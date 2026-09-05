@@ -1,0 +1,18 @@
+node_modules
+dist/
+coverage/
+reference/
+
+# Local environment and generated logs
+*.local
+*.log
+logs/
+
+# TypeScript build metadata
+*.tsbuildinfo
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
