@@ -13,11 +13,23 @@
 ## 不可违反的数据规则
 
 - 禁止虚构、合成、近似或添加用于生产环境的演示游戏数据。
-- 当前临时数据事实来源是本地检出的 `Asvel/ffxiv-gearing` 参考项目。
-- 必须通过 `scripts/update-data.mjs` 解析上游原始导出，禁止手动编辑 `src/data/generated-data.json`。
-- 必须保留数据来源信息，包括仓库 URL、精确 commit、导入时间和源文件清单。
-- 必需数据缺失或格式错误时必须明确失败。禁止为装备、食物、职业、魔晶石、属性上限或武器伤害添加回退数据。
+- 游戏资料必须优先使用对应 MCP 服务器提供的数据；仅当目标资料无法从 MCP 获取时，才允许回退到本地检出的 `Asvel/ffxiv-gearing` 参考项目。不得因为参考项目更方便而跳过可用的 MCP 数据。
+- 所有生产数据必须通过 `scripts/update-data.mjs` 从可复现的 MCP 查询产物和/或参考项目原始导出生成，禁止手动编辑 `src/data/generated-data.json`。
+- 必须按数据项保留来源信息。MCP 数据至少记录服务器、Sheet/类型/成员、查询范围、查询或导入时间以及可取得的游戏/文档版本；参考项目数据至少记录仓库 URL、精确 commit、导入时间和源文件清单。
+- 必需数据在 MCP 与参考项目中均缺失或格式错误时必须明确失败。禁止为装备、食物、职业、魔晶石、属性上限或武器伤害添加虚构、近似或内置兜底数据。
 - 仅允许在隔离的单元测试中使用合成测试对象，生产代码不得访问这些对象。
+
+## MCP 文档与游戏数据服务器引用规范
+
+编写或修改依赖游戏数据、外部 API 或底层结构的解析器、领域类型、公式和测试前，必须先按目标资料的命名空间或数据归属查询对应的 MCP 服务器。不允许凭记忆或训练数据硬写 API 签名、字段偏移、Sheet 名、字段名、行 ID 或枚举值。此判断基于资料归属，与本项目使用 TypeScript 还是 C# 无关。
+
+- 目标资料属于 `Lumina.*` 所代表的游戏数据表时，使用 `ffxiv-mcp-lumina`。装备、食物、职业、技能、状态等 Sheet 的结构使用 `describe_sheet` / `list_sheets`；具体行、行 ID 和枚举值使用 `get_row` / `get_rows` / `search_rows` 或对应的 `get_*` 便捷工具。当前项目的大多数游戏数据查询应使用此服务器。
+- 仅当任务实际引用 `Dalamud.*` 类型时，使用 `ffxiv-mcp-dalamud-api` 查询插件服务、钩子、UI、命令以及 `IClientState` / `IDataManager` / `IFramework` 等接口与成员。使用 `list_services`、`get_type`、`get_member`、`search`、`search_members` 或 `find_events`；不得用 Lumina 的表结构查询替代 Dalamud API 文档。
+- 仅当任务实际引用 `FFXIVClientStructs.*` 类型时，使用 `ffxiv-mcp-clientstructs` 查询 unmanaged struct、字段偏移、嵌套指针和命名空间。使用 `search_types`、`get_type` 或 `get_namespace`；不得根据相似类型或旧版本布局推测偏移。
+- 判断顺序是：先确认目标符号或资料属于 `Lumina.*`、`Dalamud.*` 还是 `FFXIVClientStructs.*`，再查询对应服务器。不确定归属时必须先搜索确认，三类来源不得混用。
+- 能由 MCP 返回的目标版本资料必须采用 MCP 结果。只有在对应服务器不存在该 Sheet、类型、成员、字段、目标行或必要查询能力，并确认不是查询名称或方法错误后，才可使用 `Asvel/ffxiv-gearing` 中的对应资料；回退时必须记录 MCP 缺失项和参考项目位置。
+- MCP 与参考项目结果不一致时，必须先核对目标游戏版本、MCP 数据/文档版本和参考仓库 commit。版本一致且 MCP 能提供该资料时以 MCP 为准，并同步修正导入逻辑或显式失败；版本无法对齐时禁止静默拼接为同一批生产数据。
+- MCP 查询结果进入生产数据前必须形成可复现、可校验且带来源元数据的导入产物，并由 `scripts/update-data.mjs` 统一生成运行时 JSON。不得把聊天文本或一次性查询结果直接手工抄入生成文件。
 
 ## 游戏规则正确性
 
@@ -62,6 +74,7 @@
 
 ## 当前未完成能力
 
+- 数据更新器已通过 `scripts/query-mcp-lumina.mjs` 接入环境提供的 `ffxiv-mcp-lumina` 查询产物；当前快照覆盖全部可用战斗装备和战斗食物。参考项目仍提供 MCP 未覆盖的职业公式、族群常量及必要回退，不得因此声称所有领域常量都已由 MCP 覆盖。
 - 尚未实现等级同步规则。
 - 尚未实现禁断镶嵌及相关限制。
 - 当前 UI 虽有共享部位控件，但尚未实现多职业共享部位联合优化。

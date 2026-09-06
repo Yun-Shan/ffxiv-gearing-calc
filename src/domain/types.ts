@@ -64,10 +64,23 @@ export interface Gear {
   stats: Stats;
   materiaSlots: number;
   materiaAdvanced?: true;
+  hq?: true;
+  customizable?: true;
+  customParameters?: CustomWeaponParameter[];
   source?: string;
   jobs: JobId[];
   weaponDamage?: number;
   sourceFile: string;
+  dataSources?: DataSourceRef[];
+}
+
+export interface CustomWeaponParameter {
+  materiaId: number;
+  stat: Exclude<Stat, "STR" | "DEX" | "INT" | "MND" | "VIT" | "PDMG" | "MDMG" | "DLY">;
+  bigValueIndex: number;
+  smallValueIndex: number;
+  bigValue: number;
+  smallValue: number;
 }
 
 export interface Food {
@@ -78,6 +91,7 @@ export interface Food {
   statRates: Stats;
   best?: true;
   sourceFile: string;
+  dataSources?: DataSourceRef[];
 }
 
 export interface Materia {
@@ -105,6 +119,23 @@ export interface DataProvenance {
   commit: string;
   importedAt: string;
   sourceFiles: string[];
+  sources?: DataSourceRef[];
+}
+
+export interface DataSourceRef {
+  kind: "mcp" | "reference";
+  server?: string;
+  repository?: string;
+  commit?: string;
+  sheet?: string;
+  fields?: string[];
+  rowIds?: number[];
+  gameVersion?: string;
+  validatedVersion?: string;
+  queriedAt?: string;
+  importedAt?: string;
+  note?: string;
+  sourceFiles?: string[];
 }
 
 export interface LevelModifier {

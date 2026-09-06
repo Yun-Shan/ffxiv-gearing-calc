@@ -3,6 +3,20 @@ import { access, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parse } from "@babel/parser";
+import {
+  itemActionReturnFields,
+  itemFoodReturnFields,
+  itemLevelReturnFields,
+  itemReturnFields,
+  mandervilleReturnFields,
+  mcpSource,
+  normalizeMcpFoodRows,
+  normalizeMcpGearRow,
+  normalizeMcpCustomParameters,
+  normalizeMcpItemLevel,
+  normalizeMcpMateriaRows,
+  rowMap,
+} from "./mcp-lumina-import.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const repository = "https://github.com/Asvel/ffxiv-gearing.git";
@@ -10,11 +24,16 @@ const upstreamRoot = resolve(
   process.env.FFXIV_GEARING_ROOT ?? resolve(root, "reference", "ffxiv-gearing"),
 );
 const outputPath = resolve(root, "src", "data", "generated-data.json");
+const mcpSnapshotPath = resolve(
+  process.env.FFXIV_MCP_LUMINA_SNAPSHOT ?? resolve(root, "src", "data", "mcp-lumina.snapshot.json"),
+);
 const offline = process.argv.includes("--offline");
 const supportedJobs = [
   "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN",
   "SAM", "RPR", "VPR", "BRD", "MCH", "DNC", "BLM", "SMN", "RDM", "PCT",
 ];
+const importStartedAt = new Date().toISOString();
+let currentCommit = "unknown";
 const combatMateriaStats = ["CRT", "DET", "DHT", "SKS", "SPS", "TEN", "PIE"];
 const slotMap = new Map([
   [1, "weapon"], [2, "offhand"], [3, "head"], [4, "body"], [5, "hands"],
@@ -198,12 +217,12 @@ function normalizeJobSchemas(rawSchemas) {
   );
 }
 
-function normalizeGear(raw, sourceFile, jobCategories) {
+function normalizeGear(raw, sourceFile) {
   const slot = slotMap.get(raw.slot);
   if (!slot) return undefined;
-  const category = jobCategories[raw.jobCategory] ?? {};
-  const jobs = supportedJobs.filter((job) => category[job] === true);
-  if (!jobs.length) return undefined;
+  // 参考项目只提供待查询的装备候选 ID；职业适用性必须由后续 MCP 分类确定。
+  // 这里不依据 reference jobCategories 过滤装备，避免在 MCP 查询前丢失候选。
+  const jobs = [];
   return {
     id: raw.id,
     name: raw.name,
@@ -216,10 +235,19 @@ function normalizeGear(raw, sourceFile, jobCategories) {
     stats: raw.stats,
     materiaSlots: raw.materiaSlot,
     ...(raw.materiaAdvanced ? { materiaAdvanced: true } : {}),
+    ...(raw.hq ? { hq: true } : {}),
+    ...(raw.customizable ? { customizable: true } : {}),
     ...(raw.source ? { source: raw.source } : {}),
     jobs,
     weaponDamage: raw.stats.PDMG ?? raw.stats.MDMG,
     sourceFile,
+    dataSources: [{
+      kind: "reference",
+      repository,
+      commit: currentCommit,
+      importedAt: importStartedAt,
+      sourceFiles: [sourceFile],
+    }],
   };
 }
 
@@ -232,7 +260,247 @@ function normalizeFood(raw) {
     statRates: raw.statRates,
     ...(raw.best ? { best: true } : {}),
     sourceFile: "data/out/foods.js",
+    dataSources: [{
+      kind: "reference",
+      repository,
+      commit: currentCommit,
+      importedAt: importStartedAt,
+      sourceFiles: ["data/out/foods.js"],
+    }],
   };
+}
+
+async function loadMcpSnapshot() {
+  if (!(await exists(mcpSnapshotPath))) return undefined;
+  let snapshot;
+  try {
+    snapshot = JSON.parse(await readFile(mcpSnapshotPath, "utf8"));
+  } catch (error) {
+    throw new Error(`MCP 查询产物无法解析：${mcpSnapshotPath}`, { cause: error });
+  }
+  if (snapshot?.server !== "ffxiv-mcp-lumina" || snapshot?.schemaVersion !== 1)
+    throw new Error(`MCP 查询产物格式不受支持：${mcpSnapshotPath}`);
+  if (!snapshot.gameVersion || !snapshot.validatedVersion || !snapshot.queriedAt)
+    throw new Error(`MCP 查询产物缺少游戏版本或查询时间：${mcpSnapshotPath}`);
+  if (snapshot.gameVersion !== snapshot.validatedVersion)
+    throw new Error(`MCP 查询产物的游戏版本与验证版本不一致：${snapshot.gameVersion} !== ${snapshot.validatedVersion}`);
+  return snapshot;
+}
+
+function indexRows(value) {
+  if (Array.isArray(value)) return rowMap(value);
+  if (!value || typeof value !== "object") return {};
+  const rows = Object.values(value);
+  if (rows.every((row) => row && typeof row === "object" && row.fields)) return rowMap(rows);
+  return value;
+}
+
+function snapshotRows(snapshot, name) {
+  return indexRows(snapshot?.rows?.[name] ?? snapshot?.[name]);
+}
+
+function snapshotSource(snapshot, sheet, fields, rowIds, note) {
+  return mcpSource({
+    sheet,
+    fields,
+    rowIds,
+    gameVersion: snapshot.gameVersion,
+    validatedVersion: snapshot.validatedVersion,
+    queriedAt: snapshot.queriedAt,
+    note,
+  });
+}
+
+function resolveMandervilleIds(mandervilleRows, referenceMandervilleAliases) {
+  // 自定义武器主键 = MandervilleWeaponEnhance 表内全部有效行（游戏当前版本唯一信源）。
+  const mcpIds = Object.keys(mandervilleRows).map(Number).filter(Number.isFinite).sort((a, b) => a - b);
+  if (mcpIds.length === 0)
+    throw new Error("MandervilleWeaponEnhance 行集合为空，无法确认自定义武器主键");
+  const mcpSet = new Set(mcpIds);
+  const refSet = new Set(referenceMandervilleAliases);
+  // 跨版本漂移允许：参考导出与 MCP 集合若完全无交集则报警。
+  let overlap = 0;
+  for (const id of mcpSet) if (refSet.has(id)) overlap++;
+  if (overlap === 0)
+    throw new Error(
+      `MandervilleWeaponEnhance 行集合 ${mcpIds.join(",")} 与参考项目 customizable 集合 ${referenceMandervilleAliases.join(",")} 无任何交集，请检查 MCP 快照或参考版本`,
+    );
+  return { mandervilleIds: mcpIds, referenceAliases: referenceMandervilleAliases };
+}
+function mergeMcpGearData(gears, snapshot, fallbackSource) {
+  const itemRows = snapshotRows(snapshot, "Item");
+  const categoryRows = snapshotRows(snapshot, "ClassJobCategory");
+  const mandervilleRows = snapshotRows(snapshot, "MandervilleWeaponEnhance");
+  const materiaRows = snapshotRows(snapshot, "Materia");
+  const referenceMandervilleAliases = gears
+    .filter((gear) => gear.customizable)
+    .map((gear) => gear.id);
+  const { mandervilleIds } = resolveMandervilleIds(mandervilleRows, referenceMandervilleAliases);
+  const usedIds = [];
+  const missing = [];
+  const result = gears
+    .map((gear) => {
+    const itemRow = itemRows[gear.id];
+    const categoryRow = itemRow && categoryRows[Number(itemRow.fields?.ClassJobCategory)];
+    const merged = normalizeMcpGearRow(itemRow, gear, categoryRow, { hq: gear.hq === true });
+    if (!merged) {
+      missing.push(gear.id);
+      // 即使参考项目有分类结果，也不能回退其职业适用性；等待 MCP 分类后再统一过滤。
+      return { ...gear, jobs: [] };
+    }
+    usedIds.push(gear.id);
+    const source = snapshotSource(snapshot, "Item", itemReturnFields, [gear.id]);
+    const categorySource = snapshotSource(
+      snapshot,
+      "ClassJobCategory",
+      ["PLD", "MNK", "WAR", "DRG", "BRD", "WHM", "BLM", "SMN", "SCH", "NIN", "MCH", "DRK", "AST", "SAM", "RDM", "GNB", "DNC", "RPR", "SGE", "VPR", "PCT"],
+      [Number(itemRow.fields.ClassJobCategory)],
+    );
+    const customRow = mandervilleRows[gear.id];
+    const customParameters = customRow
+      ? normalizeMcpCustomParameters(customRow, materiaRows)
+      : undefined;
+    if (customRow && !customParameters)
+      throw new Error(`MandervilleWeaponEnhance 行 ${gear.id} 的自定义参数字段不完整`);
+    return {
+      ...merged,
+      ...(customRow ? { customizable: true, customParameters } : {}),
+      dataSources: [source, categorySource, ...(gear.dataSources ?? []).filter((item) => item.kind === "reference")],
+    };
+  });
+  // MCP 当前版本的自定义参数武器主键（51000-51021 等）并不在参考项目导出中，需要主动合并。
+  const existingIds = new Set(result.map((g) => g.id));
+  const categoryFieldList = ["PLD", "MNK", "WAR", "DRG", "BRD", "WHM", "BLM", "SMN", "SCH", "NIN", "MCH", "DRK", "AST", "SAM", "RDM", "GNB", "DNC", "RPR", "SGE", "VPR", "PCT"];
+  for (const mcpId of mandervilleIds) {
+    if (existingIds.has(mcpId)) continue;
+    const itemRow = itemRows[mcpId];
+    if (!itemRow) continue;
+    const categoryRow = categoryRows[Number(itemRow.fields?.ClassJobCategory)];
+    const merged = normalizeMcpGearRow(itemRow, undefined, categoryRow, { hq: false });
+    if (!merged) continue;
+    const customRow = mandervilleRows[mcpId];
+    const customParameters = customRow ? normalizeMcpCustomParameters(customRow, materiaRows) : undefined;
+    if (!customParameters)
+      throw new Error(`MandervilleWeaponEnhance 行 ${mcpId} 的自定义参数字段不完整`);
+    usedIds.push(mcpId);
+    const source = snapshotSource(snapshot, "Item", itemReturnFields, [mcpId]);
+    const categorySource = snapshotSource(snapshot, "ClassJobCategory", categoryFieldList, [Number(itemRow.fields.ClassJobCategory)]);
+    result.push({
+      ...merged,
+      customizable: true,
+      customParameters,
+      dataSources: [source, categorySource, { kind: "mcp-manderville-source", sheet: "MandervilleWeaponEnhance", rowIds: [mcpId] }],
+    });
+  }
+  return { result: result.filter((gear) => gear.jobs.length > 0), usedIds, missing };
+}
+
+function mergeMcpFoodData(foods, snapshot) {
+  const itemRows = snapshotRows(snapshot, "Item");
+  const actionRows = snapshotRows(snapshot, "ItemAction");
+  const foodRows = snapshotRows(snapshot, "ItemFood");
+  const usedIds = [];
+  const usedActionIds = [];
+  const missing = [];
+  const result = foods.map((food) => {
+    const itemRow = itemRows[food.id];
+    const actionId = Number(itemRow?.fields?.ItemAction ?? 0);
+    const merged = normalizeMcpFoodRows(itemRow, actionRows[actionId], foodRows, food);
+    if (!merged) {
+      missing.push(food.id);
+      return food;
+    }
+    usedIds.push(food.id);
+    usedActionIds.push(actionId);
+    const actionRow = actionRows[actionId];
+    const foodIds = [];
+    for (let index = 0; index < 9; index++) {
+      const id = Number(actionRow?.fields?.[`Data[${index}]`] ?? 0);
+      if (id) foodIds.push(id);
+    }
+    const missingFoodIds = foodIds.filter((id) => !foodRows[id]);
+    return {
+      ...merged,
+      dataSources: [
+        snapshotSource(snapshot, "Item", ["Name", "LevelItem", "ItemAction"], [food.id]),
+        snapshotSource(snapshot, "ItemAction", itemActionReturnFields, [actionId]),
+        snapshotSource(
+          snapshot,
+          "ItemFood",
+          itemFoodReturnFields,
+          foodIds,
+          missingFoodIds.length
+            ? `MCP 缺少 ItemFood 行：${missingFoodIds.join(",")}；其余效果字段由 MCP 提供`
+            : undefined,
+        ),
+        ...(food.dataSources ?? []).filter((item) => item.kind === "reference"),
+      ],
+    };
+  });
+  return { result, usedIds, usedActionIds, missing };
+}
+
+function mergeMcpLevelCaps(levelCaps, snapshot) {
+  const rows = snapshotRows(snapshot, "ItemLevel");
+  const levels = levelCaps.level.slice();
+  const merged = Object.fromEntries(Object.entries(levelCaps).map(([stat, values]) => [stat, values.slice()]));
+  const usedIds = [];
+  for (let index = 0; index < levels.length; index++) {
+    const row = rows[levels[index]];
+    const stats = normalizeMcpItemLevel(row);
+    if (!stats) continue;
+    usedIds.push(levels[index]);
+    for (const [stat, value] of Object.entries(stats)) {
+      if (merged[stat]) merged[stat][index] = value;
+    }
+  }
+  return { value: merged, usedIds };
+}
+
+function mergeMcpSlotCaps(slotCaps, snapshot) {
+  const rows = snapshotRows(snapshot, "BaseParam");
+  const baseParamByStat = { STR: 1, DEX: 2, VIT: 3, INT: 4, MND: 5, PIE: 6, TEN: 19, DHT: 22, CRT: 27, DET: 44, SKS: 45, SPS: 46 };
+  const fieldsBySlot = [
+    undefined, "OneHandWeaponPercent", "OffHandPercent", "HeadPercent", "ChestPercent", "HandsPercent",
+    "WaistPercent", "LegsPercent", "FeetPercent", "EarringPercent", "NecklacePercent", "BraceletPercent",
+    "RingPercent", "TwoHandWeaponPercent", "UnderArmorPercent", "ChestHeadPercent", "ChestHeadLegsFeetPercent",
+    "Unknown0", "LegsFeetPercent", "HeadChestHandsLegsFeetPercent", "ChestLegsGlovesPercent", "ChestLegsFeetPercent",
+    "Unknown1", "Unknown3",
+  ];
+  const merged = Object.fromEntries(Object.entries(slotCaps).map(([stat, values]) => [stat, values.slice()]));
+  const usedIds = [];
+  const supportedSlots = new Set([1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13]);
+  for (const [stat, rowId] of Object.entries(baseParamByStat)) {
+    const row = rows[rowId];
+    if (!row?.fields) continue;
+    let changed = false;
+    // The project uses raw slot IDs 1..18. Newer Lumina fields after LegsFeetPercent
+    // describe additional slots that this upstream data model does not represent.
+    for (const slot of supportedSlots) {
+      const value = row.fields[fieldsBySlot[slot]];
+      if (typeof value === "number") {
+        merged[stat] ??= [];
+        merged[stat][slot] = value;
+        changed = true;
+      }
+    }
+    if (changed) usedIds.push(rowId);
+  }
+  return { value: merged, usedIds };
+}
+
+function mergeMcpMaterias(materias, snapshot) {
+  const rows = snapshotRows(snapshot, "Materia");
+  const merged = normalizeMcpMateriaRows(Object.values(rows));
+  const value = { ...materias };
+  const usedStats = [];
+  for (const stat of combatMateriaStats) {
+    if (merged[stat]?.length === 12 && merged[stat].some((entry) => entry > 0)) {
+      value[stat] = merged[stat];
+      usedStats.push(stat);
+    }
+  }
+  return { value, usedStats };
 }
 
 function validate(payload) {
@@ -254,12 +522,12 @@ function validate(payload) {
 }
 
 const commit = await prepareUpstream();
+currentCommit = commit;
 const outDir = resolve(upstreamRoot, "data", "out");
 const gearFiles = (await readdir(outDir)).filter((file) => /^gears-.*\.js$/i.test(file)).sort();
 if (!gearFiles.length) throw new Error("参考项目没有装备导出文件");
 
-const [jobCategories, rawFoods, gameSource] = await Promise.all([
-  importDefault(resolve(outDir, "jobCategories.js")),
+const [rawFoods, gameSource] = await Promise.all([
   importDefault(resolve(outDir, "foods.js")),
   readFile(resolve(upstreamRoot, "src", "game.ts"), "utf8"),
 ]);
@@ -273,33 +541,75 @@ const gearGroups = await Promise.all(
   gearFiles.map(async (file) => ({ file, items: await importDefault(resolve(outDir, file)) })),
 );
 const gears = gearGroups.flatMap(({ file, items }) =>
-  items.map((item) => normalizeGear(item, `data/out/${file}`, jobCategories)).filter(Boolean),
+  items.map((item) => normalizeGear(item, `data/out/${file}`)).filter(Boolean),
 );
-const materias = Object.fromEntries(
+const referenceSourceFiles = [
+  ...gearFiles.map((file) => `data/out/${file}`),
+  "data/out/foods.js",
+  "data/out/levelCaps.js",
+  "data/out/slotCaps.js",
+  "data/out/roleCaps.js",
+  "src/game.ts",
+];
+const referenceSource = {
+  kind: "reference",
+  repository,
+  commit,
+  importedAt: importStartedAt,
+  sourceFiles: referenceSourceFiles,
+};
+let foods = rawFoods.filter((food) => food.slot === -1).map(normalizeFood);
+let effectiveLevelCaps = levelCaps;
+let effectiveSlotCaps = slotCaps;
+let materias = Object.fromEntries(
   combatMateriaStats.map((stat) => [stat, constants.materias[stat]]),
 );
+const sourceRecords = [referenceSource];
+const mcpSnapshot = await loadMcpSnapshot();
+let mcpSummary = "MCP 查询产物未找到，使用参考项目数据";
+if (mcpSnapshot) {
+  const gearMerge = mergeMcpGearData(gears, mcpSnapshot, referenceSource);
+  gears.splice(0, gears.length, ...gearMerge.result);
+  const foodMerge = mergeMcpFoodData(foods, mcpSnapshot);
+  foods = foodMerge.result;
+  const levelMerge = mergeMcpLevelCaps(levelCaps, mcpSnapshot);
+  effectiveLevelCaps = levelMerge.value;
+  const slotMerge = mergeMcpSlotCaps(slotCaps, mcpSnapshot);
+  effectiveSlotCaps = slotMerge.value;
+  const materiaMerge = mergeMcpMaterias(materias, mcpSnapshot);
+  materias = materiaMerge.value;
+  sourceRecords.push(
+    snapshotSource(mcpSnapshot, "Item", itemReturnFields, gearMerge.usedIds),
+    snapshotSource(mcpSnapshot, "ItemAction", itemActionReturnFields, foodMerge.usedActionIds),
+    snapshotSource(mcpSnapshot, "ItemFood", itemFoodReturnFields, undefined, mcpSnapshot.missing?.ItemFood?.length
+      ? `MCP 缺少 ItemFood 行：${mcpSnapshot.missing.ItemFood.join(",")}`
+      : undefined),
+    snapshotSource(mcpSnapshot, "ItemLevel", itemLevelReturnFields, levelMerge.usedIds),
+    snapshotSource(mcpSnapshot, "BaseParam", undefined, slotMerge.usedIds),
+    snapshotSource(mcpSnapshot, "Materia", undefined, Object.keys(snapshotRows(mcpSnapshot, "Materia")).map(Number)),
+  );
+  const fallbackCount = gearMerge.missing.length + foodMerge.missing.length;
+  mcpSummary = `MCP 优先：覆盖 ${gearMerge.usedIds.length}/${gears.length} 件装备、${foodMerge.usedIds.length}/${foods.length} 种食物，${fallbackCount} 项回退参考项目`;
+} else if (!offline) {
+  console.warn(`未找到 MCP 查询产物：${mcpSnapshotPath}。请先使用环境 MCP 工具生成该文件；本次仅使用参考项目。`);
+}
 const payload = {
-  version: `upstream-${commit.slice(0, 12)}`,
+  version: mcpSnapshot
+    ? `mcp-${mcpSnapshot.gameVersion}-upstream-${commit.slice(0, 12)}`
+    : `upstream-${commit.slice(0, 12)}`,
   provenance: {
     repository,
     commit,
-    importedAt: new Date().toISOString(),
-    sourceFiles: [
-      ...gearFiles.map((file) => `data/out/${file}`),
-      "data/out/foods.js",
-      "data/out/jobCategories.js",
-      "data/out/levelCaps.js",
-      "data/out/slotCaps.js",
-      "data/out/roleCaps.js",
-      "src/game.ts",
-    ],
+    importedAt: importStartedAt,
+    sourceFiles: referenceSourceFiles,
+    sources: sourceRecords,
   },
   gears,
-  foods: rawFoods.filter((food) => food.slot === -1).map(normalizeFood),
+  foods,
   materias,
   materiaGradeRequiredLevels: constants.materiaGradeRequiredLevels,
-  levelCaps,
-  slotCaps,
+  levelCaps: effectiveLevelCaps,
+  slotCaps: effectiveSlotCaps,
   roleCaps,
   baseStats: constants.baseStats,
   clanStats: constants.clanStats,
@@ -310,5 +620,5 @@ validate(payload);
 await mkdir(resolve(outputPath, ".."), { recursive: true });
 await writeFile(outputPath, `${JSON.stringify(payload)}\n`, "utf8");
 console.log(
-  `Imported ${payload.gears.length} gears, ${payload.foods.length} foods and ${supportedJobs.length} jobs from ${commit.slice(0, 12)}`,
+  `Imported ${payload.gears.length} gears, ${payload.foods.length} foods and ${supportedJobs.length} jobs from ${commit.slice(0, 12)}. ${mcpSummary}`,
 );

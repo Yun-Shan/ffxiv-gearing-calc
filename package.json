@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "data:mcp": "node scripts/query-mcp-lumina.mjs",
     "data:update": "node scripts/update-data.mjs"
   },
   "dependencies": {
