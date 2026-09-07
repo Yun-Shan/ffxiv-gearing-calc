@@ -48,7 +48,10 @@ function relevantMateriaStats(job: ReturnType<typeof getJob>): Materia["stat"][]
       : ["CRT", "DET", "DHT", job.role === "int" ? "SPS" : "SKS"];
 }
 
-// 自定义参数武器：每个槽只能从 MCP 返回的 big/small 两档数值中二选一，生成 2^N 个完整候选。
+// 自定义参数武器：上游游戏机制要求 4 个槽位中选 1 small + 2 big + 1 空槽，
+// 每个槽至多被选一次。候选数 C(4,1) × C(3,2) = 4 × 3 = 12；其它槽位配置由
+// 领域层主导检查与最终伤害期望决定能否保留。
+// 如果上游给出的 customParameters 槽位不是 4，必须显式失败，避免静默兜底。
 function forEachMeldCombination(
   gear: Gear,
   job: ReturnType<typeof getJob>,
@@ -56,16 +59,28 @@ function forEachMeldCombination(
 ): void {
   if (gear.customParameters && gear.customParameters.length > 0) {
     const slots = gear.customParameters;
-    const walk = (index: number, melds: Materia[]) => {
-      if (index === slots.length) {
-        visit(melds);
-        return;
+    if (slots.length !== 4) {
+      throw new Error(
+        `自定义参数武器 ${gear.id} 的槽位数 ${slots.length} 不是 4，无法按 2 big + 1 small + 1 空槽规则生成候选`,
+      );
+    }
+    // 4 槽：选 1 个 small，剩下的 3 个槽里选 2 个 big，剩余 1 槽留空。
+    for (let smallIndex = 0; smallIndex < slots.length; smallIndex++) {
+      const remaining: number[] = [];
+      for (let k = 0; k < slots.length; k++) if (k !== smallIndex) remaining.push(k);
+      for (let a = 0; a < remaining.length; a++) {
+        for (let b = a + 1; b < remaining.length; b++) {
+          const bigA = remaining[a];
+          const bigB = remaining[b];
+          const melds: Materia[] = [
+            { stat: slots[bigA].stat, value: slots[bigA].bigValue, grade: 0 },
+            { stat: slots[bigB].stat, value: slots[bigB].bigValue, grade: 0 },
+            { stat: slots[smallIndex].stat, value: slots[smallIndex].smallValue, grade: 0 },
+          ];
+          visit(melds);
+        }
       }
-      const slot = slots[index];
-      walk(index + 1, [...melds, { stat: slot.stat, value: slot.bigValue, grade: 0 }]);
-      walk(index + 1, [...melds, { stat: slot.stat, value: slot.smallValue, grade: 0 }]);
-    };
-    walk(0, []);
+    }
     return;
   }
   const relevant = relevantMateriaStats(job);
@@ -341,8 +356,10 @@ function expandBeam(states: SearchState[], options: Candidate[], config: Optimiz
     .filter((food) => (food.stats[speedStat] ?? 0) > 0)
     .flatMap((food) => speedFoodRepresentatives(expanded, job, food, targetStatesPerSpeed));
   // 同一速度分组保留多个代表，避免某个高速度档位被顶层排序丢弃。
+  // 必须遍历全部 expanded 而非 ranked：否则高 SPS 但 score 较低的状态
+  // 在被 bySpeed 保留前就已经被顶层 score 排序剪掉，无法兑现「不丢全局最优」的承诺。
   const bySpeed = new Map<number, SearchState[]>();
-  for (const state of ranked) {
+  for (const state of expanded) {
     const speed = state.stats[speedStat] ?? 0;
     const reps = bySpeed.get(speed) ?? [];
     if (reps.length < targetStatesPerSpeed) reps.push(state);
@@ -404,6 +421,9 @@ export function optimize(config: OptimizationConfig): OptimizationResult | undef
     const effects = calculateEffects({ stats, job, level: currentLevel, weaponDamage: state.weaponDamage });
     if ((config.gcdTarget !== undefined && Math.abs(effects.gcd - config.gcdTarget) >= 0.001) ||
         (stats.TEN ?? 0) < requiredTenacity) continue;
+    if (Math.abs(effects.gcd - (config.gcdTarget ?? 2.5)) < 0.01) {
+      console.error("DBG_FINAL", JSON.stringify({gcd: effects.gcd, dmg: effects.damage, sps: state.stats.SPS, crt: state.stats.CRT, det: state.stats.DET, dht: state.stats.DHT, brc: state.items.find(i=>i.slot==="bracelet")?.id, brcMeld: JSON.stringify(state.items.find(i=>i.slot==="bracelet")?.melds), headMeld: JSON.stringify(state.items.find(i=>i.slot==="head")?.melds), ring1: JSON.stringify(state.items.find(i=>i.slot==="ring")?.melds)}));
+    }
     if (!best || effects.damage > best.score) best = {
       gear: state.items,
       food,

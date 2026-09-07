@@ -214,11 +214,19 @@ npm run test:coverage
 
 为了缓解这个问题，项目提供了 worker 多线程并行计算（见 src/domain/optimizer.worker.ts 与 src/domain/worker-client.ts）。按首个装备槽候选拆分任务后，多个 worker 各自跑完整搜索。由于各子任务状态集互不包含同一装备 ID，子任务中装备不会出现重复，所以逐个子任务内部的全局最优合并后仍为全局最优。
 
+#### 阶段二边界 bug 修复（2026-09）
+
+`expandBeam` 中的 `bySpeed` 必须遍历 `expanded`（全部候选），不能遍历 `ranked`（按 score 排序的前 2000）。原实现以 `ranked` 为源构造同速度档位代表，高 SPS 但 score 较低的状态会被顶层排序提前剪掉，无法被同档位代表重新加入，使“同一速度档位保留多个代表”这层保护名存实亡，违反“不丢全局最优”的承诺。
+
+修复后该函数以 `expanded` 为源遍历，同一速度档位始终保留 up-to-4 代表，BLM 2.45 GCD 这类依赖高 SPS 状态的需求不再被 frontier 丢提；同一函数中的 `speedFoodRepresentatives(expanded, ...)` 本就以 `expanded` 为源，不需调整。
+
 ## 自定义参数武器
 
 - 业务定义：装备带 `customizable: true`，且其自定义参数能从已确认的上游参数表读取。当前已知来源包括 `MandervilleWeaponEnhance`，但不能将其当作唯一类型；其他自定义参数武器可能在其他表中，必须分别确认来源后才能接入。
 - 生产主键：每个已确认参数表中的有效 Item 主键。参考项目 `customizable: true` 集合仅作为别名溯源记录，不能替代未确认的参数表；不同参数表之间不能因共享字段结构就默认可合并。
 - 参数语义：每件武器 4 个 Materia 槽，参数取值由 `Materia[i]`（Materia 行 ID）+ `MateriaBigValueIndex[i]` / `MateriaSmallValueIndex[i]` 决定；候选生成阶段必须按 Materia 行读取实际 stat/value，不得使用 12/24/54 等固定数值。
+- 上游可选规则（2026-09 用户确认）：4 个槽位中必须选 1 small + 2 big + 1 空槽，每个槽至多被选一次；候选数 C(4,1) × C(3,2) = 12。旧的"每槽独立 big/small = 16 种"实现已被取代，不得回退。
+- 候选生成实现：`src/domain/optimizer.ts` 的 `forEachMeldCombination` 按"先选 1 small、再从剩余 3 槽选 2 big、1 槽留空"生成 meld；若 `customParameters.length !== 4` 显式抛出异常，禁止静默兜底。
 - 当前快照样本（MCP 2026.08.05）：`MandervilleWeaponEnhance` 有 51000-51021 共 22 行；参考导出额外保留 15223-15264 等历史别名（仅作为溯源记录，不参与自定义参数候选）。其他类型的自定义参数武器必须等待对应上游表确认。
 - 当前已确认参数表缺失或与参考项目别名完全无交集时，导入器必须显式失败；不允许把参考项目 `customizable: true` 装备作为未确认参数表的生产信源。
 
