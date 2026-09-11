@@ -10,7 +10,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "data:mcp": "node scripts/query-mcp-lumina.mjs",
-    "data:update": "node scripts/update-data.mjs"
+    "data:test": "tsx scripts/test.ts"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.3.2",
