@@ -4,7 +4,7 @@ import type {
   JobLevel,
   Stat,
   Stats,
-} from "../reference/ffxiv-gearing/src/game.ts";
+} from "../../reference/ffxiv-gearing/src/game.ts";
 
 /**
  * Standalone entry point for the reference project's equippedEffects getter.
@@ -17,21 +17,21 @@ import type {
  * Reference commit: 78f6cbb568bdd3341ec793bbc17f4582e32d2ba8
  *
  * CLI:
- *   tsx scripts/equipped-effects.ts SAM 100 '{"STR":6007,"CRT":3185,"DET":2093,"DHT":1427,"SKS":0,"VIT":7027,"PDMG":158}'
+ *   tsx scripts/test/equipped-effects.ts SAM 100 '{"STR":6007,"CRT":3185,"DET":2093,"DHT":1427,"SKS":0,"VIT":7027,"PDMG":158}'
  *
  * The third argument is the sum of gear and food attributes. Character base
  * attributes are reconstructed from the reference job and level constants.
  */
 
 const referenceGameUrl = new URL(
-  "../reference/ffxiv-gearing/src/game.ts",
+  "../../reference/ffxiv-gearing/src/game.ts",
   import.meta.url,
 );
 
 type GlobalWithRequire = typeof globalThis & { require: NodeRequire };
 (globalThis as GlobalWithRequire).require = createRequire(referenceGameUrl);
 
-const referenceGame = await import("../reference/ffxiv-gearing/src/game.ts");
+const referenceGame = await import("../../reference/ffxiv-gearing/src/game.ts");
 
 export type EquippedStats = Stats;
 
@@ -201,5 +201,3 @@ export function equippedEffects(
     baseStats,
   );
 }
-
-
