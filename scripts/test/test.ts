@@ -16,6 +16,7 @@ import {
   type FfxivGearingGear,
 } from "./ffxiv-gearing-export.ts";
 import { applySyncLimit } from "./equipment-sync.ts";
+import { equipmentAttributeValuesKey } from "./equipment-candidates.ts";
 import {
   LoadoutFinderV2,
   type LoadoutFinderV2Options,
@@ -811,9 +812,10 @@ class EquipmentMateriaCombiner {
       );
       attributes.sort((a, b) => a.baseParamId - b.baseParamId);
       const key = attributes.map((it) => it.baseParamId).join("-");
+      const valuesKey = equipmentAttributeValuesKey(attributes);
 
-      if (!seen.has(key)) {
-        seen.add(key);
+      if (!seen.has(valuesKey)) {
+        seen.add(valuesKey);
         results.push([key, attributes]);
       }
     }

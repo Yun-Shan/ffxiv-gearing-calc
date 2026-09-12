@@ -45,6 +45,84 @@ const reverseOptions = {
 };
 
 describe("ffxiv-gearing V1 result export", () => {
+  it("parses current v6 share links with the reference implementation", () => {
+    const v1 = parseFfxivGearingGearset(
+      "4i882LbtTACmeJKUCDy81dyZ9v1Aw5guObFtKHN8NczMgLEzx",
+    );
+    const v2 = parseFfxivGearingGearset(
+      "lSjupmNs6WXHsTOWguedIb45D1sGglsb96lRYNJDumDc1J1DYT",
+    );
+
+    assert.notEqual(typeof v1, "string");
+    assert.notEqual(typeof v2, "string");
+    if (typeof v1 === "string" || typeof v2 === "string") return;
+
+    assert.deepEqual(
+      {
+        job: v1.job,
+        jobLevel: v1.jobLevel,
+        syncLevel: v1.syncLevel,
+        gearIds: v1.gears.map(({ id }) => id).sort((a, b) => a - b),
+      },
+      {
+        job: "RDM",
+        jobLevel: 100,
+        syncLevel: 735,
+        gearIds: [
+          43076, 43090, 43100, 43154, 43162, 43172, 43177, 47140, 47141,
+          47142, 49240, 51014,
+        ],
+      },
+    );
+    assert.deepEqual(
+      {
+        job: v2.job,
+        jobLevel: v2.jobLevel,
+        syncLevel: v2.syncLevel,
+        gearIds: v2.gears.map(({ id }) => id).sort((a, b) => a - b),
+      },
+      {
+        job: "RDM",
+        jobLevel: 100,
+        syncLevel: 735,
+        gearIds: [
+          43076, 43090, 43100, 43154, 43162, 43172, 43177, 47140, 47141,
+          47142, 49240, 51014,
+        ],
+      },
+    );
+
+    const configuredStatTotals = (gearset: typeof v1) => {
+      const totals: Partial<Record<Stat, number>> = {};
+      const add = (stat: Stat, value: number) => {
+        totals[stat] = (totals[stat] ?? 0) + value;
+      };
+      for (const gear of gearset.gears) {
+        for (const [stat, value] of Object.entries(gear.customStats ?? {})) {
+          add(stat as Stat, value);
+        }
+        for (const materia of gear.materias) {
+          if (materia === null) continue;
+          const [stat, grade] = materia;
+          assert.equal(grade, 12);
+          add(stat, 54);
+        }
+      }
+      return totals;
+    };
+    assert.deepEqual(configuredStatTotals(v1), {
+      CRT: 771,
+      DET: 879,
+      DHT: 432,
+    });
+    assert.deepEqual(configuredStatTotals(v2), {
+      CRT: 771,
+      DET: 486,
+      DHT: 663,
+      SPS: 108,
+    });
+  });
+
   it("reverses a normal equipment result into materia slots", () => {
     const result = reverseEquipmentForFfxivGearing(
       equipment(1000, "normal", [
