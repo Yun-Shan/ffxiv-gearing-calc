@@ -1,16 +1,17 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  createEquippedEffectsVectorEvaluator,
   equippedEffects,
   equippedSpeedRangeForGcd,
   equippedToughnessForMitigationPercent,
 } from "./equipped-effects.ts";
-import { LoadoutFinderV1 } from "./loadout-finder-v1.ts";
 import {
   LoadoutFinderV2,
   type LoadoutV2Constraints,
 } from "./loadout-finder-v2.ts";
 import type { EquipInfo, FoodInfo } from "./types.ts";
+import type { Stat } from "../../reference/ffxiv-gearing/src/game.ts";
 
 function equipment(itemId: number, values: readonly number[]): EquipInfo {
   return {
@@ -129,7 +130,53 @@ function finder(
 }
 
 describe("LoadoutFinderV2", () => {
-  it("degenerates to V1 when constraints are empty", () => {
+  it("uses damage per second when GCD is not specified and keeps real damage", () => {
+    const damage = (attributes: readonly number[]): number => attributes[0];
+    const finder = new LoadoutFinderV2(damage, 2, {
+      attributeIds: [0, 1],
+      speedAttributeId: 1,
+      evaluationFunction: (attributes) => ({
+        damage: attributes[0],
+        gcd: 3 - attributes[1],
+      }),
+      suffixFrontierSlotCount: 0,
+      debug: false,
+    });
+
+    const result = finder.findBest(
+      [[equipment(1, [100, 1]), equipment(2, [90, 2])]],
+      [],
+    );
+
+    assert.equal(result?.selection[0].itemId, 2);
+    assert.equal(result?.damage, 90);
+  });
+
+  it("compares direct damage when an exact GCD is specified", () => {
+    const damage = (attributes: readonly number[]): number => attributes[0];
+    const finder = new LoadoutFinderV2(damage, 2, {
+      attributeIds: [0, 1],
+      speedAttributeId: 1,
+      evaluationFunction: (attributes) => ({
+        damage: attributes[0],
+        gcd: 3 - attributes[1],
+      }),
+      gcdToSpeedRange: () => ({ min: 1, max: 2 }),
+      suffixFrontierSlotCount: 0,
+      debug: false,
+    });
+
+    const result = finder.findBest(
+      [[equipment(1, [100, 1]), equipment(2, [90, 2])]],
+      [],
+      { gcd: 2.48 },
+    );
+
+    assert.equal(result?.selection[0].itemId, 1);
+    assert.equal(result?.damage, 100);
+  });
+
+  it("keeps the unconstrained direct-damage result stable", () => {
     const damage = (attributes: readonly number[]): number =>
       attributes[0] * 100 + attributes[1] * 2 + attributes[2];
     const slots = [
@@ -147,22 +194,20 @@ describe("LoadoutFinderV2", () => {
       suffixFrontierSlotCount: 2,
       debug: false,
     } as const;
-    const v1 = new LoadoutFinderV1(damage, 3, options);
     const v2 = new LoadoutFinderV2(damage, 3, {
       ...options,
       speedAttributeId: 1,
       toughnessAttributeId: 2,
     });
 
-    const v1Result = v1.findBest(slots, [food]);
     const v2Result = v2.findBest(slots, [food]);
 
-    assert.equal(v2Result?.damage, v1Result?.damage);
+    assert.equal(v2Result?.damage, 1204);
     assert.deepEqual(
       v2Result?.selection.map((entry) => entry.itemId),
-      v1Result?.selection.map((entry) => entry.itemId),
+      [1, 4],
     );
-    assert.equal(v2Result?.food?.itemId, v1Result?.food?.itemId);
+    assert.equal(v2Result?.food?.itemId, food.itemId);
   });
 
   it("keeps a lower-speed candidate that ordinary Pareto dominance would remove", () => {
@@ -486,6 +531,37 @@ describe("LoadoutFinderV2", () => {
 });
 
 describe("V2 user-unit conversions", () => {
+  it("keeps the vector evaluator equivalent to equippedEffects", () => {
+    const statIndexes = new Map<Stat, number>([
+      ["INT", 0],
+      ["CRT", 1],
+      ["DET", 2],
+      ["DHT", 3],
+      ["SPS", 4],
+      ["VIT", 5],
+      ["MDMG", 6],
+    ]);
+    const attributes = [100, 200, 300, 100, 150, 250, 10];
+    const evaluate = createEquippedEffectsVectorEvaluator(
+      "RDM",
+      100,
+      statIndexes,
+    );
+
+    assert.deepEqual(
+      evaluate(attributes),
+      equippedEffects("RDM", 100, {
+        INT: 100,
+        CRT: 200,
+        DET: 300,
+        DHT: 100,
+        SPS: 150,
+        VIT: 250,
+        MDMG: 10,
+      }),
+    );
+  });
+
   it("finds the exact speed boundaries for the default 2.48 second GCD", () => {
     const range = equippedSpeedRangeForGcd("RDM", 100, 2.48);
 

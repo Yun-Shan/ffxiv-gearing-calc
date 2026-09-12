@@ -258,6 +258,38 @@ export function equippedEffects(
   );
 }
 
+/**
+ * Creates the allocation-free evaluator used by the V2 search hot path.
+ * `attributes` contains gear and food contributions in the caller's vector
+ * order. The returned function is synchronous, so its fixed-shape stats object
+ * can be safely reused between evaluations.
+ */
+export function createEquippedEffectsVectorEvaluator(
+  job: Job,
+  jobLevel: JobLevel,
+  statIndexes: ReadonlyMap<Stat, number>,
+): (attributes: readonly number[]) => EquippedEffects | undefined {
+  const levelMod = game.jobLevelModifiers[jobLevel];
+  if (levelMod === undefined) throw new Error(`不支持的等级: ${jobLevel}`);
+  const baseStats = referenceBaseStats(job, levelMod);
+  const totalStats: EquippedStats = { ...baseStats };
+  const mappedStats = [...statIndexes.entries()];
+
+  for (const [stat, index] of mappedStats) {
+    if (!Number.isInteger(index) || index < 0) {
+      throw new RangeError(`属性 ${stat} 的向量索引必须是非负整数`);
+    }
+    if (!(stat in totalStats)) totalStats[stat] = baseStats[stat] ?? 0;
+  }
+
+  return (attributes) => {
+    for (const [stat, index] of mappedStats) {
+      totalStats[stat] = (baseStats[stat] ?? 0) + (attributes[index] ?? 0);
+    }
+    return calculateFromTotalStats(job, jobLevel, totalStats, baseStats);
+  };
+}
+
 /** Returns the inclusive gear-and-food speed contribution for an exact GCD. */
 export function equippedSpeedRangeForGcd(
   job: Job,

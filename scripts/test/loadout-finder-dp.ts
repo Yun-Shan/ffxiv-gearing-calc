@@ -1,9 +1,9 @@
 import {
   DominanceIndex,
   type AttributeTierProjector,
-  type LoadoutFinderV1Options,
-  type LoadoutV1Result,
-} from "./loadout-finder-v1.ts";
+  type LoadoutSearchOptions,
+  type LoadoutSearchResult,
+} from "./loadout-finder-v2-search.ts";
 import type { EquipInfo, FoodInfo, FoodParam, ParamInfo } from "./types.ts";
 
 const MAX_DAMAGE_CACHE_ENTRIES = 500_000;
@@ -63,7 +63,7 @@ export type LoadoutDpStatistics = {
 export class LoadoutFinderDp {
   readonly damageFunction: (attributes: readonly number[]) => number;
   readonly attributeCount: number;
-  readonly options: LoadoutFinderV1Options;
+  readonly options: LoadoutSearchOptions;
   readonly damageCache = new Map<string, number>();
   statistics: LoadoutDpStatistics;
 
@@ -76,7 +76,7 @@ export class LoadoutFinderDp {
   #prefixMaximums: number[][] = [];
   #suffixReachableValues: (number[] | undefined)[][] = [];
   #stateTierClasses: (Int32Array | undefined)[][] = [];
-  #best: LoadoutV1Result | undefined;
+  #best: LoadoutSearchResult | undefined;
   #searchStartedAt = 0;
   #activeFood = "";
   #activeDepth = 0;
@@ -90,7 +90,7 @@ export class LoadoutFinderDp {
   constructor(
     damageFunction: (attributes: readonly number[]) => number,
     attributeCount: number,
-    options: LoadoutFinderV1Options | readonly number[] = {},
+    options: LoadoutSearchOptions | readonly number[] = {},
   ) {
     if (typeof damageFunction !== "function") {
       throw new TypeError("damageFunction 必须是函数");
@@ -103,7 +103,7 @@ export class LoadoutFinderDp {
     this.attributeCount = attributeCount;
     this.options = Array.isArray(options)
       ? { attributeIds: [...(options as readonly number[])] }
-      : (options as LoadoutFinderV1Options);
+      : (options as LoadoutSearchOptions);
     if (
       this.options.attributeIds !== undefined &&
       this.options.attributeIds.length !== attributeCount
@@ -122,7 +122,7 @@ export class LoadoutFinderDp {
   findBest(
     slots: readonly (readonly EquipInfo[])[],
     foods: readonly FoodInfo[],
-  ): LoadoutV1Result | undefined {
+  ): LoadoutSearchResult | undefined {
     this.#reset();
     for (const slot of slots) {
       if (slot.length === 0) return undefined;
@@ -259,7 +259,7 @@ export class LoadoutFinderDp {
     };
   }
 
-  #finish(): LoadoutV1Result | undefined {
+  #finish(): LoadoutSearchResult | undefined {
     this.statistics.elapsedMs = Date.now() - this.#searchStartedAt;
     this.#logProgress("搜索完成");
     return this.#best;

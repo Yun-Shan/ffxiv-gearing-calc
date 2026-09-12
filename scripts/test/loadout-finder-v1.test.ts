@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { LoadoutFinderV1 } from "./loadout-finder-v1.ts";
+import { LoadoutFinderV1 } from "./loadout-finder-v1.archive.ts";
 import type { EquipInfo, FoodInfo } from "./types.ts";
 
 function equipment(itemId: number, values: readonly number[]): EquipInfo {

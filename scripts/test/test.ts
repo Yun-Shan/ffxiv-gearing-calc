@@ -1,6 +1,7 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { Buffer } from "node:buffer";
 import {
+  createEquippedEffectsVectorEvaluator,
   equippedAttributeTier,
   equippedEffects,
   equippedSpeedRangeForGcd,
@@ -1290,6 +1291,20 @@ client.close();
   const v1AttributeIndex = new Map(
     v1AttributeIds.map((id, index) => [id, index]),
   );
+  const v1StatIndexes = new Map<Stat, number>();
+  for (const [id, index] of v1AttributeIndex) {
+    const stat = baseParamIdToStat[id];
+    if (stat !== undefined) v1StatIndexes.set(stat, index);
+  }
+  v1StatIndexes.set(
+    weaponDamageStat,
+    v1AttributeIndex.get(weaponDamageId)!,
+  );
+  const v1Evaluate = createEquippedEffectsVectorEvaluator(
+    v1Job,
+    v1JobLevel,
+    v1StatIndexes,
+  );
   const foodPriorityByIdentity = new Map(
     availableFoods.map((food) => {
       const attributes = new Set(
@@ -1311,17 +1326,7 @@ client.close();
     ),
   }));
   const v1Damage = (attributes: readonly number[]): number => {
-    const equippedStats: EquippedStats = {};
-    for (const [id, index] of v1AttributeIndex) {
-      const stat = baseParamIdToStat[id];
-      if (stat !== undefined) equippedStats[stat] = attributes[index];
-    }
-    equippedStats[weaponDamageStat] =
-      attributes[v1AttributeIndex.get(weaponDamageId)!];
-    return (
-      equippedEffects(v1Job, v1JobLevel, equippedStats)?.damage ??
-      Number.NEGATIVE_INFINITY
-    );
+    return v1Evaluate(attributes)?.damage ?? Number.NEGATIVE_INFINITY;
   };
   const searchOptions: LoadoutFinderV2Options = {
     attributeIds: v1AttributeIds,
@@ -1370,7 +1375,7 @@ client.close();
     throw new Error("DATA_TEST_MAX_TOUGHNESS 必须是 true、false、1 或 0");
   }
   const v2Constraints: LoadoutV2Constraints = {
-    gcd: optionalConstraint("DATA_TEST_GCD") ?? 2.48,
+    gcd: optionalConstraint("DATA_TEST_GCD"),
     speedMin: optionalConstraint("DATA_TEST_SPEED_MIN"),
     speedMax: optionalConstraint("DATA_TEST_SPEED_MAX"),
     toughnessMinPercent: optionalConstraint("DATA_TEST_TOUGH_PERCENT"),
@@ -1388,6 +1393,7 @@ client.close();
     toughnessAttributeId,
     {
       ...searchOptions,
+      evaluationFunction: v1Evaluate,
       gcdToSpeedRange: (gcdSeconds) =>
         equippedSpeedRangeForGcd(v1Job, v1JobLevel, gcdSeconds),
       toughnessPercentToMinimum: (percentage) =>

@@ -1,12 +1,21 @@
 import {
-  LoadoutFinderV1,
+  LoadoutFinderV2Search,
   type AttributeRangeConstraint,
   type DamageFunction,
-  type LoadoutFinderV1Options,
-  type LoadoutV1Result,
-  type LoadoutV1Statistics,
-} from "./loadout-finder-v1.ts";
-import type { EquipInfo, FoodInfo } from "./types.ts";
+  type LoadoutSearchOptions,
+  type LoadoutSearchResult,
+  type LoadoutSearchStatistics,
+} from "./loadout-finder-v2-search.ts";
+import type { EquipInfo, FoodInfo, ParamInfo } from "./types.ts";
+
+export type DamageEvaluation = {
+  damage: number;
+  gcd: number;
+};
+
+export type EvaluationFunction = (
+  attributes: readonly number[],
+) => DamageEvaluation | undefined;
 
 export type LoadoutV2Constraints = {
   gcd?: number;
@@ -22,21 +31,22 @@ export type GcdSpeedRange = {
   max: number;
 };
 
-export type LoadoutFinderV2Options = LoadoutFinderV1Options & {
+export type LoadoutFinderV2Options = LoadoutSearchOptions & {
+  evaluationFunction?: EvaluationFunction;
   speedAttributeId?: number;
   toughnessAttributeId?: number;
   gcdToSpeedRange?: (gcdSeconds: number) => GcdSpeedRange | undefined;
   toughnessPercentToMinimum?: (percentage: number) => number;
 };
 
-export type LoadoutV2Result = LoadoutV1Result & {
+export type LoadoutV2Result = LoadoutSearchResult & {
   maximumToughness?: number;
 };
 
-export type LoadoutV2Statistics = LoadoutV1Statistics & {
+export type LoadoutV2Statistics = LoadoutSearchStatistics & {
   maximumToughness?: number;
-  toughnessPhase?: LoadoutV1Statistics;
-  damagePhase?: LoadoutV1Statistics;
+  toughnessPhase?: LoadoutSearchStatistics;
+  damagePhase?: LoadoutSearchStatistics;
 };
 
 function emptyStatistics(): LoadoutV2Statistics {
@@ -72,7 +82,8 @@ export class LoadoutFinderV2 {
     ((gcdSeconds: number) => GcdSpeedRange | undefined) | undefined;
   readonly toughnessPercentToMinimum:
     ((percentage: number) => number) | undefined;
-  readonly options: LoadoutFinderV1Options;
+  readonly evaluationFunction: EvaluationFunction | undefined;
+  readonly options: LoadoutSearchOptions;
   statistics: LoadoutV2Statistics = emptyStatistics();
 
   constructor(
@@ -102,12 +113,14 @@ export class LoadoutFinderV2 {
         toughnessAttributeId: configuredToughnessId,
         gcdToSpeedRange,
         toughnessPercentToMinimum,
+        evaluationFunction,
         ...v1Options
       } = speedOrOptions;
       this.speedAttributeId = speedAttributeId;
       this.toughnessAttributeId = configuredToughnessId;
       this.gcdToSpeedRange = gcdToSpeedRange;
       this.toughnessPercentToMinimum = toughnessPercentToMinimum;
+      this.evaluationFunction = evaluationFunction;
       this.options = v1Options;
     } else {
       const {
@@ -115,12 +128,14 @@ export class LoadoutFinderV2 {
         toughnessPercentToMinimum,
         speedAttributeId: _speedAttributeId,
         toughnessAttributeId: _toughnessAttributeId,
+        evaluationFunction,
         ...v1Options
       } = options;
       this.speedAttributeId = speedOrOptions;
       this.toughnessAttributeId = toughnessAttributeId;
       this.gcdToSpeedRange = gcdToSpeedRange;
       this.toughnessPercentToMinimum = toughnessPercentToMinimum;
+      this.evaluationFunction = evaluationFunction;
       this.options = v1Options;
     }
     this.#validateAttributeId(this.speedAttributeId, "速度");
@@ -140,13 +155,14 @@ export class LoadoutFinderV2 {
     }
 
     if (constraints.maxToughnessMode !== true) {
-      const finder = this.#createDamageFinder("V2");
+      const useDpsObjective = this.#usesDpsObjective(constraints);
+      const finder = this.#createDamageFinder("V2", useDpsObjective);
       const result = finder.findBest(slots, foods, ranges);
       this.statistics = {
         ...finder.statistics,
         damagePhase: { ...finder.statistics },
       };
-      return result;
+      return this.#restoreActualDamage(result, useDpsObjective);
     }
 
     const toughnessIndex = this.#attributeIndex(
@@ -160,7 +176,7 @@ export class LoadoutFinderV2 {
               ([attributeId]) => attributeId !== this.toughnessAttributeId,
             ),
           );
-    const toughnessFinder = new LoadoutFinderV1(
+    const toughnessFinder = new LoadoutFinderV2Search(
       (attributes) => attributes[toughnessIndex],
       this.attributeCount,
       {
@@ -188,21 +204,130 @@ export class LoadoutFinderV2 {
       max: maximumToughness,
     });
 
-    const damageFinder = this.#createDamageFinder("V2");
+    const useDpsObjective = this.#usesDpsObjective(constraints);
+    const damageFinder = this.#createDamageFinder("V2", useDpsObjective);
     const result = damageFinder.findBest(slots, foods, exactToughnessRanges);
     this.statistics = this.#combineStatistics(
       toughnessFinder.statistics,
       damageFinder.statistics,
       maximumToughness,
     );
-    return result === undefined ? undefined : { ...result, maximumToughness };
+    const actualResult = this.#restoreActualDamage(result, useDpsObjective);
+    return actualResult === undefined
+      ? undefined
+      : { ...actualResult, maximumToughness };
   }
 
-  #createDamageFinder(label: string): LoadoutFinderV1 {
-    return new LoadoutFinderV1(this.damageFunction, this.attributeCount, {
+  #createDamageFinder(
+    label: string,
+    useDpsObjective: boolean,
+  ): LoadoutFinderV2Search {
+    const searchFunction = useDpsObjective
+      ? (attributes: readonly number[]) => this.#damagePerSecond(attributes)
+      : this.damageFunction;
+    return new LoadoutFinderV2Search(searchFunction, this.attributeCount, {
       ...this.options,
       debugLabel: label,
     });
+  }
+
+  #usesDpsObjective(constraints: LoadoutV2Constraints): boolean {
+    return constraints.gcd === undefined && this.evaluationFunction !== undefined;
+  }
+
+  #damagePerSecond(attributes: readonly number[]): number {
+    const evaluation = this.evaluationFunction?.(attributes);
+    if (
+      evaluation === undefined ||
+      !Number.isFinite(evaluation.damage) ||
+      !Number.isFinite(evaluation.gcd) ||
+      evaluation.gcd <= 0
+    ) {
+      return Number.NEGATIVE_INFINITY;
+    }
+    return evaluation.damage / evaluation.gcd;
+  }
+
+  #restoreActualDamage(
+    result: LoadoutSearchResult | undefined,
+    useDpsObjective: boolean,
+  ): LoadoutSearchResult | undefined {
+    if (result === undefined || !useDpsObjective) return result;
+    const attributes = this.#attributesForLoadout(result.selection, result.food);
+    return {
+      ...result,
+      damage: this.damageFunction(attributes),
+    };
+  }
+
+  #attributesForLoadout(
+    selection: readonly EquipInfo[],
+    food: FoodInfo | undefined,
+  ): number[] {
+    const attributeIds = this.#resolveResultAttributeIds(selection, food);
+    const attributeIndex = new Map(
+      attributeIds.map((attributeId, index) => [attributeId, index]),
+    );
+    const attributes = new Array<number>(this.attributeCount).fill(0);
+    for (const equipment of selection) {
+      const params = this.#equipmentParams(equipment);
+      for (const param of params) {
+        const index = attributeIndex.get(param.baseParamId);
+        if (index === undefined) {
+          throw new RangeError(`装备包含未配置的属性 id：${param.baseParamId}`);
+        }
+        attributes[index] += param.value;
+      }
+    }
+    if (food !== undefined) {
+      for (const param of food.baseParams) {
+        const index = attributeIndex.get(param.baseParamId);
+        if (index === undefined) {
+          throw new RangeError(`食物包含未配置的属性 id：${param.baseParamId}`);
+        }
+        attributes[index] += Math.min(
+          param.maxValue,
+          Math.trunc(attributes[index] * (param.multiplier - 1) + 1e-7),
+        );
+      }
+    }
+    return attributes;
+  }
+
+  #resolveResultAttributeIds(
+    selection: readonly EquipInfo[],
+    food: FoodInfo | undefined,
+  ): number[] {
+    if (this.options.attributeIds !== undefined) {
+      return [...this.options.attributeIds];
+    }
+    const ids = new Set<number>();
+    for (const equipment of selection) {
+      for (const param of this.#equipmentParams(equipment)) {
+        ids.add(param.baseParamId);
+      }
+    }
+    for (const param of food?.baseParams ?? []) ids.add(param.baseParamId);
+    if (ids.size > this.attributeCount) {
+      throw new RangeError(
+        `输入包含 ${ids.size} 个属性，但 attributeCount 只有 ${this.attributeCount}`,
+      );
+    }
+    if (
+      [...ids].every(
+        (id) => Number.isInteger(id) && id >= 0 && id < this.attributeCount,
+      )
+    ) {
+      return Array.from({ length: this.attributeCount }, (_, index) => index);
+    }
+    return [...ids].sort((first, second) => first - second);
+  }
+
+  #equipmentParams(equipment: EquipInfo): readonly ParamInfo[] {
+    return (
+      this.options.equipmentAttributeExtractor?.(equipment) ??
+      equipment.baseParams
+    );
   }
 
   #buildRanges(
@@ -352,8 +477,8 @@ export class LoadoutFinderV2 {
   }
 
   #combineStatistics(
-    toughness: LoadoutV1Statistics,
-    damage: LoadoutV1Statistics,
+    toughness: LoadoutSearchStatistics,
+    damage: LoadoutSearchStatistics,
     maximumToughness: number,
   ): LoadoutV2Statistics {
     return {
