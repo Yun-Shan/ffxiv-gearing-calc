@@ -38,6 +38,8 @@ type EquipmentMateriaCombinerConfig = {
   getAttributeLimit: (itemId: number, attrId: number) => number;
 };
 type ComparableInfo = {
+  itemId: number;
+  itemLevel: number;
   key: string;
   baseParams: (ParamInfo | FoodParam)[];
 };
@@ -420,7 +422,7 @@ for (const row of response.rows) {
   }
   mandervilleWeapons[row.rowId] = equips;
 }
-console.log(`共生成${Object.keys(mandervilleWeapons)}套自定义参数武器，共${Object.values(mandervilleWeapons).map(it => it.length).reduce((a, b) => a + b, 0)}件`);
+console.log(`为${Object.keys(mandervilleWeapons)}生成属性枚举自定义参数武器，共${Object.values(mandervilleWeapons).map(it => it.length).reduce((a, b) => a + b, 0)}件`);
 
 response = await client.callTool("list_rows", { sheet: "BaseParam", limit: -1 });
 const baseParam: Record<number, Row> = {};
@@ -795,51 +797,89 @@ class EquipInfoPruner {
     // 按属性总和降序排序（直接修改原数组）
     group.sort((a, b) => this.#sumAttributes(b.baseParams) - this.#sumAttributes(a.baseParams));
 
-    const paretoFront: T[] = [];
+    let paretoFront: T[] = [];
 
     for (let i = 0; i < group.length; i++) {
       const candidate = group[i];
-      let isDominated = false;
+      let shouldRetainCandidate = true;
+      const newFront: T[] = [];
 
-      // 只与已接受的Pareto最优解比较
+      // 暂存candidate加入后的前沿；一旦发现candidate应被淘汰，就放弃暂存结果。
       for (let j = 0; j < paretoFront.length; j++) {
-        if (this.#dominates(paretoFront[j].baseParams, candidate.baseParams)) {
-          isDominated = true;
+        const retained = paretoFront[j];
+        if (this.#sameAttributes(candidate.baseParams, retained.baseParams)) {
+          if (!this.#hasHigherItemPriority(candidate, retained)) {
+            shouldRetainCandidate = false;
+            break;
+          }
+          continue;
+        }
+        const dominance = this.#compareDominance(candidate.baseParams, retained.baseParams);
+        if (dominance < 0) {
+          shouldRetainCandidate = false;
           break;
+        }
+        if (dominance === 0) {
+          newFront.push(retained);
         }
       }
 
-      if (!isDominated) {
-        // 移除被candidate支配的已接受解
-        const newFront: T[] = [];
-        for (let j = 0; j < paretoFront.length; j++) {
-          if (!this.#dominates(candidate.baseParams, paretoFront[j].baseParams)) {
-            newFront.push(paretoFront[j]);
-          }
-        }
+      if (shouldRetainCandidate) {
         newFront.push(candidate);
-        paretoFront.length = 0;
-        paretoFront.push(...newFront);
+        paretoFront = newFront;
       }
     }
 
     return paretoFront;
   }
 
-  /**
-   * 判断装备a是否支配装备b（a的所有属性值都>=b的对应属性值）
-   * @param {(ParamInfo | FoodParam)[]} aParams - 装备A的属性数组（已排序）
-   * @param {(ParamInfo | FoodParam)[]} bParams - 装备B的属性数组（已排序）
-   * @returns {boolean} true表示a支配b
-   * @private
-   */
-  #dominates(aParams: (ParamInfo | FoodParam)[], bParams: (ParamInfo | FoodParam)[]): boolean {
+  #sameAttributes(aParams: (ParamInfo | FoodParam)[], bParams: (ParamInfo | FoodParam)[]): boolean {
+    if (aParams.length !== bParams.length) return false;
     for (let i = 0; i < aParams.length; i++) {
-      if (this.#attributeValue(aParams[i]) < this.#attributeValue(bParams[i])) {
+      const aParam = aParams[i];
+      const bParam = bParams[i];
+      if (aParam.baseParamId !== bParam.baseParamId) return false;
+      if ("value" in aParam && "value" in bParam) {
+        if (aParam.value !== bParam.value) return false;
+      } else if ("multiplier" in aParam && "multiplier" in bParam) {
+        if (aParam.multiplier !== bParam.multiplier || aParam.maxValue !== bParam.maxValue) return false;
+      } else {
         return false;
       }
     }
     return true;
+  }
+
+  #hasHigherItemPriority(candidate: ComparableInfo, retained: ComparableInfo): boolean {
+    return candidate.itemLevel > retained.itemLevel ||
+      (candidate.itemLevel === retained.itemLevel && candidate.itemId > retained.itemId);
+  }
+
+  /**
+   * 比较装备a和装备b的支配关系
+   * @param {(ParamInfo | FoodParam)[]} aParams - 装备A的属性数组（已排序）
+   * @param {(ParamInfo | FoodParam)[]} bParams - 装备B的属性数组（已排序）
+   * @returns {number} 正数表示a支配b，负数表示b支配a，0表示互不支配
+   * @private
+   */
+  #compareDominance(
+    aParams: (ParamInfo | FoodParam)[],
+    bParams: (ParamInfo | FoodParam)[],
+  ): number {
+    if (aParams.length !== bParams.length) return 0;
+    let dominance = 0;
+    for (let i = 0; i < aParams.length; i++) {
+      const aParam = aParams[i];
+      const bParam = bParams[i];
+      if (aParam.baseParamId !== bParam.baseParamId) return 0;
+      const current = Math.sign(this.#attributeValue(aParam) - this.#attributeValue(bParam));
+      if (dominance !== 0 && current !== 0 && dominance !== current) {
+        // 互有高低
+        return 0;
+      }
+      if (current !== 0) dominance = current;
+    }
+    return dominance;
   }
 
   /**
@@ -857,7 +897,7 @@ class EquipInfoPruner {
   }
 
   #attributeValue(param: ParamInfo | FoodParam): number {
-    return "value" in param ? param.value : param.multiplier;
+    return "value" in param ? param.value : param.maxValue;
   }
 }
 const equipInfoPruner = new EquipInfoPruner();
@@ -960,7 +1000,9 @@ function buildEquipInfo(itemId: number, jobType: number, syncLevel?: number): Eq
       filterEquips[slotName] = equipInfoPruner.prune(list);
     });
   const availableFoods = equipInfoPruner.prune(
-    foods.filter(food => food.itemLevel >= levels[levels.length - 1])
+    foods.filter(food => {
+      return food.itemLevel >= levels[levels.length - 1] && food.baseParams.some(it => baseParamIdToStat[it.baseParamId] === 'VIT');
+    })
   );
   const allAvailablePreset = Object.values(filterEquips).reduce((acc, it) => acc * it.length, 1) * availableFoods.length;
   console.log(`可用装备组合数量：${String(allAvailablePreset).replaceAll(/\B(?=(\d{3})+$)/g, '_')}`);
