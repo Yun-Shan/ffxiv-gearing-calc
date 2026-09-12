@@ -1,11 +1,33 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { Buffer } from "node:buffer";
 import {
+  equippedAttributeTier,
   equippedEffects,
+  equippedSpeedRangeForGcd,
+  equippedToughnessForMitigationPercent,
   type EquippedEffects,
   type EquippedStats,
 } from "./equipped-effects.ts";
-import type { Job, JobLevel, Stat } from "../../reference/ffxiv-gearing/src/game.ts";
+import {
+  createFfxivGearingUrl,
+  parseFfxivGearingGearset,
+  reverseEquipmentForFfxivGearing,
+  type FfxivGearingGear,
+} from "./ffxiv-gearing-export.ts";
+import { applySyncLimit } from "./equipment-sync.ts";
+import {
+  LoadoutFinderV2,
+  type LoadoutFinderV2Options,
+  type LoadoutV2Constraints,
+  type LoadoutV2Result,
+} from "./loadout-finder-v2.ts";
+import { buildRingPairEquipInfos, isRingPairEquipInfo } from "./ring-pairs.ts";
+import type {
+  Job,
+  JobLevel,
+  MateriaGrade,
+  Stat,
+} from "../../reference/ffxiv-gearing/src/game.ts";
 import type {
   ComparableInfo,
   EquipmentMateriaCombinerConfig,
@@ -19,7 +41,8 @@ import type {
   StreamState,
 } from "./types.ts";
 
-const command = "F:\\Workspace\\VisualStudio\\ffxiv\\mcp\\mcp-ffxiv-lumina\\publish\\mcp-lumina.exe";
+const command =
+  "F:\\Workspace\\VisualStudio\\ffxiv\\mcp\\mcp-ffxiv-lumina\\publish\\mcp-lumina.exe";
 const referenceGame = await import("../../reference/ffxiv-gearing/src/game.ts");
 const supportedJobLevels = new Set<number>(referenceGame.jobLevels);
 
@@ -48,22 +71,29 @@ class McpClient {
       try {
         message = JSON.parse(line as unknown as string);
       } catch (error: any) {
-        this.fail(new Error(`Lumina MCP 返回了无效 JSON-RPC：${error.message}`, { cause: error }));
+        this.fail(
+          new Error(`Lumina MCP 返回了无效 JSON-RPC：${error.message}`, {
+            cause: error,
+          }),
+        );
         return;
       }
       if (message.id === undefined) return;
       const pending = this.pending.get(message.id);
       if (!pending) return;
       this.pending.delete(message.id);
-      if (message.error) pending.reject(new Error(`${message.error.code ?? "MCP"}: ${message.error.message}`));
+      if (message.error)
+        pending.reject(
+          new Error(`${message.error.code ?? "MCP"}: ${message.error.message}`),
+        );
       else pending.resolve(message.result);
-    }
+    };
 
     this.process.stdout.on("data", (chunk) => {
       let start = 0;
       let index;
 
-      while ((index = chunk.indexOf('\n', start)) !== -1) {
+      while ((index = chunk.indexOf("\n", start)) !== -1) {
         // 将换行符前的部分加入片段
         if (index > start) {
           const slice = chunk.slice(start, index);
@@ -106,12 +136,16 @@ class McpClient {
     const id = this.nextId++;
     return new Promise((resolveRequest, rejectRequest) => {
       this.pending.set(id, { resolve: resolveRequest, reject: rejectRequest });
-      this.process.stdin.write(`${JSON.stringify({ jsonrpc: "2.0", id, method, params })}\n`);
+      this.process.stdin.write(
+        `${JSON.stringify({ jsonrpc: "2.0", id, method, params })}\n`,
+      );
     });
   }
 
   notify(method: string, params: Record<string, unknown>): void {
-    this.process.stdin.write(`${JSON.stringify({ jsonrpc: "2.0", method, params })}\n`);
+    this.process.stdin.write(
+      `${JSON.stringify({ jsonrpc: "2.0", method, params })}\n`,
+    );
   }
 
   async initialize(): Promise<any> {
@@ -125,11 +159,11 @@ class McpClient {
   }
 
   #proxyRow(row: Row): Row {
-    delete row['languagesRequested'];
-    delete row['languagesReturned'];
-    delete row['fallbackUsed'];
-    delete row['gameVersion'];
-    delete row['timestamp'];
+    delete row["languagesRequested"];
+    delete row["languagesReturned"];
+    delete row["fallbackUsed"];
+    delete row["gameVersion"];
+    delete row["timestamp"];
     Object.freeze(row.fields);
     Object.freeze(row);
     return new Proxy(row, {
@@ -144,13 +178,15 @@ class McpClient {
         }
         // 都找不到，返回 undefined（和正常行为一致）
         return undefined;
-      }
+      },
     });
   }
 
   async callTool(name: string, args: Record<string, unknown>): Promise<any> {
     const result = await this.request("tools/call", { name, arguments: args });
-    const text = result?.content?.find((entry: any) => entry.type === "text")?.text;
+    const text = result?.content?.find(
+      (entry: any) => entry.type === "text",
+    )?.text;
     if (!text) throw new Error(`MCP 工具 ${name} 未返回文本 JSON`);
     let value;
     try {
@@ -158,9 +194,9 @@ class McpClient {
     } catch (error) {
       throw `MCP 工具 ${name} 返回了无法解析的 JSON：${text}`;
     }
-    if ('rowId' in value && 'fields' in value) {
+    if ("rowId" in value && "fields" in value) {
       return this.#proxyRow(value);
-    } else if ('rows' in value) {
+    } else if ("rows" in value) {
       value.rows = value.rows.map((it: Row) => this.#proxyRow(it));
     }
     return value;
@@ -176,9 +212,12 @@ const client = new McpClient();
 await client.initialize();
 const health = await client.callTool("health", {});
 console.log(JSON.stringify(health));
-let response = await client.callTool("list_rows", { sheet: "EquipSlotCategory", limit: -1 });
+let response = await client.callTool("list_rows", {
+  sheet: "EquipSlotCategory",
+  limit: -1,
+});
 const equipSlotMap: Record<number, Row> = response.rows
-  .filter((it: Row) => Object.values(it.fields).some(f => f === 1))
+  .filter((it: Row) => Object.values(it.fields).some((f) => f === 1))
   .reduce((acc: Record<number, Row>, it: Row) => {
     acc[it.rowId] = it;
     return acc;
@@ -224,7 +263,10 @@ for (const row of response.rows) {
   itemFood[row.rowId] = row;
 }
 
-response = await client.callTool("list_rows", { sheet: "ItemAction", limit: -1 });
+response = await client.callTool("list_rows", {
+  sheet: "ItemAction",
+  limit: -1,
+});
 const itemAction: Record<number, Row> = {};
 for (const row of response.rows) {
   itemAction[row.rowId] = row;
@@ -233,19 +275,23 @@ for (const row of response.rows) {
 const foods: FoodInfo[] = [];
 for (const item of Object.values(itemMap)) {
   if (item.ItemUICategory === 46 && checkAllowItemLevel(item.LevelItem)) {
-    const foodConfig = itemFood[itemAction[item.ItemAction]['DataHQ[1]']];
+    const foodConfig = itemFood[itemAction[item.ItemAction]["DataHQ[1]"]];
     const baseParams: FoodParam[] = [];
     for (let i = 0; i < 3; i++) {
       const param = foodConfig[`BaseParam[${i}]`];
       const val = foodConfig[`ValueHQ[${i}]`];
       const max = foodConfig[`MaxHQ[${i}]`];
-      baseParams.push({ baseParamId: param, multiplier: 1 + (val / 100), maxValue: max });
+      baseParams.push({
+        baseParamId: param,
+        multiplier: 1 + val / 100,
+        maxValue: max,
+      });
     }
     baseParams.sort((a, b) => a.baseParamId - b.baseParamId);
     const food: FoodInfo = {
       itemId: item.rowId,
       itemLevel: item.LevelItem,
-      key: `${baseParams.map(it => it.baseParamId).join('-')}`,
+      key: `${baseParams.map((it) => it.baseParamId).join("-")}`,
       baseParams,
     };
     foods.push(food);
@@ -257,19 +303,43 @@ console.log(`过滤后共有${foods.length}个食物`);
 const materiaGrades: number[][] = [];
 const materiaRestrictionGrades: [number, number[]][] = [];
 const materiaNonrestrictionGrades: [number, number[]][] = [];
-response = await client.callTool("list_rows", { sheet: "MateriaGrade", limit: -1 });
+response = await client.callTool("list_rows", {
+  sheet: "MateriaGrade",
+  limit: -1,
+});
 for (const row of response.rows) {
-  if (row.rowId !== materiaGrades.length) throw '魔晶石等级异常：非连续'
-  const rates = [row['OvermeldHQPercent[0]'], row['OvermeldHQPercent[1]'], row['OvermeldHQPercent[2]'], row['OvermeldHQPercent[3]']];
+  if (row.rowId !== materiaGrades.length) throw "魔晶石等级异常：非连续";
+  const rates = [
+    row["OvermeldHQPercent[0]"],
+    row["OvermeldHQPercent[1]"],
+    row["OvermeldHQPercent[2]"],
+    row["OvermeldHQPercent[3]"],
+  ];
   materiaGrades.push(rates);
-  if (rates.some(it => it === 0)) {
+  if (rates.some((it) => it === 0)) {
     materiaRestrictionGrades.push([row.rowId, rates]);
   } else {
     materiaNonrestrictionGrades.push([row.rowId, rates]);
   }
 }
-const chineseNumbers = ['零','壹','贰','叁','肆','伍','陆','柒','捌','玖','拾','拾壹','拾贰'];
-console.log(`共有${materiaGrades.length}个等级的魔晶石，其中${JSON.stringify(materiaRestrictionGrades.map(it => chineseNumbers[it[0] + 1]))}是限制等级，${JSON.stringify(materiaNonrestrictionGrades.map(it => chineseNumbers[it[0] + 1]))}是非限制等级。`);
+const chineseNumbers = [
+  "零",
+  "壹",
+  "贰",
+  "叁",
+  "肆",
+  "伍",
+  "陆",
+  "柒",
+  "捌",
+  "玖",
+  "拾",
+  "拾壹",
+  "拾贰",
+];
+console.log(
+  `共有${materiaGrades.length}个等级的魔晶石，其中${JSON.stringify(materiaRestrictionGrades.map((it) => chineseNumbers[it[0] + 1]))}是限制等级，${JSON.stringify(materiaNonrestrictionGrades.map((it) => chineseNumbers[it[0] + 1]))}是非限制等级。`,
+);
 response = await client.callTool("list_rows", { sheet: "Materia", limit: -1 });
 const materiaMap: Record<number, Row> = {};
 const materiaByBaseParam: Record<number, Materia> = {};
@@ -299,13 +369,19 @@ for (const row of response.rows) {
   }
 }
 
-response = await client.callTool("list_rows", { sheet: "ClassJobCategory", limit: -1 });
+response = await client.callTool("list_rows", {
+  sheet: "ClassJobCategory",
+  limit: -1,
+});
 const classJobCategory: Record<number, Row> = {};
 for (const row of response.rows) {
   classJobCategory[row.rowId] = row;
 }
 
-response = await client.callTool("list_rows", { sheet: "EquipSlotCategory", limit: -1 });
+response = await client.callTool("list_rows", {
+  sheet: "EquipSlotCategory",
+  limit: -1,
+});
 const equipSlotCategory: Record<number, Row> = {};
 for (const row of response.rows) {
   equipSlotCategory[row.rowId] = row;
@@ -316,7 +392,10 @@ const itemLevelAttrId2AttrName: Record<number, string> = {};
 for (const column of response.columns) {
   itemLevelAttrId2AttrName[column.index + 1] = column.name;
 }
-response = await client.callTool("list_rows", { sheet: "ItemLevel", limit: -1 });
+response = await client.callTool("list_rows", {
+  sheet: "ItemLevel",
+  limit: -1,
+});
 const itemLevel: Record<number, Row> = {};
 for (const row of response.rows) {
   itemLevel[row.rowId] = row;
@@ -325,7 +404,10 @@ function itemLevelAttrVal(lvl: number, attrId: number): any {
   return itemLevel[lvl][itemLevelAttrId2AttrName[attrId]];
 }
 
-response = await client.callTool("list_rows", { sheet: "MandervilleWeaponEnhance", limit: -1 });
+response = await client.callTool("list_rows", {
+  sheet: "MandervilleWeaponEnhance",
+  limit: -1,
+});
 const mandervilleWeaponEnhance: Record<number, Row> = {};
 // key 物品id，value 虚拟武器列表
 const mandervilleWeapons: Record<number, EquipInfo[]> = {};
@@ -335,7 +417,8 @@ for (const row of response.rows) {
   for (let i = 0; i < 6; i++) {
     const param = itemMap[row.rowId][`BaseParam[${i}]`];
     const val = itemMap[row.rowId][`BaseParamValue[${i}]`];
-    if (param !== 0 && val !== 0) baseParams.push({ baseParamId: param, value: val });
+    if (param !== 0 && val !== 0)
+      baseParams.push({ baseParamId: param, value: val });
   }
   baseParams.sort((a, b) => a.baseParamId - b.baseParamId);
   const list: ParamInfo[][] = [];
@@ -345,24 +428,35 @@ for (const row of response.rows) {
       for (let k = 0; k < 4; k++)
         if (k !== i && k !== j) {
           const pA = materiaMap[row[`Materia[${i}]`]].BaseParam;
-          const vA = materiaMap[row[`Materia[${i}]`]][`Value[${row[`MateriaBigValueIndex[${i}]`]}]`];
+          const vA =
+            materiaMap[row[`Materia[${i}]`]][
+              `Value[${row[`MateriaBigValueIndex[${i}]`]}]`
+            ];
           const pB = materiaMap[row[`Materia[${j}]`]].BaseParam;
-          const vB = materiaMap[row[`Materia[${j}]`]][`Value[${row[`MateriaBigValueIndex[${j}]`]}]`];
+          const vB =
+            materiaMap[row[`Materia[${j}]`]][
+              `Value[${row[`MateriaBigValueIndex[${j}]`]}]`
+            ];
           const pC = materiaMap[row[`Materia[${k}]`]].BaseParam;
-          const vC = materiaMap[row[`Materia[${k}]`]][`Value[${row[`MateriaSmallValueIndex[${k}]`]}]`];
-          list.push([
-            ...baseParams,
-            { baseParamId: pA, value: vA },
-            { baseParamId: pB, value: vB },
-            { baseParamId: pC, value: vC },
-          ].sort((a, b) => a.baseParamId - b.baseParamId));
+          const vC =
+            materiaMap[row[`Materia[${k}]`]][
+              `Value[${row[`MateriaSmallValueIndex[${k}]`]}]`
+            ];
+          list.push(
+            [
+              ...baseParams,
+              { baseParamId: pA, value: vA },
+              { baseParamId: pB, value: vB },
+              { baseParamId: pC, value: vC },
+            ].sort((a, b) => a.baseParamId - b.baseParamId),
+          );
         }
   const equips: EquipInfo[] = [];
   for (const gen of list) {
     const equip: EquipInfo = {
       itemId: row.rowId,
       itemLevel: row.LevelItem,
-      key: `${gen.map(it => it.baseParamId).join('-')}`,
+      key: `${gen.map((it) => it.baseParamId).join("-")}`,
       baseParams: gen,
       PDMG: itemMap[row.rowId].DamagePhys,
       MDMG: itemMap[row.rowId].DamageMag,
@@ -372,27 +466,50 @@ for (const row of response.rows) {
   }
   mandervilleWeapons[row.rowId] = equips;
 }
-console.log(`为${Object.keys(mandervilleWeapons)}生成属性枚举自定义参数武器，共${Object.values(mandervilleWeapons).map(it => it.length).reduce((a, b) => a + b, 0)}件`);
+console.log(
+  `为${Object.keys(mandervilleWeapons)}生成属性枚举自定义参数武器，共${Object.values(
+    mandervilleWeapons,
+  )
+    .map((it) => it.length)
+    .reduce((a, b) => a + b, 0)}件`,
+);
 
-response = await client.callTool("list_rows", { sheet: "BaseParam", limit: -1 });
+response = await client.callTool("list_rows", {
+  sheet: "BaseParam",
+  limit: -1,
+});
 const baseParam: Record<number, Row> = {};
 const speedBaseParam = new Set<number>();
 const specialBaseParam = new Set<number>();
 for (const row of response.rows) {
   baseParam[row.rowId] = row;
-  if (['咏唱速度', '技能速度'].includes(row.Name)) speedBaseParam.add(row.rowId);
-  else if (['坚韧', '信仰'].includes(row.Name)) specialBaseParam.add(row.rowId);
+  if (["咏唱速度", "技能速度"].includes(row.Name))
+    speedBaseParam.add(row.rowId);
+  else if (["坚韧", "信仰"].includes(row.Name)) specialBaseParam.add(row.rowId);
 }
 const statNameToAbbreviation: Record<string, Stat> = {};
-for (const [stat, name] of Object.entries(referenceGame.statNames) as [Stat, string][]) {
+for (const [stat, name] of Object.entries(referenceGame.statNames) as [
+  Stat,
+  string,
+][]) {
   statNameToAbbreviation[name] = stat;
 }
+statNameToAbbreviation["技能速度"] = "SKS";
+statNameToAbbreviation["咏唱速度"] = "SPS";
 const baseParamIdToStat: Record<number, Stat> = {};
 for (const row of Object.values(baseParam)) {
   const stat = statNameToAbbreviation[row.Name];
-  if (stat !== undefined && stat !== 'main' && stat !== 'secondary') {
+  if (stat !== undefined && stat !== "main" && stat !== "secondary") {
     baseParamIdToStat[row.rowId] = stat;
   }
+}
+
+function baseParamIdForStat(stat: Stat): number {
+  const entry = Object.entries(baseParamIdToStat).find(
+    ([, candidate]) => candidate === stat,
+  );
+  if (entry === undefined) throw new Error(`BaseParam 中缺少属性：${stat}`);
+  return Number(entry[0]);
 }
 
 response = await client.callTool("list_rows", { sheet: "ClassJob", limit: -1 });
@@ -416,50 +533,110 @@ function getEquipSlotPercent(param: Row, equipSlotCategory: number): number {
   let value;
 
   switch (equipSlotCategory) {
-    case 1: value = param.OneHandWeaponPercent; break;
-    case 2: value = param.OffHandPercent; break;
-    case 3: value = param.HeadPercent; break;
-    case 4: value = param.ChestPercent; break;
-    case 5: value = param.HandsPercent; break;
-    case 6: value = param.WaistPercent; break; // 这个实际不会用到，因为腰带已经被移除出游戏了
-    case 7: value = param.LegsPercent; break;
-    case 8: value = param.FeetPercent; break;
-    case 9: value = param.EarringPercent; break;
-    case 10: value = param.NecklacePercent; break;
-    case 11: value = param.BraceletPercent; break;
-    case 12: value = param.RingPercent; break;
-    case 13: value = param.TwoHandWeaponPercent; break;
-    case 14: value = param.UnderArmorPercent; break; // 游戏中实际不存在这个装备分类的物品，具体是啥也不知道
-    case 15: value = param.ChestHeadPercent; break;
-    case 16: value = param.ChestHeadLegsFeetPercent; break; // 实际上应该是ChestHandsLegsFeetPercent，可能是Lumina的定义弄错了
-    case 17: value = param.Unknown0; break; // 这里是SoulCrystal，Lumina没有命名，但应该是对的(参考的配装器源码)
-    case 18: value = param.LegsFeetPercent; break;
-    case 19: value = param.HeadChestHandsLegsFeetPercent; break;
-    case 20: value = param.ChestLegsGlovesPercent; break; // 这里的Gloves应该是Hands，估计是不同的人进行PR时命名不一致
-    case 21: value = param.ChestLegsFeetPercent; break;
-    case 22: value = param.Unknown1; break; // 这里应该是ChestPercent + HandsPercent，Lumina没有命名，但应该是对的(参考的配装器源码)
-    case 23: value = param.Unknown3; break; // 这里应该是ChestPercent + LegsPercent，Lumina没有命名，但应该是对的(参考的配装器源码)
-    default: value = 0; return 0;
+    case 1:
+      value = param.OneHandWeaponPercent;
+      break;
+    case 2:
+      value = param.OffHandPercent;
+      break;
+    case 3:
+      value = param.HeadPercent;
+      break;
+    case 4:
+      value = param.ChestPercent;
+      break;
+    case 5:
+      value = param.HandsPercent;
+      break;
+    case 6:
+      value = param.WaistPercent;
+      break; // 这个实际不会用到，因为腰带已经被移除出游戏了
+    case 7:
+      value = param.LegsPercent;
+      break;
+    case 8:
+      value = param.FeetPercent;
+      break;
+    case 9:
+      value = param.EarringPercent;
+      break;
+    case 10:
+      value = param.NecklacePercent;
+      break;
+    case 11:
+      value = param.BraceletPercent;
+      break;
+    case 12:
+      value = param.RingPercent;
+      break;
+    case 13:
+      value = param.TwoHandWeaponPercent;
+      break;
+    case 14:
+      value = param.UnderArmorPercent;
+      break; // 游戏中实际不存在这个装备分类的物品，具体是啥也不知道
+    case 15:
+      value = param.ChestHeadPercent;
+      break;
+    case 16:
+      value = param.ChestHeadLegsFeetPercent;
+      break; // 实际上应该是ChestHandsLegsFeetPercent，可能是Lumina的定义弄错了
+    case 17:
+      value = param.Unknown0;
+      break; // 这里是SoulCrystal，Lumina没有命名，但应该是对的(参考的配装器源码)
+    case 18:
+      value = param.LegsFeetPercent;
+      break;
+    case 19:
+      value = param.HeadChestHandsLegsFeetPercent;
+      break;
+    case 20:
+      value = param.ChestLegsGlovesPercent;
+      break; // 这里的Gloves应该是Hands，估计是不同的人进行PR时命名不一致
+    case 21:
+      value = param.ChestLegsFeetPercent;
+      break;
+    case 22:
+      value = param.Unknown1;
+      break; // 这里应该是ChestPercent + HandsPercent，Lumina没有命名，但应该是对的(参考的配装器源码)
+    case 23:
+      value = param.Unknown3;
+      break; // 这里应该是ChestPercent + LegsPercent，Lumina没有命名，但应该是对的(参考的配装器源码)
+    default:
+      value = 0;
+      return 0;
   }
 
   // 检查值是否为有效数字
-  if (typeof value !== 'number' || isNaN(value)) {
+  if (typeof value !== "number" || isNaN(value)) {
     throw new TypeError(
-      `Invalid value for equipSlotCategory ${equipSlotCategory}: expected number, got ${typeof value}`
+      `Invalid value for equipSlotCategory ${equipSlotCategory}: expected number, got ${typeof value}`,
     );
   }
   return value;
 }
 
-function getAttributeLimit(itemId: number, attrId: number, syncLevel?: number): number {
+function getAttributeLimit(
+  itemId: number,
+  attrId: number,
+  syncLevel?: number,
+): number {
   const item = itemMap[itemId];
   const level = syncLevel ?? item.LevelItem;
   const iLvlAttr = itemLevelAttrVal(level, attrId);
-  if (iLvlAttr == null) throw new Error(`LevelItem ${level} field ${attrId} not found`);
+  if (iLvlAttr == null)
+    throw new Error(`LevelItem ${level} field ${attrId} not found`);
   const baseParamModifier = item.BaseParamModifier;
-  const meldParam = baseParamModifier <= 12 ? baseParam[attrId][`MeldParam[${baseParamModifier}]`] : 0;
+  const meldParam =
+    baseParamModifier <= 12
+      ? baseParam[attrId][`MeldParam[${baseParamModifier}]`]
+      : 0;
   return Math.round(
-    iLvlAttr * getEquipSlotPercent(baseParam[attrId], item.EquipSlotCategory) * meldParam / 100000.0);
+    (iLvlAttr *
+      getEquipSlotPercent(baseParam[attrId], item.EquipSlotCategory) *
+      meldParam) /
+      100000.0,
+  );
 }
 
 function calculateEquippedEffectsProxy(
@@ -519,7 +696,11 @@ class EquipmentMateriaCombiner {
    * @param {(itemId: number, attrId: number) => number} config.getAttributeLimit
    *        属性上限函数，返回该属性在装备上的最大值
    */
-  constructor({ getMateriaAttributeTypes, getMateriaValue, getAttributeLimit }: EquipmentMateriaCombinerConfig) {
+  constructor({
+    getMateriaAttributeTypes,
+    getMateriaValue,
+    getAttributeLimit,
+  }: EquipmentMateriaCombinerConfig) {
     this.getMateriaAttributeTypes = getMateriaAttributeTypes;
     this.getMateriaValue = getMateriaValue;
     this.getAttributeLimit = getAttributeLimit;
@@ -559,7 +740,11 @@ class EquipmentMateriaCombiner {
     const schemeKey = `${jobType}|${unrestrictedSlots}|${restrictedSlots}`;
     let schemes = this.schemeCache.get(schemeKey);
     if (!schemes) {
-      schemes = this._generateSchemes(attrIds, unrestrictedSlots, restrictedSlots);
+      schemes = this._generateSchemes(
+        attrIds,
+        unrestrictedSlots,
+        restrictedSlots,
+      );
       this.schemeCache.set(schemeKey, schemes);
     }
 
@@ -583,7 +768,8 @@ class EquipmentMateriaCombiner {
       const value = attrValues[i];
       const baseVal = baseMap.get(attrId) || 0;
       const limit = this.getAttributeLimit(itemId, attrId);
-      maxCounts[i] = value > 0 ? Math.max(0, Math.floor((limit - baseVal) / value)) : 0;
+      maxCounts[i] =
+        value > 0 ? Math.max(0, Math.floor((limit - baseVal) / value)) : 0;
     }
 
     // 6. 遍历方案，生成有效组合并去重
@@ -608,17 +794,22 @@ class EquipmentMateriaCombiner {
         const count = scheme[i];
         if (count > 0) {
           const attrId = attrIds[i];
-          finalMap.set(attrId, (finalMap.get(attrId) || 0) + count * attrValues[i]);
+          finalMap.set(
+            attrId,
+            (finalMap.get(attrId) || 0) + count * attrValues[i],
+          );
         }
       }
 
       // 转为数组并排序
-      const attributes: ParamInfo[] = Array.from(finalMap.entries()).map(([baseParamId, value]) => ({
-        baseParamId,
-        value,
-      }));
+      const attributes: ParamInfo[] = Array.from(finalMap.entries()).map(
+        ([baseParamId, value]) => ({
+          baseParamId,
+          value,
+        }),
+      );
       attributes.sort((a, b) => a.baseParamId - b.baseParamId);
-      const key = attributes.map(it => it.baseParamId).join('-');
+      const key = attributes.map((it) => it.baseParamId).join("-");
 
       if (!seen.has(key)) {
         seen.add(key);
@@ -689,17 +880,32 @@ const equipmentMateriaCombiner = new EquipmentMateriaCombiner({
     switch (jobType) {
       // 1 T
       case 1:
-        return Object.values(baseParam).filter(it => ['暴击', '信念', '直击', '技能速度', '坚韧'].includes(it.Name)).map(it => it.rowId);
+        return Object.values(baseParam)
+          .filter((it) =>
+            ["暴击", "信念", "直击", "技能速度", "坚韧"].includes(it.Name),
+          )
+          .map((it) => it.rowId);
       // 3 近战 4 远敏
       case 3:
       case 4:
-        return Object.values(baseParam).filter(it => ['暴击', '信念', '直击', '技能速度'].includes(it.Name)).map(it => it.rowId);
+        return Object.values(baseParam)
+          .filter((it) =>
+            ["暴击", "信念", "直击", "技能速度"].includes(it.Name),
+          )
+          .map((it) => it.rowId);
       // 2 纯奶 5 法系输出 6 盾奶
       case 2:
       case 5:
       case 6:
-        return Object.values(baseParam).filter(it => ['暴击', '信念', '直击', '咏唱速度'].includes(it.Name)).map(it => it.rowId);
-      default: throw new Error(`未知job type: ${jobType}，注意8.0可能会增加7 ST，并把1改为MT`);
+        return Object.values(baseParam)
+          .filter((it) =>
+            ["暴击", "信念", "直击", "咏唱速度"].includes(it.Name),
+          )
+          .map((it) => it.rowId);
+      default:
+        throw new Error(
+          `未知job type: ${jobType}，注意8.0可能会增加7 ST，并把1改为MT`,
+        );
     }
   },
   getMateriaValue: (attrId, level) => {
@@ -745,7 +951,10 @@ class EquipInfoPruner {
     if (group.length <= 1) return group;
 
     // 按属性总和降序排序（直接修改原数组）
-    group.sort((a, b) => this.#sumAttributes(b.baseParams) - this.#sumAttributes(a.baseParams));
+    group.sort(
+      (a, b) =>
+        this.#sumAttributes(b.baseParams) - this.#sumAttributes(a.baseParams),
+    );
 
     let paretoFront: T[] = [];
 
@@ -764,7 +973,10 @@ class EquipInfoPruner {
           }
           continue;
         }
-        const dominance = this.#compareDominance(candidate.baseParams, retained.baseParams);
+        const dominance = this.#compareDominance(
+          candidate.baseParams,
+          retained.baseParams,
+        );
         if (dominance < 0) {
           shouldRetainCandidate = false;
           break;
@@ -783,7 +995,10 @@ class EquipInfoPruner {
     return paretoFront;
   }
 
-  #sameAttributes(aParams: (ParamInfo | FoodParam)[], bParams: (ParamInfo | FoodParam)[]): boolean {
+  #sameAttributes(
+    aParams: (ParamInfo | FoodParam)[],
+    bParams: (ParamInfo | FoodParam)[],
+  ): boolean {
     if (aParams.length !== bParams.length) return false;
     for (let i = 0; i < aParams.length; i++) {
       const aParam = aParams[i];
@@ -792,7 +1007,11 @@ class EquipInfoPruner {
       if ("value" in aParam && "value" in bParam) {
         if (aParam.value !== bParam.value) return false;
       } else if ("multiplier" in aParam && "multiplier" in bParam) {
-        if (aParam.multiplier !== bParam.multiplier || aParam.maxValue !== bParam.maxValue) return false;
+        if (
+          aParam.multiplier !== bParam.multiplier ||
+          aParam.maxValue !== bParam.maxValue
+        )
+          return false;
       } else {
         return false;
       }
@@ -800,9 +1019,15 @@ class EquipInfoPruner {
     return true;
   }
 
-  #hasHigherItemPriority(candidate: ComparableInfo, retained: ComparableInfo): boolean {
-    return candidate.itemLevel > retained.itemLevel ||
-      (candidate.itemLevel === retained.itemLevel && candidate.itemId > retained.itemId);
+  #hasHigherItemPriority(
+    candidate: ComparableInfo,
+    retained: ComparableInfo,
+  ): boolean {
+    return (
+      candidate.itemLevel > retained.itemLevel ||
+      (candidate.itemLevel === retained.itemLevel &&
+        candidate.itemId > retained.itemId)
+    );
   }
 
   /**
@@ -822,7 +1047,9 @@ class EquipInfoPruner {
       const aParam = aParams[i];
       const bParam = bParams[i];
       if (aParam.baseParamId !== bParam.baseParamId) return 0;
-      const current = Math.sign(this.#attributeValue(aParam) - this.#attributeValue(bParam));
+      const current = Math.sign(
+        this.#attributeValue(aParam) - this.#attributeValue(bParam),
+      );
       if (dominance !== 0 && current !== 0 && dominance !== current) {
         // 互有高低
         return 0;
@@ -852,135 +1079,498 @@ class EquipInfoPruner {
 }
 const equipInfoPruner = new EquipInfoPruner();
 
-function buildEquipInfo(itemId: number, jobType: number, syncLevel?: number): EquipInfo[] {
+function buildEquipInfo(
+  itemId: number,
+  jobType: number,
+  syncLevel?: number,
+): EquipInfo[] {
   const item = itemMap[itemId];
   const isSynced = syncLevel !== undefined && item.LevelItem > syncLevel;
-  const createEquipInfo = (baseParams: ParamInfo[], key: string): EquipInfo => ({
+  const physicalDamageLimit = isSynced
+    ? getAttributeLimit(itemId, baseParamIdForStat("PDMG"), syncLevel)
+    : undefined;
+  const magicalDamageLimit = isSynced
+    ? getAttributeLimit(itemId, baseParamIdForStat("MDMG"), syncLevel)
+    : undefined;
+  const createEquipInfo = (
+    baseParams: ParamInfo[],
+    key: string,
+  ): EquipInfo => ({
     itemId,
     itemLevel: item.LevelItem,
     key,
     baseParams,
-    PDMG: item.DamagePhys,
-    MDMG: item.DamageMag,
+    PDMG: applySyncLimit(item.DamagePhys, physicalDamageLimit),
+    MDMG: applySyncLimit(item.DamageMag, magicalDamageLimit),
     DLY: item.Delayms,
   });
 
   const mandervilleEquips = mandervilleWeapons[itemId];
   if (mandervilleEquips !== undefined) {
     if (!isSynced) return mandervilleEquips;
-    return mandervilleEquips.map(equip => createEquipInfo(
-      equip.baseParams.map(param => ({
-        baseParamId: param.baseParamId,
-        value: Math.min(param.value, getAttributeLimit(itemId, param.baseParamId, syncLevel)),
-      })),
-      equip.key,
-    ));
+    return mandervilleEquips.map((equip) =>
+      createEquipInfo(
+        equip.baseParams.map((param) => ({
+          baseParamId: param.baseParamId,
+          value: Math.min(
+            param.value,
+            getAttributeLimit(itemId, param.baseParamId, syncLevel),
+          ),
+        })),
+        equip.key,
+      ),
+    );
   }
 
   const baseParams: ParamInfo[] = [];
   for (let i = 0; i < 6; i++) {
     const param = item[`BaseParam[${i}]`];
     const value = item[`BaseParamValue[${i}]`];
-    if (param !== 0 && value !== 0) baseParams.push({ baseParamId: param, value });
+    if (param !== 0 && value !== 0)
+      baseParams.push({ baseParamId: param, value });
   }
   baseParams.sort((a, b) => a.baseParamId - b.baseParamId);
 
   if (isSynced) {
-    const syncedBaseParams = baseParams.map(param => ({
+    const syncedBaseParams = baseParams.map((param) => ({
       baseParamId: param.baseParamId,
-      value: Math.min(param.value, getAttributeLimit(itemId, param.baseParamId, syncLevel)),
+      value: Math.min(
+        param.value,
+        getAttributeLimit(itemId, param.baseParamId, syncLevel),
+      ),
     }));
-    return [createEquipInfo(
-      syncedBaseParams,
-      `${syncedBaseParams.map(param => param.baseParamId).join('-')}`,
-    )];
+    return [
+      createEquipInfo(
+        syncedBaseParams,
+        `${syncedBaseParams.map((param) => param.baseParamId).join("-")}`,
+      ),
+    ];
   }
 
   const genResult = equipmentMateriaCombiner.calculate(
     jobType,
-    Object.values(materiaByBaseParam)[0].minAllowItemLevel.findLastIndex(level => level <= item.LevelItem),
+    Object.values(materiaByBaseParam)[0].minAllowItemLevel.findLastIndex(
+      (level) => level <= item.LevelItem,
+    ),
     item.MateriaSlotCount + (item.IsAdvancedMeldingPermitted ? 1 : 0),
-    item.IsAdvancedMeldingPermitted ? (5 - 1 - item.MateriaSlotCount) : 0,
+    item.IsAdvancedMeldingPermitted ? 5 - 1 - item.MateriaSlotCount : 0,
     baseParams,
     itemId,
   );
-  return genResult.map(([key, generatedBaseParams]) => createEquipInfo(generatedBaseParams, key));
+  return genResult.map(([key, generatedBaseParams]) =>
+    createEquipInfo(generatedBaseParams, key),
+  );
 }
+
+client.close();
 
 (() => {
   // 赤魔 735品级同步，装备范围730-795
   const minLvl = 730;
   const maxLvl = 795;
   const syncLvl = 735;
-  const job = jobs.find(it => it.Name === '赤魔法师') as Row;
+  const job = jobs.find((it) => it.Name === "赤魔法师") as Row;
   const jobAbbreviation = job.Abbreviation;
 
   const levels: number[] = [];
   const validEquips: Record<string, Record<number, EquipInfo[]>> = {};
-  equipMap.entries()
+  equipMap
+    .entries()
     .filter(([lvl]) => lvl >= minLvl && lvl <= maxLvl)
     .forEach(([lvl, equips]) => {
       levels.push(lvl);
       // 根据装备物品的职业槽位信息里是否有当前职业判断能否装备
-      equips.filter(it => classJobCategory[it.ClassJobCategory][jobAbbreviation])
-        .forEach(equipItem => {
+      equips
+        .filter((it) => classJobCategory[it.ClassJobCategory][jobAbbreviation])
+        .forEach((equipItem) => {
           const slot = equipSlotCategory[equipItem.EquipSlotCategory];
           Object.entries(slot.fields)
             .filter(([_, value]) => value === 1)
-            .forEach(([slotName]) =>{
+            .forEach(([slotName]) => {
               // 合并戒指槽位
-              if (slotName === 'FingerL' || slotName === 'FingerR') slotName = 'Finger';
+              if (slotName === "FingerL" || slotName === "FingerR")
+                slotName = "Finger";
               if (!validEquips[slotName]) validEquips[slotName] = {};
               if (!validEquips[slotName][lvl]) validEquips[slotName][lvl] = [];
-              validEquips[slotName][lvl].push(...buildEquipInfo(equipItem.rowId, job.JobType, syncLvl));
+              validEquips[slotName][lvl].push(
+                ...buildEquipInfo(equipItem.rowId, job.JobType, syncLvl),
+              );
             });
         });
     });
   levels.sort((a, b) => b - a);
   // 每个部位只取最高档，如果最高档全是技速/咏速/坚韧/信仰，就多找低一档
   const filterEquips: Record<string, EquipInfo[]> = {};
-  Object.entries(validEquips)
-    .forEach(([slotName, equipsByLvl]) => {
-      const list: EquipInfo[] = [];
-      for (const lvl of levels) {
-        const equips = equipsByLvl[lvl];
-        if (!equips) continue;
-        list.push(...equips);
-      }
-      filterEquips[slotName] = equipInfoPruner.prune(list);
-    });
-  const availableFoods = equipInfoPruner.prune(
-    foods.filter(food => {
-      return food.itemLevel >= levels[levels.length - 1] && food.baseParams.some(it => baseParamIdToStat[it.baseParamId] === 'VIT');
-    })
+  Object.entries(validEquips).forEach(([slotName, equipsByLvl]) => {
+    const list: EquipInfo[] = [];
+    for (const lvl of levels) {
+      const equips = equipsByLvl[lvl];
+      if (!equips) continue;
+      list.push(...equips);
+    }
+    filterEquips[slotName] = equipInfoPruner.prune(list);
+  });
+  const singleRingCandidates = filterEquips.Finger;
+  if (singleRingCandidates === undefined) {
+    throw new Error("当前职业缺少戒指候选");
+  }
+  const ringPairCandidates = buildRingPairEquipInfos(
+    singleRingCandidates,
+    (itemId) => Boolean(itemMap[itemId].IsUnique ?? itemMap[itemId].isUnique),
   );
-  const allAvailablePreset = Object.values(filterEquips).reduce((acc, it) => acc * it.length, 1) * availableFoods.length;
-  console.log(`可用装备组合数量：${String(allAvailablePreset).replaceAll(/\B(?=(\d{3})+$)/g, '_')}`);
-
-  // TODO 参考 https://chat.deepseek.com/a/chat/s/1a546460-50f7-4be1-b78f-c81c7bc32ad2
+  filterEquips.Finger = equipInfoPruner.prune(ringPairCandidates);
+  console.log(
+    `双戒指候选：${singleRingCandidates.length}x${singleRingCandidates.length}` +
+      ` -> ${ringPairCandidates.length} -> ${filterEquips.Finger.length}`,
+  );
+  const availableFoods = equipInfoPruner.prune(
+    foods.filter((food) => {
+      return (
+        food.itemLevel >= levels[levels.length - 1] &&
+        food.baseParams.some(
+          (it) => baseParamIdToStat[it.baseParamId] === "VIT",
+        )
+      );
+    }),
+  );
+  const allAvailablePreset =
+    Object.values(filterEquips).reduce((acc, it) => acc * it.length, 1) *
+    availableFoods.length;
+  console.log(
+    `可用装备组合数量：${String(allAvailablePreset).replaceAll(/\B(?=(\d{3})+$)/g, "_")}`,
+  );
 
   // 按槽位的候选数量从小到大排序
-  const slotsWithEquips = Object.entries(filterEquips).sort((a, b) => a[1].length - b[1].length);
+  const slotsWithEquips = Object.entries(filterEquips).sort(
+    (a, b) => a[1].length - b[1].length,
+  );
 
-  const test = () => {
-    const representativeEquips = Object.values(filterEquips)
-      .map(equips => equips[0])
-      .filter((equip): equip is EquipInfo => equip !== undefined);
-    const representativeFood = availableFoods[0];
-    if (representativeFood !== undefined) {
-      const effects = calculateEquippedEffectsProxy(
-        job,
-        100,
-        representativeEquips,
-        representativeFood,
-      );
-      console.log(`测试代理计算结果：${JSON.stringify(effects)}`);
-    }
+  const v1Job = job.Abbreviation as Job;
+  const v1JobLevel = 100 as JobLevel;
+  const jobSchema = referenceGame.jobSchemas[v1Job];
+  const primaryStatId = Number(job.PrimaryStat);
+  const attackMainStat = baseParamIdToStat[primaryStatId];
+  const expectedAttackMainStat =
+    jobSchema.mainStat === "VIT" ? "STR" : jobSchema.mainStat;
+  if (
+    attackMainStat === undefined ||
+    attackMainStat !== expectedAttackMainStat
+  ) {
+    throw new Error(
+      `ClassJob.PrimaryStat 与伤害公式不匹配：${job.PrimaryStat}`,
+    );
   }
-  test();
+  const speedStat: Stat = jobSchema.stats?.includes("SKS") ? "SKS" : "SPS";
+  const criticalHitId = baseParamIdForStat("CRT");
+  const determinationId = baseParamIdForStat("DET");
+  const directHitId = baseParamIdForStat("DHT");
+  const speedAttributeId = baseParamIdForStat(speedStat);
+  const spellSpeedId = baseParamIdForStat("SPS");
+  const tierStats = [attackMainStat, "CRT", "DHT", "DET", speedStat] as const;
+  const tierStatById = new Map<number, Stat>(
+    tierStats.map((stat) => [
+      stat === attackMainStat ? primaryStatId : baseParamIdForStat(stat),
+      stat,
+    ]),
+  );
+  const toughnessAttributeId = jobSchema.stats?.includes("TEN")
+    ? baseParamIdForStat("TEN")
+    : undefined;
+  if (toughnessAttributeId !== undefined) {
+    tierStatById.set(toughnessAttributeId, "TEN");
+  }
+  const weaponDamageId = -1;
+  const weaponDamageStat =
+    jobSchema.mainStat === "MND" || jobSchema.mainStat === "INT"
+      ? "MDMG"
+      : "PDMG";
+  const v1AttributeIds = [...tierStatById.keys(), weaponDamageId].sort(
+    (a, b) => a - b,
+  );
+  const v1AttributeIndex = new Map(
+    v1AttributeIds.map((id, index) => [id, index]),
+  );
+  const foodPriorityByIdentity = new Map(
+    availableFoods.map((food) => {
+      const attributes = new Set(
+        food.baseParams.map((param) => param.baseParamId),
+      );
+      const priority =
+        attributes.has(criticalHitId) && attributes.has(determinationId)
+          ? 0
+          : attributes.has(spellSpeedId)
+            ? 2
+            : 1;
+      return [`${food.itemId}|${food.key}`, priority] as const;
+    }),
+  );
+  const v1Foods = availableFoods.map((food) => ({
+    ...food,
+    baseParams: food.baseParams.filter((param) =>
+      v1AttributeIndex.has(param.baseParamId),
+    ),
+  }));
+  const v1Damage = (attributes: readonly number[]): number => {
+    const equippedStats: EquippedStats = {};
+    for (const [id, index] of v1AttributeIndex) {
+      const stat = baseParamIdToStat[id];
+      if (stat !== undefined) equippedStats[stat] = attributes[index];
+    }
+    equippedStats[weaponDamageStat] =
+      attributes[v1AttributeIndex.get(weaponDamageId)!];
+    return (
+      equippedEffects(v1Job, v1JobLevel, equippedStats)?.damage ??
+      Number.NEGATIVE_INFINITY
+    );
+  };
+  const searchOptions: LoadoutFinderV2Options = {
+    attributeIds: v1AttributeIds,
+    greedyPriorityAttributeIds: [
+      primaryStatId,
+      criticalHitId,
+      determinationId,
+      directHitId,
+    ],
+    foodPriorityComparator: (first, second) =>
+      (first === undefined
+        ? 1
+        : foodPriorityByIdentity.get(`${first.itemId}|${first.key}`)!) -
+      (second === undefined
+        ? 1
+        : foodPriorityByIdentity.get(`${second.itemId}|${second.key}`)!),
+    attributeTierProjectors: new Map(
+      [...tierStatById].map(([attributeId, stat]) => [
+        attributeId,
+        (value: number) =>
+          equippedAttributeTier(v1Job, v1JobLevel, stat, value),
+      ]),
+    ),
+    equipmentAttributeExtractor: (equip) => [
+      ...equip.baseParams.filter((param) =>
+        v1AttributeIndex.has(param.baseParamId),
+      ),
+      { baseParamId: weaponDamageId, value: equip[weaponDamageStat] },
+    ],
+  };
+  const searchSlots = slotsWithEquips.map(([, equips]) => equips);
+  const optionalConstraint = (name: string): number | undefined => {
+    const raw = process.env[name];
+    if (raw === undefined || raw === "") return undefined;
+    const value = Number(raw);
+    if (!Number.isFinite(value)) {
+      throw new Error(`${name} 必须是有限数字`);
+    }
+    return value;
+  };
+  const rawMaxToughnessMode = process.env.DATA_TEST_MAX_TOUGHNESS;
+  if (
+    rawMaxToughnessMode !== undefined &&
+    !["0", "1", "false", "true"].includes(rawMaxToughnessMode.toLowerCase())
+  ) {
+    throw new Error("DATA_TEST_MAX_TOUGHNESS 必须是 true、false、1 或 0");
+  }
+  const v2Constraints: LoadoutV2Constraints = {
+    gcd: optionalConstraint("DATA_TEST_GCD") ?? 2.48,
+    speedMin: optionalConstraint("DATA_TEST_SPEED_MIN"),
+    speedMax: optionalConstraint("DATA_TEST_SPEED_MAX"),
+    toughnessMinPercent: optionalConstraint("DATA_TEST_TOUGH_PERCENT"),
+    toughMin: optionalConstraint("DATA_TEST_TOUGH_MIN"),
+    maxToughnessMode:
+      rawMaxToughnessMode === undefined
+        ? undefined
+        : ["1", "true"].includes(rawMaxToughnessMode.toLowerCase()),
+  };
+
+  const v2Finder = new LoadoutFinderV2(
+    v1Damage,
+    v1AttributeIds.length,
+    speedAttributeId,
+    toughnessAttributeId,
+    {
+      ...searchOptions,
+      gcdToSpeedRange: (gcdSeconds) =>
+        equippedSpeedRangeForGcd(v1Job, v1JobLevel, gcdSeconds),
+      toughnessPercentToMinimum: (percentage) =>
+        equippedToughnessForMitigationPercent(v1Job, v1JobLevel, percentage),
+    },
+  );
+  console.log(`V2搜索约束：${JSON.stringify(v2Constraints)}`);
+  const startedAt = performance.now();
+  const searchResult: LoadoutV2Result | undefined = v2Finder.findBest(
+    searchSlots,
+    v1Foods,
+    v2Constraints,
+  );
+  const elapsedMs = performance.now() - startedAt;
+  console.log(
+    `V2搜索统计：耗时=${elapsedMs.toFixed(0)}ms；搜索=${v2Finder.statistics.searched}` +
+      `；叶子=${v2Finder.statistics.leaves}` +
+      `；初始贪心=${v2Finder.statistics.initialGreedyDamage}` +
+      `；局部改良=${v2Finder.statistics.localSearchDamage}` +
+      `；约束剪枝=${v2Finder.statistics.constraintPruned}` +
+      `；后缀约束剪枝=${v2Finder.statistics.suffixConstraintPruned}` +
+      `；后缀界检查=${v2Finder.statistics.suffixBoundChecks}` +
+      `；后缀界剪枝=${v2Finder.statistics.suffixBoundPruned}` +
+      `；最高坚韧=${v2Finder.statistics.maximumToughness ?? "未启用"}`,
+  );
+  const resultAlgorithm = "V2";
+  if (searchResult === undefined || searchResult.food === undefined) {
+    throw new Error(`${resultAlgorithm} 未找到可导出的配装结果`);
+  }
+
+  const slotNames: Record<string, string> = {
+    MainHand: "主手",
+    OffHand: "副手",
+    Head: "头部",
+    Body: "身体",
+    Gloves: "手部",
+    Legs: "腿部",
+    Feet: "脚部",
+    Ears: "耳饰",
+    Neck: "项链",
+    Wrists: "手镯",
+    Finger: "戒指",
+  };
+  const rawBaseParams = (item: Row): ParamInfo[] => {
+    const result: ParamInfo[] = [];
+    for (let index = 0; index < 6; index++) {
+      const baseParamId = item[`BaseParam[${index}]`];
+      const value = item[`BaseParamValue[${index}]`];
+      if (baseParamId !== 0 && value !== 0) {
+        result.push({ baseParamId, value });
+      }
+    }
+    return result.sort(
+      (first, second) => first.baseParamId - second.baseParamId,
+    );
+  };
+  const exportEquipment = (equipment: EquipInfo, slot: string) => {
+    const item = itemMap[equipment.itemId];
+    const isSynced = item.LevelItem > syncLvl;
+    const materiaGradeIndex = Object.values(
+      materiaByBaseParam,
+    )[0].minAllowItemLevel.findLastIndex((level) => level <= item.LevelItem);
+    if (!isSynced && materiaGradeIndex < 0) {
+      throw new Error(`装备 ${equipment.itemId} 没有可用的魔晶石等级`);
+    }
+    const customCandidates = mandervilleWeapons[equipment.itemId];
+    const gear = reverseEquipmentForFfxivGearing(equipment, {
+      rawBaseParams: rawBaseParams(item),
+      materiaSlotCount: item.MateriaSlotCount,
+      advancedMelding: Boolean(item.IsAdvancedMeldingPermitted),
+      materiaGrade: isSynced
+        ? undefined
+        : ((materiaGradeIndex + 1) as MateriaGrade),
+      materiaValue: (baseParamId, grade) =>
+        materiaByBaseParam[baseParamId].values[grade - 1],
+      statForBaseParam: (baseParamId) => baseParamIdToStat[baseParamId],
+      customCandidates,
+      projectCustomCandidate:
+        customCandidates === undefined
+          ? undefined
+          : (candidate) =>
+              candidate.baseParams.map((param) => ({
+                baseParamId: param.baseParamId,
+                value: isSynced
+                  ? Math.min(
+                      param.value,
+                      getAttributeLimit(
+                        equipment.itemId,
+                        param.baseParamId,
+                        syncLvl,
+                      ),
+                    )
+                  : param.value,
+              })),
+    });
+    return { slot, equipment, item, gear };
+  };
+  const exportedEquipment = searchResult.selection.flatMap(
+    (equipment, index) => {
+      const slot = slotsWithEquips[index][0];
+      return isRingPairEquipInfo(equipment)
+        ? equipment.ringEquips.map((ring) => exportEquipment(ring, slot))
+        : [exportEquipment(equipment, slot)];
+    },
+  );
+  exportedEquipment.sort(
+    (first, second) =>
+      Number(first.slot === "Finger") - Number(second.slot === "Finger"),
+  );
+  const exportedRings = exportedEquipment.filter(
+    (entry) => entry.slot === "Finger",
+  );
+  if (exportedRings.length !== 2) {
+    throw new Error(
+      `${resultAlgorithm} 导出需要两枚戒指，实际为 ${exportedRings.length} 枚`,
+    );
+  }
+
+  const gears: FfxivGearingGear[] = [
+    ...exportedEquipment.map((entry) => entry.gear),
+    { id: searchResult.food.itemId, materias: [] },
+  ];
+  const url = createFfxivGearingUrl({
+    job: v1Job,
+    jobLevel: v1JobLevel,
+    syncLevel: syncLvl,
+    gears,
+  });
+  const parsedGearset = parseFfxivGearingGearset(
+    url.slice(url.indexOf("?") + 1),
+  );
+  if (typeof parsedGearset === "string") {
+    throw new Error(`ffxiv-gearing 链接被解析为旧版本：${parsedGearset}`);
+  }
+  const expectedGearIds = gears.map((gear) => gear.id).sort((a, b) => a - b);
+  const parsedGearIds = parsedGearset.gears
+    .map((gear) => gear.id)
+    .sort((a, b) => a - b);
+  if (
+    parsedGearset.job !== v1Job ||
+    parsedGearset.jobLevel !== v1JobLevel ||
+    parsedGearset.syncLevel !== syncLvl ||
+    JSON.stringify(parsedGearIds) !== JSON.stringify(expectedGearIds)
+  ) {
+    throw new Error(
+      `ffxiv-gearing 链接往返解析结果与 ${resultAlgorithm} 配装不一致`,
+    );
+  }
+  const resultOutput = {
+    职业: v1Job,
+    等级: v1JobLevel,
+    同步品级: syncLvl,
+    每威力伤害期望: searchResult.damage,
+    食物: {
+      物品ID: searchResult.food.itemId,
+      名称: itemMap[searchResult.food.itemId].Name,
+    },
+    装备: exportedEquipment.map(({ slot, item, gear }) => ({
+      槽位: slotNames[slot] ?? slot,
+      物品ID: gear.id,
+      名称: item.Name,
+      品级: item.LevelItem,
+      魔晶石: gear.materias.map((materia) =>
+        materia === null
+          ? null
+          : {
+              属性: referenceGame.statNames[materia[0]],
+              等级: materia[1],
+            },
+      ),
+      自定义属性:
+        gear.customStats === undefined
+          ? undefined
+          : Object.fromEntries(
+              Object.entries(gear.customStats).map(([stat, value]) => [
+                referenceGame.statNames[stat as Stat],
+                value,
+              ]),
+            ),
+    })),
+  };
+  console.log(
+    `${resultAlgorithm}最优配装结果：${JSON.stringify(resultOutput, null, 2)}`,
+  );
+  console.log(`ffxiv-gearing链接：${url}`);
 })();
-
-
-client.close();
-
-
