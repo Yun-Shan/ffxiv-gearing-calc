@@ -1,5 +1,7 @@
 # AGENTS.md
 
+**scripts/test目录下的内容不需要遵守以下除了数据来源/引用方式以外的任何项目规范**
+
 ## 项目定位
 
 本项目是一个使用 React、Radix UI 和 TypeScript 开发的纯前端 FFXIV 自动配装优化器，编译目标为 ESNext。业务规则集中在 `src/domain`，以便后续将其独立导出为通用逻辑库。
