@@ -4,7 +4,7 @@ import {
   type LoadoutSearchOptions,
   type LoadoutSearchResult,
 } from "./loadout-finder-v2-search.ts";
-import type { EquipInfo, FoodInfo, FoodParam, ParamInfo } from "./types.ts";
+import type { EquipInfo, FoodInfo, FoodParam, ParamInfo } from "../types.ts";
 
 const MAX_DAMAGE_CACHE_ENTRIES = 500_000;
 

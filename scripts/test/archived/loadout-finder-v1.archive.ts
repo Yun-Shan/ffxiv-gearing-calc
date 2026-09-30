@@ -1,4 +1,4 @@
-import type { EquipInfo, FoodInfo, FoodParam, ParamInfo } from "./types.ts";
+import type { EquipInfo, FoodInfo, FoodParam, ParamInfo } from "../types.ts";
 
 const MAX_DAMAGE_CACHE_ENTRIES = 500_000;
 const DEFAULT_SUFFIX_FRONTIER_SLOT_COUNT = 5;
@@ -18,7 +18,7 @@ export type FoodPriorityComparator = (
   second: FoodInfo | undefined,
 ) => number;
 
-export type LoadoutSearchOptions = {
+export type LoadoutFinderV1Options = {
   attributeIds?: readonly number[];
   equipmentAttributeExtractor?: EquipmentAttributeExtractor;
   attributeTierProjectors?: ReadonlyMap<number, AttributeTierProjector>;
@@ -41,13 +41,13 @@ export type AttributeRangeConstraint = {
   max?: number;
 };
 
-export type LoadoutSearchResult = {
+export type LoadoutV1Result = {
   damage: number;
   selection: EquipInfo[];
   food: FoodInfo | undefined;
 };
 
-export type LoadoutSearchStatistics = {
+export type LoadoutV1Statistics = {
   elapsedMs: number;
   searched: number;
   leaves: number;
@@ -134,7 +134,6 @@ export class DominanceIndex {
   readonly dimensionCount: number;
   readonly trees: (DominanceTree | undefined)[] = [];
   size = 0;
-  #comparisonCount = 0;
 
   constructor(dimensionCount: number) {
     this.dimensionCount = dimensionCount;
@@ -145,31 +144,32 @@ export class DominanceIndex {
     comparisons: number;
     equal: boolean;
   } {
-    this.#comparisonCount = 0;
+    const counter = { comparisons: 0 };
     for (const tree of this.trees) {
       if (tree === undefined) continue;
-      const dominator = this.#findDominator(tree.root, point);
+      const dominator = this.#findDominator(tree.root, point, counter);
       if (dominator !== undefined)
         return {
           accepted: false,
-          comparisons: this.#comparisonCount,
+          comparisons: counter.comparisons,
           equal: this.#equal(dominator, point),
         };
     }
 
     this.#insert(point);
-    return { accepted: true, comparisons: this.#comparisonCount, equal: false };
+    return { accepted: true, comparisons: counter.comparisons, equal: false };
   }
 
   #findDominator(
     node: DominanceTreeNode,
     target: readonly number[],
+    counter: { comparisons: number },
   ): number[] | undefined {
     for (let dimension = 0; dimension < this.dimensionCount; dimension++) {
       if (node.maximum[dimension] < target[dimension]) return undefined;
     }
 
-    this.#comparisonCount++;
+    counter.comparisons++;
     let dominates = true;
     for (let dimension = 0; dimension < this.dimensionCount; dimension++) {
       if (node.point[dimension] < target[dimension]) {
@@ -179,11 +179,11 @@ export class DominanceIndex {
     }
     if (dominates) return node.point;
     if (node.left !== undefined) {
-      const left = this.#findDominator(node.left, target);
+      const left = this.#findDominator(node.left, target, counter);
       if (left !== undefined) return left;
     }
     if (node.right !== undefined) {
-      return this.#findDominator(node.right, target);
+      return this.#findDominator(node.right, target, counter);
     }
     return undefined;
   }
@@ -240,12 +240,12 @@ export class DominanceIndex {
  * Finds the maximum damage loadout for one job without GCD or toughness
  * constraints. The damage function is expected to be monotonic by attribute.
  */
-export class LoadoutFinderV2Search {
+export class LoadoutFinderV1 {
   readonly damageFunction: DamageFunction;
   readonly attributeCount: number;
-  readonly options: LoadoutSearchOptions;
+  readonly options: LoadoutFinderV1Options;
   readonly damageCache = new Map<string, number>();
-  readonly statistics: LoadoutSearchStatistics = {
+  readonly statistics: LoadoutV1Statistics = {
     elapsedMs: 0,
     searched: 0,
     leaves: 0,
@@ -273,7 +273,7 @@ export class LoadoutFinderV2Search {
   #suffixReachableValues: (number[] | undefined)[][] = [];
   #tierProjectors: (AttributeTierProjector | undefined)[] = [];
   #stateTierClasses: (Int32Array | undefined)[][] = [];
-  #best: LoadoutSearchResult | undefined;
+  #best: LoadoutV1Result | undefined;
   #searchedCount = 0;
   #stateDominanceIndexes: DominanceIndex[] = [];
   #acceptedStateCounts: number[] = [];
@@ -296,14 +296,11 @@ export class LoadoutFinderV2Search {
   #suffixFrontierRoot: SuffixFrontierNode | undefined;
   #attributeRanges: (NormalizedAttributeRange | undefined)[] = [];
   #upperConstrainedIndexes: number[] = [];
-  // Search callbacks are synchronous and do not retain these scratch arrays.
-  #foodAttributes: number[];
-  #upperAttributes: number[];
 
   constructor(
     damageFunction: DamageFunction,
     attributeCount: number,
-    options: LoadoutSearchOptions | readonly number[] = {},
+    options: LoadoutFinderV1Options | readonly number[] = {},
   ) {
     if (typeof damageFunction !== "function") {
       throw new TypeError("damageFunction 必须是函数");
@@ -314,12 +311,10 @@ export class LoadoutFinderV2Search {
 
     this.damageFunction = damageFunction;
     this.attributeCount = attributeCount;
-    const normalizedOptions: LoadoutSearchOptions = Array.isArray(options)
+    const normalizedOptions: LoadoutFinderV1Options = Array.isArray(options)
       ? { attributeIds: [...(options as readonly number[])] }
-      : (options as LoadoutSearchOptions);
+      : (options as LoadoutFinderV1Options);
     this.options = normalizedOptions;
-    this.#foodAttributes = this.#zeroAttributes();
-    this.#upperAttributes = this.#zeroAttributes();
 
     if (this.options.attributeIds !== undefined) {
       if (this.options.attributeIds.length !== attributeCount) {
@@ -346,7 +341,7 @@ export class LoadoutFinderV2Search {
     slots: readonly (readonly EquipInfo[])[],
     foods: readonly FoodInfo[],
     constraints: readonly AttributeRangeConstraint[] = [],
-  ): LoadoutSearchResult | undefined {
+  ): LoadoutV1Result | undefined {
     this.damageCache.clear();
     this.#best = undefined;
     this.#searchedCount = 0;
@@ -402,7 +397,7 @@ export class LoadoutFinderV2Search {
     this.#slots = this.#buildSlots(slots);
     let foodPlans = this.#buildFoodPlans(foods);
     this.#debugLog(
-      `[V2搜索] 搜索配置：槽位候选=${this.#slots
+      `[V1] 搜索配置：槽位候选=${this.#slots
         .map(
           (slot) =>
             `${slot.inputIndex}:${slot.originalCandidateCount}->${slot.candidates.length}`,
@@ -444,7 +439,7 @@ export class LoadoutFinderV2Search {
       ) {
         this.statistics.constraintPruned++;
         this.#debugLog(
-          `[V2搜索] 跳过食物分支：${this.#activeFood}；最终属性约束不可行`,
+          `[V1] 跳过食物分支：${this.#activeFood}；最终属性约束不可行`,
         );
         continue;
       }
@@ -455,7 +450,7 @@ export class LoadoutFinderV2Search {
       );
       if (this.#hasBest() && globalUpperDamage <= this.#bestDamage()) {
         this.#debugLog(
-          `[V2搜索] 跳过食物分支：${this.#activeFood}；上界=${globalUpperDamage}；当前最优=${this.#bestDamage()}`,
+          `[V1] 跳过食物分支：${this.#activeFood}；上界=${globalUpperDamage}；当前最优=${this.#bestDamage()}`,
         );
         continue;
       }
@@ -482,7 +477,7 @@ export class LoadoutFinderV2Search {
       this.#searchFood(zeroAttributes, slots.length, foodPlan);
       this.#logDepthDiagnostics();
       this.#debugLog(
-        `[V2搜索] 完成食物分支：${this.#activeFood}；耗时=${Date.now() - branchStartedAt}ms；搜索=${this.#searchedCount - searchedBefore}；状态剪枝=${this.#sumCounts(this.#statePrunedCounts) - statePrunedBefore}；上界剪枝=${this.#sumCounts(this.#upperPrunedCounts) - upperPrunedBefore}；后缀上界剪枝=${this.statistics.suffixBoundPruned}；叶子=${this.#leafCount - leafBefore}`,
+        `[V1] 完成食物分支：${this.#activeFood}；耗时=${Date.now() - branchStartedAt}ms；搜索=${this.#searchedCount - searchedBefore}；状态剪枝=${this.#sumCounts(this.#statePrunedCounts) - statePrunedBefore}；上界剪枝=${this.#sumCounts(this.#upperPrunedCounts) - upperPrunedBefore}；后缀上界剪枝=${this.statistics.suffixBoundPruned}；叶子=${this.#leafCount - leafBefore}`,
       );
     }
 
@@ -901,7 +896,7 @@ export class LoadoutFinderV2Search {
     );
     this.statistics.initialGreedyDamage = this.#bestDamage();
     this.#debugLog(
-      `[V2搜索] 初始贪心解：属性优先级=${this.#greedyPriorityIndexes.map((index) => this.#attributeIds[index]).join(">")}；食物=${this.#foodLabel(foodPlan)}；装备=${selection.map((equipment) => equipment.itemId).join(",")}；伤害=${this.#bestDamage()}`,
+      `[V1] 初始贪心解：属性优先级=${this.#greedyPriorityIndexes.map((index) => this.#attributeIds[index]).join(">")}；食物=${this.#foodLabel(foodPlan)}；装备=${selection.map((equipment) => equipment.itemId).join(",")}；伤害=${this.#bestDamage()}`,
     );
     const improvedDamage = this.#improveLowerBound(
       selectedCandidates,
@@ -909,7 +904,7 @@ export class LoadoutFinderV2Search {
     );
     this.statistics.localSearchDamage = this.#bestDamage();
     this.#debugLog(
-      `[V2搜索] 局部改良下界：食物=${this.#best?.food === undefined ? "无食物" : `${this.#best.food.itemId}/${this.#best.food.key}`}；装备=${this.#best?.selection.map((equipment) => equipment.itemId).join(",")}；伤害=${this.#bestDamage()}；单槽改良=${this.statistics.singleSlotImprovements}；双槽改良=${this.statistics.pairwiseImprovements}`,
+      `[V1] 局部改良下界：食物=${this.#best?.food === undefined ? "无食物" : `${this.#best.food.itemId}/${this.#best.food.key}`}；装备=${this.#best?.selection.map((equipment) => equipment.itemId).join(",")}；伤害=${this.#bestDamage()}；单槽改良=${this.statistics.singleSlotImprovements}；双槽改良=${this.statistics.pairwiseImprovements}`,
     );
     const searchOrder = [...orderedFoodPlans].sort((first, second) => {
       const priorityDifference = this.#compareFoodPriority(first, second);
@@ -922,7 +917,7 @@ export class LoadoutFinderV2Search {
       );
     });
     this.#debugLog(
-      `[V2搜索] 食物搜索顺序：${searchOrder.map((plan) => `${this.#foodLabel(plan)}=${improvedDamage.get(plan.key)}`).join(",")}`,
+      `[V1] 食物搜索顺序：${searchOrder.map((plan) => `${this.#foodLabel(plan)}=${improvedDamage.get(plan.key)}`).join(",")}`,
     );
     return searchOrder;
   }
@@ -1148,7 +1143,7 @@ export class LoadoutFinderV2Search {
       this.#slots = [...prefix, ...suffix];
     }
     this.#debugLog(
-      `[V2搜索] 槽位搜索顺序：策略=${order}；${this.#slots.map((slot) => `${slot.inputIndex}(候选=${slot.candidates.length},上界虚高影响=${relaxationGap.get(slot)!.toFixed(6)})`).join(",")}`,
+      `[V1] 槽位搜索顺序：策略=${order}；${this.#slots.map((slot) => `${slot.inputIndex}(候选=${slot.candidates.length},上界虚高影响=${relaxationGap.get(slot)!.toFixed(6)})`).join(",")}`,
     );
   }
 
@@ -1201,7 +1196,7 @@ export class LoadoutFinderV2Search {
     this.statistics.suffixRawCombinations =
       slotCount === 0 ? 0 : rawCombinations;
     if (slotCount === 0) {
-      this.#debugLog("[V2搜索] 后缀Pareto前沿：已禁用或组合数超过限制");
+      this.#debugLog("[V1] 后缀Pareto前沿：已禁用或组合数超过限制");
       return;
     }
 
@@ -1235,7 +1230,7 @@ export class LoadoutFinderV2Search {
     this.statistics.suffixFrontierSize = frontier.length;
     this.#suffixFrontierRoot = this.#buildSuffixFrontierTree(frontier);
     this.#debugLog(
-      `[V2搜索] 后缀Pareto前沿：槽位=${this.#slots
+      `[V1] 后缀Pareto前沿：槽位=${this.#slots
         .slice(this.#suffixStart)
         .map((slot) => `${slot.inputIndex}/${slot.candidates.length}`)
         .join(
@@ -1597,11 +1592,7 @@ export class LoadoutFinderV2Search {
     attributes: readonly number[],
     foodPlan: FoodPlan,
   ): number {
-    for (let attribute = 0; attribute < this.attributeCount; attribute++) {
-      this.#foodAttributes[attribute] = attributes[attribute];
-    }
-    this.#applyFoodInPlace(this.#foodAttributes, foodPlan.food);
-    return this.damageFunction(this.#foodAttributes);
+    return this.damageFunction(this.#applyFood(attributes, foodPlan.food));
   }
 
   #upperDamageOfSum(
@@ -1609,7 +1600,7 @@ export class LoadoutFinderV2Search {
     second: readonly number[],
     foodPlan: FoodPlan,
   ): number {
-    const attributes = this.#upperAttributes;
+    const attributes = this.#zeroAttributes();
     for (let attribute = 0; attribute < this.attributeCount; attribute++) {
       attributes[attribute] = first[attribute] + second[attribute];
     }
@@ -1637,7 +1628,7 @@ export class LoadoutFinderV2Search {
         ? "0.0"
         : ((this.#damageCacheHitCount * 100) / cacheTotal).toFixed(1);
     this.#debugLog(
-      `[V2搜索] ${stage}：食物=${this.#activeFood || "预处理"}；搜索=${this.#searchedCount}；速率=${Math.round((this.#searchedCount * 1000) / elapsedMs)}/秒；当前深度=${this.#formatActiveDepth()}；状态通过=${this.#formatDepthCounts(this.#acceptedStateCounts)}；状态剪枝=${this.#formatDepthCounts(this.#statePrunedCounts)}；上界剪枝=${this.#formatDepthCounts(this.#upperPrunedCounts)}；约束剪枝=${this.statistics.constraintPruned}/${this.statistics.suffixConstraintPruned}；后缀=前沿${this.statistics.suffixFrontierSize},界检查${this.statistics.suffixBoundChecks},界剪枝${this.statistics.suffixBoundPruned},向量评估${this.statistics.suffixVectorsEvaluated}；支配索引=${this.#stateDominanceIndexes.map((index) => index.size).join("/")}；索引峰值=${this.#frontierPeakSizes.join("/")}；支配比较=${this.#dominanceComparisonCount}；叶子=${this.#leafCount}；最优=${this.#bestDamage()}(更新${this.#bestUpdateCount})；缓存命中=${cacheHitRate}%(${this.damageCache.size}项,清空${this.#damageCacheClearCount}次)；内存=${this.#formatMemoryUsage()}`,
+      `[V1] ${stage}：食物=${this.#activeFood || "预处理"}；搜索=${this.#searchedCount}；速率=${Math.round((this.#searchedCount * 1000) / elapsedMs)}/秒；当前深度=${this.#formatActiveDepth()}；状态通过=${this.#formatDepthCounts(this.#acceptedStateCounts)}；状态剪枝=${this.#formatDepthCounts(this.#statePrunedCounts)}；上界剪枝=${this.#formatDepthCounts(this.#upperPrunedCounts)}；约束剪枝=${this.statistics.constraintPruned}/${this.statistics.suffixConstraintPruned}；后缀=前沿${this.statistics.suffixFrontierSize},界检查${this.statistics.suffixBoundChecks},界剪枝${this.statistics.suffixBoundPruned},向量评估${this.statistics.suffixVectorsEvaluated}；支配索引=${this.#stateDominanceIndexes.map((index) => index.size).join("/")}；索引峰值=${this.#frontierPeakSizes.join("/")}；支配比较=${this.#dominanceComparisonCount}；叶子=${this.#leafCount}；最优=${this.#bestDamage()}(更新${this.#bestUpdateCount})；缓存命中=${cacheHitRate}%(${this.damageCache.size}项,清空${this.#damageCacheClearCount}次)；内存=${this.#formatMemoryUsage()}`,
     );
   }
 
@@ -1684,7 +1675,7 @@ export class LoadoutFinderV2Search {
         return `${diagnostics.depth}:尝试=${diagnostics.attemptedCount},Pareto剪枝=${statePruned}(重复=${diagnostics.duplicatePrunedCount},严格=${strictPruned}),上界剪枝=${upperPruned},通过=${diagnostics.upperPassedCount},余量=${diagnostics.upperGapBuckets.join("/")},剩余不相容=${this.#formatSuffixUpperCompatibility(diagnostics.depth)}`;
       });
     this.#debugLog(
-      `[V2搜索] 分层诊断：食物=${this.#activeFood}；余量顺序=[≤0/≤0.01%/≤0.1%/≤1%/>1%]；${rows.join("；")}；后缀Pareto=槽位${this.statistics.suffixSlotCount},原始${this.statistics.suffixRawCombinations},前沿${this.statistics.suffixFrontierSize},界检查${this.statistics.suffixBoundChecks},界剪枝${this.statistics.suffixBoundPruned},向量评估${this.statistics.suffixVectorsEvaluated}`,
+      `[V1] 分层诊断：食物=${this.#activeFood}；余量顺序=[≤0/≤0.01%/≤0.1%/≤1%/>1%]；${rows.join("；")}；后缀Pareto=槽位${this.statistics.suffixSlotCount},原始${this.statistics.suffixRawCombinations},前沿${this.statistics.suffixFrontierSize},界检查${this.statistics.suffixBoundChecks},界剪枝${this.statistics.suffixBoundPruned},向量评估${this.statistics.suffixVectorsEvaluated}`,
     );
   }
 
@@ -1701,7 +1692,7 @@ export class LoadoutFinderV2Search {
       return `${slot.inputIndex}:${compatible ? "可达" : "不相容"}(超额=${maximumSum - attainableSum})`;
     });
     this.#debugLog(
-      `[V2搜索] 逐属性上界：槽位(输入序号:单件能否同时达到各维最大值/最大向量属性和超额)=${slots.join(",")}`,
+      `[V1] 逐属性上界：槽位(输入序号:单件能否同时达到各维最大值/最大向量属性和超额)=${slots.join(",")}`,
     );
   }
 
@@ -1740,7 +1731,7 @@ export class LoadoutFinderV2Search {
       return `${depth}:${rawValues}->${tierClasses}/后缀${suffixValues}`;
     });
     this.#debugLog(
-      `[V2搜索] 阈值压缩：食物=${this.#activeFood}；深度(原始整数值数之和->未来等价类数之和/后缀可达值数之和)=${byDepth.join(",")}`,
+      `[V1] 阈值压缩：食物=${this.#activeFood}；深度(原始整数值数之和->未来等价类数之和/后缀可达值数之和)=${byDepth.join(",")}`,
     );
   }
 
@@ -1762,10 +1753,17 @@ export class LoadoutFinderV2Search {
     if (this.options.debug === false) return;
     const label = this.options.debugLabel;
     console.log(
-      label === undefined
-        ? message
-        : message.replace(/^\[V2搜索\]/, `[${label}]`),
+      label === undefined ? message : message.replace(/^\[V1\]/, `[${label}]`),
     );
+  }
+
+  #applyFood(
+    attributes: readonly number[],
+    food: FoodInfo | undefined,
+  ): number[] {
+    const result = [...attributes];
+    this.#applyFoodInPlace(result, food);
+    return result;
   }
 
   #applyFoodInPlace(attributes: number[], food: FoodInfo | undefined): void {

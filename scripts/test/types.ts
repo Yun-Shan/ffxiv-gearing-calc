@@ -15,6 +15,8 @@ export type FoodParam = {
 };
 
 export type PendingRequest = {
+  method: string;
+  params: Record<string, unknown>;
   resolve: (value: any) => void;
   reject: (reason?: any) => void;
 };

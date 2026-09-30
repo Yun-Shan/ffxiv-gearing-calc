@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { LoadoutFinderDp } from "./loadout-finder-dp.ts";
-import type { EquipInfo, FoodInfo } from "./types.ts";
+import { LoadoutFinderV1 } from "./loadout-finder-v1.archive.ts";
+import type { EquipInfo, FoodInfo } from "../types.ts";
 
 function equipment(itemId: number, values: readonly number[]): EquipInfo {
   return {
@@ -37,15 +37,15 @@ function bruteForce(
 ): number {
   let best = Number.NEGATIVE_INFINITY;
   const current = [0, 0, 0];
-  const effectiveFoods = foods.length === 0 ? [undefined] : foods;
 
   const search = (depth: number): void => {
     if (depth === slots.length) {
-      for (const food of effectiveFoods) {
-        best = Math.max(
-          best,
-          damage(food === undefined ? current : applyFood(current, food)),
-        );
+      if (foods.length === 0) {
+        best = Math.max(best, damage(current));
+        return;
+      }
+      for (const food of foods) {
+        best = Math.max(best, damage(applyFood(current, food)));
       }
       return;
     }
@@ -64,36 +64,83 @@ function bruteForce(
   return best;
 }
 
-describe("LoadoutFinderDp", () => {
-  it("merges equal reachable vectors before expanding another layer", () => {
+describe("LoadoutFinderV1 threshold Pareto", () => {
+  it("improves the initial lower bound with a joint two-slot replacement", () => {
     const damage = (values: readonly number[]): number =>
-      values[0] + (values[1] >= 20 ? 100 : 0);
-    const finder = new LoadoutFinderDp(damage, 2, {
+      Math.trunc(values[0] / 10) + 2 * Math.trunc(values[1] / 10);
+    const finder = new LoadoutFinderV1(damage, 2, {
       attributeIds: [0, 1],
       greedyPriorityAttributeIds: [0, 1],
+      suffixFrontierSlotCount: 0,
       debug: false,
-      attributeTierProjectors: new Map([
-        [1, (value: number) => Math.trunc(value / 20)],
-      ]),
+    });
+    const slots = [
+      [equipment(1, [9, 0]), equipment(2, [0, 6])],
+      [equipment(3, [9, 0]), equipment(4, [0, 6])],
+    ];
+
+    const result = finder.findBest(slots, []);
+
+    assert.equal(finder.statistics.initialGreedyDamage, 1);
+    assert.equal(finder.statistics.localSearchDamage, 2);
+    assert.ok(finder.statistics.pairwiseImprovements > 0);
+    assert.equal(result?.damage, bruteForce(slots, [], damage));
+  });
+
+  it("solves a Pareto-pruned suffix frontier exactly", () => {
+    const damage = (values: readonly number[]): number => values[0] * values[1];
+    const slots = [
+      [equipment(1, [3, 0]), equipment(2, [0, 3])],
+      [equipment(3, [3, 0]), equipment(4, [0, 3])],
+      [equipment(5, [3, 0]), equipment(6, [0, 3])],
+    ];
+    const finder = new LoadoutFinderV1(damage, 2, {
+      attributeIds: [0, 1],
+      suffixFrontierSlotCount: 3,
+      debug: false,
+    });
+
+    const result = finder.findBest(slots, []);
+
+    assert.equal(finder.statistics.suffixRawCombinations, 8);
+    assert.equal(finder.statistics.suffixFrontierSize, 4);
+    assert.ok(finder.statistics.suffixVectorsEvaluated > 0);
+    assert.equal(result?.damage, bruteForce(slots, [], damage));
+  });
+
+  it("uses the explicit food category before food attribute values", () => {
+    const lowerPriorityFood: FoodInfo = {
+      itemId: 1,
+      itemLevel: 1,
+      key: "larger-bonus",
+      baseParams: [{ baseParamId: 0, multiplier: 1.5, maxValue: 50 }],
+    };
+    const higherPriorityFood: FoodInfo = {
+      itemId: 2,
+      itemLevel: 1,
+      key: "smaller-bonus",
+      baseParams: [{ baseParamId: 1, multiplier: 1.01, maxValue: 1 }],
+    };
+    const finder = new LoadoutFinderV1(() => 1, 2, {
+      attributeIds: [0, 1],
+      debug: false,
+      foodPriorityComparator: (first, second) =>
+        (first?.itemId === higherPriorityFood.itemId ? 0 : 1) -
+        (second?.itemId === higherPriorityFood.itemId ? 0 : 1),
     });
 
     const result = finder.findBest(
-      [
-        [equipment(1, [10, 0]), equipment(2, [0, 10])],
-        [equipment(3, [0, 10]), equipment(4, [10, 0])],
-        [equipment(5, [10, 0]), equipment(6, [0, 10])],
-      ],
-      [],
+      [[equipment(10, [100, 100])]],
+      [lowerPriorityFood, higherPriorityFood],
     );
 
-    assert.equal(result?.damage, 110);
-    assert.ok(finder.statistics.equivalentMerged >= 1);
+    assert.equal(result?.food?.itemId, higherPriorityFood.itemId);
   });
 
-  it("does not merge current tiers that a reachable suffix can separate", () => {
+  it("keeps equal current tiers when a reachable suffix can separate them", () => {
     const damage = (values: readonly number[]): number =>
       (Math.trunc(values[0] / 10) + 1) * (Math.trunc(values[1] / 10) + 1);
-    const finder = new LoadoutFinderDp(damage, 3, {
+    const finder = new LoadoutFinderV1(damage, 3, {
       attributeIds: [0, 1, 2],
       debug: false,
       attributeTierProjectors: new Map([
@@ -153,7 +200,7 @@ describe("LoadoutFinderDp", () => {
           equipment(itemId++, [random(10), random(10), random(5)]),
         ),
       );
-      const finder = new LoadoutFinderDp(damage, 3, {
+      const finder = new LoadoutFinderV1(damage, 3, {
         attributeIds: [0, 1, 2],
         debug: false,
         attributeTierProjectors: new Map([
@@ -167,34 +214,5 @@ describe("LoadoutFinderDp", () => {
         bruteForce(slots, foods, damage),
       );
     }
-  });
-
-  it("uses explicit food priority when damage ties", () => {
-    const lowerPriorityFood: FoodInfo = {
-      itemId: 1,
-      itemLevel: 1,
-      key: "lower",
-      baseParams: [{ baseParamId: 0, multiplier: 1.5, maxValue: 50 }],
-    };
-    const higherPriorityFood: FoodInfo = {
-      itemId: 2,
-      itemLevel: 1,
-      key: "higher",
-      baseParams: [{ baseParamId: 1, multiplier: 1.01, maxValue: 1 }],
-    };
-    const finder = new LoadoutFinderDp(() => 1, 2, {
-      attributeIds: [0, 1],
-      debug: false,
-      foodPriorityComparator: (first, second) =>
-        (first?.itemId === higherPriorityFood.itemId ? 0 : 1) -
-        (second?.itemId === higherPriorityFood.itemId ? 0 : 1),
-    });
-
-    const result = finder.findBest(
-      [[equipment(10, [100, 100])]],
-      [lowerPriorityFood, higherPriorityFood],
-    );
-
-    assert.equal(result?.food?.itemId, higherPriorityFood.itemId);
   });
 });

@@ -6,7 +6,7 @@ import {
   type LoadoutSearchResult,
   type LoadoutSearchStatistics,
 } from "./loadout-finder-v2-search.ts";
-import type { EquipInfo, FoodInfo, ParamInfo } from "./types.ts";
+import type { EquipInfo, FoodInfo, ParamInfo } from "../types.ts";
 
 export type DamageEvaluation = {
   damage: number;
@@ -63,7 +63,20 @@ function emptyStatistics(): LoadoutV2Statistics {
     suffixFrontierSize: 0,
     suffixBoundChecks: 0,
     suffixBoundPruned: 0,
+    suffixNecessaryBoundChecks: 0,
+    suffixNecessaryBoundSkipped: 0,
     suffixVectorsEvaluated: 0,
+    suffixTotalVectorSamples: 0,
+    suffixTotalVectorUnique: 0,
+    suffixTierSignatureSamples: 0,
+    suffixTierSignatureUnique: 0,
+    suffixSignatureSaturated: false,
+    totalDamageCacheHits: 0,
+    totalDamageCacheMisses: 0,
+    totalDamageCacheSize: 0,
+    suffixPrefixTierLookupHits: 0,
+    suffixPrefixTierLookupMisses: 0,
+    suffixPrefixTierLookupEntries: 0,
     constraintPruned: 0,
     suffixConstraintPruned: 0,
   };
@@ -83,6 +96,7 @@ export class LoadoutFinderV2 {
   readonly toughnessPercentToMinimum:
     ((percentage: number) => number) | undefined;
   readonly evaluationFunction: EvaluationFunction | undefined;
+  readonly dominanceBucketAttributeIds: readonly number[] | undefined;
   readonly options: LoadoutSearchOptions;
   statistics: LoadoutV2Statistics = emptyStatistics();
 
@@ -118,6 +132,10 @@ export class LoadoutFinderV2 {
       } = speedOrOptions;
       this.speedAttributeId = speedAttributeId;
       this.toughnessAttributeId = configuredToughnessId;
+      this.dominanceBucketAttributeIds =
+        speedAttributeId === undefined
+          ? v1Options.dominanceBucketAttributeIds
+          : [speedAttributeId];
       this.gcdToSpeedRange = gcdToSpeedRange;
       this.toughnessPercentToMinimum = toughnessPercentToMinimum;
       this.evaluationFunction = evaluationFunction;
@@ -133,6 +151,10 @@ export class LoadoutFinderV2 {
       } = options;
       this.speedAttributeId = speedOrOptions;
       this.toughnessAttributeId = toughnessAttributeId;
+      this.dominanceBucketAttributeIds =
+        speedOrOptions === undefined
+          ? v1Options.dominanceBucketAttributeIds
+          : [speedOrOptions];
       this.gcdToSpeedRange = gcdToSpeedRange;
       this.toughnessPercentToMinimum = toughnessPercentToMinimum;
       this.evaluationFunction = evaluationFunction;
@@ -157,7 +179,16 @@ export class LoadoutFinderV2 {
     if (constraints.maxToughnessMode !== true) {
       const useDpsObjective = this.#usesDpsObjective(constraints);
       const finder = this.#createDamageFinder("V2", useDpsObjective);
-      const result = finder.findBest(slots, foods, ranges);
+      let result: LoadoutSearchResult | undefined;
+      try {
+        result = finder.findBest(slots, foods, ranges);
+      } catch (error) {
+        this.statistics = {
+          ...finder.statistics,
+          damagePhase: { ...finder.statistics },
+        };
+        throw error;
+      }
       this.statistics = {
         ...finder.statistics,
         damagePhase: { ...finder.statistics },
@@ -181,11 +212,21 @@ export class LoadoutFinderV2 {
       this.attributeCount,
       {
         ...this.options,
+        dominanceBucketAttributeIds: this.dominanceBucketAttributeIds,
         attributeTierProjectors: toughnessTierProjectors,
         debugLabel: "V2-最高坚韧",
       },
     );
-    const toughnessResult = toughnessFinder.findBest(slots, foods, ranges);
+    let toughnessResult: LoadoutSearchResult | undefined;
+    try {
+      toughnessResult = toughnessFinder.findBest(slots, foods, ranges);
+    } catch (error) {
+      this.statistics = {
+        ...toughnessFinder.statistics,
+        toughnessPhase: { ...toughnessFinder.statistics },
+      };
+      throw error;
+    }
     if (toughnessResult === undefined) {
       this.statistics = {
         ...toughnessFinder.statistics,
@@ -206,7 +247,17 @@ export class LoadoutFinderV2 {
 
     const useDpsObjective = this.#usesDpsObjective(constraints);
     const damageFinder = this.#createDamageFinder("V2", useDpsObjective);
-    const result = damageFinder.findBest(slots, foods, exactToughnessRanges);
+    let result: LoadoutSearchResult | undefined;
+    try {
+      result = damageFinder.findBest(slots, foods, exactToughnessRanges);
+    } catch (error) {
+      this.statistics = this.#combineStatistics(
+        toughnessFinder.statistics,
+        damageFinder.statistics,
+        maximumToughness,
+      );
+      throw error;
+    }
     this.statistics = this.#combineStatistics(
       toughnessFinder.statistics,
       damageFinder.statistics,
@@ -227,6 +278,7 @@ export class LoadoutFinderV2 {
       : this.damageFunction;
     return new LoadoutFinderV2Search(searchFunction, this.attributeCount, {
       ...this.options,
+      dominanceBucketAttributeIds: this.dominanceBucketAttributeIds,
       debugLabel: label,
     });
   }
@@ -492,8 +544,22 @@ export class LoadoutFinderV2 {
         toughness.pairwiseImprovements + damage.pairwiseImprovements,
       suffixBoundChecks: toughness.suffixBoundChecks + damage.suffixBoundChecks,
       suffixBoundPruned: toughness.suffixBoundPruned + damage.suffixBoundPruned,
+      suffixNecessaryBoundChecks:
+        toughness.suffixNecessaryBoundChecks + damage.suffixNecessaryBoundChecks,
+      suffixNecessaryBoundSkipped:
+        toughness.suffixNecessaryBoundSkipped + damage.suffixNecessaryBoundSkipped,
       suffixVectorsEvaluated:
         toughness.suffixVectorsEvaluated + damage.suffixVectorsEvaluated,
+      totalDamageCacheHits:
+        toughness.totalDamageCacheHits + damage.totalDamageCacheHits,
+      totalDamageCacheMisses:
+        toughness.totalDamageCacheMisses + damage.totalDamageCacheMisses,
+      totalDamageCacheSize: damage.totalDamageCacheSize,
+      suffixPrefixTierLookupHits:
+        toughness.suffixPrefixTierLookupHits + damage.suffixPrefixTierLookupHits,
+      suffixPrefixTierLookupMisses:
+        toughness.suffixPrefixTierLookupMisses + damage.suffixPrefixTierLookupMisses,
+      suffixPrefixTierLookupEntries: damage.suffixPrefixTierLookupEntries,
       constraintPruned: toughness.constraintPruned + damage.constraintPruned,
       suffixConstraintPruned:
         toughness.suffixConstraintPruned + damage.suffixConstraintPruned,

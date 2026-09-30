@@ -1,7 +1,8 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
+import { Worker } from "node:worker_threads";
 import { Buffer } from "node:buffer";
 import {
-  createEquippedEffectsVectorEvaluator,
+  createDamageGcdVectorEvaluator,
   equippedAttributeTier,
   equippedEffects,
   equippedSpeedRangeForGcd,
@@ -18,12 +19,14 @@ import {
 import { applySyncLimit } from "./equipment-sync.ts";
 import { equipmentAttributeValuesKey } from "./equipment-candidates.ts";
 import {
-  LoadoutFinderV2,
   type LoadoutFinderV2Options,
   type LoadoutV2Constraints,
   type LoadoutV2Result,
-} from "./loadout-finder-v2.ts";
+} from "./archived/loadout-finder-v2.ts";
 import { buildRingPairEquipInfos, isRingPairEquipInfo } from "./ring-pairs.ts";
+import {
+  type AttributeVector,
+} from "./archived/attribute-combination-counter.ts";
 import type {
   Job,
   JobLevel,
@@ -64,6 +67,15 @@ class McpClient {
       stdio: ["pipe", "pipe"],
     });
     this.process.on("error", (error) => {
+      console.error(
+        `[Lumina MCP] 进程错误：${error.message}；挂起请求=${JSON.stringify(
+          [...this.pending].map(([id, pending]) => ({
+            id,
+            method: pending.method,
+            params: pending.params,
+          })),
+        )}`,
+      );
       for (const pending of this.pending.values()) pending.reject(error);
       this.pending.clear();
     });
@@ -84,6 +96,15 @@ class McpClient {
       const pending = this.pending.get(message.id);
       if (!pending) return;
       this.pending.delete(message.id);
+      if (message.error)
+        console.error(
+          `[Lumina MCP] JSON-RPC 请求失败：${JSON.stringify({
+            id: message.id,
+            method: pending.method,
+            params: pending.params,
+            error: message.error,
+          })}`,
+        );
       if (message.error)
         pending.reject(
           new Error(`${message.error.code ?? "MCP"}: ${message.error.message}`),
@@ -130,6 +151,15 @@ class McpClient {
   }
 
   fail(error: any): void {
+    console.error(
+      `[Lumina MCP] 请求处理失败：${error?.message ?? String(error)}；挂起请求=${JSON.stringify(
+        [...this.pending].map(([id, pending]) => ({
+          id,
+          method: pending.method,
+          params: pending.params,
+        })),
+      )}`,
+    );
     for (const pending of this.pending.values()) pending.reject(error);
     this.pending.clear();
   }
@@ -137,7 +167,12 @@ class McpClient {
   request(method: string, params: Record<string, unknown>): Promise<any> {
     const id = this.nextId++;
     return new Promise((resolveRequest, rejectRequest) => {
-      this.pending.set(id, { resolve: resolveRequest, reject: rejectRequest });
+      this.pending.set(id, {
+        method,
+        params,
+        resolve: resolveRequest,
+        reject: rejectRequest,
+      });
       this.process.stdin.write(
         `${JSON.stringify({ jsonrpc: "2.0", id, method, params })}\n`,
       );
@@ -1167,12 +1202,16 @@ function buildEquipInfo(
 
 client.close();
 
-(() => {
+ (async () => {
   // 赤魔 735品级同步，装备范围730-795
   const minLvl = 730;
   const maxLvl = 795;
   const syncLvl = 735;
-  const job = jobs.find((it) => it.Name === "赤魔法师") as Row;
+  const requestedJob = process.env.DATA_TEST_JOB ?? "RDM";
+  const job = jobs.find((it) => it.Abbreviation === requestedJob);
+  if (job === undefined) {
+    throw new Error(`MCP ClassJob 表中不存在职业缩写：${requestedJob}`);
+  }
   const jobAbbreviation = job.Abbreviation;
 
   const levels: number[] = [];
@@ -1244,9 +1283,39 @@ client.close();
   );
 
   // 按槽位的候选数量从小到大排序
-  const slotsWithEquips = Object.entries(filterEquips).sort(
+  let slotsWithEquips = Object.entries(filterEquips).sort(
     (a, b) => a[1].length - b[1].length,
   );
+  const partitionCount = Number(process.env.DATA_TEST_PARTITION_COUNT ?? 0);
+  const partitionIndex = Number(process.env.DATA_TEST_PARTITION_INDEX ?? 0);
+  if (
+    !Number.isInteger(partitionCount) || partitionCount < 0 ||
+    !Number.isInteger(partitionIndex) || partitionIndex < 0 ||
+    (partitionCount > 0 && partitionIndex >= partitionCount)
+  ) {
+    throw new Error("DATA_TEST_PARTITION_COUNT/INDEX 必须是有效的非负整数");
+  }
+  const configuredPartitionSlot = Number(
+    process.env.DATA_TEST_PARTITION_SLOT ?? 8,
+  );
+  if (
+    !Number.isInteger(configuredPartitionSlot) ||
+    configuredPartitionSlot < 0 ||
+    configuredPartitionSlot >= slotsWithEquips.length
+  ) {
+    throw new Error("DATA_TEST_PARTITION_SLOT 必须是有效的槽位排序索引");
+  }
+  if (partitionCount > 1) {
+    const partitionCandidateCount = slotsWithEquips[configuredPartitionSlot][1].length;
+    if (partitionCount > partitionCandidateCount) {
+      throw new Error("分区数不能超过分区槽位候选数");
+    }
+    slotsWithEquips = slotsWithEquips.map(([slot, equips], index) =>
+      index === configuredPartitionSlot
+        ? [slot, equips.filter((_, candidateIndex) => candidateIndex % partitionCount === partitionIndex)]
+        : [slot, equips],
+    );
+  }
 
   const v1Job = job.Abbreviation as Job;
   const v1JobLevel = 100 as JobLevel;
@@ -1293,6 +1362,272 @@ client.close();
   const v1AttributeIndex = new Map(
     v1AttributeIds.map((id, index) => [id, index]),
   );
+  if (process.env.DATA_TEST_COUNT_ATTRIBUTE_COMBINATIONS === "true") {
+  const { countAttributeCombinationLayers } = await import("./archived/attribute-combination-counter.ts");
+    const thresholdStats = ["CRT", "DET", "DHT"] as const;
+    const theoreticalMinimumTotal = 7000;
+    type TierInterval = [minimum: number, maximum: number];
+    const buildTierIntervals = (
+      stat: Stat,
+      accept: (value: number) => boolean = () => true,
+    ): TierInterval[] => {
+      const intervals = new Map<number, TierInterval>();
+      for (let value = 0; value <= 10000; value++) {
+        if (!accept(value)) continue;
+        const tier = equippedAttributeTier(v1Job, v1JobLevel, stat, value);
+        const interval = intervals.get(tier);
+        if (interval === undefined) intervals.set(tier, [value, value]);
+        else interval[1] = value;
+      }
+      return [...intervals.values()];
+    };
+    const thresholdIntervals = thresholdStats.map((stat) => {
+      const intervals = buildTierIntervals(stat);
+      console.log(`理论阈值档位：${stat}=${intervals.length}`);
+      return intervals;
+    });
+    const speedGcdBuckets = new Int32Array(20001);
+    for (let value = 0; value < speedGcdBuckets.length; value++) {
+      const effects = equippedEffects(v1Job, v1JobLevel, {
+        [speedStat]: value,
+      });
+      if (effects === undefined || !Number.isFinite(effects.gcd)) {
+        throw new Error(`无法计算速度 ${value} 的 GCD`);
+      }
+      speedGcdBuckets[value] = Math.round(effects.gcd * 100);
+    }
+    const speedIntervalsByGcd = new Map<number, TierInterval>();
+    for (let value = 0; value <= 10000; value++) {
+      const gcdBucket = speedGcdBuckets[value]!;
+      if (gcdBucket < 200 || gcdBucket > 250) continue;
+      const interval = speedIntervalsByGcd.get(gcdBucket);
+      if (interval === undefined) {
+        speedIntervalsByGcd.set(gcdBucket, [value, value]);
+      } else {
+        interval[1] = value;
+      }
+    }
+    const pairIntervals: TierInterval[] = [];
+    for (const first of thresholdIntervals[0]!) {
+      for (const second of thresholdIntervals[1]!) {
+        pairIntervals.push([
+          first[0] + second[0],
+          first[1] + second[1],
+        ]);
+      }
+    }
+    const lowerBound = (values: readonly number[], target: number): number => {
+      let left = 0;
+      let right = values.length;
+      while (left < right) {
+        const middle = (left + right) >> 1;
+        if (values[middle]! < target) left = middle + 1;
+        else right = middle;
+      }
+      return left;
+    };
+    const upperBound = (values: readonly number[], target: number): number => {
+      let left = 0;
+      let right = values.length;
+      while (left < right) {
+        const middle = (left + right) >> 1;
+        if (values[middle]! <= target) left = middle + 1;
+        else right = middle;
+      }
+      return left;
+    };
+    const countThresholdCombinationsInRange = (
+      maximumAttributeValue: number,
+      minimumTotal: number,
+      maximumTotal: number,
+      minimumGcdBucket = Number.NEGATIVE_INFINITY,
+      maximumGcdBucket = Number.POSITIVE_INFINITY,
+    ): bigint => {
+      if (!Number.isInteger(maximumAttributeValue) || maximumAttributeValue < 0) {
+        throw new RangeError("理论阈值最大属性必须是非负整数");
+      }
+      if (
+        !Number.isInteger(minimumTotal) ||
+        !Number.isInteger(maximumTotal) ||
+        minimumTotal < 0 ||
+        maximumTotal < minimumTotal
+      ) {
+        throw new RangeError("理论阈值总属性和范围无效");
+      }
+      if (maximumAttributeValue >= speedGcdBuckets.length) {
+        throw new RangeError(
+          `理论阈值速度属性超出 GCD 分桶表范围：${maximumAttributeValue}`,
+        );
+      }
+      const boundedThresholdIntervals = thresholdStats.map((stat) =>
+        buildTierIntervals(stat, (value) => value <= maximumAttributeValue),
+      );
+      const boundedSpeedIntervalsByGcd = new Map<number, TierInterval>();
+      for (let value = 0; value <= maximumAttributeValue; value++) {
+        const gcdBucket = speedGcdBuckets[value]!;
+        if (gcdBucket < minimumGcdBucket || gcdBucket > maximumGcdBucket) {
+          continue;
+        }
+        const interval = boundedSpeedIntervalsByGcd.get(gcdBucket);
+        if (interval === undefined) {
+          boundedSpeedIntervalsByGcd.set(gcdBucket, [value, value]);
+        } else {
+          interval[1] = value;
+        }
+      }
+      const boundedPairIntervals: TierInterval[] = [];
+      for (const first of boundedThresholdIntervals[0]!) {
+        for (const second of boundedThresholdIntervals[1]!) {
+          boundedPairIntervals.push([
+            first[0] + second[0],
+            first[1] + second[1],
+          ]);
+        }
+      }
+      const boundedDirectHitMinimums = boundedThresholdIntervals[2]!.map(
+        (interval) => interval[0],
+      );
+      const boundedDirectHitMaximums = boundedThresholdIntervals[2]!.map(
+        (interval) => interval[1],
+      );
+      let result = 0n;
+      for (const speedInterval of boundedSpeedIntervalsByGcd.values()) {
+        for (const pair of boundedPairIntervals) {
+          const right = upperBound(
+            boundedDirectHitMinimums,
+            maximumTotal - speedInterval[0] - pair[0],
+          );
+          const left = lowerBound(
+            boundedDirectHitMaximums,
+            minimumTotal - speedInterval[1] - pair[1],
+          );
+          if (right > left) result += BigInt(right - left);
+        }
+      }
+      return result;
+    };
+    const directHitMinimums = thresholdIntervals[2]!.map(
+      (interval) => interval[0],
+    );
+    const directHitMaximums = thresholdIntervals[2]!.map(
+      (interval) => interval[1],
+    );
+    let theoreticalThresholdCombinationCount = 0n;
+    for (const [gcdBucket, speedInterval] of speedIntervalsByGcd) {
+      for (const pair of pairIntervals) {
+        const right = upperBound(
+          directHitMinimums,
+          10000 - speedInterval[0] - pair[0],
+        );
+        const left = lowerBound(
+          directHitMaximums,
+          theoreticalMinimumTotal - speedInterval[1] - pair[1],
+        );
+        if (right > left) {
+          theoreticalThresholdCombinationCount += BigInt(right - left);
+        }
+      }
+      if (gcdBucket < 200 || gcdBucket > 250) {
+        throw new Error("GCD 分桶超出理论范围");
+      }
+    }
+    console.log(
+      `理论速度 GCD 桶=${speedIntervalsByGcd.size}`,
+    );
+    console.log(
+      `理论四属性阈值组合数（和=${theoreticalMinimumTotal}..10000；GCD=2.00..2.50）：${theoreticalThresholdCombinationCount}`,
+    );
+    /*
+     * Keep a wider table for the preset equipment totals. Its threshold key
+     * uses the same GCD calculation, including speeds outside the theoretical
+     * 2.00..2.50 filter.
+     */
+
+    const nonPrimaryAttributeIds = [
+      criticalHitId,
+      determinationId,
+      directHitId,
+      speedAttributeId,
+    ];
+    const equipmentVector = (equip: EquipInfo): AttributeVector => {
+      const values = nonPrimaryAttributeIds.map((attributeId) =>
+        equip.baseParams
+          .filter((param) => param.baseParamId === attributeId)
+          .reduce((sum, param) => sum + param.value, 0),
+      );
+      return [values[0]!, values[1]!, values[2]!, values[3]!];
+    };
+    const thresholdTierTables = thresholdStats.map((stat) => {
+      const table = new Uint16Array(speedGcdBuckets.length);
+      for (let value = 0; value < table.length; value++) {
+        table[value] = equippedAttributeTier(
+          v1Job,
+          v1JobLevel,
+          stat,
+          value,
+        );
+      }
+      return table;
+    });
+    for (const [index, table] of thresholdTierTables.entries()) {
+      for (let value = 1; value < table.length; value++) {
+        if (table[value]! < table[value - 1]!) {
+          throw new Error(`理论阈值档位不是单调的：属性索引=${index}；值=${value}`);
+        }
+      }
+    }
+    for (let value = 1; value < speedGcdBuckets.length; value++) {
+      if (speedGcdBuckets[value]! > speedGcdBuckets[value - 1]!) {
+        throw new Error(`理论 GCD 桶不是单调的：值=${value}`);
+      }
+    }
+    const layerResults = countAttributeCombinationLayers({
+      slots: slotsWithEquips.map(([name, equips]) => ({
+        name,
+        candidates: equips.map(equipmentVector),
+      })),
+      workRoot: `${import.meta.dirname}/.attribute-count-work`,
+      blockSize: Number(process.env.DATA_TEST_ATTRIBUTE_BLOCK_SIZE ?? 2_000_000),
+      keepTemporaryFiles:
+        process.env.DATA_TEST_KEEP_ATTRIBUTE_TEMP === "true",
+      thresholdKey: (first, second, third, fourth, output) => {
+        if (fourth >= speedGcdBuckets.length) {
+          throw new RangeError("预设搜索速度超出 GCD 分桶表范围");
+        }
+        // 这是阈值键的内部排序值；偏移到非负范围，避免负数参与按位 OR 污染高位。
+        const speedRank = 0x8000 - speedGcdBuckets[fourth]!;
+        output[0] =
+          ((thresholdTierTables[0]![first]! << 16) |
+            thresholdTierTables[1]![second]!) >>> 0;
+        output[1] =
+          ((thresholdTierTables[2]![third]! << 16) | speedRank) >>> 0;
+      },
+      thresholdUpperBound: (minimumTotal, maximumTotal) =>
+        countThresholdCombinationsInRange(
+          maximumTotal,
+          minimumTotal,
+          maximumTotal,
+        ),
+      thresholdKeysSorted: false,
+      onLayerProgress: (progress) => {
+        console.log(
+          `属性组合进度：槽位=${progress.name}；完成=${progress.percent.toFixed(1)}%`,
+        );
+      },
+      onLayerComplete: (result) => {
+        console.log(
+          `属性组合去重：槽位=${result.name}；候选=${result.candidateCount}` +
+            `；遍历次数=${result.traversalCount}` +
+            `；精确总属性=${result.exactCount}` +
+            `；阈值截断=${result.thresholdCount}` +
+            `；总属性和范围=${result.minimumTotal}..${result.maximumTotal}` +
+            `；理论阈值范围上限=${result.thresholdUpperBound}`,
+        );
+      },
+    });
+    void layerResults;
+    process.exit(0);
+  }
   const v1StatIndexes = new Map<Stat, number>();
   for (const [id, index] of v1AttributeIndex) {
     const stat = baseParamIdToStat[id];
@@ -1302,10 +1637,25 @@ client.close();
     weaponDamageStat,
     v1AttributeIndex.get(weaponDamageId)!,
   );
-  const v1Evaluate = createEquippedEffectsVectorEvaluator(
+  const maxContributions = v1AttributeIds.map((attributeId) =>
+    slotsWithEquips.reduce(
+      (total, [, equips]) => total + Math.max(0, ...equips.map((equip) =>
+        attributeId === weaponDamageId
+          ? equip[weaponDamageStat]
+          : equip.baseParams.filter((param) => param.baseParamId === attributeId)
+              .reduce((sum, param) => sum + param.value, 0))),
+      0,
+    ) + Math.max(0, ...availableFoods.map((food) =>
+      food.baseParams.find((param) => param.baseParamId === attributeId)?.maxValue ?? 0)),
+  );
+  if (process.env.DATA_TEST_PRINT_MAX === "true") {
+    console.log(`最大属性贡献：${v1AttributeIds.map((id, index) => `${id}=${maxContributions[index]}`).join(",")}`);
+  }
+  const v1Evaluate = createDamageGcdVectorEvaluator(
     v1Job,
     v1JobLevel,
     v1StatIndexes,
+    maxContributions,
   );
   const foodPriorityByIdentity = new Map(
     availableFoods.map((food) => {
@@ -1330,7 +1680,65 @@ client.close();
   const v1Damage = (attributes: readonly number[]): number => {
     return v1Evaluate(attributes)?.damage ?? Number.NEGATIVE_INFINITY;
   };
+  const configuredSuffixFrontierSlotCount = Number(
+    process.env.DATA_TEST_SUFFIX_SLOTS ?? 4,
+  );
+  if (
+    !Number.isInteger(configuredSuffixFrontierSlotCount) ||
+    configuredSuffixFrontierSlotCount < 0
+  ) {
+    throw new Error("DATA_TEST_SUFFIX_SLOTS 必须是非负整数");
+  }
+  const rawSuffixFrontierMaxCombinations =
+    process.env.DATA_TEST_SUFFIX_MAX_COMBINATIONS;
+  const configuredSuffixFrontierMaxCombinations =
+    rawSuffixFrontierMaxCombinations === undefined ||
+      rawSuffixFrontierMaxCombinations === ""
+      ? undefined
+      : Number(rawSuffixFrontierMaxCombinations);
+  if (
+    configuredSuffixFrontierMaxCombinations !== undefined &&
+    (!Number.isSafeInteger(configuredSuffixFrontierMaxCombinations) ||
+      configuredSuffixFrontierMaxCombinations < 1)
+  ) {
+    throw new Error("DATA_TEST_SUFFIX_MAX_COMBINATIONS 必须是正整数");
+  }
+  const rawSuffixFrontierLeafSize = process.env.DATA_TEST_SUFFIX_LEAF_SIZE;
+  const configuredSuffixFrontierLeafSize =
+    rawSuffixFrontierLeafSize === undefined
+      ? undefined
+      : Number(rawSuffixFrontierLeafSize);
+  if (
+    configuredSuffixFrontierLeafSize !== undefined &&
+    (!Number.isInteger(configuredSuffixFrontierLeafSize) ||
+      configuredSuffixFrontierLeafSize < 1)
+  ) {
+    throw new Error("DATA_TEST_SUFFIX_LEAF_SIZE 必须是正整数");
+  }
+  const useDpsObjective =
+    process.env.DATA_TEST_GCD === undefined || process.env.DATA_TEST_GCD === "";
+  const abortAfterSearched = Number(
+    process.env.DATA_TEST_ABORT_AFTER_SEARCH ?? 0,
+  );
+  if (!Number.isInteger(abortAfterSearched) || abortAfterSearched < 0) {
+    throw new Error("DATA_TEST_ABORT_AFTER_SEARCH 必须是非负整数");
+  }
+  let searchAbortRequested = false;
+  const abortAfterMs = Number(process.env.DATA_TEST_ABORT_AFTER_MS ?? 0);
+  if (!Number.isFinite(abortAfterMs) || abortAfterMs < 0) {
+    throw new Error("DATA_TEST_ABORT_AFTER_MS 必须是非负有限数字");
+  }
+  let searchAbortDeadline = Number.POSITIVE_INFINITY;
+  const abortFlag = new SharedArrayBuffer(4);
+  const abortView = new Int32Array(abortFlag);
+  process.on("SIGINT", () => {
+    searchAbortRequested = true;
+    Atomics.store(abortView, 0, 1);
+  });
   const searchOptions: LoadoutFinderV2Options = {
+    shouldAbort: () => searchAbortRequested || Date.now() >= searchAbortDeadline,
+    debug: process.env.DATA_TEST_DEBUG !== "false",
+    compactDominance: process.env.DATA_TEST_COMPACT_DOMINANCE !== "false",
     attributeIds: v1AttributeIds,
     greedyPriorityAttributeIds: [
       primaryStatId,
@@ -1358,6 +1766,138 @@ client.close();
       ),
       { baseParamId: weaponDamageId, value: equip[weaponDamageStat] },
     ],
+    suffixPairAttributes:
+      process.env.DATA_TEST_SUFFIX_PAIR_INDEX === "false"
+        ? undefined
+        : [
+            v1AttributeIndex.get(weaponDamageId)!,
+            v1AttributeIndex.get(primaryStatId)!,
+          ] as const,
+    suffixPairStride:
+      process.env.DATA_TEST_SUFFIX_PAIR_INDEX === "false"
+        ? undefined
+        : maxContributions[v1AttributeIndex.get(primaryStatId)!]! + 1,
+    suffixFrontierSlotCount: configuredSuffixFrontierSlotCount,
+    suffixFrontierMaxCombinations: configuredSuffixFrontierMaxCombinations,
+    suffixFrontierLeafSize: configuredSuffixFrontierLeafSize,
+    slotOrder: (() => {
+      const value = process.env.DATA_TEST_SLOT_ORDER;
+      if (
+        value === undefined ||
+        value === "candidate-count-descending" ||
+        value === "relaxation-gap" ||
+        value === "relaxation-gap-with-small-suffix"
+      ) {
+        return value;
+      }
+      throw new Error(
+        "DATA_TEST_SLOT_ORDER 必须是 candidate-count-descending、relaxation-gap 或 relaxation-gap-with-small-suffix",
+      );
+    })(),
+    combinedDamageCache:
+      process.env.DATA_TEST_COMBINED_CACHE === "true",
+    collectTotalSignatures:
+      process.env.DATA_TEST_COLLECT_SIGNATURES === "true",
+    abortAfterSearched: abortAfterSearched === 0 ? undefined : abortAfterSearched,
+    combinedDamageFunction: useDpsObjective
+      ? v1Evaluate.combinedDps
+      : v1Evaluate.combinedDamage,
+    combinedDamageFlatFunction: useDpsObjective
+      ? v1Evaluate.combinedDpsFlat
+      : v1Evaluate.combinedDamageFlat,
+    maxCombinedDamageFlat: useDpsObjective
+      ? v1Evaluate.maxCombinedDpsFlat
+      : v1Evaluate.maxCombinedDamageFlat,
+    maxCombinedDamageFlatColumnsFunction: useDpsObjective
+      ? v1Evaluate.maxCombinedDpsFlatColumns
+      : v1Evaluate.maxCombinedDamageFlatColumns,
+    maxCombinedDamageFlatBatch: useDpsObjective
+      ? v1Evaluate.maxCombinedDpsFlatBatch
+      : v1Evaluate.maxCombinedDamageFlatBatch,
+    // The RDM data set benefits more from per-food incumbent pruning than
+    // from sharing one suffix scan across all four food branches. Keep the
+    // shared path available for targeted experiments, but disable it by
+    // default for the production benchmark.
+    shareFoods: process.env.DATA_TEST_SHARE_FOODS !== "false",
+    shareFoodsMode: (() => {
+      const value = process.env.DATA_TEST_SHARE_FOODS_MODE;
+      if (value === undefined || value === "batch" || value === "sequential") {
+        return value ?? "sequential";
+      }
+      throw new Error("DATA_TEST_SHARE_FOODS_MODE 必须是 batch 或 sequential");
+    })(),
+    prefixUpperBound: (() => {
+      const value = process.env.DATA_TEST_PREFIX_UPPER;
+      if (value === undefined || value === "true" || value === "false") {
+        return value !== "false";
+      }
+      throw new Error("DATA_TEST_PREFIX_UPPER 必须是 true 或 false");
+    })(),
+    prefixSuffixBlockUpperBound:
+      process.env.DATA_TEST_PREFIX_SUFFIX_BLOCK_UPPER === "true",
+    suffixSubblockRefinement: process.env.DATA_TEST_SUFFIX_SUBBLOCK === "true",
+    suffixSubblockStateLimit: (() => {
+      const value = process.env.DATA_TEST_SUFFIX_SUBBLOCK_SIZE;
+      if (value === undefined || value === "") return undefined;
+      const parsed = Number(value);
+      if (!Number.isInteger(parsed) || parsed < 1) {
+        throw new Error("DATA_TEST_SUFFIX_SUBBLOCK_SIZE 必须是正整数");
+      }
+      return parsed;
+    })(),
+    suffixFlatScan: process.env.DATA_TEST_SUFFIX_FLAT !== "false",
+    suffixFlatTree: process.env.DATA_TEST_SUFFIX_FLAT_TREE === "true",
+    suffixFlatTreeLeafSize: (() => {
+      const value = process.env.DATA_TEST_SUFFIX_TREE_LEAF_SIZE;
+      if (value === undefined || value === "") return undefined;
+      const parsed = Number(value);
+      if (!Number.isInteger(parsed) || parsed < 1) {
+        throw new Error("DATA_TEST_SUFFIX_TREE_LEAF_SIZE 必须是正整数");
+      }
+      return parsed;
+    })(),
+    suffixStateUpperBound: process.env.DATA_TEST_SUFFIX_STATE_UPPER === "true",
+    sharedRawPrefixDominance: process.env.DATA_TEST_SHARED_RAW_PREFIX === "true",
+    suffixNecessaryLowerBound:
+      process.env.DATA_TEST_SUFFIX_NECESSARY_LOWER === "true",
+    suffixNecessaryIntersection:
+      process.env.DATA_TEST_SUFFIX_NECESSARY_INTERSECTION === "true",
+    suffixSumNecessaryBound:
+      process.env.DATA_TEST_SUFFIX_SUM_NECESSARY !== "false",
+    suffixExactBlockUpperBound:
+      process.env.DATA_TEST_SUFFIX_EXACT_BLOCK_UPPER === "true",
+    suffixDynamicBlockOrder:
+      process.env.DATA_TEST_SUFFIX_DYNAMIC_ORDER === "true",
+    suffixPerSlotBounds:
+      process.env.DATA_TEST_SUFFIX_PER_SLOT_BOUNDS === "true",
+    suffixTotalDamageCache:
+      process.env.DATA_TEST_SUFFIX_TOTAL_CACHE === "true",
+    suffixTotalDamageTierCache:
+      process.env.DATA_TEST_SUFFIX_TOTAL_TIER_CACHE === "true",
+    suffixPrefixGridUpperBound:
+      process.env.DATA_TEST_SUFFIX_GRID_UPPER === "true",
+    suffixPrefixGridStateUpperBound:
+      process.env.DATA_TEST_SUFFIX_GRID_STATE_UPPER === "true",
+    suffixPrefixTierLookup:
+      process.env.DATA_TEST_SUFFIX_PREFIX_TIER_LOOKUP === "true",
+    suffixPrefixGridSize: (() => {
+      const value = process.env.DATA_TEST_SUFFIX_GRID_SIZE;
+      if (value === undefined || value === "") return undefined;
+      const parsed = Number(value);
+      if (!Number.isInteger(parsed) || parsed < 2 || parsed > 16) {
+        throw new Error("DATA_TEST_SUFFIX_GRID_SIZE 必须是 2 到 16 之间的整数");
+      }
+      return parsed;
+    })(),
+    prefixFrontierBatch: process.env.DATA_TEST_PREFIX_FRONTIER === "true",
+    suffixFutureTierCompression:
+      process.env.DATA_TEST_SUFFIX_FUTURE_TIER_COMPRESSION === "true",
+    combinedDamageUpperBoundFunction:
+      process.env.DATA_TEST_DISABLE_UPPER === "true"
+        ? undefined
+        : useDpsObjective
+          ? v1Evaluate.combinedDpsUpperBound
+          : v1Evaluate.combinedDamageUpperBound,
   };
   const searchSlots = slotsWithEquips.map(([, equips]) => equips);
   const optionalConstraint = (name: string): number | undefined => {
@@ -1387,41 +1927,302 @@ client.close();
         ? undefined
         : ["1", "true"].includes(rawMaxToughnessMode.toLowerCase()),
   };
-
-  const v2Finder = new LoadoutFinderV2(
-    v1Damage,
-    v1AttributeIds.length,
+  const configuredWorkerCount = Number(process.env.DATA_TEST_WORKERS ?? 1);
+  if (!Number.isInteger(configuredWorkerCount) || configuredWorkerCount < 1 || configuredWorkerCount > 4) {
+    throw new Error("DATA_TEST_WORKERS 必须是 1 到 4 之间的整数");
+  }
+  const selectedAlgorithm = process.env.DATA_TEST_ALGORITHM ?? "exact";
+  if (!new Set(["exact", "v2", "dp"]).has(selectedAlgorithm)) {
+    throw new Error("DATA_TEST_ALGORITHM 必须是 exact、v2 或 dp");
+  }
+  if (configuredWorkerCount > 1 && selectedAlgorithm !== "v2") {
+    throw new Error("DATA_TEST_WORKERS > 1 仅支持 DATA_TEST_ALGORITHM=v2");
+  }
+  const workerData = {
+    job: v1Job,
+    jobLevel: v1JobLevel,
+    attributeIds: v1AttributeIds,
+    statIndexes: [...v1StatIndexes.entries()],
+    maxContributions,
+    slots: searchSlots,
+    foods: v1Foods,
+    constraints: v2Constraints,
+    tierStats: [...tierStatById.entries()],
+    primaryStatId,
     speedAttributeId,
     toughnessAttributeId,
-    {
-      ...searchOptions,
-      evaluationFunction: v1Evaluate,
-      gcdToSpeedRange: (gcdSeconds) =>
-        equippedSpeedRangeForGcd(v1Job, v1JobLevel, gcdSeconds),
-      toughnessPercentToMinimum: (percentage) =>
-        equippedToughnessForMitigationPercent(v1Job, v1JobLevel, percentage),
-    },
-  );
-  console.log(`V2搜索约束：${JSON.stringify(v2Constraints)}`);
+    weaponDamageStat,
+    weaponDamageId,
+    debug: process.env.DATA_TEST_DEBUG !== "false",
+    compactDominance: process.env.DATA_TEST_COMPACT_DOMINANCE !== "false",
+    suffixPrefixGridUpperBound:
+      process.env.DATA_TEST_SUFFIX_GRID_UPPER === "true",
+    suffixPrefixGridSize: process.env.DATA_TEST_SUFFIX_GRID_SIZE,
+    prefixFrontierBatch: process.env.DATA_TEST_PREFIX_FRONTIER === "true",
+    suffixSumNecessaryBound:
+      process.env.DATA_TEST_SUFFIX_SUM_NECESSARY !== "false",
+    prefixSuffixBlockUpperBound:
+      process.env.DATA_TEST_PREFIX_SUFFIX_BLOCK_UPPER === "true",
+    suffixPairAttributes:
+      process.env.DATA_TEST_SUFFIX_PAIR_INDEX === "false"
+        ? undefined
+        : [
+            v1AttributeIndex.get(weaponDamageId)!,
+            v1AttributeIndex.get(primaryStatId)!,
+          ],
+    suffixPairStride:
+      process.env.DATA_TEST_SUFFIX_PAIR_INDEX === "false"
+        ? undefined
+        : maxContributions[v1AttributeIndex.get(primaryStatId)!]! + 1,
+    suffixPrefixTierLookup:
+      process.env.DATA_TEST_SUFFIX_PREFIX_TIER_LOOKUP === "true",
+    suffixFutureTierCompression:
+      process.env.DATA_TEST_SUFFIX_FUTURE_TIER_COMPRESSION === "true",
+    suffixFrontierSlotCount: configuredSuffixFrontierSlotCount,
+    suffixFrontierMaxCombinations: configuredSuffixFrontierMaxCombinations,
+    abortFlag,
+  };
+  const runWorker = (index: number): Promise<{
+    result: LoadoutV2Result | undefined;
+    objectiveScore: number;
+    statistics: any;
+  }> =>
+    new Promise((resolveWorker, rejectWorker) => {
+      const worker = new Worker(new URL("./archived/v2-worker.mjs", import.meta.url), {
+        workerData: { ...workerData, partitionIndex: index, partitionCount: configuredWorkerCount },
+      });
+      worker.once("message", (message) => {
+        resolveWorker(message);
+        void worker.terminate();
+      });
+      worker.once("error", rejectWorker);
+    });
+  const runExactMipWorker = (
+    maxSearchMs: number,
+  ): Promise<{
+    result: LoadoutV2Result | undefined;
+    statistics: Record<string, unknown> | undefined;
+    peakRssBytes: number;
+  }> =>
+    new Promise((resolveWorker, rejectWorker) => {
+      const maxWorkerRssBytes = Math.floor(3.5 * 1024 * 1024 * 1024);
+      let peakRssBytes = process.memoryUsage.rss();
+      let terminatedForMemory = false;
+      let terminatedForTime = false;
+      let settled = false;
+      const worker = new Worker(new URL("./exact-mip-worker.mjs", import.meta.url), {
+        workerData: {
+          job: v1Job,
+          jobLevel: v1JobLevel,
+          attributeIds: v1AttributeIds,
+          statIndexes: [...v1StatIndexes.entries()],
+          maxContributions,
+          slots: searchSlots,
+          foods: v1Foods,
+          constraints: v2Constraints,
+          speedAttributeId,
+          toughnessAttributeId,
+          weaponDamageStat,
+          weaponDamageId,
+          maxSearchMs,
+        },
+        resourceLimits: { maxOldGenerationSizeMb: 2560 },
+      });
+      const finish = (callback: () => void) => {
+        if (settled) return;
+        settled = true;
+        clearInterval(memoryMonitor);
+        clearTimeout(timeWatchdog);
+        callback();
+      };
+      const memoryMonitor = setInterval(() => {
+        const rss = process.memoryUsage.rss();
+        if (rss > peakRssBytes) peakRssBytes = rss;
+        if (rss >= maxWorkerRssBytes && !settled) {
+          terminatedForMemory = true;
+          void worker.terminate();
+          finish(() => rejectWorker(new Error(
+            `精确搜索进程 RSS 达到内存保护线 ${maxWorkerRssBytes} 字节，已停止且未声称最优`,
+          )));
+        }
+      }, 10);
+      const timeWatchdog = setTimeout(() => {
+        terminatedForTime = true;
+        void worker.terminate();
+        finish(() => rejectWorker(new Error("精确 MIP 工作线程达到搜索时限，未完成最优性证明")));
+      }, maxSearchMs + 750);
+      worker.on("message", (message) => {
+        if (message.type === "progress") {
+          if (process.env.DATA_TEST_DEBUG !== "false") console.log(message.message);
+          return;
+        }
+        if (message.type === "error") {
+          const error = new Error(message.error.message);
+          error.name = message.error.name ?? "Error";
+          if (message.error.stack) error.stack = message.error.stack;
+          finish(() => rejectWorker(error));
+          return;
+        }
+        if (message.type === "result") {
+          peakRssBytes = Math.max(peakRssBytes, process.memoryUsage.rss());
+          finish(() => resolveWorker({
+            result: message.result === undefined ? undefined : {
+              damage: message.result.damage,
+              selection: message.result.selection,
+              food: message.result.food,
+              maximumToughness: message.result.maximumToughness,
+            },
+            statistics: message.result?.statistics,
+            peakRssBytes,
+          }));
+          void worker.terminate();
+        }
+      });
+      worker.once("error", (error) => finish(() => rejectWorker(error)));
+      worker.once("exit", (code) => {
+        if (settled) return;
+        const reason = terminatedForMemory
+          ? "RSS 超过保护线"
+          : terminatedForTime
+            ? "超过搜索时限"
+            : `工作线程退出（代码 ${code}）`;
+        finish(() => rejectWorker(new Error(`${reason}，未完成最优性证明`)));
+      });
+    });
+  console.log(`搜索约束：${JSON.stringify(v2Constraints)}`);
   const startedAt = performance.now();
-  const searchResult: LoadoutV2Result | undefined = v2Finder.findBest(
-    searchSlots,
-    v1Foods,
-    v2Constraints,
-  );
+  searchAbortDeadline =
+    abortAfterMs === 0 ? Number.POSITIVE_INFINITY : Date.now() + abortAfterMs;
+  const abortTimer = abortAfterMs === 0
+    ? undefined
+    : setTimeout(() => {
+        searchAbortRequested = true;
+        Atomics.store(abortView, 0, 1);
+      }, abortAfterMs);
+  let searchResult: LoadoutV2Result | undefined;
+  let searchObjectiveScore = Number.NEGATIVE_INFINITY;
+  let searchMaximumToughness = Number.NEGATIVE_INFINITY;
+  let searchStatistics: any;
+  if (configuredWorkerCount > 1) {
+    let workerResults: {
+      result: LoadoutV2Result | undefined;
+      objectiveScore: number;
+      statistics: any;
+    }[];
+    try {
+      workerResults = await Promise.all(
+        Array.from({ length: configuredWorkerCount }, (_, index) => runWorker(index)),
+      );
+    } catch (error) {
+      if (!(error instanceof Error) || error.message !== "V2 搜索已中断，未完成最优性证明") {
+        throw error;
+      }
+      console.error(`V2搜索采样已停止：${String(error)}`);
+      process.exitCode = 130;
+      if (abortTimer !== undefined) clearTimeout(abortTimer);
+      return;
+    }
+    for (const workerResult of workerResults) {
+      const maximumToughness =
+        workerResult.result?.maximumToughness ?? Number.NEGATIVE_INFINITY;
+      const better =
+        maximumToughness > searchMaximumToughness ||
+        (maximumToughness === searchMaximumToughness &&
+          workerResult.objectiveScore > searchObjectiveScore);
+      if (
+        workerResult.result !== undefined &&
+        (searchResult === undefined || better)
+      ) {
+        searchResult = workerResult.result;
+        searchObjectiveScore = workerResult.objectiveScore;
+        searchMaximumToughness = maximumToughness;
+      }
+    }
+    searchStatistics = workerResults.map(({ statistics }) => statistics);
+  } else {
+    if (selectedAlgorithm === "exact") {
+      const configuredExactTimeout = Number(process.env.DATA_TEST_EXACT_TIMEOUT_MS ?? 115_000);
+      if (!Number.isFinite(configuredExactTimeout) || configuredExactTimeout <= 0 || configuredExactTimeout > 115_000) {
+        throw new Error("DATA_TEST_EXACT_TIMEOUT_MS 必须大于 0 且不超过 115000");
+      }
+      const effectiveTimeout = abortAfterMs === 0
+        ? configuredExactTimeout
+        : Math.min(configuredExactTimeout, abortAfterMs);
+      try {
+        const exact = await runExactMipWorker(effectiveTimeout);
+        searchResult = exact.result;
+        searchStatistics = {
+          ...exact.statistics,
+          peakRssBytes: exact.peakRssBytes,
+        };
+      } catch (error) {
+        console.error(`精确搜索已停止：${String(error)}`);
+        process.exitCode = 130;
+        if (abortTimer !== undefined) clearTimeout(abortTimer);
+        return;
+      }
+    } else if (selectedAlgorithm === "dp") {
+      if (v2Constraints.gcd !== undefined || v2Constraints.speedMin !== undefined ||
+          v2Constraints.speedMax !== undefined || v2Constraints.toughMin !== undefined ||
+          v2Constraints.toughnessMinPercent !== undefined || v2Constraints.maxToughnessMode === true) {
+        throw new Error("DATA_TEST_ALGORITHM=dp 仅支持无约束伤害采样");
+      }
+      const dpDamage = (attributes: readonly number[]): number => {
+        const evaluation = v1Evaluate(attributes);
+        return evaluation === undefined || evaluation.gcd <= 0
+          ? Number.NEGATIVE_INFINITY
+          : evaluation.damage / evaluation.gcd;
+      };
+      const dpFinder = new (await import("./archived/loadout-finder-dp.ts")).LoadoutFinderDp(dpDamage, v1AttributeIds.length, searchOptions);
+      try {
+        searchResult = dpFinder.findBest(searchSlots, v1Foods);
+        searchStatistics = dpFinder.statistics;
+      } catch (error) {
+        console.error(`DP搜索部分统计：${JSON.stringify(dpFinder.statistics)}`);
+        throw error;
+      }
+    } else {
+      const v2Finder = new (await import("./archived/loadout-finder-v2.ts")).LoadoutFinderV2(
+        v1Damage,
+        v1AttributeIds.length,
+        speedAttributeId,
+        toughnessAttributeId,
+        {
+          ...searchOptions,
+          evaluationFunction: v1Evaluate,
+          gcdToSpeedRange: (gcdSeconds) =>
+            equippedSpeedRangeForGcd(v1Job, v1JobLevel, gcdSeconds),
+          toughnessPercentToMinimum: (percentage) =>
+            equippedToughnessForMitigationPercent(v1Job, v1JobLevel, percentage),
+        },
+      );
+      try {
+        searchResult = v2Finder.findBest(searchSlots, v1Foods, v2Constraints);
+        searchStatistics = v2Finder.statistics;
+      } catch (error) {
+        console.error(
+          `V2搜索部分统计：${JSON.stringify(v2Finder.statistics)}`,
+        );
+        if (!(error instanceof Error) || error.message !== "V2 搜索已中断，未完成最优性证明") throw error;
+        console.error(`V2搜索采样已停止：${String(error)}`);
+        process.exitCode = 130;
+        return;
+      }
+    }
+  }
+  if (abortTimer !== undefined) clearTimeout(abortTimer);
   const elapsedMs = performance.now() - startedAt;
-  console.log(
-    `V2搜索统计：耗时=${elapsedMs.toFixed(0)}ms；搜索=${v2Finder.statistics.searched}` +
-      `；叶子=${v2Finder.statistics.leaves}` +
-      `；初始贪心=${v2Finder.statistics.initialGreedyDamage}` +
-      `；局部改良=${v2Finder.statistics.localSearchDamage}` +
-      `；约束剪枝=${v2Finder.statistics.constraintPruned}` +
-      `；后缀约束剪枝=${v2Finder.statistics.suffixConstraintPruned}` +
-      `；后缀界检查=${v2Finder.statistics.suffixBoundChecks}` +
-      `；后缀界剪枝=${v2Finder.statistics.suffixBoundPruned}` +
-      `；最高坚韧=${v2Finder.statistics.maximumToughness ?? "未启用"}`,
+  if (selectedAlgorithm === "exact") {
+    console.log(`精确 MIP 搜索统计：耗时=${elapsedMs.toFixed(0)}ms；并发=1`);
+  } else console.log(
+      `${selectedAlgorithm === "dp" ? "DP" : selectedAlgorithm === "exact" ? "精确 MIP" : "V2"}搜索统计：耗时=${elapsedMs.toFixed(0)}ms；并发=${configuredWorkerCount}` +
+      `；搜索=${Array.isArray(searchStatistics) ? searchStatistics.reduce((sum, stat) => sum + (stat.searched ?? stat.transitions ?? 0), 0) : (searchStatistics.searched ?? searchStatistics.transitions)}` +
+      `；叶子=${Array.isArray(searchStatistics) ? searchStatistics.reduce((sum, stat) => sum + (stat.leaves ?? 0), 0) : (searchStatistics.leaves ?? 0)}`,
   );
-  const resultAlgorithm = "V2";
+  if (selectedAlgorithm === "exact") {
+    console.log(`精确性与资源统计：${JSON.stringify(searchStatistics)}`);
+  }
+  const resultAlgorithm = selectedAlgorithm === "exact" ? "精确 MIP" : selectedAlgorithm === "dp" ? "DP" : "V2";
   if (searchResult === undefined || searchResult.food === undefined) {
     throw new Error(`${resultAlgorithm} 未找到可导出的配装结果`);
   }
