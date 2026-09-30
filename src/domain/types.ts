@@ -33,6 +33,7 @@ export type JobId =
   | "MCH"
   | "DNC"
   | "BLM"
+  | "BLU"
   | "SMN"
   | "RDM"
   | "PCT";
@@ -64,6 +65,8 @@ export interface Gear {
   stats: Stats;
   materiaSlots: number;
   materiaAdvanced?: true;
+  /** Item-level unique flag when it is available in the generated source data. */
+  unique?: boolean;
   hq?: true;
   customizable?: true;
   customParameters?: CustomWeaponParameter[];
@@ -112,6 +115,13 @@ export interface JobSchema {
   partyBonus?: number;
   gcdModifier: number;
   traitDamageMultiplier: number;
+  /** Maximum character level supported by this job. */
+  maxJobLevel?: number;
+  /** The source gives limited-job weapons zero item-level weight. */
+  ignoreWeaponItemLevel?: boolean;
+  /** Initial item-level range selected for this job in the optimizer. */
+  defaultItemLevel?: readonly [number, number];
+  dataSources?: DataSourceRef[];
 }
 
 export interface DataProvenance {
@@ -180,13 +190,42 @@ export interface OptimizationConfig {
   jobId: JobId;
   minItemLevel: number;
   maxItemLevel: number;
+  /** Character level used for base stats and damage formulas. Defaults to currentLevel. */
+  jobLevel?: number;
+  /** Sync item attributes and weapon damage to this item level. */
+  syncLevel?: number;
   gcdTarget?: number;
+  gcdChoices?: number[];
+  speedMin?: number;
+  speedMax?: number;
   minTenacity?: number;
+  /** Minimum final Tenacity after base attributes, equipment, and food. */
+  toughnessMin?: number;
+  toughnessMinPercent?: number;
   maximizeTenacity: boolean;
+  objective?: "damage" | "dps";
   excludedSources: string[];
+  excludedGearIds?: number[];
   forcedGear: Partial<Record<GearSlot, number>>;
-  sharedSlots: GearSlot[];
+  sharedSlots?: GearSlot[];
   foodId: number;
+  maxSearchMs?: number;
+}
+
+export type CommonGearSlot = GearSlot | "rings";
+
+export interface JointOptimizationConfig {
+  jobs: OptimizationConfig[];
+  commonSlots: CommonGearSlot[];
+  foodStrategy: "shared" | "independent";
+  objective?: "damage" | "dps";
+  maxSearchMs?: number;
+  cacheLimit?: number;
+}
+
+export interface SearchOptions {
+  signal?: AbortSignal;
+  onProgress?: (message: string) => void;
 }
 
 export interface OptimizationResult {
@@ -195,9 +234,48 @@ export interface OptimizationResult {
   stats: Stats;
   effects: Effects;
   score: number;
+  objective: "damage" | "dps";
+  damagePerSecond: number;
   gcdTier: number;
   searchedCandidates: number;
   durationMs: number;
+  maximumTenacity?: number;
+  statistics?: object;
+}
+
+export interface JointOptimizationResult {
+  jobResults: Partial<Record<JobId, OptimizationResult>>;
+  optima: Partial<Record<JobId, OptimizationResult>>;
+  commonGear: Partial<Record<CommonGearSlot, MeldedGear[]>>;
+  commonFood?: Food;
+  objective: "damage" | "dps";
+  value: { numerator: string; denominator: string; approximate: number };
+  proof: {
+    complete: true;
+    objective: "damage" | "dps";
+    optimalityScope: string;
+    outerBound: string;
+    innerSolverStatus: "Optimal";
+    formalCertificate: false;
+    numericalLimitation: string;
+    terminationReason: string;
+  };
+  statistics: {
+    elapsedMs: number;
+    timeLimitMs: number;
+    outerNodes: number;
+    completeNodes: number;
+    upperBoundPrunes: number;
+    relaxedOptimaAttained: number;
+    innerSolves: number;
+    parentResultReuses: number;
+    cacheHits: number;
+    cacheMisses: number;
+    cacheEntries: number;
+    cacheLimit: number;
+    rssBytes?: number;
+    heapUsedBytes?: number;
+  };
 }
 
 export const combatSlots: GearSlot[] = [

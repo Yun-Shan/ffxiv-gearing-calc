@@ -41,6 +41,7 @@ export const itemReturnFields = [
   "BaseParamSpecial[5]",
   "MateriaSlotCount",
   "IsAdvancedMeldingPermitted",
+  "IsUnique",
   "LevelItem",
   "EquipSlotCategory",
   "CanBeHq",
@@ -122,6 +123,20 @@ export const mandervilleReturnFields = [
   "MateriaSmallValueIndex[3]",
 ];
 
+export const classJobReturnFields = [
+  "Name",
+  "Abbreviation",
+  "ModifierHitPoints",
+  "ModifierStrength",
+  "ModifierVitality",
+  "ModifierDexterity",
+  "ModifierIntelligence",
+  "ModifierMind",
+  "ModifierPiety",
+  "IsLimitedJob",
+  "CanWearShield",
+];
+
 const statByBaseParam = new Map([
   [1, "STR"],
   [2, "DEX"],
@@ -142,7 +157,7 @@ const statByBaseParam = new Map([
 
 const classJobFields = [
   "PLD", "MNK", "WAR", "DRG", "BRD", "WHM", "BLM", "SMN", "SCH", "NIN",
-  "MCH", "DRK", "AST", "SAM", "RDM", "GNB", "DNC", "RPR", "SGE", "VPR", "PCT",
+  "MCH", "DRK", "AST", "SAM", "RDM", "GNB", "DNC", "RPR", "SGE", "VPR", "PCT", "BLU",
 ];
 
 function numberOrUndefined(value) {
@@ -162,11 +177,64 @@ export function rowMap(rows = []) {
   return map;
 }
 
+export function normalizeMcpClassJobRow(row) {
+  const values = fieldsOf(row);
+  if (!values) return undefined;
+  const name = typeof values.Name === "string" ? values.Name : undefined;
+  const abbreviation = typeof values.Abbreviation === "string" ? values.Abbreviation : undefined;
+  if (!name || !abbreviation) return undefined;
+
+  const modifierFields = {
+    hp: "ModifierHitPoints",
+    STR: "ModifierStrength",
+    VIT: "ModifierVitality",
+    DEX: "ModifierDexterity",
+    INT: "ModifierIntelligence",
+    MND: "ModifierMind",
+    PIE: "ModifierPiety",
+  };
+  const statModifiers = {};
+  for (const [stat, fieldName] of Object.entries(modifierFields)) {
+    const value = values[fieldName];
+    if (!Number.isSafeInteger(value) || value <= 0) return undefined;
+    statModifiers[stat] = value;
+  }
+  if (typeof values.IsLimitedJob !== "boolean" || typeof values.CanWearShield !== "boolean")
+    return undefined;
+
+  return {
+    name,
+    abbreviation,
+    statModifiers,
+    isLimitedJob: values.IsLimitedJob,
+    canWearShield: values.CanWearShield,
+  };
+}
+
 function field(row, name) {
   return fieldsOf(row)?.[name];
 }
 
-function readStats(row, { hq = false, damageStat } = {}) {
+export function normalizeMcpItemName(row) {
+  const itemFields = fieldsOf(row);
+  const name = itemFields?.Name;
+  if (typeof name !== "string") {
+    const rowId = Number.isSafeInteger(row?.rowId) ? ` ${row.rowId}` : "";
+    throw new Error(`MCP Item 行${rowId} 缺少有效 Name 字段`);
+  }
+  return name.trim() ? name : undefined;
+}
+
+function requiredNonNegativeInteger(row, name) {
+  const value = field(row, name);
+  if (!Number.isSafeInteger(value) || value < 0) {
+    const rowId = Number.isSafeInteger(row?.rowId) ? ` ${row.rowId}` : "";
+    throw new Error(`MCP Item 行${rowId} 的 ${name} 必须是非负安全整数`);
+  }
+  return value;
+}
+
+function readStats(row, { hq = false, damageStat, isWeapon = false } = {}) {
   const stats = {};
   for (let index = 0; index < 6; index++) {
     const baseParam = numberOrUndefined(field(row, `BaseParam[${index}]`));
@@ -174,11 +242,21 @@ function readStats(row, { hq = false, damageStat } = {}) {
     const stat = statByBaseParam.get(baseParam);
     if (stat && value !== undefined && value > 0) stats[stat] = value;
   }
-  const physical = numberOrUndefined(field(row, "DamagePhys"));
-  const magical = numberOrUndefined(field(row, "DamageMag"));
-  const delay = numberOrUndefined(field(row, "Delayms"));
-  if (damageStat === "PDMG" && physical !== undefined && physical > 0) stats.PDMG = physical;
-  if (damageStat === "MDMG" && magical !== undefined && magical > 0) stats.MDMG = magical;
+  const physical = isWeapon
+    ? requiredNonNegativeInteger(row, "DamagePhys")
+    : numberOrUndefined(field(row, "DamagePhys"));
+  const magical = isWeapon
+    ? requiredNonNegativeInteger(row, "DamageMag")
+    : numberOrUndefined(field(row, "DamageMag"));
+  const delay = isWeapon
+    ? requiredNonNegativeInteger(row, "Delayms")
+    : numberOrUndefined(field(row, "Delayms"));
+  if (damageStat === "PDMG" && physical !== undefined) stats.PDMG = physical;
+  if (damageStat === "MDMG" && magical !== undefined) stats.MDMG = magical;
+  if (isWeapon && damageStat === undefined) {
+    stats.PDMG = physical;
+    stats.MDMG = magical;
+  }
   if (delay !== undefined && delay > 0) stats.DLY = delay;
   if (hq) {
     for (let index = 0; index < 6; index++) {
@@ -193,11 +271,18 @@ function readStats(row, { hq = false, damageStat } = {}) {
   return stats;
 }
 
-export function normalizeMcpGearRow(row, fallback, categoryRow, { hq = false } = {}) {
+export function normalizeMcpGearRow(row, fallback, categoryRow, options = {}) {
+  const { hq = false } = options;
+  if (!row) return undefined;
   const itemFields = fieldsOf(row);
-  if (!itemFields) return undefined;
+  if (!itemFields) {
+    const rowId = Number.isSafeInteger(row.rowId) ? ` ${row.rowId}` : "";
+    throw new Error(`MCP Item 行${rowId} 缺少 fields，无法读取 Name`);
+  }
+  const name = normalizeMcpItemName(row);
+  if (name === undefined) return undefined;
   const categoryFields = fieldsOf(categoryRow);
-  const required = ["Name", "LevelItem", "LevelEquip", "ClassJobCategory", "EquipSlotCategory"];
+  const required = ["LevelItem", "LevelEquip", "ClassJobCategory", "EquipSlotCategory"];
   if (required.some((name) => itemFields[name] === undefined)) return undefined;
   const jobs = categoryFields
     ? classJobFields.filter((job) => categoryFields[job] === true)
@@ -209,21 +294,23 @@ export function normalizeMcpGearRow(row, fallback, categoryRow, { hq = false } =
   const materiaSlots = numberOrUndefined(itemFields.MateriaSlotCount);
   if (rawSlot === undefined || level === undefined || equipLevel === undefined || materiaSlots === undefined)
     return undefined;
-  const damageStat = fallback.stats?.PDMG !== undefined
+  const damageStat = fallback?.stats?.PDMG !== undefined
     ? "PDMG"
-    : fallback.stats?.MDMG !== undefined
+    : fallback?.stats?.MDMG !== undefined
       ? "MDMG"
       : undefined;
-  const stats = readStats(row, { hq, damageStat });
+  const isWeapon = options.isWeapon ?? fallback?.slot === "weapon";
+  const stats = readStats(row, { hq, damageStat, isWeapon });
   return {
     ...fallback,
-    name: String(itemFields.Name),
+    name,
     rawSlot,
     level,
     equipLevel,
-    jobCategory: numberOrUndefined(itemFields.ClassJobCategory) ?? fallback.jobCategory,
+    jobCategory: numberOrUndefined(itemFields.ClassJobCategory) ?? fallback?.jobCategory,
     stats,
     materiaSlots,
+    ...(typeof itemFields.IsUnique === "boolean" ? { unique: itemFields.IsUnique } : {}),
     ...(itemFields.IsAdvancedMeldingPermitted === true ? { materiaAdvanced: true } : {}),
     ...(itemFields.Rarity !== undefined ? { rarity: Number(itemFields.Rarity) } : {}),
     weaponDamage: stats.PDMG ?? stats.MDMG,
@@ -232,9 +319,16 @@ export function normalizeMcpGearRow(row, fallback, categoryRow, { hq = false } =
 }
 
 export function normalizeMcpFoodRows(itemRow, actionRow, foodRows, fallback) {
+  if (!itemRow) return undefined;
   const itemFields = fieldsOf(itemRow);
+  if (!itemFields) {
+    const rowId = Number.isSafeInteger(itemRow.rowId) ? ` ${itemRow.rowId}` : "";
+    throw new Error(`MCP Item 行${rowId} 缺少 fields，无法读取 Name`);
+  }
+  const name = normalizeMcpItemName(itemRow);
+  if (name === undefined) return undefined;
   const actionFields = fieldsOf(actionRow);
-  if (!itemFields || !actionFields) return undefined;
+  if (!actionFields) return undefined;
   const stats = {};
   const statRates = {};
   for (let actionIndex = 0; actionIndex < 9; actionIndex++) {
@@ -267,7 +361,7 @@ export function normalizeMcpFoodRows(itemRow, actionRow, foodRows, fallback) {
   if (level === undefined) return undefined;
   return {
     ...fallback,
-    name: String(itemFields.Name),
+    name,
     level,
     stats,
     statRates,

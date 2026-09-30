@@ -1,8 +1,8 @@
+import { createDamageGcdVectorEvaluator } from "./equipped-effects-legacy.ts";
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { Worker } from "node:worker_threads";
 import { Buffer } from "node:buffer";
 import {
-  createDamageGcdVectorEvaluator,
   equippedAttributeTier,
   equippedEffects,
   equippedSpeedRangeForGcd,

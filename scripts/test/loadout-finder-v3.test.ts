@@ -1,17 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type {
-  Job,
-  JobLevel,
-  Stat,
-} from "../../reference/ffxiv-gearing/src/game.ts";
+import type { Job, JobLevel } from "../../src/domain/search/equipped-effects.ts";
+import type { Stat } from "../../src/domain/types.ts";
 import {
   createDamageGcdVectorEvaluator,
   createIntegerDamageFactorEvaluator,
   equippedSpeedRangeForGcd,
   equippedToughnessForMitigationPercent,
   type IntegerDamageFactors,
-} from "./equipped-effects.ts";
+} from "../../src/domain/search/equipped-effects.ts";
 import { findBestJointLoadoutV3 } from "./loadout-finder-v3.ts";
 import type { JointLoadoutV3Result } from "./loadout-finder-v3.ts";
 import type {

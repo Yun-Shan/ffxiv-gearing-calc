@@ -15,6 +15,7 @@
 ## 不可违反的数据规则
 
 - 禁止虚构、合成、近似或添加用于生产环境的演示游戏数据。
+- `Item.Name` 为空或仅含空白的物品视为已移除，导入时排除，不参与后续计算；不得用参考项目旧名称恢复。名称字段缺失或格式错误必须明确失败。
 - 游戏资料必须优先使用对应 MCP 服务器提供的数据；仅当目标资料无法从 MCP 获取时，才允许回退到本地检出的 `Asvel/ffxiv-gearing` 参考项目。不得因为参考项目更方便而跳过可用的 MCP 数据。
 - 所有生产数据必须通过 `scripts/update-data.mjs` 从可复现的 MCP 查询产物和/或参考项目原始导出生成，禁止手动编辑 `src/data/generated-data.json`。
 - 必须按数据项保留来源信息。MCP 数据至少记录服务器、Sheet/类型/成员、查询范围、查询或导入时间以及可取得的游戏/文档版本；参考项目数据至少记录仓库 URL、精确 commit、导入时间和源文件清单。
@@ -32,18 +33,18 @@
 - 能由 MCP 返回的目标版本资料必须采用 MCP 结果。只有在对应服务器不存在该 Sheet、类型、成员、字段、目标行或必要查询能力，并确认不是查询名称或方法错误后，才可使用 `Asvel/ffxiv-gearing` 中的对应资料；回退时必须记录 MCP 缺失项和参考项目位置。
 - MCP 与参考项目结果不一致时，必须先核对目标游戏版本、MCP 数据/文档版本和参考仓库 commit。版本一致且 MCP 能提供该资料时以 MCP 为准，并同步修正导入逻辑或显式失败；版本无法对齐时禁止静默拼接为同一批生产数据。
 - MCP 查询结果进入生产数据前必须形成可复现、可校验且带来源元数据的导入产物，并由 `scripts/update-data.mjs` 统一生成运行时 JSON。不得把聊天文本或一次性查询结果直接手工抄入生成文件。
+- MCP 仅因验证版本滞后而报告 `GameVersionMismatch` 时，只有服务器明确声明通用查询不受该警告影响、Schema 可用且全部查询批次为同一当前游戏版本，才可使用通用查询更新整批快照；必须保留检测版本、验证版本、警告和查询来源。其他降级仍须失败，不得混合不同游戏版本的生产表数据。
 
 ## 游戏规则正确性
 
 - 所有公式必须在数学意义上与上游实现一致，包括每一个 `floor`、`round`、倍率和运算顺序。
-- 最终属性必须从等级、职业和族群基础属性开始计算，不能从零开始。
-- 魔晶石必须逐颗应用，并使用上游 `levelCaps`、`slotCaps` 和 `roleCaps` 对单件装备进行属性封顶。
+- 最终属性必须从等级、职业和种族基础属性开始计算，不能从零开始。
+- 魔晶石必须填满全部可用孔；可禁忌镶嵌的普通装备必须填满五孔，不提供关闭禁忌镶嵌的选项。同步普通装备的魔晶石按同步规则失效，自定义参数武器遵循独立参数槽规则。必须使用上游 `levelCaps`、`slotCaps` 和 `roleCaps` 对单件装备进行属性封顶。
 - 魔晶石等级必须根据上游等级要求选择，禁止写死十二型或数值 54。
 - 食物必须在基础属性、装备属性和实际生效的魔晶石属性合并后应用。
 - 每威力伤害期望必须包含职业武器伤害修正和队伍主属性加成。
-- 骑士具有独立盾牌槽。所有战斗配装都必须选择两枚不同的戒指。
-- 禁止在两个戒指槽中使用相同装备 ID。
-- 不得将 Beam Search 描述为保证得到严格全局最优解的算法。
+- 骑士和驯兽师具有独立盾牌槽。
+- 两个戒指槽中使用相同装备ID时必须确保该装备不属于unique装备。
 
 ## 前端文案与结果展示
 
@@ -54,9 +55,7 @@
 - 装备原生副属性达到单件上限时加粗，判定必须保持与参考项目 `statHighlights` 一致。
 - 伤害指标统一称为“每威力伤害期望”，计算必须复用领域层公式，禁止在 UI 层重新计算。
 - GCD 速度属性必须按职业角色读取：坦克、力量职业和灵巧职业使用 `SKS`，治疗职业和智力职业使用 `SPS`。
-- GCD 可行性查询输出的每个档位都必须能交给正式优化生成对应结果；指定 GCD 的搜索不得让普通伤害 Beam 提前丢弃该档位的全部状态。
-- 指定 GCD 时，中间状态排序必须先应用真实食物的比例加成与属性上限，再使用领域层完整伤害期望公式；明确选择食物时使用该食物，自动食物模式只使用数据中可用的最高品级战斗食物，并在中间阶段按这些真实食物的最高完整伤害期望排序，同时为会改变职业速度属性的食物独立保留各速度档位代表，最终阶段评估该最高品级集合中的全部真实食物。
-- 锁定装备只固定装备 ID；该装备的普通孔魔晶石仍必须按当前职业、装备品级和单件属性上限参与 GCD 可行性查询、伤害优化和结果展示。锁定装备不等于锁定魔晶石方案。
+- GCD 可行性查询输出的每个档位都必须能交给正式优化生成对应结果。
 
 ## 架构要求
 
@@ -74,40 +73,30 @@
 - 用户未确认修改规则时，应保持现有规则和行为不变，并说明当前无法继续实施冲突部分。
 - 如果用户的新要求明确表示要修改现有项目规则，则该要求本身视为修改意图，但仍需在实施前说明将被修改的具体规则及影响，避免因隐含冲突造成非预期变更。
 
-## 当前未完成能力
-
-- 数据更新器已通过 `scripts/query-mcp-lumina.mjs` 接入环境提供的 `ffxiv-mcp-lumina` 查询产物；当前快照覆盖全部可用战斗装备和战斗食物。参考项目仍提供 MCP 未覆盖的职业公式、族群常量及必要回退，不得因此声称所有领域常量都已由 MCP 覆盖。
-- 尚未实现等级同步规则。
-- 尚未实现禁断镶嵌及相关限制。
-- 当前 UI 虽有共享部位控件，但尚未实现多职业共享部位联合优化。
-- 尚未实现按孔强制指定魔晶石。
-- 尚未提供族群选择，当前逻辑使用上游族群索引 0。
-- 搜索使用固定候选数量和 Beam 宽度，因此只能提供高质量近似解。
-
-在真正实现并完成测试前，不得声称上述功能已经完成。开发这些功能时必须遵循 `docs/PROJECT_RULES.md` 中记录的正确方向，禁止添加缺少依据的局部启发式规则。
-
-## 必须执行的验证
-
-修改导入数据或数据结构后执行：
-
-```bash
-node scripts/update-data.mjs --offline
-```
-
-修改应用代码或领域逻辑后执行：
-
-```bash
-npm run build
-npm run test:coverage
-```
-
-领域层的语句、分支、函数和行覆盖率必须分别保持在 90% 以上。修改公式时必须增加具有已知输入和输出的数值回归测试。`src/domain/rules.test.ts` 中的 7.55 武士参考配装回归测试必须始终通过。
-
-修改 UI 后必须运行本地应用，并分别检查桌面端和移动端布局。确认控件没有重叠、较长的中文装备名称仍可阅读、页面显示真实上游名称，并且浏览器控制台没有错误。
-
 ## 编辑纪律
 
 - 保留与任务无关的用户改动，避免大范围格式化文件。
 - 注释应集中说明不直观的游戏规则和算法取舍，避免重复描述代码本身。
 - 游戏规则、当前边界、数据来源或重要实现方向变化时，必须同步更新 `docs/PROJECT_RULES.md`。
 - 命令、安装方式或用户可见能力变化时，必须同步更新 `README.md`。
+
+
+# Codex project instructions
+
+For complex coding tasks, use the `astra-orchestrator` skill when its trigger conditions match.
+
+The root agent owns architecture, decomposition, integration, and final verification.
+Prefer specialized subagents for bounded exploration, implementation, testing, review, and technical research.
+
+Do not delegate trivial work merely for parallelism.
+Do not let multiple implementation agents edit the same files without explicit ownership boundaries.
+User instructions always take precedence over this orchestration policy.
+
+
+# Frontend Workflow
+
+When a task involves substantial user-facing frontend work, UI/UX design, layout, interaction design, visual redesign, or non-trivial frontend implementation, read and follow:
+
+`.agents/Frontend Design Workflow.md`
+
+Do not read or apply that file for trivial text/content edits, isolated style-value changes, simple prop/attribute changes, pure backend work, or other small frontend fixes that require no meaningful design or broader frontend engineering decisions.

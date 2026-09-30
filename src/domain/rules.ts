@@ -1,4 +1,5 @@
 import { gameData } from "./data";
+import { blueMageWeaponDamageAddition } from "./search/equipped-effects";
 import { jobLevelModifiers } from "./jobs";
 import type {
   CalculationInput,
@@ -9,7 +10,14 @@ import type {
   Stats,
 } from "./types";
 
-const floor = Math.floor;
+// Match the source formula at floating-point integer boundaries.
+const floor = (value: number) => Math.trunc(value + 1e-7);
+
+function levelModifierFor(level: number) {
+  const modifier = jobLevelModifiers[level];
+  if (modifier === undefined) throw new RangeError(`不支持的职业等级：${level}`);
+  return modifier;
+}
 
 export function addStats(...items: Stats[]): Stats {
   const result: Stats = {};
@@ -37,7 +45,7 @@ export function applyFood(
 }
 
 export function calculateBaseStats(job: JobSchema, level: number, clanIndex = 0): Stats {
-  const modifier = jobLevelModifiers[level] ?? jobLevelModifiers[100];
+  const modifier = levelModifierFor(level);
   const stats: Stats = { PDMG: 0, MDMG: 0 };
   for (const stat of job.stats) {
     const base = gameData.baseStats[stat] ?? 0;
@@ -55,7 +63,11 @@ export function calculateEffects({
   level,
   weaponDamage,
 }: CalculationInput): Effects {
-  const levelMod = jobLevelModifiers[level] ?? jobLevelModifiers[100];
+  const levelMod = levelModifierFor(level);
+  const attackModifier = job.statModifiers[job.attackStat];
+  const hpModifier = job.statModifiers.hp;
+  if (attackModifier === undefined) throw new Error(`职业 ${job.id} 缺少主属性修正`);
+  if (hpModifier === undefined) throw new Error(`职业 ${job.id} 缺少生命值修正`);
   const { main, sub, div, det, detTrunc } = levelMod;
   const crt = stats.CRT ?? sub;
   const detStat = stats.DET ?? main;
@@ -63,12 +75,12 @@ export function calculateEffects({
   const ten = stats.TEN ?? sub;
   const vit = stats.VIT ?? main;
   const attack = stats[job.attackStat] ?? main;
-  const crtChance = floor((200 * (crt - sub)) / div + 50) / 1000;
+  const crtChance = floor((200 * (crt - sub)) / div + 50 + (job.id === "BLU" ? 200 : 0)) / 1000;
   const crtDamage = floor((200 * (crt - sub)) / div + 1400) / 1000;
   const detDamage =
     (floor(((140 * (detStat - main)) / det + 1000) / detTrunc) * detTrunc) /
     1000;
-  const dhtChance = floor((550 * (dht - sub)) / div) / 1000;
+  const dhtChance = floor((550 * (dht - sub)) / div + (job.id === "BLU" ? 200 : 0)) / 1000;
   const tenDamage = floor((112 * (ten - sub)) / div + 1000) / 1000;
   const tenMitigation = floor((200 * (ten - sub)) / div) / 1000;
   const adjustedAttack = floor(attack * (job.partyBonus ?? 1.05));
@@ -80,7 +92,8 @@ export function calculateEffects({
         100,
     ) / 100;
   const adjustedWeaponDamage =
-    weaponDamage + floor((main * (job.statModifiers[job.attackStat] ?? 100)) / 1000);
+    weaponDamage + floor((main * attackModifier) / 1000) +
+    (job.id === "BLU" ? blueMageWeaponDamageAddition((stats.INT ?? 0) - (calculateBaseStats(job, level).INT ?? 0)) : 0);
   const damage =
     0.01 *
     adjustedWeaponDamage *
@@ -94,11 +107,11 @@ export function calculateEffects({
   const gcd =
     floor(
       (floor(((1000 - floor((130 * (speed - sub)) / div)) * 2500) / 1000) *
-        job.gcdModifier) /
+        (level >= 80 ? job.gcdModifier : 100)) /
         1000,
     ) / 100;
   const hp =
-    levelMod.hp * (job.statModifiers.hp ?? 100) +
+    levelMod.hp * hpModifier +
     floor(
       (job.mainStat === "VIT" ? levelMod.vitTank : levelMod.vit) * (vit - main),
     );

@@ -76,14 +76,12 @@ describe("stat rules", () => {
   it("builds upstream base stats with job and clan modifiers", () => {
     const base = calculateBaseStats(jobSchemas.SAM, 100);
     expect(base).toMatchObject({ STR: 494, CRT: 420, DET: 440, DHT: 420, SKS: 420 });
-    expect(calculateBaseStats(jobSchemas.SAM, 999).STR).toBe(494);
+    expect(() => calculateBaseStats(jobSchemas.SAM, 999)).toThrow("不支持的职业等级");
     expect(calculateBaseStats(jobSchemas.SAM, 100, 99).STR).toBe(492);
     expect(calculateBaseStats({ ...jobSchemas.SAM, stats: ["PDMG"] }, 100).PDMG).toBe(0);
   });
-  it("falls back to the level-100 modifier for unknown levels", () =>
-    expect(
-      calculateEffects({ stats, job, level: 999, weaponDamage: 100 }).hp,
-    ).toBeGreaterThan(0));
+  it("rejects unknown levels without substituting another level", () =>
+    expect(() => calculateEffects({ stats, job, level: 999, weaponDamage: 100 })).toThrow("不支持的职业等级"));
   it("uses the job-specific secondary speed stat", () =>
     expect(
       calculateGcdTier({ SPS: 2100 }, jobSchemas.BLM),

@@ -1,33 +1,18 @@
-// Worker 进程入口：调用同一份领域代码跑优化器，避免主线程被长时间搜索阻塞。
-import { optimize } from "./optimizer";
-import type { OptimizationConfig, OptimizationResult } from "./types";
+import { findFeasibleGcdsLocally, runJointOptimizationLocally, runOptimizationLocally } from "./optimizer";
+import type { SearchRequest, SearchResponse, SearchValue } from "./worker-client";
 
-export interface WorkerRequest {
-  id: number;
-  config: OptimizationConfig;
-}
-
-export interface WorkerResponse {
-  id: number;
-  result: OptimizationResult | undefined;
-  durationMs: number;
-}
-
-self.addEventListener("message", (event: MessageEvent<WorkerRequest>) => {
-  const data = event.data;
-  if (!data || typeof data.id !== "number") return;
-  const started = performance.now();
-  let result: OptimizationResult | undefined;
+const workerScope = self as unknown as { postMessage(response: SearchResponse): void; addEventListener(type: "message", listener: (event: MessageEvent<SearchRequest>) => void): void };
+workerScope.addEventListener("message", async (event) => {
+  const request = event.data;
+  const options = { onProgress: (message: string) => workerScope.postMessage({ kind: "progress", message }) };
   try {
-    result = optimize(data.config);
-  } catch (error) {
-    result = undefined;
-    console.error("worker-optimize-error", error);
+    let value: SearchValue;
+    if (request.kind === "single") value = await runOptimizationLocally(request.config, options);
+    else if (request.kind === "joint") value = await runJointOptimizationLocally(request.config, options);
+    else value = findFeasibleGcdsLocally(request.config, options);
+    workerScope.postMessage({ kind: "result", value });
+  } catch (caught) {
+    const error = caught instanceof Error ? caught : new Error(String(caught));
+    workerScope.postMessage({ kind: "error", message: error.message, name: error.name });
   }
-  const response: WorkerResponse = {
-    id: data.id,
-    result,
-    durationMs: performance.now() - started,
-  };
-  (self as unknown as Worker).postMessage(response);
 });

@@ -3,15 +3,19 @@ import { access, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parse } from "@babel/parser";
+import { acceptsVersionWarning } from "./mcp-query-validation.mjs";
 import {
   itemActionReturnFields,
   itemFoodReturnFields,
   itemLevelReturnFields,
   itemReturnFields,
   mandervilleReturnFields,
+  classJobReturnFields,
   mcpSource,
   normalizeMcpFoodRows,
   normalizeMcpGearRow,
+  normalizeMcpItemName,
+  normalizeMcpClassJobRow,
   normalizeMcpCustomParameters,
   normalizeMcpItemLevel,
   normalizeMcpMateriaRows,
@@ -30,7 +34,7 @@ const mcpSnapshotPath = resolve(
 const offline = process.argv.includes("--offline");
 const supportedJobs = [
   "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN",
-  "SAM", "RPR", "VPR", "BRD", "MCH", "DNC", "BLM", "SMN", "RDM", "PCT",
+  "SAM", "RPR", "VPR", "BRD", "MCH", "DNC", "BLM", "SMN", "RDM", "PCT", "BLU",
 ];
 const importStartedAt = new Date().toISOString();
 let currentCommit = "unknown";
@@ -176,21 +180,53 @@ function parseGameConstants(sourceText) {
     const name = propertyName(property);
     if (supportedJobs.includes(name)) jobSchemas[name] = evaluate(property.value);
   }
+  // The restriction is a reference rule, not a Materia sheet column.
+  // Import its explicit grade list instead of duplicating grade numbers in runtime code.
+  const restrictionLoop = sourceFile.program.body.find((statement) =>
+    statement.type === "ForOfStatement" &&
+    statement.body.type === "ExpressionStatement" &&
+    statement.body.expression.type === "AssignmentExpression" &&
+    statement.body.expression.left.type === "MemberExpression" &&
+    statement.body.expression.left.object.type === "Identifier" &&
+    statement.body.expression.left.object.name === "materiaGradeIsRestricted",
+  );
+  if (!restrictionLoop) throw new Error("上游缺少魔晶石禁断等级限制规则");
+  const restrictedGrades = evaluate(restrictionLoop.right);
+  if (!Array.isArray(restrictedGrades) || restrictedGrades.some((grade) => !Number.isInteger(grade) || grade < 1))
+    throw new Error("上游魔晶石禁断等级限制格式错误");
   return {
     jobLevelModifiers,
     jobSchemas,
     materias: evaluateIdentifier("materias"),
     materiaGradeRequiredLevels: evaluateIdentifier("materiaGradeRequiredLevels"),
+    materiaGradeIsRestricted: Array.from(
+      { length: evaluateIdentifier("materiaGradeRequiredLevels").length + 1 },
+      (_, grade) => restrictedGrades.includes(grade),
+    ),
     baseStats: evaluateIdentifier("baseStats"),
     clanStats: evaluateIdentifier("clanStats"),
   };
 }
 
-function normalizeJobSchemas(rawSchemas) {
+function normalizeJobSchemas(rawSchemas, snapshot) {
+  const classJobRows = snapshotRows(snapshot, "ClassJob");
   return Object.fromEntries(
     supportedJobs.map((id) => {
       const schema = rawSchemas[id];
       if (!schema) throw new Error(`上游缺少职业：${id}`);
+      const rowId = Number(snapshot.queryPlan.classJobIds[id]);
+      const classJobRow = classJobRows[rowId];
+      const mcpSchema = normalizeMcpClassJobRow(classJobRow);
+      if (!mcpSchema || mcpSchema.abbreviation !== id)
+        throw new Error(`MCP ClassJob 行 ${rowId} 缺少职业 ${id} 的完整字段`);
+      if (id === "BLU" && !mcpSchema.isLimitedJob)
+        throw new Error("MCP ClassJob 未将 BLU 标记为限职，拒绝生成职业数据");
+      if (id !== "BLU" && mcpSchema.isLimitedJob)
+        throw new Error(`当前支持职业 ${id} 被 MCP 标记为限职，请核对支持职业清单`);
+      if (!Array.isArray(schema.defaultItemLevel) || schema.defaultItemLevel.length !== 2 ||
+          schema.defaultItemLevel.some((value) => !Number.isSafeInteger(value) || value < 1) ||
+          !Number.isSafeInteger(schema.jobLevel) || schema.jobLevel < 1)
+        throw new Error(`参考职业 ${id} 缺少合法 defaultItemLevel 或 jobLevel`);
       const role = schema.stats.includes("TEN")
         ? "tank"
         : schema.stats.includes("PIE")
@@ -200,18 +236,41 @@ function normalizeJobSchemas(rawSchemas) {
             : schema.mainStat === "DEX"
               ? "dex"
               : "int";
+      const referenceSchemaSource = {
+        kind: "reference",
+        repository,
+        commit: currentCommit,
+        importedAt: importStartedAt,
+        sourceFiles: ["src/game.ts"],
+        note: "提供 role、mainStat、secondaryStat、stats、partyBonus、GCD/trait 公式修正、defaultItemLevel、maxJobLevel 与 slots.weapon.levelWeight；ClassJob 不提供这些领域公式字段。",
+      };
       return [id, {
         id,
-        name: schema.name,
+        name: mcpSchema.name,
         role,
         mainStat: schema.mainStat,
         secondaryStat: schema.secondaryStat,
         attackStat: schema.mainStat === "VIT" ? "STR" : schema.mainStat,
         stats: schema.stats,
-        statModifiers: schema.statModifiers,
+        statModifiers: { ...schema.statModifiers, ...mcpSchema.statModifiers },
         ...(schema.partyBonus ? { partyBonus: schema.partyBonus } : {}),
         gcdModifier: schema.statModifiers?.gcd ?? 100,
         traitDamageMultiplier: schema.traitDamageMultiplier,
+        defaultItemLevel: schema.defaultItemLevel,
+        maxJobLevel: schema.jobLevel,
+        ignoreWeaponItemLevel: schema.slots.some(
+          (slot) => (slot.slot === 1 || slot.slot === 13) && slot.levelWeight === 0,
+        ),
+        dataSources: [
+          snapshotSource(
+            snapshot,
+            "ClassJob",
+            classJobReturnFields,
+            [rowId],
+            "Name 映射至职业名称，ModifierHitPoints/Modifier{Strength,Vitality,Dexterity,Intelligence,Mind,Piety} 映射至 statModifiers；IsLimitedJob 用于校验，CanWearShield 原样记录以保留 MCP 来源字段。",
+          ),
+          referenceSchemaSource,
+        ],
       }];
     }),
   );
@@ -270,6 +329,25 @@ function normalizeFood(raw) {
   };
 }
 
+function validateBluMdmgAdditions(exported, measuredSource) {
+  if (!Array.isArray(exported) || exported.length === 0)
+    throw new Error("参考项目缺少完整的 bluMdmgAdditions 数组");
+  if (!exported.every((value) => Number.isSafeInteger(value) && value >= 0))
+    throw new Error("bluMdmgAdditions 必须全部是非负安全整数");
+  const measuredValues = measuredSource.trim().split(/\r?\n/).map((value) => {
+    if (!/^\d+$/.test(value.trim()))
+      throw new Error("参考项目 bluMdmgAdditions.txt 含有非整数或空数据");
+    const number = Number(value.trim());
+    if (!Number.isSafeInteger(number) || number < 0)
+      throw new Error("参考项目 bluMdmgAdditions.txt 含有非负安全整数范围外的数据");
+    return number;
+  });
+  if (measuredValues.length !== exported.length ||
+      measuredValues.some((value, index) => value !== exported[index]))
+    throw new Error("bluMdmgAdditions.js 与原始测量数据不一致或不完整");
+  return exported.slice();
+}
+
 async function loadMcpSnapshot() {
   if (!(await exists(mcpSnapshotPath))) return undefined;
   let snapshot;
@@ -282,9 +360,36 @@ async function loadMcpSnapshot() {
     throw new Error(`MCP 查询产物格式不受支持：${mcpSnapshotPath}`);
   if (!snapshot.gameVersion || !snapshot.validatedVersion || !snapshot.queriedAt)
     throw new Error(`MCP 查询产物缺少游戏版本或查询时间：${mcpSnapshotPath}`);
-  if (snapshot.gameVersion !== snapshot.validatedVersion)
-    throw new Error(`MCP 查询产物的游戏版本与验证版本不一致：${snapshot.gameVersion} !== ${snapshot.validatedVersion}`);
+  if (snapshot.gameVersion !== snapshot.validatedVersion) {
+    const validation = snapshot.genericQueryValidation;
+    if (validation?.allowed !== true || !acceptsVersionWarning(validation.warnings))
+      throw new Error(`MCP 通用查询缺少版本警告可用性声明：${snapshot.gameVersion} !== ${snapshot.validatedVersion}`);
+  }
+  if (!snapshot.rows?.ClassJob?.length || !snapshot.queryPlan?.classJobIds)
+    throw new Error("MCP 快照缺少 ClassJob 职业行，请重新运行 npm run data:mcp");
+  const queriedJobIds = Object.keys(snapshot.queryPlan.classJobIds).sort();
+  if (JSON.stringify(queriedJobIds) !== JSON.stringify([...supportedJobs].sort()))
+    throw new Error("MCP 快照 ClassJob 行集合与当前支持职业不一致，请重新运行 npm run data:mcp");
+  validateBluMcpAbsence(snapshot);
+  validateMcpItemRows(snapshot);
   return snapshot;
+}
+
+function validateMcpItemRows(snapshot) {
+  const source = snapshot.rows?.Item ?? snapshot.Item;
+  const rows = Array.isArray(source)
+    ? source
+    : source && typeof source === "object"
+      ? Object.values(source)
+      : [];
+  if (!rows.length) throw new Error("MCP 快照缺少 Item 行，请重新运行 npm run data:mcp");
+  for (const row of rows) {
+    if (!row || typeof row !== "object" || !Number.isSafeInteger(row.rowId))
+      throw new Error("MCP Item 行缺少有效 rowId，快照格式无效");
+    if (!row.fields || typeof row.fields !== "object" || Array.isArray(row.fields))
+      throw new Error(`MCP Item 行 ${row.rowId} 缺少有效 fields，无法校验 Name`);
+    normalizeMcpItemName(row);
+  }
 }
 
 function indexRows(value) {
@@ -309,6 +414,30 @@ function snapshotSource(snapshot, sheet, fields, rowIds, note) {
     queriedAt: snapshot.queriedAt,
     note,
   });
+}
+
+function validateBluMcpAbsence(snapshot) {
+  const check = snapshot.sourceCapabilityChecks?.bluMdmgAdditions;
+  const inventory = check?.listSheets;
+  const classJob = check?.classJob;
+  if (
+    check?.status !== "missing-from-mcp" ||
+    !Array.isArray(inventory?.sheets) ||
+    !Array.isArray(classJob?.fields) ||
+    check.gameVersion !== snapshot.gameVersion ||
+    inventory.gameVersion !== snapshot.gameVersion ||
+    classJob.gameVersion !== snapshot.gameVersion ||
+    !inventory.queriedAt ||
+    !classJob.queriedAt
+  )
+    throw new Error("MCP 快照缺少青魔法师武器伤害映射的来源缺失核验");
+  const pattern = /blu.*(?:mdmg|magic.*damage)|(?:mdmg|magic.*damage).*blu/i;
+  if (inventory.sheets.some((sheet) => pattern.test(String(sheet))))
+    throw new Error("MCP 快照包含可能提供青魔法师武器伤害映射的 Sheet，禁止回退参考数据");
+  if (classJob.fields.some((name) => pattern.test(String(name))))
+    throw new Error("MCP ClassJob 描述包含可能提供青魔法师武器伤害映射的字段，禁止回退参考数据");
+  if (!String(snapshot.missing?.bluMdmgAdditions ?? "").trim())
+    throw new Error("MCP 快照未记录青魔法师武器伤害映射缺失项");
 }
 
 function resolveMandervilleIds(mandervilleRows, referenceMandervilleAliases) {
@@ -338,9 +467,14 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
   const { mandervilleIds } = resolveMandervilleIds(mandervilleRows, referenceMandervilleAliases);
   const usedIds = [];
   const missing = [];
+  const removed = [];
   const result = gears
     .map((gear) => {
     const itemRow = itemRows[gear.id];
+    if (itemRow && normalizeMcpItemName(itemRow) === undefined) {
+      removed.push(gear.id);
+      return undefined;
+    }
     const categoryRow = itemRow && categoryRows[Number(itemRow.fields?.ClassJobCategory)];
     const merged = normalizeMcpGearRow(itemRow, gear, categoryRow, { hq: gear.hq === true });
     if (!merged) {
@@ -348,12 +482,14 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
       // 即使参考项目有分类结果，也不能回退其职业适用性；等待 MCP 分类后再统一过滤。
       return { ...gear, jobs: [] };
     }
+    if (typeof merged.unique !== "boolean")
+      throw new Error(`MCP Item 行 ${gear.id} 缺少 IsUnique，请重新生成完整快照`);
     usedIds.push(gear.id);
     const source = snapshotSource(snapshot, "Item", itemReturnFields, [gear.id]);
     const categorySource = snapshotSource(
       snapshot,
       "ClassJobCategory",
-      ["PLD", "MNK", "WAR", "DRG", "BRD", "WHM", "BLM", "SMN", "SCH", "NIN", "MCH", "DRK", "AST", "SAM", "RDM", "GNB", "DNC", "RPR", "SGE", "VPR", "PCT"],
+      supportedJobs,
       [Number(itemRow.fields.ClassJobCategory)],
     );
     const customRow = mandervilleRows[gear.id];
@@ -365,18 +501,26 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
     return {
       ...merged,
       ...(customRow ? { customizable: true, customParameters } : {}),
-      dataSources: [source, categorySource, ...(gear.dataSources ?? []).filter((item) => item.kind === "reference")],
+      dataSources: [source, categorySource, ...(customRow ? [
+        snapshotSource(snapshot, "MandervilleWeaponEnhance", mandervilleReturnFields, [gear.id]),
+        snapshotSource(snapshot, "Materia", undefined, customParameters.map((parameter) => parameter.materiaId)),
+      ] : []), ...(gear.dataSources ?? []).filter((item) => item.kind === "reference")],
     };
-  });
+  })
+    .filter(Boolean);
   // MCP 当前版本的自定义参数武器主键（51000-51021 等）并不在参考项目导出中，需要主动合并。
-  const existingIds = new Set(result.map((g) => g.id));
-  const categoryFieldList = ["PLD", "MNK", "WAR", "DRG", "BRD", "WHM", "BLM", "SMN", "SCH", "NIN", "MCH", "DRK", "AST", "SAM", "RDM", "GNB", "DNC", "RPR", "SGE", "VPR", "PCT"];
+  const existingIds = new Set(gears.map((gear) => gear.id));
+  const categoryFieldList = supportedJobs;
   for (const mcpId of mandervilleIds) {
     if (existingIds.has(mcpId)) continue;
     const itemRow = itemRows[mcpId];
-    if (!itemRow) continue;
+    if (!itemRow) throw new Error(`MandervilleWeaponEnhance 行 ${mcpId} 缺少对应 MCP Item 行`);
+    if (normalizeMcpItemName(itemRow) === undefined) {
+      removed.push(mcpId);
+      continue;
+    }
     const categoryRow = categoryRows[Number(itemRow.fields?.ClassJobCategory)];
-    const merged = normalizeMcpGearRow(itemRow, undefined, categoryRow, { hq: false });
+    const merged = normalizeMcpGearRow(itemRow, undefined, categoryRow, { hq: false, isWeapon: true });
     if (!merged) continue;
     const customRow = mandervilleRows[mcpId];
     const customParameters = customRow ? normalizeMcpCustomParameters(customRow, materiaRows) : undefined;
@@ -389,10 +533,15 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
       ...merged,
       customizable: true,
       customParameters,
-      dataSources: [source, categorySource, { kind: "mcp-manderville-source", sheet: "MandervilleWeaponEnhance", rowIds: [mcpId] }],
+      dataSources: [
+        source,
+        categorySource,
+        snapshotSource(snapshot, "MandervilleWeaponEnhance", mandervilleReturnFields, [mcpId]),
+        snapshotSource(snapshot, "Materia", undefined, customParameters.map((parameter) => parameter.materiaId)),
+      ],
     });
   }
-  return { result: result.filter((gear) => gear.jobs.length > 0), usedIds, missing };
+  return { result: result.filter((gear) => gear.jobs.length > 0), usedIds, missing, removed };
 }
 
 function mergeMcpFoodData(foods, snapshot) {
@@ -402,8 +551,13 @@ function mergeMcpFoodData(foods, snapshot) {
   const usedIds = [];
   const usedActionIds = [];
   const missing = [];
+  const removed = [];
   const result = foods.map((food) => {
     const itemRow = itemRows[food.id];
+    if (itemRow && normalizeMcpItemName(itemRow) === undefined) {
+      removed.push(food.id);
+      return undefined;
+    }
     const actionId = Number(itemRow?.fields?.ItemAction ?? 0);
     const merged = normalizeMcpFoodRows(itemRow, actionRows[actionId], foodRows, food);
     if (!merged) {
@@ -437,7 +591,7 @@ function mergeMcpFoodData(foods, snapshot) {
       ],
     };
   });
-  return { result, usedIds, usedActionIds, missing };
+  return { result: result.filter(Boolean), usedIds, usedActionIds, missing, removed };
 }
 
 function mergeMcpLevelCaps(levelCaps, snapshot) {
@@ -508,6 +662,17 @@ function validate(payload) {
   if (payload.foods.length < 100) throw new Error(`食物数量异常：${payload.foods.length}`);
   if (Object.keys(payload.jobSchemas).length !== supportedJobs.length)
     throw new Error("职业数量异常");
+  for (const [id, schema] of Object.entries(payload.jobSchemas)) {
+    if (!Number.isSafeInteger(schema.maxJobLevel) || schema.maxJobLevel < 1 ||
+        !Array.isArray(schema.defaultItemLevel) || schema.defaultItemLevel.length !== 2 ||
+        schema.defaultItemLevel.some((value) => !Number.isSafeInteger(value) || value < 1))
+      throw new Error(`职业 ${id} 缺少合法等级上限或默认品级范围`);
+    if (!Array.isArray(schema.dataSources) || schema.dataSources.length < 2)
+      throw new Error(`职业 ${id} 缺少字段来源记录`);
+  }
+  if (!Array.isArray(payload.bluMdmgAdditions) || payload.bluMdmgAdditions.length === 0 ||
+      !payload.bluMdmgAdditions.every((value) => Number.isSafeInteger(value) && value >= 0))
+    throw new Error("青魔法师武器伤害映射必须包含完整的非负安全整数数据");
   if (Object.keys(payload.materias).length !== combatMateriaStats.length)
     throw new Error("魔晶石数据不完整");
   if (!payload.levelCaps.level?.length || !payload.slotCaps.CRT?.length || !payload.roleCaps.CRT?.length)
@@ -527,10 +692,13 @@ const outDir = resolve(upstreamRoot, "data", "out");
 const gearFiles = (await readdir(outDir)).filter((file) => /^gears-.*\.js$/i.test(file)).sort();
 if (!gearFiles.length) throw new Error("参考项目没有装备导出文件");
 
-const [rawFoods, gameSource] = await Promise.all([
+const [rawFoods, gameSource, bluMdmgAdditionsExport, bluMdmgAdditionsText] = await Promise.all([
   importDefault(resolve(outDir, "foods.js")),
   readFile(resolve(upstreamRoot, "src", "game.ts"), "utf8"),
+  importDefault(resolve(outDir, "bluMdmgAdditions.js")),
+  readFile(resolve(upstreamRoot, "data", "in", "bluMdmgAdditions.txt"), "utf8"),
 ]);
+const bluMdmgAdditions = validateBluMdmgAdditions(bluMdmgAdditionsExport, bluMdmgAdditionsText);
 const [levelCaps, slotCaps, roleCaps] = await Promise.all([
   importDefault(resolve(outDir, "levelCaps.js")),
   importDefault(resolve(outDir, "slotCaps.js")),
@@ -550,6 +718,9 @@ const referenceSourceFiles = [
   "data/out/slotCaps.js",
   "data/out/roleCaps.js",
   "src/game.ts",
+  "data/out/bluMdmgAdditions.js",
+  "data/in/bluMdmgAdditions.txt",
+  "data/convert.ts",
 ];
 const referenceSource = {
   kind: "reference",
@@ -566,6 +737,8 @@ let materias = Object.fromEntries(
 );
 const sourceRecords = [referenceSource];
 const mcpSnapshot = await loadMcpSnapshot();
+if (!mcpSnapshot)
+  throw new Error("BLU 正式职业数据需要 MCP ClassJob 快照和武器伤害映射缺失核验；请先运行 npm run data:mcp");
 let mcpSummary = "MCP 查询产物未找到，使用参考项目数据";
 if (mcpSnapshot) {
   const gearMerge = mergeMcpGearData(gears, mcpSnapshot, referenceSource);
@@ -578,6 +751,19 @@ if (mcpSnapshot) {
   effectiveSlotCaps = slotMerge.value;
   const materiaMerge = mergeMcpMaterias(materias, mcpSnapshot);
   materias = materiaMerge.value;
+  const classJobRowIds = Object.values(mcpSnapshot.queryPlan.classJobIds).map(Number);
+  const bluDamageReferenceSource = {
+    kind: "reference",
+    repository,
+    commit,
+    importedAt: importStartedAt,
+    sourceFiles: [
+      "data/out/bluMdmgAdditions.js",
+      "data/in/bluMdmgAdditions.txt",
+      "data/convert.ts",
+    ],
+    note: `MCP ${mcpSnapshot.gameVersion} 的 list_sheets 与 ClassJob describe_sheet 均未提供青魔法师按 INT 索引的魔法武器伤害加值表或字段；使用参考项目原始测量映射，并与输入文本逐值校验。`,
+  };
   sourceRecords.push(
     snapshotSource(mcpSnapshot, "Item", itemReturnFields, gearMerge.usedIds),
     snapshotSource(mcpSnapshot, "ItemAction", itemActionReturnFields, foodMerge.usedActionIds),
@@ -587,9 +773,12 @@ if (mcpSnapshot) {
     snapshotSource(mcpSnapshot, "ItemLevel", itemLevelReturnFields, levelMerge.usedIds),
     snapshotSource(mcpSnapshot, "BaseParam", undefined, slotMerge.usedIds),
     snapshotSource(mcpSnapshot, "Materia", undefined, Object.keys(snapshotRows(mcpSnapshot, "Materia")).map(Number)),
+    snapshotSource(mcpSnapshot, "ClassJob", classJobReturnFields, classJobRowIds),
+    bluDamageReferenceSource,
   );
   const fallbackCount = gearMerge.missing.length + foodMerge.missing.length;
-  mcpSummary = `MCP 优先：覆盖 ${gearMerge.usedIds.length}/${gears.length} 件装备、${foodMerge.usedIds.length}/${foods.length} 种食物，${fallbackCount} 项回退参考项目`;
+  const removedNameCount = gearMerge.removed.length + foodMerge.removed.length;
+  mcpSummary = `MCP 优先：覆盖 ${gearMerge.usedIds.length}/${gears.length} 件装备、${foodMerge.usedIds.length}/${foods.length} 种食物，${fallbackCount} 项回退参考项目；剔除 ${removedNameCount} 项空名称物品`;
 } else if (!offline) {
   console.warn(`未找到 MCP 查询产物：${mcpSnapshotPath}。请先使用环境 MCP 工具生成该文件；本次仅使用参考项目。`);
 }
@@ -607,13 +796,15 @@ const payload = {
   gears,
   foods,
   materias,
+  bluMdmgAdditions,
   materiaGradeRequiredLevels: constants.materiaGradeRequiredLevels,
+  materiaGradeIsRestricted: constants.materiaGradeIsRestricted,
   levelCaps: effectiveLevelCaps,
   slotCaps: effectiveSlotCaps,
   roleCaps,
   baseStats: constants.baseStats,
   clanStats: constants.clanStats,
-  jobSchemas: normalizeJobSchemas(constants.jobSchemas),
+  jobSchemas: normalizeJobSchemas(constants.jobSchemas, mcpSnapshot),
   jobLevelModifiers: constants.jobLevelModifiers,
 };
 validate(payload);

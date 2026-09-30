@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { Job, Stat } from "../../reference/ffxiv-gearing/src/game.ts";
+import type { Job } from "../../src/domain/search/equipped-effects.ts";
+import type { Stat } from "../../src/domain/types.ts";
 import {
   createDamageGcdVectorEvaluator,
   createIntegerDamageFactorEvaluator,
   equippedEffects,
-} from "./equipped-effects.ts";
+} from "../../src/domain/search/equipped-effects.ts";
 
 const names: Stat[] = ["PDMG", "MDMG", "STR", "INT", "VIT", "CRT", "DET", "DHT", "TEN", "SKS", "SPS"];
 const indexes = new Map(names.map((name, index) => [name, index] as const));

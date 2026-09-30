@@ -2,12 +2,14 @@ import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { allowsGenericQueries } from "./mcp-query-validation.mjs";
 import {
   itemActionReturnFields,
   itemFoodReturnFields,
   itemLevelReturnFields,
   itemReturnFields,
   mandervilleReturnFields,
+  classJobReturnFields,
 } from "./mcp-lumina-import.mjs";
 
 const root = resolve(import.meta.dirname, "..");
@@ -23,7 +25,7 @@ const concurrency = Math.max(1, Number(process.env.FFXIV_MCP_LUMINA_CONCURRENCY 
 const scope = process.env.FFXIV_MCP_LUMINA_SCOPE ?? "all";
 const supportedJobs = [
   "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN", "SAM", "RPR", "VPR",
-  "BRD", "MCH", "DNC", "BLM", "SMN", "RDM", "PCT",
+  "BRD", "MCH", "DNC", "BLM", "SMN", "RDM", "PCT", "BLU",
 ];
 const slotIds = new Set([1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13]);
 const fields = (values) => values.join(",");
@@ -33,6 +35,7 @@ const itemActionFields = fields(itemActionReturnFields);
 const itemLevelFields = fields(itemLevelReturnFields);
 const itemFields = fields(itemReturnFields);
 const mandervilleFields = fields(mandervilleReturnFields);
+const classJobFields = fields(classJobReturnFields);
 
 async function load(path) {
   return (await import(`${pathToFileURL(path).href}?query=${Date.now()}-${Math.random()}`)).default;
@@ -208,14 +211,97 @@ async function queryRows(client, sheet, rowIds, returnFields, queries) {
   return { rows, missingRowIds };
 }
 
+async function searchClassJobs(client, jobs, queries) {
+  const found = new Array(jobs.length);
+  let cursor = 0;
+  async function worker() {
+    while (true) {
+      const index = cursor++;
+      if (index >= jobs.length) return;
+      const job = jobs[index];
+      let response;
+      let lastError;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          response = await client.callTool("search_rows", {
+            sheet: "ClassJob",
+            query: job,
+            textFields: "Abbreviation",
+            returnFields: "Name,Abbreviation",
+            limit: 200,
+            languages: "chs",
+          });
+          break;
+        } catch (error) {
+          lastError = error;
+          if (attempt < 2) await new Promise((resolveDelay) => setTimeout(resolveDelay, 250 * (attempt + 1)));
+        }
+      }
+      if (!response) throw new Error(`MCP ClassJob 缩写 ${job} 查询失败`, { cause: lastError });
+      const matches = (response.value.results ?? []).filter((row) => row.fields?.Abbreviation === job);
+      if (matches.length !== 1)
+        throw new Error(`MCP ClassJob 缩写 ${job} 应精确匹配一行，实际 ${matches.length} 行`);
+      const row = matches[0];
+      found[index] = { job, rowId: Number(row.rowId) };
+      queries.push({
+        method: "search_rows",
+        sheet: "ClassJob",
+        query: job,
+        textFields: ["Abbreviation"],
+        fields: ["Name", "Abbreviation"],
+        returnedRows: matches.length,
+        rowIds: [Number(row.rowId)],
+        gameVersion: response.value.gameVersion,
+        queriedAt: response.value.timestamp,
+      });
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(concurrency, jobs.length) }, worker));
+  return found;
+}
+
 const client = new McpClient();
 try {
   if (!(await fileExists(command)) && command.includes("\\"))
     throw new Error(`找不到 Lumina MCP 可执行文件：${command}。请设置 FFXIV_MCP_LUMINA_COMMAND。`);
   const initialization = await client.initialize();
   const health = (await client.callTool("health", {})).value;
-  if (health.status !== "ok" || health.gameVersion !== health.validatedVersion)
-    throw new Error(`Lumina MCP 版本校验失败：${JSON.stringify(health)}`);
+  const genericQueriesAvailable = allowsGenericQueries(health);
+  if (!genericQueriesAvailable)
+    throw new Error(`Lumina MCP 通用查询不可用：${JSON.stringify(health)}`);
+
+  const [sheetInventoryResult, classJobDescriptionResult] = await Promise.all([
+    client.callTool("list_sheets", {}),
+    client.callTool("describe_sheet", { sheet: "ClassJob" }),
+  ]);
+  const sheetInventory = sheetInventoryResult.value;
+  const classJobDescription = classJobDescriptionResult.value;
+  if (!Array.isArray(sheetInventory.sheets) || !Array.isArray(classJobDescription.columns))
+    throw new Error("Lumina MCP 未能提供 Sheet 清单或 ClassJob 字段描述，无法核对青魔法师伤害数据来源");
+  const bluDamageSheetCandidates = sheetInventory.sheets.filter((sheet) =>
+    /blu.*(?:mdmg|magic.*damage)|(?:mdmg|magic.*damage).*blu/i.test(String(sheet)),
+  );
+  const bluDamageClassJobFields = classJobDescription.columns
+    .map((column) => column.name)
+    .filter((name) => /blu.*(?:mdmg|magic.*damage)|(?:mdmg|magic.*damage).*blu/i.test(String(name)));
+  if (bluDamageSheetCandidates.length || bluDamageClassJobFields.length)
+    throw new Error(`发现可能提供青魔法师武器伤害映射的 MCP 资料，需先查询并导入：${JSON.stringify({ bluDamageSheetCandidates, bluDamageClassJobFields })}`);
+  const capabilityQueries = [
+    {
+      method: "list_sheets",
+      gameVersion: sheetInventory.gameVersion,
+      queriedAt: sheetInventory.timestamp,
+      returnedRows: sheetInventory.sheets.length,
+    },
+    {
+      method: "describe_sheet",
+      sheet: "ClassJob",
+      fields: classJobDescription.columns.map((column) => column.name),
+      returnedRows: classJobDescription.rowCount,
+      gameVersion: classJobDescription.gameVersion,
+      queriedAt: classJobDescription.timestamp,
+    },
+  ];
 
   const outDir = resolve(upstreamRoot, "data", "out");
   const gearFiles = (await (await import("node:fs/promises")).readdir(outDir)).filter((file) => file.startsWith("gears-") && file.endsWith(".js"));
@@ -233,11 +319,22 @@ try {
     .map((gear) => gear.id);
   const gearIds = [...new Set(selectedGearIds)];
   const foodIds = foods.map((food) => food.id);
-  const itemRowsResult = await queryRows(client, "Item", [...gearIds, ...foodIds], itemFields, []);
+  const itemQueries = [];
+  const itemRowsResult = await queryRows(client, "Item", [...gearIds, ...foodIds], itemFields, itemQueries);
   const itemRows = itemRowsResult.rows;
   const categoryIds = [...new Set(itemRows.map((row) => Number(row.fields?.ClassJobCategory)).filter((id) => Number.isInteger(id) && id > 0))];
   const categoryQueries = [];
   const categoryRowsResult = await queryRows(client, "ClassJobCategory", categoryIds, categoryFields, categoryQueries);
+  const classJobSearchQueries = [];
+  const discoveredClassJobs = await searchClassJobs(client, supportedJobs, classJobSearchQueries);
+  const classJobQueries = [];
+  const classJobRowsResult = await queryRows(
+    client,
+    "ClassJob",
+    discoveredClassJobs.map((entry) => entry.rowId),
+    classJobFields,
+    classJobQueries,
+  );
   const actionIds = [...new Set(itemRows.filter((row) => foodIds.includes(row.rowId)).map((row) => Number(row.fields?.ItemAction)).filter((id) => Number.isInteger(id) && id > 0))];
   const actionQueries = [];
   const actionRowsResult = await queryRows(client, "ItemAction", actionIds, itemActionFields, actionQueries);
@@ -259,16 +356,20 @@ try {
   const customIds = [...new Set(mandRowsResult.rows.map((row) => Number(row.rowId)).filter(Number.isInteger))].sort((a, b) => a - b);
   const missingReferenceCustomIds = referenceCustomIds.filter((id) => !customIds.includes(id));
   const unexpectedCustomIds = customIds.filter((id) => !referenceCustomIds.includes(id));
-  if (missingReferenceCustomIds.length || unexpectedCustomIds.length)
-    throw new Error(`MCP MandervilleWeaponEnhance 行集合与参考项目不一致：缺少 ${missingReferenceCustomIds.join(",") || "无"}；新增 ${unexpectedCustomIds.join(",") || "无"}`);
+  if (!customIds.length || !referenceCustomIds.some((id) => customIds.includes(id)))
+    throw new Error("MCP 自定义武器集合为空或与参考主键完全无交集，请核对版本与参数表");
   const materiaQueries = [];
   const materiaRowsResult = await queryRows(client, "Materia", Array.from({ length: 1417 }, (_, index) => index), fields(Array.from({ length: 16 }, (_, index) => `Value[${index}]`).concat("BaseParam")), materiaQueries);
   const queriedAt = new Date().toISOString();
+  const allQueries = [...capabilityQueries, ...classJobSearchQueries, ...classJobQueries, ...itemQueries, ...categoryQueries, ...actionQueries, ...foodQueries, ...levelQueries, ...baseQueries, ...mandQueries, ...materiaQueries];
+  if (allQueries.some((query) => query.gameVersion !== health.gameVersion))
+    throw new Error("MCP 查询批次游戏版本不一致，拒绝生成混合快照");
   const snapshot = {
     schemaVersion: 1,
     server: "ffxiv-mcp-lumina",
     gameVersion: health.gameVersion,
     validatedVersion: health.validatedVersion,
+    genericQueryValidation: { allowed: genericQueriesAvailable, warnings: health.warnings ?? [] },
     queriedAt,
     scope,
     client: initialization?.serverInfo ?? initialization,
@@ -278,10 +379,32 @@ try {
       foodItemIds: foodIds,
       itemLevelIds: levelCaps.level,
       customWeaponIds: customIds,
+      classJobIds: Object.fromEntries(discoveredClassJobs.map((entry) => [entry.job, entry.rowId])),
+      referenceCustomWeaponDifferences: { missing: missingReferenceCustomIds, added: unexpectedCustomIds },
+    },
+    sourceCapabilityChecks: {
+      bluMdmgAdditions: {
+        status: "missing-from-mcp",
+        checkedAt: queriedAt,
+        gameVersion: health.gameVersion,
+        listSheets: {
+          count: sheetInventory.count,
+          sheets: sheetInventory.sheets,
+          gameVersion: sheetInventory.gameVersion,
+          queriedAt: sheetInventory.timestamp,
+        },
+        classJob: {
+          rowCount: classJobDescription.rowCount,
+          fields: classJobDescription.columns.map((column) => column.name),
+          gameVersion: classJobDescription.gameVersion,
+          queriedAt: classJobDescription.timestamp,
+        },
+      },
     },
     rows: {
       Item: itemRows,
       ClassJobCategory: categoryRowsResult.rows,
+      ClassJob: classJobRowsResult.rows,
       ItemAction: actionRowsResult.rows,
       ItemFood: foodRowsResult.rows,
       ItemLevel: levelRowsResult.rows,
@@ -291,23 +414,26 @@ try {
     },
     queries: [
       { method: "health", gameVersion: health.gameVersion, validatedVersion: health.validatedVersion, queriedAt: health.timestamp },
-      ...itemRowsResult.rows.length ? [{ method: "get_rows", sheet: "Item", rowIds: [...new Set([...gearIds, ...foodIds])], fields: itemReturnFields, returnedRows: itemRowsResult.rows.length, missingRowIds: itemRowsResult.missingRowIds }] : [],
+      ...itemQueries,
+      ...capabilityQueries, ...classJobSearchQueries, ...classJobQueries,
       ...categoryQueries, ...actionQueries, ...foodQueries, ...levelQueries, ...baseQueries, ...mandQueries, ...materiaQueries,
     ],
     missing: {
       Item: itemRowsResult.missingRowIds,
       ClassJobCategory: categoryRowsResult.missingRowIds,
+      ClassJob: classJobRowsResult.missingRowIds,
       ItemAction: actionRowsResult.missingRowIds,
       ItemFood: foodRowsResult.missingRowIds,
       ItemLevel: levelRowsResult.missingRowIds,
       BaseParam: baseRowsResult.missingRowIds,
       MandervilleWeaponEnhance: mandRowsResult.missingRowIds,
       Materia: materiaRowsResult.missingRowIds,
+      bluMdmgAdditions: "Lumina MCP list_sheets and ClassJob describe_sheet do not expose a per-INT BLU magical-weapon-damage addition table or field; see sourceCapabilityChecks.bluMdmgAdditions.",
     },
   };
   await mkdir(resolve(outputPath, ".."), { recursive: true });
   await writeFile(outputPath, `${JSON.stringify(snapshot)}\n`, "utf8");
-  console.log(JSON.stringify({ outputPath, scope, itemRows: itemRows.length, categoryRows: categoryRowsResult.rows.length, actionRows: actionRowsResult.rows.length, foodRows: foodRowsResult.rows.length, itemLevelRows: levelRowsResult.rows.length, baseParamRows: baseRowsResult.rows.length, mandervilleRows: mandRowsResult.rows.length, materiaRows: materiaRowsResult.rows.length, missing: snapshot.missing }));
+  console.log(JSON.stringify({ outputPath, scope, itemRows: itemRows.length, categoryRows: categoryRowsResult.rows.length, classJobRows: classJobRowsResult.rows.length, actionRows: actionRowsResult.rows.length, foodRows: foodRowsResult.rows.length, itemLevelRows: levelRowsResult.rows.length, baseParamRows: baseRowsResult.rows.length, mandervilleRows: mandRowsResult.rows.length, materiaRows: materiaRowsResult.rows.length, missing: snapshot.missing }));
 } finally {
   client.close();
 }

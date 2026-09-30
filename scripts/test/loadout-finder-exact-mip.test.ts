@@ -1,13 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { Worker } from "node:worker_threads";
-import type { Job, JobLevel, Stat } from "../../reference/ffxiv-gearing/src/game.ts";
+import type { Job, JobLevel } from "../../src/domain/search/equipped-effects.ts";
+import type { Stat } from "../../src/domain/types.ts";
 import {
   createDamageGcdVectorEvaluator,
   createIntegerDamageFactorEvaluator,
   equippedSpeedRangeForGcd,
   equippedToughnessForMitigationPercent,
-} from "./equipped-effects.ts";
+} from "../../src/domain/search/equipped-effects.ts";
 import { findBestLoadoutExactMip } from "./loadout-finder-exact-mip.ts";
 import type { EquipInfo, FoodInfo, ParamInfo } from "./types.ts";
 
@@ -42,7 +43,7 @@ function equipment(
   };
 }
 
-const slots: EquipInfo[][] = [
+const globalSlots: EquipInfo[][] = [
   [
     equipment(1, 160, { 1: 590, 2: 440, 3: 300, 4: 180, 5: 115, 6: 100 }),
     equipment(2, 159, { 1: 610, 2: 420, 3: 320, 4: 160, 5: 135, 6: 120 }),
@@ -52,6 +53,8 @@ const slots: EquipInfo[][] = [
     equipment(4, 0, { 1: 600, 2: 470, 3: 280, 4: 210, 5: 110, 6: 110 }),
   ],
 ];
+
+const slots = globalSlots;
 
 const foods: FoodInfo[] = [
   {
@@ -254,6 +257,7 @@ test("exact MIP worker returns its result through structured clone", async () =>
 
 test("exact MIP preserves BLU INT-based weapon damage", async () => {
   const jobLevel = 80 as JobLevel;
+  const slots = globalSlots.map((slot) => slot.map((equip) => ({ ...equip, baseParams: equip.baseParams.map((param) => param.baseParamId === 1 ? { ...param, value: param.value - 30 } : param) })));
   const bluEvaluate = createDamageGcdVectorEvaluator("BLU", jobLevel, statIndexes, maximums);
   const bluFactors = createIntegerDamageFactorEvaluator("BLU", jobLevel, statIndexes);
   let expected: { product: bigint; gcd: number; selection: EquipInfo[]; food: FoodInfo; factors: NonNullable<ReturnType<typeof bluFactors>> } | undefined;
