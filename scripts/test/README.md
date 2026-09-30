@@ -6,6 +6,41 @@
 
 根目录的搜索基准记录保留新算法结果，完整历史记录位于归档目录。最优性结论限定于传入求解器的候选集合，MIP 的数值最优状态不等同于形式化有理数证明。
 
+## 多职业 V3
+
+`npm run data:test:v3` 使用完整原始候选执行多职业联合搜索，默认赤魔与黑魔共享所有非武器部位及食物。独立运行候选生成进程后才开始搜索计时；搜索包含各职业单独最优基线。该入口不改变网页优化器。
+
+```powershell
+$env:DATA_TEST_JOBS = 'RDM,BLM'
+$env:DATA_TEST_COMMON_SLOTS = 'Head,Body,Gloves,Legs,Feet,Ears,Neck,Wrists,Finger'
+$env:DATA_TEST_FOOD_STRATEGY = 'shared' # 或 independent
+$env:DATA_TEST_OBJECTIVE = 'damage' # 或 dps：伤害除以 GCD
+npm run data:test:v3
+```
+
+求解接口为 `findBestJointLoadoutV3`，位于 `loadout-finder-v3.ts`。每个职业分别提供 `ExactMipOptions` 和自己的槽位名称数组；共享部位按名称匹配，因此骑士的盾牌槽不会导致槽位索引错位。共享装备包含完整属性方案，双戒指包含各枚戒指的属性方案。目标是最大化各职业每威力伤害期望相对其单独最优值的比例之和。
+
+联合模型直接约束共享装备和食物，用已核验的单职业最优值收紧每个职业的上界，再枚举仍可能改善归一化总和的因子签名。乘积与固定点对数只用于必要条件筛选，最终仍比较 BigInt 有理数总和；存在零权重职业或无共享槽时使用外层分支限界。每次运行从原始候选重新求解，初始共享方案的构造也包含在搜索计时中。
+
+指定的性能验收使用 `DATA_TEST_JOBS=RPR,SAM` 或 `VPR,MCH`，`DATA_TEST_COMMON_SLOTS=Ears,Neck,Wrists,Finger`，`DATA_TEST_FOOD_STRATEGY=shared`，`DATA_TEST_OBJECTIVE=dps`，并清除 GCD、速度和坚韧约束。这时单职业基线和联合优化统一使用每秒每威力伤害期望。
+
+赤魔与绘灵验收配置：
+
+```powershell
+$env:DATA_TEST_JOBS = 'RDM,PCT'
+$env:DATA_TEST_COMMON_SLOTS = 'Head,Body,Gloves,Legs,Feet,Ears,Neck,Wrists'
+$env:DATA_TEST_FOOD_STRATEGY = 'shared'
+$env:DATA_TEST_OBJECTIVE = 'dps'
+$env:DATA_TEST_JOB_CONSTRAINTS = '{"RDM":{"gcd":2.48},"PCT":{"gcdChoices":[2.48,2.5]}}'
+npm run data:test:v3
+```
+
+每职业约束可以通过 `DATA_TEST_JOB_CONSTRAINTS` 单独配置；全局 `DATA_TEST_GCD`、速度及坚韧环境变量仍会继承，复现验收时应先清除无关设置。`DATA_TEST_COMMON_SLOTS=none` 可关闭装备共享，食物仍按所选策略处理。
+
+搜索总时限为 235 秒，给四分钟要求保留退出余量；可用 `DATA_TEST_V3_TIMEOUT_MS` 调低。入口在独立线程执行搜索并监控整个进程的 RSS，在 3.5 GiB 保护线停止。没有预先打表文件；运行时缓存有界。超时、内存保护或内层未证明最优均报错，不返回近似方案。停止保护本身不代表通过性能验收，完成场景见 [基准记录](搜索基准记录.md)。算法证明范围及数值求解器边界见 [正确性与验收](V3正确性与验收.md)。
+
+## 测试
+
 执行相关测试：
 
 ```powershell

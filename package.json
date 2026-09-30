@@ -11,6 +11,7 @@
     "test:coverage": "vitest run --coverage",
     "data:mcp": "node scripts/query-mcp-lumina.mjs",
     "data:test": "node --max-old-space-size=4096 --experimental-strip-types scripts/test/test.ts",
+    "data:test:v3": "node --max-old-space-size=2560 scripts/test/run-v3.mjs",
     "data:test:parallel": "node scripts/test/archived/run-parallel-v2.mjs"
   },
   "dependencies": {

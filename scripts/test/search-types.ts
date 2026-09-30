@@ -12,6 +12,8 @@ export type LoadoutSearchResult = {
 
 export type LoadoutConstraints = {
   gcd?: number;
+  /** Accept any listed exact GCD threshold while optimizing one common result. */
+  gcdChoices?: readonly number[];
   speedMin?: number;
   speedMax?: number;
   toughnessMinPercent?: number;

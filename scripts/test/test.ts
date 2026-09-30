@@ -1927,6 +1927,189 @@ client.close();
         ? undefined
         : ["1", "true"].includes(rawMaxToughnessMode.toLowerCase()),
   };
+  if (process.env.DATA_TEST_EXPORT_V3 === "true") {
+    const sendCandidate = process.send;
+    if (typeof sendCandidate !== "function") {
+      throw new Error("DATA_TEST_EXPORT_V3 需要由 scripts/test/run-v3.mjs 通过 IPC 启动");
+    }
+    const equipmentVariantIdentity = (equipment: EquipInfo): string => {
+      const parameters = equipment.baseParams
+        .map(({ baseParamId, value }) => [baseParamId, value] as const)
+        .sort((first, second) => first[0] - second[0])
+        .map(([baseParamId, value]) => `${baseParamId}:${value}`)
+        .join(",");
+      return [
+        equipment.itemId,
+        equipment.itemLevel,
+        parameters,
+        equipment.PDMG,
+        equipment.MDMG,
+        equipment.DLY,
+      ].join("|");
+    };
+    const fullEquipmentIdentity = (equipment: EquipInfo): string => {
+      if (isRingPairEquipInfo(equipment)) {
+        return `pair:${equipment.ringEquips
+          .map(equipmentVariantIdentity)
+          .sort()
+          .join("||")}`;
+      }
+      return equipmentVariantIdentity(equipment);
+    };
+    const uniqueEquipmentVariants = (equipments: readonly EquipInfo[]): EquipInfo[] => {
+      const seen = new Set<string>();
+      return equipments.filter((equipment) => {
+        const identity = fullEquipmentIdentity(equipment);
+        if (seen.has(identity)) return false;
+        seen.add(identity);
+        return true;
+      });
+    };
+    const rawSingleRingCandidates = Object.values(validEquips.Finger ?? {})
+      .flat();
+    const estimatedRawRingPairCount = rawSingleRingCandidates.length ** 2;
+    if (estimatedRawRingPairCount > 1_000_000) {
+      throw new Error(
+        `V3 原始戒指候选预计产生 ${estimatedRawRingPairCount} 个有序戒指对，超过候选内存保护线；未导出且不会声称最优`,
+      );
+    }
+    const rawGcdChoices = process.env.DATA_TEST_GCD_CHOICES;
+    const v3Constraints = {
+      ...v2Constraints,
+      ...(rawGcdChoices === undefined || rawGcdChoices.trim() === ""
+        ? {}
+        : {
+            gcdChoices: rawGcdChoices.split(",").map((part) => {
+              const gcd = Number(part.trim());
+              if (!Number.isFinite(gcd) || gcd <= 0) {
+                throw new Error("DATA_TEST_GCD_CHOICES 必须是逗号分隔的正有限数字");
+              }
+              return gcd;
+            }),
+          }),
+    };
+    if (
+      v3Constraints.gcdChoices !== undefined &&
+      (v3Constraints.gcdChoices.length === 0 ||
+        new Set(v3Constraints.gcdChoices).size !== v3Constraints.gcdChoices.length)
+    ) {
+      throw new Error("DATA_TEST_GCD_CHOICES 不能是空列表或包含重复 GCD");
+    }
+    const rawRingPairCandidates = uniqueEquipmentVariants(
+      buildRingPairEquipInfos(
+        rawSingleRingCandidates,
+        (itemId) => Boolean(itemMap[itemId].IsUnique ?? itemMap[itemId].isUnique),
+      ),
+    );
+    const rawFoodCandidates = foods
+      .filter((food) =>
+        food.itemLevel >= levels[levels.length - 1] &&
+        food.baseParams.some(
+          (param) => baseParamIdToStat[param.baseParamId] === "VIT",
+        ),
+      );
+    const v3Slots = slotsWithEquips.map(([slotName]) => {
+      if (slotName === "Finger") return rawRingPairCandidates;
+      const rawCandidates = Object.values(validEquips[slotName] ?? {}).flat();
+      return uniqueEquipmentVariants(rawCandidates);
+    });
+    const v3MaxContributions = v1AttributeIds.map((attributeId) =>
+      v3Slots.reduce(
+        (total, equips) =>
+          total +
+          Math.max(
+            0,
+            ...equips.map((equipment) =>
+              attributeId === weaponDamageId
+                ? equipment[weaponDamageStat]
+                : equipment.baseParams
+                    .filter((param) => param.baseParamId === attributeId)
+                    .reduce((sum, param) => sum + param.value, 0),
+            ),
+          ),
+        0,
+      ) +
+        Math.max(
+          0,
+          ...rawFoodCandidates.map(
+            (food) =>
+              food.baseParams.find((param) => param.baseParamId === attributeId)
+                ?.maxValue ?? 0,
+          ),
+        ),
+    );
+    const itemNames: Record<number, string> = {};
+    const rememberItemName = (itemId: number): void => {
+      const name = itemMap[itemId]?.Name;
+      if (typeof name === "string") itemNames[itemId] = name;
+    };
+    for (const slot of v3Slots) {
+      for (const equipment of slot) {
+        if (isRingPairEquipInfo(equipment)) {
+          for (const ring of equipment.ringEquips) rememberItemName(ring.itemId);
+        } else {
+          rememberItemName(equipment.itemId);
+        }
+      }
+    }
+    for (const food of rawFoodCandidates) rememberItemName(food.itemId);
+    const candidateCounts = Object.fromEntries(
+      slotsWithEquips.map(([slotName, prunedCandidates], index) => [
+        slotName,
+        {
+          beforePruning: slotName === "Finger"
+            ? rawSingleRingCandidates.length
+            : Object.values(validEquips[slotName] ?? {}).reduce(
+                (total, equips) => total + equips.length,
+                0,
+              ),
+          afterPruning: slotName === "Finger"
+            ? singleRingCandidates.length
+            : prunedCandidates.length,
+          v3Candidates: v3Slots[index].length,
+          ...(slotName === "Finger"
+            ? {
+                rawSingleRings: rawSingleRingCandidates.length,
+                prunedRingPairs: prunedCandidates.length,
+                estimatedOrderedRingPairs: estimatedRawRingPairCount,
+                v3RingPairs: rawRingPairCandidates.length,
+              }
+            : {}),
+        },
+      ]),
+    );
+    const candidateExport = {
+      job: v1Job,
+      jobLevel: v1JobLevel,
+      attributeIds: v1AttributeIds,
+      statIndexes: [...v1StatIndexes.entries()],
+      slots: v3Slots,
+      slotNames: slotsWithEquips.map(([name]) => name),
+      foods: rawFoodCandidates,
+      constraints: v3Constraints,
+      speedAttributeId,
+      toughnessAttributeId,
+      weaponDamageStat,
+      weaponDamageId,
+      itemNames,
+      candidateCounts,
+      foodCandidateCounts: {
+        beforePruning: rawFoodCandidates.length,
+        afterPruning: v1Foods.length,
+      },
+      maxContributions: v3MaxContributions,
+    };
+    console.log(`V3候选数量（剪枝前/后/完整输入）：${JSON.stringify(candidateCounts)}`);
+    await new Promise<void>((resolve, reject) => {
+      sendCandidate!.call(
+        process,
+        { type: "v3-candidate-export", candidateExport },
+        (error) => error ? reject(error) : resolve(),
+      );
+    });
+    if (process.connected && typeof process.disconnect === "function") process.disconnect();
+    return;
+  }
   const configuredWorkerCount = Number(process.env.DATA_TEST_WORKERS ?? 1);
   if (!Number.isInteger(configuredWorkerCount) || configuredWorkerCount < 1 || configuredWorkerCount > 4) {
     throw new Error("DATA_TEST_WORKERS 必须是 1 到 4 之间的整数");

@@ -3,6 +3,7 @@ import {
   createIntegerDamageFactorEvaluator,
   type IntegerDamageFactors,
 } from "./equipped-effects.ts";
+import { hasStrictlyBetterFactorCombination } from "./signature-band.ts";
 import type {
   GcdSpeedRange,
   LoadoutConstraints,
@@ -62,6 +63,9 @@ export type ExactMipSearchStatistics = {
   elapsedMs: number;
   solverRuns: number;
   excludedSignatures: number;
+  signatureBandChecks: number;
+  signatureBandElapsedMs: number;
+  signatureBandProof: boolean;
   variables: number;
   constraints: number;
   maximumSurrogate: number;
@@ -90,6 +94,8 @@ export type ExactMipOptions = {
   evaluationFunction: (
     attributes: readonly number[],
   ) => { damage: number; gcd: number } | undefined;
+  /** Defaults to DPS without a fixed GCD, preserving the original search behavior. */
+  objective?: "damage" | "dps";
   maxSearchMs?: number;
   onProgress?: (message: string) => void;
 };
@@ -97,6 +103,17 @@ export type ExactMipOptions = {
 const LOG_SCALE = 1_000_000_000_000n;
 const FIXED_SCALE = 10n ** 30n;
 const LOG_TERMS = 40;
+let highsPromise: ReturnType<typeof loadHighs> | undefined;
+
+function getHighs(): ReturnType<typeof loadHighs> {
+  if (highsPromise === undefined) {
+    highsPromise = loadHighs().catch((error: unknown) => {
+      highsPromise = undefined;
+      throw error;
+    });
+  }
+  return highsPromise;
+}
 
 function gcd(a: number, b: number): number {
   let left = Math.abs(a);
@@ -226,10 +243,11 @@ function lpText(
 function buildFactorClasses(
   groupName: string,
   values: readonly { value: number; auxiliary?: number }[],
+  firstValue = 0,
 ): FactorClass[] {
   if (values.length === 0) throw new Error(`因子组 ${groupName} 没有可达值`);
   const result: FactorClass[] = [];
-  let start = 0;
+  let start = firstValue;
   for (let index = 1; index <= values.length; index++) {
     const previous = values[index - 1]!;
     const current = values[index];
@@ -240,13 +258,13 @@ function buildFactorClasses(
     ) continue;
     result.push({
       min: start,
-      max: index - 1,
+      max: firstValue + index - 1,
       value: previous.value,
       auxiliary: previous.auxiliary,
       variable: `${groupName}_${result.length}`,
       q: roundedLog(previous.value),
     });
-    start = index;
+    start = firstValue + index;
   }
   return result;
 }
@@ -311,6 +329,444 @@ function betterFactors(
     incumbentProduct * BigInt(candidate.gcdCentiseconds);
 }
 
+function greedyMipStart(options: ExactMipOptions,
+  model: NonNullable<ReturnType<typeof buildLinearAttributeModel>>, useDps: boolean, deadline: number): Map<string, number> | undefined {
+  const selection = options.slots.map((slot) => slot[0]!);
+  let chosenFood = options.foods[0];
+  const speedIndex = options.speedAttributeId === undefined ? undefined : model.idToIndex.get(options.speedAttributeId);
+  const toughnessIndex = options.toughnessAttributeId === undefined ? undefined : model.idToIndex.get(options.toughnessAttributeId);
+  const choiceRanges = options.constraints?.gcdChoices?.flatMap((gcd) => {
+    const range = options.gcdToSpeedRange?.(gcd);
+    return range === undefined ? [] : [range];
+  });
+  const evaluate = () => {
+    const attributes = getAttributeVector(selection, chosenFood, options.attributeIds, options.equipmentAttributeExtractor);
+    const evaluation = options.evaluationFunction(attributes);
+    if (evaluation === undefined || !Number.isFinite(evaluation.damage) || !Number.isFinite(evaluation.gcd) || evaluation.gcd <= 0) return undefined;
+    let violation = 0;
+    for (const [attribute, range] of model.ranges) {
+      violation += Math.max(0, (range.min ?? attributes[attribute]!) - attributes[attribute]!,
+        attributes[attribute]! - (range.max ?? attributes[attribute]!));
+    }
+    if (choiceRanges !== undefined && speedIndex !== undefined) {
+      violation += Math.min(...choiceRanges.map((range) => Math.max(0,
+        range.min - attributes[speedIndex]!, attributes[speedIndex]! - range.max)));
+    }
+    return { violation, toughness: toughnessIndex === undefined ? 0 : attributes[toughnessIndex]!,
+      score: useDps ? evaluation.damage / evaluation.gcd : evaluation.damage };
+  };
+  type HeuristicScore = NonNullable<ReturnType<typeof evaluate>>;
+  const better = (candidate: HeuristicScore | undefined, current: HeuristicScore | undefined) => {
+    if (candidate === undefined) return false;
+    if (current === undefined || candidate.violation < current.violation) return true;
+    if (candidate.violation !== current.violation) return false;
+    if (options.constraints?.maxToughnessMode === true && candidate.toughness !== current.toughness) {
+      return candidate.toughness > current.toughness;
+    }
+    return candidate.score > current.score;
+  };
+  let current = evaluate();
+  let checks = 0;
+  // This bounded coordinate search supplies ONLY a MIP hint. It never serves
+  // as an answer or a bound, and every final result retains the complete proof.
+  for (let pass = 0; pass < 6; pass++) {
+    if (performance.now() >= deadline) return undefined;
+    let changed = false;
+    for (let slot = 0; slot < selection.length; slot++) {
+      const previous = selection[slot]!;
+      let winner = previous;
+      for (const candidate of options.slots[slot]!) {
+        if ((++checks & 63) === 0 && performance.now() >= deadline) return undefined;
+        selection[slot] = candidate;
+        const score = evaluate();
+        if (better(score, current)) { winner = candidate; current = score; }
+      }
+      selection[slot] = winner;
+      changed ||= winner !== previous;
+    }
+    const previousFood = chosenFood;
+    let winningFood = previousFood;
+    for (const food of options.foods) {
+      if ((++checks & 63) === 0 && performance.now() >= deadline) return undefined;
+      chosenFood = food;
+      const score = evaluate();
+      if (better(score, current)) { winningFood = food; current = score; }
+    }
+    chosenFood = winningFood;
+    changed ||= chosenFood !== previousFood;
+    if (!changed) break;
+  }
+  if (current === undefined || current.violation !== 0) return undefined;
+  const start = new Map<string, number>();
+  selection.forEach((equipment, slot) => start.set(model.slotVariables[slot]![options.slots[slot]!.indexOf(equipment)]!, 1));
+  if (chosenFood !== undefined) start.set(model.foodVariables[options.foods.indexOf(chosenFood)]!, 1);
+  return start;
+}
+
+type JointMipJob = {
+  id: string;
+  slotNames: readonly string[];
+  options: ExactMipOptions;
+  baseline: IntegerDamageFactors;
+};
+
+/** The product is only a necessary upper-bound filter; candidates are ranked by the exact SUM. */
+export async function findBestJointFactorMip(options: {
+  jobs: readonly JointMipJob[];
+  commonSlots: readonly string[];
+  sharedFood: boolean;
+  equipmentIdentity: (equipment: EquipInfo) => string;
+  foodIdentity: (food: FoodInfo) => string;
+  objective: "damage" | "dps";
+  initialResults?: readonly ExactMipResult[];
+  maxSearchMs: number;
+  onProgress?: (message: string) => void;
+}): Promise<{ results: ExactMipResult[]; solverRuns: number; signatures: number } | undefined> {
+  const startedAt = performance.now();
+  const preparedJobs: { job: JointMipJob; prepared: NonNullable<Awaited<ReturnType<typeof prepareExactMipModel>>> }[] = [];
+  for (const job of options.jobs) {
+    const prepared = await prepareExactMipModel({ ...job.options, objective: options.objective });
+    if (prepared === undefined) return undefined;
+    preparedJobs.push({ job, prepared });
+  }
+  const rows: ModelRow[] = [];
+  const bounds: VariableBounds[] = [];
+  const binaries: string[] = [];
+  const generals: string[] = [];
+  const objective = new Map<string, number>();
+  const jobSurrogates: { terms: Map<string, number>; offset: number; baseline: number; error: number }[] = [];
+  let maximumOffset = 0;
+  let baselineQ = 0;
+  const prefix = (index: number, name: string) => `j${index}_${name}`;
+  for (let index = 0; index < preparedJobs.length; index++) {
+    const { job, prepared } = preparedJobs[index]!;
+    const { model, groups, qByVariable } = prepared;
+    for (const row of model.rows) rows.push({ ...row, name: prefix(index, row.name),
+      terms: new Map([...row.terms].map(([name, value]) => [prefix(index, name), value])) });
+    for (const bound of model.bounds) bounds.push({ ...bound, name: prefix(index, bound.name) });
+    binaries.push(...model.binaryVars.map((name) => prefix(index, name)));
+    generals.push(...model.generalVars.map((name) => prefix(index, name)));
+    const terms = new Map([...qByVariable].map(([name, value]) => [prefix(index, name), value]));
+    for (const [name, value] of terms) objective.set(name, value);
+    const offset = groups.reduce((sum, group) => sum + Math.max(...group.classes.map((entry) => entry.q)), 0);
+    maximumOffset += offset;
+    const factors = job.baseline;
+    let individualBaselineQ = [factors.weaponDamage, factors.mainStat, factors.determination,
+      factors.tenacity, factors.critical, factors.directHit].reduce((sum, value) => sum + roundedLog(value), 0);
+    if (options.objective === "dps") individualBaselineQ -= roundedLog(factors.gcdCentiseconds);
+    baselineQ += individualBaselineQ;
+    jobSurrogates.push({ terms, offset, baseline: individualBaselineQ, error: groups.length });
+    // Every joint-feasible job is bounded by its independently proved optimum.
+    // Explicit bounds also prevent an LP relaxation from trading an impossible
+    // super-optimal job against a suboptimal one.
+    addRows(rows, `solo_bound_${index}`, terms, "<=", individualBaselineQ + groups.length - offset);
+  }
+  if (!Number.isSafeInteger(maximumOffset) || !Number.isSafeInteger(baselineQ)) {
+    throw new Error("联合固定点目标超出安全整数范围");
+  }
+  const linkChoices = (name: string, choices: readonly ReadonlyMap<string, readonly string[]>[]) => {
+    const keys = [...choices[0]!.keys()].filter((key) => choices.every((choice) => choice.has(key)));
+    if (keys.length === 0) return false;
+    const selectors: string[] = [];
+    for (let choiceIndex = 0; choiceIndex < keys.length; choiceIndex++) {
+      const selector = `shared_${name}_${choiceIndex}`;
+      bounds.push({ name: selector, min: 0, max: 1 });
+      binaries.push(selector);
+      selectors.push(selector);
+      for (let jobIndex = 0; jobIndex < choices.length; jobIndex++) {
+        const terms = new Map<string, number>([[selector, -1]]);
+        for (const variable of choices[jobIndex]!.get(keys[choiceIndex]!)!) addTerm(terms, variable, 1);
+        addRows(rows, `link_${name}_${choiceIndex}_${jobIndex}`, terms, "=", 0);
+      }
+    }
+    addRows(rows, `shared_one_${name}`, selectors.map((name) => [name, 1] as const), "=", 1);
+    // Choices absent from the intersection must be disabled explicitly.
+    const allowed = new Set(keys);
+    choices.forEach((choice, jobIndex) => {
+      for (const [key, variables] of choice) if (!allowed.has(key)) {
+        addRows(rows, `shared_absent_${name}_${jobIndex}_${rows.length}`,
+          variables.map((variable) => [variable, 1] as const), "=", 0);
+      }
+    });
+    return true;
+  };
+  const sharedEquipmentDomains = options.commonSlots.map((slot) => {
+    const choices = preparedJobs.map(({ job, prepared }, jobIndex) => {
+      const slotIndex = job.slotNames.indexOf(slot);
+      if (slotIndex < 0) throw new Error(`共享槽位 ${slot} 不存在于 ${job.id}`);
+      const byKey = new Map<string, { equipment: EquipInfo; variables: string[] }>();
+      job.options.slots[slotIndex]!.forEach((equipment, candidateIndex) => {
+        const key = options.equipmentIdentity(equipment);
+        const entry: { equipment: EquipInfo; variables: string[] } = byKey.get(key) ?? { equipment, variables: [] };
+        entry.variables.push(prefix(jobIndex, prepared.model.slotVariables[slotIndex]![candidateIndex]!));
+        byKey.set(key, entry);
+      });
+      return byKey;
+    });
+    const keys = new Set([...choices[0]!.keys()].filter((key) => choices.every((choice) => choice.has(key))));
+    choices.forEach((choice, jobIndex) => {
+      for (const [key, entry] of choice) if (!keys.has(key)) addRows(rows,
+        `shared_absent_${slot}_${jobIndex}_${rows.length}`,
+        entry.variables.map((variable) => [variable, 1] as const), "=", 0);
+    });
+    return { slot, choices, keys };
+  });
+  if (sharedEquipmentDomains.some((domain) => domain.keys.size === 0)) return undefined;
+  // Keep a universal attribute profile: it includes EVERY job's extractor and
+  // attribute coordinates. Equal totals allow replacing each job's shared
+  // pattern by job 0's real pattern without changing any model attribute.
+  // Domains remain the full identity intersection for EACH slot, so this
+  // replacement also preserves slot legality and complete shared identities.
+  const profileRows = new Set<string>();
+  for (let targetJob = 0; targetJob < preparedJobs.length; targetJob++) {
+    const target = preparedJobs[targetJob]!.job.options;
+    for (const attributeId of target.attributeIds) {
+      const contributions = sharedEquipmentDomains.map((domain) => new Map([...domain.keys].map((key) => {
+        const equipment = domain.choices[targetJob]!.get(key)!.equipment;
+        const params = target.equipmentAttributeExtractor?.(equipment) ?? equipment.baseParams;
+        return [key, params.reduce((sum, param) => sum + (param.baseParamId === attributeId ? param.value : 0), 0)];
+      })));
+      for (let sourceJob = 1; sourceJob < preparedJobs.length; sourceJob++) {
+        const terms = new Map<string, number>();
+        sharedEquipmentDomains.forEach((domain, domainIndex) => {
+          for (const key of domain.keys) {
+            const coefficient = contributions[domainIndex]!.get(key)!;
+            for (const variable of domain.choices[sourceJob]!.get(key)!.variables) addTerm(terms, variable, coefficient);
+            for (const variable of domain.choices[0]!.get(key)!.variables) addTerm(terms, variable, -coefficient);
+          }
+        });
+        const rowKey = JSON.stringify([...terms].sort(([left], [right]) => left.localeCompare(right)));
+        if (terms.size > 0 && !profileRows.has(rowKey)) {
+          profileRows.add(rowKey);
+          addRows(rows, `shared_profile_${targetJob}_${attributeId}_${sourceJob}`, terms, "=", 0);
+        }
+      }
+    }
+  }
+  if (options.sharedFood && preparedJobs.some(({ job }) => job.options.foods.length > 0)) {
+    const choices = preparedJobs.map(({ job, prepared }, jobIndex) => {
+      const byKey = new Map<string, string[]>();
+      job.options.foods.forEach((food, foodIndex) => {
+        const key = options.foodIdentity(food);
+        const variables = byKey.get(key) ?? [];
+        variables.push(prefix(jobIndex, prepared.model.foodVariables[foodIndex]!));
+        byKey.set(key, variables);
+      });
+      return byKey;
+    });
+    if (!linkChoices("food", choices)) return undefined;
+  }
+  const highs = await getHighs();
+  const excluded: string[][] = [];
+  let solverRuns = 0;
+  let best: { numerator: bigint; denominator: bigint; results: ExactMipResult[] } | undefined;
+  if (options.initialResults !== undefined) {
+    if (options.initialResults.length !== preparedJobs.length) throw new Error("联合初始方案职业数不匹配");
+    let numerator = 0n;
+    let denominator = 1n;
+    for (let index = 0; index < preparedJobs.length; index++) {
+      const { job, prepared } = preparedJobs[index]!;
+      const result = options.initialResults[index]!;
+      if (result.selection.length !== job.options.slots.length || result.selection.some((equipment, slot) =>
+        !job.options.slots[slot]!.some((candidate) => options.equipmentIdentity(candidate) === options.equipmentIdentity(equipment)))) {
+        throw new Error("联合初始方案装备不属于模型候选");
+      }
+      if (result.food === undefined ? job.options.foods.length > 0 :
+        !job.options.foods.some((food) => options.foodIdentity(food) === options.foodIdentity(result.food!))) {
+        throw new Error("联合初始方案食物不属于模型候选");
+      }
+      const attributes = getAttributeVector(result.selection, result.food, job.options.attributeIds, job.options.equipmentAttributeExtractor);
+      for (const [attribute, range] of prepared.model.ranges) {
+        if ((range.min !== undefined && attributes[attribute]! < range.min) ||
+          (range.max !== undefined && attributes[attribute]! > range.max)) throw new Error("联合初始方案不满足属性约束");
+      }
+      const factors = prepared.factorEvaluator(attributes);
+      if (factors === undefined) throw new Error("联合初始方案无法计算整数因子");
+      const requested = job.options.constraints?.gcdChoices ??
+        (job.options.constraints?.gcd === undefined ? undefined : [job.options.constraints.gcd]);
+      if (requested !== undefined && !requested.some((value) => Math.round(value * 100) === factors.gcdCentiseconds)) {
+        throw new Error("联合初始方案不满足 GCD 集合");
+      }
+      for (const slot of options.commonSlots) {
+        if (options.equipmentIdentity(result.selection[job.slotNames.indexOf(slot)]!) !==
+          options.equipmentIdentity(options.initialResults[0]!.selection[options.jobs[0]!.slotNames.indexOf(slot)]!)) {
+          throw new Error("联合初始方案装备不共享");
+        }
+      }
+      if (options.sharedFood && (result.food === undefined ? "none" : options.foodIdentity(result.food)) !==
+        (options.initialResults[0]!.food === undefined ? "none" : options.foodIdentity(options.initialResults[0]!.food!))) {
+        throw new Error("联合初始方案食物不共享");
+      }
+      const ratioNumerator = exactProduct(factors) * (options.objective === "dps" ? BigInt(job.baseline.gcdCentiseconds) : 1n);
+      const ratioDenominator = exactProduct(job.baseline) * (options.objective === "dps" ? BigInt(factors.gcdCentiseconds) : 1n);
+      if (ratioNumerator > ratioDenominator) throw new Error("联合初始方案超过单职业基线");
+      numerator = numerator * ratioDenominator + ratioNumerator * denominator;
+      denominator *= ratioDenominator;
+    }
+    best = { numerator, denominator, results: [...options.initialResults] };
+  }
+  const groupCount = preparedJobs.reduce((sum, { prepared }) => sum + prepared.groups.length, 0);
+  while (true) {
+    const remaining = options.maxSearchMs - (performance.now() - startedAt);
+    if (remaining <= 0) throw new Error("联合因子 MIP 达到时限，未完成最优性复核");
+    if (process.memoryUsage.rss() > 3.5 * 1024 ** 3) throw new Error("联合因子 MIP 达到内存保护线");
+    const solveRows = [...rows];
+    if (best !== undefined) {
+      const thresholdNumerator = best.numerator - BigInt(options.jobs.length - 1) * best.denominator;
+      if (thresholdNumerator > 0n) {
+        // For t in (0,1], ln(t) >= 1 - 1/t. Rounding errors in candidate
+        // and baseline log sums total at most groupCount. All arithmetic is exact.
+        const loss = ceilDiv(LOG_SCALE * (best.denominator - thresholdNumerator), thresholdNumerator);
+        const minimumQ = BigInt(baselineQ) - loss - BigInt(groupCount);
+        const rhs = minimumQ - BigInt(maximumOffset);
+        if (rhs >= BigInt(Number.MIN_SAFE_INTEGER) && rhs <= BigInt(Number.MAX_SAFE_INTEGER)) {
+          addRows(solveRows, "joint_necessary_product", objective, ">=", Number(rhs));
+        }
+        for (let index = 0; index < jobSurrogates.length; index++) {
+          const surrogate = jobSurrogates[index]!;
+          // sum > incumbent and all other ratios <= 1 also require EACH ratio > t.
+          const individualRhs = BigInt(surrogate.baseline - surrogate.offset - surrogate.error) - loss;
+          if (individualRhs >= BigInt(Number.MIN_SAFE_INTEGER) && individualRhs <= BigInt(Number.MAX_SAFE_INTEGER)) {
+            addRows(solveRows, `joint_necessary_job_${index}`, surrogate.terms, ">=", Number(individualRhs));
+          }
+        }
+      }
+    }
+    excluded.forEach((signature, index) => addRows(solveRows, `joint_nogood_${index}`,
+      signature.map((name) => [name, 1] as const), "<=", signature.length - 1));
+    const output = highs.withModel({ format: "lp", data: lpText("joint_factor_product",
+      best === undefined ? objective : new Map(), solveRows, bounds, binaries, generals) }, (native) => {
+      native.options.set({ output_flag: false, presolve: "on", mip_rel_gap: 0, mip_abs_gap: 0,
+        time_limit: Math.max(0.05, remaining / 1000) });
+      if (best !== undefined) {
+        const start = new Map<number, number>();
+        for (let jobIndex = 0; jobIndex < preparedJobs.length; jobIndex++) {
+          const { job, prepared } = preparedJobs[jobIndex]!;
+          const result = best.results[jobIndex]!;
+          result.selection.forEach((equipment, slotIndex) => {
+            const candidate = job.options.slots[slotIndex]!.findIndex((entry) =>
+              options.equipmentIdentity(entry) === options.equipmentIdentity(equipment));
+            start.set(native.getColByName(prefix(jobIndex, prepared.model.slotVariables[slotIndex]![candidate]!)), 1);
+          });
+          if (result.food !== undefined) {
+            const foodIndex = job.options.foods.findIndex((entry) => options.foodIdentity(entry) === options.foodIdentity(result.food!));
+            start.set(native.getColByName(prefix(jobIndex, prepared.model.foodVariables[foodIndex]!)), 1);
+          }
+        }
+        const entries = [...start].sort(([left], [right]) => left - right);
+        native.setSolution({ indices: entries.map(([index]) => index), values: entries.map(([, value]) => value) });
+      }
+      native.run();
+      const status = native.getModelStatus();
+      const Status = status === highs.constants.modelStatus.optimal ? "Optimal"
+        : status === highs.constants.modelStatus.infeasible ? "Infeasible" : `状态代码 ${status}`;
+      const Columns: Record<string, { Primal: number }> = {};
+      if (Status === "Optimal") {
+        const solution = native.getSolution();
+        for (const { name } of bounds) Columns[name] = { Primal: solution.colValue[native.getColByName(name)]! };
+      }
+      return { Status, Columns };
+    });
+    solverRuns++;
+    options.onProgress?.(`联合因子 MIP 状态=${output.Status}；已检查签名=${excluded.length}；耗时=${Math.round(performance.now() - startedAt)}ms`);
+    if (output.Status === "Infeasible") break;
+    if (output.Status !== "Optimal") throw new Error(`联合因子 MIP 未证明最优：${output.Status}`);
+    validateMipSolution(solveRows, bounds, output.Columns);
+    const signature: string[] = [];
+    const results: ExactMipResult[] = [];
+    let canonicalSharedSelection: readonly EquipInfo[] | undefined;
+    let numerator = 0n;
+    let denominator = 1n;
+    for (let index = 0; index < preparedJobs.length; index++) {
+      const { job, prepared } = preparedJobs[index]!;
+      const columns = Object.fromEntries(prepared.model.bounds.map(({ name }) =>
+        [name, output.Columns[prefix(index, name)] ?? { Primal: 0 }]));
+      const selection = slotsForResult(job.options.slots, prepared.model.slotVariables, columns);
+      if (index === 0) canonicalSharedSelection = selection;
+      else for (const domain of sharedEquipmentDomains) {
+        const key = options.equipmentIdentity(canonicalSharedSelection![options.jobs[0]!.slotNames.indexOf(domain.slot)]!);
+        selection[job.slotNames.indexOf(domain.slot)] = domain.choices[index]!.get(key)!.equipment;
+      }
+      const food = foodForResult(job.options.foods, prepared.model.foodVariables, columns);
+      const attributes = getAttributeVector(selection, food, job.options.attributeIds, job.options.equipmentAttributeExtractor);
+      const factors = prepared.factorEvaluator(attributes);
+      const evaluation = job.options.evaluationFunction(attributes);
+      if (factors === undefined || evaluation === undefined || !Number.isFinite(evaluation.damage)) {
+        throw new Error(`联合因子 MIP 结果无法计算：${job.id}`);
+      }
+      const fields = { weapon: "weaponDamage", main: "mainStat", det: "determination", ten: "tenacity",
+        crt: "critical", dht: "directHit", gcd: "gcdCentiseconds" } as const;
+      for (const group of prepared.groups) {
+        const chosen = group.classes.find((entry) => (columns[entry.variable]?.Primal ?? 0) > 0.5);
+        if (chosen === undefined || factors[fields[group.name as keyof typeof fields]] !== chosen.value) {
+          throw new Error(`联合因子 MIP 因子重建不一致：${job.id}/${group.name}`);
+        }
+        signature.push(prefix(index, chosen.variable));
+      }
+      for (let attribute = 0; attribute < attributes.length; attribute++) {
+        if (attributes[attribute] !== Math.round(columns[prepared.model.finalVariables[attribute]!]!.Primal)) {
+          throw new Error(`联合因子 MIP 最终属性重建不一致：${job.id}/${attribute}`);
+        }
+      }
+      const ratioNumerator = exactProduct(factors) * (options.objective === "dps" ? BigInt(job.baseline.gcdCentiseconds) : 1n);
+      const ratioDenominator = exactProduct(job.baseline) * (options.objective === "dps" ? BigInt(factors.gcdCentiseconds) : 1n);
+      if (ratioNumerator > ratioDenominator) throw new Error(`联合方案超过已证明单职业基线：${job.id}`);
+      numerator = numerator * ratioDenominator + ratioNumerator * denominator;
+      denominator *= ratioDenominator;
+      results.push({ selection, food, damage: evaluation.damage, statistics: {
+        elapsedMs: performance.now() - startedAt, solverRuns, excludedSignatures: excluded.length,
+        signatureBandChecks: 0, signatureBandElapsedMs: 0, signatureBandProof: false,
+        variables: bounds.length, constraints: solveRows.length, maximumSurrogate: 0,
+        nextSurrogate: undefined, memoryUsage: process.memoryUsage(),
+      } });
+    }
+    if (best === undefined || numerator * best.denominator > best.numerator * denominator) {
+      best = { numerator, denominator, results };
+      options.onProgress?.(`联合因子 MIP 当前最优归一化总和=${Number(numerator) / Number(denominator)}`);
+    }
+    if (best.numerator === BigInt(options.jobs.length) * best.denominator) break;
+    excluded.push(signature);
+  }
+  if (best === undefined) return undefined;
+  return { results: best.results, solverRuns, signatures: excluded.length };
+}
+
+function validateMipSolution(
+  rows: readonly ModelRow[],
+  bounds: readonly VariableBounds[],
+  columns: Record<string, { Primal: number }>,
+): void {
+  const integerValues = new Map<string, bigint>();
+  for (const bound of bounds) {
+    const primal = columns[bound.name]?.Primal;
+    const value = primal ?? (bound.min === 0 ? 0 : bound.min === bound.max ? bound.min : undefined);
+    if (value === undefined || !Number.isFinite(value)) {
+      throw new Error(`HiGHS 最优解缺少变量 ${bound.name}`);
+    }
+    const rounded = Math.round(value);
+    if (!Number.isSafeInteger(rounded) || Math.abs(value - rounded) > 1e-5) {
+      throw new Error(`HiGHS 变量 ${bound.name} 不是可靠整数：${value}`);
+    }
+    if (rounded < bound.min || rounded > bound.max) {
+      throw new Error(`HiGHS 变量 ${bound.name} 超出上下界：${rounded}`);
+    }
+    integerValues.set(bound.name, BigInt(rounded));
+  }
+  for (const row of rows) {
+    let lhs = 0n;
+    for (const [name, coefficient] of row.terms) {
+      const value = integerValues.get(name);
+      if (value === undefined) throw new Error(`模型行 ${row.name} 引用了未知变量 ${name}`);
+      lhs += BigInt(coefficient) * value;
+    }
+    const rhs = BigInt(row.rhs);
+    const valid = row.sense === "=" ? lhs === rhs : row.sense === "<=" ? lhs <= rhs : lhs >= rhs;
+    if (!valid) {
+      throw new Error(`HiGHS 最优解不满足整数模型行 ${row.name}：${lhs} ${row.sense} ${rhs}`);
+    }
+  }
+}
+
 function parseRationalRate(rate: number): { numerator: number; denominator: number } {
   const numerator = Math.round(rate * 100);
   if (!Number.isSafeInteger(numerator) || numerator < 0) {
@@ -352,9 +808,11 @@ function factorGroupsForAttribute(
   field: "mainStat" | "determination" | "tenacity" | "critical" | "directHit" | "gcdCentiseconds",
   withBluAddition = false,
   weaponBase = 0,
+  minimum = 0,
 ): FactorGroup {
   const values: { value: number; auxiliary?: number }[] = [];
-  for (let value = 0; value <= (attributeIndex === undefined ? 0 : maximum); value++) {
+  const firstValue = attributeIndex === undefined ? 0 : minimum;
+  for (let value = firstValue; value <= (attributeIndex === undefined ? 0 : maximum); value++) {
     const attributes = attributeIndex === undefined
       ? new Array<number>(vectorLength).fill(0)
       : makeVector(vectorLength, attributeIndex, value);
@@ -367,7 +825,7 @@ function factorGroupsForAttribute(
         : undefined,
     });
   }
-  const classes = buildFactorClasses(name, values);
+  const classes = buildFactorClasses(name, values, firstValue);
   for (let index = 1; index < classes.length; index++) {
     const previous = classes[index - 1]!;
     const current = classes[index]!;
@@ -448,11 +906,29 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
   const rawMaximums = attributeIds.map((_, attribute) =>
     equipmentAttributes.reduce((total, slot) =>
       total + Math.max(0, ...slot.map((values) => values[attribute]!)), 0));
+  const rawMinimums = attributeIds.map((_, attribute) =>
+    equipmentAttributes.reduce((total, slot) =>
+      total + Math.min(...slot.map((values) => values[attribute]!)), 0));
   for (const maximum of rawMaximums) {
     if (!Number.isSafeInteger(maximum) || maximum < 0) {
       throw new RangeError(`装备属性范围不是非负安全整数：${maximum}`);
     }
   }
+  for (const minimum of rawMinimums) {
+    if (!Number.isSafeInteger(minimum) || minimum < 0) {
+      throw new RangeError(`装备属性下界不是非负安全整数：${minimum}`);
+    }
+  }
+  const finalMinimums = attributeIds.map((id, attribute) => {
+    if (foods.length === 0) return rawMinimums[attribute]!;
+    return Math.min(...foods.map((food) => {
+      const param = food.baseParams.find((entry) => entry.baseParamId === id);
+      const bonus = param !== undefined && param.maxValue > 0 && param.multiplier > 1
+        ? Math.min(param.maxValue, Math.trunc(rawMinimums[attribute]! * (param.multiplier - 1) + 1e-7))
+        : 0;
+      return rawMinimums[attribute]! + bonus;
+    }));
+  });
 
   slots.forEach((slot, slotIndex) => {
     const variables = slot.map((_, candidateIndex) => `e_${slotIndex}_${candidateIndex}`);
@@ -482,8 +958,8 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
     const finalVariable = `final_${attribute}`;
     rawVariables.push(rawVariable);
     finalVariables.push(finalVariable);
-    bounds.push({ name: rawVariable, min: 0, max: rawMaximums[attribute]! });
-    bounds.push({ name: finalVariable, min: 0, max: rawMaximums[attribute]! + Math.max(0, ...foods.map((food) =>
+    bounds.push({ name: rawVariable, min: rawMinimums[attribute]!, max: rawMaximums[attribute]! });
+    bounds.push({ name: finalVariable, min: finalMinimums[attribute]!, max: rawMaximums[attribute]! + Math.max(0, ...foods.map((food) =>
       food.baseParams.find((param) => param.baseParamId === attributeIds[attribute])?.maxValue ?? 0)) });
     generalVars.push(rawVariable, finalVariable);
 
@@ -576,6 +1052,40 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
     if (options.speedAttributeId === undefined) throw new RangeError("按 GCD 搜索缺少速度属性 id");
     mergeRange(options.speedAttributeId, range.min, range.max);
   }
+  if (constraints.gcdChoices !== undefined) {
+    if (constraints.gcdChoices.length === 0) return undefined;
+    if (options.gcdToSpeedRange === undefined) throw new RangeError("多个 GCD 搜索需要配置 gcdToSpeedRange");
+    if (options.speedAttributeId === undefined) throw new RangeError("多个 GCD 搜索缺少速度属性 id");
+    const choices = new Map<string, GcdSpeedRange>();
+    for (const gcdChoice of constraints.gcdChoices) {
+      if (!Number.isFinite(gcdChoice) || gcdChoice <= 0) {
+        throw new RangeError(`GCD 备选值必须为正有限数：${gcdChoice}`);
+      }
+      const range = options.gcdToSpeedRange(gcdChoice);
+      if (range === undefined) continue;
+      if (!Number.isSafeInteger(range.min) || !Number.isSafeInteger(range.max) || range.min > range.max) {
+        throw new RangeError(`GCD ${gcdChoice} 对应的速度范围无效`);
+      }
+      choices.set(`${range.min}:${range.max}`, range);
+    }
+    if (choices.size === 0) return undefined;
+    const speedIndex = idToIndex.get(options.speedAttributeId);
+    if (speedIndex === undefined) throw new RangeError(`GCD 搜索的速度属性未配置：${options.speedAttributeId}`);
+    const choiceVariables: string[] = [];
+    const lowerTerms = new Map<string, number>([[finalVariables[speedIndex]!, 1]]);
+    const upperTerms = new Map<string, number>([[finalVariables[speedIndex]!, 1]]);
+    for (const [index, range] of [...choices.values()].entries()) {
+      const variable = `gcd_choice_${index}`;
+      choiceVariables.push(variable);
+      bounds.push({ name: variable, min: 0, max: 1 });
+      binaryVars.push(variable);
+      addTerm(lowerTerms, variable, -range.min);
+      addTerm(upperTerms, variable, -range.max);
+    }
+    addRows(rows, "choose_gcd_choice", choiceVariables.map((variable) => [variable, 1] as const), "=", 1);
+    addRows(rows, "gcd_choice_speed_min", lowerTerms, ">=", 0);
+    addRows(rows, "gcd_choice_speed_max", upperTerms, "<=", 0);
+  }
   if (constraints.speedMin !== undefined || constraints.speedMax !== undefined) {
     if (options.speedAttributeId === undefined) throw new RangeError("速度约束缺少速度属性 id");
     mergeRange(options.speedAttributeId, constraints.speedMin, constraints.speedMax);
@@ -602,6 +1112,8 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
     rawVariables,
     finalVariables,
     rawMaximums,
+    rawMinimums,
+    finalMinimums,
     equipmentAttributes,
     foodBonuses,
     idToIndex,
@@ -609,12 +1121,9 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
   };
 }
 
-export async function findBestLoadoutExactMip(
+async function prepareExactMipModel(
   options: ExactMipOptions,
-): Promise<ExactMipResult | undefined> {
-  const startedAt = performance.now();
-  const maxSearchMs = options.maxSearchMs ?? 110_000;
-  if (!Number.isFinite(maxSearchMs) || maxSearchMs <= 0) throw new RangeError("maxSearchMs 必须是正有限值");
+) {
   const model = buildLinearAttributeModel(options);
   if (model === undefined) return undefined;
   const factorEvaluator = createIntegerDamageFactorEvaluator(
@@ -657,12 +1166,12 @@ export async function findBestLoadoutExactMip(
       food.baseParams.find((param) => param.baseParamId === id)?.maxValue ?? 0)));
 
   const groups: FactorGroup[] = [];
-  groups.push(factorGroupsForAttribute("main", mainAttribute, finalMaximums[mainAttribute]!, options.attributeIds.length, factorEvaluator, "mainStat", options.job === "BLU", zeroFactors.weaponDamage));
-  groups.push(factorGroupsForAttribute("det", detAttribute, detAttribute === undefined ? 0 : finalMaximums[detAttribute]!, options.attributeIds.length, factorEvaluator, "determination"));
-  groups.push(factorGroupsForAttribute("ten", tenAttribute, tenAttribute === undefined ? 0 : finalMaximums[tenAttribute]!, options.attributeIds.length, factorEvaluator, "tenacity"));
-  groups.push(factorGroupsForAttribute("crt", crtAttribute, crtAttribute === undefined ? 0 : finalMaximums[crtAttribute]!, options.attributeIds.length, factorEvaluator, "critical"));
-  groups.push(factorGroupsForAttribute("dht", dhtAttribute, dhtAttribute === undefined ? 0 : finalMaximums[dhtAttribute]!, options.attributeIds.length, factorEvaluator, "directHit"));
-  groups.push(factorGroupsForAttribute("gcd", speedAttribute, finalMaximums[speedAttribute]!, options.attributeIds.length, factorEvaluator, "gcdCentiseconds"));
+  groups.push(factorGroupsForAttribute("main", mainAttribute, finalMaximums[mainAttribute]!, options.attributeIds.length, factorEvaluator, "mainStat", options.job === "BLU", zeroFactors.weaponDamage, model.finalMinimums[mainAttribute]!));
+  groups.push(factorGroupsForAttribute("det", detAttribute, detAttribute === undefined ? 0 : finalMaximums[detAttribute]!, options.attributeIds.length, factorEvaluator, "determination", false, 0, detAttribute === undefined ? 0 : model.finalMinimums[detAttribute]!));
+  groups.push(factorGroupsForAttribute("ten", tenAttribute, tenAttribute === undefined ? 0 : finalMaximums[tenAttribute]!, options.attributeIds.length, factorEvaluator, "tenacity", false, 0, tenAttribute === undefined ? 0 : model.finalMinimums[tenAttribute]!));
+  groups.push(factorGroupsForAttribute("crt", crtAttribute, crtAttribute === undefined ? 0 : finalMaximums[crtAttribute]!, options.attributeIds.length, factorEvaluator, "critical", false, 0, crtAttribute === undefined ? 0 : model.finalMinimums[crtAttribute]!));
+  groups.push(factorGroupsForAttribute("dht", dhtAttribute, dhtAttribute === undefined ? 0 : finalMaximums[dhtAttribute]!, options.attributeIds.length, factorEvaluator, "directHit", false, 0, dhtAttribute === undefined ? 0 : model.finalMinimums[dhtAttribute]!));
+  groups.push(factorGroupsForAttribute("gcd", speedAttribute, finalMaximums[speedAttribute]!, options.attributeIds.length, factorEvaluator, "gcdCentiseconds", false, 0, model.finalMinimums[speedAttribute]!));
   const mainFactorGroup = groups[0]!;
   const bluAdditionValues = mainFactorGroup.classes.map((factorClass) => factorClass.auxiliary ?? 0);
   const bluAdditionMinimum = options.job === "BLU" ? Math.min(...bluAdditionValues) : 0;
@@ -671,7 +1180,7 @@ export async function findBestLoadoutExactMip(
     : 0;
   // BLU's reference lookup returns zero outside its source table. Keep the
   // complete relative range, including a possible negative delta from INT=0.
-  const weaponRelativeMinimum = bluAdditionMinimum;
+  const weaponRelativeMinimum = model.finalMinimums[weaponAttribute]! + bluAdditionMinimum;
   const weaponRelativeMaximum = finalMaximums[weaponAttribute]! + bluAdditionMaximum;
   const weaponGroup: FactorGroup = {
     name: "weapon",
@@ -722,7 +1231,9 @@ export async function findBestLoadoutExactMip(
     }
   }
 
-  const useDps = options.constraints?.gcd === undefined;
+  const useDps = options.objective === undefined
+    ? options.constraints?.gcd === undefined
+    : options.objective === "dps";
   const gcdGroup = groups.find((group) => group.name === "gcd")!;
   if (!useDps) {
     for (const factorClass of gcdGroup.classes) factorClass.q = 0;
@@ -737,6 +1248,189 @@ export async function findBestLoadoutExactMip(
       qByVariable.set(factorClass.variable, coefficient);
     }
   }
+
+  const secondaryAxes = ([
+    ["det", detAttribute], ["ten", tenAttribute], ["crt", crtAttribute],
+    ["dht", dhtAttribute], ["gcd", speedAttribute],
+  ] as const).filter((entry): entry is readonly ["det" | "ten" | "crt" | "dht" | "gcd", number] => entry[1] !== undefined);
+  const foodMaximumBonuses = options.foods.map(() => new Array<number>(options.attributeIds.length).fill(0));
+  for (const bonus of model.foodBonuses) {
+    const uncapped = BigInt(bonus.maximumRaw) * BigInt(bonus.numerator) / BigInt(bonus.denominator);
+    foodMaximumBonuses[bonus.foodIndex]![bonus.attribute] += uncapped >= BigInt(bonus.cap) ? bonus.cap : Number(uncapped);
+  }
+  // These support inequalities are implied by real gear/food resources. Put
+  // them directly on factor selectors to strengthen the integer relaxation.
+  for (let mask = 1; mask < 1 << secondaryAxes.length; mask++) {
+    const axes = secondaryAxes.filter((_, index) => (mask & (1 << index)) !== 0);
+    const gearMaximum = model.equipmentAttributes.reduce((total, slot) => total + Math.max(...slot.map((candidate) =>
+      axes.reduce((sum, [, attribute]) => sum + candidate[attribute]!, 0))), 0);
+    const foodMaximum = Math.max(0, ...foodMaximumBonuses.map((bonuses) =>
+      axes.reduce((sum, [, attribute]) => sum + bonuses[attribute]!, 0)));
+    const maximum = gearMaximum + foodMaximum;
+    if (!Number.isSafeInteger(maximum)) continue;
+    const terms = new Map<string, number>();
+    for (const [name] of axes) for (const entry of groups.find((group) => group.name === name)!.classes) {
+      addTerm(terms, entry.variable, entry.min);
+    }
+    addRows(model.rows, `factor_resource_${mask}`, terms, "<=", maximum);
+  }
+  return { model, groups, factorEvaluator, useDps, qByVariable,
+    mainAttribute, detAttribute, tenAttribute, crtAttribute, dhtAttribute, speedAttribute };
+}
+
+export async function findBestLoadoutExactMip(
+  options: ExactMipOptions,
+): Promise<ExactMipResult | undefined> {
+  const startedAt = performance.now();
+  const maxSearchMs = options.maxSearchMs ?? 110_000;
+  if (!Number.isFinite(maxSearchMs) || maxSearchMs <= 0) throw new RangeError("maxSearchMs 必须是正有限值");
+  const prepared = await prepareExactMipModel(options);
+  if (prepared === undefined) return undefined;
+  const { model, groups, factorEvaluator, useDps, qByVariable,
+    mainAttribute, detAttribute, tenAttribute, crtAttribute, dhtAttribute, speedAttribute } = prepared;
+  const attributeForFactorGroup = new Map<string, number>([
+    ["main", mainAttribute],
+    ["det", detAttribute ?? -1],
+    ["ten", tenAttribute ?? -1],
+    ["crt", crtAttribute ?? -1],
+    ["dht", dhtAttribute ?? -1],
+    ["gcd", speedAttribute],
+  ]);
+  const speedRange = model.ranges.get(speedAttribute);
+  const clippedSpeedRange = (range: GcdSpeedRange): GcdSpeedRange | undefined => {
+    const min = Math.max(range.min, speedRange?.min ?? Number.NEGATIVE_INFINITY);
+    const max = Math.min(range.max, speedRange?.max ?? Number.POSITIVE_INFINITY);
+    return min <= max ? { min, max } : undefined;
+  };
+  const requestedGcds = options.constraints?.gcdChoices !== undefined
+    ? options.constraints.gcdChoices
+    : options.constraints?.gcd === undefined
+    ? undefined
+    : [options.constraints.gcd];
+  const scalarGcdRange = options.constraints?.gcd === undefined
+    ? undefined
+    : options.gcdToSpeedRange?.(options.constraints.gcd);
+  const validGcdRanges = requestedGcds?.flatMap((gcdChoice) => {
+    const rawRange = options.gcdToSpeedRange?.(gcdChoice);
+    if (rawRange === undefined) return [];
+    let combined = clippedSpeedRange(rawRange);
+    if (combined === undefined) return [];
+    if (scalarGcdRange !== undefined) {
+      const intersected = clippedSpeedRange({
+        min: Math.max(combined.min, scalarGcdRange.min),
+        max: Math.min(combined.max, scalarGcdRange.max),
+      });
+      if (intersected === undefined) return [];
+      combined = intersected;
+    }
+    return [{ centiseconds: Math.round(gcdChoice * 100), range: combined }];
+  });
+  const intersectsRange = (minimum: number, maximum: number, range: GcdSpeedRange): boolean =>
+    maximum >= Math.ceil(range.min) && minimum <= Math.floor(range.max);
+  const signatureBandGroups = groups.map((group) => {
+    const attribute = attributeForFactorGroup.get(group.name);
+    let classes = group.classes;
+    if (attribute !== undefined && attribute >= 0) {
+      const range = model.ranges.get(attribute);
+      if (range !== undefined) {
+        classes = classes.filter((factorClass) =>
+          intersectsRange(factorClass.min, factorClass.max, {
+            min: range.min ?? Number.NEGATIVE_INFINITY,
+            max: range.max ?? Number.POSITIVE_INFINITY,
+          }));
+      }
+    }
+    if (group.name === "gcd" && validGcdRanges !== undefined) {
+      classes = classes.filter((factorClass) => validGcdRanges.some((choice) =>
+        factorClass.value === choice.centiseconds &&
+        intersectsRange(factorClass.min, factorClass.max, choice.range)));
+    }
+    // An empty filtered group cannot occur after a feasible initial MIP solve;
+    // keep the unfiltered superset if numeric edge cases make it appear empty.
+    if (classes.length === 0) classes = group.classes;
+    return {
+      name: group.name,
+      classes: classes.map(({ q, value }) => ({ q, value })),
+    };
+  });
+  const minimumAttributeByGroupAndQ = new Map<string, Map<number, number>>();
+  for (const group of groups) {
+    const attribute = attributeForFactorGroup.get(group.name);
+    if (attribute === undefined || attribute < 0) continue;
+    const filteredGroup = signatureBandGroups.find((candidate) => candidate.name === group.name)!;
+    const classBySignature = new Map(filteredGroup.classes.map(({ q, value }) => [`${q}:${value}`, true]));
+    const minimaByQ = new Map<number, number>();
+    for (const factorClass of group.classes) {
+      if (!classBySignature.has(`${factorClass.q}:${factorClass.value}`)) continue;
+      const previous = minimaByQ.get(factorClass.q);
+      if (previous === undefined || factorClass.min < previous) {
+        minimaByQ.set(factorClass.q, factorClass.min);
+      }
+    }
+    minimumAttributeByGroupAndQ.set(group.name, minimaByQ);
+  }
+  const secondaryAttributes = [
+    ["det", detAttribute],
+    ["ten", tenAttribute],
+    ["crt", crtAttribute],
+    ["dht", dhtAttribute],
+    ["gcd", speedAttribute],
+  ] as const;
+  const presentSecondaryAttributes = secondaryAttributes.flatMap(([name, attribute]) =>
+    attribute === undefined ? [] : [[name, attribute] as const]);
+  const maximumFoodBonuses = options.foods.map(() =>
+    new Array<number>(options.attributeIds.length).fill(0));
+  for (const bonus of model.foodBonuses) {
+    const rawBonus = BigInt(bonus.maximumRaw) * BigInt(bonus.numerator) /
+      BigInt(bonus.denominator);
+    const cappedBonus = rawBonus >= BigInt(bonus.cap) ? bonus.cap : Number(rawBonus);
+    maximumFoodBonuses[bonus.foodIndex]![bonus.attribute] += cappedBonus;
+  }
+  const subsetBudgets: { groups: readonly string[]; maximum: number }[] = [];
+  for (let mask = 1; mask < 1 << presentSecondaryAttributes.length; mask++) {
+    const included = presentSecondaryAttributes.filter((_, index) => (mask & (1 << index)) !== 0);
+    let maximum = 0;
+    for (const slot of model.equipmentAttributes) {
+      let slotMaximum = Number.NEGATIVE_INFINITY;
+      for (const candidate of slot) {
+        const contribution = included.reduce((total, [, attribute]) => total + candidate[attribute]!, 0);
+        slotMaximum = Math.max(slotMaximum, contribution);
+      }
+      maximum += slotMaximum;
+    }
+    let foodMaximum = 0;
+    for (let foodIndex = 0; foodIndex < options.foods.length; foodIndex++) {
+      const foodContribution = included.reduce((total, [, attribute]) =>
+        total + maximumFoodBonuses[foodIndex]![attribute]!, 0);
+      foodMaximum = Math.max(foodMaximum, foodContribution);
+    }
+    maximum += foodMaximum;
+    if (Number.isSafeInteger(maximum)) {
+      subsetBudgets.push({ groups: included.map(([name]) => name), maximum });
+    }
+  }
+  const isPossiblyFeasibleFactorTuple = (
+    signature: readonly { name: string; q: number; value: number }[],
+  ): boolean => {
+    const qByGroup = new Map(signature.map((factor) => [factor.name, factor.q]));
+    for (const budget of subsetBudgets) {
+      let minimum = 0;
+      for (const name of budget.groups) {
+        const q = qByGroup.get(name);
+        const attributeMinimum = q === undefined
+          ? undefined
+          : minimumAttributeByGroupAndQ.get(name)?.get(q);
+        // Unknown mappings must retain the tuple; only a complete lower bound can reject it.
+        if (attributeMinimum === undefined) {
+          minimum = Number.NEGATIVE_INFINITY;
+          break;
+        }
+        minimum += attributeMinimum;
+      }
+      if (Number.isSafeInteger(minimum) && minimum > budget.maximum) return false;
+    }
+    return true;
+  };
   const excludedSignatures: string[][] = [];
   const toughnessIndex = options.toughnessAttributeId === undefined
     ? undefined
@@ -744,20 +1438,56 @@ export async function findBestLoadoutExactMip(
   if (options.constraints?.maxToughnessMode === true && toughnessIndex === undefined) {
     throw new RangeError("最高坚韧模式需要配置坚韧属性 id");
   }
-  const highs = await loadHighs();
+  const highs = await getHighs();
   let solverRuns = 0;
+  const initialStart = greedyMipStart(options, model, useDps, Math.min(startedAt + maxSearchMs, performance.now() + 100));
   let maximumSurrogate = Number.NEGATIVE_INFINITY;
   let nextSurrogate: number | undefined;
   let best: { result: LoadoutSearchResult; factors: IntegerDamageFactors; toughness?: number } | undefined;
-  const solveModel = (objective: Map<string, number>, phaseName: string) => {
+  let maximumToughness: number | undefined;
+  const solveModel = (
+    objective: Map<string, number>,
+    phaseName: string,
+    minimumSurrogate?: number,
+  ) => {
     const remainingMs = maxSearchMs - (performance.now() - startedAt);
     if (remainingMs <= 0) throw new Error("精确 MIP 搜索达到时限，未完成最优性证明");
     const rows = [...model.rows];
+    if (minimumSurrogate !== undefined) {
+      const maximumOffset = groups.reduce((total, group) =>
+        total + Math.max(...group.classes.map((factorClass) => factorClass.q)), 0);
+      addRows(
+        rows,
+        "surrogate_band_cutoff",
+        qByVariable,
+        ">=",
+        minimumSurrogate - maximumOffset,
+      );
+    }
     excludedSignatures.forEach((signature, index) => {
       addRows(rows, `nogood_${index}`, signature.map((variable) => [variable, 1] as const), "<=", signature.length - 1);
     });
-    const output = highs.solve(
-      lpText(phaseName, objective, rows, model.bounds, model.binaryVars, model.generalVars),
+    const text = lpText(phaseName, objective, rows, model.bounds, model.binaryVars, model.generalVars);
+    const output = initialStart !== undefined && excludedSignatures.length === 0
+      ? highs.withModel({ format: "lp", data: text }, (native) => {
+          native.options.set({ output_flag: false, presolve: "on", mip_rel_gap: 0, mip_abs_gap: 0,
+            time_limit: Math.max(0.05, remainingMs / 1000) });
+          const entries = [...initialStart].map(([name, value]) => [native.getColByName(name), value] as const)
+            .sort(([left], [right]) => left - right);
+          native.setSolution({ indices: entries.map(([index]) => index), values: entries.map(([, value]) => value) });
+          native.run();
+          const status = native.getModelStatus();
+          const Status = status === highs.constants.modelStatus.optimal ? "Optimal"
+            : status === highs.constants.modelStatus.infeasible ? "Infeasible" : `状态代码 ${status}`;
+          const Columns: Record<string, { Primal: number }> = {};
+          if (Status === "Optimal") {
+            const solution = native.getSolution();
+            for (const { name } of model.bounds) Columns[name] = { Primal: solution.colValue[native.getColByName(name)]! };
+          }
+          return { Status, Columns, ObjectiveValue: native.getObjectiveValue() };
+        })
+      : highs.solve(
+      text,
       {
         output_flag: false,
         presolve: "on",
@@ -768,6 +1498,7 @@ export async function findBestLoadoutExactMip(
       },
     );
     solverRuns++;
+    if (output.Status === "Optimal") validateMipSolution(rows, model.bounds, output.Columns);
     options.onProgress?.(`HiGHS ${phaseName} 状态=${output.Status}；目标=${output.ObjectiveValue}`);
     return output;
   };
@@ -782,18 +1513,60 @@ export async function findBestLoadoutExactMip(
     if (phaseOne.Status !== "Optimal") throw new Error(`最高坚韧阶段未证明最优：${phaseOne.Status}`);
     const maximumTenacity = phaseOne.Columns[tenVariable]?.Primal;
     if (!Number.isSafeInteger(maximumTenacity)) throw new Error("最高坚韧阶段返回了非整数解");
+    maximumToughness = maximumTenacity;
     setRange(tenVariable, maximumTenacity, maximumTenacity);
   }
 
   const objective = new Map<string, number>();
   for (const [variable, coefficient] of qByVariable) addTerm(objective, variable, coefficient);
   let firstSurrogate: number | undefined;
+  let signatureBandChecks = 0;
+  let signatureBandElapsedMs = 0;
+  let signatureBandProof = false;
+  let lastSignatureBandIncumbent: string | undefined;
+  let lastSignatureBandMayContainBetter = true;
   // The score sums seven rounded log factors. Its rounding error is bounded
   // by the factor count, so signatures below the surrogate optimum by more
   // than this band cannot beat that optimum under exact factor comparison.
   const errorBand = groups.length;
   while (true) {
-    const output = solveModel(objective, "exact_damage");
+    if (firstSurrogate !== undefined && best !== undefined) {
+      const incumbentKey = [
+        best.factors.weaponDamage,
+        best.factors.mainStat,
+        best.factors.determination,
+        best.factors.tenacity,
+        best.factors.critical,
+        best.factors.directHit,
+        best.factors.gcdCentiseconds,
+      ].join(":");
+      if (incumbentKey !== lastSignatureBandIncumbent) {
+        signatureBandChecks++;
+        const bandStartedAt = performance.now();
+        lastSignatureBandMayContainBetter = hasStrictlyBetterFactorCombination({
+          groups: signatureBandGroups,
+          objective: useDps ? "dps" : "damage",
+          incumbent: best.factors,
+          qMinimum: firstSurrogate - errorBand,
+          qMaximum: firstSurrogate,
+          deadline: () => performance.now() - startedAt >= maxSearchMs,
+          isPossiblyFeasible: isPossiblyFeasibleFactorTuple,
+        });
+        signatureBandElapsedMs += performance.now() - bandStartedAt;
+        lastSignatureBandIncumbent = incumbentKey;
+      }
+      if (performance.now() - startedAt >= maxSearchMs) {
+        throw new Error("精确 MIP 搜索达到时限，未完成最优性证明");
+      }
+      if (!lastSignatureBandMayContainBetter) {
+        signatureBandProof = true;
+        options.onProgress?.("签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解");
+        break;
+      }
+    }
+    const output = firstSurrogate === undefined
+      ? solveModel(objective, "exact_damage_initial")
+      : solveModel(new Map(), "exact_damage_band_feasibility", firstSurrogate - errorBand);
     if (output.Status === "Infeasible") {
       if (best === undefined) {
         return undefined;
@@ -826,6 +1599,32 @@ export async function findBestLoadoutExactMip(
     const selection = slotsForResult(options.slots, model.slotVariables, output.Columns);
     const food = foodForResult(options.foods, model.foodVariables, output.Columns);
     const attributes = getAttributeVector(selection, food, options.attributeIds, options.equipmentAttributeExtractor);
+    const rawAttributes = new Array<number>(options.attributeIds.length).fill(0);
+    const attributeIndexes = new Map(options.attributeIds.map((id, index) => [id, index]));
+    for (const equipment of selection) {
+      const params = options.equipmentAttributeExtractor?.(equipment) ?? equipment.baseParams;
+      for (const param of params) {
+        const index = attributeIndexes.get(param.baseParamId);
+        if (index !== undefined) rawAttributes[index] += param.value;
+      }
+    }
+    for (let index = 0; index < options.attributeIds.length; index++) {
+      const expectedRaw = rawAttributes[index]!;
+      const expectedFinal = attributes[index]!;
+      const mipRaw = Math.round(output.Columns[model.rawVariables[index]!]?.Primal ?? 0);
+      const mipFinal = Math.round(output.Columns[model.finalVariables[index]!]?.Primal ?? 0);
+      if (mipRaw !== expectedRaw || mipFinal !== expectedFinal) {
+        throw new Error(
+          `MIP 属性重建不一致：属性 ${options.attributeIds[index]}，装备=${mipRaw}/${expectedRaw}，含食物=${mipFinal}/${expectedFinal}`,
+        );
+      }
+      const range = model.ranges.get(index);
+      if (range !== undefined &&
+          ((range.min !== undefined && expectedFinal < range.min) ||
+           (range.max !== undefined && expectedFinal > range.max))) {
+        throw new Error(`MIP 返回属性 ${options.attributeIds[index]}=${expectedFinal}，不满足约束范围`);
+      }
+    }
     const factors = factorEvaluator(attributes);
     if (factors === undefined) throw new Error("精确 MIP 返回的属性向量无法评估");
     for (const name of ["weaponDamage", "mainStat", "determination", "tenacity", "critical", "directHit", "gcdCentiseconds"] as const) {
@@ -837,13 +1636,26 @@ export async function findBestLoadoutExactMip(
     if (evaluation === undefined || !Number.isFinite(evaluation.damage) || !Number.isFinite(evaluation.gcd)) {
       throw new Error("MIP 返回的配装无法计算伤害或 GCD");
     }
+    const requestedGcds = options.constraints?.gcdChoices ??
+      (options.constraints?.gcd === undefined ? undefined : [options.constraints.gcd]);
+    if (requestedGcds !== undefined && !requestedGcds.some((gcdChoice) =>
+      Math.round(gcdChoice * 100) === factors.gcdCentiseconds)) {
+      throw new Error(`精确 MIP 返回 GCD=${factors.gcdCentiseconds / 100}，不在请求集合 ${requestedGcds.join(", ")} 中`);
+    }
     const candidate = { result: { selection, food, damage: evaluation.damage }, factors, toughness: toughnessIndex === undefined ? undefined : attributes[toughnessIndex] };
+    if (maximumToughness !== undefined && candidate.toughness !== maximumToughness) {
+      throw new Error(`最高坚韧阶段固定值不一致：${candidate.toughness}，预期 ${maximumToughness}`);
+    }
     if (best === undefined || betterFactors(factors, best.factors, useDps)) best = candidate;
     if (firstSurrogate === undefined) {
       firstSurrogate = surrogate;
       maximumSurrogate = surrogate;
-    } else nextSurrogate = surrogate;
-    if (best !== undefined && surrogate < firstSurrogate - errorBand) break;
+    } else {
+      nextSurrogate = surrogate;
+      if (surrogate < firstSurrogate - errorBand) {
+        throw new Error("HiGHS 返回了不满足 surrogate 带宽约束的签名");
+      }
+    }
     excludedSignatures.push(selectedSignature);
     options.onProgress?.(`精确候选已核验 ${excludedSignatures.length} 个；固定点上界=${surrogate}`);
     if (performance.now() - startedAt >= maxSearchMs) {
@@ -865,6 +1677,9 @@ export async function findBestLoadoutExactMip(
       elapsedMs: performance.now() - startedAt,
       solverRuns,
       excludedSignatures: excludedSignatures.length,
+      signatureBandChecks,
+      signatureBandElapsedMs,
+      signatureBandProof,
       variables: model!.bounds.length,
       constraints: model!.rows.length + excludedSignatures.length,
       maximumSurrogate,

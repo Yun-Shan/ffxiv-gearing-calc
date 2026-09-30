@@ -1,0 +1,3076 @@
+{
+  "recordedAt": "2026-09-30T07:26:20.583Z",
+  "hardware": {
+    "cpu": "12th Gen Intel(R) Core(TM) i7-12650H",
+    "logicalCpus": 16,
+    "totalMemoryBytes": 16902635520,
+    "node": "v26.5.0",
+    "platform": "win32"
+  },
+  "timingScope": "候选生成结束后至联合搜索和最优性复核完成，包含工作线程启动和结果传输",
+  "timeLimitMs": 240000,
+  "targetTimeMs": 120000,
+  "noPrecomputedTables": true,
+  "algorithmFiles": {
+    "loadout-finder-exact-mip.ts": "317f6991415ae0804a4c2c753bbedfdaf479c1a7a4098772587c4d6f2712f4bf",
+    "loadout-finder-v3.ts": "6aee819e2c7304168c5f7cc8a9a353da388493a15a001f21d18747dd50e1cb25",
+    "signature-band.ts": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+    "test.ts": "aafe933f816e8be192fc8d964cc3593fe5c46d84c019ea75fe87cea4c673344a",
+    "run-v3.mjs": "e91edc9e70ff555e2bcad91ed66d37553828becad38dfa4f7be49552d3e2566e",
+    "v3-worker.mjs": "f85871b81868da8844476faa87669eac6adcc7d7a42e7ea98b2c148d08b372c1"
+  },
+  "reference": {
+    "repository": "https://github.com/Asvel/ffxiv-gearing",
+    "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+    "sourceFiles": [
+      "reference/ffxiv-gearing/src/game.ts"
+    ]
+  },
+  "note": "最终基准后仅修正 proof.outerBound 说明文字，未修改求解模型、搜索或约束。HiGHS 数值最优状态不是独立形式化证书。",
+  "results": [
+    {
+      "name": "rpr-sam",
+      "jobs": [
+        "RPR",
+        "SAM"
+      ],
+      "sharedSlots": [
+        "耳饰",
+        "项链",
+        "手镯",
+        "戒指1",
+        "戒指2"
+      ],
+      "foodStrategy": "shared",
+      "objective": "dps",
+      "constraints": {},
+      "value": {
+        "numerator": "2",
+        "denominator": "1",
+        "approximate": 2
+      },
+      "jobResults": {
+        "RPR": {
+          "damage": 64.73973188192656,
+          "gcd": 2.26,
+          "damagePerSecond": 28.645899062799366,
+          "soloDamage": 64.73973188192656,
+          "soloDamagePerSecond": 28.645899062799366,
+          "food": {
+            "itemId": 49246,
+            "name": "剑山芋沙拉",
+            "itemLevel": 770,
+            "attributes": [
+              {
+                "baseParamId": 3,
+                "multiplier": 1.1,
+                "maxValue": 297
+              },
+              {
+                "baseParamId": 22,
+                "multiplier": 1.1,
+                "maxValue": 91
+              },
+              {
+                "baseParamId": 45,
+                "multiplier": 1.1,
+                "maxValue": 151
+              }
+            ]
+          },
+          "equipment": [
+            {
+              "slot": "主手",
+              "itemId": 51017,
+              "name": "幻境战镰·秘影",
+              "itemLevel": 795,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 628
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 667
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 393
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 393
+                }
+              ],
+              "weaponDamage": {
+                "physical": 146,
+                "magical": 73,
+                "delay": 3200
+              }
+            },
+            {
+              "slot": "项链",
+              "itemId": 43164,
+              "name": "黑马冠军强攻项环",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "手镯",
+              "itemId": 43092,
+              "name": "改良型绿咬鹃强攻手镯",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 186
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 43082,
+              "name": "改良型绿咬鹃强攻耳夹",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 184
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "手部",
+              "itemId": 47115,
+              "name": "雾忆制敌臂甲",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 405
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 167
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "腿部",
+              "itemId": 47116,
+              "name": "雾忆制敌束膝裤",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 605
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 643
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 379
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 265
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "脚部",
+              "itemId": 47117,
+              "name": "雾忆制敌胫甲",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 405
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 221
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "头部",
+              "itemId": 47113,
+              "name": "雾忆制敌角盔",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 405
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 221
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "身体",
+              "itemId": 47114,
+              "name": "雾忆制敌战铠",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 605
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 643
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 379
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 265
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 43097,
+              "name": "改良型绿咬鹃强攻戒指",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 43174,
+              "name": "黑马冠军强攻指环",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            }
+          ]
+        },
+        "SAM": {
+          "damage": 63.690702671334385,
+          "gcd": 1.95,
+          "damagePerSecond": 32.661898805812505,
+          "soloDamage": 63.690702671334385,
+          "soloDamagePerSecond": 32.661898805812505,
+          "food": {
+            "itemId": 49246,
+            "name": "剑山芋沙拉",
+            "itemLevel": 770,
+            "attributes": [
+              {
+                "baseParamId": 3,
+                "multiplier": 1.1,
+                "maxValue": 297
+              },
+              {
+                "baseParamId": 22,
+                "multiplier": 1.1,
+                "maxValue": 91
+              },
+              {
+                "baseParamId": 45,
+                "multiplier": 1.1,
+                "maxValue": 151
+              }
+            ]
+          },
+          "equipment": [
+            {
+              "slot": "项链",
+              "itemId": 43164,
+              "name": "黑马冠军强攻项环",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "手镯",
+              "itemId": 43092,
+              "name": "改良型绿咬鹃强攻手镯",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 186
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 43082,
+              "name": "改良型绿咬鹃强攻耳夹",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 184
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "主手",
+              "itemId": 51013,
+              "name": "幻境武士刀·秘影",
+              "itemLevel": 795,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 628
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 667
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 393
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 393
+                }
+              ],
+              "weaponDamage": {
+                "physical": 146,
+                "magical": 73,
+                "delay": 2640
+              }
+            },
+            {
+              "slot": "手部",
+              "itemId": 47120,
+              "name": "雾忆强袭手套",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 405
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 167
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "头部",
+              "itemId": 47118,
+              "name": "雾忆强袭眼罩",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 405
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 167
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "脚部",
+              "itemId": 43060,
+              "name": "改良型绿咬鹃强袭护腿",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 371
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 391
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 236
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 219
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "身体",
+              "itemId": 47119,
+              "name": "雾忆强袭衬衫",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 605
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 643
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 265
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 379
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "腿部",
+              "itemId": 50866,
+              "name": "瓦纳·迪尔强袭五分裤",
+              "itemLevel": 780,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 605
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 643
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 379
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 293
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 43097,
+              "name": "改良型绿咬鹃强攻戒指",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 43174,
+              "name": "黑马冠军强攻指环",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 1,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            }
+          ]
+        }
+      },
+      "proof": {
+        "complete": true,
+        "objective": "dps",
+        "optimalityScope": "传入的每职业槽位候选、通用 EquipInfo 完整身份交集、食物列表和约束范围",
+        "outerBound": "每个外层节点以各职业在已固定通用装备下独立重优化的 DPS 上界求和；product/GCD 归一化分数用 BigInt 有理数比较",
+        "innerSolverStatus": "Optimal",
+        "formalCertificate": false,
+        "numericalLimitation": "HiGHS 报告 Optimal 且整数模型行、属性重建和约束范围均已复核；HiGHS 浮点优化本身不是形式化有理数证明",
+        "terminationReason": "已达到各职业单独最优基线之和这一全局上界"
+      },
+      "stats": {
+        "elapsedMs": 42735,
+        "peakRssBytes": 309342208,
+        "statistics": {
+          "outerNodes": 0,
+          "completeNodes": 0,
+          "upperBoundPrunes": 0,
+          "relaxedOptimaAttained": 0,
+          "innerSolves": 3,
+          "parentResultReuses": 0,
+          "cacheHits": 0,
+          "cacheMisses": 3,
+          "cacheEntries": 2,
+          "elapsedMs": 42600.573599999996,
+          "timeLimitMs": 235000,
+          "cacheLimit": 2048,
+          "rssBytes": 309276672,
+          "heapUsedBytes": 32984184
+        }
+      },
+      "candidates": [
+        {
+          "MainHand": {
+            "beforePruning": 56,
+            "afterPruning": 20,
+            "v3Candidates": 56
+          },
+          "Neck": {
+            "beforePruning": 28,
+            "afterPruning": 20,
+            "v3Candidates": 28
+          },
+          "Wrists": {
+            "beforePruning": 28,
+            "afterPruning": 20,
+            "v3Candidates": 28
+          },
+          "Ears": {
+            "beforePruning": 28,
+            "afterPruning": 21,
+            "v3Candidates": 28
+          },
+          "Gloves": {
+            "beforePruning": 43,
+            "afterPruning": 29,
+            "v3Candidates": 43
+          },
+          "Legs": {
+            "beforePruning": 47,
+            "afterPruning": 29,
+            "v3Candidates": 47
+          },
+          "Feet": {
+            "beforePruning": 43,
+            "afterPruning": 29,
+            "v3Candidates": 43
+          },
+          "Head": {
+            "beforePruning": 43,
+            "afterPruning": 30,
+            "v3Candidates": 43
+          },
+          "Body": {
+            "beforePruning": 49,
+            "afterPruning": 30,
+            "v3Candidates": 49
+          },
+          "Finger": {
+            "beforePruning": 58,
+            "afterPruning": 18,
+            "v3Candidates": 389,
+            "rawSingleRings": 58,
+            "prunedRingPairs": 120,
+            "estimatedOrderedRingPairs": 3364,
+            "v3RingPairs": 389
+          }
+        },
+        {
+          "Neck": {
+            "beforePruning": 28,
+            "afterPruning": 20,
+            "v3Candidates": 28
+          },
+          "Wrists": {
+            "beforePruning": 28,
+            "afterPruning": 20,
+            "v3Candidates": 28
+          },
+          "Ears": {
+            "beforePruning": 28,
+            "afterPruning": 21,
+            "v3Candidates": 28
+          },
+          "MainHand": {
+            "beforePruning": 56,
+            "afterPruning": 23,
+            "v3Candidates": 56
+          },
+          "Gloves": {
+            "beforePruning": 43,
+            "afterPruning": 27,
+            "v3Candidates": 43
+          },
+          "Head": {
+            "beforePruning": 43,
+            "afterPruning": 28,
+            "v3Candidates": 43
+          },
+          "Feet": {
+            "beforePruning": 43,
+            "afterPruning": 28,
+            "v3Candidates": 43
+          },
+          "Body": {
+            "beforePruning": 49,
+            "afterPruning": 30,
+            "v3Candidates": 49
+          },
+          "Legs": {
+            "beforePruning": 47,
+            "afterPruning": 31,
+            "v3Candidates": 47
+          },
+          "Finger": {
+            "beforePruning": 58,
+            "afterPruning": 18,
+            "v3Candidates": 389,
+            "rawSingleRings": 58,
+            "prunedRingPairs": 120,
+            "estimatedOrderedRingPairs": 3364,
+            "v3RingPairs": 389
+          }
+        }
+      ],
+      "source": {
+        "status": "degraded",
+        "serverVersion": "1.0.0",
+        "gamePath": "F:\\Game\\FF14\\最终幻想XIV\\game",
+        "detectedVersion": "2026.09.15.0000.0000",
+        "validatedVersion": "2026.08.05.0000.0000",
+        "schemaAvailable": true,
+        "schemaVersion": "latest",
+        "cacheEnabled": true,
+        "cacheTTLSeconds": 300,
+        "uptimeSeconds": 2,
+        "warnings": [
+          {
+            "code": "GameVersionMismatch",
+            "message": "Detected game version 2026.09.15.0000.0000 differs from last validated version 2026.08.05.0000.0000. FFXIV convenience tools (get_jobs, get_duties, get_localized_labels) may return incorrect data. Generic tools (get_row, search_rows, etc.) are unaffected.",
+            "detectedVersion": "2026.09.15.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000"
+          }
+        ],
+        "gameVersion": "2026.09.15.0000.0000",
+        "timestamp": "2026-09-30T07:23:05.4928333+00:00"
+      }
+    },
+    {
+      "name": "vpr-mch",
+      "jobs": [
+        "VPR",
+        "MCH"
+      ],
+      "sharedSlots": [
+        "耳饰",
+        "项链",
+        "手镯",
+        "戒指1",
+        "戒指2"
+      ],
+      "foodStrategy": "shared",
+      "objective": "dps",
+      "constraints": {},
+      "value": {
+        "numerator": "4742535",
+        "denominator": "2371792",
+        "approximate": 1.9995577183833995
+      },
+      "jobResults": {
+        "VPR": {
+          "damage": 63.090071918521524,
+          "gcd": 1.9,
+          "damagePerSecond": 33.20530100974817,
+          "soloDamage": 63.117987844221844,
+          "soloDamagePerSecond": 33.219993602222026,
+          "food": {
+            "itemId": 49245,
+            "name": "炖剑山芋",
+            "itemLevel": 770,
+            "attributes": [
+              {
+                "baseParamId": 3,
+                "multiplier": 1.1,
+                "maxValue": 297
+              },
+              {
+                "baseParamId": 22,
+                "multiplier": 1.1,
+                "maxValue": 151
+              },
+              {
+                "baseParamId": 44,
+                "multiplier": 1.1,
+                "maxValue": 91
+              }
+            ]
+          },
+          "equipment": [
+            {
+              "slot": "项链",
+              "itemId": 43088,
+              "name": "改良型绿咬鹃精准项链",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "手镯",
+              "itemId": 43170,
+              "name": "黑马冠军精准手镯",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 184
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 43160,
+              "name": "黑马冠军精准耳坠",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 186
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "主手",
+              "itemId": 51019,
+              "name": "幻境双牙·秘影",
+              "itemLevel": 795,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 628
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 667
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 393
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 393
+                }
+              ],
+              "weaponDamage": {
+                "physical": 146,
+                "magical": 73,
+                "delay": 2640
+              }
+            },
+            {
+              "slot": "头部",
+              "itemId": 47128,
+              "name": "雾忆游击眼罩",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 405
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 167
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "脚部",
+              "itemId": 47132,
+              "name": "雾忆游击长靴",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 405
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 167
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "手部",
+              "itemId": 47130,
+              "name": "雾忆游击手套",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 405
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 167
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "身体",
+              "itemId": 47129,
+              "name": "雾忆游击衬衫",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 605
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 643
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 379
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 373
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "腿部",
+              "itemId": 49450,
+              "name": "重量级游击骑兵裤",
+              "itemLevel": 770,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 605
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 643
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 286
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 379
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 43098,
+              "name": "改良型绿咬鹃精准戒指",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 43175,
+              "name": "黑马冠军精准指环",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            }
+          ]
+        },
+        "MCH": {
+          "damage": 78.38188210688435,
+          "gcd": 2.29,
+          "damagePerSecond": 34.227896116543384,
+          "soloDamage": 78.38188210688435,
+          "soloDamagePerSecond": 34.227896116543384,
+          "food": {
+            "itemId": 49245,
+            "name": "炖剑山芋",
+            "itemLevel": 770,
+            "attributes": [
+              {
+                "baseParamId": 3,
+                "multiplier": 1.1,
+                "maxValue": 297
+              },
+              {
+                "baseParamId": 22,
+                "multiplier": 1.1,
+                "maxValue": 151
+              },
+              {
+                "baseParamId": 44,
+                "multiplier": 1.1,
+                "maxValue": 91
+              }
+            ]
+          },
+          "equipment": [
+            {
+              "slot": "项链",
+              "itemId": 43088,
+              "name": "改良型绿咬鹃精准项链",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "手镯",
+              "itemId": 43170,
+              "name": "黑马冠军精准手镯",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 184
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 43160,
+              "name": "黑马冠军精准耳坠",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 186
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "主手",
+              "itemId": 51011,
+              "name": "幻境左轮枪·秘影",
+              "itemLevel": 795,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 628
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 667
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 393
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 393
+                }
+              ],
+              "weaponDamage": {
+                "physical": 146,
+                "magical": 73,
+                "delay": 2640
+              }
+            },
+            {
+              "slot": "手部",
+              "itemId": 47125,
+              "name": "雾忆精准手套",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 405
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 167
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "脚部",
+              "itemId": 47127,
+              "name": "雾忆精准矮靴",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 405
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 221
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "头部",
+              "itemId": 47123,
+              "name": "雾忆精准狩猎帽",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 405
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 167
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "身体",
+              "itemId": 47124,
+              "name": "雾忆精准上装",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 605
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 643
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 379
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 265
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "腿部",
+              "itemId": 47126,
+              "name": "雾忆精准垮裤",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 605
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 643
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 379
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 265
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 43098,
+              "name": "改良型绿咬鹃精准戒指",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 43175,
+              "name": "黑马冠军精准指环",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 2,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 3,
+                  "value": 308
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 45,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            }
+          ]
+        }
+      },
+      "proof": {
+        "complete": true,
+        "objective": "dps",
+        "optimalityScope": "传入的每职业槽位候选、通用 EquipInfo 完整身份交集、食物列表和约束范围",
+        "outerBound": "每个外层节点以各职业在已固定通用装备下独立重优化的 DPS 上界求和；product/GCD 归一化分数用 BigInt 有理数比较",
+        "innerSolverStatus": "Optimal",
+        "formalCertificate": false,
+        "numericalLimitation": "HiGHS 报告 Optimal 且整数模型行、属性重建和约束范围均已复核；HiGHS 浮点优化本身不是形式化有理数证明",
+        "terminationReason": "完整共享模型已穷尽归一化总和可能改进的因子签名；乘积仅用于必要条件筛选，最终比较精确有理数总和"
+      },
+      "stats": {
+        "elapsedMs": 132538,
+        "peakRssBytes": 323358720,
+        "statistics": {
+          "outerNodes": 0,
+          "completeNodes": 1,
+          "upperBoundPrunes": 0,
+          "relaxedOptimaAttained": 0,
+          "innerSolves": 6,
+          "parentResultReuses": 0,
+          "cacheHits": 0,
+          "cacheMisses": 4,
+          "cacheEntries": 4,
+          "elapsedMs": 132397.74690000003,
+          "timeLimitMs": 235000,
+          "cacheLimit": 2048,
+          "rssBytes": 275443712,
+          "heapUsedBytes": 16424880
+        }
+      },
+      "candidates": [
+        {
+          "Neck": {
+            "beforePruning": 28,
+            "afterPruning": 20,
+            "v3Candidates": 28
+          },
+          "Wrists": {
+            "beforePruning": 28,
+            "afterPruning": 20,
+            "v3Candidates": 28
+          },
+          "Ears": {
+            "beforePruning": 28,
+            "afterPruning": 21,
+            "v3Candidates": 28
+          },
+          "MainHand": {
+            "beforePruning": 56,
+            "afterPruning": 23,
+            "v3Candidates": 56
+          },
+          "Head": {
+            "beforePruning": 43,
+            "afterPruning": 27,
+            "v3Candidates": 43
+          },
+          "Feet": {
+            "beforePruning": 43,
+            "afterPruning": 27,
+            "v3Candidates": 43
+          },
+          "Gloves": {
+            "beforePruning": 43,
+            "afterPruning": 29,
+            "v3Candidates": 43
+          },
+          "Body": {
+            "beforePruning": 49,
+            "afterPruning": 30,
+            "v3Candidates": 49
+          },
+          "Legs": {
+            "beforePruning": 47,
+            "afterPruning": 31,
+            "v3Candidates": 47
+          },
+          "Finger": {
+            "beforePruning": 58,
+            "afterPruning": 19,
+            "v3Candidates": 389,
+            "rawSingleRings": 58,
+            "prunedRingPairs": 129,
+            "estimatedOrderedRingPairs": 3364,
+            "v3RingPairs": 389
+          }
+        },
+        {
+          "Neck": {
+            "beforePruning": 28,
+            "afterPruning": 20,
+            "v3Candidates": 28
+          },
+          "Wrists": {
+            "beforePruning": 28,
+            "afterPruning": 20,
+            "v3Candidates": 28
+          },
+          "Ears": {
+            "beforePruning": 28,
+            "afterPruning": 21,
+            "v3Candidates": 28
+          },
+          "MainHand": {
+            "beforePruning": 56,
+            "afterPruning": 22,
+            "v3Candidates": 56
+          },
+          "Gloves": {
+            "beforePruning": 43,
+            "afterPruning": 26,
+            "v3Candidates": 43
+          },
+          "Feet": {
+            "beforePruning": 43,
+            "afterPruning": 27,
+            "v3Candidates": 43
+          },
+          "Head": {
+            "beforePruning": 43,
+            "afterPruning": 28,
+            "v3Candidates": 43
+          },
+          "Body": {
+            "beforePruning": 49,
+            "afterPruning": 30,
+            "v3Candidates": 49
+          },
+          "Legs": {
+            "beforePruning": 47,
+            "afterPruning": 30,
+            "v3Candidates": 47
+          },
+          "Finger": {
+            "beforePruning": 58,
+            "afterPruning": 19,
+            "v3Candidates": 389,
+            "rawSingleRings": 58,
+            "prunedRingPairs": 129,
+            "estimatedOrderedRingPairs": 3364,
+            "v3RingPairs": 389
+          }
+        }
+      ],
+      "source": {
+        "status": "degraded",
+        "serverVersion": "1.0.0",
+        "gamePath": "F:\\Game\\FF14\\最终幻想XIV\\game",
+        "detectedVersion": "2026.09.15.0000.0000",
+        "validatedVersion": "2026.08.05.0000.0000",
+        "schemaAvailable": true,
+        "schemaVersion": "latest",
+        "cacheEnabled": true,
+        "cacheTTLSeconds": 300,
+        "uptimeSeconds": 2,
+        "warnings": [
+          {
+            "code": "GameVersionMismatch",
+            "message": "Detected game version 2026.09.15.0000.0000 differs from last validated version 2026.08.05.0000.0000. FFXIV convenience tools (get_jobs, get_duties, get_localized_labels) may return incorrect data. Generic tools (get_row, search_rows, etc.) are unaffected.",
+            "detectedVersion": "2026.09.15.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000"
+          }
+        ],
+        "gameVersion": "2026.09.15.0000.0000",
+        "timestamp": "2026-09-30T07:15:52.6887929+00:00"
+      }
+    },
+    {
+      "name": "rdm-pct",
+      "jobs": [
+        "RDM",
+        "PCT"
+      ],
+      "sharedSlots": [
+        "头部",
+        "身体",
+        "手部",
+        "腿部",
+        "脚部",
+        "耳饰",
+        "项链",
+        "手镯"
+      ],
+      "foodStrategy": "shared",
+      "objective": "dps",
+      "constraints": {
+        "RDM": {
+          "gcd": 2.48
+        },
+        "PCT": {
+          "gcdChoices": [
+            2.48,
+            2.5
+          ]
+        }
+      },
+      "value": {
+        "numerator": "2",
+        "denominator": "1",
+        "approximate": 2
+      },
+      "jobResults": {
+        "RDM": {
+          "damage": 91.18741781427764,
+          "gcd": 2.48,
+          "damagePerSecond": 36.769120086402275,
+          "soloDamage": 91.18741781427764,
+          "soloDamagePerSecond": 36.769120086402275,
+          "food": {
+            "itemId": 49240,
+            "name": "焦糖爆米花",
+            "itemLevel": 770,
+            "attributes": [
+              {
+                "baseParamId": 3,
+                "multiplier": 1.1,
+                "maxValue": 297
+              },
+              {
+                "baseParamId": 27,
+                "multiplier": 1.1,
+                "maxValue": 91
+              },
+              {
+                "baseParamId": 44,
+                "multiplier": 1.1,
+                "maxValue": 151
+              }
+            ]
+          },
+          "equipment": [
+            {
+              "slot": "主手",
+              "itemId": 51014,
+              "name": "幻境刺剑·秘影",
+              "itemLevel": 795,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 600
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 628
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 393
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 393
+                },
+                {
+                  "baseParamId": 46,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 146,
+                "magical": 146,
+                "delay": 3440
+              }
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 43162,
+              "name": "黑马冠军咏咒耳坠",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 277
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 184
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 186
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "手镯",
+              "itemId": 43172,
+              "name": "黑马冠军咏咒手镯",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 277
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 184
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 54
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "项链",
+              "itemId": 43090,
+              "name": "改良型绿咬鹃咏咒项链",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 277
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "头部",
+              "itemId": 43076,
+              "name": "改良型绿咬鹃咏咒兜帽",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 352
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 371
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 236
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 165
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "脚部",
+              "itemId": 47142,
+              "name": "雾忆咏咒长靴",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 365
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 167
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "手部",
+              "itemId": 47140,
+              "name": "雾忆咏咒护臂",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 365
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 167
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "身体",
+              "itemId": 49711,
+              "name": "总冠军咏咒外袍",
+              "itemLevel": 790,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 579
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 605
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 379
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 299
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "腿部",
+              "itemId": 47141,
+              "name": "雾忆咏咒打底裤",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 579
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 605
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 319
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 379
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 54
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 43100,
+              "name": "改良型绿咬鹃咏咒戒指",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 277
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 130
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 43177,
+              "name": "黑马冠军咏咒指环",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 277
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 184
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 54
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            }
+          ]
+        },
+        "PCT": {
+          "damage": 91.18741781427764,
+          "gcd": 2.48,
+          "damagePerSecond": 36.769120086402275,
+          "soloDamage": 91.18741781427764,
+          "soloDamagePerSecond": 36.769120086402275,
+          "food": {
+            "itemId": 49240,
+            "name": "焦糖爆米花",
+            "itemLevel": 770,
+            "attributes": [
+              {
+                "baseParamId": 3,
+                "multiplier": 1.1,
+                "maxValue": 297
+              },
+              {
+                "baseParamId": 27,
+                "multiplier": 1.1,
+                "maxValue": 91
+              },
+              {
+                "baseParamId": 44,
+                "multiplier": 1.1,
+                "maxValue": 151
+              }
+            ]
+          },
+          "equipment": [
+            {
+              "slot": "主手",
+              "itemId": 51020,
+              "name": "幻境圆笔·秘影",
+              "itemLevel": 795,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 600
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 628
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 393
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 393
+                }
+              ],
+              "weaponDamage": {
+                "physical": 146,
+                "magical": 146,
+                "delay": 2960
+              }
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 43162,
+              "name": "黑马冠军咏咒耳坠",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 277
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 54
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 184
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 186
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "手镯",
+              "itemId": 43172,
+              "name": "黑马冠军咏咒手镯",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 277
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 184
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 54
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "项链",
+              "itemId": 43090,
+              "name": "改良型绿咬鹃咏咒项链",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 277
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "头部",
+              "itemId": 43076,
+              "name": "改良型绿咬鹃咏咒兜帽",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 352
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 371
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 236
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 165
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "脚部",
+              "itemId": 47142,
+              "name": "雾忆咏咒长靴",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 365
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 167
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "手部",
+              "itemId": 47140,
+              "name": "雾忆咏咒护臂",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 365
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 381
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 239
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 108
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 167
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "身体",
+              "itemId": 49711,
+              "name": "总冠军咏咒外袍",
+              "itemLevel": 790,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 579
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 605
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 379
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 299
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "腿部",
+              "itemId": 47141,
+              "name": "雾忆咏咒打底裤",
+              "itemLevel": 735,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 579
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 605
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 319
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 379
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 54
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 43100,
+              "name": "改良型绿咬鹃咏咒戒指",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 277
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 130
+                },
+                {
+                  "baseParamId": 46,
+                  "value": 108
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 43177,
+              "name": "黑马冠军咏咒指环",
+              "itemLevel": 730,
+              "attributes": [
+                {
+                  "baseParamId": 3,
+                  "value": 277
+                },
+                {
+                  "baseParamId": 4,
+                  "value": 292
+                },
+                {
+                  "baseParamId": 22,
+                  "value": 186
+                },
+                {
+                  "baseParamId": 27,
+                  "value": 184
+                },
+                {
+                  "baseParamId": 44,
+                  "value": 54
+                }
+              ],
+              "weaponDamage": {
+                "physical": 0,
+                "magical": 0,
+                "delay": 0
+              }
+            }
+          ]
+        }
+      },
+      "proof": {
+        "complete": true,
+        "objective": "dps",
+        "optimalityScope": "传入的每职业槽位候选、通用 EquipInfo 完整身份交集、食物列表和约束范围",
+        "outerBound": "每个外层节点以各职业在已固定通用装备下独立重优化的 DPS 上界求和；product/GCD 归一化分数用 BigInt 有理数比较",
+        "innerSolverStatus": "Optimal",
+        "formalCertificate": false,
+        "numericalLimitation": "HiGHS 报告 Optimal 且整数模型行、属性重建和约束范围均已复核；HiGHS 浮点优化本身不是形式化有理数证明",
+        "terminationReason": "已达到各职业单独最优基线之和这一全局上界"
+      },
+      "stats": {
+        "elapsedMs": 16709,
+        "peakRssBytes": 205348864,
+        "statistics": {
+          "outerNodes": 0,
+          "completeNodes": 0,
+          "upperBoundPrunes": 0,
+          "relaxedOptimaAttained": 0,
+          "innerSolves": 3,
+          "parentResultReuses": 0,
+          "cacheHits": 0,
+          "cacheMisses": 3,
+          "cacheEntries": 2,
+          "elapsedMs": 16576.7411,
+          "timeLimitMs": 235000,
+          "cacheLimit": 2048,
+          "rssBytes": 205344768,
+          "heapUsedBytes": 36748448
+        }
+      },
+      "candidates": [
+        {
+          "MainHand": {
+            "beforePruning": 56,
+            "afterPruning": 20,
+            "v3Candidates": 56
+          },
+          "Ears": {
+            "beforePruning": 28,
+            "afterPruning": 21,
+            "v3Candidates": 28
+          },
+          "Wrists": {
+            "beforePruning": 28,
+            "afterPruning": 21,
+            "v3Candidates": 28
+          },
+          "Neck": {
+            "beforePruning": 28,
+            "afterPruning": 22,
+            "v3Candidates": 28
+          },
+          "Head": {
+            "beforePruning": 43,
+            "afterPruning": 28,
+            "v3Candidates": 43
+          },
+          "Feet": {
+            "beforePruning": 43,
+            "afterPruning": 29,
+            "v3Candidates": 43
+          },
+          "Gloves": {
+            "beforePruning": 43,
+            "afterPruning": 31,
+            "v3Candidates": 43
+          },
+          "Body": {
+            "beforePruning": 49,
+            "afterPruning": 32,
+            "v3Candidates": 49
+          },
+          "Legs": {
+            "beforePruning": 47,
+            "afterPruning": 33,
+            "v3Candidates": 47
+          },
+          "Finger": {
+            "beforePruning": 58,
+            "afterPruning": 20,
+            "v3Candidates": 389,
+            "rawSingleRings": 58,
+            "prunedRingPairs": 152,
+            "estimatedOrderedRingPairs": 3364,
+            "v3RingPairs": 389
+          }
+        },
+        {
+          "MainHand": {
+            "beforePruning": 56,
+            "afterPruning": 20,
+            "v3Candidates": 56
+          },
+          "Ears": {
+            "beforePruning": 28,
+            "afterPruning": 21,
+            "v3Candidates": 28
+          },
+          "Wrists": {
+            "beforePruning": 28,
+            "afterPruning": 21,
+            "v3Candidates": 28
+          },
+          "Neck": {
+            "beforePruning": 28,
+            "afterPruning": 22,
+            "v3Candidates": 28
+          },
+          "Head": {
+            "beforePruning": 43,
+            "afterPruning": 28,
+            "v3Candidates": 43
+          },
+          "Feet": {
+            "beforePruning": 43,
+            "afterPruning": 29,
+            "v3Candidates": 43
+          },
+          "Gloves": {
+            "beforePruning": 43,
+            "afterPruning": 31,
+            "v3Candidates": 43
+          },
+          "Body": {
+            "beforePruning": 49,
+            "afterPruning": 32,
+            "v3Candidates": 49
+          },
+          "Legs": {
+            "beforePruning": 47,
+            "afterPruning": 33,
+            "v3Candidates": 47
+          },
+          "Finger": {
+            "beforePruning": 58,
+            "afterPruning": 20,
+            "v3Candidates": 389,
+            "rawSingleRings": 58,
+            "prunedRingPairs": 152,
+            "estimatedOrderedRingPairs": 3364,
+            "v3RingPairs": 389
+          }
+        }
+      ],
+      "source": {
+        "status": "degraded",
+        "serverVersion": "1.0.0",
+        "gamePath": "F:\\Game\\FF14\\最终幻想XIV\\game",
+        "detectedVersion": "2026.09.15.0000.0000",
+        "validatedVersion": "2026.08.05.0000.0000",
+        "schemaAvailable": true,
+        "schemaVersion": "latest",
+        "cacheEnabled": true,
+        "cacheTTLSeconds": 300,
+        "uptimeSeconds": 2,
+        "warnings": [
+          {
+            "code": "GameVersionMismatch",
+            "message": "Detected game version 2026.09.15.0000.0000 differs from last validated version 2026.08.05.0000.0000. FFXIV convenience tools (get_jobs, get_duties, get_localized_labels) may return incorrect data. Generic tools (get_row, search_rows, etc.) are unaffected.",
+            "detectedVersion": "2026.09.15.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000"
+          }
+        ],
+        "gameVersion": "2026.09.15.0000.0000",
+        "timestamp": "2026-09-30T07:24:23.0933847+00:00"
+      }
+    }
+  ],
+  "dataQueries": {
+    "server": "ffxiv-mcp-lumina",
+    "reproductionEntry": "scripts/test/test.ts",
+    "rowQueries": [
+      {
+        "tool": "list_rows",
+        "arguments": {
+          "sheet": "EquipSlotCategory",
+          "limit": -1
+        },
+        "scope": "全部行"
+      },
+      {
+        "tool": "list_rows",
+        "arguments": {
+          "sheet": "Item",
+          "limit": -1
+        },
+        "scope": "全部行"
+      },
+      {
+        "tool": "list_rows",
+        "arguments": {
+          "sheet": "ItemFood",
+          "limit": -1
+        },
+        "scope": "全部行"
+      },
+      {
+        "tool": "list_rows",
+        "arguments": {
+          "sheet": "ItemAction",
+          "limit": -1
+        },
+        "scope": "全部行"
+      },
+      {
+        "tool": "list_rows",
+        "arguments": {
+          "sheet": "MateriaGrade",
+          "limit": -1
+        },
+        "scope": "全部行"
+      },
+      {
+        "tool": "list_rows",
+        "arguments": {
+          "sheet": "Materia",
+          "limit": -1
+        },
+        "scope": "全部行"
+      },
+      {
+        "tool": "list_rows",
+        "arguments": {
+          "sheet": "ClassJobCategory",
+          "limit": -1
+        },
+        "scope": "全部行"
+      },
+      {
+        "tool": "list_rows",
+        "arguments": {
+          "sheet": "ItemLevel",
+          "limit": -1
+        },
+        "scope": "全部行"
+      },
+      {
+        "tool": "list_rows",
+        "arguments": {
+          "sheet": "MandervilleWeaponEnhance",
+          "limit": -1
+        },
+        "scope": "全部行"
+      },
+      {
+        "tool": "list_rows",
+        "arguments": {
+          "sheet": "BaseParam",
+          "limit": -1
+        },
+        "scope": "全部行"
+      },
+      {
+        "tool": "list_rows",
+        "arguments": {
+          "sheet": "ClassJob",
+          "limit": -1
+        },
+        "scope": "全部行"
+      }
+    ],
+    "schemaQueries": [
+      {
+        "tool": "describe_sheet",
+        "arguments": {
+          "sheet": "ItemLevel"
+        }
+      }
+    ],
+    "scope": {
+      "jobLevel": 100,
+      "itemLevelMin": 730,
+      "itemLevelMax": 795,
+      "syncItemLevel": 735
+    },
+    "timestamps": "各次运行 source.timestamp 为对应 MCP 健康检查时间；逐行查询由该运行的候选生成入口顺序执行。"
+  }
+}
