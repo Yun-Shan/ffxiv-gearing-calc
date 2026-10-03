@@ -54,6 +54,7 @@ try {
           ),
         equipmentAttributeExtractor,
         evaluationFunction,
+        onSolverProgress: (event) => parentPort?.postMessage({ type: "solver-progress", event }),
       },
     };
   });

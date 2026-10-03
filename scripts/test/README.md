@@ -37,6 +37,23 @@ npm run data:test:v3
 
 每职业约束可以通过 `DATA_TEST_JOB_CONSTRAINTS` 单独配置；全局 `DATA_TEST_GCD`、速度及坚韧环境变量仍会继承，复现验收时应先清除无关设置。`DATA_TEST_COMMON_SLOTS=none` 可关闭装备共享，食物仍按所选策略处理。
 
+## HiGHS 进度记录
+
+Node 验收当前固定使用 HiGHS。历史算法对照、CP-SAT 运行数据与搜索结论保留在 [搜索基准记录](../../docs/搜索基准记录.md) 和 [算法包性能分析](../../docs/已安装算法包搜索性能分析.md)，但不再提供 CP-SAT 运行入口。
+
+可设置 `DATA_TEST_CANDIDATE_CACHE_PATH` 将候选导出到 JSON，之后重放完全相同的候选和约束；脚本会校验场景与候选 SHA-256。设置 `DATA_TEST_PROGRESS_OUTPUT_PATH` 可保存 HiGHS 的原生 incumbent、bound、gap 和节点事件。正常完成时保存完整轨迹；达到时限或出错时也会保存已收集到的部分轨迹并标记 `complete: false`。候选生成不计入搜索计时，模型构造、求解、回调和 BigInt 复核都计入。
+
+需要细分模型准备与原生求解耗时时，可设置 `FFXIV_PROFILE_TIMING=1`。进度文件会增加 `PROFILE` 日志事件；HiGHS 记录 LP 序列化、导入和求解墙钟，精确 MIP 另记录模型准备、求解、签名带检查及联合阶段总计。该选项会启用额外计时和日志回调。
+
+```powershell
+$env:DATA_TEST_CANDIDATE_CACHE_PATH = "$env:TEMP\v3-candidates.json"
+$env:DATA_TEST_PROGRESS_OUTPUT_PATH = "$env:TEMP\v3-highs-progress.json"
+$env:FFXIV_PROFILE_TIMING = '1' # 可选：写入 PROFILE 阶段计时
+npm run data:test:v3
+```
+
+HiGHS 回调在 incumbent 改进、原生日志/界更新及约每秒一次的中断检查点触发。
+
 搜索总时限为 235 秒，给四分钟要求保留退出余量；可用 `DATA_TEST_V3_TIMEOUT_MS` 调低。入口在独立线程执行搜索并监控整个进程的 RSS，在 3.5 GiB 保护线停止。没有预先打表文件；运行时缓存有界。超时、内存保护或内层未证明最优均报错，不返回近似方案。停止保护本身不代表通过性能验收，完成场景见 [基准记录](../../docs/搜索基准记录.md)。算法证明范围及数值求解器边界见 [正确性与验收](../../docs/V3正确性与验收.md)。
 
 ## 测试

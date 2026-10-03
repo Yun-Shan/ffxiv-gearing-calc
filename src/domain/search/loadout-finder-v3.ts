@@ -779,6 +779,12 @@ export async function findBestJointLoadoutV3(
       onProgress: options.onProgress === undefined
         ? context.job.options.onProgress
         : (message) => options.onProgress?.(`${context.job.id}: ${message}`),
+      ...(context.job.options.onSolverProgress === undefined ? {} : {
+        onSolverProgress: (event) => context.job.options.onSolverProgress?.({
+          ...event,
+          model: `${context.job.id}:${event.model}`,
+        }),
+      }),
     });
     assertWithinBudget("单职业最优基线");
     if (optimum === undefined) return undefined;
@@ -895,6 +901,12 @@ export async function findBestJointLoadoutV3(
       if (options.onProgress !== undefined) {
         mipOptions.onProgress = (message) => options.onProgress?.(`${context.job.id}: ${message}`);
       }
+      if (context.job.options.onSolverProgress !== undefined) {
+        mipOptions.onSolverProgress = (event) => context.job.options.onSolverProgress?.({
+          ...event,
+          model: `${context.job.id}:${event.model}`,
+        });
+      }
       const result = await findBestLoadoutExactMip(mipOptions);
       assertWithinBudget("受限单职业求解");
       remember(key, result ?? null);
@@ -988,6 +1000,7 @@ export async function findBestJointLoadoutV3(
     }
     const initialResults = best === undefined ? [] : contexts.map((context) => best!.jobResults[context.job.id]!);
     const remainingMs = Math.floor(deadline - performance.now());
+    const onSolverProgress = contexts[0]!.job.options.onSolverProgress;
     const joint = stopAtProvenCeiling ? undefined : await findBestJointFactorMip({
       jobs: contexts.map((context) => {
         const jobOptions = makeJobOptions(
@@ -996,8 +1009,17 @@ export async function findBestJointLoadoutV3(
         const slots = [...jobOptions.slots];
         for (const name of options.commonSlots) {
           const slotIndex = commonSlotIndex(context, name, commonSlotProjections);
+          const slotCandidates = slots[slotIndex]!;
+          const completeRingPairSlot = commonSlotProjections.get(name) === undefined &&
+            slotCandidates.length > 0 &&
+            slotCandidates.every((equipment) =>
+              Array.isArray((equipment as EquipInfo & { ringEquips?: readonly EquipInfo[] }).ringEquips));
+          // The joint MIP can split a complete ring-pair Cartesian domain into
+          // two one-hot slots. Keep its full input domain so validation can
+          // establish that completeness before applying unique-item rows.
+          if (completeRingPairSlot) continue;
           const allowedKeys = new Set(commonChoicesByName.get(name)!.map((choice) => choice.key));
-          slots[slotIndex] = slots[slotIndex]!.filter((equipment) =>
+          slots[slotIndex] = slotCandidates.filter((equipment) =>
             allowedKeys.has(equipmentIdentity(projectEquipment(equipment, commonSlotProjections.get(name)))));
         }
         return {
@@ -1019,6 +1041,9 @@ export async function findBestJointLoadoutV3(
       objective,
       ...(initialResults.length === contexts.length ? { initialResults } : {}),
       maxSearchMs: remainingMs,
+      ...(onSolverProgress === undefined ? {} : {
+        onSolverProgress: (event) => onSolverProgress({ ...event, model: `joint:${event.model}` }),
+      }),
       ...(options.onProgress === undefined ? {} : { onProgress: options.onProgress }),
       isCancelled: cancellationRequested,
     });
@@ -1070,7 +1095,7 @@ export async function findBestJointLoadoutV3(
     proof: {
       complete: true,
       objective,
-      optimalityScope: "传入的每职业槽位候选、完整装备身份或合法完整戒指对内的单戒指身份交集、食物列表和约束范围",
+      optimalityScope: "传入的每职业槽位候选（含两个独立戒指槽及跨槽 unique 约束）、完整装备身份交集、食物列表和约束范围",
       outerBound: jointFactorProof
         ? "单职业最优基线归一化后，每职业比例不超过 1；总和不超过职业数减 1 加比例乘积，乘积仅筛选可能改进的因子签名；最终总和使用 BigInt 有理数比较"
         : objective === "dps"
@@ -1078,7 +1103,7 @@ export async function findBestJointLoadoutV3(
         : "每个外层节点以各职业在已固定通用装备下独立重优化的伤害上界求和；归一化分数用 BigInt 有理数比较",
       innerSolverStatus: "Optimal",
       formalCertificate: false,
-      numericalLimitation: "HiGHS 报告 Optimal 且整数模型行、属性重建和约束范围均已复核；HiGHS 浮点优化本身不是形式化有理数证明",
+      numericalLimitation: "HiGHS 报告 Optimal，且整数模型行、属性重建和约束范围均已复核；求解器状态不是可独立验证的形式化证书",
       terminationReason: stopAtProvenCeiling
         ? "已达到各职业单独最优基线之和这一全局上界"
         : jointFactorProof

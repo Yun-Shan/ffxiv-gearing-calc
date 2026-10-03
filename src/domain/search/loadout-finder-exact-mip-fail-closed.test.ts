@@ -35,7 +35,14 @@ vi.mock("highs", () => {
     getObjectiveValue: () => 0,
   };
   const highs = {
-    constants: { modelStatus: { optimal: 1, infeasible: 2 } },
+    constants: {
+      callbackType: {
+        mipImprovingSolution: 4,
+        mipLogging: 5,
+        mipInterrupt: 6,
+      },
+      modelStatus: { optimal: 1, infeasible: 2 },
+    },
     withModel: (
       _model: unknown,
       run: (solver: typeof native) => unknown,

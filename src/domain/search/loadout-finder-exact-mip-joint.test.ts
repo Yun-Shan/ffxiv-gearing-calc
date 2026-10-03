@@ -12,6 +12,7 @@ import {
   findBestJointFactorMip,
   findBestLoadoutExactMip,
 } from "./loadout-finder-exact-mip.ts";
+import { buildRingPairEquipInfos } from "./ring-pairs.ts";
 import type {
   ExactMipOptions,
   ExactMipResult,
@@ -51,7 +52,7 @@ type Fraction = { numerator: bigint; denominator: bigint };
 type FixtureJob = {
   id: string;
   job: JobId;
-  slotNames: readonly ["weapon", "ring"];
+  slotNames: readonly string[];
   options: ExactMipOptions;
   evaluateFactors: (attributes: readonly number[]) => IntegerDamageFactors | undefined;
   speedAttributeId: number;
@@ -195,6 +196,99 @@ function makeJob(
     },
   };
 }
+
+function ringCandidate(
+  itemId: number,
+  variantKey: string,
+  stats: Readonly<Record<number, number>>,
+  isUnique: boolean,
+): EquipInfo {
+  return {
+    ...equipment(itemId, stats),
+    variantKey,
+    isUnique,
+  } as EquipInfo;
+}
+
+function ringPairWithUniqueness(
+  first: EquipInfo,
+  second: EquipInfo,
+  ringUniqueByItemId: readonly (readonly [number, boolean])[],
+): EquipInfo & {
+  ringEquips: readonly [EquipInfo, EquipInfo];
+  ringUniqueByItemId: readonly (readonly [number, boolean])[];
+} {
+  const totals = new Map<number, number>();
+  for (const param of [...first.baseParams, ...second.baseParams]) {
+    totals.set(param.baseParamId, (totals.get(param.baseParamId) ?? 0) + param.value);
+  }
+  const baseParams = [...totals].map(([baseParamId, value]) => ({ baseParamId, value }))
+    .sort((left, right) => left.baseParamId - right.baseParamId);
+  return {
+    itemId: first.itemId * 100_000 + second.itemId,
+    itemLevel: first.itemLevel + second.itemLevel,
+    key: baseParams.map((param) => param.baseParamId).join("-"),
+    baseParams,
+    PDMG: first.PDMG + second.PDMG,
+    MDMG: first.MDMG + second.MDMG,
+    DLY: first.DLY + second.DLY,
+    ringEquips: [first, second],
+    ringUniqueByItemId,
+  };
+}
+
+function ringPairs(
+  firstRings: readonly EquipInfo[],
+  secondRings: readonly EquipInfo[] = firstRings,
+): EquipInfo[] {
+  const uniqueByItemId = new Map<number, boolean>();
+  for (const ring of [...firstRings, ...secondRings]) {
+    uniqueByItemId.set(ring.itemId, (ring as EquipInfo & { isUnique: boolean }).isUnique);
+  }
+  const uniqueness = [...uniqueByItemId].sort(([left], [right]) => left - right);
+  return firstRings.flatMap((first) => secondRings.flatMap((second) =>
+    first.itemId === second.itemId && uniqueByItemId.get(first.itemId) === true
+      ? []
+      : [ringPairWithUniqueness(first, second, uniqueness)]));
+}
+
+function pairFixtureJob(
+  base: FixtureJob,
+  firstRings: readonly EquipInfo[],
+  secondRings: readonly EquipInfo[] = firstRings,
+  slotName = "Finger",
+): FixtureJob {
+  const pairs = ringPairs(firstRings, secondRings);
+  const job: FixtureJob = {
+    ...base,
+    slotNames: ["weapon", slotName],
+    options: { ...base.options, slots: [base.options.slots[0]!, pairs] },
+  };
+  return { ...job, options: { ...job.options, objective: "damage" } };
+}
+
+function pairEquipmentIdentity(item: EquipInfo): string {
+  const pair = (item as EquipInfo & { ringEquips?: readonly [EquipInfo, EquipInfo] }).ringEquips;
+  if (pair !== undefined) return JSON.stringify(pair.map(pairEquipmentIdentity).sort());
+  return JSON.stringify({
+    itemId: item.itemId,
+    variantKey: item.variantKey,
+    baseParams: item.baseParams.map(({ baseParamId, value }) => [baseParamId, value]),
+  });
+}
+
+test("ring pair generation carries complete uniqueness metadata without cloning child equipment", () => {
+  const unique = ringCandidate(990, "unique", { 1: 100 }, true);
+  const repeatable = ringCandidate(991, "repeatable", { 1: 50 }, false);
+  const pairs = buildRingPairEquipInfos([unique, repeatable], (itemId) => itemId === unique.itemId);
+  const pair = pairs.find((candidate) =>
+    candidate.ringEquips[0] === unique && candidate.ringEquips[1] === repeatable);
+
+  assert.ok(pair);
+  assert.deepEqual(pair.ringUniqueByItemId, [[990, true], [991, false]]);
+  assert.strictEqual(pair.ringEquips[0], unique);
+  assert.strictEqual(pair.ringEquips[1], repeatable);
+});
 
 function vectorFor(selection: readonly EquipInfo[], selectedFood: FoodInfo | undefined): number[] {
   const attributes = new Array<number>(attributeIds.length).fill(0);
@@ -405,6 +499,230 @@ test("direct joint factor MIP reports infeasible when jobs have no common food i
   });
 
   assert.equal(actual, undefined);
+});
+
+test("joint ring splitting keeps unique item ID variants from occupying both ring slots", async () => {
+  const rings = [
+    ringCandidate(100, "unique-a", { 1: 900, 7: 900 }, true),
+    ringCandidate(100, "unique-b", { 1: 880, 7: 880 }, true),
+    ringCandidate(200, "ordinary-a", { 1: 300, 7: 300 }, false),
+    ringCandidate(300, "ordinary-b", { 1: 100, 7: 100 }, false),
+  ];
+  const jobs = tradeoffJobs().map((job) => pairFixtureJob(job, rings));
+  const actual = await findBestJointFactorMip({
+    jobs: jointJobArgs(jobs, "damage"),
+    commonSlots: [],
+    sharedFood: false,
+    equipmentIdentity: pairEquipmentIdentity,
+    foodIdentity: (item) => String(item.itemId),
+    objective: "damage",
+    maxSearchMs: 20_000,
+  });
+
+  assert.ok(actual);
+  for (const result of actual.results) {
+    const pair = result.selection[1] as EquipInfo & { ringEquips?: readonly [EquipInfo, EquipInfo] };
+    assert.ok(pair.ringEquips, "the joint result must restore its pair-shaped ring selection");
+    assert.equal(
+      pair.ringEquips[0].itemId === 100 && pair.ringEquips[1].itemId === 100,
+      false,
+      "variants of one unique item must conflict by physical itemId across both slots",
+    );
+  }
+});
+
+test("initial results reject an ordered pair of two variants of one unique ring", async () => {
+  const uniqueA = ringCandidate(150, "unique-a", { 1: 900, 7: 900 }, true);
+  const uniqueB = ringCandidate(150, "unique-b", { 1: 880, 7: 880 }, true);
+  const ordinary = ringCandidate(151, "ordinary", { 1: 300, 7: 300 }, false);
+  const rings = [uniqueA, uniqueB, ordinary];
+  const jobs = tradeoffJobs().map((job) => pairFixtureJob(job, rings));
+  const solveOptions = {
+    jobs: jointJobArgs(jobs, "damage"),
+    commonSlots: [],
+    sharedFood: false,
+    equipmentIdentity: pairEquipmentIdentity,
+    foodIdentity: (item: FoodInfo) => String(item.itemId),
+    objective: "damage" as const,
+    maxSearchMs: 20_000,
+  };
+  const valid = await findBestJointFactorMip(solveOptions);
+  assert.ok(valid);
+  assert.ok(jobs[0]!.options.slots[1]!.some((candidate) =>
+    (candidate as EquipInfo & { ringEquips?: readonly [EquipInfo, EquipInfo] }).ringEquips?.[0] === uniqueA));
+  assert.ok(jobs[0]!.options.slots[1]!.some((candidate) =>
+    (candidate as EquipInfo & { ringEquips?: readonly [EquipInfo, EquipInfo] }).ringEquips?.[1] === uniqueB));
+
+  const invalidPair = ringPairWithUniqueness(uniqueA, uniqueB, [[150, true], [151, false]]);
+  const initialResults = [...valid.results];
+  initialResults[0] = {
+    ...initialResults[0]!,
+    selection: [initialResults[0]!.selection[0]!, invalidPair],
+  };
+  await assert.rejects(
+    findBestJointFactorMip({ ...solveOptions, initialResults }),
+    /联合初始方案装备不属于模型候选/,
+    "individually present children do not make an excluded unique pair a valid initial candidate",
+  );
+});
+
+test("joint ring splitting still allows the same nonunique item in both ring slots", async () => {
+  const rings = [
+    ringCandidate(400, "repeatable", { 1: 1200, 7: 1200 }, false),
+    ringCandidate(401, "weaker", { 1: 20, 7: 20 }, false),
+  ];
+  const jobs = tradeoffJobs().map((job) => pairFixtureJob(job, rings));
+  const actual = await findBestJointFactorMip({
+    jobs: jointJobArgs(jobs, "damage"),
+    commonSlots: [],
+    sharedFood: false,
+    equipmentIdentity: pairEquipmentIdentity,
+    foodIdentity: (item) => String(item.itemId),
+    objective: "damage",
+    maxSearchMs: 20_000,
+  });
+
+  assert.ok(actual);
+  for (const result of actual.results) {
+    const pair = result.selection[1] as EquipInfo & { ringEquips?: readonly [EquipInfo, EquipInfo] };
+    assert.deepEqual(pair.ringEquips?.map((ring) => ring.itemId), [400, 400]);
+  }
+});
+
+test("shared full ring pairs use unordered child identity and restore each ordered pair", async () => {
+  const left = ringCandidate(510, "left", { 1: 400, 7: 400 }, false);
+  const right = ringCandidate(511, "right", { 1: 390, 7: 390 }, false);
+  const bases = tradeoffJobs();
+  const jobs = [
+    pairFixtureJob(bases[0]!, [left], [right]),
+    pairFixtureJob(bases[1]!, [right], [left]),
+  ];
+  const actual = await findBestJointFactorMip({
+    jobs: jointJobArgs(jobs, "damage"),
+    commonSlots: ["Finger"],
+    sharedFood: false,
+    equipmentIdentity: pairEquipmentIdentity,
+    foodIdentity: (item) => String(item.itemId),
+    objective: "damage",
+    maxSearchMs: 20_000,
+  });
+
+  assert.ok(actual);
+  const first = (actual.results[0]!.selection[1] as EquipInfo & {
+    ringEquips?: readonly [EquipInfo, EquipInfo];
+  }).ringEquips;
+  const second = (actual.results[1]!.selection[1] as EquipInfo & {
+    ringEquips?: readonly [EquipInfo, EquipInfo];
+  }).ringEquips;
+  assert.deepEqual(first?.map((ring) => ring.itemId), [510, 511]);
+  assert.deepEqual(second?.map((ring) => ring.itemId), [511, 510]);
+  assert.deepEqual(first?.map(pairEquipmentIdentity).sort(), second?.map(pairEquipmentIdentity).sort());
+});
+
+test("shared projected ring and ring2 choices link directly to the matching split child slot", async () => {
+  const rings = [
+    ringCandidate(610, "a", { 1: 440, 7: 440 }, false),
+    ringCandidate(611, "b", { 1: 390, 7: 390 }, false),
+    ringCandidate(612, "c", { 1: 200, 7: 200 }, false),
+  ];
+  const bases = tradeoffJobs();
+  for (const ringIndex of [0, 1] as const) {
+    const jobs = bases.map((job) => pairFixtureJob(job, rings));
+    const commonSlot = ringIndex === 0 ? "ring" : "ring2";
+    const actual = await findBestJointFactorMip({
+      jobs: jointJobArgs(jobs, "damage"),
+      commonSlots: [commonSlot],
+      commonSlotProjections: [{ commonSlot, slotName: "Finger", ringIndex }],
+      sharedFood: false,
+      equipmentIdentity: pairEquipmentIdentity,
+      foodIdentity: (item) => String(item.itemId),
+      objective: "damage",
+      maxSearchMs: 20_000,
+    });
+
+    assert.ok(actual);
+    const selected = actual.results.map((result) => {
+      const pair = result.selection[1] as EquipInfo & { ringEquips?: readonly [EquipInfo, EquipInfo] };
+      return pair.ringEquips?.[ringIndex];
+    });
+    assert.equal(pairEquipmentIdentity(selected[0]!), pairEquipmentIdentity(selected[1]!));
+  }
+});
+
+test("an incomplete pair domain falls back to pair variables instead of splitting", async () => {
+  const rings = [
+    ringCandidate(710, "a", { 1: 500, 7: 500 }, false),
+    ringCandidate(711, "b", { 1: 300, 7: 300 }, false),
+    ringCandidate(712, "c", { 1: 100, 7: 100 }, false),
+  ];
+  const bases = tradeoffJobs();
+  const completeJobs = bases.map((job) => pairFixtureJob(job, rings));
+  const incompleteJobs = [...completeJobs];
+  const incompletePairJob = incompleteJobs[1]!;
+  const incompletePairs = [...incompletePairJob.options.slots[1]!];
+  incompletePairs.splice(1, 1);
+  incompleteJobs[1] = {
+    ...incompletePairJob,
+    options: { ...incompletePairJob.options, slots: [incompletePairJob.options.slots[0]!, incompletePairs] },
+  };
+  const solve = (jobs: readonly FixtureJob[]) => findBestJointFactorMip({
+    jobs: jointJobArgs(jobs, "damage"),
+    commonSlots: ["Finger"],
+    sharedFood: false,
+    equipmentIdentity: pairEquipmentIdentity,
+    foodIdentity: (item) => String(item.itemId),
+    objective: "damage",
+    maxSearchMs: 20_000,
+  });
+
+  const split = await solve(completeJobs);
+  const fallback = await solve(incompleteJobs);
+  assert.ok(split);
+  assert.ok(fallback);
+  assert.ok(
+    split.results[0]!.statistics.variables < fallback.results[0]!.statistics.variables,
+    `a validated Cartesian pair domain must split ring variables (${split.results[0]!.statistics.variables} vs ${fallback.results[0]!.statistics.variables})`,
+  );
+});
+
+test("pair domains without uniqueness metadata conservatively use the legacy model", async () => {
+  const rings = [
+    ringCandidate(810, "a", { 1: 500, 7: 500 }, false),
+    ringCandidate(811, "b", { 1: 300, 7: 300 }, false),
+    ringCandidate(812, "c", { 1: 100, 7: 100 }, false),
+  ];
+  const bases = tradeoffJobs();
+  const completeJobs = bases.map((job) => pairFixtureJob(job, rings));
+  const metadataFreeJobs = completeJobs.map((job) => ({
+    ...job,
+    options: {
+      ...job.options,
+      slots: [job.options.slots[0]!, job.options.slots[1]!.map((candidate) => {
+        const { ringUniqueByItemId: _metadata, ...legacyPair } = candidate as EquipInfo & {
+          ringUniqueByItemId?: readonly (readonly [number, boolean])[];
+        };
+        return legacyPair as EquipInfo;
+      })],
+    },
+  }));
+  const solve = (jobs: readonly FixtureJob[]) => findBestJointFactorMip({
+    jobs: jointJobArgs(jobs, "damage"),
+    commonSlots: ["Finger"],
+    sharedFood: false,
+    equipmentIdentity: pairEquipmentIdentity,
+    foodIdentity: (item) => String(item.itemId),
+    objective: "damage",
+    maxSearchMs: 20_000,
+  });
+
+  const split = await solve(completeJobs);
+  const legacy = await solve(metadataFreeJobs);
+  assert.ok(split);
+  assert.ok(legacy);
+  assert.ok(
+    split.results[0]!.statistics.variables < legacy.results[0]!.statistics.variables,
+    "missing physical uniqueness metadata must disable the split layout",
+  );
 });
 
 function exactOptionsForOneSidedSpeed(
