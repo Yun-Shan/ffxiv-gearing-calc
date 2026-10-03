@@ -55,9 +55,9 @@ npm run data:update
 
 ## 维护文档
 
-`npm run data:test:v3` 为正式联合求解器的 Node 验收入口，配置见 [运行说明](scripts/test/README.md)。算法、正确性说明和 [搜索基准记录](docs/搜索基准记录.md) 位于 `docs`，基准数据仅用于验收，不是运行时预先打表数据。
+`npm run data:test:v3` 为正式联合求解器的 Node 验收入口，包装器位于 `scripts/node-tests`，配置见[运行说明](scripts/node-tests/README.md)。算法、正确性说明和[搜索基准记录](docs/搜索基准记录.md)位于 `docs`，基准数据仅用于验收，不是运行时预先打表数据。
 
-`scripts/test/archived` 仅作为存档，不参与构建类型检查。引用归档代码的兼容验收入口 `scripts/test/test.ts` 同样不纳入构建。
+`scripts/archive` 保留旧算法探索代码、验收记录和日志，不参与构建类型检查，也不提供 npm 入口；需要手动复现时请先阅读其中的说明。当前 Node 测试与验收入口集中在 `scripts/node-tests`，算法和候选构造均由 `src/domain` 提供。
 
 - [项目规则与实现记录](docs/PROJECT_RULES.md)：游戏规则、数据约束、已修复问题、算法边界和正确演进方向。
 - [已安装算法包的搜索性能分析](docs/已安装算法包搜索性能分析.md)：已安装求解器与当前整数搜索模型的数学适配和性能边界。

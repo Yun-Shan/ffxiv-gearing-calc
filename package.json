@@ -11,10 +11,8 @@
     "test:coverage": "vitest run --coverage",
     "data:mcp": "node scripts/query-mcp-lumina.mjs",
     "data:update": "node scripts/update-data.mjs",
-    "test:data": "node --test scripts/test/mcp-query-validation.test.mjs scripts/test/mcp-weapon-damage.test.mjs",
-    "data:test": "node --max-old-space-size=4096 --experimental-strip-types scripts/test/test.ts",
-    "data:test:v3": "node --max-old-space-size=2560 scripts/test/run-v3.mjs",
-    "data:test:parallel": "node scripts/test/archived/run-parallel-v2.mjs"
+    "test:data": "node --test scripts/node-tests/mcp-query-validation.test.mjs scripts/node-tests/mcp-weapon-damage.test.mjs",
+    "data:test:v3": "node --max-old-space-size=2560 --experimental-strip-types scripts/node-tests/run-v3.mjs"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.3.2",

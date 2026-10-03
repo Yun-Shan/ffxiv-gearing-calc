@@ -2966,7 +2966,7 @@
   ],
   "dataQueries": {
     "server": "ffxiv-mcp-lumina",
-    "reproductionEntry": "scripts/test/test.ts",
+    "reproductionEntry": "scripts/archive/test.ts",
     "rowQueries": [
       {
         "tool": "list_rows",

@@ -1,5 +1,5 @@
-import { gameData } from "./data";
-import type { JobId } from "./types";
+import { gameData } from "./data.ts";
+import type { JobId } from "./types.ts";
 
 export const jobSchemas = gameData.jobSchemas;
 export const jobLevelModifiers = gameData.jobLevelModifiers;

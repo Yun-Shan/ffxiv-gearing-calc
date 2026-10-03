@@ -1930,7 +1930,7 @@ client.close();
   if (process.env.DATA_TEST_EXPORT_V3 === "true") {
     const sendCandidate = process.send;
     if (typeof sendCandidate !== "function") {
-      throw new Error("DATA_TEST_EXPORT_V3 需要由 scripts/test/run-v3.mjs 通过 IPC 启动");
+      throw new Error("DATA_TEST_EXPORT_V3 仅支持历史手动 IPC 实验；当前 Node 验收入口不会调用此脚本");
     }
     const equipmentVariantIdentity = (equipment: EquipInfo): string => {
       const parameters = equipment.baseParams

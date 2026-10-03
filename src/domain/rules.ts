@@ -1,6 +1,6 @@
-import { gameData } from "./data";
-import { blueMageWeaponDamageAddition } from "./search/equipped-effects";
-import { jobLevelModifiers } from "./jobs";
+import { gameData } from "./data.ts";
+import { blueMageWeaponDamageAddition } from "./search/equipped-effects.ts";
+import { jobLevelModifiers } from "./jobs.ts";
 import type {
   CalculationInput,
   Effects,
@@ -8,7 +8,7 @@ import type {
   JobSchema,
   Stat,
   Stats,
-} from "./types";
+} from "./types.ts";
 
 // Match the source formula at floating-point integer boundaries.
 const floor = (value: number) => Math.trunc(value + 1e-7);

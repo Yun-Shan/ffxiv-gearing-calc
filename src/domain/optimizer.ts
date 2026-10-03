@@ -1,5 +1,5 @@
-import { foods, gameData, gears, materiaGradeRequiredLevels } from "./data";
-import { currentLevel, jobSchemas } from "./jobs";
+import { foods, gameData, gears, materiaGradeRequiredLevels } from "./data.ts";
+import { currentLevel, jobSchemas } from "./jobs.ts";
 import {
   addStats,
   applyFood,
@@ -7,23 +7,23 @@ import {
   calculateEffects,
   getSpeedStat,
   isGearUsable,
-} from "./rules";
-import { buildRingPairEquipInfos, isRingPairEquipInfo } from "./search/ring-pairs";
+} from "./rules.ts";
+import { buildRingPairEquipInfos, isRingPairEquipInfo } from "./search/ring-pairs.ts";
 import {
   equippedEffects,
   equippedSpeedRangeForGcd,
   equippedToughnessForMitigationPercent,
-} from "./search/equipped-effects";
+} from "./search/equipped-effects.ts";
 import {
   findBestLoadoutExactMip,
   type ExactMipOptions,
   type ExactMipResult,
-} from "./search/loadout-finder-exact-mip";
+} from "./search/loadout-finder-exact-mip.ts";
 import {
   findBestJointLoadoutV3,
   type JointLoadoutV3Result,
-} from "./search/loadout-finder-v3";
-import type { SharedSlotProjection } from "./search/types";
+} from "./search/loadout-finder-v3.ts";
+import type { SharedSlotProjection } from "./search/types.ts";
 import type {
   CommonGearSlot,
   Effects,
@@ -40,7 +40,7 @@ import type {
   SearchOptions,
   Stat,
   Stats,
-} from "./types";
+} from "./types.ts";
 
 type SolverParam = { baseParamId: number; value: number };
 type SolverFoodParam = {

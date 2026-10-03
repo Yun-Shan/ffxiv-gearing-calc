@@ -1,3 +1,5 @@
+> 历史说明：此文件记录目录拆分前的 Node 验收参数和命令，其中路径、场景及命令可能已失效。当前入口请查看 `scripts/node-tests/README.md`；本文件仅作为旧验收记录保存。
+
 # 配装搜索验收
 
 运行入口：`npm run data:test`，默认使用 HiGHS MIP 求解器。求解器和 worker 分别位于 `loadout-finder-exact-mip.ts`、`exact-mip-worker.mjs`；其余根目录模块为数据准备、公式、导出和相关测试。

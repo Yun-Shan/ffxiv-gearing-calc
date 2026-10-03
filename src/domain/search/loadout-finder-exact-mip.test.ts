@@ -236,7 +236,7 @@ test("exact MIP honors fixed GCD and lexicographic maximum toughness", async () 
 });
 
 test("exact MIP worker returns its result through structured clone", async () => {
-  const worker = new Worker(new URL("scripts/test/exact-mip-worker.mjs", `file:///${process.cwd().replaceAll("\\", "/")}/`), {
+  const worker = new Worker(new URL("scripts/node-tests/exact-mip-worker.mjs", `file:///${process.cwd().replaceAll("\\", "/")}/`), {
     workerData: {
       job: "RDM",
       jobLevel: 100,
