@@ -4,15 +4,18 @@ import {
   ArrowRight,
   Check,
   CircleHelp,
+  Compass,
   Play,
   Plus,
   RotateCcw,
-  Sparkles,
   X,
 } from "lucide-react";
 import {
+  addStats,
+  applyFood,
   combatSlots,
   combatStats,
+  calculateBaseStats,
   dataProvenance,
   findFeasibleGcds,
   foods,
@@ -33,6 +36,16 @@ import {
   type OptimizationResult,
   type Stat,
 } from "./domain";
+import {
+  InstructionRail,
+  JobPicker,
+  WizardProgress,
+} from "./ui/WizardNavigation";
+import { SearchProgress } from "./ui/SearchProgress";
+import { ConfigSnapshot } from "./ui/ConfigSnapshot";
+import { SearchHistory } from "./ui/SearchHistory";
+import { createSearchHistory, finishSearchHistory, type SearchHistoryRecord } from "./ui/search-history";
+import type { WizardStep } from "./ui/WizardNavigation";
 
 const displayedDataVersion = dataProvenance.sources?.find((source) => source.kind === "mcp" && source.gameVersion)?.gameVersion ?? dataProvenance.commit.slice(0, 12);
 
@@ -118,6 +131,8 @@ function searchProgressText(message: string): string {
     const jobId = jobIds.find((id) => new RegExp(`\\b${id}\\b`).test(message));
     return `正在计算${jobId ? jobSchemas[jobId].name : "各职业"}的单独最优配装…`;
   }
+  if (message.includes("候选准备完成")) return "候选准备完成，正在求解配装…";
+  if (message.includes("还原并复核")) return "正在还原并复核结果…";
   if (message.includes("最高坚韧")) return "正在优化最高坚韧方案…";
   if (message.includes("GCD") || message.includes("档位")) return searchMessageText(message);
   if (message.includes("incumbent")) return "已找到候选配装，正在确认最优结果…";
@@ -202,11 +217,11 @@ function Header({
     <header className="topbar">
       <div className="brand">
         <div className="brand-mark">
-          <Sparkles size={18} />
+          <Compass size={20} />
         </div>
         <div>
-          <div className="brand-name">配装工坊</div>
-          <div className="brand-sub">最终幻想 14 配装实验室</div>
+          <div className="brand-name">青瓷分析台</div>
+          <div className="brand-sub">最终幻想14 配装优化工具</div>
         </div>
       </div>
       <nav className="page-nav" aria-label="搜索页面">
@@ -215,7 +230,7 @@ function Header({
           className={page === "single" ? "active" : ""}
           aria-current={page === "single" ? "page" : undefined}
         >
-          单职业搜索
+          单职业配装
         </a>
         <a
           href="#/joint"
@@ -310,17 +325,19 @@ function SelectField({
   label,
   value,
   onChange,
+  disabled = false,
   children,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  disabled?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <label className="config-field">
       <span className="field-label">{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value)}>
+      <select disabled={disabled} value={value} onChange={(event) => onChange(event.target.value)}>
         {children}
       </select>
     </label>
@@ -331,10 +348,14 @@ function JobConfigFields({
   config,
   setConfig,
   showFood,
+  step = "all",
+  onEdited,
 }: {
   config: OptimizationConfig;
   setConfig: Dispatch<SetStateAction<OptimizationConfig>>;
   showFood: boolean;
+  step?: WizardStep | "all";
+  onEdited?: () => void;
 }) {
   const [sourceQuery, setSourceQuery] = useState("");
   const [equipmentQuery, setEquipmentQuery] = useState("");
@@ -439,10 +460,12 @@ function JobConfigFields({
     key: K,
     value: OptimizationConfig[K],
   ) {
+    onEdited?.();
     setConfig((current) => ({ ...current, [key]: value }));
   }
 
   function setGcdMode(mode: string) {
+    onEdited?.();
     if (mode === "any") {
       setConfigPatch(setConfig, { gcdTarget: undefined, gcdChoices: undefined });
       setGcdChoicesText("");
@@ -509,12 +532,14 @@ function JobConfigFields({
   }
 
   function selectSingleFeasibleGcd(gcd: number) {
+    onEdited?.();
     setConfigPatch(setConfig, { gcdTarget: gcd, gcdChoices: undefined });
     setGcdChoicesText("");
     setGcdChoicesDirty(false);
   }
 
   function toggleFeasibleGcd(gcd: number, checked: boolean) {
+    onEdited?.();
     const choices = new Set(config.gcdChoices ?? []);
     if (checked) choices.add(gcd);
     else choices.delete(gcd);
@@ -528,6 +553,7 @@ function JobConfigFields({
   }
 
   function forceGear(gear: Gear) {
+    onEdited?.();
     setConfig((current) => ({
       ...current,
       forcedGear: { ...current.forcedGear, [forcedSlot]: gear.id },
@@ -537,6 +563,7 @@ function JobConfigFields({
   }
 
   function excludeGear(gear: Gear) {
+    onEdited?.();
     setConfig((current) => {
       const forcedGear = { ...current.forcedGear };
       for (const [slot, id] of Object.entries(forcedGear)) {
@@ -553,7 +580,7 @@ function JobConfigFields({
 
   return (
     <div className="job-fields">
-      <div className="field-grid two">
+      {(step === "all" || step === 1) && <div className="field-grid one job-level-field">
         <SelectField
           label="职业等级"
           value={String(config.jobLevel ?? jobSchemas[config.jobId].maxJobLevel ?? defaultJobLevel)}
@@ -561,6 +588,10 @@ function JobConfigFields({
         >
           {Object.keys(gameData.jobLevelModifiers).map(Number).filter(level => level <= (jobSchemas[config.jobId].maxJobLevel ?? 100)).sort((a, b) => a - b).map(level => <option key={level} value={level}>{level} 级</option>)}
         </SelectField>
+      </div>}
+
+      {(step === "all" || step === 3) && <div className="candidate-range-group">
+      <div className="field-grid one">
         <NumberField
           label="同步品级"
           value={config.syncLevel}
@@ -590,8 +621,25 @@ function JobConfigFields({
           }
         />
       </div>
+      </div>}
 
-      {jobSchemas[config.jobId].ignoreWeaponItemLevel && <p className="field-hint">武器不按装备品级区间筛选，仍须满足职业与穿戴等级限制。</p>}
+      {(step === "all" || step === 2) && <details className="advanced-section">
+      <summary>
+        <span>GCD、速度与坚韧条件</span>
+        <span className="advanced-summary">
+          {config.gcdChoices?.length
+            ? config.gcdChoices.map((gcd) => gcd.toFixed(2)).join("、") + " 秒"
+            : config.gcdTarget !== undefined
+              ? config.gcdTarget.toFixed(2) + " 秒 GCD"
+              : "GCD 不限"}
+          {config.speedMin !== undefined || config.speedMax !== undefined
+            ? ` · ${speedStatName} ${config.speedMin ?? "不限"}–${config.speedMax ?? "不限"}`
+            : ""}
+          {jobSchemas[config.jobId].role === "tank"
+            ? ` · 坚韧条件 ${Number(config.minTenacity !== undefined) + Number(config.toughnessMinPercent !== undefined) + Number(config.maximizeTenacity)}`
+            : ""}
+        </span>
+      </summary>
       <div className="config-section">
         <div className="field-label with-help">
           <span>GCD 约束</span>
@@ -649,6 +697,7 @@ function JobConfigFields({
                 <button
                   type="button"
                   onClick={() => {
+                    onEdited?.();
                     const sorted = [...feasibleGcds].sort((first, second) => second - first);
                     setConfigPatch(setConfig, { gcdTarget: undefined, gcdChoices: sorted });
                     setGcdChoicesText(sorted.join(", "));
@@ -704,13 +753,6 @@ function JobConfigFields({
         </div>
       </div>
 
-      <div className="config-section">
-        <div className="field-label">魔晶石规则</div>
-        <p className="field-hint">
-          所有可用孔位均会镶满；可禁断装备按规则搜索满五孔方案，等级同步时遵循同步后的孔位限制。
-        </p>
-      </div>
-
       {jobSchemas[config.jobId].role === "tank" && <div className="config-section">
         <div className="field-label">坚韧约束</div>
         <div className="field-grid two">
@@ -737,6 +779,16 @@ function JobConfigFields({
           达到当前候选范围内的最高坚韧值
         </CheckControl>
       </div>}
+      </details>}
+
+      {(step === "all" || step === 3) && <>
+      {jobSchemas[config.jobId].ignoreWeaponItemLevel && <p className="field-hint">武器不按装备品级区间筛选，仍须满足职业与穿戴等级限制。</p>}
+      <div className="config-section">
+        <div className="field-label">魔晶石规则</div>
+        <p className="field-hint">
+          所有可用孔位均会镶满；可禁断装备按规则搜索满五孔方案，等级同步时遵循同步后的孔位限制。
+        </p>
+      </div>
 
       {showFood && (
         <SelectField
@@ -753,6 +805,13 @@ function JobConfigFields({
         </SelectField>
       )}
 
+      <details className="advanced-section">
+        <summary>
+          <span>来源与装备限制</span>
+          <span className="advanced-summary">
+            来源排除 {config.excludedSources.length} 项 · 强制 {forcedGearEntries.length} 件 · 排除 {excludedGears.length} 件
+          </span>
+        </summary>
       <details className="restriction-details">
         <summary>
           来源限制
@@ -835,13 +894,14 @@ function JobConfigFields({
                 <button
                   type="button"
                   aria-label={"移除强制装备 " + (gear?.name ?? id)}
-                  onClick={() =>
+                  onClick={() => {
+                    onEdited?.();
                     setConfig((current) => {
                       const forcedGear = { ...current.forcedGear };
                       delete forcedGear[slot];
                       return { ...current, forcedGear };
-                    })
-                  }
+                    });
+                  }}
                 >
                   <X size={12} />
                 </button>
@@ -889,6 +949,8 @@ function JobConfigFields({
           </div>
         </div>
       </details>
+      </details>
+      </>}
     </div>
   );
 }
@@ -896,12 +958,14 @@ function JobConfigFields({
 function StatusPanel({
   running,
   progress,
+  rawProgress,
   error,
   message,
   onCancel,
 }: {
   running: boolean;
   progress: string;
+  rawProgress?: string;
   error?: string;
   message?: string;
   onCancel: () => void;
@@ -909,22 +973,25 @@ function StatusPanel({
   if (!running && !error && !message) return null;
   return (
     <div
-      className={"search-status " + (error ? "has-error" : running ? "is-running" : "")}
+      className={"search-status result-status " + (error ? "has-error is-failed" : running ? "is-running" : message?.includes("取消") ? "is-cancelled" : message?.includes("没有") ? "is-empty" : "is-complete")}
       role={error ? "alert" : "status"}
       aria-live="polite"
     >
       <div className="search-status-copy">
         <span className="status-dot" />
         <div>
-          <strong>{error ? "搜索失败" : running ? "正在搜索" : "搜索状态"}</strong>
+          <strong>{error ? "搜索失败" : running ? "正在搜索" : message?.includes("取消") ? "搜索已取消" : message?.includes("没有") ? "没有可行配装" : message?.includes("完成") ? "搜索已完成" : "搜索状态"}</strong>
           <p>{error ?? (running ? progress : message ?? progress)}</p>
         </div>
       </div>
       {running && (
-        <button className="cancel-button" onClick={onCancel}>
-          <X size={14} />
-          取消搜索
-        </button>
+        <>
+          <SearchProgress message={rawProgress ?? progress} />
+          <button className="cancel-button" onClick={onCancel}>
+            <X size={14} />
+            取消搜索
+          </button>
+        </>
       )}
     </div>
   );
@@ -947,6 +1014,35 @@ function Metric({
   );
 }
 
+function appliedFoodStats(
+  result: OptimizationResult,
+  config: OptimizationConfig,
+): Partial<Record<Stat, number>> {
+  const job = jobSchemas[config.jobId];
+  const level = config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel;
+  const allowed = new Set(job.stats);
+  const foodStats = Object.fromEntries(
+    Object.entries(result.food.stats).filter(([stat, value]) =>
+      allowed.has(stat as Stat) && value !== undefined,
+    ),
+  ) as Partial<Record<Stat, number>>;
+  const foodRates = Object.fromEntries(
+    Object.entries(result.food.statRates).filter(([stat, value]) =>
+      allowed.has(stat as Stat) && value !== undefined,
+    ),
+  ) as Partial<Record<Stat, number>>;
+  const unbuffedStats = addStats(
+    calculateBaseStats(job, level),
+    ...result.gear.map((gear) => gear.finalStats),
+  );
+  const withFood = applyFood(unbuffedStats, foodStats, foodRates);
+  return Object.fromEntries(
+    Object.keys(foodStats)
+      .map((stat) => [stat as Stat, (withFood[stat as Stat] ?? 0) - (unbuffedStats[stat as Stat] ?? 0)] as const)
+      .filter(([, value]) => value > 0),
+  ) as Partial<Record<Stat, number>>;
+}
+
 function GearTable({
   result,
   config,
@@ -954,12 +1050,14 @@ function GearTable({
   result: OptimizationResult;
   config: OptimizationConfig;
 }) {
+  const actualFoodStats = appliedFoodStats(result, config);
   const displaySlots: GearSlot[] = [
     "weapon", "offhand", "head", "body", "hands", "legs", "feet",
     "earrings", "necklace", "bracelet", "ring", "ring2",
   ];
   return (
-    <div className="gear-table">
+    <div className="equipment-table-wrap">
+    <div className="gear-table equipment-table">
       <div className="gear-table-head">
         <span>部位</span>
         <span>装备</span>
@@ -1020,16 +1118,17 @@ function GearTable({
         </div>
         <strong>{result.food.name}</strong>
         <div className="gear-stats">
-          {Object.entries(result.food.stats)
+          {Object.entries(actualFoodStats)
             .map(([key, value]) => statName(key) + " " + value)
-            .join(" · ")}
+            .join(" · ") || "无属性加成"}
         </div>
         <div className="melds">
-          <span className="food-bonus">食物加成</span>
+          <span className="food-bonus">实际生效</span>
         </div>
         <span className="source-text">上游食物数据</span>
         <span className="level-tag">{result.food.level}</span>
       </div>
+    </div>
     </div>
   );
 }
@@ -1040,39 +1139,58 @@ function ResultPanel({
   baseline,
   attempted = false,
   failed = false,
+  statusMessage,
+  stale = false,
+  onEditConfig,
+  compact = false,
+  currentReview,
 }: {
   result?: OptimizationResult;
   config: OptimizationConfig;
   baseline?: OptimizationResult;
   attempted?: boolean;
   failed?: boolean;
+  statusMessage?: string;
+  stale?: boolean;
+  onEditConfig?: () => void;
+  compact?: boolean;
+  currentReview?: React.ReactNode;
 }) {
   if (!result) {
+    const cancelled = statusMessage?.includes("取消") ?? false;
     return (
-      <div className="empty-state">
+      <div className="empty-state result-status result-empty-state">
         <div className="empty-icon">
-          {attempted ? <X size={19} /> : <Play size={19} />}
+          {attempted || cancelled || failed ? <X size={19} /> : <Play size={19} />}
         </div>
-        <h2>{failed ? "搜索未完成" : attempted ? "没有可行配装" : "尚未搜索"}</h2>
+        <h2>{failed ? "搜索未完成" : cancelled ? "搜索已取消" : attempted ? "没有可行配装" : "尚未搜索"}</h2>
         <p>
           {failed
             ? "请查看上方错误信息，修正条件后重新搜索。"
+            : cancelled
+              ? "本次搜索已停止，当前没有新的推荐结果；确认条件后可以重新开始。"
             : attempted
-              ? "当前约束下没有可行结果，请放宽限制后重试。"
-              : "设置搜索条件后，点击“开始搜索”生成结果。"}
+                ? "当前约束下没有可行结果，请调整条件后重试。"
+                : "设置搜索条件后，点击“开始搜索”生成结果。"}
         </p>
       </div>
     );
   }
-  const damagePerSecond =
-    result.damagePerSecond ?? result.effects.damage / result.effects.gcd;
   const ratio =
     baseline && baseline.score > 0
       ? ((result.score / baseline.score) * 100).toFixed(4) + "%"
       : undefined;
   return (
-    <>
-      <div className="metric-strip">
+    <div className={"result-workspace" + (compact ? " single-result-workspace" : "")}>
+      <div className={compact ? "single-result-main" : undefined}>
+      <div className="result-completion" role="status">
+        <Check size={18} aria-hidden="true" />
+        <div><strong>{stale ? "历史搜索已完成 · 当前条件待更新" : "搜索已完成"}</strong><p>求解与结果复核已完成；最优结果限于本次候选与约束。</p></div>
+      </div>
+      {stale && <div className="stale-notice result-stale-note" role="status">
+        条件已修改，以下配装对应上一组条件，不代表当前设置的推荐结果。
+      </div>}
+      <div className="metric-strip result-conclusion">
         <Metric
           label="每威力伤害期望"
           value={result.effects.damage.toFixed(7)}
@@ -1081,7 +1199,7 @@ function ResultPanel({
         <Metric label="GCD" value={result.effects.gcd.toFixed(2) + " 秒"} />
         <Metric label="暴击率" value={(result.effects.crtChance * 100).toFixed(1) + "%"} />
         <Metric label="直击率" value={(result.effects.dhtChance * 100).toFixed(1) + "%"} />
-        <Metric label="按 GCD 折算" value={damagePerSecond.toFixed(7)} />
+        <Metric label="按 GCD 折算" value={result.damagePerSecond.toFixed(7)} />
       </div>
       <div className="result-toolbar">
         <div>
@@ -1100,24 +1218,23 @@ function ResultPanel({
         )}
       </div>
       <GearTable result={result} config={config} />
-
-      <div className="result-section">
+      </div>
+      <div className={compact ? "single-result-aside" : undefined}>
+      {compact && currentReview}
+      <div className="result-section result-attributes">
         <div className="result-toolbar">
           <div>
             <h2>配装总属性</h2>
             <span className="muted">已计入食物比例加成与装备魔晶石</span>
           </div>
         </div>
-        <div className="stats-grid">
+        <div className="stats-grid stat-summary-grid">
           {Object.entries(result.stats)
             .filter(([, value]) => value && value > 0)
             .map(([stat, value]) => (
               <div className="stat-card" key={stat}>
                 <span>{statName(stat)}</span>
                 <strong>{statValue(stat, value)}</strong>
-                <div className="stat-bar">
-                  <i style={{ width: Math.min(100, Number(value) / 35) + "%" }} />
-                </div>
               </div>
             ))}
         </div>
@@ -1140,7 +1257,9 @@ function ResultPanel({
           </div>
         </div>
       </div>
-    </>
+      <ConfigSnapshot config={config} onEdit={onEditConfig} />
+      </div>
+    </div>
   );
 }
 
@@ -1155,167 +1274,584 @@ function SearchButton({
 }) {
   return (
     <button
+      type="button"
       className={"run-button " + (running ? "is-running" : "")}
       onClick={running ? onCancel : onSearch}
       disabled={false}
     >
       {running ? <X size={16} /> : <Play size={16} fill="currentColor" />}
       {running ? "取消搜索" : "开始搜索"}
-      {!running && <span className="run-shortcut">↵</span>}
     </button>
   );
 }
 
+const roleNames = {
+  tank: "防护职业",
+  healer: "治疗职业",
+  str: "力量职业",
+  dex: "灵巧职业",
+  int: "智力职业",
+} as const;
+
+function SummaryRow({
+  label,
+  value,
+  onEdit,
+}: {
+  label: string;
+  value: React.ReactNode;
+  onEdit: () => void;
+}) {
+  return (
+    <div className="summary-row">
+      <span>{label}</span>
+      <strong>{value}</strong>
+      <button type="button" className="summary-edit-button" onClick={onEdit}>编辑</button>
+    </div>
+  );
+}
+
+function CurrentConfigReview({
+  config,
+  onEditStep,
+}: {
+  config: OptimizationConfig;
+  onEditStep: (step: WizardStep) => void;
+}) {
+  return (
+    <section className="single-current-review" aria-label="当前搜索条件，可编辑">
+      <h2>当前搜索条件</h2>
+      <SummaryRow
+        label="优化目标"
+        value={config.objective === "dps" ? "按 GCD 折算" : "每威力伤害期望"}
+        onEdit={() => onEditStep(2)}
+      />
+    </section>
+  );
+}
+
 function SinglePage() {
+  const [selectedJob, setSelectedJob] = useState<JobId | null>(null);
   const [config, setConfig] = useState<OptimizationConfig>(() => makeConfig("SAM"));
+  const [step, setStep] = useState<WizardStep>(1);
+  const [confirmedThrough, setConfirmedThrough] = useState(0);
   const [result, setResult] = useState<OptimizationResult>();
   const [resultConfig, setResultConfig] = useState<OptimizationConfig>();
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState("");
+  const [rawProgress, setRawProgress] = useState("");
   const [error, setError] = useState<string>();
   const [statusMessage, setStatusMessage] = useState<string>();
   const [resultKey, setResultKey] = useState<string>();
   const [hasAttempted, setHasAttempted] = useState(false);
+  const [historyRefresh, setHistoryRefresh] = useState(0);
+  const [historyError, setHistoryError] = useState<string>();
   const abortController = useRef<AbortController | undefined>(undefined);
-  const currentKey = JSON.stringify(config);
+  const currentKey = selectedJob ? JSON.stringify(config) : "";
   const stale = result !== undefined && resultKey !== currentKey;
-  const job = jobSchemas[config.jobId];
+  const showResult = step === 4 && result !== undefined && !stale;
+  const job = selectedJob ? jobSchemas[selectedJob] : undefined;
+  const speedStatName =
+    job && (job.role === "healer" || job.role === "int") ? "咏速" : "技速";
 
   useEffect(() => () => {
     abortController.current?.abort();
   }, []);
 
+  function cancelSearch() {
+    abortController.current?.abort();
+  }
+
+  function invalidateCurrentStep() {
+    if (running) cancelSearch();
+    setConfirmedThrough((current) => Math.min(current, step - 1));
+    setError(undefined);
+    setStatusMessage(undefined);
+  }
+
+  function chooseJob(jobId: JobId) {
+    if (selectedJob === jobId) return;
+    if (running) cancelSearch();
+    setSelectedJob(jobId);
+    setConfig(makeConfig(jobId));
+    setConfirmedThrough(0);
+    setStep(1);
+    setResult(undefined);
+    setResultConfig(undefined);
+    setResultKey(undefined);
+    setHasAttempted(false);
+    setError(undefined);
+    setStatusMessage(undefined);
+  }
+
+  function editStep(target: WizardStep) {
+    if (target >= step || target > confirmedThrough) return;
+    cancelSearch();
+    setConfirmedThrough((current) => Math.min(current, target - 1));
+    setStep(target);
+    setError(undefined);
+    setStatusMessage(undefined);
+  }
+
+  function confirmAndContinue() {
+    if (!selectedJob || step >= 4) return;
+    setConfirmedThrough(step);
+    setStep((step + 1) as WizardStep);
+    setError(undefined);
+    setStatusMessage(undefined);
+  }
+
+  function loadHistoryConfig(record: SearchHistoryRecord) {
+    if (record.kind !== "single") return;
+    const previous = abortController.current;
+    abortController.current = undefined;
+    previous?.abort();
+    setRunning(false);
+    setProgress("");
+    setRawProgress("");
+    setSelectedJob(record.config.jobId);
+    setConfig(record.config);
+    setResult(undefined);
+    setResultConfig(undefined);
+    setResultKey(undefined);
+    setConfirmedThrough(0);
+    setStep(1);
+    setHasAttempted(false);
+    setError(undefined);
+    setStatusMessage(undefined);
+  }
+
+  function loadHistoryResult(record: SearchHistoryRecord) {
+    if (record.kind !== "single" || !record.result || record.dataVersion !== displayedDataVersion) return;
+    const previous = abortController.current;
+    abortController.current = undefined;
+    previous?.abort();
+    setRunning(false);
+    setProgress("");
+    setRawProgress("");
+    setSelectedJob(record.config.jobId);
+    setConfig(record.config);
+    setResult(record.result);
+    setResultConfig(record.config);
+    setResultKey(JSON.stringify(record.config));
+    setConfirmedThrough(3);
+    setStep(4);
+    setHasAttempted(true);
+    setError(undefined);
+    setStatusMessage("已加载该次搜索结果。");
+  }
+
+  async function saveHistoryOutcome(id: string, outcome: Parameters<typeof finishSearchHistory>[1]) {
+    try { await finishSearchHistory(id, outcome); }
+    catch (caught) { setHistoryError("搜索记录保存失败：" + searchMessageText(caught instanceof Error ? caught.message : String(caught))); }
+    setHistoryRefresh((value) => value + 1);
+  }
+
   async function runSearch() {
+    if (!selectedJob || step !== 4 || confirmedThrough < 3) return;
+    const searchConfig = { ...config, jobId: selectedJob };
+    const searchKey = JSON.stringify(searchConfig);
     abortController.current?.abort();
     const controller = new AbortController();
     abortController.current = controller;
     setRunning(true);
     setProgress("正在准备候选装备…");
+    setRawProgress("正在准备候选装备…");
     setError(undefined);
     setStatusMessage(undefined);
     setHasAttempted(true);
     setResult(undefined);
     setResultKey(undefined);
+    setHistoryError(undefined);
+    let historyId: string | undefined;
     try {
-      const searchResult = await optimize(config, {
+      const record = await createSearchHistory({ kind: "single", config: searchConfig, dataVersion: displayedDataVersion });
+      historyId = record.id;
+      setHistoryRefresh((value) => value + 1);
+      if (controller.signal.aborted) throw new Error("搜索已取消。");
+      const searchResult = await optimize(searchConfig, {
         signal: controller.signal,
-        onProgress: (message) => setProgress(searchProgressText(message)),
+        onProgress: (message) => {
+          if (controller.signal.aborted || abortController.current !== controller) return;
+          setRawProgress(message);
+          setProgress(searchProgressText(message));
+        },
       });
+      await saveHistoryOutcome(historyId, searchResult ? { status: "completed", result: searchResult } : { status: "no-result" });
+      if (controller.signal.aborted || abortController.current !== controller) return;
       setResult(searchResult);
-      if (searchResult) { setResultKey(currentKey); setResultConfig(config); }
+      if (searchResult) {
+        setResultKey(searchKey);
+        setResultConfig(searchConfig);
+      }
       setStatusMessage(
         searchResult
           ? "搜索已完成。"
-          : "当前约束下没有可行配装，请调整条件后重试。",
+          : "当前约束下没有满足条件的配装，请调整条件后重试。",
       );
     } catch (caught) {
+      if (historyId) await saveHistoryOutcome(historyId, controller.signal.aborted ? { status: "cancelled" } : { status: "failed", error: searchMessageText(caught instanceof Error ? caught.message : String(caught)) });
+      if (abortController.current !== controller) return;
       if (controller.signal.aborted) {
         setHasAttempted(false);
-        setStatusMessage("搜索已取消。");
+        setStatusMessage("搜索已取消。本次未生成推荐，可以确认条件后重新开始。");
       } else {
         setError(searchMessageText(caught instanceof Error ? caught.message : String(caught)));
       }
     } finally {
-      if (abortController.current === controller) abortController.current = undefined;
-      setRunning(false);
-      setProgress("");
+      if (abortController.current === controller) {
+        abortController.current = undefined;
+        setRunning(false);
+        setProgress("");
+        setRawProgress("");
+      }
     }
   }
 
-  function cancelSearch() {
-    abortController.current?.abort();
-  }
-
-  function reset() {
-    cancelSearch();
-    setConfig(makeConfig("SAM"));
-    setResult(undefined);
-    setError(undefined);
-    setStatusMessage(undefined);
-    setResultKey(undefined);
-    setHasAttempted(false);
-  }
+  const foodName = config.foodId === 0
+    ? "自动选择符合条件的食物"
+    : foods.find((food) => food.id === config.foodId)?.name ?? "食物编号 " + config.foodId;
+  const gcdSummary = config.gcdChoices?.length
+    ? config.gcdChoices.map((gcd) => gcd.toFixed(2) + " 秒").join("、")
+    : config.gcdTarget === undefined
+      ? "不限"
+      : config.gcdTarget.toFixed(2) + " 秒";
+  const speedSummary = config.speedMin === undefined && config.speedMax === undefined
+    ? "不限"
+    : String(config.speedMin ?? "不限") + "–" + String(config.speedMax ?? "不限");
+  const forcedSummary = Object.entries(config.forcedGear)
+    .filter((entry): entry is [string, number] => entry[1] !== undefined)
+    .map(([slot, id]) => {
+      const gear = gears.find((item) => item.id === id);
+      return slotLabels[slot as GearSlot] + "：" + (gear?.name ?? "装备 " + id);
+    });
+  const excludedGearSummary = (config.excludedGearIds ?? [])
+    .map((id) => gears.find((gear) => gear.id === id)?.name ?? "装备 " + id);
+  const sourceSummary = config.excludedSources.length
+    ? config.excludedSources.join("、")
+    : "无限制";
 
   return (
-    <main className="workspace">
-      <aside className="sidebar">
-        <div className="section-kicker">单职业搜索</div>
-        <div className="sidebar-title">优化配置</div>
-        <SelectField
-          label="职业"
-          value={config.jobId}
-          onChange={(value) => setConfig(makeConfig(value as JobId))}
-        >
-          {jobIds.map((id) => (
-            <option key={id} value={id}>
-              {jobSchemas[id].name}
-            </option>
-          ))}
-        </SelectField>
-        <JobConfigFields config={config} setConfig={setConfig} showFood />
-        <SelectField
-          label="优化目标"
-          value={config.objective ?? "damage"}
-          onChange={(value) =>
-            setConfig((current) => ({
-              ...current,
-              objective: value as "damage" | "dps",
-            }))
-          }
-        >
-          <option value="damage">每威力伤害期望</option>
-          <option value="dps">按 GCD 折算</option>
-        </SelectField>
-        <SearchButton running={running} onSearch={runSearch} onCancel={cancelSearch} />
-      </aside>
+    <main className="workspace wizard-workspace">
+      <div className={"wizard-layout" + (showResult ? " has-result-view" : "")}>
+        <section className="wizard-primary" aria-label="配装设置">
+          <WizardProgress
+            step={step}
+            confirmedThrough={confirmedThrough}
+            onStep={editStep}
+          />
 
-      <section className="main-panel">
-        <div className="content-head">
-          <div>
-            <div className="section-kicker">单职业优化结果</div>
-            <h1>{job.name} · 配装搜索</h1>
-            <p className="head-caption">
-              {config.minItemLevel} — {config.maxItemLevel} 品级
-              {config.syncLevel ? " · 同步品级 " + config.syncLevel : ""}
-              {" · 等级 " + config.jobLevel}
-            </p>
-          </div>
-          <div className="head-actions">
-            <span className="compute-chip">
-              <span className="status-dot" />
-              {running ? "搜索中" : "手动启动"}
-            </span>
-          </div>
-        </div>
-        {stale && (
-          <div className="stale-notice">
-            配置已修改，当前显示的是上一组配置的结果。点击“开始搜索”更新。
-          </div>
-        )}
-        <StatusPanel
-          running={running}
-          progress={progress}
-          error={error}
-          message={statusMessage}
-          onCancel={cancelSearch}
-        />
-        {!running && <ResultPanel
-          result={result}
-          config={resultConfig ?? config}
-          attempted={hasAttempted}
-          failed={error !== undefined}
-        />}
-        <footer className="footer">
-          <span>搜索规则 · {job.name}</span>
-          <span>纯前端计算 · 可离线运行</span>
-          <span>数据版本 {displayedDataVersion}</span>
-        </footer>
-      </section>
+          {step === 1 && (
+            <section className="wizard-step-panel is-step-1">
+              <header className="wizard-page-heading">
+                <h1>先选择你的职业</h1>
+                <p>按职业角色选择，下一步再决定目标与战斗节奏。</p>
+              </header>
+              <JobPicker value={selectedJob} onChange={chooseJob} />
+              <div className="job-level-section">
+                <div className="job-level-caption">
+                  <h2>职业等级</h2>
+                  <p>{job ? "默认使用" + job.name + "职业数据中的等级上限，可在下方调整。" : "选择职业后设置对应职业等级。"}</p>
+                </div>
+                {job ? (
+                  <JobConfigFields
+                    config={config}
+                    setConfig={setConfig}
+                    showFood={false}
+                    step={1}
+                    onEdited={invalidateCurrentStep}
+                  />
+                ) : (
+                  <SelectField
+                    label="职业等级"
+                    value=""
+                    disabled
+                    onChange={() => undefined}
+                  >
+                    <option value="">请选择职业后设置</option>
+                  </SelectField>
+                )}
+                <details className="advanced-section job-description">
+                  <summary>
+                    <span>职业说明</span>
+                    <span className="advanced-summary">
+                      {job ? roleNames[job.role] + " · 主属性 " + statName(job.mainStat) : "选择职业后可查看该职业的定位与特点。"}
+                    </span>
+                  </summary>
+                  <p>
+                    {job
+                      ? "当前职业的基础属性修正、等级上限与计算规则来自项目职业数据；配装搜索会按所选等级计算基础属性。"
+                      : "选择职业后可查看该职业的定位与特点。"}
+                  </p>
+                </details>
+              </div>
+              <div className="wizard-actions">
+                <span className="wizard-action-hint">
+                  {selectedJob
+                    ? (job?.name ?? "所选职业") + "已选；确认职业与等级后继续。"
+                    : "请选择职业后，再设置对应职业等级。"}
+                </span>
+                <button
+                  type="button"
+                  className="wizard-continue"
+                  disabled={!selectedJob}
+                  onClick={confirmAndContinue}
+                >
+                  确认并继续 <ArrowRight size={17} />
+                </button>
+              </div>
+              <SearchHistory kind="single" currentDataVersion={displayedDataVersion} refreshKey={historyRefresh} onLoadConfig={loadHistoryConfig} onLoadResult={loadHistoryResult} />
+            </section>
+          )}
+
+          {step === 2 && job && (
+            <section className="wizard-step-panel is-step-2">
+              <header className="wizard-page-heading">
+                <h1>选择优化目标</h1>
+                <p>选择希望优先优化的伤害指标；战斗节奏和职业专属条件可在高级选项中调整。</p>
+              </header>
+              <fieldset className="objective-options">
+                <legend>优化目标</legend>
+                <label className={"objective-option" + (config.objective === "damage" ? " is-selected" : "")}>
+                  <input
+                    type="radio"
+                    name="single-objective"
+                    value="damage"
+                    checked={config.objective === "damage"}
+                    onChange={() => {
+                      invalidateCurrentStep();
+                      setConfig((current) => ({ ...current, objective: "damage" }));
+                    }}
+                  />
+                  <span className="objective-option-copy">
+                    <strong>每威力伤害期望</strong>
+                    <span>推荐。比较每点武器威力对应的伤害期望。</span>
+                  </span>
+                </label>
+                <label className={"objective-option" + (config.objective === "dps" ? " is-selected" : "")}>
+                  <input
+                    type="radio"
+                    name="single-objective"
+                    value="dps"
+                    checked={config.objective === "dps"}
+                    onChange={() => {
+                      invalidateCurrentStep();
+                      setConfig((current) => ({ ...current, objective: "dps" }));
+                    }}
+                  />
+                  <span className="objective-option-copy">
+                    <strong>按 GCD 折算</strong>
+                    <span>把每威力伤害期望按最终 GCD 折算，适合将战斗节奏纳入目标时使用。</span>
+                  </span>
+                </label>
+              </fieldset>
+              <p className="field-hint objective-recommendation">
+                推荐先使用每威力伤害期望；如果你希望将 GCD 纳入取舍，可选择按 GCD 折算。
+              </p>
+              <JobConfigFields
+                config={config}
+                setConfig={setConfig}
+                showFood={false}
+                step={2}
+                onEdited={invalidateCurrentStep}
+              />
+              <div className="wizard-actions">
+                <button type="button" className="wizard-back" onClick={() => editStep(1)}>
+                  <ArrowRight className="back-arrow" size={17} /> 上一步
+                </button>
+                <button type="button" className="wizard-continue" onClick={confirmAndContinue}>
+                  确认并继续 <ArrowRight size={17} />
+                </button>
+              </div>
+            </section>
+          )}
+
+          {step === 3 && job && (
+            <section className="wizard-step-panel is-step-3">
+              <header className="wizard-page-heading">
+                <h1>设置候选范围</h1>
+                <p>决定哪些装备和食物可以参与搜索；默认品级范围来自当前职业配置。</p>
+              </header>
+              <div className="candidate-range-intro">
+                <strong>装备品级范围</strong>
+                <p>范围只影响候选装备；实际结果仍会遵守职业、穿戴等级、属性上限与同步规则。</p>
+              </div>
+              <JobConfigFields
+                config={config}
+                setConfig={setConfig}
+                showFood
+                step={3}
+                onEdited={invalidateCurrentStep}
+              />
+              <div className="wizard-actions">
+                <button type="button" className="wizard-back" onClick={() => editStep(2)}>
+                  <ArrowRight className="back-arrow" size={17} /> 上一步
+                </button>
+                <button type="button" className="wizard-continue" onClick={confirmAndContinue}>
+                  确认并继续 <ArrowRight size={17} />
+                </button>
+              </div>
+            </section>
+          )}
+
+          {step === 4 && job && (
+            <section className="wizard-step-panel is-step-4">
+              <header className={"wizard-page-heading" + (showResult ? " result-edit-heading" : "")}>
+                <h1>{showResult ? "配装结果" : "检查并开始"}</h1>
+                <p>{showResult ? "本次搜索记录保存在右侧；返回第一步可配置新的搜索。" : "核对本次搜索条件；可以返回对应步骤编辑。"}</p>
+              </header>
+
+              {!showResult && <div className="config-summary">
+                <section className="config-summary-section">
+                  <h2>职业与等级</h2>
+                  <SummaryRow
+                    label="职业"
+                    value={job.name + " · " + roleNames[job.role]}
+                    onEdit={() => editStep(1)}
+                  />
+                  <SummaryRow
+                    label="职业等级"
+                    value={(config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel) + " 级"}
+                    onEdit={() => editStep(1)}
+                  />
+                </section>
+                <section className="config-summary-section">
+                  <h2>优化目标与战斗节奏</h2>
+                  <SummaryRow
+                    label="优化目标"
+                    value={config.objective === "dps" ? "按 GCD 折算" : "每威力伤害期望"}
+                    onEdit={() => editStep(2)}
+                  />
+                  <SummaryRow
+                    label="GCD"
+                    value={gcdSummary}
+                    onEdit={() => editStep(2)}
+                  />
+                  <SummaryRow
+                    label={speedStatName + "范围"}
+                    value={speedSummary}
+                    onEdit={() => editStep(2)}
+                  />
+                  {job.role === "tank" && (
+                    <SummaryRow
+                      label="坚韧条件"
+                      value={[
+                        config.minTenacity !== undefined ? "最低 " + config.minTenacity : "",
+                        config.toughnessMinPercent !== undefined ? "减伤至少 " + config.toughnessMinPercent + "%" : "",
+                        config.maximizeTenacity ? "候选范围内最高坚韧" : "",
+                      ].filter(Boolean).join(" · ") || "无额外条件"}
+                      onEdit={() => editStep(2)}
+                    />
+                  )}
+                </section>
+                <section className="config-summary-section">
+                  <h2>装备与食物范围</h2>
+                  <SummaryRow
+                    label="装备品级"
+                    value={config.minItemLevel + "–" + config.maxItemLevel}
+                    onEdit={() => editStep(3)}
+                  />
+                  <SummaryRow
+                    label="同步品级"
+                    value={config.syncLevel === undefined ? "未启用" : config.syncLevel}
+                    onEdit={() => editStep(3)}
+                  />
+                  <SummaryRow label="食物" value={foodName} onEdit={() => editStep(3)} />
+                  <SummaryRow label="来源限制" value={sourceSummary} onEdit={() => editStep(3)} />
+                  <SummaryRow
+                    label="强制装备"
+                    value={forcedSummary.length ? forcedSummary.join("；") : "无"}
+                    onEdit={() => editStep(3)}
+                  />
+                  <SummaryRow
+                    label="排除装备"
+                    value={excludedGearSummary.length ? excludedGearSummary.join("、") : "无"}
+                    onEdit={() => editStep(3)}
+                  />
+                  <p className="config-rule-note">
+                    所有可用魔晶石孔均会填满；允许禁断的装备按规则填满五孔。
+                    等级同步会按同步规则处理普通装备的魔晶石。
+                  </p>
+                </section>
+              </div>}
+
+              <div className="wizard-actions wizard-final-actions">
+                <button type="button" className="wizard-back" onClick={() => editStep(3)}>
+                  <ArrowRight className="back-arrow" size={17} /> 上一步
+                </button>
+                {running
+                  ? <span className="wizard-action-hint">搜索进行中，可在进度面板取消。</span>
+                  : <SearchButton running={false} onSearch={runSearch} onCancel={cancelSearch} />}
+              </div>
+            </section>
+          )}
+
+          {(running || error !== undefined || (!result && statusMessage !== undefined)) && (
+            <StatusPanel
+              running={running}
+              progress={progress}
+              rawProgress={rawProgress}
+              error={error}
+              message={statusMessage}
+              onCancel={cancelSearch}
+            />
+          )}
+          {historyError && <p role="alert" className="history-error">{historyError}</p>}
+          {!running && step === 4 && (showResult || (!result && (hasAttempted || error || statusMessage))) && (
+            <ResultPanel
+              result={result}
+              config={resultConfig ?? config}
+              attempted={hasAttempted}
+              failed={error !== undefined}
+              statusMessage={statusMessage}
+              stale={stale}
+              onEditConfig={step > 1 ? () => editStep(1) : undefined}
+              compact={step === 4 && result !== undefined}
+              currentReview={showResult ? <CurrentConfigReview config={config} onEditStep={editStep} /> : undefined}
+            />
+          )}
+          <footer className="footer wizard-footer">
+            <span>{job ? "搜索规则 · " + job.name : "选择职业后配置搜索条件"}</span>
+            <span>纯前端计算 · 可离线运行</span>
+            <span>数据版本 {displayedDataVersion}</span>
+          </footer>
+        </section>
+        <InstructionRail step={step} confirmedThrough={confirmedThrough} />
+      </div>
     </main>
   );
 }
+function jointJobSummary(config: OptimizationConfig): string {
+  const job = jobSchemas[config.jobId];
+  const speedStatName = job.role === "healer" || job.role === "int" ? "咏速" : "技速";
+  const gcd = config.gcdChoices?.length
+    ? config.gcdChoices.map((value) => value.toFixed(2)).join("、") + " 秒"
+    : config.gcdTarget === undefined
+      ? "GCD 不限"
+      : config.gcdTarget.toFixed(2) + " 秒 GCD";
+  const speed = config.speedMin === undefined && config.speedMax === undefined
+    ? "速度不限"
+    : speedStatName + " " + String(config.speedMin ?? "不限") + "–" + String(config.speedMax ?? "不限");
+  const food = config.foodId === 0
+    ? "自动食物"
+    : foods.find((item) => item.id === config.foodId)?.name ?? "食物 " + config.foodId;
+  const restrictionCount = config.excludedSources.length +
+    (config.excludedGearIds?.length ?? 0) +
+    Object.values(config.forcedGear).filter((id) => id !== undefined).length;
+  const tankConditionCount = [
+    config.minTenacity !== undefined,
+    config.toughnessMinPercent !== undefined,
+    config.maximizeTenacity,
+  ].filter(Boolean).length;
+  const tankConditions = job.role === "tank"
+    ? " · 坚韧条件 " + tankConditionCount + " 项"
+    : "";
+  return `${config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel} 级 · 品级 ${config.minItemLevel}–${config.maxItemLevel} · ${food} · ${gcd} · ${speed} · 限制 ${restrictionCount} 项${tankConditions}`;
+}
 
 function JointPage() {
+  const [historyRefresh, setHistoryRefresh] = useState(0);
+  const [historyError, setHistoryError] = useState<string>();
   const [jobConfigs, setJobConfigs] = useState<Record<string, OptimizationConfig>>({
     RDM: makeConfig("RDM"),
     BLM: makeConfig("BLM"),
@@ -1329,6 +1865,7 @@ function JointPage() {
   const [resultConfig, setResultConfig] = useState<JointOptimizationConfig>();
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState("");
+  const [rawProgress, setRawProgress] = useState("");
   const [error, setError] = useState<string>();
   const [statusMessage, setStatusMessage] = useState<string>();
   const [resultKey, setResultKey] = useState<string>();
@@ -1403,6 +1940,49 @@ function JointPage() {
     );
   }
 
+  function loadJointHistoryConfig(record: SearchHistoryRecord) {
+    if (record.kind !== "joint") return false;
+    if (record.config.commonSlots.includes("rings")) {
+      setError("该记录使用当前界面不支持的合并戒指共享方式，无法载入。");
+      return false;
+    }
+    const previous = abortController.current;
+    abortController.current = undefined;
+    previous?.abort();
+    setRunning(false);
+    setProgress("");
+    setRawProgress("");
+    setJobList(record.config.jobs.map((config) => config.jobId));
+    setAddingJob(jobIds.find((jobId) => !record.config.jobs.some((config) => config.jobId === jobId)) ?? jobIds[0]!);
+    setJobConfigs(Object.fromEntries(record.config.jobs.map((config) => [config.jobId, config])));
+    setCommonSlots(record.config.commonSlots.filter((slot): slot is CommonSlot => slot !== "rings"));
+    setFoodStrategy(record.config.foodStrategy);
+    setObjective(record.config.objective ?? "damage");
+    setResult(undefined);
+    setResultConfig(undefined);
+    setResultKey(undefined);
+    setHasAttempted(false);
+    setError(undefined);
+    setStatusMessage(undefined);
+    return true;
+  }
+
+  function loadJointHistoryResult(record: SearchHistoryRecord) {
+    if (record.kind !== "joint" || !record.result || record.dataVersion !== displayedDataVersion) return;
+    if (!loadJointHistoryConfig(record)) return;
+    setResult(record.result);
+    setResultConfig(record.config);
+    setResultKey(JSON.stringify(record.config));
+    setHasAttempted(true);
+    setStatusMessage("已加载该次联合搜索结果。");
+  }
+
+  async function saveHistoryOutcome(id: string, outcome: Parameters<typeof finishSearchHistory>[1]) {
+    try { await finishSearchHistory(id, outcome); }
+    catch (caught) { setHistoryError("搜索记录保存失败：" + searchMessageText(caught instanceof Error ? caught.message : String(caught))); }
+    setHistoryRefresh((value) => value + 1);
+  }
+
   async function runSearch() {
     if (jobList.length < 2) {
       setError("联合搜索至少需要选择两个职业。");
@@ -1413,16 +1993,29 @@ function JointPage() {
     abortController.current = controller;
     setRunning(true);
     setProgress("正在准备所有职业的候选装备…");
+    setRawProgress("正在准备所有职业的候选装备…");
     setError(undefined);
     setStatusMessage(undefined);
     setHasAttempted(true);
     setResult(undefined);
     setResultKey(undefined);
+    setHistoryError(undefined);
+    let historyId: string | undefined;
     try {
+      const record = await createSearchHistory({ kind: "joint", config: currentConfig, dataVersion: displayedDataVersion });
+      historyId = record.id;
+      setHistoryRefresh((value) => value + 1);
+      if (controller.signal.aborted) throw new Error("联合搜索已取消。");
       const searchResult = await optimizeJoint(currentConfig, {
         signal: controller.signal,
-        onProgress: (message) => setProgress(searchProgressText(message)),
+        onProgress: (message) => {
+          if (controller.signal.aborted || abortController.current !== controller) return;
+          setRawProgress(message);
+          setProgress(searchProgressText(message));
+        },
       });
+      await saveHistoryOutcome(historyId, searchResult ? { status: "completed", result: searchResult } : { status: "no-result" });
+      if (controller.signal.aborted || abortController.current !== controller) return;
       setResult(searchResult);
       if (searchResult) { setResultKey(currentKey); setResultConfig(currentConfig); }
       setStatusMessage(
@@ -1431,6 +2024,8 @@ function JointPage() {
           : "当前约束下没有满足条件的联合配装，请调整条件后重试。",
       );
     } catch (caught) {
+      if (historyId) await saveHistoryOutcome(historyId, controller.signal.aborted ? { status: "cancelled" } : { status: "failed", error: searchMessageText(caught instanceof Error ? caught.message : String(caught)) });
+      if (abortController.current !== controller) return;
       if (controller.signal.aborted) {
         setHasAttempted(false);
         setStatusMessage("联合搜索已取消。");
@@ -1438,9 +2033,12 @@ function JointPage() {
         setError(searchMessageText(caught instanceof Error ? caught.message : String(caught)));
       }
     } finally {
-      if (abortController.current === controller) abortController.current = undefined;
-      setRunning(false);
-      setProgress("");
+      if (abortController.current === controller) {
+        abortController.current = undefined;
+        setRunning(false);
+        setProgress("");
+        setRawProgress("");
+      }
     }
   }
 
@@ -1540,6 +2138,8 @@ function JointPage() {
           <option value="dps">按 GCD 折算</option>
         </SelectField>
         <SearchButton running={running} onSearch={runSearch} onCancel={cancelSearch} />
+        {historyError && <p role="alert" className="history-error">{historyError}</p>}
+        <SearchHistory kind="joint" currentDataVersion={displayedDataVersion} refreshKey={historyRefresh} onLoadConfig={loadJointHistoryConfig} onLoadResult={loadJointHistoryResult} />
       </aside>
 
       <section className="main-panel">
@@ -1551,7 +2151,7 @@ function JointPage() {
               每个职业单独配置等级、限制和目标档位；联合搜索同时计算各职业基线。
             </p>
           </div>
-          {result && (
+          {result && !stale && (
             <div className="head-actions">
               <span className={"completion-chip " + (jointCompleted ? "complete" : "incomplete")}>
                 <span className="status-dot" />
@@ -1561,35 +2161,30 @@ function JointPage() {
           )}
         </div>
 
-        {stale && (
-          <div className="stale-notice">
-            配置已修改，当前结果对应上一组设置。点击“开始搜索”更新。
-          </div>
-        )}
         <StatusPanel
           running={running}
           progress={progress}
+          rawProgress={rawProgress}
           error={error}
-          message={statusMessage}
+          message={stale ? undefined : statusMessage}
           onCancel={cancelSearch}
         />
 
         <div className="job-config-list">
-          {jobList.map((jobId, index) => (
-            <details className="job-config-card" key={jobId} open={index === 0}>
+          {jobList.map((jobId) => {
+            const jobConfig = jobConfigs[jobId] ?? makeConfig(jobId);
+            return (
+            <details className="job-config-card" key={jobId}>
               <summary>
                 <span>
                   <strong>{jobSchemas[jobId].name}</strong>
-                  <small>
-                    等级 {jobConfigs[jobId]?.jobLevel ?? defaultJobLevel} · 品级{" "}
-                    {jobConfigs[jobId]?.minItemLevel ?? bounds[0]}–{jobConfigs[jobId]?.maxItemLevel ?? bounds[1]}
-                  </small>
+                  <small className="job-config-summary">{jointJobSummary(jobConfig)}</small>
                 </span>
                 <span className="summary-chevron">⌄</span>
               </summary>
               <div className="job-config-card-body">
                 <JobConfigFields
-                  config={jobConfigs[jobId] ?? makeConfig(jobId)}
+                  config={jobConfig}
                   setConfig={(action) =>
                     setJobConfigs((current) => ({
                       ...current,
@@ -1603,11 +2198,28 @@ function JointPage() {
                 />
               </div>
             </details>
-          ))}
+            );
+          })}
         </div>
 
-        {result && (
+        <section className="joint-condition-review" aria-label="联合搜索条件检查">
+          <h2>开始前检查</h2>
+          <p>参与职业：{jobList.map((id) => jobSchemas[id].name).join("、")}；目标：{objective === "damage" ? "每威力伤害期望" : "按 GCD 折算"}。</p>
+          <p>共享部位：{commonSlots.map((slot) => slotLabels[slot]).join("、") || "不共享"}；食物：{foodStrategy === "shared" ? "所有职业共用" : "各职业独立选择"}。各职业已启用的限制显示在上方折叠摘要中。</p>
+        </section>
+
+        {result && !stale && (
           <>
+            <section className="result-config-snapshot" aria-label="本次联合结果的共享条件">
+              <h2>本次联合搜索条件</h2>
+              <p className="field-hint">以下记录绑定本次结果；各职业完整条件在对应结果末尾展示。</p>
+              <dl className="snapshot-rows">
+                <div><dt>参与职业</dt><dd>{(resultConfig ?? currentConfig).jobs.map((config) => jobSchemas[config.jobId].name).join("、")}</dd></div>
+                <div><dt>联合目标</dt><dd>{(resultConfig ?? currentConfig).objective === "dps" ? "按 GCD 折算" : "每威力伤害期望"}</dd></div>
+                <div><dt>共享部位</dt><dd>{(resultConfig ?? currentConfig).commonSlots.map((slot) => slot === "rings" ? "两个戒指" : slotLabels[slot]).join("、") || "不共享"}</dd></div>
+                <div><dt>食物策略</dt><dd>{(resultConfig ?? currentConfig).foodStrategy === "shared" ? "所有职业共用" : "各职业独立选择"}</dd></div>
+              </dl>
+            </section>
             <div className="joint-score-card">
               <div>
                 <div className="section-kicker">联合总分</div>
@@ -1698,22 +2310,22 @@ function JointPage() {
           </>
         )}
 
-        {!result && !running && (
+        {(!result || stale) && !running && (
           <div className="empty-state joint-empty-state">
             <div className="empty-icon">
-              {hasAttempted ? <X size={19} /> : <ArrowRight size={20} />}
+              {hasAttempted && !stale ? <X size={19} /> : <ArrowRight size={20} />}
             </div>
             <h2>
               {error
                 ? "搜索未完成"
-                : hasAttempted
+                : hasAttempted && !stale
                   ? "没有可行联合方案"
                   : "准备联合搜索"}
             </h2>
             <p>
               {error
                 ? "请查看上方错误信息，修正条件后重新搜索。"
-                : hasAttempted
+                : hasAttempted && !stale
                   ? "当前联合约束下没有可行方案，请调整职业或限制后重试。"
                   : "配置参与职业、公共部位和各职业约束后手动开始搜索。"}
             </p>

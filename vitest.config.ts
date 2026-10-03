@@ -5,7 +5,7 @@ export default defineConfig({
     environment: "node",
     maxWorkers: 2,
     testTimeout: 30_000,
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.{ts,tsx}"],
     coverage: {
       provider: "v8",
       include: [
@@ -14,7 +14,7 @@ export default defineConfig({
         "src/domain/optimizer.ts",
         "src/domain/search/**/*.ts",
       ],
-      exclude: ["**/*.test.ts", "**/*.d.ts"],
+      exclude: ["**/*.test.{ts,tsx}", "**/*.d.ts"],
       thresholds: { lines: 90, functions: 90, branches: 90, statements: 90 },
     },
   },

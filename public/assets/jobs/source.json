@@ -1,0 +1,1140 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-03T09:14:03.354Z",
+  "mcp": {
+    "server": "ffxiv-mcp-lumina",
+    "transport": "stdio",
+    "gameVersion": "2026.09.15.0000.0000",
+    "validatedVersion": "2026.08.05.0000.0000",
+    "schemaVersion": "latest",
+    "queryTime": "2026-10-03T09:13:58.0775695+00:00",
+    "versionWarnings": [
+      {
+        "code": "GameVersionMismatch",
+        "message": "Detected game version 2026.09.15.0000.0000 differs from last validated version 2026.08.05.0000.0000. FFXIV convenience tools (get_jobs, get_duties, get_localized_labels) may return incorrect data. Generic tools (get_row, search_rows, etc.) are unaffected.",
+        "detectedVersion": "2026.09.15.0000.0000",
+        "validatedVersion": "2026.08.05.0000.0000"
+      }
+    ],
+    "healthResponse": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"status\":\"degraded\",\"serverVersion\":\"1.0.0\",\"gamePath\":\"F:\\\\Game\\\\FF14\\\\\\u6700\\u7EC8\\u5E7B\\u60F3XIV\",\"detectedVersion\":\"2026.09.15.0000.0000\",\"validatedVersion\":\"2026.08.05.0000.0000\",\"schemaAvailable\":true,\"schemaVersion\":\"latest\",\"cacheEnabled\":true,\"cacheTTLSeconds\":300,\"uptimeSeconds\":4,\"warnings\":[{\"code\":\"GameVersionMismatch\",\"message\":\"Detected game version 2026.09.15.0000.0000 differs from last validated version 2026.08.05.0000.0000. FFXIV convenience tools (get_jobs, get_duties, get_localized_labels) may return incorrect data. Generic tools (get_row, search_rows, etc.) are unaffected.\",\"detectedVersion\":\"2026.09.15.0000.0000\",\"validatedVersion\":\"2026.08.05.0000.0000\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.0775695\\u002B00:00\"}"
+        }
+      ]
+    },
+    "describeSheet": {
+      "request": {
+        "tool": "describe_sheet",
+        "arguments": {
+          "sheet": "ClassJob"
+        }
+      },
+      "response": {
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"sheet\":\"ClassJob\",\"rowCount\":46,\"columns\":[{\"index\":0,\"name\":\"Name\",\"type\":\"string\"},{\"index\":1,\"name\":\"Abbreviation\",\"type\":\"string\"},{\"index\":2,\"name\":\"NameFemale\",\"type\":\"string\"},{\"index\":3,\"name\":\"CanQueueForDuty\",\"type\":\"bool\"},{\"index\":4,\"name\":\"NameEnglish\",\"type\":\"string\"},{\"index\":5,\"name\":\"ItemSoulCrystal\",\"type\":\"uint\"},{\"index\":6,\"name\":\"UnlockQuest\",\"type\":\"uint\"},{\"index\":7,\"name\":\"RelicQuest\",\"type\":\"uint\"},{\"index\":8,\"name\":\"Prerequisite\",\"type\":\"uint\"},{\"index\":9,\"name\":\"ReplaceAction\",\"type\":\"int\"},{\"index\":10,\"name\":\"ReplaceActionPvP\",\"type\":\"int\"},{\"index\":11,\"name\":\"Unknown9\",\"type\":\"int\"},{\"index\":12,\"name\":\"ItemStartingWeaponMainHand\",\"type\":\"int\"},{\"index\":13,\"name\":\"ItemStartingWeaponOffHand\",\"type\":\"int\"},{\"index\":14,\"name\":\"ModifierHitPoints\",\"type\":\"uint\"},{\"index\":15,\"name\":\"ModifierManaPoints\",\"type\":\"uint\"},{\"index\":16,\"name\":\"ModifierStrength\",\"type\":\"uint\"},{\"index\":17,\"name\":\"ModifierVitality\",\"type\":\"uint\"},{\"index\":18,\"name\":\"ModifierDexterity\",\"type\":\"uint\"},{\"index\":19,\"name\":\"ModifierIntelligence\",\"type\":\"uint\"},{\"index\":20,\"name\":\"ModifierMind\",\"type\":\"uint\"},{\"index\":21,\"name\":\"ModifierPiety\",\"type\":\"uint\"},{\"index\":22,\"name\":\"Unknown2\",\"type\":\"uint\"},{\"index\":23,\"name\":\"Unknown3\",\"type\":\"uint\"},{\"index\":24,\"name\":\"Unknown4\",\"type\":\"uint\"},{\"index\":25,\"name\":\"Unknown5\",\"type\":\"uint\"},{\"index\":26,\"name\":\"Unknown6\",\"type\":\"uint\"},{\"index\":27,\"name\":\"Unknown7\",\"type\":\"uint\"},{\"index\":28,\"name\":\"LimitBreak1\",\"type\":\"uint\"},{\"index\":29,\"name\":\"LimitBreak2\",\"type\":\"uint\"},{\"index\":30,\"name\":\"LimitBreak3\",\"type\":\"uint\"},{\"index\":31,\"name\":\"ClassJobCategory\",\"type\":\"uint\"},{\"index\":32,\"name\":\"Unknown8\",\"type\":\"uint\"},{\"index\":33,\"name\":\"JobIndex\",\"type\":\"uint\"},{\"index\":34,\"name\":\"PvPBaseParamValue\",\"type\":\"uint\"},{\"index\":35,\"name\":\"PvPActionSortRow\",\"type\":\"uint\"},{\"index\":36,\"name\":\"PvPInitialSelectActionTrait\",\"type\":\"uint\"},{\"index\":37,\"name\":\"ClassJobParent\",\"type\":\"uint\"},{\"index\":38,\"name\":\"Role\",\"type\":\"uint\"},{\"index\":39,\"name\":\"StartingTown\",\"type\":\"uint\"},{\"index\":40,\"name\":\"PrimaryStat\",\"type\":\"uint\"},{\"index\":41,\"name\":\"UIPriority\",\"type\":\"uint\"},{\"index\":42,\"name\":\"StartingLevel\",\"type\":\"uint\"},{\"index\":43,\"name\":\"PartyBonus\",\"type\":\"uint\"},{\"index\":44,\"name\":\"JobType\",\"type\":\"uint\"},{\"index\":45,\"name\":\"ExpArrayIndex\",\"type\":\"int\"},{\"index\":46,\"name\":\"BattleClassIndex\",\"type\":\"int\"},{\"index\":47,\"name\":\"DohDolJobIndex\",\"type\":\"int\"},{\"index\":48,\"name\":\"MonsterNote\",\"type\":\"int\"},{\"index\":49,\"name\":\"IsLimitedJob\",\"type\":\"bool\"},{\"index\":50,\"name\":\"CanWearShield\",\"type\":\"bool\"}],\"languages\":[\"chs\"],\"schema\":{\"available\":true,\"version\":\"latest\",\"note\":\"Column names are derived from EXDSchema and are best-effort.\"},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.1660087\\u002B00:00\"}"
+          }
+        ]
+      }
+    },
+    "abbreviationSearches": [
+      {
+        "jobId": "PLD",
+        "rowId": 19,
+        "name": "骑士",
+        "abbreviation": "PLD",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2066079+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "PLD",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"PLD\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":19,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9A91\\u58EB\",\"Abbreviation\":\"PLD\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2055003\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2066079\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "WAR",
+        "rowId": 21,
+        "name": "战士",
+        "abbreviation": "WAR",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2065808+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "WAR",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"WAR\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":21,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u6218\\u58EB\",\"Abbreviation\":\"WAR\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2054790\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2065808\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "DRK",
+        "rowId": 32,
+        "name": "暗黑骑士",
+        "abbreviation": "DRK",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2065983+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "DRK",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"DRK\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":32,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u6697\\u9ED1\\u9A91\\u58EB\",\"Abbreviation\":\"DRK\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2055093\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2065983\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "GNB",
+        "rowId": 37,
+        "name": "绝枪战士",
+        "abbreviation": "GNB",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2065928+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "GNB",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"GNB\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":37,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u7EDD\\u67AA\\u6218\\u58EB\",\"Abbreviation\":\"GNB\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2054910\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2065928\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "WHM",
+        "rowId": 24,
+        "name": "白魔法师",
+        "abbreviation": "WHM",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2190143+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "WHM",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"WHM\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":24,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u767D\\u9B54\\u6CD5\\u5E08\",\"Abbreviation\":\"WHM\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2189640\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2190143\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "SCH",
+        "rowId": 28,
+        "name": "学者",
+        "abbreviation": "SCH",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2209811+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "SCH",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"SCH\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":28,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u5B66\\u8005\",\"Abbreviation\":\"SCH\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2209582\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2209811\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "AST",
+        "rowId": 33,
+        "name": "占星术士",
+        "abbreviation": "AST",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2213772+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "AST",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"AST\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":33,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u5360\\u661F\\u672F\\u58EB\",\"Abbreviation\":\"AST\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2213588\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2213772\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "SGE",
+        "rowId": 40,
+        "name": "贤者",
+        "abbreviation": "SGE",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2215404+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "SGE",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"SGE\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":40,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u8D24\\u8005\",\"Abbreviation\":\"SGE\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2215340\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2215404\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "MNK",
+        "rowId": 20,
+        "name": "武僧",
+        "abbreviation": "MNK",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2216167+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "MNK",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"MNK\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":20,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u6B66\\u50E7\",\"Abbreviation\":\"MNK\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2215992\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2216167\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "DRG",
+        "rowId": 22,
+        "name": "龙骑士",
+        "abbreviation": "DRG",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2219167+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "DRG",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"DRG\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":22,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9F99\\u9A91\\u58EB\",\"Abbreviation\":\"DRG\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2218424\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2219167\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "NIN",
+        "rowId": 30,
+        "name": "忍者",
+        "abbreviation": "NIN",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2221071+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "NIN",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"NIN\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":30,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u5FCD\\u8005\",\"Abbreviation\":\"NIN\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2220790\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2221071\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "SAM",
+        "rowId": 34,
+        "name": "武士",
+        "abbreviation": "SAM",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2220991+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "SAM",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"SAM\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":34,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u6B66\\u58EB\",\"Abbreviation\":\"SAM\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2220805\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2220991\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "RPR",
+        "rowId": 39,
+        "name": "钐镰客",
+        "abbreviation": "RPR",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2223619+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "RPR",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"RPR\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":39,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9490\\u9570\\u5BA2\",\"Abbreviation\":\"RPR\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2223528\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2223619\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "VPR",
+        "rowId": 41,
+        "name": "蝰蛇剑士",
+        "abbreviation": "VPR",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2225418+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "VPR",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"VPR\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":41,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u8770\\u86C7\\u5251\\u58EB\",\"Abbreviation\":\"VPR\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2225347\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2225418\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "BRD",
+        "rowId": 23,
+        "name": "吟游诗人",
+        "abbreviation": "BRD",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2227601+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "BRD",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"BRD\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":23,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u541F\\u6E38\\u8BD7\\u4EBA\",\"Abbreviation\":\"BRD\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2227273\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2227601\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "MCH",
+        "rowId": 31,
+        "name": "机工士",
+        "abbreviation": "MCH",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2227401+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "MCH",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"MCH\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":31,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u673A\\u5DE5\\u58EB\",\"Abbreviation\":\"MCH\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2227087\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2227401\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "DNC",
+        "rowId": 38,
+        "name": "舞者",
+        "abbreviation": "DNC",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2228544+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "DNC",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"DNC\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":38,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u821E\\u8005\",\"Abbreviation\":\"DNC\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2228485\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2228544\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "BLM",
+        "rowId": 25,
+        "name": "黑魔法师",
+        "abbreviation": "BLM",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2232389+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "BLM",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"BLM\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":25,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9ED1\\u9B54\\u6CD5\\u5E08\",\"Abbreviation\":\"BLM\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2231942\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2232389\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "SMN",
+        "rowId": 27,
+        "name": "召唤师",
+        "abbreviation": "SMN",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2233995+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "SMN",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"SMN\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":27,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u53EC\\u5524\\u5E08\",\"Abbreviation\":\"SMN\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2233767\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2233995\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "RDM",
+        "rowId": 35,
+        "name": "赤魔法师",
+        "abbreviation": "RDM",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2234005+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "RDM",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"RDM\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":35,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u8D64\\u9B54\\u6CD5\\u5E08\",\"Abbreviation\":\"RDM\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2233848\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2234005\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "PCT",
+        "rowId": 42,
+        "name": "绘灵法师",
+        "abbreviation": "PCT",
+        "isLimitedJob": false,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2235045+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "PCT",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"PCT\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":42,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u7ED8\\u7075\\u6CD5\\u5E08\",\"Abbreviation\":\"PCT\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2235001\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2235045\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "BLU",
+        "rowId": 36,
+        "name": "青魔法师",
+        "abbreviation": "BLU",
+        "isLimitedJob": true,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-03T09:13:58.2237221+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "BLU",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"BLU\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":36,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9752\\u9B54\\u6CD5\\u5E08\",\"Abbreviation\":\"BLU\",\"IsLimitedJob\":true},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2237152\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2237221\\u002B00:00\"}"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "xivapi": {
+    "service": "XIVAPI",
+    "apiVersion": "v2",
+    "endpoint": "https://v2.xivapi.com/api/asset",
+    "assetPattern": "ui/icon/062000/0621{ClassJob rowId padded to 2 digits}.tex",
+    "requestedAt": "2026-10-03T09:13:58.224Z",
+    "completedAt": "2026-10-03T09:14:03.354Z",
+    "gameVersion": null,
+    "gameVersionNote": "XIVAPI asset responses did not expose a game-version header; ClassJob row IDs are tied to the MCP gameVersion above.",
+    "icons": {
+      "PLD": {
+        "rowId": 19,
+        "file": "PLD.png",
+        "sha256": "a03a22c4eb7cb199e540fe9c77d0349c4f274e8651262f3a0b3d35be5f6fe8bf",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2415,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062119.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062119.tex&format=png",
+          "requestedAt": "2026-10-03T09:13:58.224Z",
+          "downloadedAt": "2026-10-03T09:13:59.405Z",
+          "contentType": "image/png",
+          "etag": "\"a649f7d3137da362.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "WAR": {
+        "rowId": 21,
+        "file": "WAR.png",
+        "sha256": "0a5c9bba5c0c37f96cdbf91f01e2becc9da7d4f7ab49e1967e32f131f2f878dd",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2611,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062121.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062121.tex&format=png",
+          "requestedAt": "2026-10-03T09:13:58.271Z",
+          "downloadedAt": "2026-10-03T09:13:59.402Z",
+          "contentType": "image/png",
+          "etag": "\"72284277a575e4df.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "DRK": {
+        "rowId": 32,
+        "file": "DRK.png",
+        "sha256": "4e4bca7f7343f35562eaa6bfb86b03b2427f54797cdae83c06e48ee5e99f85bc",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2541,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062132.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062132.tex&format=png",
+          "requestedAt": "2026-10-03T09:13:58.272Z",
+          "downloadedAt": "2026-10-03T09:13:59.404Z",
+          "contentType": "image/png",
+          "etag": "\"faeeaa2af3f17dc3.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "GNB": {
+        "rowId": 37,
+        "file": "GNB.png",
+        "sha256": "2c7093bb3d94810850566f13f4707bf983a1e0bbe17ebea42c9c38669151860a",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2532,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062137.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062137.tex&format=png",
+          "requestedAt": "2026-10-03T09:13:58.273Z",
+          "downloadedAt": "2026-10-03T09:13:59.397Z",
+          "contentType": "image/png",
+          "etag": "\"c215cf246d22b0f1.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "WHM": {
+        "rowId": 24,
+        "file": "WHM.png",
+        "sha256": "98fbf1e505b591dba376969f350a4c7d29ae91294a8e6ab682218aa226ae58fb",
+        "width": 32,
+        "height": 32,
+        "byteLength": 1916,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062124.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062124.tex&format=png",
+          "requestedAt": "2026-10-03T09:13:59.401Z",
+          "downloadedAt": "2026-10-03T09:14:00.116Z",
+          "contentType": "image/png",
+          "etag": "\"1fc3db12b05e0351.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "SCH": {
+        "rowId": 28,
+        "file": "SCH.png",
+        "sha256": "e8bb52e82299b29380c3ab9060884da348ab4bc1621bc240e303dd5a44c8cbe1",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2249,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062128.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062128.tex&format=png",
+          "requestedAt": "2026-10-03T09:13:59.403Z",
+          "downloadedAt": "2026-10-03T09:14:00.248Z",
+          "contentType": "image/png",
+          "etag": "\"b5f81ce9fe18ece0.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "AST": {
+        "rowId": 33,
+        "file": "AST.png",
+        "sha256": "0ad05045cc300104f34799ea152c2fa8135d3568e54705e9e300a2bf919d940f",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2140,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062133.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062133.tex&format=png",
+          "requestedAt": "2026-10-03T09:13:59.404Z",
+          "downloadedAt": "2026-10-03T09:14:00.127Z",
+          "contentType": "image/png",
+          "etag": "\"6176822b0f99013e.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "SGE": {
+        "rowId": 40,
+        "file": "SGE.png",
+        "sha256": "d81c7ea7244b34d9f7664990be1e6a616bb0cbdfad11edaac089f9931478eaf2",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2309,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062140.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062140.tex&format=png",
+          "requestedAt": "2026-10-03T09:13:59.406Z",
+          "downloadedAt": "2026-10-03T09:14:00.129Z",
+          "contentType": "image/png",
+          "etag": "\"e11d739d7c38040c.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "MNK": {
+        "rowId": 20,
+        "file": "MNK.png",
+        "sha256": "15c1ba2d595dc619c9c6f489556b571940c0eca4858de4ec2e4cb0a591798256",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2552,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062120.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062120.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:00.117Z",
+          "downloadedAt": "2026-10-03T09:14:00.897Z",
+          "contentType": "image/png",
+          "etag": "\"43ce678d20daf866.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "DRG": {
+        "rowId": 22,
+        "file": "DRG.png",
+        "sha256": "832653bc94ab24ddf89a3416799771cd107e6be4533eadca825f114b3189ba3e",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2252,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062122.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062122.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:00.127Z",
+          "downloadedAt": "2026-10-03T09:14:00.987Z",
+          "contentType": "image/png",
+          "etag": "\"8b2e51c5b7f79ff0.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "NIN": {
+        "rowId": 30,
+        "file": "NIN.png",
+        "sha256": "ac2e123aeea0cbba61031d278975bbf2091fed52ce8b50f665a0202955bf12a3",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2258,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062130.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062130.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:00.133Z",
+          "downloadedAt": "2026-10-03T09:14:01.004Z",
+          "contentType": "image/png",
+          "etag": "\"0256c7bee88e535e.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "SAM": {
+        "rowId": 34,
+        "file": "SAM.png",
+        "sha256": "a638c4f074ec7919cb53296d4f499e0127df4aac0418bf012bf7d4dc5656ef11",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2484,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062134.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062134.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:00.249Z",
+          "downloadedAt": "2026-10-03T09:14:01.025Z",
+          "contentType": "image/png",
+          "etag": "\"dcc0a7250cefa1fa.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "RPR": {
+        "rowId": 39,
+        "file": "RPR.png",
+        "sha256": "a3149e485dd8c6c053481683e621dc9bee3db757352e95c4bddc949b0cbb4150",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2290,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062139.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062139.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:00.898Z",
+          "downloadedAt": "2026-10-03T09:14:01.747Z",
+          "contentType": "image/png",
+          "etag": "\"dbc9cb4b1750eb80.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "VPR": {
+        "rowId": 41,
+        "file": "VPR.png",
+        "sha256": "a07b30913564319c823a7a5fdae18ad3cb4c0cb05deac429811a66a7e927ead6",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2305,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062141.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062141.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:00.987Z",
+          "downloadedAt": "2026-10-03T09:14:01.707Z",
+          "contentType": "image/png",
+          "etag": "\"4957fc4266873f46.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "BRD": {
+        "rowId": 23,
+        "file": "BRD.png",
+        "sha256": "a99248d63a7af93288716c5535cac38293f1a978146b95be43d507030a31702d",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2270,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062123.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062123.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:01.005Z",
+          "downloadedAt": "2026-10-03T09:14:01.768Z",
+          "contentType": "image/png",
+          "etag": "\"ddcdc89289d0aaca.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "MCH": {
+        "rowId": 31,
+        "file": "MCH.png",
+        "sha256": "bf300e4d186024ace698dd54f5da129dd97ed30f220685a3216c0b1204ece8b1",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2454,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062131.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062131.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:01.026Z",
+          "downloadedAt": "2026-10-03T09:14:01.754Z",
+          "contentType": "image/png",
+          "etag": "\"b502c9268d1210be.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "DNC": {
+        "rowId": 38,
+        "file": "DNC.png",
+        "sha256": "ff82037e489a6c97da727d3525a7b18e3bde49d62b91d650b4814edcb13e1d10",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2398,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062138.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062138.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:01.709Z",
+          "downloadedAt": "2026-10-03T09:14:02.569Z",
+          "contentType": "image/png",
+          "etag": "\"35bc9982a8b8a3e0.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "BLM": {
+        "rowId": 25,
+        "file": "BLM.png",
+        "sha256": "16731ae8ae1e3822309e09d6a8225dbfe58e494f663e6940f5849cf7812204b3",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2712,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062125.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062125.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:01.748Z",
+          "downloadedAt": "2026-10-03T09:14:02.483Z",
+          "contentType": "image/png",
+          "etag": "\"eb90baa30e0b0f22.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "SMN": {
+        "rowId": 27,
+        "file": "SMN.png",
+        "sha256": "fd70fb610684884b2721072202dd72adf01324dbebe1cdb4cbc8af06676c02c5",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2327,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062127.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062127.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:01.755Z",
+          "downloadedAt": "2026-10-03T09:14:02.482Z",
+          "contentType": "image/png",
+          "etag": "\"7654d70a13d87349.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "RDM": {
+        "rowId": 35,
+        "file": "RDM.png",
+        "sha256": "6b2b34651e95acad405b76a7fdd08acf9741a29ae4e5ff892ef73fd801d94635",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2002,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062135.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062135.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:01.768Z",
+          "downloadedAt": "2026-10-03T09:14:02.507Z",
+          "contentType": "image/png",
+          "etag": "\"39d8af48c5724f4f.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "PCT": {
+        "rowId": 42,
+        "file": "PCT.png",
+        "sha256": "5d8ff1f0fd0b5b1424e92fb0ff581d4a24754fecd173969781449c797df2275d",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2423,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062142.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062142.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:02.482Z",
+          "downloadedAt": "2026-10-03T09:14:03.348Z",
+          "contentType": "image/png",
+          "etag": "\"fe3a4bcafbf42c9a.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "BLU": {
+        "rowId": 36,
+        "file": "BLU.png",
+        "sha256": "6d9de4820a27e7ee88eb5ecb9a4b19ca52a3fcbf864cde11497cb333698d3b57",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2181,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062136.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062136.tex&format=png",
+          "requestedAt": "2026-10-03T09:14:02.483Z",
+          "downloadedAt": "2026-10-03T09:14:03.203Z",
+          "contentType": "image/png",
+          "etag": "\"a0859ee4cdecf4c3.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      }
+    }
+  },
+  "client": {
+    "name": "mcp-lumina",
+    "version": "1.0.0.0"
+  }
+}

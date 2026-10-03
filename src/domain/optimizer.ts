@@ -751,11 +751,13 @@ export async function runOptimizationLocally(
   options: SearchOptions = {},
 ): Promise<OptimizationResult | undefined> {
   const prepared = prepareSearch(config, options);
+  options.onProgress?.(`候选准备完成；装备方案=${prepared.searchedCandidates}；食物候选=${prepared.foods.length}；正在求解配装`);
   if (prepared.slots.some((slot) => slot.candidates.length === 0) || !prepared.foods.length) {
     return undefined;
   }
   const result = await findBestLoadoutExactMip(prepared.options);
   throwIfAborted(options.signal);
+  options.onProgress?.("求解完成，正在还原并复核结果");
   return result === undefined ? undefined : assembleResult(result, config, prepared);
 }
 
@@ -806,6 +808,7 @@ export async function runJointOptimizationLocally(
     return undefined;
   }
   const sharedSlots = normalizedCommonSlots(config.commonSlots);
+  options.onProgress?.(`联合候选准备完成；职业数=${jobs.length}；装备方案=${[...preparedByJob.values()].reduce((sum, prepared) => sum + prepared.searchedCandidates, 0)}；食物候选=${[...preparedByJob.values()].reduce((sum, prepared) => sum + prepared.foods.length, 0)}；正在求解配装`);
   const result: JointLoadoutV3Result | undefined = await findBestJointLoadoutV3({
     jobs,
     commonSlots: sharedSlots.slots,
@@ -819,6 +822,8 @@ export async function runJointOptimizationLocally(
   });
   throwIfAborted(options.signal);
   if (!result) return undefined;
+
+  options.onProgress?.("联合求解完成，正在还原并复核结果");
 
   const convertByJob = (items: Record<string, ExactMipResult>) => {
     const converted: Partial<Record<JobId, OptimizationResult>> = {};
