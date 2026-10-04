@@ -1,3 +1,5 @@
+import type { CallbackType } from "highs";
+
 /** A finite-domain integer linear model used by the exact loadout search. */
 export type LinearMipRow = {
   name: string;
@@ -17,11 +19,46 @@ export type LinearMipProgress = {
   model: string;
   kind: "incumbent" | "bound" | "log";
   elapsedMs?: number;
+  /** Incumbent objective value, taken from HiGHS' primal bound when present. */
   objectiveValue?: number;
   bestBound?: number;
   gap?: number;
   nodes?: string;
+  totalLpIterations?: string;
+  variableCount?: number;
+  rowCount?: number;
+  status?: string;
+  completed?: boolean;
   message?: string;
+};
+
+export type HighsCallbackName =
+  | "logging"
+  | "simplexInterrupt"
+  | "ipmInterrupt"
+  | "mipSolution"
+  | "mipImprovingSolution"
+  | "mipLogging"
+  | "mipInterrupt"
+  | "mipCutPool"
+  | "mipUserSolution";
+
+/** Detached, serializable context for a full HiGHS callback observation. */
+export type HighsCallbackTrace = {
+  model: string;
+  callbackType: CallbackType;
+  callbackName: HighsCallbackName;
+  event: {
+    ownKeys: string[];
+    type: CallbackType;
+    message: string;
+    data: Readonly<Record<string, unknown>>;
+    controlMethods: {
+      interrupt: boolean;
+      setSolution: boolean;
+      repairSolution: boolean;
+    };
+  };
 };
 
 export type LinearMipRequest = {
@@ -34,6 +71,7 @@ export type LinearMipRequest = {
   timeLimitMs: number;
   solutionHint?: ReadonlyMap<string, number>;
   onProgress?: (event: LinearMipProgress) => void;
+  onCallback?: (event: HighsCallbackTrace) => void;
 };
 
 export type LinearMipSolution = {

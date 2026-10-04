@@ -20,9 +20,10 @@ type MockHistoryOutcome =
   | { status: "failed"; error: string }
   | { status: "cancelled" | "no-result" | "interrupted"; error?: string };
 
-const { optimizeMock, optimizeJointMock, historyStore } = vi.hoisted(() => ({
+const { optimizeMock, optimizeJointMock, findFeasibleGcdsMock, historyStore } = vi.hoisted(() => ({
   optimizeMock: vi.fn(),
   optimizeJointMock: vi.fn(),
+  findFeasibleGcdsMock: vi.fn(),
   historyStore: { records: [] as MockHistoryRecord[], nextId: 0 },
 }));
 
@@ -30,6 +31,7 @@ vi.mock("./domain", async (importOriginal) => ({
   ...(await importOriginal<typeof import("./domain")>()),
   optimize: optimizeMock,
   optimizeJoint: optimizeJointMock,
+  findFeasibleGcds: findFeasibleGcdsMock,
 }));
 
 vi.mock("./ui/search-history", () => ({
@@ -68,7 +70,6 @@ import { App } from "./App";
 import {
   dataProvenance,
   foods,
-  gameData,
   jobIds,
   jobSchemas,
   type JobId,
@@ -84,6 +85,8 @@ let root: Root;
 beforeEach(async () => {
   optimizeMock.mockReset();
   optimizeJointMock.mockReset();
+  findFeasibleGcdsMock.mockReset();
+  findFeasibleGcdsMock.mockResolvedValue([2.5, 2.48]);
   historyStore.records.length = 0;
   historyStore.nextId = 0;
   host = document.createElement("div");
@@ -409,282 +412,403 @@ function mockDelayedAbortableJointSearch(): void {
   );
 }
 
-describe("单职业四步配装向导", () => {
-  it("开始时不预选职业；职业与等级确认前不能继续或启动搜索", () => {
-    expect(host.querySelector('[aria-label="配装设置进度"]')).not.toBeNull();
+describe("单职业连续搜索工作台", () => {
+  it("启动时不预选职业；选择职业后直接进入连续工作台", () => {
+    expect(host.querySelector('[aria-label="配装设置进度"]')).toBeNull();
     for (const jobId of jobIds) {
       expect(buttonNamed(jobSchemas[jobId].name).getAttribute("aria-pressed")).toBe("false");
     }
-    expect(buttonNamed("确认并继续").disabled).toBe(true);
     expect(() => buttonNamed("开始搜索")).toThrow();
     expect(optimizeMock).not.toHaveBeenCalled();
 
     chooseJob("SAM");
-    expect(buttonNamed(jobSchemas.SAM.name).getAttribute("aria-pressed")).toBe("true");
-    expect((textField("职业等级") as HTMLSelectElement).value).toBe(
-      String(jobSchemas.SAM.maxJobLevel),
-    );
-    expect(buttonNamed("确认并继续").disabled).toBe(false);
+    expect(host.querySelector(".single-workbench-heading")?.textContent).toContain(jobSchemas.SAM.name);
+    expect(() => textField("职业等级")).toThrow();
+    expect(textField("最低装备品级")).toBeDefined();
+    expect(textField("同步品级")).toBeDefined();
+    expect(textField("食物")).toBeDefined();
+    expect(buttonNamed("开始搜索").disabled).toBe(false);
+    expect(host.querySelector(".single-workbench-aside")).not.toBeNull();
     expect(optimizeMock).not.toHaveBeenCalled();
   });
 
-  it("要求逐步确认，锁住未到步骤；只有第四步手动开始才调用正式优化", async () => {
-    mockAbortableSearch();
-    chooseJob("SAM");
-
-    const progress = host.querySelector('[aria-label="配装设置进度"]');
-    expect(progress).not.toBeNull();
-    const futureStep = progressStep(3);
-    expect(futureStep?.disabled).toBe(true);
-    click(buttonNamed("确认并继续"));
-    expect(currentStep()).toContain("选择目标");
-    expect(futureStep.disabled).toBe(true);
-    expect(optimizeMock).not.toHaveBeenCalled();
-
-    confirmStep();
-    expect(currentStep()).toContain("设置候选范围");
-    expect(optimizeMock).not.toHaveBeenCalled();
-
-    confirmStep();
-    expect(currentStep()).toContain("检查并开始");
-    expect(buttonContaining("开始搜索").disabled).toBe(false);
-    expect(optimizeMock).not.toHaveBeenCalled();
-
-    await act(async () => {
-      buttonContaining("开始搜索").click();
-      await Promise.resolve();
-    });
-    expect(optimizeMock).toHaveBeenCalledTimes(1);
-    expect(optimizeMock.mock.calls[0][0]).toMatchObject({ jobId: "SAM" });
-  });
-
-  it("返回时保留目标限制和候选范围；高级选项折叠时仍显示摘要", () => {
-    chooseJob("SAM");
-    confirmStep();
-
-    const advanced = detailsNamed("GCD、速度与坚韧条件");
-    expect(advanced.open).toBe(false);
-    expect(normalizedText(advanced.querySelector("summary")!)).toContain("GCD 不限");
-    openDetails(advanced);
-
-    inputValue("最低技速", "1234");
-    expect(normalizedText(advanced.querySelector("summary")!)).toContain("技速 1234");
-    confirmStep();
-    expect(currentStep()).toContain("设置候选范围");
-
-    const lower = textField("最低装备品级");
-    const customMin = String(Number((lower as HTMLInputElement).value) - 1);
-    inputValue("最低装备品级", customMin);
-    confirmStep();
-    expect(currentStep()).toContain("检查并开始");
-
-    editSummaryRow("技速范围");
-    expect(currentStep()).toContain("选择目标");
-    openDetails(detailsNamed("GCD、速度与坚韧条件"));
-    expect((textField("最低技速") as HTMLInputElement).value).toBe("1234");
-    confirmStep();
-    confirmStep();
-    editSummaryRow("装备品级");
-    expect(currentStep()).toContain("设置候选范围");
-    expect((textField("最低装备品级") as HTMLInputElement).value).toBe(customMin);
-  });
-
-  it("职业改变后只出现对应的速度属性和坦克限制", () => {
+  it("自动按 GCD 档位或自定义速度范围选择指标，并保持速度与 GCD 互斥", async () => {
     chooseJob("WAR");
-    confirmStep();
+    expect(host.querySelector(".single-objective-display")?.textContent).toContain("每秒每威力伤害期望");
+    expect(host.querySelector(".single-custom-speed-status")?.textContent).toContain("未启用");
+    expect(textField("坚韧方式")).toBeDefined();
 
-    const tankAdvanced = detailsNamed("GCD、速度与坚韧条件");
-    openDetails(tankAdvanced);
-    expect(textField("最低技速")).toBeDefined();
+    selectValue("坚韧方式", "minimum");
     expect(textField("最低坚韧值")).toBeDefined();
-
-    click(progressStep(1));
-    chooseJob("WHM");
-    confirmStep();
-    const healerAdvanced = detailsNamed("GCD、速度与坚韧条件");
-    openDetails(healerAdvanced);
-    expect(textField("最低咏速")).toBeDefined();
-    expect(() => textField("最低技速")).toThrow();
+    expect(() => textField("最低减伤比例")).toThrow();
+    selectValue("坚韧方式", "mitigation");
+    expect(textField("最低减伤比例")).toBeDefined();
     expect(() => textField("最低坚韧值")).toThrow();
-  });
+    selectValue("坚韧方式", "maximum");
+    expect(host.textContent).toContain("使用当前候选范围内能够达到的最高坚韧值");
+    expect(() => textField("最低减伤比例")).toThrow();
 
-  it("搜索进度只在运行时显示，保留候选计数，并在等待求解时不宣告完成", async () => {
-    advanceToReview();
-    expect(host.querySelector('[aria-label="搜索进度"]')).toBeNull();
-
-    const rawMessage = "候选准备完成；装备方案=120；食物候选=4；正在求解配装";
-    optimizeMock.mockImplementation(
-      (_config: unknown, options: { signal: AbortSignal; onProgress?: (message: string) => void }) => {
-        options.onProgress?.(rawMessage);
-        return new Promise((_resolve, reject) => {
-          options.signal.addEventListener(
-            "abort",
-            () => reject(new DOMException("Search cancelled", "AbortError")),
-            { once: true },
-          );
-        });
-      },
-    );
-
-    await act(async () => {
-      buttonContaining("开始搜索").click();
-      await Promise.resolve();
-    });
-    expect(host.querySelector('[aria-label="搜索进度"]')).not.toBeNull();
-    expect(host.textContent).toContain("已准备 120 个装备方案 · 4 个食物候选");
-    expect(host.textContent).toContain("候选总数尚未确定");
-
-    const progressBar = host.querySelector<HTMLElement>('[role="progressbar"][aria-label="估算搜索进度"]');
-    expect(progressBar).not.toBeNull();
-    expect(Number(progressBar!.getAttribute("aria-valuemax"))).toBe(100);
-    expect(Number(progressBar!.getAttribute("aria-valuenow"))).toBeLessThan(100);
-
-    await act(async () => {
-      await new Promise((resolve) => window.setTimeout(resolve, 1100));
-    });
-    expect(Number(progressBar!.getAttribute("aria-valuenow"))).toBeLessThan(100);
-
-    click(buttonNamed("取消搜索"));
-    await act(async () => { await Promise.resolve(); });
-    expect(host.querySelector('[aria-label="搜索进度"]')).toBeNull();
-    expect(host.textContent).toContain("搜索已取消");
-  });
-
-  it("再次点选当前职业时保留已经输入的等级、目标、速度和品级范围", () => {
-    chooseJob("SAM");
-    const lowerLevel = Object.keys(gameData.jobLevelModifiers)
-      .map(Number)
-      .filter((level) => level < jobSchemas.SAM.maxJobLevel!)
-      .sort((left, right) => right - left)[0];
-    expect(lowerLevel).toBeDefined();
-    selectValue("职业等级", String(lowerLevel));
-    confirmStep();
-
-    const dpsRadio = host.querySelector<HTMLInputElement>('input[name="single-objective"][value="dps"]');
-    expect(dpsRadio).not.toBeNull();
-    act(() => dpsRadio!.click());
-    openDetails(detailsNamed("GCD、速度与坚韧条件"));
-    inputValue("最低技速", "1234");
-    confirmStep();
-
-    const lowerItemLevel = textField("最低装备品级") as HTMLInputElement;
-    const selectedMinItemLevel = String(Number(lowerItemLevel.value) + 1);
-    inputValue("最低装备品级", selectedMinItemLevel);
-    confirmStep();
-    expect(currentStep()).toContain("检查并开始");
-
-    click(progressStep(1));
-    chooseJob("SAM");
-    expect((textField("职业等级") as HTMLSelectElement).value).toBe(String(lowerLevel));
-    confirmStep();
-    expect(host.querySelector<HTMLInputElement>('input[name="single-objective"][value="dps"]')?.checked).toBe(true);
-    openDetails(detailsNamed("GCD、速度与坚韧条件"));
-    expect((textField("最低技速") as HTMLInputElement).value).toBe("1234");
-    confirmStep();
-    expect(currentStep()).toContain("设置候选范围");
-    expect((textField("最低装备品级") as HTMLInputElement).value).toBe(selectedMinItemLevel);
-  });
-
-  it("编辑已有结果后隐藏旧配装，只检查当前条件且不自动开始新搜索", async () => {
-    advanceToReview();
-    optimizeMock.mockResolvedValueOnce(sampleResult());
-    await startSearchAndSettle();
-    expect(snapshotValue("优化目标")).toBe("每威力伤害期望");
-    expect(snapshotValue("职业与等级")).toContain("武士");
-
-    click(buttonNamed("编辑当前条件"));
-    confirmStep();
-    expect(currentStep()).toContain("选择目标");
-    expect(host.querySelector(".result-workspace")).toBeNull();
-    openDetails(detailsNamed("GCD、速度与坚韧条件"));
     selectAriaValue("GCD 约束类型", "single");
-    inputValue("目标 GCD", "2.4");
-    confirmStep();
+    inputValue("目标 GCD", "2.40");
+    expect(host.querySelector(".single-objective-display")?.textContent).toContain("每威力伤害期望");
 
-    const rangeField = textField("最低装备品级") as HTMLInputElement;
-    const newMinimum = Number(rangeField.value) + 1;
-    inputValue("最低装备品级", String(newMinimum));
-    confirmStep();
-    expect(currentStep()).toContain("检查并开始");
-    expect(host.querySelector(".result-workspace")).toBeNull();
-    expect(host.querySelector('[aria-label="本次结果的搜索条件"]')).toBeNull();
-    expect(summaryRowValue("GCD")).toBe("2.40 秒");
-    expect(summaryRowValue("装备品级")).toBe(`${newMinimum}–${rangeField.max}`);
-    expect(optimizeMock).toHaveBeenCalledTimes(1);
-    expect(buttonContaining("开始搜索")).toBeDefined();
+    openDetails(detailsNamed("高级自定义速度范围"));
+    inputValue("最低技速", "1234");
+    await settleApp(340);
+    expect(host.querySelector(".single-custom-speed-status")?.textContent).toContain("已启用");
+    expect(findFeasibleGcdsMock).toHaveBeenCalled();
+    expect(findFeasibleGcdsMock.mock.calls.at(-1)?.[0]).toMatchObject({
+      speedMin: 1234,
+      gcdTarget: undefined,
+      gcdChoices: undefined,
+    });
+    expect(host.querySelector(".single-objective-display")?.textContent).toContain("覆盖 2 个可行 GCD 档位");
+    expect(host.querySelector(".single-objective-display")?.textContent).toContain("每秒每威力伤害期望");
+    expect(buttonNamed("开始搜索").disabled).toBe(false);
+
+    selectAriaValue("GCD 约束类型", "single");
+    click(buttonNamed("计算可行 GCD 档位"));
+    await settleApp();
+    const singleFeasibleGcd = host.querySelector<HTMLButtonElement>(".feasible-gcd-option > button");
+    expect(singleFeasibleGcd).not.toBeNull();
+    click(singleFeasibleGcd!);
+    expect((textField("最低技速") as HTMLInputElement).value).toBe("");
+    expect(host.querySelector(".single-config-warning")).toBeNull();
+    expect(host.querySelector(".single-objective-display")?.textContent).toContain("每威力伤害期望");
+    expect(buttonNamed("开始搜索").disabled).toBe(false);
+
+    openDetails(detailsNamed("高级自定义速度范围"));
+    inputValue("最低技速", "1234");
+    await settleApp(340);
+    selectAriaValue("GCD 约束类型", "multiple");
+    click(buttonNamed("计算可行 GCD 档位"));
+    await settleApp();
+    click(buttonNamed("全部设为多档"));
+    await settleApp();
+    expect((textField("最低技速") as HTMLInputElement).value).toBe("");
+    expect(host.querySelector(".single-config-warning")).toBeNull();
+    expect(host.querySelector(".single-objective-display")?.textContent).toContain("每秒每威力伤害期望");
+
+    selectAriaValue("GCD 约束类型", "single");
+    expect(host.querySelector(".single-condition-summary")?.textContent).toContain("不限");
+    expect(host.querySelector(".single-objective-display")?.textContent).toContain("每威力伤害期望");
   });
 
-  it("为每次搜索保存终态，并在重新挂载后载入指定结果或只载入条件", async () => {
-    const firstLevel = jobSchemas.SAM.maxJobLevel ?? 100;
-    const lowerLevel = Object.keys(gameData.jobLevelModifiers)
-      .map(Number)
-      .filter((level) => level < firstLevel)
-      .sort((left, right) => right - left)[0];
-    expect(lowerLevel).toBeDefined();
+  it("进度页显示真实槽位候选和当前模型数据；单轮不显示核验组合计数", async () => {
+    chooseJob("BLM");
+    let callbacks: {
+      signal: AbortSignal;
+      onProgress?: (message: string) => void;
+      onCandidateCounts?: (counts: { jobId: JobId; slots: { slot: string; count: number }[]; foodCount: number }) => void;
+      onSolverProgress?: (progress: {
+        backend: "HiGHS";
+        model: string;
+        kind: "bound" | "incumbent" | "log";
+        objectiveValue?: number;
+        bestBound?: number;
+        gap?: number;
+        nodes?: string;
+        totalLpIterations?: string;
+        variableCount?: number;
+        rowCount?: number;
+        status?: string;
+        completed?: boolean;
+      }) => void;
+    } | undefined;
+    optimizeMock.mockImplementation((_config: unknown, options: {
+      signal: AbortSignal;
+      onProgress?: (message: string) => void;
+      onCandidateCounts?: (counts: { jobId: JobId; slots: { slot: string; count: number }[]; foodCount: number }) => void;
+      onSolverProgress?: (progress: {
+        backend: "HiGHS";
+        model: string;
+        kind: "bound" | "incumbent" | "log";
+        objectiveValue?: number;
+        bestBound?: number;
+        gap?: number;
+        nodes?: string;
+        totalLpIterations?: string;
+        variableCount?: number;
+        rowCount?: number;
+        status?: string;
+        completed?: boolean;
+      }) => void;
+    }) => {
+      callbacks = options;
+      return new Promise((_resolve, reject) => {
+      options.signal.addEventListener(
+        "abort",
+        () => reject(new DOMException("Search cancelled", "AbortError")),
+        { once: true },
+      );
+      });
+    });
 
-    advanceToReview();
+    await startSearchAndSettle();
+    act(() => {
+      callbacks?.onProgress?.("候选准备完成；正在求解配装");
+      callbacks?.onCandidateCounts?.({
+        jobId: "BLM",
+        slots: [
+          { slot: "weapon", count: 57 },
+          { slot: "head", count: 47 },
+          { slot: "body", count: 49 },
+          { slot: "hands", count: 47 },
+          { slot: "legs", count: 47 },
+          { slot: "feet", count: 47 },
+          { slot: "earrings", count: 30 },
+          { slot: "necklace", count: 30 },
+          { slot: "bracelet", count: 30 },
+          { slot: "rings", count: 870 },
+        ],
+        foodCount: 32,
+      });
+      callbacks?.onSolverProgress?.({
+        backend: "HiGHS",
+        model: "exact_damage_initial",
+        kind: "bound",
+        objectiveValue: 1.01,
+        bestBound: 1.02,
+        gap: 0.004,
+        nodes: "793",
+        totalLpIterations: "46103",
+        variableCount: 3281,
+        rowCount: 358,
+      });
+    });
+    expect(host.querySelector('[aria-label="搜索阶段"]')).not.toBeNull();
+    expect(host.textContent).toContain("正在寻找可行配装");
+    expect(host.querySelector('[role="progressbar"]')).toBeNull();
+    expect(host.textContent).toContain("870");
+    expect(host.textContent).toContain("32");
+    expect(host.textContent).toContain("仅描述当前模型");
+    expect(host.textContent).toContain("793");
+    expect(host.textContent).toContain("46,103");
+    expect(host.textContent).toContain("3,281");
+    expect(host.textContent).not.toContain("剩余时间");
+    act(() => callbacks?.onSolverProgress?.({
+      backend: "HiGHS",
+      model: "exact_damage_initial",
+      kind: "incumbent",
+      objectiveValue: 1.02,
+      bestBound: 1.03,
+      gap: 0.01,
+      nodes: "794",
+      totalLpIterations: "46104",
+      variableCount: 3281,
+      rowCount: 358,
+    }));
+    expect(host.textContent).toContain("已找到待核验方案，正在检查是否还有更优方案");
+    act(() => callbacks?.onProgress?.("精确候选已核验 1 个；固定点上界=123"));
+    expect(host.textContent).not.toContain("已核验 1 组");
+    expect(host.textContent).not.toContain("第 2 轮");
+    act(() => callbacks?.onSolverProgress?.({
+      backend: "HiGHS",
+      model: "exact_damage_band_feasibility",
+      kind: "bound",
+      objectiveValue: 1,
+      bestBound: 1.1,
+      gap: 0.02,
+      nodes: "1",
+      totalLpIterations: "11",
+      variableCount: 10,
+      rowCount: 5,
+    }));
+    expect(host.textContent).toContain("第 2 轮");
+    expect(host.textContent).toContain("已核验 1 组候选组合");
+    click(buttonNamed("取消搜索"));
+    await settleApp();
+    expect(host.querySelector('[aria-label="搜索阶段"]')).toBeNull();
+    expect(host.textContent).toContain("搜索已取消");
+
+    click(buttonNamed("更换职业"));
+    chooseJob("PLD");
+    await startSearchAndSettle();
+    act(() => callbacks?.onCandidateCounts?.({
+      jobId: "PLD",
+      slots: [
+        { slot: "weapon", count: 5 }, { slot: "offhand", count: 5 },
+        { slot: "head", count: 5 }, { slot: "body", count: 5 },
+        { slot: "hands", count: 5 }, { slot: "legs", count: 5 },
+        { slot: "feet", count: 5 }, { slot: "earrings", count: 5 },
+        { slot: "necklace", count: 5 }, { slot: "bracelet", count: 5 },
+        { slot: "rings", count: 25 },
+      ],
+      foodCount: 1,
+    }));
+    expect(host.querySelector(".single-search-candidate-grid")?.getAttribute("style"))
+      .toContain("--single-search-grid-columns: 6");
+    click(buttonNamed("取消搜索"));
+    await settleApp();
+  });
+
+  it("结果页保留目标值和耗时，隐藏基线比例及候选条目，并允许修改条件", async () => {
+    chooseJob("SAM");
     optimizeMock.mockResolvedValueOnce(sampleResult());
     await startSearchAndSettle();
+    await settleApp();
+
+    expect(host.querySelector(".single-result-workspace")).not.toBeNull();
+    expect(host.querySelector('[aria-label="搜索阶段"]')).toBeNull();
+    expect(host.textContent).toContain("目标值 1.0000000（每威力伤害期望）");
+    expect(host.textContent).toContain("用时 0.0 秒");
+    expect(host.textContent).toContain("求解与结果复核已完成；最优结果限于本次候选与约束。");
+    expect(host.querySelector(".single-result-workspace .result-toolbar h2")).toBeNull();
+    expect(host.querySelector(".single-result-workspace .result-completion")?.textContent)
+      .toContain("目标值 1.0000000（每威力伤害期望） · 用时 0.0 秒");
+    expect(host.textContent).not.toContain("基线比例");
+    expect(host.textContent).not.toContain("个候选");
+    expect([...host.querySelectorAll(".single-result-workspace .result-conclusion .stat-pill")]
+      .map((item) => normalizedText(item.querySelector("span") ?? item))).toEqual([
+      "每威力伤害期望",
+      "GCD",
+      "暴击率",
+      "直击率",
+      "每秒每威力伤害期望",
+    ]);
+    const resultTableHead = host.querySelector<HTMLElement>(".single-result-workspace .gear-table-head");
+    const resultFoodRow = host.querySelector<HTMLElement>(".single-result-workspace .food-row");
+    expect(resultFoodRow?.style.gridTemplateColumns).toBe(resultTableHead?.style.gridTemplateColumns);
+    expect(resultFoodRow?.style.gridTemplateColumns.startsWith("72px ")).toBe(true);
+    expect(resultFoodRow?.style.gridTemplateColumns.endsWith("36px")).toBe(true);
+    expect(resultFoodRow?.style.gridTemplateColumns.split(" ").filter((column) => column === "24px"))
+      .toHaveLength(jobSchemas.SAM.stats.length);
+    expect(host.textContent).toContain("结果身份");
+    expect(host.textContent).toContain("配装总属性");
+    expect(host.textContent).toContain("伤害与防御");
+    expect(host.textContent).toContain("搜索条件");
+    const resultEffects = host.querySelector(".single-result-workspace .single-result-effects");
+    expect(normalizedText(resultEffects!)).toContain("暴击伤害");
+    expect(normalizedText(resultEffects!)).toContain("信念加成");
+    expect(normalizedText(resultEffects!)).not.toContain("GCD");
+    expect(normalizedText(resultEffects!)).not.toContain("暴击率");
+    expect(normalizedText(resultEffects!)).not.toContain("直击率");
+    expect(host.querySelectorAll(".single-job-stat-heading")).toHaveLength(jobSchemas.SAM.stats.length);
+
+    click(buttonNamed("修改条件"));
+    expect(host.querySelector(".single-result-workspace")).toBeNull();
+    expect(host.querySelector(".single-workbench-layout")).not.toBeNull();
+    expect(optimizeMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("保存单次搜索历史，且摘要、结果与载入的条件都不展示职业等级", async () => {
+    chooseJob("SAM");
+    expect(() => textField("职业等级")).toThrow();
+    optimizeMock.mockResolvedValueOnce(sampleResult());
+    await startSearchAndSettle();
+    await settleApp();
     expect(historyStore.records).toHaveLength(1);
     expect(historyStore.records[0]).toMatchObject({
       kind: "single",
       status: "completed",
-      config: { jobId: "SAM", jobLevel: firstLevel },
+      config: { jobId: "SAM", jobLevel: jobSchemas.SAM.maxJobLevel },
     });
 
-    click(buttonNamed("编辑当前条件"));
-    selectValue("职业等级", String(lowerLevel));
-    confirmStep();
-    confirmStep();
-    confirmStep();
+    click(buttonNamed("修改条件"));
+    expect(() => textField("职业等级")).toThrow();
     optimizeMock.mockResolvedValueOnce(sampleResult());
     await startSearchAndSettle();
+    await settleApp();
     expect(historyStore.records).toHaveLength(2);
     expect(historyStore.records.map((record) => record.status)).toEqual(["completed", "completed"]);
     expect(historyStore.records.map((record) => (record.config as OptimizationConfig).jobLevel)).toEqual([
-      firstLevel,
-      lowerLevel,
+      jobSchemas.SAM.maxJobLevel,
+      jobSchemas.SAM.maxJobLevel,
     ]);
 
-    click(buttonNamed("编辑当前条件"));
+    click(buttonNamed("修改条件"));
+    openSearchHistory();
+    await settleApp();
+    expect(normalizedText(detailsNamed("搜索记录"))).toContain("2 次");
+    const firstRecord = historyCardContaining(jobSchemas.SAM.name + " ·");
+    expect(normalizedText(firstRecord)).not.toContain(`${jobSchemas.SAM.name} · ${jobSchemas.SAM.maxJobLevel} 级 ·`);
+    click(firstRecord.querySelector<HTMLButtonElement>(".search-history-load-result")!);
+    expect(host.querySelector(".single-result-workspace")).not.toBeNull();
+    expect(host.querySelector(".single-result-summary, .single-condition-summary.is-result")).not.toBeNull();
+    expect(host.textContent).toContain("数据版本");
+    expect(host.textContent).not.toContain("职业等级");
+
+    click(buttonNamed("修改条件"));
+    await settleApp();
+    openSearchHistory();
+    const savedRecord = historyCardContaining(jobSchemas.SAM.name + " ·");
+    click(savedRecord.querySelector<HTMLButtonElement>(".search-history-load-config")!);
+    expect(host.querySelector(".single-workbench-layout")).not.toBeNull();
+    expect(() => textField("职业等级")).toThrow();
+    expect(host.querySelector(".single-result-workspace")).toBeNull();
+    expect(optimizeMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("载入较低等级的旧单职业条件后按职业最高等级执行", async () => {
+    const legacyConfig = {
+      ...testJobConfig("SAM"),
+      jobLevel: Math.max(1, (jobSchemas.SAM.maxJobLevel ?? 100) - 10),
+    };
+    const startedAtISO = new Date(Date.UTC(2026, 9, 2, 12, 0, 0)).toISOString();
+    historyStore.records.push({
+      id: "legacy-single-condition",
+      kind: "single",
+      config: legacyConfig,
+      dataVersion: currentDataVersion(),
+      status: "failed",
+      startedAtISO,
+      finishedAtISO: new Date(Date.parse(startedAtISO) + 1_000).toISOString(),
+      error: "旧历史记录",
+    });
+
     remountApp();
     await settleApp();
     openSearchHistory();
     await settleApp();
-    expect(normalizedText(detailsNamed("搜索记录"))).toContain("2 次");
-    expect(historyCardContaining(`${jobSchemas.SAM.name} · ${firstLevel} 级`)).toBeDefined();
-    expect(historyCardContaining(`${jobSchemas.SAM.name} · ${lowerLevel} 级`)).toBeDefined();
+    const legacyRecord = historyCardContaining(jobSchemas.SAM.name + " ·");
+    click(legacyRecord.querySelector<HTMLButtonElement>(".search-history-load-config")!);
+    expect(host.querySelector(".single-workbench-layout")).not.toBeNull();
+    expect(() => textField("职业等级")).toThrow();
 
-    const firstRecord = historyCardContaining(`${jobSchemas.SAM.name} · ${firstLevel} 级`);
-    const loadFirstResult = firstRecord.querySelector<HTMLButtonElement>(".search-history-load-result");
-    expect(loadFirstResult?.disabled).toBe(false);
-    click(loadFirstResult!);
-    expect(currentStep()).toContain("检查并开始");
-    expect(host.querySelector(".result-workspace")).not.toBeNull();
-    expect(snapshotValue("职业与等级")).toContain(`${firstLevel} 级`);
-    expect(optimizeMock).toHaveBeenCalledTimes(2);
-
-    click(buttonNamed("编辑当前条件"));
+    optimizeMock.mockResolvedValueOnce(sampleResult());
+    await startSearchAndSettle();
     await settleApp();
-    openSearchHistory();
-    const lowerRecord = historyCardContaining(`${jobSchemas.SAM.name} · ${lowerLevel} 级`);
-    click(lowerRecord.querySelector<HTMLButtonElement>(".search-history-load-config")!);
-    expect(currentStep()).toContain("选择职业");
-    expect((textField("职业等级") as HTMLSelectElement).value).toBe(String(lowerLevel));
-    expect(host.querySelector(".result-workspace")).toBeNull();
-    expect(buttonNamed("确认并继续").disabled).toBe(false);
-
-    confirmStep();
-    expect(currentStep()).toContain("选择目标");
-    confirmStep();
-    confirmStep();
-    expect(currentStep()).toContain("检查并开始");
-    expect(optimizeMock).toHaveBeenCalledTimes(2);
+    expect(optimizeMock.mock.calls[0]?.[0]).toMatchObject({
+      jobId: "SAM",
+      jobLevel: jobSchemas.SAM.maxJobLevel,
+      minItemLevel: legacyConfig.minItemLevel,
+      maxItemLevel: legacyConfig.maxItemLevel,
+    });
   });
 
-  it("取消、无解和失败都会保存独立的搜索历史状态", async () => {
+  it("限制详情可键盘访问，浮窗内点击保持打开，Esc 或外部点击会收起", () => {
+    chooseJob("SAM");
+    const summary = host.querySelector(".single-condition-summary.is-workbench");
+    expect(summary).not.toBeNull();
+    const triggers = [...summary!.querySelectorAll<HTMLButtonElement>(".single-summary-popover-trigger")];
+    expect(triggers).toHaveLength(3);
+    click(triggers[0]!);
+    expect(triggers[0]!.getAttribute("aria-expanded")).toBe("true");
+    const panel = document.body.querySelector(".single-summary-popover-panel");
+    expect(panel).not.toBeNull();
+    expect(summary!.contains(panel)).toBe(false);
+    const panelList = panel!.querySelector<HTMLElement>(".single-summary-popover-list");
+    expect(panelList).not.toBeNull();
+    expect(panelList!.tabIndex).toBe(0);
+    expect(document.activeElement).toBe(panelList);
+
+    act(() => panelList!.dispatchEvent(new Event("pointerdown", { bubbles: true })));
+    expect(document.body.querySelector(".single-summary-popover-panel")).not.toBeNull();
+
+    act(() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
+    expect(document.body.querySelector(".single-summary-popover-panel")).toBeNull();
+    expect(document.activeElement).toBe(triggers[0]);
+
+    act(() => triggers[0]!.click());
+    expect(document.body.querySelector(".single-summary-popover-panel")).not.toBeNull();
+    act(() => host.querySelector(".single-objective-display")!.dispatchEvent(new Event("pointerdown", { bubbles: true })));
+    expect(document.body.querySelector(".single-summary-popover-panel")).toBeNull();
+    expect(triggers[0]!.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("取消、无解和失败分别记录终态", async () => {
+    chooseJob("SAM");
     mockAbortableSearch();
-    advanceToReview();
     await startSearchAndSettle();
     click(buttonNamed("取消搜索"));
     await settleApp();
@@ -692,10 +816,12 @@ describe("单职业四步配装向导", () => {
 
     optimizeMock.mockResolvedValueOnce(null);
     await startSearchAndSettle();
+    await settleApp();
     expect(host.textContent).toContain("没有可行配装");
 
     optimizeMock.mockRejectedValueOnce(new Error("Solve error"));
     await startSearchAndSettle();
+    await settleApp();
     expect(host.textContent).toContain("搜索失败");
 
     expect(historyStore.records.map((record) => record.status)).toEqual([
@@ -703,16 +829,57 @@ describe("单职业四步配装向导", () => {
       "no-result",
       "failed",
     ]);
-    expect(historyStore.records[2]?.error).toContain("搜索失败");
-
-    click(progressStep(1));
-    await settleApp();
+    click(buttonNamed("更换职业"));
     openSearchHistory();
     await settleApp();
     const recordsText = normalizedText(detailsNamed("搜索记录"));
     expect(recordsText).toContain("已取消");
     expect(recordsText).toContain("无可行结果");
     expect(recordsText).toContain("搜索失败");
+  });
+});
+
+describe("多职业联合搜索保持现状", () => {
+  it("联合职业仍可同时设置 GCD、速度与多项坚韧条件，并保留原有控件布局", async () => {
+    navigateToJoint();
+    await settleApp();
+
+    const rdmCard = [...host.querySelectorAll<HTMLDetailsElement>(".job-config-card")]
+      .find((card) => normalizedText(card.querySelector("summary") ?? card).includes(jobSchemas.RDM.name));
+    expect(rdmCard).toBeDefined();
+    openDetails(rdmCard!);
+    const rdmFields = rdmCard!.querySelector<HTMLElement>(".job-fields");
+    expect(rdmFields?.querySelector(":scope > .job-level-field")).not.toBeNull();
+    expect(rdmFields?.querySelector(".candidate-range-group .job-level-field")).toBeNull();
+    expect(rdmFields?.querySelector(".single-restriction-columns")).toBeNull();
+    expect(rdmFields?.querySelector(".restriction-details")).not.toBeNull();
+
+    openDetails(rdmFields!.querySelector<HTMLDetailsElement>("details.advanced-section")!);
+    selectAriaValue("GCD 约束类型", "single");
+    inputValue("目标 GCD", "2.40");
+    inputValue("最低咏速", "1234");
+    expect((textField("目标 GCD") as HTMLInputElement).value).toBe("2.40");
+    expect((textField("最低咏速") as HTMLInputElement).value).toBe("1234");
+    expect((textField("联合目标") as HTMLSelectElement).value).toBe("damage");
+
+    selectAriaValue("添加职业", "WAR");
+    click(buttonNamed("添加职业"));
+    await settleApp();
+    const warCard = [...host.querySelectorAll<HTMLDetailsElement>(".job-config-card")]
+      .find((card) => normalizedText(card.querySelector("summary") ?? card).includes(jobSchemas.WAR.name));
+    expect(warCard).toBeDefined();
+    openDetails(warCard!);
+    expect(warCard!.querySelector('select[aria-label="坚韧方式"]')).toBeNull();
+    inputValue("最低坚韧值", "900");
+    inputValue("最低减伤", "5");
+    const maximumTenacity = [...warCard!.querySelectorAll<HTMLLabelElement>("label")]
+      .find((label) => normalizedText(label).includes("达到当前候选范围内的最高坚韧值"))
+      ?.querySelector<HTMLInputElement>('input[type="checkbox"]');
+    expect(maximumTenacity).toBeDefined();
+    act(() => maximumTenacity!.click());
+    expect((textField("最低坚韧值") as HTMLInputElement).value).toBe("900");
+    expect((textField("最低减伤") as HTMLInputElement).value).toBe("5");
+    expect(maximumTenacity!.checked).toBe(true);
   });
 
   it("载入含白魔法师的联合条件后，职业添加器选择首个未选职业", async () => {
@@ -731,6 +898,21 @@ describe("单职业四步配装向导", () => {
     expect(adder?.value).toBe(expectedNextJob);
     click(buttonNamed("添加职业"));
     expect(normalizedText(host.querySelector(".selected-jobs")!)).toContain(jobSchemas[expectedNextJob!].name);
+  });
+
+  it("联合结果继续使用原来的 GCD 折算指标名称", async () => {
+    const config = testJointConfig(["RDM", "WHM"]);
+    seedCompletedJointHistory(config);
+    navigateToJoint();
+    await settleApp();
+    openSearchHistory();
+    await settleApp();
+    const record = historyCardContaining(`${jobSchemas.RDM.name} ${jobSchemas.RDM.maxJobLevel} 级、${jobSchemas.WHM.name}`);
+    click(record.querySelector<HTMLButtonElement>(".search-history-load-result")!);
+
+    const metricStrip = host.querySelector(".joint-job-result .result-conclusion");
+    expect(normalizedText(metricStrip!)).toContain("按 GCD 折算");
+    expect(normalizedText(metricStrip!)).not.toContain("每秒每威力伤害期望");
   });
 
   it("联合搜索取消后迟到回调不会覆盖已载入的历史结果", async () => {

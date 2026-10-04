@@ -1,13 +1,17 @@
 import { findFeasibleGcdsLocally, runJointOptimizationLocally, runOptimizationLocally } from "./optimizer";
-import type { JointOptimizationConfig, JointOptimizationResult, OptimizationConfig, OptimizationResult, SearchOptions } from "./types";
+import type { JointOptimizationConfig, JointOptimizationResult, OptimizationConfig, OptimizationResult, SearchCandidateCounts, SearchOptions } from "./types";
+import type { HighsCallbackTrace, LinearMipProgress } from "./search/linear-mip.ts";
 
 export type SearchRequest =
-  | { kind: "single"; config: OptimizationConfig }
-  | { kind: "joint"; config: JointOptimizationConfig }
-  | { kind: "gcds"; config: OptimizationConfig };
+  | { kind: "single"; config: OptimizationConfig; traceSolverCallbacks?: boolean; includeCandidateCounts?: boolean; includeSolverProgress?: boolean }
+  | { kind: "joint"; config: JointOptimizationConfig; traceSolverCallbacks?: boolean; includeCandidateCounts?: boolean; includeSolverProgress?: boolean }
+  | { kind: "gcds"; config: OptimizationConfig; traceSolverCallbacks?: boolean; includeCandidateCounts?: boolean; includeSolverProgress?: boolean };
 export type SearchValue = OptimizationResult | JointOptimizationResult | number[] | undefined;
 export type SearchResponse =
   | { kind: "progress"; message: string }
+  | { kind: "candidateCounts"; counts: SearchCandidateCounts }
+  | { kind: "solverProgress"; progress: LinearMipProgress }
+  | { kind: "solverCallback"; trace: HighsCallbackTrace }
   | { kind: "result"; value: SearchValue }
   | { kind: "error"; message: string; name: string };
 
@@ -41,6 +45,9 @@ export async function optimizeInWorker(request: SearchRequest, options: SearchOp
     worker.addEventListener("message", (event: MessageEvent<SearchResponse>) => {
       const response = event.data;
       if (response.kind === "progress") options.onProgress?.(response.message);
+      else if (response.kind === "candidateCounts") options.onCandidateCounts?.(response.counts);
+      else if (response.kind === "solverProgress") options.onSolverProgress?.(response.progress);
+      else if (response.kind === "solverCallback") options.onSolverCallback?.(response.trace);
       else if (response.kind === "error") {
         const error = new Error(response.message);
         error.name = response.name;
@@ -49,7 +56,13 @@ export async function optimizeInWorker(request: SearchRequest, options: SearchOp
     });
     worker.addEventListener("error", (event) => finish(new Error(event.message || "搜索工作线程失败")));
     worker.addEventListener("messageerror", () => finish(new Error("搜索结果传输失败")));
-    try { worker.postMessage(request); } catch (error) { finish(error instanceof Error ? error : new Error(String(error))); }
+    const workerRequest = {
+      ...request,
+      ...(options.onSolverCallback === undefined ? {} : { traceSolverCallbacks: true }),
+      ...(options.onCandidateCounts === undefined ? {} : { includeCandidateCounts: true }),
+      ...(options.onSolverProgress === undefined ? {} : { includeSolverProgress: true }),
+    };
+    try { worker.postMessage(workerRequest); } catch (error) { finish(error instanceof Error ? error : new Error(String(error))); }
     if (options.signal?.aborted) cancel();
   });
 }

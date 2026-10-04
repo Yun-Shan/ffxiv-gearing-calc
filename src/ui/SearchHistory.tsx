@@ -46,7 +46,8 @@ function objectiveLabel(objective: "damage" | "dps" | undefined): string {
 function singleSummary(record: Extract<SearchHistoryRecord, { kind: "single" }>): string {
   const config = record.config;
   const job = jobSchemas[config.jobId];
-  return `${job.name} · ${config.jobLevel ?? job.maxJobLevel} 级 · ${objectiveLabel(config.objective)} · 品级 ${config.minItemLevel}–${config.maxItemLevel}`;
+  const target = config.objective === "dps" ? "每秒每威力伤害期望" : "每威力伤害期望";
+  return `${job.name} · ${target} · 品级 ${config.minItemLevel}–${config.maxItemLevel}`;
 }
 
 function jointSummary(record: Extract<SearchHistoryRecord, { kind: "joint" }>): string {

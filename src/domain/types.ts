@@ -1,3 +1,5 @@
+import type { HighsCallbackTrace, LinearMipProgress } from "./search/linear-mip.ts";
+
 export type Stat =
   | "STR"
   | "DEX"
@@ -226,6 +228,17 @@ export interface JointOptimizationConfig {
 export interface SearchOptions {
   signal?: AbortSignal;
   onProgress?: (message: string) => void;
+  onCandidateCounts?: (counts: SearchCandidateCounts) => void;
+  onSolverProgress?: (event: LinearMipProgress) => void;
+  /** Opt-in full solver callback snapshots for diagnostics. */
+  onSolverCallback?: (event: HighsCallbackTrace) => void;
+}
+
+export interface SearchCandidateCounts {
+  jobId: JobId;
+  /** Candidate counts from the exact slot pools prepared for the solver. */
+  slots: { slot: string; count: number }[];
+  foodCount: number;
 }
 
 export interface OptimizationResult {

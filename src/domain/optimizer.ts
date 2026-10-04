@@ -19,6 +19,7 @@ import {
   type ExactMipOptions,
   type ExactMipResult,
 } from "./search/loadout-finder-exact-mip.ts";
+import type { LinearMipProgress } from "./search/linear-mip.ts";
 import {
   findBestJointLoadoutV3,
   type JointLoadoutV3Result,
@@ -618,6 +619,12 @@ function makeExactOptions(
     objective: config.objective ?? "damage",
     ...(config.maxSearchMs !== undefined ? { maxSearchMs: config.maxSearchMs } : {}),
     ...(options.onProgress ? { onProgress: options.onProgress } : {}),
+    ...(options.onSolverProgress ? {
+      onSolverProgress: (event: LinearMipProgress) => {
+        if (event.kind !== "log") options.onSolverProgress?.(event);
+      },
+    } : {}),
+    ...(options.onSolverCallback ? { onSolverCallback: options.onSolverCallback } : {}),
     isCancelled: () => options.signal?.aborted === true,
   };
 }
@@ -647,6 +654,11 @@ function prepareSearch(config: OptimizationConfig, options: SearchOptions): Prep
   });
   const slotCandidateCount = slots.reduce((sum, slot) => sum + slot.candidates.length, 0);
   const exactOptions = makeExactOptions(config, slots, solverFoods, options);
+  options.onCandidateCounts?.({
+    jobId: config.jobId,
+    slots: slots.map((slot) => ({ slot: slot.name, count: slot.candidates.length })),
+    foodCount: solverFoods.length,
+  });
   return {
     jobId: config.jobId,
     jobLevel,
@@ -818,6 +830,7 @@ export async function runJointOptimizationLocally(
     ...(config.maxSearchMs !== undefined ? { maxSearchMs: config.maxSearchMs } : {}),
     ...(config.cacheLimit !== undefined ? { cacheLimit: config.cacheLimit } : {}),
     ...(options.onProgress ? { onProgress: options.onProgress } : {}),
+    ...(options.onSolverCallback ? { onSolverCallback: options.onSolverCallback } : {}),
     isCancelled: () => options.signal?.aborted === true,
   });
   throwIfAborted(options.signal);

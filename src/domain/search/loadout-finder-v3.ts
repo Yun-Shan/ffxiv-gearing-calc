@@ -11,6 +11,7 @@ import {
 import type { EquipInfo, FoodInfo, ParamInfo, SharedSlotProjection } from "./types.ts";
 import { getMemoryUsageSnapshot } from "./memory-usage.ts";
 import { throwIfCancelled } from "./cancellation.ts";
+import type { HighsCallbackTrace } from "./linear-mip.ts";
 
 export type JointLoadoutJobV3 = {
   id: string;
@@ -33,6 +34,7 @@ export type JointLoadoutV3Options = {
   /** FIFO-bounded cache for restricted inner MIP results. Defaults to 2048 entries. */
   cacheLimit?: number;
   onProgress?: (message: string) => void;
+  onSolverCallback?: (event: HighsCallbackTrace) => void;
   /** Checked between solver calls and outer search nodes. */
   isCancelled?: () => boolean;
 };
@@ -770,6 +772,7 @@ export async function findBestJointLoadoutV3(
     mutable.innerSolves++;
     mutable.cacheMisses++;
     options.onProgress?.(`V3：正在计算 ${context.job.id} 的单职业最优伤害基线`);
+    const onSolverCallback = options.onSolverCallback ?? context.job.options.onSolverCallback;
     const optimum = await findBestLoadoutExactMip({
       ...context.job.options,
       slots: context.solverSlots,
@@ -781,6 +784,12 @@ export async function findBestJointLoadoutV3(
         : (message) => options.onProgress?.(`${context.job.id}: ${message}`),
       ...(context.job.options.onSolverProgress === undefined ? {} : {
         onSolverProgress: (event) => context.job.options.onSolverProgress?.({
+          ...event,
+          model: `${context.job.id}:${event.model}`,
+        }),
+      }),
+      ...(onSolverCallback === undefined ? {} : {
+        onSolverCallback: (event) => onSolverCallback({
           ...event,
           model: `${context.job.id}:${event.model}`,
         }),
@@ -907,6 +916,13 @@ export async function findBestJointLoadoutV3(
           model: `${context.job.id}:${event.model}`,
         });
       }
+      const onSolverCallback = options.onSolverCallback ?? context.job.options.onSolverCallback;
+      if (onSolverCallback !== undefined) {
+        mipOptions.onSolverCallback = (event) => onSolverCallback({
+          ...event,
+          model: `${context.job.id}:${event.model}`,
+        });
+      }
       const result = await findBestLoadoutExactMip(mipOptions);
       assertWithinBudget("受限单职业求解");
       remember(key, result ?? null);
@@ -1001,6 +1017,7 @@ export async function findBestJointLoadoutV3(
     const initialResults = best === undefined ? [] : contexts.map((context) => best!.jobResults[context.job.id]!);
     const remainingMs = Math.floor(deadline - performance.now());
     const onSolverProgress = contexts[0]!.job.options.onSolverProgress;
+    const onSolverCallback = options.onSolverCallback ?? contexts[0]!.job.options.onSolverCallback;
     const joint = stopAtProvenCeiling ? undefined : await findBestJointFactorMip({
       jobs: contexts.map((context) => {
         const jobOptions = makeJobOptions(
@@ -1043,6 +1060,9 @@ export async function findBestJointLoadoutV3(
       maxSearchMs: remainingMs,
       ...(onSolverProgress === undefined ? {} : {
         onSolverProgress: (event) => onSolverProgress({ ...event, model: `joint:${event.model}` }),
+      }),
+      ...(onSolverCallback === undefined ? {} : {
+        onSolverCallback: (event) => onSolverCallback({ ...event, model: `joint:${event.model}` }),
       }),
       ...(options.onProgress === undefined ? {} : { onProgress: options.onProgress }),
       isCancelled: cancellationRequested,
