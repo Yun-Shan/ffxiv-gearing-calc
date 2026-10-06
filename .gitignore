@@ -20,6 +20,7 @@ Thumbs.db
 
 
 # Playwright
+/.playwright-mcp/
 /test-results/
 /playwright-report/
 /blob-report/
