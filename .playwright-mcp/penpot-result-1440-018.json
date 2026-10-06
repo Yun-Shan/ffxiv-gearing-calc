@@ -1,0 +1,1364 @@
+[
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1c9f858",
+    "id": "cd720ada-34f1-80c0-8008-bd28c1c9f858",
+    "name": "魔晶石 Chip 文本",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd28c1c9f858",
+      "type": "text",
+      "name": "魔晶石 Chip 文本",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1978",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1979",
+        "$values": []
+      },
+      "x": 470.69399999999587,
+      "y": 446.5,
+      "parentIndex": 199,
+      "parentX": 470.69399999999587,
+      "parentY": 446.5,
+      "boardX": 470.69399999999587,
+      "boardY": 446.5,
+      "width": 42,
+      "height": 18,
+      "bounds": {
+        "$id": "value-1980",
+        "x": 470.69399999999587,
+        "y": 446.5,
+        "width": 42,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-1981",
+        "x": 491.69399999999587,
+        "y": 455.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1982",
+        "$values": [
+          {
+            "$id": "value-1983",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1984",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1985",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1986",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.caption"
+      },
+      "characters": "武略+54",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "600",
+      "fontSize": "8",
+      "fontWeight": "600",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-1987",
+        "x": 476.72524999999587,
+        "y": 449.703125,
+        "width": 29.921875,
+        "height": 11
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1d0dda9",
+    "id": "cd720ada-34f1-80c0-8008-bd28c1d0dda9",
+    "name": "魔晶石 Chip",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd28c1d0dda9",
+      "type": "rectangle",
+      "name": "魔晶石 Chip",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 5,
+      "borderRadiusTopLeft": 5,
+      "borderRadiusTopRight": 5,
+      "borderRadiusBottomRight": 5,
+      "borderRadiusBottomLeft": 5,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1988",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1989",
+        "$values": []
+      },
+      "x": 520.6939999999959,
+      "y": 446.5,
+      "parentIndex": 200,
+      "parentX": 520.6939999999959,
+      "parentY": 446.5,
+      "boardX": 520.6939999999959,
+      "boardY": 446.5,
+      "width": 48,
+      "height": 18,
+      "bounds": {
+        "$id": "value-1990",
+        "x": 520.6939999999959,
+        "y": 446.5,
+        "width": 48,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-1991",
+        "x": 544.6939999999959,
+        "y": 455.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1992",
+        "$values": [
+          {
+            "$id": "value-1993",
+            "fillColor": "#eaf1ec",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1994",
+        "$values": [
+          {
+            "$id": "value-1995",
+            "strokeColor": "#dce3d7",
+            "strokeColorRefFile": null,
+            "strokeColorRefId": null,
+            "strokeOpacity": 1,
+            "strokeStyle": "solid",
+            "strokeWidth": 1,
+            "strokeAlignment": "inner",
+            "strokeCapStart": null,
+            "strokeCapEnd": null,
+            "strokeColorGradient": null,
+            "strokeImage": null
+          }
+        ]
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1996",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1997",
+        "fill": "color.surface.chip",
+        "strokeColor": "color.border.default"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1d6bc5d",
+    "id": "cd720ada-34f1-80c0-8008-bd28c1d6bc5d",
+    "name": "魔晶石 Chip 文本",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd28c1d6bc5d",
+      "type": "text",
+      "name": "魔晶石 Chip 文本",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1998",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1999",
+        "$values": []
+      },
+      "x": 523.6939999999959,
+      "y": 446.5,
+      "parentIndex": 201,
+      "parentX": 523.6939999999959,
+      "parentY": 446.5,
+      "boardX": 523.6939999999959,
+      "boardY": 446.5,
+      "width": 42,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2000",
+        "x": 523.6939999999959,
+        "y": 446.5,
+        "width": 42,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2001",
+        "x": 544.6939999999959,
+        "y": 455.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2002",
+        "$values": [
+          {
+            "$id": "value-2003",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2004",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2005",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2006",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.caption"
+      },
+      "characters": "神眼+54",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "600",
+      "fontSize": "8",
+      "fontWeight": "600",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-2007",
+        "x": 529.7252499999959,
+        "y": 449.703125,
+        "width": 29.921875,
+        "height": 11
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1dd177b",
+    "id": "cd720ada-34f1-80c0-8008-bd28c1dd177b",
+    "name": "魔晶石 Chip",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd28c1dd177b",
+      "type": "rectangle",
+      "name": "魔晶石 Chip",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 5,
+      "borderRadiusTopLeft": 5,
+      "borderRadiusTopRight": 5,
+      "borderRadiusBottomRight": 5,
+      "borderRadiusBottomLeft": 5,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2008",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2009",
+        "$values": []
+      },
+      "x": 467.69399999999587,
+      "y": 478.5,
+      "parentIndex": 202,
+      "parentX": 467.69399999999587,
+      "parentY": 478.5,
+      "boardX": 467.69399999999587,
+      "boardY": 478.5,
+      "width": 48,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2010",
+        "x": 467.69399999999587,
+        "y": 478.5,
+        "width": 48,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2011",
+        "x": 491.69399999999587,
+        "y": 487.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2012",
+        "$values": [
+          {
+            "$id": "value-2013",
+            "fillColor": "#eaf1ec",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2014",
+        "$values": [
+          {
+            "$id": "value-2015",
+            "strokeColor": "#dce3d7",
+            "strokeColorRefFile": null,
+            "strokeColorRefId": null,
+            "strokeOpacity": 1,
+            "strokeStyle": "solid",
+            "strokeWidth": 1,
+            "strokeAlignment": "inner",
+            "strokeCapStart": null,
+            "strokeCapEnd": null,
+            "strokeColorGradient": null,
+            "strokeImage": null
+          }
+        ]
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2016",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2017",
+        "fill": "color.surface.chip",
+        "strokeColor": "color.border.default"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1e0d9c2",
+    "id": "cd720ada-34f1-80c0-8008-bd28c1e0d9c2",
+    "name": "魔晶石 Chip 文本",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd28c1e0d9c2",
+      "type": "text",
+      "name": "魔晶石 Chip 文本",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2018",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2019",
+        "$values": []
+      },
+      "x": 470.69399999999587,
+      "y": 478.5,
+      "parentIndex": 203,
+      "parentX": 470.69399999999587,
+      "parentY": 478.5,
+      "boardX": 470.69399999999587,
+      "boardY": 478.5,
+      "width": 42,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2020",
+        "x": 470.69399999999587,
+        "y": 478.5,
+        "width": 42,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2021",
+        "x": 491.69399999999587,
+        "y": 487.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2022",
+        "$values": [
+          {
+            "$id": "value-2023",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2024",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2025",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2026",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.caption"
+      },
+      "characters": "武略+54",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "600",
+      "fontSize": "8",
+      "fontWeight": "600",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-2027",
+        "x": 476.72524999999587,
+        "y": 481.703125,
+        "width": 29.921875,
+        "height": 11
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1e6b5ce",
+    "id": "cd720ada-34f1-80c0-8008-bd28c1e6b5ce",
+    "name": "魔晶石 Chip",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd28c1e6b5ce",
+      "type": "rectangle",
+      "name": "魔晶石 Chip",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 5,
+      "borderRadiusTopLeft": 5,
+      "borderRadiusTopRight": 5,
+      "borderRadiusBottomRight": 5,
+      "borderRadiusBottomLeft": 5,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2028",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2029",
+        "$values": []
+      },
+      "x": 520.6939999999959,
+      "y": 478.5,
+      "parentIndex": 204,
+      "parentX": 520.6939999999959,
+      "parentY": 478.5,
+      "boardX": 520.6939999999959,
+      "boardY": 478.5,
+      "width": 48,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2030",
+        "x": 520.6939999999959,
+        "y": 478.5,
+        "width": 48,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2031",
+        "x": 544.6939999999959,
+        "y": 487.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2032",
+        "$values": [
+          {
+            "$id": "value-2033",
+            "fillColor": "#eaf1ec",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2034",
+        "$values": [
+          {
+            "$id": "value-2035",
+            "strokeColor": "#dce3d7",
+            "strokeColorRefFile": null,
+            "strokeColorRefId": null,
+            "strokeOpacity": 1,
+            "strokeStyle": "solid",
+            "strokeWidth": 1,
+            "strokeAlignment": "inner",
+            "strokeCapStart": null,
+            "strokeCapEnd": null,
+            "strokeColorGradient": null,
+            "strokeImage": null
+          }
+        ]
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2036",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2037",
+        "fill": "color.surface.chip",
+        "strokeColor": "color.border.default"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1eaf57f",
+    "id": "cd720ada-34f1-80c0-8008-bd28c1eaf57f",
+    "name": "魔晶石 Chip 文本",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd28c1eaf57f",
+      "type": "text",
+      "name": "魔晶石 Chip 文本",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2038",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2039",
+        "$values": []
+      },
+      "x": 523.6939999999959,
+      "y": 478.5,
+      "parentIndex": 205,
+      "parentX": 523.6939999999959,
+      "parentY": 478.5,
+      "boardX": 523.6939999999959,
+      "boardY": 478.5,
+      "width": 42,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2040",
+        "x": 523.6939999999959,
+        "y": 478.5,
+        "width": 42,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2041",
+        "x": 544.6939999999959,
+        "y": 487.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2042",
+        "$values": [
+          {
+            "$id": "value-2043",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2044",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2045",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2046",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.caption"
+      },
+      "characters": "战技+54",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "600",
+      "fontSize": "8",
+      "fontWeight": "600",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-2047",
+        "x": 529.7252499999959,
+        "y": 481.703125,
+        "width": 29.921875,
+        "height": 11
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1f15762",
+    "id": "cd720ada-34f1-80c0-8008-bd28c1f15762",
+    "name": "魔晶石 Chip",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd28c1f15762",
+      "type": "rectangle",
+      "name": "魔晶石 Chip",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 5,
+      "borderRadiusTopLeft": 5,
+      "borderRadiusTopRight": 5,
+      "borderRadiusBottomRight": 5,
+      "borderRadiusBottomLeft": 5,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2048",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2049",
+        "$values": []
+      },
+      "x": 467.69399999999587,
+      "y": 510.5,
+      "parentIndex": 206,
+      "parentX": 467.69399999999587,
+      "parentY": 510.5,
+      "boardX": 467.69399999999587,
+      "boardY": 510.5,
+      "width": 48,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2050",
+        "x": 467.69399999999587,
+        "y": 510.5,
+        "width": 48,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2051",
+        "x": 491.69399999999587,
+        "y": 519.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2052",
+        "$values": [
+          {
+            "$id": "value-2053",
+            "fillColor": "#eaf1ec",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2054",
+        "$values": [
+          {
+            "$id": "value-2055",
+            "strokeColor": "#dce3d7",
+            "strokeColorRefFile": null,
+            "strokeColorRefId": null,
+            "strokeOpacity": 1,
+            "strokeStyle": "solid",
+            "strokeWidth": 1,
+            "strokeAlignment": "inner",
+            "strokeCapStart": null,
+            "strokeCapEnd": null,
+            "strokeColorGradient": null,
+            "strokeImage": null
+          }
+        ]
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2056",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2057",
+        "fill": "color.surface.chip",
+        "strokeColor": "color.border.default"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1f55edb",
+    "id": "cd720ada-34f1-80c0-8008-bd28c1f55edb",
+    "name": "魔晶石 Chip 文本",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd28c1f55edb",
+      "type": "text",
+      "name": "魔晶石 Chip 文本",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2058",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2059",
+        "$values": []
+      },
+      "x": 470.69399999999587,
+      "y": 510.5,
+      "parentIndex": 207,
+      "parentX": 470.69399999999587,
+      "parentY": 510.5,
+      "boardX": 470.69399999999587,
+      "boardY": 510.5,
+      "width": 42,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2060",
+        "x": 470.69399999999587,
+        "y": 510.5,
+        "width": 42,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2061",
+        "x": 491.69399999999587,
+        "y": 519.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2062",
+        "$values": [
+          {
+            "$id": "value-2063",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2064",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2065",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2066",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.caption"
+      },
+      "characters": "雄略+54",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "600",
+      "fontSize": "8",
+      "fontWeight": "600",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-2067",
+        "x": 476.72524999999587,
+        "y": 513.703125,
+        "width": 29.921875,
+        "height": 11
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1fbeb11",
+    "id": "cd720ada-34f1-80c0-8008-bd28c1fbeb11",
+    "name": "魔晶石 Chip",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd28c1fbeb11",
+      "type": "rectangle",
+      "name": "魔晶石 Chip",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 5,
+      "borderRadiusTopLeft": 5,
+      "borderRadiusTopRight": 5,
+      "borderRadiusBottomRight": 5,
+      "borderRadiusBottomLeft": 5,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2068",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2069",
+        "$values": []
+      },
+      "x": 520.6939999999959,
+      "y": 510.5,
+      "parentIndex": 208,
+      "parentX": 520.6939999999959,
+      "parentY": 510.5,
+      "boardX": 520.6939999999959,
+      "boardY": 510.5,
+      "width": 48,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2070",
+        "x": 520.6939999999959,
+        "y": 510.5,
+        "width": 48,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2071",
+        "x": 544.6939999999959,
+        "y": 519.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2072",
+        "$values": [
+          {
+            "$id": "value-2073",
+            "fillColor": "#eaf1ec",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2074",
+        "$values": [
+          {
+            "$id": "value-2075",
+            "strokeColor": "#dce3d7",
+            "strokeColorRefFile": null,
+            "strokeColorRefId": null,
+            "strokeOpacity": 1,
+            "strokeStyle": "solid",
+            "strokeWidth": 1,
+            "strokeAlignment": "inner",
+            "strokeCapStart": null,
+            "strokeCapEnd": null,
+            "strokeColorGradient": null,
+            "strokeImage": null
+          }
+        ]
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2076",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2077",
+        "fill": "color.surface.chip",
+        "strokeColor": "color.border.default"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c2000719",
+    "id": "cd720ada-34f1-80c0-8008-bd28c2000719",
+    "name": "魔晶石 Chip 文本",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd28c2000719",
+      "type": "text",
+      "name": "魔晶石 Chip 文本",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2078",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2079",
+        "$values": []
+      },
+      "x": 523.6939999999959,
+      "y": 510.5,
+      "parentIndex": 209,
+      "parentX": 523.6939999999959,
+      "parentY": 510.5,
+      "boardX": 523.6939999999959,
+      "boardY": 510.5,
+      "width": 42,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2080",
+        "x": 523.6939999999959,
+        "y": 510.5,
+        "width": 42,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2081",
+        "x": 544.6939999999959,
+        "y": 519.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2082",
+        "$values": [
+          {
+            "$id": "value-2083",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2084",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2085",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2086",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.caption"
+      },
+      "characters": "战技+54",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "600",
+      "fontSize": "8",
+      "fontWeight": "600",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-2087",
+        "x": 529.7252499999959,
+        "y": 513.703125,
+        "width": 29.921875,
+        "height": 11
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c2073b5c",
+    "id": "cd720ada-34f1-80c0-8008-bd28c2073b5c",
+    "name": "魔晶石 Chip",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd28c2073b5c",
+      "type": "rectangle",
+      "name": "魔晶石 Chip",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 5,
+      "borderRadiusTopLeft": 5,
+      "borderRadiusTopRight": 5,
+      "borderRadiusBottomRight": 5,
+      "borderRadiusBottomLeft": 5,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2088",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2089",
+        "$values": []
+      },
+      "x": 467.69399999999587,
+      "y": 542.5,
+      "parentIndex": 210,
+      "parentX": 467.69399999999587,
+      "parentY": 542.5,
+      "boardX": 467.69399999999587,
+      "boardY": 542.5,
+      "width": 48,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2090",
+        "x": 467.69399999999587,
+        "y": 542.5,
+        "width": 48,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2091",
+        "x": 491.69399999999587,
+        "y": 551.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2092",
+        "$values": [
+          {
+            "$id": "value-2093",
+            "fillColor": "#eaf1ec",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2094",
+        "$values": [
+          {
+            "$id": "value-2095",
+            "strokeColor": "#dce3d7",
+            "strokeColorRefFile": null,
+            "strokeColorRefId": null,
+            "strokeOpacity": 1,
+            "strokeStyle": "solid",
+            "strokeWidth": 1,
+            "strokeAlignment": "inner",
+            "strokeCapStart": null,
+            "strokeCapEnd": null,
+            "strokeColorGradient": null,
+            "strokeImage": null
+          }
+        ]
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2096",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2097",
+        "fill": "color.surface.chip",
+        "strokeColor": "color.border.default"
+      }
+    },
+    "childrenRefs": []
+  }
+]

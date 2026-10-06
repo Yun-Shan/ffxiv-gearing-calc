@@ -53,6 +53,7 @@ export type SearchHistoryRecord =
   | (SearchHistoryBase & {
       kind: "single";
       config: OptimizationConfig;
+      gcdMode?: SingleGcdMode;
       result?: OptimizationResult;
     })
   | (SearchHistoryBase & {
@@ -62,8 +63,10 @@ export type SearchHistoryRecord =
     });
 
 export type CreateSearchHistoryInput =
-  | { kind: "single"; config: OptimizationConfig; dataVersion: string }
+  | { kind: "single"; config: OptimizationConfig; gcdMode?: SingleGcdMode; dataVersion: string }
   | { kind: "joint"; config: JointOptimizationConfig; dataVersion: string };
+
+export type SingleGcdMode = "any" | "tiers" | "speed";
 
 export type FinishSearchHistoryInput =
   | { status: "completed"; result: OptimizationResult | JointOptimizationResult }
@@ -352,6 +355,10 @@ function validateRecord(value: unknown): SearchHistoryRecord {
   assert(value.error === undefined || typeof value.error === "string", "错误信息格式无效。");
 
   if (value.kind === "single") {
+    assert(
+      value.gcdMode === undefined || value.gcdMode === "any" || value.gcdMode === "tiers" || value.gcdMode === "speed",
+      "GCD 约束模式无效。",
+    );
     assert(validateOptimizationConfig(value.config), "单职业配置缺少必要字段或类型错误。");
     if (value.status === "completed") {
       assert(supportsResultLevel(value.config), "成功记录的职业等级不受当前数据支持。");
@@ -433,6 +440,7 @@ export async function createSearchHistory(input: CreateSearchHistoryInput): Prom
     startedAtISO: new Date().toISOString(),
     dataVersion: input.dataVersion,
     config: input.config,
+    ...(input.kind === "single" && input.gcdMode ? { gcdMode: input.gcdMode } : {}),
     status: "running",
   });
   await requestTransaction<IDBValidKey>(

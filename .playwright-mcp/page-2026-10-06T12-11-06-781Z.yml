@@ -1,0 +1,925 @@
+- generic [ref=f3e3]:
+  - region "调色板栏" [ref=f3e4]:
+    - generic [ref=f3e5]:
+      - list [ref=f3e7]:
+        - listitem [ref=f3e8]:
+          - button "调色盘（Alt+P）" [ref=f3e9] [cursor=pointer]
+        - listitem [ref=f3e12]:
+          - button "排版（Alt+T）" [ref=f3e13] [cursor=pointer]
+      - generic [ref=f3e16] [cursor=pointer]
+  - generic [ref=f3e739]:
+    - toolbar "workspace.toolbar.label" [ref=f3e740]:
+      - list [ref=f3e741]:
+        - listitem [ref=f3e742]:
+          - generic "移动（V）" [ref=f3e743]:
+            - button "移动（V）" [pressed] [ref=f3e744]
+        - listitem [ref=f3e747]:
+          - generic "画板（B）" [ref=f3e748]:
+            - button "画板（B）" [ref=f3e749]
+        - listitem [ref=f3e752]:
+          - 'group "选项: 矩形（R）" [ref=f3e753]':
+            - button "矩形（R）" [ref=f3e754]
+        - listitem [ref=f3e759]:
+          - generic "文本（T）" [ref=f3e760]:
+            - button "文本（T）" [ref=f3e761]
+        - listitem [ref=f3e764]:
+          - generic "图片（Shift+K）" [ref=f3e765]:
+            - button "图片（Shift+K）" [ref=f3e766]
+        - listitem [ref=f3e769]:
+          - 'group "选项: 路径（P）" [ref=f3e770]':
+            - button "路径（P）" [ref=f3e771]
+        - listitem [ref=f3e777]:
+          - generic "插件（Ctrl+Alt+P）" [ref=f3e778]:
+            - button "插件（Ctrl+Alt+P）" [ref=f3e779]
+        - listitem [ref=f3e782]:
+          - button "MCP" [pressed] [ref=f3e783]
+          - menu [ref=f3e891]: MCP 已连接
+      - button "切换工具栏" [ref=f3e787]
+    - img:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 主手
+                                                                        - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 盾牌
+                                                                        - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 头部
+                                                                        - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 身体
+                                                                        - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 手部
+                                                                        - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 腿部
+                                                                        - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 脚部
+                                                                        - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 耳饰
+                                                                        - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 项链
+                                                                        - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 手镯
+                                                                        - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 戒指组合
+                                                                        - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 食物
+                                                                        - generic: —
+                                            - generic: 装备与食物候选
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic: 正在寻找符合条件的最优配装
+                                                          - generic: 已用时 00:19
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic: 当前算法搜索状态
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic: 当前模型差距
+                                                                                      - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic: 已探索节点
+                                                                                      - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic: 线性规划迭代数
+                                                                                      - generic: —
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic: 模型规模
+                                                                                      - generic: —
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic: ✧
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 青瓷分析台
+                                                                        - generic: 最终幻想14 配装优化工具
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic: 单职业配装
+                                                          - generic: 多职业联合搜索
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic: 数据版本 2026.09.15.0000.0000
+                                                          - generic: ↻
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 单职业配装搜索
+                                                                        - generic: 骑士
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic: ✓
+                                                                                      - generic: "2"
+                                                                                      - generic: "3"
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic: 准备候选与搜索模型
+                                                                                      - generic: 求解并搜索配装
+                                                                                      - generic: 核验候选与最优性
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 阶段内容请参考下方三步布局画布
+                                                                        - generic: 此处保留视口框架；阶段信息在对应裁切画布中展开。
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic: 条件摘要
+                                                                                      - generic: 骑士
+                                                                        - generic: 搜索条件
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 优化指标
+                                                                                                                  - generic: 每秒每威力伤害期望
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 装备品级
+                                                                                                                  - generic: 780–795
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 同步品级
+                                                                                                                  - generic: 未启用
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: GCD
+                                                                                                                  - generic: 不限
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 技速范围
+                                                                                                                  - generic: 不限
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 坚韧约束
+                                                                                                                  - generic: 不限
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 食物
+                                                                                                                  - generic: 自动选择
+                                                                        - generic: 装备限制
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 来源限制
+                                                                                                                  - generic: 3 项
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 强制装备
+                                                                                                                  - generic: 3 项
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 排除装备
+                                                                                                                  - generic: 3 项
+                                                                        - generic: 已就绪 · 搜索结果将严格满足以上条件
+                                                                        - generic: 开始搜索 →
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic: 纯前端计算 · 可离线运行
+                                                                                      - generic: 高级设置
+    - img [ref=f3e789]:
+      - generic [ref=f3e790]:
+        - generic: 1440 x 695
+        - generic [ref=f3e791]:
+          - generic [ref=f3e792]: 阶段三 · 核验候选与最优性
+          - generic [ref=f3e794]: 阶段一 · 准备候选与搜索模型
+          - generic [ref=f3e796]: 01 最小视口框架 · 1440×695（内容见三步画布）
+          - generic [ref=f3e798]: 阶段画布说明 · Flex
+          - generic [ref=f3e800]: 阶段二 · 求解并搜索配装
+        - generic:
+          - generic:
+            - generic:
+              - generic: "0"
+              - generic: "250"
+              - generic: "500"
+              - generic: "750"
+              - generic: "1000"
+              - generic: "1250"
+            - generic:
+              - generic: "-250"
+              - generic: "0"
+              - generic: "250"
+              - generic: "500"
+              - generic: "750"
+              - generic: "1000"
+              - generic: "1250"
+              - generic: "1500"
+              - generic: "1750"
+              - generic: "2000"
+          - generic:
+            - generic:
+              - generic: "0"
+              - generic: "1440"
+            - generic:
+              - generic: "695"
+              - generic: "0"
+  - complementary [ref=f3e131]:
+    - generic [ref=f3e132]:
+      - generic [ref=f3e133] [cursor=pointer]
+      - generic [ref=f3e136]:
+        - generic [ref=f3e137] [cursor=pointer]: ffxiv-gearing-calc
+        - generic "单职业" [ref=f3e138] [cursor=pointer]:
+          - generic "已保存" [ref=f3e139]
+      - generic "主菜单" [ref=f3e144]:
+        - button "主菜单" [ref=f3e145]
+    - generic [ref=f3e150]:
+      - navigation [ref=f3e152]:
+        - button [ref=f3e153]:
+          - img "收起侧边栏" [ref=f3e154]
+        - tablist [ref=f3e156]:
+          - listitem [ref=f3e157]:
+            - tab "图层" [selected] [ref=f3e158]
+          - listitem [ref=f3e160]:
+            - tab "素材" [ref=f3e161]
+          - listitem [ref=f3e163]:
+            - tab "Tokens" [ref=f3e164]
+      - tabpanel "图层" [ref=f3e166]:
+        - article [ref=f3e167]:
+          - generic [ref=f3e168]:
+            - generic [ref=f3e169]:
+              - button "页面" [ref=f3e171] [cursor=pointer]
+              - generic "添加页面" [ref=f3e175]:
+                - button "添加页面" [ref=f3e176]
+            - list [ref=f3e180]:
+              - listitem [ref=f3e181]:
+                - generic [ref=f3e182]:
+                  - generic "单职业参数工作台" [ref=f3e186]
+                  - generic "删除页面" [ref=f3e188]:
+                    - button "删除页面" [ref=f3e189]
+              - listitem [ref=f3e190]:
+                - generic [ref=f3e191]:
+                  - generic "单职业搜索进度" [ref=f3e195]
+                  - generic "删除页面" [ref=f3e197]:
+                    - button "删除页面" [ref=f3e198]
+              - listitem [ref=f3e199]:
+                - generic [ref=f3e200]:
+                  - generic "单职业配装结果" [ref=f3e204]
+                  - generic "删除页面" [ref=f3e206]:
+                    - button "删除页面" [ref=f3e207]
+          - generic [ref=f3e210]:
+            - generic [ref=f3e212]:
+              - generic [ref=f3e213]: 单职业搜索进度
+              - generic "搜索" [ref=f3e214]:
+                - button "搜索" [ref=f3e215]
+            - generic [ref=f3e804]:
+              - checkbox "01 最小视口框架 · 1440×695（内容见三步画布）" [checked] [ref=f3e805]:
+                - generic [ref=f3e806] [cursor=pointer]:
+                  - button [ref=f3e808]
+                  - generic [ref=f3e814]: 01 最小视口框架 · 1440×695（内容见三步画布）
+                - generic [ref=f3e933]:
+                  - button "隐藏" [ref=f3e934] [cursor=pointer]
+                  - button "锁定" [ref=f3e937] [cursor=pointer]
+              - checkbox "阶段画布说明 · Flex" [ref=f3e815]:
+                - generic [ref=f3e816] [cursor=pointer]:
+                  - button [ref=f3e818]
+                  - generic [ref=f3e824]: 阶段画布说明 · Flex
+              - checkbox "阶段一 · 准备候选与搜索模型" [ref=f3e825]:
+                - generic [ref=f3e826] [cursor=pointer]:
+                  - button [ref=f3e828]
+                  - generic [ref=f3e834]: 阶段一 · 准备候选与搜索模型
+              - checkbox "阶段二 · 求解并搜索配装" [ref=f3e835]:
+                - generic [ref=f3e836] [cursor=pointer]:
+                  - button [ref=f3e838]
+                  - generic [ref=f3e844]: 阶段二 · 求解并搜索配装
+              - checkbox "阶段三 · 核验候选与最优性" [ref=f3e845]:
+                - generic [ref=f3e846] [cursor=pointer]:
+                  - button [ref=f3e848]
+                  - generic [ref=f3e854]: 阶段三 · 核验候选与最优性
+  - complementary [ref=f3e312]:
+    - generic [ref=f3e313]:
+      - button [ref=f3e315] [cursor=pointer]:
+        - list [ref=f3e316]:
+          - listitem "云闪" [ref=f3e317]:
+            - img "云闪" [ref=f3e318]
+      - generic "缩放" [ref=f3e320] [cursor=pointer]: 37%
+      - button "评论（C）" [ref=f3e323] [cursor=pointer]
+      - button "历史" [ref=f3e327] [cursor=pointer]
+      - generic "预览模式（G V）" [ref=f3e330] [cursor=pointer]
+    - generic [ref=f3e335]:
+      - navigation [ref=f3e337]:
+        - tablist [ref=f3e338]:
+          - listitem [ref=f3e339]:
+            - tab "设计" [selected] [ref=f3e340]
+          - listitem [ref=f3e342]:
+            - tab "原型" [ref=f3e343]
+          - listitem [ref=f3e345]:
+            - tab "检查" [ref=f3e346]
+      - tabpanel "设计" [ref=f3e348]:
+        - generic [ref=f3e349]:
+          - region "图层菜单区域" [ref=f3e940]:
+            - combobox [ref=f3e941] [cursor=pointer]:
+              - generic [ref=f3e942]: 正常
+            - generic "不透明度" [ref=f3e950]:
+              - textbox "不透明度" [ref=f3e951]:
+                - /placeholder: "--"
+                - text: "100"
+            - generic "显示/隐藏图层" [ref=f3e952]:
+              - button "显示/隐藏图层" [ref=f3e953]
+            - generic "锁定" [ref=f3e956]:
+              - button "锁定" [ref=f3e957]
+          - region "shape-measures-section" [ref=f3e960]:
+            - generic [ref=f3e961]:
+              - generic [ref=f3e962]:
+                - generic [ref=f3e963] [cursor=pointer]: 尺寸预设
+                - generic [ref=f3e964] [cursor=pointer]
+              - generic [ref=f3e967]:
+                - generic [ref=f3e968] [cursor=pointer]
+                - generic [ref=f3e971] [cursor=pointer]
+              - generic "调整画板适应内容大小" [ref=f3e974]:
+                - button "调整画板适应内容大小" [ref=f3e975]
+            - generic [ref=f3e978]:
+              - generic "宽度" [ref=f3e983]:
+                - textbox "宽度" [ref=f3e984]:
+                  - /placeholder: "--"
+                  - text: "1440"
+              - generic "高度" [ref=f3e989]:
+                - textbox "高度" [ref=f3e990]:
+                  - /placeholder: "--"
+                  - text: "695"
+              - generic "锁定比例" [ref=f3e991]:
+                - button "锁定比例" [ref=f3e992]
+            - generic [ref=f3e995]:
+              - generic "X 轴" [ref=f3e1000]:
+                - textbox "X 轴" [disabled] [ref=f3e1001]:
+                  - /placeholder: "--"
+                  - text: "0"
+              - generic "Y 轴" [ref=f3e1006]:
+                - textbox "Y 轴" [disabled] [ref=f3e1007]:
+                  - /placeholder: "--"
+                  - text: "0"
+            - generic [ref=f3e1008]:
+              - generic "旋转" [ref=f3e1013]:
+                - textbox "旋转" [ref=f3e1014]:
+                  - /placeholder: "--"
+                  - text: "0"
+              - region "圆角半径区域" [ref=f3e1015]:
+                - generic [ref=f3e1016]:
+                  - generic "圆角" [ref=f3e1021]:
+                    - textbox "圆角" [ref=f3e1022]:
+                      - /placeholder: "--"
+                      - text: "0"
+                  - generic "显示独立的圆角" [ref=f3e1023]:
+                    - button "显示独立的圆角" [ref=f3e1024]
+            - generic [ref=f3e1027]:
+              - generic "裁剪内容" [ref=f3e1029] [cursor=pointer]
+              - generic "在预览模式显示" [ref=f3e1033] [cursor=pointer]
+          - region "Layout container section" [ref=f3e1036]:
+            - generic [ref=f3e1038]:
+              - button "布局" [ref=f3e1040] [cursor=pointer]
+              - generic [ref=f3e1044]:
+                - generic "新增布局" [ref=f3e1045]:
+                  - button "新增布局" [ref=f3e1046]
+                - generic "移除布局" [ref=f3e1049]:
+                  - button "移除布局" [ref=f3e1050]
+            - generic [ref=f3e1052]:
+              - generic [ref=f3e1053]:
+                - generic [ref=f3e1054]:
+                  - generic "Align items start" [ref=f3e1055] [cursor=pointer]
+                  - generic "Align items center" [ref=f3e1058] [cursor=pointer]
+                  - generic "Align items end" [ref=f3e1061] [cursor=pointer]
+                - generic [ref=f3e1064]:
+                  - generic "Row" [ref=f3e1065] [cursor=pointer]
+                  - generic "Row reverse" [ref=f3e1068] [cursor=pointer]
+                  - generic "Column" [ref=f3e1071] [cursor=pointer]
+                  - generic "Column reverse" [ref=f3e1074] [cursor=pointer]
+                - button "Wrap" [ref=f3e1077] [cursor=pointer]
+              - generic [ref=f3e1080]:
+                - generic [ref=f3e1081]:
+                  - generic "Justify content start" [ref=f3e1082] [cursor=pointer]
+                  - generic "Justify content center" [ref=f3e1085] [cursor=pointer]
+                  - generic "Justify content end" [ref=f3e1088] [cursor=pointer]
+                  - generic "Justify content space-between" [ref=f3e1091] [cursor=pointer]
+                  - generic "Justify content space-around" [ref=f3e1094] [cursor=pointer]
+                  - generic "Justify content space-evenly" [ref=f3e1097] [cursor=pointer]
+                - generic "帮助中心" [ref=f3e1100]:
+                  - button "帮助中心" [ref=f3e1101]
+              - generic [ref=f3e1104]:
+                - generic [ref=f3e1105]:
+                  - generic "Row gap" [ref=f3e1110]:
+                    - textbox "Row gap" [ref=f3e1111]:
+                      - /placeholder: "--"
+                      - text: "0"
+                  - generic "Column gap" [ref=f3e1116]:
+                    - textbox "Column gap" [disabled] [ref=f3e1117]:
+                      - /placeholder: "--"
+                      - text: "0"
+                - generic [ref=f3e1118]:
+                  - generic [ref=f3e1120]:
+                    - generic "垂直内边距" [ref=f3e1125]:
+                      - textbox "垂直内边距" [ref=f3e1126]:
+                        - /placeholder: "--"
+                        - text: "0"
+                    - generic "水平内边距" [ref=f3e1131]:
+                      - textbox "水平内边距" [ref=f3e1132]:
+                        - /placeholder: "--"
+                        - text: "0"
+                  - button "显示四边内边距选项" [ref=f3e1133] [cursor=pointer]
+          - region "Layout item section" [ref=f3e1136]:
+            - button "Flex element" [ref=f3e1140] [cursor=pointer]
+            - generic [ref=f3e1144]:
+              - generic [ref=f3e1145]:
+                - generic [ref=f3e1147]:
+                  - generic [ref=f3e1148] [cursor=pointer]: static
+                  - generic [ref=f3e1150] [cursor=pointer]: absolute
+                - generic "z-index" [ref=f3e1152]:
+                  - generic [ref=f3e1153]: Z
+                  - textbox "--" [ref=f3e1154]
+              - generic [ref=f3e1156]:
+                - generic [ref=f3e1158]:
+                  - generic "Fix width" [ref=f3e1159] [cursor=pointer]
+                  - generic "Width 100%" [ref=f3e1162] [cursor=pointer]
+                  - generic "Fit content (Horizontal)" [ref=f3e1165] [cursor=pointer]
+                - generic [ref=f3e1169]:
+                  - generic "Fix height" [ref=f3e1170] [cursor=pointer]
+                  - generic "Height 100%" [ref=f3e1173] [cursor=pointer]
+                  - generic "Fit content (Vertical)" [ref=f3e1176] [cursor=pointer]
+              - generic [ref=f3e1180]:
+                - generic "Align self start" [ref=f3e1181] [cursor=pointer]
+                - generic "Align self center" [ref=f3e1184] [cursor=pointer]
+                - generic "Align self end" [ref=f3e1187] [cursor=pointer]
+              - generic [ref=f3e1190]:
+                - generic [ref=f3e1192]:
+                  - generic "Vertical margin" [ref=f3e1197]:
+                    - textbox "Vertical margin" [ref=f3e1198]:
+                      - /placeholder: "--"
+                  - generic "Horizontal margin" [ref=f3e1203]:
+                    - textbox "Horizontal margin" [ref=f3e1204]:
+                      - /placeholder: "--"
+                - button "Margin - multiple" [ref=f3e1205] [cursor=pointer]
+          - region "填充区域" [ref=f3e1208]:
+            - generic [ref=f3e1210]:
+              - button "填充" [ref=f3e1212] [cursor=pointer]
+              - generic "新增填充" [ref=f3e1216]:
+                - button "新增填充" [ref=f3e1217]
+            - generic [ref=f3e1220]:
+              - generic [ref=f3e1221]:
+                - generic [ref=f3e1224]:
+                  - generic "解析值：#ffffff" [ref=f3e1226]:
+                    - button "解析值：#ffffff" [ref=f3e1227] [cursor=pointer]
+                  - 'generic "名称: color.neutral.white" [ref=f3e1231]':
+                    - 'generic "名称: color.neutral.white" [ref=f3e1232]': color.neutral.white
+                - generic "移除颜色" [ref=f3e1233]:
+                  - button "移除颜色" [ref=f3e1234]
+              - generic [ref=f3e1237] [cursor=pointer]:
+                - text: 在导出中显示
+                - checkbox "在导出中显示" [checked]
+          - region "Stroke section" [ref=f3e1241]:
+            - generic [ref=f3e1243]:
+              - generic [ref=f3e1244]: 描边
+              - generic "新增描边颜色" [ref=f3e1245]:
+                - button "新增描边颜色" [ref=f3e1246]
+          - region "颜色选择区域" [ref=f3e1249]:
+            - generic [ref=f3e1250]: 已选颜色
+            - generic [ref=f3e1254]:
+              - generic [ref=f3e1255]:
+                - generic [ref=f3e1257]:
+                  - generic "解析值：#ffffff" [ref=f3e1259]:
+                    - button "解析值：#ffffff" [ref=f3e1260] [cursor=pointer]
+                  - 'generic "名称: color.neutral.white" [ref=f3e1264]':
+                    - 'generic "名称: color.neutral.white" [ref=f3e1265]': color.neutral.white
+                - generic "选择使用此样式的项目" [ref=f3e1266]:
+                  - button "选择使用此样式的项目" [ref=f3e1267]
+              - generic [ref=f3e1270]:
+                - generic [ref=f3e1272]:
+                  - generic "解析值：#1c2e3e" [ref=f3e1274]:
+                    - button "解析值：#1c2e3e" [ref=f3e1275] [cursor=pointer]
+                  - 'generic "名称: color.surface.navigation" [ref=f3e1279]':
+                    - 'generic "名称: color.surface.navigation" [ref=f3e1280]': color.surface.navigation
+                - generic "选择使用此样式的项目" [ref=f3e1281]:
+                  - button "选择使用此样式的项目" [ref=f3e1282]
+              - generic [ref=f3e1285]:
+                - generic [ref=f3e1287]:
+                  - generic "解析值：#f8f9f5" [ref=f3e1289]:
+                    - button "解析值：#f8f9f5" [ref=f3e1290] [cursor=pointer]
+                  - 'generic "名称: color.surface.canvas" [ref=f3e1294]':
+                    - 'generic "名称: color.surface.canvas" [ref=f3e1295]': color.surface.canvas
+                - generic "选择使用此样式的项目" [ref=f3e1296]:
+                  - button "选择使用此样式的项目" [ref=f3e1297]
+              - button "更多颜色令牌" [ref=f3e1300] [cursor=pointer]
+          - generic [ref=f3e1303]:
+            - generic [ref=f3e1304]: 阴影
+            - generic "新增阴影" [ref=f3e1305]:
+              - button "新增阴影" [ref=f3e1306]
+          - region "模糊" [ref=f3e1309]:
+            - generic [ref=f3e1311]:
+              - generic [ref=f3e1312]: 模糊
+              - generic "新增模糊" [ref=f3e1313]:
+                - button "新增模糊" [ref=f3e1314]
+          - generic [ref=f3e1319]:
+            - generic [ref=f3e1320]: 参考线
+            - generic "添加参考线" [ref=f3e1321]:
+              - button "添加参考线" [ref=f3e1322]
+          - generic [ref=f3e1327]:
+            - generic [ref=f3e1328]: 导出
+            - generic "新增导出" [ref=f3e1329]:
+              - button "新增导出" [ref=f3e1330]

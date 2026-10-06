@@ -1,0 +1,1273 @@
+- generic [ref=f8e3]:
+  - region "调色板栏" [ref=f8e4]:
+    - generic [ref=f8e5]:
+      - list [ref=f8e7]:
+        - listitem [ref=f8e8]:
+          - button "调色盘（Alt+P）" [ref=f8e9] [cursor=pointer]
+        - listitem [ref=f8e12]:
+          - button "排版（Alt+T）" [ref=f8e13] [cursor=pointer]
+      - generic [ref=f8e16] [cursor=pointer]
+  - generic [ref=f8e20]:
+    - toolbar "workspace.toolbar.label" [ref=f8e21]:
+      - list [ref=f8e22]:
+        - listitem [ref=f8e23]:
+          - generic "移动（V）" [ref=f8e24]:
+            - button "移动（V）" [pressed] [ref=f8e25]
+        - listitem [ref=f8e28]:
+          - generic "画板（B）" [ref=f8e29]:
+            - button "画板（B）" [ref=f8e30]
+        - listitem [ref=f8e33]:
+          - 'group "选项: 矩形（R）" [ref=f8e34]':
+            - button "矩形（R）" [ref=f8e35]
+        - listitem [ref=f8e40]:
+          - generic "文本（T）" [ref=f8e41]:
+            - button "文本（T）" [ref=f8e42]
+        - listitem [ref=f8e45]:
+          - generic "图片（Shift+K）" [ref=f8e46]:
+            - button "图片（Shift+K）" [ref=f8e47]
+        - listitem [ref=f8e50]:
+          - 'group "选项: 路径（P）" [ref=f8e51]':
+            - button "路径（P）" [ref=f8e52]
+        - listitem [ref=f8e58]:
+          - generic "插件（Ctrl+Alt+P）" [ref=f8e59]:
+            - button "插件（Ctrl+Alt+P）" [ref=f8e60]
+        - listitem [ref=f8e63]:
+          - button "MCP" [ref=f8e64]
+      - button "切换工具栏" [ref=f8e68]
+    - img:
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: 配装结果
+                              - generic: 目标值 47.7706626（每秒每威力伤害期望） · 用时 25.3 秒
+                              - generic: 每威力伤害期望
+                              - generic: "95.5413252"
+                              - generic: GCD
+                              - generic: 2.00 秒
+                              - generic: 暴击率
+                              - generic: 28.3%
+                              - generic: 直击率
+                              - generic: 16.2%
+                              - generic: 每秒每威力伤害期望
+                              - generic: "47.7706626"
+                              - generic: 推荐配装
+                              - generic: 部位
+                              - generic: 装备名称
+                              - generic: 来源
+                              - generic: 品级
+                              - generic: 力量
+                              - generic: 耐力
+                              - generic: 暴击
+                              - generic: 信念
+                              - generic: 直击
+                              - generic: 技速
+                              - generic: 魔晶石 / 生效属性
+                              - generic: 武器
+                              - generic: 幻境武士刀·秘影
+                              - generic: 物理基本性能 158 · 攻击间隔 2.64
+                              - generic: 幻境武器
+                              - generic: "795"
+                              - generic: "790"
+                              - generic: "847"
+                              - generic: "943"
+                              - generic: "447"
+                              - generic: "108"
+                              - generic: —
+                              - generic: "447"
+                              - generic: 头部
+                              - generic: 改良型王国黄铜强袭鸭舌帽
+                              - generic: 点数强化/记忆
+                              - generic: "790"
+                              - generic: "510"
+                              - generic: "572"
+                              - generic: "269"
+                              - generic: —
+                              - generic: "54"
+                              - generic: "242"
+                              - generic: 身体
+                              - generic: 改良型王国黄铜强袭短衣
+                              - generic: 点数强化/记忆
+                              - generic: "790"
+                              - generic: "810"
+                              - generic: "908"
+                              - generic: "427"
+                              - generic: "353"
+                              - generic: "54"
+                              - generic: —
+                              - generic: 手部
+                              - generic: 总冠军强袭手套
+                              - generic: 零式/重量级
+                              - generic: "790"
+                              - generic: "510"
+                              - generic: "572"
+                              - generic: "242"
+                              - generic: "269"
+                              - generic: —
+                              - generic: "54"
+                              - generic: 腿部
+                              - generic: 总冠军强袭骑兵裤
+                              - generic: 零式/重量级
+                              - generic: "790"
+                              - generic: "810"
+                              - generic: "908"
+                              - generic: "427"
+                              - generic: —
+                              - generic: "299"
+                              - generic: "108"
+                              - generic: 脚部
+                              - generic: 总冠军强袭铠靴
+                              - generic: 零式/重量级
+                              - generic: "790"
+                              - generic: "510"
+                              - generic: "572"
+                              - generic: "242"
+                              - generic: —
+                              - generic: "54"
+                              - generic: "269"
+                              - generic: 耳坠
+                              - generic: 改良型王国黄铜强攻耳坠
+                              - generic: 点数强化/记忆
+                              - generic: "790"
+                              - generic: "402"
+                              - generic: "451"
+                              - generic: "202"
+                              - generic: —
+                              - generic: "212"
+                              - generic: "54"
+                              - generic: 项链
+                              - generic: 总冠军强攻项环
+                              - generic: 零式/重量级
+                              - generic: "790"
+                              - generic: "402"
+                              - generic: "451"
+                              - generic: "212"
+                              - generic: "54"
+                              - generic: —
+                              - generic: "202"
+                              - generic: 手镯
+                              - generic: 总冠军强攻手镯
+                              - generic: 零式/重量级
+                              - generic: "790"
+                              - generic: "402"
+                              - generic: "451"
+                              - generic: "212"
+                              - generic: "148"
+                              - generic: —
+                              - generic: "108"
+                              - generic: 戒指
+                              - generic: 总冠军强攻指环
+                              - generic: 零式/重量级
+                              - generic: "790"
+                              - generic: "402"
+                              - generic: "451"
+                              - generic: "202"
+                              - generic: "212"
+                              - generic: —
+                              - generic: "54"
+                              - generic: 戒指
+                              - generic: 改良型王国黄铜强攻戒指
+                              - generic: 点数强化/记忆
+                              - generic: "790"
+                              - generic: "402"
+                              - generic: "451"
+                              - generic: "212"
+                              - generic: "108"
+                              - generic: "148"
+                              - generic: —
+                              - generic: 食物
+                              - generic: 烤干酪辣味玉米片
+                              - generic: 上游食物数据
+                              - generic: "770"
+                              - generic: —
+                              - generic: "297"
+                              - generic: "151"
+                              - generic: —
+                              - generic: —
+                              - generic: "91"
+                              - generic: 武略+447
+                              - generic: 战技+447
+                              - generic: 雄略+108
+                              - generic: 神眼+54
+                              - generic: 战技+54
+                              - generic: 雄略+54
+                              - generic: 神眼+54
+                              - generic: 武略+54
+                              - generic: 战技+54
+                              - generic: 战技+54
+                              - generic: 战技+54
+                              - generic: 武略+54
+                              - generic: 神眼+54
+                              - generic: 武略+54
+                              - generic: 战技+54
+                              - generic: 雄略+54
+                              - generic: 战技+54
+                              - generic: 战技+54
+                              - generic: 战技+54
+                              - generic: 武略+54
+                              - generic: 战技+54
+                              - generic: 雄略+54
+                              - generic: 雄略+54
+                              - generic: 雄略+54
+                              - generic: 神眼+54
+                              - generic: 战技+54
+                              - generic: 在配装器打开
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 最优结果
+                                                                        - generic: 武士
+                                                          - generic: 伤害与防御
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 暴击伤害
+                                                                                                                  - generic: 163.3%
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 信念加成
+                                                                                                                  - generic: 6.30%
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 坚韧伤害加成
+                                                                                                                  - generic: 100.00%
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 坚韧减伤
+                                                                                                                  - generic: 0.00%
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 生命值
+                                                                                                                  - generic: 215,872
+                                                          - generic: 搜索条件与限制
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 优化指标
+                                                                                                    - generic: 每秒每威力伤害期望
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 装备品级
+                                                                                                    - generic: 780–795
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 同步品级
+                                                                                                    - generic: 未启用
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: GCD
+                                                                                                    - generic: 不限
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 技速范围
+                                                                                                    - generic: 不限
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 坚韧约束
+                                                                                                    - generic: 不限
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 食物
+                                                                                                    - generic: 自动选择
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 来源限制
+                                                                                                    - generic: 不限
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 强制装备
+                                                                                                    - generic: 不限
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 排除装备
+                                                                                                    - generic: 不限
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 数据版本
+                                                                                                    - generic: 2026.09.15.0000.0000
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 搜索时间
+                                                                                                    - generic: 2026/10/4 22:09:08
+                              - generic: 总属性
+                              - generic: 6,501
+                              - generic: 3,665
+                              - generic: 1,692
+                              - generic: 1,241
+                              - generic: 2,049
+                              - generic: 7,467
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic: ✧
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 青瓷分析台
+                                                                        - generic: 最终幻想14 配装优化工具
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic: 单职业配装
+                                                          - generic: 多职业联合搜索
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic: 数据版本 2026.09.15.0000.0000
+                                                          - generic: ↻
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - generic: 配装结果
+                              - generic: 目标值 47.7706626（每秒每威力伤害期望） · 用时 25.3 秒
+                              - generic: 每威力伤害期望
+                              - generic: "95.5413252"
+                              - generic: GCD
+                              - generic: 2.00 秒
+                              - generic: 暴击率
+                              - generic: 28.3%
+                              - generic: 直击率
+                              - generic: 16.2%
+                              - generic: 每秒每威力伤害期望
+                              - generic: "47.7706626"
+                              - generic: 推荐配装
+                              - generic: 部位
+                              - generic: 装备名称
+                              - generic: 来源
+                              - generic: 品级
+                              - generic: 力量
+                              - generic: 耐力
+                              - generic: 暴击
+                              - generic: 信念
+                              - generic: 直击
+                              - generic: 技速
+                              - generic: 魔晶石 / 生效属性
+                              - generic: 武器
+                              - generic: 幻境武士刀·秘影
+                              - generic: 物理基本性能 158 · 攻击间隔 2.64
+                              - generic: 幻境武器
+                              - generic: "795"
+                              - generic: "790"
+                              - generic: "847"
+                              - generic: "943"
+                              - generic: "447"
+                              - generic: "108"
+                              - generic: —
+                              - generic: "447"
+                              - generic: 头部
+                              - generic: 改良型王国黄铜强袭鸭舌帽
+                              - generic: 点数强化/记忆
+                              - generic: "790"
+                              - generic: "510"
+                              - generic: "572"
+                              - generic: "269"
+                              - generic: —
+                              - generic: "54"
+                              - generic: "242"
+                              - generic: 身体
+                              - generic: 改良型王国黄铜强袭短衣
+                              - generic: 点数强化/记忆
+                              - generic: "790"
+                              - generic: "810"
+                              - generic: "908"
+                              - generic: "427"
+                              - generic: "353"
+                              - generic: "54"
+                              - generic: —
+                              - generic: 手部
+                              - generic: 总冠军强袭手套
+                              - generic: 零式/重量级
+                              - generic: "790"
+                              - generic: "510"
+                              - generic: "572"
+                              - generic: "242"
+                              - generic: "269"
+                              - generic: —
+                              - generic: "54"
+                              - generic: 腿部
+                              - generic: 总冠军强袭骑兵裤
+                              - generic: 零式/重量级
+                              - generic: "790"
+                              - generic: "810"
+                              - generic: "908"
+                              - generic: "427"
+                              - generic: —
+                              - generic: "299"
+                              - generic: "108"
+                              - generic: 脚部
+                              - generic: 总冠军强袭铠靴
+                              - generic: 零式/重量级
+                              - generic: "790"
+                              - generic: "510"
+                              - generic: "572"
+                              - generic: "242"
+                              - generic: —
+                              - generic: "54"
+                              - generic: "269"
+                              - generic: 耳坠
+                              - generic: 改良型王国黄铜强攻耳坠
+                              - generic: 点数强化/记忆
+                              - generic: "790"
+                              - generic: "402"
+                              - generic: "451"
+                              - generic: "202"
+                              - generic: —
+                              - generic: "212"
+                              - generic: "54"
+                              - generic: 项链
+                              - generic: 总冠军强攻项环
+                              - generic: 零式/重量级
+                              - generic: "790"
+                              - generic: "402"
+                              - generic: "451"
+                              - generic: "212"
+                              - generic: "54"
+                              - generic: —
+                              - generic: "202"
+                              - generic: 手镯
+                              - generic: 总冠军强攻手镯
+                              - generic: 零式/重量级
+                              - generic: "790"
+                              - generic: "402"
+                              - generic: "451"
+                              - generic: "212"
+                              - generic: "148"
+                              - generic: —
+                              - generic: "108"
+                              - generic: 戒指
+                              - generic: 总冠军强攻指环
+                              - generic: 零式/重量级
+                              - generic: "790"
+                              - generic: "402"
+                              - generic: "451"
+                              - generic: "202"
+                              - generic: "212"
+                              - generic: —
+                              - generic: "54"
+                              - generic: 戒指
+                              - generic: 改良型王国黄铜强攻戒指
+                              - generic: 点数强化/记忆
+                              - generic: "790"
+                              - generic: "402"
+                              - generic: "451"
+                              - generic: "212"
+                              - generic: "108"
+                              - generic: "148"
+                              - generic: —
+                              - generic: 食物
+                              - generic: 烤干酪辣味玉米片
+                              - generic: 上游食物数据
+                              - generic: "770"
+                              - generic: —
+                              - generic: "297"
+                              - generic: "151"
+                              - generic: —
+                              - generic: —
+                              - generic: "91"
+                              - generic: 武略+447
+                              - generic: 战技+447
+                              - generic: 雄略+108
+                              - generic: 神眼+54
+                              - generic: 战技+54
+                              - generic: 雄略+54
+                              - generic: 神眼+54
+                              - generic: 武略+54
+                              - generic: 战技+54
+                              - generic: 战技+54
+                              - generic: 战技+54
+                              - generic: 武略+54
+                              - generic: 神眼+54
+                              - generic: 武略+54
+                              - generic: 战技+54
+                              - generic: 雄略+54
+                              - generic: 战技+54
+                              - generic: 战技+54
+                              - generic: 战技+54
+                              - generic: 武略+54
+                              - generic: 战技+54
+                              - generic: 雄略+54
+                              - generic: 雄略+54
+                              - generic: 雄略+54
+                              - generic: 神眼+54
+                              - generic: 战技+54
+                              - generic: 在配装器打开
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 最优结果
+                                                                        - generic: 武士
+                                                          - generic: 伤害与防御
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 暴击伤害
+                                                                                                                  - generic: 163.3%
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 信念加成
+                                                                                                                  - generic: 6.30%
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 坚韧伤害加成
+                                                                                                                  - generic: 100.00%
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 坚韧减伤
+                                                                                                                  - generic: 0.00%
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic:
+                                                                                                      - generic:
+                                                                                                        - generic:
+                                                                                                          - generic:
+                                                                                                            - generic:
+                                                                                                              - generic:
+                                                                                                                - generic:
+                                                                                                                  - generic: 生命值
+                                                                                                                  - generic: 215,872
+                                                          - generic: 搜索条件与限制
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 优化指标
+                                                                                                    - generic: 每秒每威力伤害期望
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 装备品级
+                                                                                                    - generic: 780–795
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 同步品级
+                                                                                                    - generic: 未启用
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: GCD
+                                                                                                    - generic: 不限
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 技速范围
+                                                                                                    - generic: 不限
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 坚韧约束
+                                                                                                    - generic: 不限
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 食物
+                                                                                                    - generic: 自动选择
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 来源限制
+                                                                                                    - generic: 不限
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 强制装备
+                                                                                                    - generic: 不限
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 排除装备
+                                                                                                    - generic: 不限
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 数据版本
+                                                                                                    - generic: 2026.09.15.0000.0000
+                                                                        - generic:
+                                                                          - generic:
+                                                                            - generic:
+                                                                              - generic:
+                                                                                - generic:
+                                                                                  - generic:
+                                                                                    - generic:
+                                                                                      - generic:
+                                                                                        - generic:
+                                                                                          - generic:
+                                                                                            - generic:
+                                                                                              - generic:
+                                                                                                - generic:
+                                                                                                  - generic:
+                                                                                                    - generic: 搜索时间
+                                                                                                    - generic: 2026/10/4 22:09:08
+                              - generic: 总属性
+                              - generic: 6,501
+                              - generic: 3,665
+                              - generic: 1,692
+                              - generic: 1,241
+                              - generic: 2,049
+                              - generic: 7,467
+                              - generic:
+                                - generic:
+                                  - generic:
+                                    - generic:
+                                      - generic:
+                                        - generic:
+                                          - generic:
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic: ✧
+                                                          - generic:
+                                                            - generic:
+                                                              - generic:
+                                                                - generic:
+                                                                  - generic:
+                                                                    - generic:
+                                                                      - generic:
+                                                                        - generic: 青瓷分析台
+                                                                        - generic: 最终幻想14 配装优化工具
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic: 单职业配装
+                                                          - generic: 多职业联合搜索
+                                            - generic:
+                                              - generic:
+                                                - generic:
+                                                  - generic:
+                                                    - generic:
+                                                      - generic:
+                                                        - generic:
+                                                          - generic: 数据版本 2026.09.15.0000.0000
+                                                          - generic: ↻
+    - img [ref=f8e70]:
+      - generic [ref=f8e71]:
+        - generic:
+          - generic:
+            - generic:
+              - generic: "0"
+              - generic: "250"
+              - generic: "500"
+              - generic: "750"
+              - generic: "1000"
+              - generic: "1250"
+              - generic: "1500"
+              - generic: "1750"
+              - generic: "2000"
+              - generic: "2250"
+              - generic: "2500"
+              - generic: "2750"
+              - generic: "3000"
+              - generic: "3250"
+            - generic:
+              - generic: "-1250"
+              - generic: "-1000"
+              - generic: "-750"
+              - generic: "-500"
+              - generic: "-250"
+              - generic: "0"
+              - generic: "250"
+              - generic: "500"
+              - generic: "750"
+              - generic: "1000"
+              - generic: "1250"
+              - generic: "1500"
+              - generic: "1750"
+              - generic: "2000"
+              - generic: "2250"
+              - generic: "2500"
+  - complementary [ref=f8e77]:
+    - generic [ref=f8e78]:
+      - generic [ref=f8e79] [cursor=pointer]
+      - generic [ref=f8e82]:
+        - generic [ref=f8e83] [cursor=pointer]: ffxiv-gearing-calc
+        - generic "单职业" [ref=f8e84] [cursor=pointer]:
+          - generic "已保存" [ref=f8e85]
+      - generic "主菜单" [ref=f8e90]:
+        - button "主菜单" [ref=f8e91]
+    - generic [ref=f8e96]:
+      - navigation [ref=f8e98]:
+        - button [ref=f8e99]:
+          - img "收起侧边栏" [ref=f8e100]
+        - tablist [ref=f8e102]:
+          - listitem [ref=f8e103]:
+            - tab "图层" [selected] [ref=f8e104]
+          - listitem [ref=f8e106]:
+            - tab "素材" [ref=f8e107]
+          - listitem [ref=f8e109]:
+            - tab "Tokens" [ref=f8e110]
+      - tabpanel "图层" [ref=f8e112]:
+        - article [ref=f8e113]:
+          - generic [ref=f8e114]:
+            - generic [ref=f8e115]:
+              - button "页面" [ref=f8e117] [cursor=pointer]
+              - generic "添加页面" [ref=f8e121]:
+                - button "添加页面" [ref=f8e122]
+            - list [ref=f8e126]:
+              - listitem [ref=f8e127]:
+                - generic [ref=f8e128]:
+                  - generic "单职业参数工作台" [ref=f8e132]
+                  - generic "删除页面" [ref=f8e134]:
+                    - button "删除页面" [ref=f8e135]
+              - listitem [ref=f8e136]:
+                - generic [ref=f8e137]:
+                  - generic "单职业搜索进度" [ref=f8e141]
+                  - generic "删除页面" [ref=f8e143]:
+                    - button "删除页面" [ref=f8e144]
+              - listitem [ref=f8e145]:
+                - generic [ref=f8e146]:
+                  - generic "单职业配装结果" [ref=f8e150]
+                  - generic "删除页面" [ref=f8e152]:
+                    - button "删除页面" [ref=f8e153]
+          - generic [ref=f8e156]:
+            - generic [ref=f8e158]:
+              - generic [ref=f8e159]: 单职业配装结果
+              - generic "搜索" [ref=f8e160]:
+                - button "搜索" [ref=f8e161]
+            - generic [ref=f8e165]:
+              - checkbox "02 推荐视口 · 1920×1080" [ref=f8e166]:
+                - generic [ref=f8e167] [cursor=pointer]:
+                  - button [ref=f8e169]
+                  - generic [ref=f8e175]: 02 推荐视口 · 1920×1080
+              - checkbox "01 最小视口 · 1440×695" [ref=f8e176]:
+                - generic [ref=f8e177] [cursor=pointer]:
+                  - button [ref=f8e179]
+                  - generic [ref=f8e185]: 01 最小视口 · 1440×695
+  - complementary [ref=f8e186]:
+    - generic [ref=f8e187]:
+      - button [ref=f8e189] [cursor=pointer]:
+        - list [ref=f8e190]:
+          - listitem "云闪" [ref=f8e191]:
+            - img "云闪" [ref=f8e192]
+      - generic "缩放" [ref=f8e194] [cursor=pointer]: 21%
+      - button "评论（C）" [ref=f8e197] [cursor=pointer]
+      - button "历史" [ref=f8e201] [cursor=pointer]
+      - generic "预览模式（G V）" [ref=f8e204] [cursor=pointer]
+    - generic [ref=f8e209]:
+      - navigation [ref=f8e211]:
+        - tablist [ref=f8e212]:
+          - listitem [ref=f8e213]:
+            - tab "设计" [selected] [ref=f8e214]
+          - listitem [ref=f8e216]:
+            - tab "原型" [ref=f8e217]
+          - listitem [ref=f8e219]:
+            - tab "检查" [ref=f8e220]
+      - tabpanel "设计" [ref=f8e222]:
+        - generic [ref=f8e223]:
+          - generic [ref=f8e224]:
+            - generic [ref=f8e225]: 画布背景
+            - generic [ref=f8e231]:
+              - generic "#E8E9EA" [ref=f8e233]:
+                - button "#E8E9EA" [ref=f8e234] [cursor=pointer]
+              - textbox "颜色" [ref=f8e239]:
+                - /placeholder: 混合
+                - text: E8E9EA
+          - generic [ref=f8e240]:
+            - generic [ref=f8e241]: 像素网格颜色
+            - generic [ref=f8e246]:
+              - generic [ref=f8e247]:
+                - generic "#0070E4 (20%)" [ref=f8e249]:
+                  - button "#0070E4 (20%)" [ref=f8e250] [cursor=pointer]
+                - textbox "颜色" [ref=f8e255]:
+                  - /placeholder: 混合
+                  - text: "0070E4"
+              - generic [ref=f8e256]:
+                - generic [ref=f8e257]: "%"
+                - textbox "--" [ref=f8e258]: "20"

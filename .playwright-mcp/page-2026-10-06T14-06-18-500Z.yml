@@ -1,0 +1,187 @@
+- generic [ref=e3]:
+  - region "调色板栏" [ref=e4]:
+    - generic [ref=e5]:
+      - list [ref=e7]:
+        - listitem [ref=e8]:
+          - button "调色盘（Alt+P）" [ref=e9] [cursor=pointer]
+        - listitem [ref=e12]:
+          - button "排版（Alt+T）" [ref=e13] [cursor=pointer]
+      - generic [ref=e16] [cursor=pointer]
+  - generic [ref=e552]:
+    - toolbar "workspace.toolbar.label" [ref=e553]:
+      - list [ref=e554]:
+        - listitem [ref=e555]:
+          - generic "移动（V）" [ref=e556]:
+            - button "移动（V）" [pressed] [ref=e557]
+        - listitem [ref=e560]:
+          - generic "画板（B）" [ref=e561]:
+            - button "画板（B）" [ref=e562]
+        - listitem [ref=e565]:
+          - 'group "选项: 矩形（R）" [ref=e566]':
+            - button "矩形（R）" [ref=e567]
+        - listitem [ref=e572]:
+          - generic "文本（T）" [ref=e573]:
+            - button "文本（T）" [ref=e574]
+        - listitem [ref=e577]:
+          - generic "图片（Shift+K）" [ref=e578]:
+            - button "图片（Shift+K）" [ref=e579]
+        - listitem [ref=e582]:
+          - 'group "选项: 路径（P）" [ref=e583]':
+            - button "路径（P）" [ref=e584]
+        - listitem [ref=e590]:
+          - generic "插件（Ctrl+Alt+P）" [ref=e591]:
+            - button "插件（Ctrl+Alt+P）" [ref=e592]
+        - listitem [ref=e595]:
+          - button "MCP" [ref=e596]
+      - button "切换工具栏" [ref=e600]
+    - img [ref=e602]:
+      - generic [ref=e603]:
+        - generic [ref=e604]:
+          - generic [ref=e605]: 阶段三 · 核验候选与最优性
+          - generic [ref=e607]: 阶段一 · 准备候选与搜索模型
+          - generic [ref=e609]: 01 最小视口框架 · 1440×695（内容见三步画布）
+          - generic [ref=e611]: 阶段画布说明 · Flex
+          - generic [ref=e613]: 阶段二 · 求解并搜索配装
+        - generic:
+          - generic:
+            - generic:
+              - generic: "-200"
+              - generic: "-100"
+              - generic: "0"
+              - generic: "100"
+              - generic: "200"
+              - generic: "300"
+              - generic: "400"
+              - generic: "500"
+              - generic: "600"
+              - generic: "700"
+              - generic: "800"
+              - generic: "900"
+              - generic: "1000"
+              - generic: "1100"
+              - generic: "1200"
+              - generic: "1300"
+              - generic: "1400"
+            - generic:
+              - generic: "-200"
+              - generic: "-100"
+              - generic: "0"
+              - generic: "100"
+              - generic: "200"
+              - generic: "300"
+              - generic: "400"
+              - generic: "500"
+              - generic: "600"
+              - generic: "700"
+              - generic: "800"
+              - generic: "900"
+  - complementary [ref=e86]:
+    - generic [ref=e87]:
+      - generic [ref=e88] [cursor=pointer]
+      - generic [ref=e91]:
+        - generic [ref=e92] [cursor=pointer]: ffxiv-gearing-calc
+        - generic "单职业" [ref=e93] [cursor=pointer]:
+          - generic "已保存" [ref=e94]
+      - generic "主菜单" [ref=e99]:
+        - button "主菜单" [ref=e100]
+    - generic [ref=e105]:
+      - navigation [ref=e107]:
+        - button [ref=e108]:
+          - img "收起侧边栏" [ref=e109]
+        - tablist [ref=e111]:
+          - listitem [ref=e112]:
+            - tab "图层" [selected] [ref=e113]
+          - listitem [ref=e115]:
+            - tab "素材" [ref=e116]
+          - listitem [ref=e118]:
+            - tab "Tokens" [ref=e119]
+      - tabpanel "图层" [ref=e121]:
+        - article [ref=e122]:
+          - generic [ref=e123]:
+            - generic [ref=e124]:
+              - button "页面" [ref=e126] [cursor=pointer]
+              - generic "添加页面" [ref=e130]:
+                - button "添加页面" [ref=e131]
+            - list [ref=e135]:
+              - listitem [ref=e136]:
+                - generic [active] [ref=e137]:
+                  - generic "单职业参数工作台" [ref=e141]
+                  - generic "删除页面" [ref=e143]:
+                    - button "删除页面" [ref=e144]
+              - listitem [ref=e145]:
+                - generic [ref=e146]:
+                  - generic "单职业搜索进度" [ref=e150]
+                  - generic "删除页面" [ref=e152]:
+                    - button "删除页面" [ref=e153]
+              - listitem [ref=e154]:
+                - generic [ref=e155]:
+                  - generic "单职业配装结果" [ref=e159]
+                  - generic "删除页面" [ref=e161]:
+                    - button "删除页面" [ref=e162]
+          - generic [ref=e165]:
+            - generic [ref=e167]:
+              - generic [ref=e168]: 单职业搜索进度
+              - generic "搜索" [ref=e169]:
+                - button "搜索" [ref=e170]
+            - generic [ref=e622]:
+              - checkbox "01 最小视口框架 · 1440×695（内容见三步画布）" [ref=e623]:
+                - generic [ref=e624] [cursor=pointer]:
+                  - button [ref=e626]
+                  - generic [ref=e632]: 01 最小视口框架 · 1440×695（内容见三步画布）
+              - checkbox "阶段画布说明 · Flex" [ref=e633]:
+                - generic [ref=e634] [cursor=pointer]:
+                  - button [ref=e636]
+                  - generic [ref=e642]: 阶段画布说明 · Flex
+              - checkbox "阶段一 · 准备候选与搜索模型" [ref=e643]:
+                - generic [ref=e644] [cursor=pointer]:
+                  - button [ref=e646]
+                  - generic [ref=e652]: 阶段一 · 准备候选与搜索模型
+              - checkbox "阶段二 · 求解并搜索配装" [ref=e653]:
+                - generic [ref=e654] [cursor=pointer]:
+                  - button [ref=e656]
+                  - generic [ref=e662]: 阶段二 · 求解并搜索配装
+              - checkbox "阶段三 · 核验候选与最优性" [ref=e663]:
+                - generic [ref=e664] [cursor=pointer]:
+                  - button [ref=e666]
+                  - generic [ref=e672]: 阶段三 · 核验候选与最优性
+  - complementary [ref=e477]:
+    - generic [ref=e478]:
+      - button [ref=e480] [cursor=pointer]:
+        - list [ref=e481]:
+          - listitem "云闪" [ref=e482]:
+            - img "云闪" [ref=e483]
+      - generic "缩放" [ref=e485] [cursor=pointer]: 71%
+      - button "评论（C）" [ref=e488] [cursor=pointer]
+      - button "历史" [ref=e492] [cursor=pointer]
+      - generic "预览模式（G V）" [ref=e495] [cursor=pointer]
+    - generic [ref=e500]:
+      - navigation [ref=e502]:
+        - tablist [ref=e503]:
+          - listitem [ref=e504]:
+            - tab "设计" [selected] [ref=e505]
+          - listitem [ref=e507]:
+            - tab "原型" [ref=e508]
+          - listitem [ref=e510]:
+            - tab "检查" [ref=e511]
+      - tabpanel "设计" [ref=e513]:
+        - generic [ref=e514]:
+          - generic [ref=e515]:
+            - generic [ref=e516]: 画布背景
+            - generic [ref=e522]:
+              - generic "#E8E9EA" [ref=e524]:
+                - button "#E8E9EA" [ref=e525] [cursor=pointer]
+              - textbox "颜色" [ref=e530]:
+                - /placeholder: 混合
+                - text: E8E9EA
+          - generic [ref=e531]:
+            - generic [ref=e532]: 像素网格颜色
+            - generic [ref=e537]:
+              - generic [ref=e538]:
+                - generic "#0070E4 (20%)" [ref=e540]:
+                  - button "#0070E4 (20%)" [ref=e541] [cursor=pointer]
+                - textbox "颜色" [ref=e546]:
+                  - /placeholder: 混合
+                  - text: "0070E4"
+              - generic [ref=e547]:
+                - generic [ref=e548]: "%"
+                - textbox "--" [ref=e549]: "20"

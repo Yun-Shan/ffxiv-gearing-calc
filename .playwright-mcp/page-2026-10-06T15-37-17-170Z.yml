@@ -1,0 +1,306 @@
+- generic [ref=f10e1]:
+  - generic [ref=f10e3]:
+    - region "调色板栏" [ref=f10e4]:
+      - generic [ref=f10e5]:
+        - list [ref=f10e7]:
+          - listitem [ref=f10e8]:
+            - button "调色盘（Alt+P）" [ref=f10e9] [cursor=pointer]
+          - listitem [ref=f10e12]:
+            - button "排版（Alt+T）" [ref=f10e13] [cursor=pointer]
+        - generic [ref=f10e16] [cursor=pointer]
+    - generic [ref=f10e20]:
+      - toolbar "workspace.toolbar.label" [ref=f10e21]:
+        - list [ref=f10e22]:
+          - listitem [ref=f10e23]:
+            - generic "移动（V）" [ref=f10e24]:
+              - button "移动（V）" [pressed] [ref=f10e25]
+          - listitem [ref=f10e28]:
+            - generic "画板（B）" [ref=f10e29]:
+              - button "画板（B）" [ref=f10e30]
+          - listitem [ref=f10e33]:
+            - 'group "选项: 矩形（R）" [ref=f10e34]':
+              - button "矩形（R）" [ref=f10e35]
+          - listitem [ref=f10e40]:
+            - generic "文本（T）" [ref=f10e41]:
+              - button "文本（T）" [ref=f10e42]
+          - listitem [ref=f10e45]:
+            - generic "图片（Shift+K）" [ref=f10e46]:
+              - button "图片（Shift+K）" [ref=f10e47]
+          - listitem [ref=f10e50]:
+            - 'group "选项: 路径（P）" [ref=f10e51]':
+              - button "路径（P）" [ref=f10e52]
+          - listitem [ref=f10e58]:
+            - generic "插件（Ctrl+Alt+P）" [ref=f10e59]:
+              - button "插件（Ctrl+Alt+P）" [ref=f10e60]
+          - listitem [ref=f10e63]:
+            - button "MCP" [ref=f10e64]
+        - button "切换工具栏" [ref=f10e68]
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic [ref=f10e70] [cursor=pointer]
+              - generic [ref=f10e75] [cursor=pointer]
+      - img [ref=f10e80]:
+        - generic [ref=f10e81]:
+          - generic: 1920 x 1080
+          - generic [ref=f10e85]:
+            - generic [ref=f10e86]: 02 推荐视口 · 1920×1080
+            - generic [ref=f10e88]: 01 最小视口 · 1440×695
+          - generic:
+            - generic:
+              - generic:
+                - generic: "-1500"
+                - generic: "-1400"
+                - generic: "-1300"
+                - generic: "-1200"
+                - generic: "-1100"
+                - generic: "-1000"
+                - generic: "-900"
+                - generic: "-800"
+                - generic: "-700"
+                - generic: "-600"
+                - generic: "-500"
+                - generic: "-400"
+                - generic: "-300"
+                - generic: "-200"
+                - generic: "-100"
+              - generic:
+                - generic: "-200"
+                - generic: "-100"
+                - generic: "0"
+                - generic: "100"
+                - generic: "200"
+                - generic: "300"
+                - generic: "400"
+                - generic: "500"
+                - generic: "600"
+                - generic: "700"
+                - generic: "800"
+                - generic: "900"
+            - generic:
+              - generic:
+                - generic: "0"
+                - generic: "1920"
+              - generic:
+                - generic: "1080"
+                - generic: "0"
+    - complementary [ref=f10e123]:
+      - generic [ref=f10e124]:
+        - generic [ref=f10e125] [cursor=pointer]
+        - generic [ref=f10e128]:
+          - generic [ref=f10e129] [cursor=pointer]: ffxiv-gearing-calc
+          - generic "单职业" [ref=f10e130] [cursor=pointer]:
+            - generic "已保存" [ref=f10e131]
+        - generic "主菜单" [ref=f10e136]:
+          - button "主菜单" [ref=f10e137]
+      - generic [ref=f10e142]:
+        - navigation [ref=f10e144]:
+          - button [ref=f10e145]:
+            - img "收起侧边栏" [ref=f10e146]
+          - tablist [ref=f10e148]:
+            - listitem [ref=f10e149]:
+              - tab "图层" [selected] [ref=f10e150]
+            - listitem [ref=f10e152]:
+              - tab "素材" [ref=f10e153]
+            - listitem [ref=f10e155]:
+              - tab "Tokens" [ref=f10e156]
+        - tabpanel "图层" [active] [ref=f10e158]:
+          - article [ref=f10e159]:
+            - generic [ref=f10e160]:
+              - generic [ref=f10e161]:
+                - button "页面" [ref=f10e163] [cursor=pointer]
+                - generic "添加页面" [ref=f10e167]:
+                  - button "添加页面" [ref=f10e168]
+              - list [ref=f10e172]:
+                - listitem [ref=f10e173]:
+                  - generic [ref=f10e174]:
+                    - generic "单职业参数工作台" [ref=f10e178]
+                    - generic "删除页面" [ref=f10e180]:
+                      - button "删除页面" [ref=f10e181]
+                - listitem [ref=f10e182]:
+                  - generic [ref=f10e183]:
+                    - generic "单职业搜索进度" [ref=f10e187]
+                    - generic "删除页面" [ref=f10e189]:
+                      - button "删除页面" [ref=f10e190]
+                - listitem [ref=f10e191]:
+                  - generic [ref=f10e192]:
+                    - generic "单职业配装结果" [ref=f10e196]
+                    - generic "删除页面" [ref=f10e198]:
+                      - button "删除页面" [ref=f10e199]
+            - generic [ref=f10e202]:
+              - generic [ref=f10e204]:
+                - generic [ref=f10e205]: 单职业配装结果
+                - generic "搜索" [ref=f10e206]:
+                  - button "搜索" [ref=f10e207]
+              - generic [ref=f10e211]:
+                - checkbox "02 推荐视口 · 1920×1080" [checked] [ref=f10e212]:
+                  - generic [ref=f10e213] [cursor=pointer]:
+                    - button [ref=f10e215]
+                    - generic [ref=f10e221]: 02 推荐视口 · 1920×1080
+                  - generic [ref=f10e222]:
+                    - button "隐藏" [ref=f10e223] [cursor=pointer]
+                    - button "锁定" [ref=f10e226] [cursor=pointer]
+                - checkbox "01 最小视口 · 1440×695" [ref=f10e229]:
+                  - generic [ref=f10e230] [cursor=pointer]:
+                    - button [ref=f10e232]
+                    - generic [ref=f10e238]: 01 最小视口 · 1440×695
+    - complementary [ref=f10e239]:
+      - generic [ref=f10e240]:
+        - button [ref=f10e242] [cursor=pointer]:
+          - list [ref=f10e243]:
+            - listitem "云闪" [ref=f10e244]:
+              - img "云闪" [ref=f10e245]
+        - generic "缩放" [ref=f10e247] [cursor=pointer]: 76%
+        - button "评论（C）" [ref=f10e250] [cursor=pointer]
+        - button "历史" [ref=f10e254] [cursor=pointer]
+        - generic "预览模式（G V）" [ref=f10e257] [cursor=pointer]
+      - generic [ref=f10e262]:
+        - navigation [ref=f10e264]:
+          - tablist [ref=f10e265]:
+            - listitem [ref=f10e266]:
+              - tab "设计" [selected] [ref=f10e267]
+            - listitem [ref=f10e269]:
+              - tab "原型" [ref=f10e270]
+            - listitem [ref=f10e272]:
+              - tab "检查" [ref=f10e273]
+        - tabpanel "设计" [ref=f10e275]:
+          - generic [ref=f10e276]:
+            - region "图层菜单区域" [ref=f10e277]:
+              - combobox [ref=f10e278] [cursor=pointer]:
+                - generic [ref=f10e279]: 正常
+              - generic "不透明度" [ref=f10e287]:
+                - textbox "不透明度" [ref=f10e288]:
+                  - /placeholder: "--"
+                  - text: "100"
+              - generic "显示/隐藏图层" [ref=f10e289]:
+                - button "显示/隐藏图层" [ref=f10e290]
+              - generic "锁定" [ref=f10e293]:
+                - button "锁定" [ref=f10e294]
+            - region "shape-measures-section" [ref=f10e297]:
+              - generic [ref=f10e298]:
+                - generic [ref=f10e299]:
+                  - generic [ref=f10e300] [cursor=pointer]: 尺寸预设
+                  - generic [ref=f10e301] [cursor=pointer]
+                - generic [ref=f10e304]:
+                  - generic [ref=f10e305] [cursor=pointer]
+                  - generic [ref=f10e308] [cursor=pointer]
+                - generic "调整画板适应内容大小" [ref=f10e311]:
+                  - button "调整画板适应内容大小" [ref=f10e312]
+              - generic [ref=f10e315]:
+                - generic "宽度" [ref=f10e320]:
+                  - textbox "宽度" [ref=f10e321]:
+                    - /placeholder: "--"
+                    - text: "1920"
+                - generic "高度" [ref=f10e326]:
+                  - textbox "高度" [ref=f10e327]:
+                    - /placeholder: "--"
+                    - text: "1080"
+                - generic "锁定比例" [ref=f10e328]:
+                  - button "锁定比例" [ref=f10e329]
+              - generic [ref=f10e332]:
+                - generic "X 轴" [ref=f10e337]:
+                  - textbox "X 轴" [ref=f10e338]:
+                    - /placeholder: "--"
+                    - text: "1510"
+                - generic "Y 轴" [ref=f10e343]:
+                  - textbox "Y 轴" [ref=f10e344]:
+                    - /placeholder: "--"
+                    - text: "0"
+              - generic [ref=f10e345]:
+                - generic "旋转" [ref=f10e350]:
+                  - textbox "旋转" [ref=f10e351]:
+                    - /placeholder: "--"
+                    - text: "0"
+                - region "圆角半径区域" [ref=f10e352]:
+                  - generic [ref=f10e353]:
+                    - generic "圆角" [ref=f10e358]:
+                      - textbox "圆角" [ref=f10e359]:
+                        - /placeholder: "--"
+                        - text: "0"
+                    - generic "显示独立的圆角" [ref=f10e360]:
+                      - button "显示独立的圆角" [ref=f10e361]
+              - generic [ref=f10e364]:
+                - generic "裁剪内容" [ref=f10e366] [cursor=pointer]
+                - generic "在预览模式显示" [ref=f10e370] [cursor=pointer]
+            - region "Layout container section" [ref=f10e373]:
+              - generic [ref=f10e375]:
+                - generic [ref=f10e376]: 布局
+                - generic "新增布局" [ref=f10e378]:
+                  - button "新增布局" [ref=f10e379]
+            - region "填充区域" [ref=f10e382]:
+              - generic [ref=f10e384]:
+                - button "填充" [ref=f10e386] [cursor=pointer]
+                - generic "新增填充" [ref=f10e390]:
+                  - button "新增填充" [ref=f10e391]
+              - generic [ref=f10e394]:
+                - generic [ref=f10e395]:
+                  - generic [ref=f10e398]:
+                    - generic "解析值：#ffffff" [ref=f10e400]:
+                      - button "解析值：#ffffff" [ref=f10e401] [cursor=pointer]
+                    - 'generic "名称: color.neutral.white" [ref=f10e405]':
+                      - 'generic "名称: color.neutral.white" [ref=f10e406]': color.neutral.white
+                  - generic "移除颜色" [ref=f10e407]:
+                    - button "移除颜色" [ref=f10e408]
+                - generic [ref=f10e411] [cursor=pointer]:
+                  - text: 在导出中显示
+                  - checkbox "在导出中显示" [checked]
+            - region "Stroke section" [ref=f10e415]:
+              - generic [ref=f10e417]:
+                - generic [ref=f10e418]: 描边
+                - generic "新增描边颜色" [ref=f10e419]:
+                  - button "新增描边颜色" [ref=f10e420]
+            - region "颜色选择区域" [ref=f10e423]:
+              - generic [ref=f10e424]: 已选颜色
+              - generic [ref=f10e428]:
+                - generic [ref=f10e429]:
+                  - generic [ref=f10e431]:
+                    - generic "解析值：#ffffff" [ref=f10e433]:
+                      - button "解析值：#ffffff" [ref=f10e434] [cursor=pointer]
+                    - 'generic "名称: color.neutral.white" [ref=f10e438]':
+                      - 'generic "名称: color.neutral.white" [ref=f10e439]': color.neutral.white
+                  - generic "选择使用此样式的项目" [ref=f10e440]:
+                    - button "选择使用此样式的项目" [ref=f10e441]
+                - generic [ref=f10e444]:
+                  - generic [ref=f10e446]:
+                    - generic "解析值：#2d3d31" [ref=f10e448]:
+                      - button "解析值：#2d3d31" [ref=f10e449] [cursor=pointer]
+                    - 'generic "名称: color.text.primary" [ref=f10e453]':
+                      - 'generic "名称: color.text.primary" [ref=f10e454]': color.text.primary
+                  - generic "选择使用此样式的项目" [ref=f10e455]:
+                    - button "选择使用此样式的项目" [ref=f10e456]
+                - generic [ref=f10e459]:
+                  - generic [ref=f10e461]:
+                    - generic "解析值：#5e6d5c" [ref=f10e463]:
+                      - button "解析值：#5e6d5c" [ref=f10e464] [cursor=pointer]
+                    - 'generic "名称: color.text.secondary" [ref=f10e468]':
+                      - 'generic "名称: color.text.secondary" [ref=f10e469]': color.text.secondary
+                  - generic "选择使用此样式的项目" [ref=f10e470]:
+                    - button "选择使用此样式的项目" [ref=f10e471]
+                - button "更多颜色令牌" [ref=f10e474] [cursor=pointer]
+            - generic [ref=f10e477]:
+              - generic [ref=f10e478]: 阴影
+              - generic "新增阴影" [ref=f10e479]:
+                - button "新增阴影" [ref=f10e480]
+            - region "模糊" [ref=f10e483]:
+              - generic [ref=f10e485]:
+                - generic [ref=f10e486]: 模糊
+                - generic "新增模糊" [ref=f10e487]:
+                  - button "新增模糊" [ref=f10e488]
+            - generic [ref=f10e493]:
+              - generic [ref=f10e494]: 参考线
+              - generic "添加参考线" [ref=f10e495]:
+                - button "添加参考线" [ref=f10e496]
+            - generic [ref=f10e501]:
+              - generic [ref=f10e502]: 导出
+              - generic "新增导出" [ref=f10e503]:
+                - button "新增导出" [ref=f10e504]
+  - generic "Tailwind generator":
+    - generic [ref=f10e508]:
+      - generic [ref=f10e509]:
+        - heading "Tailwind generator" [level=1] [ref=f10e510]
+        - button [ref=f10e511] [cursor=pointer]
+      - iframe [ref=f10e520]:
+        - generic [ref=f14e3]:
+          - generic [ref=f14e4]: <div class="absolute top-[0px] left-[1510px] w-[1920px] h-[1080px] bg-white"> <div class="text-[#2d3d31] font-bold text-2xl leading-[1.2] absolute top-[102px] left-[64px] w-[1174px] h-[34px]"> 配装结果 </div> <div class="text-[#5e6d5c] font-medium text-sm leading-[1.2] absolute top-[144px] left-[64px] w-[1404px] h-[23px]"> 目标值 47.7706626（每秒每威力伤害期望） · 用时 25.3 秒 </div> <div class="absolute top-[180px] left-[64px] w-[271px] h-[88px] bg-white rounded-[10px] border-1 border-[#dce3d7]"></div> <div class="text-[#5e6d5c] font-medium text-xs leading-[1.2] absolute top-[193px] left-[79px] w-[245px] h-[20px]"> 每威力伤害期望 </div> <div class="text-[#2d3d31] font-semibold text-2xl leading-[1.2] absolute top-[219px] left-[79px] w-[245px] h-[34px]"> 95.5413252 </div> <div class="absolute top-[180px] left-[347px] w-[271px] h-[88px] bg-white rounded-[10px] border-1 border-[#dce3d7]"></div> <div class="text-[#5e6d5c] font-medium text-xs leading-[1.2] absolute top-[193px] left-[362px] w-[245px] h-[20px]"> GCD </div> <div class="text-[#2d3d31] font-semibold text-2xl leading-[1.2] absolute top-[219px] left-[362px] w-[245px] h-[34px]"> 2.00 秒 </div> <div class="absolute top-[180px] left-[630px] w-[271px] h-[88px] bg-white rounded-[10px] border-1 border-[#dce3d7]"></div> <div class="text-[#5e6d5c] font-medium text-xs leading-[1.2] absolute top-[193px] left-[645px] w-[245px] h-[20px]"> 暴击率 </div> <div class="text-[#2d3d31] font-semibold text-2xl leading-[1.2] absolute top-[219px] left-[645px] w-[245px] h-[34px]"> 28.3% </div> <div class="absolute top-[180px] left-[914px] w-[271px] h-[88px] bg-white rounded-[10px] border-1 border-[#dce3d7]"></div> <div class="text-[#5e6d5c] font-medium text-xs leading-[1.2] absolute top-[193px] left-[929px] w-[245px] h-[20px]"> 直击率 </div> <div class="text-[#2d3d31] font-semibold text-2xl leading-[1.2] absolute top-[219px] left-[929px] w-[245px] h-[34px]"> 16.2% </div> <div class="absolute top-[180px] left-[1197px] w-[271px] h-[88px] bg-[#eef2ea] rounded-[10px] border-1 border-[#dce3d7]"></div> <div class="absolute top-[180px] left-[1197px] w-[4px] h-[88px] bg-[#708e3c] rounded-sm"></div> <div class="text-[#5e6d5c] font-medium text-xs leading-[1.2] absolute top-[193px] left-[1212px] w-[245px] h-[20px]"> 每秒每威力伤害期望 </div> <div class="text-[#2d3d31] font-bold text-2xl leading-[1.2] absolute top-[219px] left-[1212px] w-[245px] h-[34px]"> 47.7706626 </div> <div class="text-[#2d3d31] font-bold text-lg leading-[1.2] absolute top-[288px] left-[64px] w-[180px] h-[28px]"> 推荐配装 </div> <div class="absolute top-[323px] left-[64px] w-[1404px] h-[744px] bg-white rounded-[10px] border-1 border-[#dce3d7]"></div> <div class="absolute top-[323px] left-[64px] w-[1404px] h-[42px] bg-[#eef2ea] rounded-[10px]"></div> <div class="absolute top-[1013px] left-[65px] w-[1402px] h-[54px] bg-[#eef2ea]"></div> <div class="absolute top-[357px] left-[64px] w-[1404px] h-[8px] bg-[#eef2ea]"></div> <div class="text-[#5e6d5c] font-semibold text-sm leading-[1.2] absolute top-[325px] left-[78px] w-[75px] h-[38px]"> 部位 </div> <div class="text-[#5e6d5c] font-semibold text-sm leading-[1.2] absolute top-[325px] left-[157px] w-[269px] h-[38px]"> 装备名称 </div> <div class="text-[#5e6d5c] font-semibold text-sm leading-[1.2] absolute top-[325px] left-[432px] w-[145px] h-[38px]"> 来源 </div> <div class="text-[#5e6d5c] font-semibold text-sm leading-[1.2] absolute top-[325px] left-[583px] w-[60px] h-[38px]"> 品级 </div> <div class="text-[#5e6d5c] font-semibold text-center text-sm leading-[1.2] absolute top-[325px] left-[1025px] w-[66px] h-[38px]"> 力量 </div> <div class="text-[#5e6d5c] font-semibold text-center text-sm leading-[1.2] absolute top-[325px] left-[1383px] w-[66px] h-[38px]"> 耐力 </div> <div class="text-[#5e6d5c] font-semibold text-center text-sm leading-[1.2] absolute top-[325px] left-[1096px] w-[66px] h-[38px]"> 暴击 </div> <div class="text-[#5e6d5c] font-semibold text-center text-sm leading-[1.2] absolute top-[325px] left-[1168px] w-[66px] h-[38px]"> 信念 </div> <div class="text-[#5e6d5c] font-semibold text-center text-sm leading-[1.2] absolute top-[325px] left-[1240px] w-[66px] h-[38px]"> 直击 </div> <div class="text-[#5e6d5c] font-semibold text-center text-sm leading-[1.2] absolute top-[325px] left-[1311px] w-[66px] h-[38px]"> 技速 </div> <div class="text-[#5e6d5c] font-semibold text-sm leading-[1.2] absolute top-[325px] left-[649px] w-[370px] h-[38px]"> 魔晶石 / 生效属性 </div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[368px] left-[78px] w-[75px] h-[46px]"> 武器 </div> <div class="text-[#2d3d31] font-semibold text-sm leading-[1.2] absolute top-[372px] left-[157px] w-[269px] h-[21px]"> 幻境武士刀·秘影 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[394px] left-[157px] w-[269px] h-[17px]"> 物理基本性能 158 · 攻击间隔 2.64 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[368px] left-[432px] w-[145px] h-[46px]"> 幻境武器 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[368px] left-[583px] w-[60px] h-[46px]"> 795 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[1016px] left-[583px] w-[60px] h-[46px]"> 790 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[368px] left-[1025px] w-[66px] h-[46px]"> 847 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[368px] left-[1383px] w-[66px] h-[46px]"> 943 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[368px] left-[1096px] w-[66px] h-[46px]"> 447 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[368px] left-[1168px] w-[66px] h-[46px]"> 108 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[368px] left-[1240px] w-[66px] h-[46px]"> — </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[368px] left-[1311px] w-[66px] h-[46px]"> 447 </div> <div class="absolute top-[419px] left-[65px] w-[1402px] h-[54px] bg-[#f8f9f5]"></div> <div class="absolute top-[419px] left-[74px] w-[1384px] h-[1px] bg-[#eef2ea]"></div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[422px] left-[78px] w-[75px] h-[46px]"> 头部 </div> <div class="text-[#2d3d31] font-semibold text-sm leading-[1.2] absolute top-[422px] left-[157px] w-[269px] h-[46px]"> 改良型王国黄铜强袭鸭舌帽 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[422px] left-[432px] w-[145px] h-[46px]"> 点数强化/记忆 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[422px] left-[583px] w-[60px] h-[46px]"> 790 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[422px] left-[1025px] w-[66px] h-[46px]"> 510 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[422px] left-[1383px] w-[66px] h-[46px]"> 572 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[422px] left-[1096px] w-[66px] h-[46px]"> 269 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[422px] left-[1168px] w-[66px] h-[46px]"> — </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[422px] left-[1240px] w-[66px] h-[46px]"> 54 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[422px] left-[1311px] w-[66px] h-[46px]"> 242 </div> <div class="absolute top-[473px] left-[74px] w-[1384px] h-[1px] bg-[#eef2ea]"></div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[476px] left-[78px] w-[75px] h-[46px]"> 身体 </div> <div class="text-[#2d3d31] font-semibold text-sm leading-[1.2] absolute top-[476px] left-[157px] w-[269px] h-[46px]"> 改良型王国黄铜强袭短衣 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[476px] left-[432px] w-[145px] h-[46px]"> 点数强化/记忆 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[476px] left-[583px] w-[60px] h-[46px]"> 790 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[476px] left-[1025px] w-[66px] h-[46px]"> 810 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[476px] left-[1383px] w-[66px] h-[46px]"> 908 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[476px] left-[1096px] w-[66px] h-[46px]"> 427 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[476px] left-[1168px] w-[66px] h-[46px]"> 353 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[476px] left-[1240px] w-[66px] h-[46px]"> 54 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[476px] left-[1311px] w-[66px] h-[46px]"> — </div> <div class="absolute top-[527px] left-[65px] w-[1402px] h-[54px] bg-[#f8f9f5]"></div> <div class="absolute top-[527px] left-[74px] w-[1384px] h-[1px] bg-[#eef2ea]"></div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[530px] left-[78px] w-[75px] h-[46px]"> 手部 </div> <div class="text-[#2d3d31] font-semibold text-sm leading-[1.2] absolute top-[530px] left-[157px] w-[269px] h-[46px]"> 总冠军强袭手套 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[530px] left-[432px] w-[145px] h-[46px]"> 零式/重量级 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[530px] left-[583px] w-[60px] h-[46px]"> 790 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[530px] left-[1025px] w-[66px] h-[46px]"> 510 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[530px] left-[1383px] w-[66px] h-[46px]"> 572 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[530px] left-[1096px] w-[66px] h-[46px]"> 242 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[530px] left-[1168px] w-[66px] h-[46px]"> 269 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[530px] left-[1240px] w-[66px] h-[46px]"> — </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[530px] left-[1311px] w-[66px] h-[46px]"> 54 </div> <div class="absolute top-[581px] left-[74px] w-[1384px] h-[1px] bg-[#eef2ea]"></div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[584px] left-[78px] w-[75px] h-[46px]"> 腿部 </div> <div class="text-[#2d3d31] font-semibold text-sm leading-[1.2] absolute top-[584px] left-[157px] w-[269px] h-[46px]"> 总冠军强袭骑兵裤 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[584px] left-[432px] w-[145px] h-[46px]"> 零式/重量级 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[584px] left-[583px] w-[60px] h-[46px]"> 790 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[584px] left-[1025px] w-[66px] h-[46px]"> 810 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[584px] left-[1383px] w-[66px] h-[46px]"> 908 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[584px] left-[1096px] w-[66px] h-[46px]"> 427 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[584px] left-[1168px] w-[66px] h-[46px]"> — </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[584px] left-[1240px] w-[66px] h-[46px]"> 299 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[584px] left-[1311px] w-[66px] h-[46px]"> 108 </div> <div class="absolute top-[635px] left-[65px] w-[1402px] h-[54px] bg-[#f8f9f5]"></div> <div class="absolute top-[635px] left-[74px] w-[1384px] h-[1px] bg-[#eef2ea]"></div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[638px] left-[78px] w-[75px] h-[46px]"> 脚部 </div> <div class="text-[#2d3d31] font-semibold text-sm leading-[1.2] absolute top-[638px] left-[157px] w-[269px] h-[46px]"> 总冠军强袭铠靴 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[638px] left-[432px] w-[145px] h-[46px]"> 零式/重量级 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[638px] left-[583px] w-[60px] h-[46px]"> 790 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[638px] left-[1025px] w-[66px] h-[46px]"> 510 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[638px] left-[1383px] w-[66px] h-[46px]"> 572 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[638px] left-[1096px] w-[66px] h-[46px]"> 242 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[638px] left-[1168px] w-[66px] h-[46px]"> — </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[638px] left-[1240px] w-[66px] h-[46px]"> 54 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[638px] left-[1311px] w-[66px] h-[46px]"> 269 </div> <div class="absolute top-[689px] left-[74px] w-[1384px] h-[1px] bg-[#eef2ea]"></div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[692px] left-[78px] w-[75px] h-[46px]"> 耳坠 </div> <div class="text-[#2d3d31] font-semibold text-sm leading-[1.2] absolute top-[692px] left-[157px] w-[269px] h-[46px]"> 改良型王国黄铜强攻耳坠 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[692px] left-[432px] w-[145px] h-[46px]"> 点数强化/记忆 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[692px] left-[583px] w-[60px] h-[46px]"> 790 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[692px] left-[1025px] w-[66px] h-[46px]"> 402 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[692px] left-[1383px] w-[66px] h-[46px]"> 451 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[692px] left-[1096px] w-[66px] h-[46px]"> 202 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[692px] left-[1168px] w-[66px] h-[46px]"> — </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[692px] left-[1240px] w-[66px] h-[46px]"> 212 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[692px] left-[1311px] w-[66px] h-[46px]"> 54 </div> <div class="absolute top-[743px] left-[65px] w-[1402px] h-[54px] bg-[#f8f9f5]"></div> <div class="absolute top-[743px] left-[74px] w-[1384px] h-[1px] bg-[#eef2ea]"></div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[746px] left-[78px] w-[75px] h-[46px]"> 项链 </div> <div class="text-[#2d3d31] font-semibold text-sm leading-[1.2] absolute top-[746px] left-[157px] w-[269px] h-[46px]"> 总冠军强攻项环 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[746px] left-[432px] w-[145px] h-[46px]"> 零式/重量级 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[746px] left-[583px] w-[60px] h-[46px]"> 790 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[746px] left-[1025px] w-[66px] h-[46px]"> 402 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[746px] left-[1383px] w-[66px] h-[46px]"> 451 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[746px] left-[1096px] w-[66px] h-[46px]"> 212 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[746px] left-[1168px] w-[66px] h-[46px]"> 54 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[746px] left-[1240px] w-[66px] h-[46px]"> — </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[746px] left-[1311px] w-[66px] h-[46px]"> 202 </div> <div class="absolute top-[797px] left-[74px] w-[1384px] h-[1px] bg-[#eef2ea]"></div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[800px] left-[78px] w-[75px] h-[46px]"> 手镯 </div> <div class="text-[#2d3d31] font-semibold text-sm leading-[1.2] absolute top-[800px] left-[157px] w-[269px] h-[46px]"> 总冠军强攻手镯 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[800px] left-[432px] w-[145px] h-[46px]"> 零式/重量级 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[800px] left-[583px] w-[60px] h-[46px]"> 790 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[800px] left-[1025px] w-[66px] h-[46px]"> 402 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[800px] left-[1383px] w-[66px] h-[46px]"> 451 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[800px] left-[1096px] w-[66px] h-[46px]"> 212 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[800px] left-[1168px] w-[66px] h-[46px]"> 148 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[800px] left-[1240px] w-[66px] h-[46px]"> — </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[800px] left-[1311px] w-[66px] h-[46px]"> 108 </div> <div class="absolute top-[851px] left-[65px] w-[1402px] h-[54px] bg-[#f8f9f5]"></div> <div class="absolute top-[851px] left-[74px] w-[1384px] h-[1px] bg-[#eef2ea]"></div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[854px] left-[78px] w-[75px] h-[46px]"> 戒指 </div> <div class="text-[#2d3d31] font-semibold text-sm leading-[1.2] absolute top-[854px] left-[157px] w-[269px] h-[46px]"> 总冠军强攻指环 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[854px] left-[432px] w-[145px] h-[46px]"> 零式/重量级 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[854px] left-[583px] w-[60px] h-[46px]"> 790 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[854px] left-[1025px] w-[66px] h-[46px]"> 402 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[854px] left-[1383px] w-[66px] h-[46px]"> 451 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[854px] left-[1096px] w-[66px] h-[46px]"> 202 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[854px] left-[1168px] w-[66px] h-[46px]"> 212 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[854px] left-[1240px] w-[66px] h-[46px]"> — </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[854px] left-[1311px] w-[66px] h-[46px]"> 54 </div> <div class="absolute top-[905px] left-[74px] w-[1384px] h-[1px] bg-[#eef2ea]"></div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[908px] left-[78px] w-[75px] h-[46px]"> 戒指 </div> <div class="text-[#2d3d31] font-semibold text-sm leading-[1.2] absolute top-[908px] left-[157px] w-[269px] h-[46px]"> 改良型王国黄铜强攻戒指 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[908px] left-[432px] w-[145px] h-[46px]"> 点数强化/记忆 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[908px] left-[583px] w-[60px] h-[46px]"> 790 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[908px] left-[1025px] w-[66px] h-[46px]"> 402 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[908px] left-[1383px] w-[66px] h-[46px]"> 451 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[908px] left-[1096px] w-[66px] h-[46px]"> 212 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[908px] left-[1168px] w-[66px] h-[46px]"> 108 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[908px] left-[1240px] w-[66px] h-[46px]"> 148 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[908px] left-[1311px] w-[66px] h-[46px]"> — </div> <div class="absolute top-[959px] left-[65px] w-[1402px] h-[54px] bg-[#f8f9f5]"></div> <div class="absolute top-[959px] left-[65px] w-[1402px] h-[54px] bg-[#fbf3e5]"></div> <div class="absolute top-[959px] left-[74px] w-[1384px] h-[1px] bg-[#eef2ea]"></div> <div class="absolute top-[1013px] left-[74px] w-[1384px] h-[1px] bg-[#eef2ea]"></div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[962px] left-[78px] w-[75px] h-[46px]"> 食物 </div> <div class="text-[#2d3d31] font-bold text-sm leading-[1.2] absolute top-[963px] left-[157px] w-[269px] h-[46px]"> 烤干酪辣味玉米片 </div> <div class="text-[#5e6d5c] text-xs leading-[1.2] absolute top-[962px] left-[432px] w-[145px] h-[46px]"> 上游食物数据 </div> <div class="text-[#2d3d31] text-sm leading-[1.2] absolute top-[962px] left-[583px] w-[60px] h-[46px]"> 770 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[962px] left-[1025px] w-[66px] h-[46px]"> — </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[962px] left-[1383px] w-[66px] h-[46px]"> 297 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[962px] left-[1096px] w-[66px] h-[46px]"> 151 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[962px] left-[1168px] w-[66px] h-[46px]"> — </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[962px] left-[1240px] w-[66px] h-[46px]"> — </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[962px] left-[1311px] w-[66px] h-[46px]"> 91 </div> <div class="absolute top-[278px] left-[64px] w-[1404px] h-[1px] bg-[#eef2ea]"></div> <div class="absolute top-[379px] left-[649px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[379px] left-[652px] w-[62px] h-[24px]"> 武略+447 </div> <div class="absolute top-[379px] left-[722px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[379px] left-[725px] w-[62px] h-[24px]"> 战技+447 </div> <div class="absolute top-[379px] left-[795px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[379px] left-[798px] w-[62px] h-[24px]"> 雄略+108 </div> <div class="absolute top-[433px] left-[649px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[433px] left-[652px] w-[62px] h-[24px]"> 神眼+54 </div> <div class="absolute top-[433px] left-[722px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[433px] left-[725px] w-[62px] h-[24px]"> 战技+54 </div> <div class="absolute top-[487px] left-[649px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[487px] left-[652px] w-[62px] h-[24px]"> 雄略+54 </div> <div class="absolute top-[487px] left-[722px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[487px] left-[725px] w-[62px] h-[24px]"> 神眼+54 </div> <div class="absolute top-[541px] left-[649px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[541px] left-[652px] w-[62px] h-[24px]"> 武略+54 </div> <div class="absolute top-[541px] left-[722px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[541px] left-[725px] w-[62px] h-[24px]"> 战技+54 </div> <div class="absolute top-[595px] left-[649px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[595px] left-[652px] w-[62px] h-[24px]"> 战技+54 </div> <div class="absolute top-[595px] left-[722px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[595px] left-[725px] w-[62px] h-[24px]"> 战技+54 </div> <div class="absolute top-[649px] left-[649px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[649px] left-[652px] w-[62px] h-[24px]"> 武略+54 </div> <div class="absolute top-[649px] left-[722px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[649px] left-[725px] w-[62px] h-[24px]"> 神眼+54 </div> <div class="absolute top-[703px] left-[649px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[703px] left-[652px] w-[62px] h-[24px]"> 武略+54 </div> <div class="absolute top-[703px] left-[722px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[703px] left-[725px] w-[62px] h-[24px]"> 战技+54 </div> <div class="absolute top-[757px] left-[649px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[757px] left-[652px] w-[62px] h-[24px]"> 雄略+54 </div> <div class="absolute top-[757px] left-[722px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[757px] left-[725px] w-[62px] h-[24px]"> 战技+54 </div> <div class="absolute top-[811px] left-[649px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[811px] left-[652px] w-[62px] h-[24px]"> 战技+54 </div> <div class="absolute top-[811px] left-[722px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[811px] left-[725px] w-[62px] h-[24px]"> 战技+54 </div> <div class="absolute top-[865px] left-[649px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[865px] left-[652px] w-[62px] h-[24px]"> 武略+54 </div> <div class="absolute top-[865px] left-[722px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[865px] left-[725px] w-[62px] h-[24px]"> 战技+54 </div> <div class="absolute top-[919px] left-[649px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[919px] left-[652px] w-[62px] h-[24px]"> 雄略+54 </div> <div class="absolute top-[919px] left-[722px] w-[68px] h-[24px] bg-[#eaf1ec] rounded-[5px] border-1 border-[#dce3d7]"></div> <div class="text-[#2d3d31] font-semibold text-center text-xs leading-[1.2] absolute top-[919px] left-[725px] w-[62px] h-[24px]"> 雄略+54 </div> <div class="absolute top-[433px] left-[795px] w-[68px] h-[24px] bg-[#fbeaec] rounded-[5px] border-1 border-[#e3aab3]"></div> <div class="text-[#a94350] font-semibold text-center text-xs leading-[1.2] absolute top-[433px] left-[798px] w-[62px] h-[24px]"> 雄略+54 </div> <div class="absolute top-[433px] left-[868px] w-[68px] h-[24px] bg-[#fbeaec] rounded-[5px] border-1 border-[#e3aab3]"></div> <div class="text-[#a94350] font-semibold text-center text-xs leading-[1.2] absolute top-[433px] left-[871px] w-[62px] h-[24px]"> 神眼+54 </div> <div class="absolute top-[433px] left-[941px] w-[68px] h-[24px] bg-[#fbeaec] rounded-[5px] border-1 border-[#e3aab3]"></div> <div class="text-[#a94350] font-semibold text-center text-xs leading-[1.2] absolute top-[433px] left-[944px] w-[62px] h-[24px]"> 战技+54 </div> <div class="absolute top-[287px] left-[1294px] w-[174px] h-[30px] bg-white rounded-md border-1 border-[#dce3d7]"></div> <div class="text-[#087f80] font-semibold text-center text-sm leading-[1.2] absolute top-[287px] left-[1306px] w-[126px] h-[30px]"> 在配装器打开 </div> <div class="absolute top-[296px] left-[1441px] w-[10px] h-[1px] bg-[#087f80]"></div> <div class="absolute top-[301px] left-[1441px] w-[10px] h-[2px] bg-[#087f80]"></div> <div class="rounded-[100%] absolute top-[300px] left-[1439px] size-[5px] bg-[#087f80]"></div> <div class="rounded-[100%] absolute top-[295px] left-[1448px] size-[5px] bg-[#087f80]"></div> <div class="rounded-[100%] absolute top-[305px] left-[1448px] size-[5px] bg-[#087f80]"></div> <div class="flex flex-col-reverse grid items-start justify-start justify-items-start absolute top-[72px] left-[1560px] w-[360px] h-[1008px] bg-[#f8f9f5]"> <div class="flex flex-col-reverse grid items-start justify-end absolute top-[3px] bottom-[-4px] left-[0px] right-[0px] w-full h-[1008px]"> <img src="https://picsum.photos/360/1008" class="relative size-full"/> </div> <div class="flex flex-col grid pt-2 items-center justify-start mx-6 size-full"> <div class="flex flex-col grid items-start justify-start w-[312px] h-[54px]"> <div class="text-[#708e3c] font-bold text-[10px] leading-[1.2] relative w-[312px] h-[15px]"> 最优结果 </div> <div class="text-[#2d3d31] font-bold text-lg leading-[1.2] relative mt-[2px] w-[312px] h-[28px]"> 武士 </div> <div class="relative mt-2 w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="text-[#2d3d31] font-bold text-xs leading-[1.2] relative mt-[10px] w-[312px] h-[18px]"> 伤害与防御 </div> <div class="flex flex-col grid items-start justify-start mt-[6px] w-[312px] h-[60px]"> <div class="flex flex-col grid items-start justify-start w-[312px] h-[20px]"> <div class="flex grid gap-x-[6px] items-center justify-between mb-[1px] w-[312px] h-[18px]"> <div class="flex grid items-center justify-between mb-[1px] w-[153px] h-[18px]"> <div class="text-[#2d3d31] font-medium text-[10px] leading-[1.2] relative w-[72px] h-[18px]"> 暴击伤害 </div> <div class="text-[#708e3c] font-medium text-right text-[10px] leading-[1.2] relative w-[46px] h-[18px]"> 163.3% </div> </div> <div class="flex grid items-center justify-between mb-[1px] w-[153px] h-[18px]"> <div class="text-[#2d3d31] font-medium text-[10px] leading-[1.2] relative w-[72px] h-[18px]"> 信念加成 </div> <div class="text-[#708e3c] font-medium text-right text-[10px] leading-[1.2] relative w-[46px] h-[18px]"> 6.30% </div> </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[20px]"> <div class="flex grid gap-x-[6px] items-center justify-between mb-[1px] w-[312px] h-[18px]"> <div class="flex grid items-center justify-between mb-[1px] w-[153px] h-[18px]"> <div class="text-[#2d3d31] font-medium text-[10px] leading-[1.2] relative w-[72px] h-[18px]"> 坚韧伤害加成 </div> <div class="text-[#708e3c] font-medium text-right text-[10px] leading-[1.2] relative w-[46px] h-[18px]"> 100.00% </div> </div> <div class="flex grid items-center justify-between mb-[1px] w-[153px] h-[18px]"> <div class="text-[#2d3d31] font-medium text-[10px] leading-[1.2] relative w-[72px] h-[18px]"> 坚韧减伤 </div> <div class="text-[#708e3c] font-medium text-right text-[10px] leading-[1.2] relative w-[46px] h-[18px]"> 0.00% </div> </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[20px]"> <div class="flex grid gap-x-[6px] items-center justify-between mb-[1px] w-[312px] h-[18px]"> <div class="flex grid items-center justify-between mb-[1px] w-[312px] h-[18px]"> <div class="text-[#2d3d31] font-medium text-[10px] leading-[1.2] relative w-[72px] h-[18px]"> 生命值 </div> <div class="text-[#708e3c] font-medium text-right text-[10px] leading-[1.2] relative w-[46px] h-[18px]"> 215,872 </div> </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> </div> <div class="text-[#2d3d31] font-bold text-xs leading-[1.2] relative mt-[11px] w-[312px] h-[18px]"> 搜索条件与限制 </div> <div class="flex flex-col grid items-start justify-start mt-[3px] w-[312px] h-[288px]"> <div class="flex flex-col grid items-start justify-start w-[312px] h-[24px]"> <div class="flex grid gap-x-[3px] items-center justify-start mb-[1px] w-[312px] h-[22px]"> <div class="text-[#5e6d5c] text-[10px] leading-[1.2] relative w-[79px] h-[22px]"> 优化指标 </div> <div class="text-[#2d3d31] font-medium text-right text-[10px] leading-[1.2] relative w-[230px] h-[22px]"> 每秒每威力伤害期望 </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[24px]"> <div class="flex grid gap-x-[3px] items-center justify-start mb-[1px] w-[312px] h-[22px]"> <div class="text-[#5e6d5c] text-[10px] leading-[1.2] relative w-[79px] h-[22px]"> 装备品级 </div> <div class="text-[#2d3d31] font-medium text-right text-[10px] leading-[1.2] relative w-[230px] h-[22px]"> 780–795 </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[24px]"> <div class="flex grid gap-x-[3px] items-center justify-start mb-[1px] w-[312px] h-[22px]"> <div class="text-[#5e6d5c] text-[10px] leading-[1.2] relative w-[79px] h-[22px]"> 同步品级 </div> <div class="text-[#2d3d31] font-medium text-right text-[10px] leading-[1.2] relative w-[230px] h-[22px]"> 未启用 </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[24px]"> <div class="flex grid gap-x-[3px] items-center justify-start mb-[1px] w-[312px] h-[22px]"> <div class="text-[#5e6d5c] text-[10px] leading-[1.2] relative w-[79px] h-[22px]"> GCD </div> <div class="text-[#2d3d31] font-medium text-right text-[10px] leading-[1.2] relative w-[230px] h-[22px]"> 不限 </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[24px]"> <div class="flex grid gap-x-[3px] items-center justify-start mb-[1px] w-[312px] h-[22px]"> <div class="text-[#5e6d5c] text-[10px] leading-[1.2] relative w-[79px] h-[22px]"> 技速范围 </div> <div class="text-[#2d3d31] font-medium text-right text-[10px] leading-[1.2] relative w-[230px] h-[22px]"> 不限 </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[24px]"> <div class="flex grid gap-x-[3px] items-center justify-start mb-[1px] w-[312px] h-[22px]"> <div class="text-[#5e6d5c] text-[10px] leading-[1.2] relative w-[79px] h-[22px]"> 坚韧约束 </div> <div class="text-[#2d3d31] font-medium text-right text-[10px] leading-[1.2] relative w-[230px] h-[22px]"> 不限 </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[24px]"> <div class="flex grid gap-x-[3px] items-center justify-start mb-[1px] w-[312px] h-[22px]"> <div class="text-[#5e6d5c] text-[10px] leading-[1.2] relative w-[79px] h-[22px]"> 食物 </div> <div class="text-[#2d3d31] font-medium text-right text-[10px] leading-[1.2] relative w-[230px] h-[22px]"> 自动选择 </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[24px]"> <div class="flex grid items-center justify-between mb-[1px] w-[312px] h-[22px]"> <div class="text-[#2d3d31] font-medium text-[10px] leading-[1.2] relative w-[79px] h-[22px]"> 来源限制 </div> <div class="text-[#708e3c] font-medium text-right text-[10px] leading-[1.2] relative w-[230px] h-[22px]"> 不限 </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[24px]"> <div class="flex grid items-center justify-between mb-[1px] w-[312px] h-[22px]"> <div class="text-[#2d3d31] font-medium text-[10px] leading-[1.2] relative w-[79px] h-[22px]"> 强制装备 </div> <div class="text-[#708e3c] font-medium text-right text-[10px] leading-[1.2] relative w-[230px] h-[22px]"> 不限 </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[24px]"> <div class="flex grid items-center justify-between mb-[1px] w-[312px] h-[22px]"> <div class="text-[#2d3d31] font-medium text-[10px] leading-[1.2] relative w-[79px] h-[22px]"> 排除装备 </div> <div class="text-[#708e3c] font-medium text-right text-[10px] leading-[1.2] relative w-[230px] h-[22px]"> 不限 </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[24px]"> <div class="flex grid gap-x-[3px] items-center justify-start mb-[1px] w-[312px] h-[22px]"> <div class="text-[#5e6d5c] text-[10px] leading-[1.2] relative w-[79px] h-[22px]"> 数据版本 </div> <div class="text-[#2d3d31] font-medium text-right text-[10px] leading-[1.2] relative w-[230px] h-[22px]"> 2026.09.15.0000.0000 </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[312px] h-[24px]"> <div class="flex grid gap-x-[3px] items-center justify-start mb-[1px] w-[312px] h-[22px]"> <div class="text-[#5e6d5c] text-[10px] leading-[1.2] relative w-[79px] h-[22px]"> 搜索时间 </div> <div class="text-[#2d3d31] font-medium text-right text-[10px] leading-[1.2] relative w-[230px] h-[22px]"> 2026/10/4 22:09:08 </div> </div> <div class="relative w-[312px] h-[1px] bg-[#9eac98]"></div> </div> </div> </div> <div class="relative w-full h-[3px] bg-[#708e3c]"></div> </div> <div class="text-[#2d3d31] text-xs leading-[1.2] absolute top-[1016px] left-[78px] w-[75px] h-[46px]"> 总属性 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[1016px] left-[1025px] w-[66px] h-[46px]"> 6,501 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[1016px] left-[1096px] w-[66px] h-[46px]"> 3,665 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[1016px] left-[1168px] w-[66px] h-[46px]"> 1,692 </div> <div class="text-[#2d3d31] text-center text-sm leading-[1.2] absolute top-[1016px] left-[1240px] w-[66px] h-[46px]"> 1,241 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[1016px] left-[1311px] w-[66px] h-[46px]"> 2,049 </div> <div class="text-[#2d3d31] font-bold text-center text-sm leading-[1.2] absolute top-[1016px] left-[1383px] w-[66px] h-[46px]"> 7,467 </div> <div class="flex grid pl-[30px] pr-[38px] items-center justify-between absolute top-[0px] left-[0px] w-[1920px] h-[72px] bg-[#1c2e3e]"> <div class="flex grid gap-x-3 items-center justify-start w-[174px] h-[44px]"> <div class="flex grid items-center justify-center size-[40px] bg-[#a4dcd9] rounded-[20px]"> <div class="flex grid items-center justify-center size-[36px] bg-[#1c2e3e] rounded-[18px]"> <div class="text-[#a4dcd9] font-medium text-center text-2xl leading-[1.2] relative size-[40px]"> ✧ </div> </div> </div> <div class="flex flex-col grid gap-y-[1px] items-start justify-start w-[124px] h-[46px]"> <div class="text-[#a4dcd9] font-bold text-2xl leading-[1.2] relative w-[123px] h-[29px]"> 青瓷分析台 </div> <div class="text-[#c7d5df] text-[10px] leading-[1.2] relative ml-[1px] w-[114px] h-[17px]"> 最终幻想14 配装优化工具 </div> </div> </div> <div class="flex grid gap-x-3 items-start justify-start ml-17 w-[324px] h-[72px]"> <div class="flex flex-col grid justify-start w-[146px] h-[72px] bg-[#1c2e3e]"> <div class="text-white font-semibold text-center text-sm leading-[1.2] relative w-[146px] h-[68px]"> 单职业配装 </div> <div class="relative w-[146px] h-[4px] bg-[#51c4bd]"></div> </div> <div class="flex flex-col grid items-start justify-start w-[166px] h-[72px]"> <div class="text-[#c7d5df] text-center text-sm leading-[1.2] relative w-[166px] h-[68px]"> 多职业联合搜索 </div> </div> </div> <div class="flex grid items-center justify-start ml-[479px] w-[334px] h-[34px]"> <div class="flex grid gap-x-[10px] items-center justify-start mr-2 w-[274px] h-[26px]"> <div class="flex grid items-center justify-center size-[9px] bg-[#405540] rounded-[4.5px]"> <div class="relative size-[5px] bg-[#b8dc67] rounded-[2.5px]"></div> </div> <div class="text-[#c7d5df] text-[10px] leading-[1.2] relative w-[255px] h-[26px]"> 数据版本 2026.09.15.0000.0000 </div> </div> <div class="relative mr-[9px] w-[1px] h-[20px] bg-[#435461]"></div> <div class="text-[#c7d5df] text-center text-2xl leading-[1.2] relative w-[42px] h-[34px]"> ↻ </div> </div> </div></div>
+          - button [ref=f14e5] [cursor=pointer]

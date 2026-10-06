@@ -1,0 +1,76 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [aria-hidden] [ref=e7]: ✧
+      - generic [ref=e8]:
+        - generic [ref=e9]: 青瓷分析台
+        - generic [ref=e10]: 最终幻想14 配装优化工具
+    - navigation "搜索页面" [ref=e11]:
+      - link "单职业配装" [ref=e12] [cursor=pointer]:
+        - /url: "#/single"
+      - link "多职业联合搜索" [ref=e13] [cursor=pointer]:
+        - /url: "#/joint"
+    - generic [ref=e14]:
+      - generic [ref=e16]: 数据版本 2026.09.15.0000.0000
+      - button "重置当前页面配置" [ref=e18] [cursor=pointer]
+  - main [ref=e22]:
+    - generic [ref=e172]:
+      - main [ref=e173]:
+        - generic [ref=e175]:
+          - paragraph [ref=e176]: 单职业配装搜索
+          - heading "骑士" [level=1] [ref=e177]
+        - list "搜索阶段" [ref=e178]:
+          - listitem [ref=e179]:
+            - generic [aria-hidden] [ref=e180]: "1"
+            - generic [ref=e181]: 准备候选与搜索模型
+          - listitem [ref=e182]:
+            - generic [aria-hidden] [ref=e183]: "2"
+            - generic [ref=e184]: 求解并搜索配装
+          - listitem [ref=e185]:
+            - generic [aria-hidden] [ref=e186]: "3"
+            - generic [ref=e187]: 核验候选与最优性
+        - generic [ref=e188]:
+          - paragraph [ref=e189]: 正在准备候选与搜索模型
+          - paragraph [ref=e190]: 已用时 00:06
+      - complementary "搜索条件摘要" [ref=e191]:
+        - generic [ref=e193]:
+          - generic [ref=e195]:
+            - paragraph [ref=e196]: 搜索条件
+            - heading "骑士" [level=2] [ref=e197]
+          - generic [ref=e198]:
+            - heading "搜索条件" [level=3] [ref=e199]
+            - generic [ref=e200]:
+              - generic [ref=e201]:
+                - term [ref=e202]: 优化指标
+                - definition [ref=e203]: 每秒每威力伤害期望
+              - generic [ref=e204]:
+                - term [ref=e205]: 装备品级
+                - definition [ref=e206]: 780–795
+              - generic [ref=e207]:
+                - term [ref=e208]: 同步品级
+                - definition [ref=e209]: 未启用
+              - generic [ref=e210]:
+                - term [ref=e211]: GCD
+                - definition [ref=e212]: 不限
+              - generic [ref=e213]:
+                - term [ref=e214]: 技速范围
+                - definition [ref=e215]: 不限
+              - generic [ref=e216]:
+                - term [ref=e217]: 坚韧约束
+                - definition [ref=e218]: 不限
+              - generic [ref=e219]:
+                - term [ref=e220]: 食物
+                - definition [ref=e221]: 自动选择
+            - generic [ref=e222]:
+              - button "来源限制 不限" [ref=e224] [cursor=pointer]:
+                - generic [ref=e225]: 来源限制
+                - strong [ref=e226]: 不限
+              - button "强制装备 不限" [ref=e228] [cursor=pointer]:
+                - generic [ref=e229]: 强制装备
+                - strong [ref=e230]: 不限
+              - button "排除装备 不限" [ref=e232] [cursor=pointer]:
+                - generic [ref=e233]: 排除装备
+                - strong [ref=e234]: 不限
+            - paragraph [ref=e235]: 食物、装备候选、属性上限与计算规则均来自当前项目数据。
+        - paragraph [ref=e236]: 搜索中 · 搜索结果将严格满足以上条件
+        - button "取消搜索" [ref=e237] [cursor=pointer]

@@ -1,0 +1,1270 @@
+[
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2d00a3512b",
+    "id": "cd720ada-34f1-80c0-8008-bd2d00a3512b",
+    "name": "禁忌镶嵌属性",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd2d00a3512b",
+      "type": "text",
+      "name": "禁忌镶嵌属性",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2218",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2219",
+        "$values": []
+      },
+      "x": 576.6939999999959,
+      "y": 318.5,
+      "parentIndex": 223,
+      "parentX": 576.6939999999959,
+      "parentY": 318.5,
+      "boardX": 576.6939999999959,
+      "boardY": 318.5,
+      "width": 42,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2220",
+        "x": 576.6939999999959,
+        "y": 318.5,
+        "width": 42,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2221",
+        "x": 597.6939999999959,
+        "y": 327.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2222",
+        "$values": [
+          {
+            "$id": "value-2223",
+            "fillColor": "#a94350",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2224",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2225",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2226",
+        "fill": "color.status.error",
+        "fontSize": "font.size.caption"
+      },
+      "characters": "雄略+54",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "600",
+      "fontSize": "8",
+      "fontWeight": "600",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-2227",
+        "x": 582.7252499999959,
+        "y": 321.703125,
+        "width": 29.921875,
+        "height": 11
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2d00a8dd8f",
+    "id": "cd720ada-34f1-80c0-8008-bd2d00a8dd8f",
+    "name": "禁忌镶嵌 Chip",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd2d00a8dd8f",
+      "type": "rectangle",
+      "name": "禁忌镶嵌 Chip",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 5,
+      "borderRadiusTopLeft": 5,
+      "borderRadiusTopRight": 5,
+      "borderRadiusBottomRight": 5,
+      "borderRadiusBottomLeft": 5,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2228",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2229",
+        "$values": []
+      },
+      "x": 626.6939999999959,
+      "y": 318.5,
+      "parentIndex": 224,
+      "parentX": 626.6939999999959,
+      "parentY": 318.5,
+      "boardX": 626.6939999999959,
+      "boardY": 318.5,
+      "width": 48,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2230",
+        "x": 626.6939999999959,
+        "y": 318.5,
+        "width": 48,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2231",
+        "x": 650.6939999999959,
+        "y": 327.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2232",
+        "$values": [
+          {
+            "$id": "value-2233",
+            "fillColor": "#fbeaec",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2234",
+        "$values": [
+          {
+            "$id": "value-2235",
+            "strokeColor": "#e3aab3",
+            "strokeColorRefFile": null,
+            "strokeColorRefId": null,
+            "strokeOpacity": 1,
+            "strokeStyle": "solid",
+            "strokeWidth": 1,
+            "strokeAlignment": "inner",
+            "strokeCapStart": null,
+            "strokeCapEnd": null,
+            "strokeColorGradient": null,
+            "strokeImage": null
+          }
+        ]
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2236",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2237",
+        "fill": "color.surface.error",
+        "strokeColor": "color.border.error"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2d00b45e2f",
+    "id": "cd720ada-34f1-80c0-8008-bd2d00b45e2f",
+    "name": "禁忌镶嵌属性",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd2d00b45e2f",
+      "type": "text",
+      "name": "禁忌镶嵌属性",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2238",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2239",
+        "$values": []
+      },
+      "x": 629.6939999999959,
+      "y": 318.5,
+      "parentIndex": 225,
+      "parentX": 629.6939999999959,
+      "parentY": 318.5,
+      "boardX": 629.6939999999959,
+      "boardY": 318.5,
+      "width": 42,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2240",
+        "x": 629.6939999999959,
+        "y": 318.5,
+        "width": 42,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2241",
+        "x": 650.6939999999959,
+        "y": 327.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2242",
+        "$values": [
+          {
+            "$id": "value-2243",
+            "fillColor": "#a94350",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2244",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2245",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2246",
+        "fill": "color.status.error",
+        "fontSize": "font.size.caption"
+      },
+      "characters": "神眼+54",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "600",
+      "fontSize": "8",
+      "fontWeight": "600",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-2247",
+        "x": 635.7252499999959,
+        "y": 321.703125,
+        "width": 29.921875,
+        "height": 11
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2d00b9b79c",
+    "id": "cd720ada-34f1-80c0-8008-bd2d00b9b79c",
+    "name": "禁忌镶嵌 Chip",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd2d00b9b79c",
+      "type": "rectangle",
+      "name": "禁忌镶嵌 Chip",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 5,
+      "borderRadiusTopLeft": 5,
+      "borderRadiusTopRight": 5,
+      "borderRadiusBottomRight": 5,
+      "borderRadiusBottomLeft": 5,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2248",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2249",
+        "$values": []
+      },
+      "x": 679.6939999999959,
+      "y": 318.5,
+      "parentIndex": 226,
+      "parentX": 679.6939999999959,
+      "parentY": 318.5,
+      "boardX": 679.6939999999959,
+      "boardY": 318.5,
+      "width": 48,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2250",
+        "x": 679.6939999999959,
+        "y": 318.5,
+        "width": 48,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2251",
+        "x": 703.6939999999959,
+        "y": 327.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2252",
+        "$values": [
+          {
+            "$id": "value-2253",
+            "fillColor": "#fbeaec",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2254",
+        "$values": [
+          {
+            "$id": "value-2255",
+            "strokeColor": "#e3aab3",
+            "strokeColorRefFile": null,
+            "strokeColorRefId": null,
+            "strokeOpacity": 1,
+            "strokeStyle": "solid",
+            "strokeWidth": 1,
+            "strokeAlignment": "inner",
+            "strokeCapStart": null,
+            "strokeCapEnd": null,
+            "strokeColorGradient": null,
+            "strokeImage": null
+          }
+        ]
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2256",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2257",
+        "fill": "color.surface.error",
+        "strokeColor": "color.border.error"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2d00c4a5a7",
+    "id": "cd720ada-34f1-80c0-8008-bd2d00c4a5a7",
+    "name": "禁忌镶嵌属性",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd2d00c4a5a7",
+      "type": "text",
+      "name": "禁忌镶嵌属性",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2258",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2259",
+        "$values": []
+      },
+      "x": 682.6939999999959,
+      "y": 318.5,
+      "parentIndex": 227,
+      "parentX": 682.6939999999959,
+      "parentY": 318.5,
+      "boardX": 682.6939999999959,
+      "boardY": 318.5,
+      "width": 42,
+      "height": 18,
+      "bounds": {
+        "$id": "value-2260",
+        "x": 682.6939999999959,
+        "y": 318.5,
+        "width": 42,
+        "height": 18
+      },
+      "center": {
+        "$id": "value-2261",
+        "x": 703.6939999999959,
+        "y": 327.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2262",
+        "$values": [
+          {
+            "$id": "value-2263",
+            "fillColor": "#a94350",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2264",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2265",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2266",
+        "fill": "color.status.error",
+        "fontSize": "font.size.caption"
+      },
+      "characters": "战技+54",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "600",
+      "fontSize": "8",
+      "fontWeight": "600",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-2267",
+        "x": 688.7252499999959,
+        "y": 321.703125,
+        "width": 29.921875,
+        "height": 11
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd305887e8cf",
+    "id": "cd720ada-34f1-80c0-8008-bd305887e8cf",
+    "name": "在配装器打开 · Outline 按钮",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd305887e8cf",
+      "type": "rectangle",
+      "name": "在配装器打开 · Outline 按钮",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 6,
+      "borderRadiusTopLeft": 6,
+      "borderRadiusTopRight": 6,
+      "borderRadiusBottomRight": 6,
+      "borderRadiusBottomLeft": 6,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2268",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2269",
+        "$values": []
+      },
+      "x": 932,
+      "y": 220,
+      "parentIndex": 228,
+      "parentX": 932,
+      "parentY": 220,
+      "boardX": 932,
+      "boardY": 220,
+      "width": 154,
+      "height": 28,
+      "bounds": {
+        "$id": "value-2270",
+        "x": 932,
+        "y": 220,
+        "width": 154,
+        "height": 28
+      },
+      "center": {
+        "$id": "value-2271",
+        "x": 1009,
+        "y": 234
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2272",
+        "$values": [
+          {
+            "$id": "value-2273",
+            "fillColor": "#ffffff",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2274",
+        "$values": [
+          {
+            "$id": "value-2275",
+            "strokeColor": "#dce3d7",
+            "strokeColorRefFile": null,
+            "strokeColorRefId": null,
+            "strokeOpacity": 1,
+            "strokeStyle": "solid",
+            "strokeWidth": 1,
+            "strokeAlignment": "inner",
+            "strokeCapStart": null,
+            "strokeCapEnd": null,
+            "strokeColorGradient": null,
+            "strokeImage": null
+          }
+        ]
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2276",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2277",
+        "fill": "color.neutral.white",
+        "strokeColor": "color.border.default"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd30588caab6",
+    "id": "cd720ada-34f1-80c0-8008-bd30588caab6",
+    "name": "在配装器打开 · 按钮文案",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd30588caab6",
+      "type": "text",
+      "name": "在配装器打开 · 按钮文案",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2278",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2279",
+        "$values": []
+      },
+      "x": 944,
+      "y": 220,
+      "parentIndex": 229,
+      "parentX": 944,
+      "parentY": 220,
+      "boardX": 944,
+      "boardY": 220,
+      "width": 106,
+      "height": 28,
+      "bounds": {
+        "$id": "value-2280",
+        "x": 944,
+        "y": 220,
+        "width": 106,
+        "height": 28
+      },
+      "center": {
+        "$id": "value-2281",
+        "x": 997,
+        "y": 234
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2282",
+        "$values": [
+          {
+            "$id": "value-2283",
+            "fillColor": "#087f80",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2284",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2285",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2286",
+        "fill": "color.accent.teal",
+        "fontSize": "font.size.body"
+      },
+      "characters": "在配装器打开",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "600",
+      "fontSize": "12",
+      "fontWeight": "600",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-2287",
+        "x": 961,
+        "y": 224.796875,
+        "width": 72,
+        "height": 17
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd305893ab09",
+    "id": "cd720ada-34f1-80c0-8008-bd305893ab09",
+    "name": "分享图标连线",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd305893ab09",
+      "type": "rectangle",
+      "name": "分享图标连线",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2288",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2289",
+        "$values": []
+      },
+      "x": 1058.6357678016159,
+      "y": 228.34438204290882,
+      "parentIndex": 230,
+      "parentX": 1058.6357678016159,
+      "parentY": 228.34438204290882,
+      "boardX": 1058.6357678016159,
+      "boardY": 228.34438204290882,
+      "width": 10.295630140986987,
+      "height": 1.5000000000000284,
+      "bounds": {
+        "$id": "value-2290",
+        "x": 1058.6357678016159,
+        "y": 228.34438204290882,
+        "width": 9.728464396768004,
+        "height": 6.311235914182305
+      },
+      "center": {
+        "$id": "value-2291",
+        "x": 1063.5,
+        "y": 231.5
+      },
+      "rotation": 330.94539590092285,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2292",
+        "$values": [
+          {
+            "$id": "value-2293",
+            "fillColor": "#087f80",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2294",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2295",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2296",
+        "fill": "color.accent.teal"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd3058986fd2",
+    "id": "cd720ada-34f1-80c0-8008-bd3058986fd2",
+    "name": "分享图标连线",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd3058986fd2",
+      "type": "rectangle",
+      "name": "分享图标连线",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2297",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2298",
+        "$values": []
+      },
+      "x": 1058.635767801616,
+      "y": 233.34438204290882,
+      "parentIndex": 231,
+      "parentX": 1058.635767801616,
+      "parentY": 233.34438204290882,
+      "boardX": 1058.635767801616,
+      "boardY": 233.34438204290882,
+      "width": 10.295630140986987,
+      "height": 1.4999999999999716,
+      "bounds": {
+        "$id": "value-2299",
+        "x": 1058.635767801616,
+        "y": 233.34438204290882,
+        "width": 9.728464396767777,
+        "height": 6.311235914182362
+      },
+      "center": {
+        "$id": "value-2300",
+        "x": 1063.5,
+        "y": 236.5
+      },
+      "rotation": 29.054604099077153,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2301",
+        "$values": [
+          {
+            "$id": "value-2302",
+            "fillColor": "#087f80",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2303",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2304",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2305",
+        "fill": "color.accent.teal"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd30589d1373",
+    "id": "cd720ada-34f1-80c0-8008-bd30589d1373",
+    "name": "分享图标节点",
+    "type": "ellipse",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd30589d1373",
+      "type": "ellipse",
+      "name": "分享图标节点",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2306",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2307",
+        "$values": []
+      },
+      "x": 1056.5,
+      "y": 231.5,
+      "parentIndex": 232,
+      "parentX": 1056.5,
+      "parentY": 231.5,
+      "boardX": 1056.5,
+      "boardY": 231.5,
+      "width": 5,
+      "height": 5,
+      "bounds": {
+        "$id": "value-2308",
+        "x": 1056.5,
+        "y": 231.5,
+        "width": 5,
+        "height": 5
+      },
+      "center": {
+        "$id": "value-2309",
+        "x": 1059,
+        "y": 234
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2310",
+        "$values": [
+          {
+            "$id": "value-2311",
+            "fillColor": "#087f80",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2312",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2313",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2314",
+        "fill": "color.accent.teal"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd3058a10428",
+    "id": "cd720ada-34f1-80c0-8008-bd3058a10428",
+    "name": "分享图标节点",
+    "type": "ellipse",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd3058a10428",
+      "type": "ellipse",
+      "name": "分享图标节点",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2315",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2316",
+        "$values": []
+      },
+      "x": 1065.5,
+      "y": 226.5,
+      "parentIndex": 233,
+      "parentX": 1065.5,
+      "parentY": 226.5,
+      "boardX": 1065.5,
+      "boardY": 226.5,
+      "width": 5,
+      "height": 5,
+      "bounds": {
+        "$id": "value-2317",
+        "x": 1065.5,
+        "y": 226.5,
+        "width": 5,
+        "height": 5
+      },
+      "center": {
+        "$id": "value-2318",
+        "x": 1068,
+        "y": 229
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2319",
+        "$values": [
+          {
+            "$id": "value-2320",
+            "fillColor": "#087f80",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2321",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2322",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2323",
+        "fill": "color.accent.teal"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd3058a53171",
+    "id": "cd720ada-34f1-80c0-8008-bd3058a53171",
+    "name": "分享图标节点",
+    "type": "ellipse",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd3058a53171",
+      "type": "ellipse",
+      "name": "分享图标节点",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-2324",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2325",
+        "$values": []
+      },
+      "x": 1065.5,
+      "y": 236.5,
+      "parentIndex": 234,
+      "parentX": 1065.5,
+      "parentY": 236.5,
+      "boardX": 1065.5,
+      "boardY": 236.5,
+      "width": 5,
+      "height": 5,
+      "bounds": {
+        "$id": "value-2326",
+        "x": 1065.5,
+        "y": 236.5,
+        "width": 5,
+        "height": 5
+      },
+      "center": {
+        "$id": "value-2327",
+        "x": 1068,
+        "y": 239
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-2328",
+        "$values": [
+          {
+            "$id": "value-2329",
+            "fillColor": "#087f80",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-2330",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-2331",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-2332",
+        "fill": "color.accent.teal"
+      }
+    },
+    "childrenRefs": []
+  }
+]

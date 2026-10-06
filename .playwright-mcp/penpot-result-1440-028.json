@@ -1,0 +1,1672 @@
+[
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7402",
+    "id": "cd720ada-34f1-80c0-8008-bd46cfae7402",
+    "name": "搜索摘要行 10 · Flex",
+    "type": "board",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd3f3b70fb8f",
+      "name": "搜索条件与限制列表 · Flex",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd3f3b70fb8f"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfae7402",
+      "type": "board",
+      "name": "搜索摘要行 10 · Flex",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-3291",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-3292",
+        "$values": []
+      },
+      "x": 1148,
+      "y": 479,
+      "parentIndex": 2,
+      "parentX": 0,
+      "parentY": 216,
+      "boardX": 0,
+      "boardY": 216,
+      "width": 276,
+      "height": 24,
+      "bounds": {
+        "$id": "value-3293",
+        "x": 1148,
+        "y": 479,
+        "width": 276,
+        "height": 24
+      },
+      "center": {
+        "$id": "value-3294",
+        "x": 1286,
+        "y": 491
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-3295",
+        "$values": []
+      },
+      "strokes": {
+        "$id": "value-3296",
+        "$values": []
+      },
+      "layoutChild": {
+        "$id": "value-3297",
+        "absolute": false,
+        "zIndex": 0,
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix",
+        "alignSelf": "auto",
+        "verticalMargin": 0,
+        "horizontalMargin": 0,
+        "topMargin": 0,
+        "rightMargin": 0,
+        "bottomMargin": 0,
+        "leftMargin": 0,
+        "marginType": "simple",
+        "maxWidth": null,
+        "minWidth": null,
+        "maxHeight": null,
+        "minHeight": null
+      },
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-3298",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-3299"
+      },
+      "clipContent": true,
+      "showInViewMode": false,
+      "grid": null,
+      "flex": {
+        "$id": "value-3300",
+        "dir": "column",
+        "wrap": "nowrap",
+        "alignItems": "start",
+        "alignContent": "stretch",
+        "justifyItems": null,
+        "justifyContent": "start",
+        "rowGap": 0,
+        "columnGap": 0,
+        "verticalPadding": 0,
+        "horizontalPadding": 0,
+        "topPadding": 0,
+        "rightPadding": 0,
+        "bottomPadding": 0,
+        "leftPadding": 0,
+        "paddingType": "simple",
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix"
+      },
+      "guides": {
+        "$id": "value-3301",
+        "$values": []
+      },
+      "rulerGuides": {
+        "$id": "value-3302",
+        "$values": []
+      },
+      "horizontalSizing": "fix",
+      "verticalSizing": "fix"
+    },
+    "childrenRefs": [
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd46cfae7404",
+        "name": "装备限制字段行 3 · Flex",
+        "type": "board",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7404",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd46cfae7403",
+        "name": "摘要限制行线 3",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7403",
+        "cycle": false,
+        "duplicate": false
+      }
+    ]
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7404",
+    "id": "cd720ada-34f1-80c0-8008-bd46cfae7404",
+    "name": "装备限制字段行 3 · Flex",
+    "type": "board",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfae7402",
+      "name": "搜索摘要行 10 · Flex",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7402"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfae7404",
+      "type": "board",
+      "name": "装备限制字段行 3 · Flex",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": null,
+      "constraintsVertical": null,
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-3303",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-3304",
+        "$values": []
+      },
+      "x": 1148,
+      "y": 479,
+      "parentIndex": 1,
+      "parentX": 0,
+      "parentY": 0,
+      "boardX": 0,
+      "boardY": 0,
+      "width": 276,
+      "height": 22,
+      "bounds": {
+        "$id": "value-3305",
+        "x": 1148,
+        "y": 479,
+        "width": 276,
+        "height": 22
+      },
+      "center": {
+        "$id": "value-3306",
+        "x": 1286,
+        "y": 490
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-3307",
+        "$values": []
+      },
+      "strokes": {
+        "$id": "value-3308",
+        "$values": []
+      },
+      "layoutChild": {
+        "$id": "value-3309",
+        "absolute": false,
+        "zIndex": 0,
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix",
+        "alignSelf": "auto",
+        "verticalMargin": 0,
+        "horizontalMargin": 0,
+        "topMargin": 0,
+        "rightMargin": 0,
+        "bottomMargin": 1,
+        "leftMargin": 0,
+        "marginType": "multiple",
+        "maxWidth": null,
+        "minWidth": null,
+        "maxHeight": null,
+        "minHeight": null
+      },
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-3310",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-3311"
+      },
+      "clipContent": true,
+      "showInViewMode": false,
+      "grid": null,
+      "flex": {
+        "$id": "value-3312",
+        "dir": "row",
+        "wrap": "nowrap",
+        "alignItems": "center",
+        "alignContent": "stretch",
+        "justifyItems": null,
+        "justifyContent": "space-between",
+        "rowGap": 0,
+        "columnGap": 0,
+        "verticalPadding": 0,
+        "horizontalPadding": 0,
+        "topPadding": 0,
+        "rightPadding": 0,
+        "bottomPadding": 0,
+        "leftPadding": 0,
+        "paddingType": "simple",
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix"
+      },
+      "guides": {
+        "$id": "value-3313",
+        "$values": []
+      },
+      "rulerGuides": {
+        "$id": "value-3314",
+        "$values": []
+      },
+      "horizontalSizing": "fix",
+      "verticalSizing": "fix"
+    },
+    "childrenRefs": [
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd46cfae7406",
+        "name": "摘要限制标签 3",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7406",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd46cfae7405",
+        "name": "摘要限制数量 3",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7405",
+        "cycle": false,
+        "duplicate": false
+      }
+    ]
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7406",
+    "id": "cd720ada-34f1-80c0-8008-bd46cfae7406",
+    "name": "摘要限制标签 3",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfae7404",
+      "name": "装备限制字段行 3 · Flex",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7404"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfae7406",
+      "type": "text",
+      "name": "摘要限制标签 3",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": null,
+      "constraintsVertical": null,
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-3315",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-3316",
+        "$values": []
+      },
+      "x": 1148,
+      "y": 479,
+      "parentIndex": 1,
+      "parentX": 0,
+      "parentY": 0,
+      "boardX": 0,
+      "boardY": 0,
+      "width": 79,
+      "height": 22,
+      "bounds": {
+        "$id": "value-3317",
+        "x": 1148,
+        "y": 479,
+        "width": 79,
+        "height": 22
+      },
+      "center": {
+        "$id": "value-3318",
+        "x": 1187.5,
+        "y": 490
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-3319",
+        "$values": [
+          {
+            "$id": "value-3320",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-3321",
+        "$values": []
+      },
+      "layoutChild": {
+        "$id": "value-3322",
+        "absolute": false,
+        "zIndex": 0,
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix",
+        "alignSelf": "auto",
+        "verticalMargin": 0,
+        "horizontalMargin": 0,
+        "topMargin": 0,
+        "rightMargin": 0,
+        "bottomMargin": 0,
+        "leftMargin": 0,
+        "marginType": "simple",
+        "maxWidth": null,
+        "minWidth": null,
+        "maxHeight": null,
+        "minHeight": null
+      },
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-3323",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-3324",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.compact"
+      },
+      "characters": "排除装备",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "500",
+      "fontSize": "10",
+      "fontWeight": "500",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "left",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-3325",
+        "x": 1148,
+        "y": 482,
+        "width": 40,
+        "height": 15
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7405",
+    "id": "cd720ada-34f1-80c0-8008-bd46cfae7405",
+    "name": "摘要限制数量 3",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfae7404",
+      "name": "装备限制字段行 3 · Flex",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7404"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfae7405",
+      "type": "text",
+      "name": "摘要限制数量 3",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": null,
+      "constraintsVertical": null,
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-3326",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-3327",
+        "$values": []
+      },
+      "x": 1230,
+      "y": 479,
+      "parentIndex": 0,
+      "parentX": 82,
+      "parentY": 0,
+      "boardX": 82,
+      "boardY": 0,
+      "width": 194,
+      "height": 22,
+      "bounds": {
+        "$id": "value-3328",
+        "x": 1230,
+        "y": 479,
+        "width": 194,
+        "height": 22
+      },
+      "center": {
+        "$id": "value-3329",
+        "x": 1327,
+        "y": 490
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-3330",
+        "$values": [
+          {
+            "$id": "value-3331",
+            "fillColor": "#708e3c",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-3332",
+        "$values": []
+      },
+      "layoutChild": {
+        "$id": "value-3333",
+        "absolute": false,
+        "zIndex": 0,
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix",
+        "alignSelf": "auto",
+        "verticalMargin": 0,
+        "horizontalMargin": 0,
+        "topMargin": 0,
+        "rightMargin": 0,
+        "bottomMargin": 0,
+        "leftMargin": 0,
+        "marginType": "simple",
+        "maxWidth": null,
+        "minWidth": null,
+        "maxHeight": null,
+        "minHeight": null
+      },
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-3334",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-3335",
+        "fill": "color.accent.olive",
+        "fontSize": "font.size.compact"
+      },
+      "characters": "不限",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "500",
+      "fontSize": "10",
+      "fontWeight": "500",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "right",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-3336",
+        "x": 1404,
+        "y": 482,
+        "width": 20,
+        "height": 15
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7403",
+    "id": "cd720ada-34f1-80c0-8008-bd46cfae7403",
+    "name": "摘要限制行线 3",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfae7402",
+      "name": "搜索摘要行 10 · Flex",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfae7402"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfae7403",
+      "type": "rectangle",
+      "name": "摘要限制行线 3",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": null,
+      "constraintsVertical": null,
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-3337",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-3338",
+        "$values": []
+      },
+      "x": 1148,
+      "y": 502,
+      "parentIndex": 0,
+      "parentX": 0,
+      "parentY": 23,
+      "boardX": 0,
+      "boardY": 23,
+      "width": 276,
+      "height": 1,
+      "bounds": {
+        "$id": "value-3339",
+        "x": 1148,
+        "y": 502,
+        "width": 276,
+        "height": 1
+      },
+      "center": {
+        "$id": "value-3340",
+        "x": 1286,
+        "y": 502.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-3341",
+        "$values": [
+          {
+            "$id": "value-3342",
+            "fillColor": "#9eac98",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-3343",
+        "$values": []
+      },
+      "layoutChild": {
+        "$id": "value-3344",
+        "absolute": false,
+        "zIndex": 0,
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix",
+        "alignSelf": "auto",
+        "verticalMargin": 0,
+        "horizontalMargin": 0,
+        "topMargin": 0,
+        "rightMargin": 0,
+        "bottomMargin": 0,
+        "leftMargin": 0,
+        "marginType": "simple",
+        "maxWidth": null,
+        "minWidth": null,
+        "maxHeight": null,
+        "minHeight": null
+      },
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-3345",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-3346",
+        "fill": "color.border.emphasis"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bc9",
+    "id": "cd720ada-34f1-80c0-8008-bd46cfb13bc9",
+    "name": "搜索摘要行 11 · Flex",
+    "type": "board",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd3f3b70fb8f",
+      "name": "搜索条件与限制列表 · Flex",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd3f3b70fb8f"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfb13bc9",
+      "type": "board",
+      "name": "搜索摘要行 11 · Flex",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-3347",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-3348",
+        "$values": []
+      },
+      "x": 1148,
+      "y": 503,
+      "parentIndex": 1,
+      "parentX": 0,
+      "parentY": 240,
+      "boardX": 0,
+      "boardY": 240,
+      "width": 276,
+      "height": 24,
+      "bounds": {
+        "$id": "value-3349",
+        "x": 1148,
+        "y": 503,
+        "width": 276,
+        "height": 24
+      },
+      "center": {
+        "$id": "value-3350",
+        "x": 1286,
+        "y": 515
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-3351",
+        "$values": []
+      },
+      "strokes": {
+        "$id": "value-3352",
+        "$values": []
+      },
+      "layoutChild": {
+        "$id": "value-3353",
+        "absolute": false,
+        "zIndex": 0,
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix",
+        "alignSelf": "auto",
+        "verticalMargin": 0,
+        "horizontalMargin": 0,
+        "topMargin": 0,
+        "rightMargin": 0,
+        "bottomMargin": 0,
+        "leftMargin": 0,
+        "marginType": "simple",
+        "maxWidth": null,
+        "minWidth": null,
+        "maxHeight": null,
+        "minHeight": null
+      },
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-3354",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-3355"
+      },
+      "clipContent": true,
+      "showInViewMode": false,
+      "grid": null,
+      "flex": {
+        "$id": "value-3356",
+        "dir": "column",
+        "wrap": "nowrap",
+        "alignItems": "start",
+        "alignContent": "stretch",
+        "justifyItems": null,
+        "justifyContent": "start",
+        "rowGap": 0,
+        "columnGap": 0,
+        "verticalPadding": 0,
+        "horizontalPadding": 0,
+        "topPadding": 0,
+        "rightPadding": 0,
+        "bottomPadding": 0,
+        "leftPadding": 0,
+        "paddingType": "simple",
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix"
+      },
+      "guides": {
+        "$id": "value-3357",
+        "$values": []
+      },
+      "rulerGuides": {
+        "$id": "value-3358",
+        "$values": []
+      },
+      "horizontalSizing": "fix",
+      "verticalSizing": "fix"
+    },
+    "childrenRefs": [
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd46cfb13bcb",
+        "name": "搜索条件字段行 1 · Flex",
+        "type": "board",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bcb",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd46cfb13bca",
+        "name": "摘要条件行线 1",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bca",
+        "cycle": false,
+        "duplicate": false
+      }
+    ]
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bcb",
+    "id": "cd720ada-34f1-80c0-8008-bd46cfb13bcb",
+    "name": "搜索条件字段行 1 · Flex",
+    "type": "board",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfb13bc9",
+      "name": "搜索摘要行 11 · Flex",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bc9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfb13bcb",
+      "type": "board",
+      "name": "搜索条件字段行 1 · Flex",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": null,
+      "constraintsVertical": null,
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-3359",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-3360",
+        "$values": []
+      },
+      "x": 1148,
+      "y": 503,
+      "parentIndex": 1,
+      "parentX": 0,
+      "parentY": 0,
+      "boardX": 0,
+      "boardY": 0,
+      "width": 276,
+      "height": 22,
+      "bounds": {
+        "$id": "value-3361",
+        "x": 1148,
+        "y": 503,
+        "width": 276,
+        "height": 22
+      },
+      "center": {
+        "$id": "value-3362",
+        "x": 1286,
+        "y": 514
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-3363",
+        "$values": []
+      },
+      "strokes": {
+        "$id": "value-3364",
+        "$values": []
+      },
+      "layoutChild": {
+        "$id": "value-3365",
+        "absolute": false,
+        "zIndex": 0,
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix",
+        "alignSelf": "auto",
+        "verticalMargin": 0,
+        "horizontalMargin": 0,
+        "topMargin": 0,
+        "rightMargin": 0,
+        "bottomMargin": 1,
+        "leftMargin": 0,
+        "marginType": "multiple",
+        "maxWidth": null,
+        "minWidth": null,
+        "maxHeight": null,
+        "minHeight": null
+      },
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-3366",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-3367"
+      },
+      "clipContent": true,
+      "showInViewMode": false,
+      "grid": null,
+      "flex": {
+        "$id": "value-3368",
+        "dir": "row",
+        "wrap": "nowrap",
+        "alignItems": "center",
+        "alignContent": "stretch",
+        "justifyItems": null,
+        "justifyContent": "start",
+        "rowGap": 0,
+        "columnGap": 3,
+        "verticalPadding": 0,
+        "horizontalPadding": 0,
+        "topPadding": 0,
+        "rightPadding": 0,
+        "bottomPadding": 0,
+        "leftPadding": 0,
+        "paddingType": "simple",
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix"
+      },
+      "guides": {
+        "$id": "value-3369",
+        "$values": []
+      },
+      "rulerGuides": {
+        "$id": "value-3370",
+        "$values": []
+      },
+      "horizontalSizing": "fix",
+      "verticalSizing": "fix"
+    },
+    "childrenRefs": [
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd46cfb13bcd",
+        "name": "摘要条件标签 1",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bcd",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd46cfb13bcc",
+        "name": "摘要条件值 1",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bcc",
+        "cycle": false,
+        "duplicate": false
+      }
+    ]
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bcd",
+    "id": "cd720ada-34f1-80c0-8008-bd46cfb13bcd",
+    "name": "摘要条件标签 1",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfb13bcb",
+      "name": "搜索条件字段行 1 · Flex",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bcb"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfb13bcd",
+      "type": "text",
+      "name": "摘要条件标签 1",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": null,
+      "constraintsVertical": null,
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-3371",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-3372",
+        "$values": []
+      },
+      "x": 1148,
+      "y": 503,
+      "parentIndex": 1,
+      "parentX": 0,
+      "parentY": 0,
+      "boardX": 0,
+      "boardY": 0,
+      "width": 79,
+      "height": 22,
+      "bounds": {
+        "$id": "value-3373",
+        "x": 1148,
+        "y": 503,
+        "width": 79,
+        "height": 22
+      },
+      "center": {
+        "$id": "value-3374",
+        "x": 1187.5,
+        "y": 514
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-3375",
+        "$values": [
+          {
+            "$id": "value-3376",
+            "fillColor": "#5e6d5c",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-3377",
+        "$values": []
+      },
+      "layoutChild": {
+        "$id": "value-3378",
+        "absolute": false,
+        "zIndex": 0,
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix",
+        "alignSelf": "auto",
+        "verticalMargin": 0,
+        "horizontalMargin": 0,
+        "topMargin": 0,
+        "rightMargin": 0,
+        "bottomMargin": 0,
+        "leftMargin": 0,
+        "marginType": "simple",
+        "maxWidth": null,
+        "minWidth": null,
+        "maxHeight": null,
+        "minHeight": null
+      },
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-3379",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-3380",
+        "fill": "color.text.secondary",
+        "fontSize": "font.size.compact"
+      },
+      "characters": "数据版本",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "regular",
+      "fontSize": "10",
+      "fontWeight": "400",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "left",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-3381",
+        "x": 1148,
+        "y": 506,
+        "width": 40,
+        "height": 15
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bcc",
+    "id": "cd720ada-34f1-80c0-8008-bd46cfb13bcc",
+    "name": "摘要条件值 1",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfb13bcb",
+      "name": "搜索条件字段行 1 · Flex",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bcb"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfb13bcc",
+      "type": "text",
+      "name": "摘要条件值 1",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": null,
+      "constraintsVertical": null,
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-3382",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-3383",
+        "$values": []
+      },
+      "x": 1230,
+      "y": 503,
+      "parentIndex": 0,
+      "parentX": 82,
+      "parentY": 0,
+      "boardX": 82,
+      "boardY": 0,
+      "width": 194,
+      "height": 22,
+      "bounds": {
+        "$id": "value-3384",
+        "x": 1230,
+        "y": 503,
+        "width": 194,
+        "height": 22
+      },
+      "center": {
+        "$id": "value-3385",
+        "x": 1327,
+        "y": 514
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-3386",
+        "$values": [
+          {
+            "$id": "value-3387",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-3388",
+        "$values": []
+      },
+      "layoutChild": {
+        "$id": "value-3389",
+        "absolute": false,
+        "zIndex": 0,
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix",
+        "alignSelf": "auto",
+        "verticalMargin": 0,
+        "horizontalMargin": 0,
+        "topMargin": 0,
+        "rightMargin": 0,
+        "bottomMargin": 0,
+        "leftMargin": 0,
+        "marginType": "simple",
+        "maxWidth": null,
+        "minWidth": null,
+        "maxHeight": null,
+        "minHeight": null
+      },
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-3390",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-3391",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.compact"
+      },
+      "characters": "2026.09.15.0000.0000",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "500",
+      "fontSize": "10",
+      "fontWeight": "500",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "right",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-3392",
+        "x": 1320.875,
+        "y": 506,
+        "width": 103.125,
+        "height": 15
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bca",
+    "id": "cd720ada-34f1-80c0-8008-bd46cfb13bca",
+    "name": "摘要条件行线 1",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfb13bc9",
+      "name": "搜索摘要行 11 · Flex",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd46cfb13bc9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd46cfb13bca",
+      "type": "rectangle",
+      "name": "摘要条件行线 1",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": null,
+      "constraintsVertical": null,
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-3393",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-3394",
+        "$values": []
+      },
+      "x": 1148,
+      "y": 526,
+      "parentIndex": 0,
+      "parentX": 0,
+      "parentY": 23,
+      "boardX": 0,
+      "boardY": 23,
+      "width": 276,
+      "height": 1,
+      "bounds": {
+        "$id": "value-3395",
+        "x": 1148,
+        "y": 526,
+        "width": 276,
+        "height": 1
+      },
+      "center": {
+        "$id": "value-3396",
+        "x": 1286,
+        "y": 526.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-3397",
+        "$values": [
+          {
+            "$id": "value-3398",
+            "fillColor": "#9eac98",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-3399",
+        "$values": []
+      },
+      "layoutChild": {
+        "$id": "value-3400",
+        "absolute": false,
+        "zIndex": 0,
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix",
+        "alignSelf": "auto",
+        "verticalMargin": 0,
+        "horizontalMargin": 0,
+        "topMargin": 0,
+        "rightMargin": 0,
+        "bottomMargin": 0,
+        "leftMargin": 0,
+        "marginType": "simple",
+        "maxWidth": null,
+        "minWidth": null,
+        "maxHeight": null,
+        "minHeight": null
+      },
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-3401",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-3402",
+        "fill": "color.border.emphasis"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd4b940e1c60",
+    "id": "cd720ada-34f1-80c0-8008-bd4b940e1c60",
+    "name": "搜索时间行 · Flex",
+    "type": "board",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd3f3b70fb8f",
+      "name": "搜索条件与限制列表 · Flex",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd3f3b70fb8f"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd4b940e1c60",
+      "type": "board",
+      "name": "搜索时间行 · Flex",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-3403",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-3404",
+        "$values": []
+      },
+      "x": 1148,
+      "y": 527,
+      "parentIndex": 0,
+      "parentX": 0,
+      "parentY": 264,
+      "boardX": 0,
+      "boardY": 264,
+      "width": 276,
+      "height": 24,
+      "bounds": {
+        "$id": "value-3405",
+        "x": 1148,
+        "y": 527,
+        "width": 276,
+        "height": 24
+      },
+      "center": {
+        "$id": "value-3406",
+        "x": 1286,
+        "y": 539
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-3407",
+        "$values": []
+      },
+      "strokes": {
+        "$id": "value-3408",
+        "$values": []
+      },
+      "layoutChild": {
+        "$id": "value-3409",
+        "absolute": false,
+        "zIndex": 0,
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix",
+        "alignSelf": "auto",
+        "verticalMargin": 0,
+        "horizontalMargin": 0,
+        "topMargin": 0,
+        "rightMargin": 0,
+        "bottomMargin": 0,
+        "leftMargin": 0,
+        "marginType": "simple",
+        "maxWidth": null,
+        "minWidth": null,
+        "maxHeight": null,
+        "minHeight": null
+      },
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-3410",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-3411"
+      },
+      "clipContent": true,
+      "showInViewMode": false,
+      "grid": null,
+      "flex": {
+        "$id": "value-3412",
+        "dir": "column",
+        "wrap": "nowrap",
+        "alignItems": "start",
+        "alignContent": "stretch",
+        "justifyItems": null,
+        "justifyContent": "start",
+        "rowGap": 0,
+        "columnGap": 0,
+        "verticalPadding": 0,
+        "horizontalPadding": 0,
+        "topPadding": 0,
+        "rightPadding": 0,
+        "bottomPadding": 0,
+        "leftPadding": 0,
+        "paddingType": "simple",
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix"
+      },
+      "guides": {
+        "$id": "value-3413",
+        "$values": []
+      },
+      "rulerGuides": {
+        "$id": "value-3414",
+        "$values": []
+      },
+      "horizontalSizing": "fix",
+      "verticalSizing": "fix"
+    },
+    "childrenRefs": [
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd4b940e1c62",
+        "name": "搜索条件字段行 1 · Flex",
+        "type": "board",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd4b940e1c62",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd4b940e1c61",
+        "name": "摘要条件行线 1",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd4b940e1c61",
+        "cycle": false,
+        "duplicate": false
+      }
+    ]
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd4b940e1c62",
+    "id": "cd720ada-34f1-80c0-8008-bd4b940e1c62",
+    "name": "搜索条件字段行 1 · Flex",
+    "type": "board",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd4b940e1c60",
+      "name": "搜索时间行 · Flex",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd4b940e1c60"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd4b940e1c62",
+      "type": "board",
+      "name": "搜索条件字段行 1 · Flex",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": null,
+      "constraintsVertical": null,
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-3415",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-3416",
+        "$values": []
+      },
+      "x": 1148,
+      "y": 527,
+      "parentIndex": 1,
+      "parentX": 0,
+      "parentY": 0,
+      "boardX": 0,
+      "boardY": 0,
+      "width": 276,
+      "height": 22,
+      "bounds": {
+        "$id": "value-3417",
+        "x": 1148,
+        "y": 527,
+        "width": 276,
+        "height": 22
+      },
+      "center": {
+        "$id": "value-3418",
+        "x": 1286,
+        "y": 538
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-3419",
+        "$values": []
+      },
+      "strokes": {
+        "$id": "value-3420",
+        "$values": []
+      },
+      "layoutChild": {
+        "$id": "value-3421",
+        "absolute": false,
+        "zIndex": 0,
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix",
+        "alignSelf": "auto",
+        "verticalMargin": 0,
+        "horizontalMargin": 0,
+        "topMargin": 0,
+        "rightMargin": 0,
+        "bottomMargin": 1,
+        "leftMargin": 0,
+        "marginType": "multiple",
+        "maxWidth": null,
+        "minWidth": null,
+        "maxHeight": null,
+        "minHeight": null
+      },
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-3422",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-3423"
+      },
+      "clipContent": true,
+      "showInViewMode": false,
+      "grid": null,
+      "flex": {
+        "$id": "value-3424",
+        "dir": "row",
+        "wrap": "nowrap",
+        "alignItems": "center",
+        "alignContent": "stretch",
+        "justifyItems": null,
+        "justifyContent": "start",
+        "rowGap": 0,
+        "columnGap": 3,
+        "verticalPadding": 0,
+        "horizontalPadding": 0,
+        "topPadding": 0,
+        "rightPadding": 0,
+        "bottomPadding": 0,
+        "leftPadding": 0,
+        "paddingType": "simple",
+        "horizontalSizing": "fix",
+        "verticalSizing": "fix"
+      },
+      "guides": {
+        "$id": "value-3425",
+        "$values": []
+      },
+      "rulerGuides": {
+        "$id": "value-3426",
+        "$values": []
+      },
+      "horizontalSizing": "fix",
+      "verticalSizing": "fix"
+    },
+    "childrenRefs": [
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd4b940e1c64",
+        "name": "摘要条件标签 1",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd4b940e1c64",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd4b940e1c63",
+        "name": "摘要条件值 1",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd4b940e1c63",
+        "cycle": false,
+        "duplicate": false
+      }
+    ]
+  }
+]

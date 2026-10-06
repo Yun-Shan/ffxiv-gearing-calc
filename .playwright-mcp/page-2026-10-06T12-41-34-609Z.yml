@@ -1,0 +1,180 @@
+- generic [ref=f8e3]:
+  - region "调色板栏" [ref=f8e4]:
+    - generic [ref=f8e5]:
+      - list [ref=f8e7]:
+        - listitem [ref=f8e8]:
+          - button "调色盘（Alt+P）" [ref=f8e9] [cursor=pointer]
+        - listitem [ref=f8e12]:
+          - button "排版（Alt+T）" [ref=f8e13] [cursor=pointer]
+      - generic [ref=f8e16] [cursor=pointer]
+  - generic [ref=f8e20]:
+    - toolbar "workspace.toolbar.label" [ref=f8e21]:
+      - list [ref=f8e22]:
+        - listitem [ref=f8e23]:
+          - generic "移动（V）" [ref=f8e24]:
+            - button "移动（V）" [pressed] [ref=f8e25]
+        - listitem [ref=f8e28]:
+          - generic "画板（B）" [ref=f8e29]:
+            - button "画板（B）" [ref=f8e30]
+        - listitem [ref=f8e33]:
+          - 'group "选项: 矩形（R）" [ref=f8e34]':
+            - button "矩形（R）" [ref=f8e35]
+        - listitem [ref=f8e40]:
+          - generic "文本（T）" [ref=f8e41]:
+            - button "文本（T）" [ref=f8e42]
+        - listitem [ref=f8e45]:
+          - generic "图片（Shift+K）" [ref=f8e46]:
+            - button "图片（Shift+K）" [ref=f8e47]
+        - listitem [ref=f8e50]:
+          - 'group "选项: 路径（P）" [ref=f8e51]':
+            - button "路径（P）" [ref=f8e52]
+        - listitem [ref=f8e58]:
+          - generic "插件（Ctrl+Alt+P）" [ref=f8e59]:
+            - button "插件（Ctrl+Alt+P）" [ref=f8e60]
+        - listitem [ref=f8e63]:
+          - button "MCP" [active] [pressed] [ref=f8e64]
+          - menu [ref=f8e260]: MCP 已连接
+      - button "切换工具栏" [ref=f8e68]
+    - generic:
+      - generic:
+        - generic:
+          - generic:
+            - generic [ref=f8e261] [cursor=pointer]
+            - generic [ref=f8e266] [cursor=pointer]
+    - img [ref=f8e70]:
+      - generic [ref=f8e71]:
+        - generic [ref=f8e271]:
+          - generic [ref=f8e272]: 02 推荐视口 · 1920×1080
+          - generic [ref=f8e274]: 01 最小视口 · 1440×695
+        - generic:
+          - generic:
+            - generic:
+              - generic: "0"
+              - generic: "250"
+              - generic: "500"
+              - generic: "750"
+              - generic: "1000"
+              - generic: "1250"
+              - generic: "1500"
+              - generic: "1750"
+              - generic: "2000"
+              - generic: "2250"
+              - generic: "2500"
+              - generic: "2750"
+              - generic: "3000"
+              - generic: "3250"
+            - generic:
+              - generic: "-1250"
+              - generic: "-1000"
+              - generic: "-750"
+              - generic: "-500"
+              - generic: "-250"
+              - generic: "0"
+              - generic: "250"
+              - generic: "500"
+              - generic: "750"
+              - generic: "1000"
+              - generic: "1250"
+              - generic: "1500"
+              - generic: "1750"
+              - generic: "2000"
+              - generic: "2250"
+              - generic: "2500"
+  - complementary [ref=f8e77]:
+    - generic [ref=f8e78]:
+      - generic [ref=f8e79] [cursor=pointer]
+      - generic [ref=f8e82]:
+        - generic [ref=f8e83] [cursor=pointer]: ffxiv-gearing-calc
+        - generic "单职业" [ref=f8e84] [cursor=pointer]:
+          - generic "已保存" [ref=f8e85]
+      - generic "主菜单" [ref=f8e90]:
+        - button "主菜单" [ref=f8e91]
+    - generic [ref=f8e96]:
+      - navigation [ref=f8e98]:
+        - button [ref=f8e99]:
+          - img "收起侧边栏" [ref=f8e100]
+        - tablist [ref=f8e102]:
+          - listitem [ref=f8e103]:
+            - tab "图层" [selected] [ref=f8e104]
+          - listitem [ref=f8e106]:
+            - tab "素材" [ref=f8e107]
+          - listitem [ref=f8e109]:
+            - tab "Tokens" [ref=f8e110]
+      - tabpanel "图层" [ref=f8e112]:
+        - article [ref=f8e113]:
+          - generic [ref=f8e114]:
+            - generic [ref=f8e115]:
+              - button "页面" [ref=f8e117] [cursor=pointer]
+              - generic "添加页面" [ref=f8e121]:
+                - button "添加页面" [ref=f8e122]
+            - list [ref=f8e126]:
+              - listitem [ref=f8e127]:
+                - generic [ref=f8e128]:
+                  - generic "单职业参数工作台" [ref=f8e132]
+                  - generic "删除页面" [ref=f8e134]:
+                    - button "删除页面" [ref=f8e135]
+              - listitem [ref=f8e136]:
+                - generic [ref=f8e137]:
+                  - generic "单职业搜索进度" [ref=f8e141]
+                  - generic "删除页面" [ref=f8e143]:
+                    - button "删除页面" [ref=f8e144]
+              - listitem [ref=f8e145]:
+                - generic [ref=f8e146]:
+                  - generic "单职业配装结果" [ref=f8e150]
+                  - generic "删除页面" [ref=f8e152]:
+                    - button "删除页面" [ref=f8e153]
+          - generic [ref=f8e156]:
+            - generic [ref=f8e158]:
+              - generic [ref=f8e159]: 单职业配装结果
+              - generic "搜索" [ref=f8e160]:
+                - button "搜索" [ref=f8e161]
+            - generic [ref=f8e165]:
+              - checkbox "02 推荐视口 · 1920×1080" [ref=f8e166]:
+                - generic [ref=f8e167] [cursor=pointer]:
+                  - button [ref=f8e169]
+                  - generic [ref=f8e175]: 02 推荐视口 · 1920×1080
+              - checkbox "01 最小视口 · 1440×695" [ref=f8e176]:
+                - generic [ref=f8e177] [cursor=pointer]:
+                  - button [ref=f8e179]
+                  - generic [ref=f8e185]: 01 最小视口 · 1440×695
+  - complementary [ref=f8e186]:
+    - generic [ref=f8e187]:
+      - button [ref=f8e189] [cursor=pointer]:
+        - list [ref=f8e190]:
+          - listitem "云闪" [ref=f8e191]:
+            - img "云闪" [ref=f8e192]
+      - generic "缩放" [ref=f8e194] [cursor=pointer]: 21%
+      - button "评论（C）" [ref=f8e197] [cursor=pointer]
+      - button "历史" [ref=f8e201] [cursor=pointer]
+      - generic "预览模式（G V）" [ref=f8e204] [cursor=pointer]
+    - generic [ref=f8e209]:
+      - navigation [ref=f8e211]:
+        - tablist [ref=f8e212]:
+          - listitem [ref=f8e213]:
+            - tab "设计" [selected] [ref=f8e214]
+          - listitem [ref=f8e216]:
+            - tab "原型" [ref=f8e217]
+          - listitem [ref=f8e219]:
+            - tab "检查" [ref=f8e220]
+      - tabpanel "设计" [ref=f8e222]:
+        - generic [ref=f8e223]:
+          - generic [ref=f8e224]:
+            - generic [ref=f8e225]: 画布背景
+            - generic [ref=f8e231]:
+              - generic "#E8E9EA" [ref=f8e233]:
+                - button "#E8E9EA" [ref=f8e234] [cursor=pointer]
+              - textbox "颜色" [ref=f8e239]:
+                - /placeholder: 混合
+                - text: E8E9EA
+          - generic [ref=f8e240]:
+            - generic [ref=f8e241]: 像素网格颜色
+            - generic [ref=f8e246]:
+              - generic [ref=f8e247]:
+                - generic "#0070E4 (20%)" [ref=f8e249]:
+                  - button "#0070E4 (20%)" [ref=f8e250] [cursor=pointer]
+                - textbox "颜色" [ref=f8e255]:
+                  - /placeholder: 混合
+                  - text: "0070E4"
+              - generic [ref=f8e256]:
+                - generic [ref=f8e257]: "%"
+                - textbox "--" [ref=f8e258]: "20"

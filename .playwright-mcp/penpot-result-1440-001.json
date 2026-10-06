@@ -1,0 +1,2868 @@
+[
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+    "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+    "name": "01 最小视口 · 1440×695",
+    "type": "board",
+    "parentRef": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Root Frame",
+      "type": "board",
+      "shapeRef": "shape-id:00000000-0000-0000-0000-000000000000"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "type": "board",
+      "name": "01 最小视口 · 1440×695",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": null,
+      "constraintsVertical": null,
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-2",
+        "$values": []
+      },
+      "x": 0,
+      "y": 0,
+      "parentIndex": 0,
+      "parentX": 0,
+      "parentY": 0,
+      "boardX": 0,
+      "boardY": 0,
+      "width": 1440,
+      "height": 695,
+      "bounds": {
+        "$id": "value-3",
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 695
+      },
+      "center": {
+        "$id": "value-4",
+        "x": 720,
+        "y": 347.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-5",
+        "$values": [
+          {
+            "$id": "value-6",
+            "fillColor": "#ffffff",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-7",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-8",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-9",
+        "fill": "color.neutral.white"
+      },
+      "clipContent": true,
+      "showInViewMode": true,
+      "grid": null,
+      "flex": null,
+      "guides": {
+        "$id": "value-10",
+        "$values": []
+      },
+      "rulerGuides": {
+        "$id": "value-11",
+        "$values": []
+      },
+      "horizontalSizing": "fix",
+      "verticalSizing": "fix"
+    },
+    "childrenRefs": [
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c0edfc0",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c0edfc0",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c1fda33",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c1fda33",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c25694f",
+        "name": "结果指标卡",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c25694f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c28795f",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c28795f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c2df93c",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c2df93c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c341d71",
+        "name": "结果指标卡",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c341d71",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c3736b2",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c3736b2",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c3e6c06",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c3e6c06",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c447e11",
+        "name": "结果指标卡",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c447e11",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c475694",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c475694",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c4d0dc3",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c4d0dc3",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c5241e4",
+        "name": "结果指标卡",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c5241e4",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c5591e9",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c5591e9",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c5bed05",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c5bed05",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c625eab",
+        "name": "结果指标卡",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c625eab",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c6717eb",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c6717eb",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c6b5c66",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c6b5c66",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c734849",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c734849",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c7c4bd0",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c7c4bd0",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c8c911c",
+        "name": "装备与食物表",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c8c911c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c91f2f2",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c91f2f2",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd4e3d295920",
+        "name": "总属性行背景",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd4e3d295920",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c96fc47",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c96fc47",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253c9a033e",
+        "name": "表头·部位",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c9a033e",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253ca11cdc",
+        "name": "表头·装备名称",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253ca11cdc",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253ca77b4d",
+        "name": "表头·来源",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253ca77b4d",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253caec3b6",
+        "name": "表头·品级",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253caec3b6",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253cb5e2de",
+        "name": "表头·力量",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253cb5e2de",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253cbfff96",
+        "name": "表头·耐力",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253cbfff96",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253cc6a6e4",
+        "name": "表头·暴击",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253cc6a6e4",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253ccd6d8c",
+        "name": "表头·信念",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253ccd6d8c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253cd7556c",
+        "name": "表头·直击",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253cd7556c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253cdf4121",
+        "name": "表头·技速",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253cdf4121",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253ce84777",
+        "name": "表头·魔晶石 / 生效属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253ce84777",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253cf08715",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253cf08715",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253cf94c94",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253cf94c94",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d04d11c",
+        "name": "文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d04d11c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d0fbf22",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d0fbf22",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d1874d7",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d1874d7",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd536dd6011a",
+        "name": "总属性·平均品级",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd536dd6011a",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d20e72b",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d20e72b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d28bec6",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d28bec6",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d31703f",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d31703f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d3a8f77",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d3a8f77",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d438487",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d438487",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d4bf84e",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d4bf84e",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d63f2ac",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d63f2ac",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d6e7705",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d6e7705",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d745eed",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d745eed",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d80dade",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d80dade",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d8d64c4",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d8d64c4",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253d981ad8",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253d981ad8",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253da17873",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253da17873",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253daabf1c",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253daabf1c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253db3cd44",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253db3cd44",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253dbde230",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253dbde230",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253dc78f4d",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253dc78f4d",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253dd2925f",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253dd2925f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253de862f4",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253de862f4",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253dee14d3",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253dee14d3",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253df7ebbe",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253df7ebbe",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e027bd1",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e027bd1",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e0dd4af",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e0dd4af",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e174c4c",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e174c4c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e22a2d1",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e22a2d1",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e2d8214",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e2d8214",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e39bbf6",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e39bbf6",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e458813",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e458813",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e525761",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e525761",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e6e293b",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e6e293b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e767ae9",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e767ae9",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e7e5dd1",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e7e5dd1",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e8b9a24",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e8b9a24",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253e99999f",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253e99999f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253ea4a6b7",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253ea4a6b7",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253eb0c2a3",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253eb0c2a3",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253ebd4be2",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253ebd4be2",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253ecaa95d",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253ecaa95d",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253ed78701",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253ed78701",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253ee945af",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253ee945af",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253efacce1",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253efacce1",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253f18f103",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253f18f103",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253f1f5058",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253f1f5058",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253f2b9cf1",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253f2b9cf1",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253f38e4a2",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253f38e4a2",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253f466db5",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253f466db5",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253f53816b",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253f53816b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253f65b80c",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253f65b80c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253f7755bb",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253f7755bb",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253f8c4aa5",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253f8c4aa5",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253f9a6eaa",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253f9a6eaa",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253faa3919",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253faa3919",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253fc6ff6e",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253fc6ff6e",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253fce2c0c",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253fce2c0c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253fd63e99",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253fd63e99",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253fe4e0dd",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253fe4e0dd",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd253ff3bc56",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253ff3bc56",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25400653f5",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25400653f5",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd254019a193",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd254019a193",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25402d253a",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25402d253a",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd254042961b",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd254042961b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2540574995",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2540574995",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25406d4397",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25406d4397",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2540840088",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2540840088",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2540a7dc3d",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2540a7dc3d",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2540b08f99",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2540b08f99",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2540c0384b",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2540c0384b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2540d38827",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2540d38827",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2540e74662",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2540e74662",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2540fcc8b7",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2540fcc8b7",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25410f64cd",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25410f64cd",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25412221f6",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25412221f6",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd254133e92a",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd254133e92a",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2541470dad",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2541470dad",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25415e69bf",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25415e69bf",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25418a6329",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25418a6329",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25419444c0",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25419444c0",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25419e16aa",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25419e16aa",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2541af79f1",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2541af79f1",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2541c2c965",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2541c2c965",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2541d64437",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2541d64437",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2541ecf9d8",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2541ecf9d8",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2542016b15",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2542016b15",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2542154186",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2542154186",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd254229bc9b",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd254229bc9b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25423e7763",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25423e7763",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd254254caca",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd254254caca",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25428171ca",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25428171ca",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25428b3885",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25428b3885",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25429ed734",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25429ed734",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2542b37450",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2542b37450",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2542c73d20",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2542c73d20",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2542def113",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2542def113",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2542f7cdda",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2542f7cdda",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25430e9bd4",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25430e9bd4",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25432498c7",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25432498c7",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25433ac064",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25433ac064",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2543546645",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2543546645",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd254386ae7b",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd254386ae7b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2543911e9b",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2543911e9b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25439d40a5",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25439d40a5",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2543b1213e",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2543b1213e",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2543c9a674",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2543c9a674",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2543e5bdd5",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2543e5bdd5",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2543fc149d",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2543fc149d",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd254414ea43",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd254414ea43",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25442c32d2",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25442c32d2",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2544453417",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2544453417",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25446385b8",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25446385b8",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25447babbd",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25447babbd",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2544abc225",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2544abc225",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2544b88d48",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2544b88d48",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2544d3f54f",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2544d3f54f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2544f48553",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2544f48553",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd254511c81d",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd254511c81d",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd254530772c",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd254530772c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2545509078",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2545509078",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25456e2289",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25456e2289",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2545897d8e",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2545897d8e",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2545a3b0f4",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2545a3b0f4",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2545bd8126",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2545bd8126",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2545eff626",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2545eff626",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2545fc7688",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2545fc7688",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25460ade62",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25460ade62",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd4e3d2dd9c6",
+        "name": "总属性行分隔线",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd4e3d2dd9c6",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2546190a0c",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2546190a0c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2546323981",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2546323981",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2546526aa4",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2546526aa4",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25466c8c9b",
+        "name": "装备信息",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25466c8c9b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25468355b7",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25468355b7",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd25469d3ff3",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25469d3ff3",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2546be2184",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2546be2184",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2546e068ab",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2546e068ab",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2546f9451a",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2546f9451a",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2547148212",
+        "name": "装备属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2547148212",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2547523900",
+        "name": "矩形",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2547523900",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c15b5471",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c15b5471",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c15f9eb6",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c15f9eb6",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1652ac7",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1652ac7",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c168cc20",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c168cc20",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c16ff2b8",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c16ff2b8",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c173345b",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c173345b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1785591",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1785591",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c17ba42a",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c17ba42a",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1816c4b",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1816c4b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1844733",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1844733",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c189c1a0",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c189c1a0",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c18d95f7",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c18d95f7",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c192eb4b",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c192eb4b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c196be7f",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c196be7f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c19d204d",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c19d204d",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1a0be2b",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1a0be2b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1a6e66b",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1a6e66b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1aa6e52",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1aa6e52",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1b13b2b",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1b13b2b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1b4b6c9",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1b4b6c9",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1bab0f8",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1bab0f8",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1bec208",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1bec208",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1c5a4b4",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1c5a4b4",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1c9f858",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1c9f858",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1d0dda9",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1d0dda9",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1d6bc5d",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1d6bc5d",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1dd177b",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1dd177b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1e0d9c2",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1e0d9c2",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1e6b5ce",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1e6b5ce",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1eaf57f",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1eaf57f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1f15762",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1f15762",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1f55edb",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1f55edb",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c1fbeb11",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c1fbeb11",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c2000719",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c2000719",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c2073b5c",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c2073b5c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c20b77d1",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c20b77d1",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c2128d73",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c2128d73",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c2166767",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c2166767",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c21f36cb",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c21f36cb",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c2233795",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c2233795",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c22a71a9",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c22a71a9",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c22ee185",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c22ee185",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c2369c0f",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c2369c0f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c23b476f",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c23b476f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c242b304",
+        "name": "魔晶石 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c242b304",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd28c2470244",
+        "name": "魔晶石 Chip 文本",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd28c2470244",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2d0097cb10",
+        "name": "禁忌镶嵌 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2d0097cb10",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2d00a3512b",
+        "name": "禁忌镶嵌属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2d00a3512b",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2d00a8dd8f",
+        "name": "禁忌镶嵌 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2d00a8dd8f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2d00b45e2f",
+        "name": "禁忌镶嵌属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2d00b45e2f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2d00b9b79c",
+        "name": "禁忌镶嵌 Chip",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2d00b9b79c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd2d00c4a5a7",
+        "name": "禁忌镶嵌属性",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2d00c4a5a7",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd305887e8cf",
+        "name": "在配装器打开 · Outline 按钮",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd305887e8cf",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd30588caab6",
+        "name": "在配装器打开 · 按钮文案",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd30588caab6",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd305893ab09",
+        "name": "分享图标连线",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd305893ab09",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd3058986fd2",
+        "name": "分享图标连线",
+        "type": "rectangle",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd3058986fd2",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd30589d1373",
+        "name": "分享图标节点",
+        "type": "ellipse",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd30589d1373",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd3058a10428",
+        "name": "分享图标节点",
+        "type": "ellipse",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd3058a10428",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd3058a53171",
+        "name": "分享图标节点",
+        "type": "ellipse",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd3058a53171",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd3f3b70fb82",
+        "name": "右侧配装结果面板",
+        "type": "board",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd3f3b70fb82",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd4e3d453fa3",
+        "name": "总属性标签",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd4e3d453fa3",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd51b9c179d7",
+        "name": "总属性·力量",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd51b9c179d7",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd51b9c6e105",
+        "name": "总属性·暴击",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd51b9c6e105",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd51b9cbabfc",
+        "name": "总属性·信念",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd51b9cbabfc",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd51b9d071c0",
+        "name": "总属性·直击",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd51b9d071c0",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd51b9d60e2f",
+        "name": "总属性·技速",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd51b9d60e2f",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "cd720ada-34f1-80c0-8008-bd51b9daf93c",
+        "name": "总属性·耐力",
+        "type": "text",
+        "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd51b9daf93c",
+        "cycle": false,
+        "duplicate": false
+      },
+      {
+        "id": "a0f79bb9-a27a-809a-8008-bf7dba899ac6",
+        "name": "顶栏与主导航",
+        "type": "board",
+        "shapeRef": "shape-id:a0f79bb9-a27a-809a-8008-bf7dba899ac6",
+        "cycle": false,
+        "duplicate": false
+      }
+    ]
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c0edfc0",
+    "id": "cd720ada-34f1-80c0-8008-bd253c0edfc0",
+    "name": "文本",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd253c0edfc0",
+      "type": "text",
+      "name": "文本",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-12",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-13",
+        "$values": []
+      },
+      "x": 24,
+      "y": 90,
+      "parentIndex": 0,
+      "parentX": 24,
+      "parentY": 90,
+      "boardX": 24,
+      "boardY": 90,
+      "width": 877,
+      "height": 27,
+      "bounds": {
+        "$id": "value-14",
+        "x": 24,
+        "y": 90,
+        "width": 877,
+        "height": 27
+      },
+      "center": {
+        "$id": "value-15",
+        "x": 462.5,
+        "y": 103.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-16",
+        "$values": [
+          {
+            "$id": "value-17",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-18",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-19",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-20",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.display"
+      },
+      "characters": "配装结果",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "700",
+      "fontSize": "24",
+      "fontWeight": "700",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "left",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-21",
+        "x": 24,
+        "y": 85.109375,
+        "width": 96,
+        "height": 35
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c1fda33",
+    "id": "cd720ada-34f1-80c0-8008-bd253c1fda33",
+    "name": "文本",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd253c1fda33",
+      "type": "text",
+      "name": "文本",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-22",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-23",
+        "$values": []
+      },
+      "x": 24,
+      "y": 122,
+      "parentIndex": 1,
+      "parentX": 24,
+      "parentY": 122,
+      "boardX": 24,
+      "boardY": 122,
+      "width": 1062,
+      "height": 19,
+      "bounds": {
+        "$id": "value-24",
+        "x": 24,
+        "y": 122,
+        "width": 1062,
+        "height": 19
+      },
+      "center": {
+        "$id": "value-25",
+        "x": 555,
+        "y": 131.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-26",
+        "$values": [
+          {
+            "$id": "value-27",
+            "fillColor": "#5e6d5c",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-28",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-29",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-30",
+        "fill": "color.text.secondary",
+        "fontSize": "font.size.label"
+      },
+      "characters": "目标值 47.7706626（每秒每威力伤害期望） · 用时 25.3 秒",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "500",
+      "fontSize": "14",
+      "fontWeight": "500",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "left",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-31",
+        "x": 24,
+        "y": 121.09375,
+        "width": 371.859375,
+        "height": 20
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c25694f",
+    "id": "cd720ada-34f1-80c0-8008-bd253c25694f",
+    "name": "结果指标卡",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd253c25694f",
+      "type": "rectangle",
+      "name": "结果指标卡",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 8,
+      "borderRadiusTopLeft": 8,
+      "borderRadiusTopRight": 8,
+      "borderRadiusBottomRight": 8,
+      "borderRadiusBottomLeft": 8,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-32",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-33",
+        "$values": []
+      },
+      "x": 24,
+      "y": 144,
+      "parentIndex": 2,
+      "parentX": 24,
+      "parentY": 144,
+      "boardX": 24,
+      "boardY": 144,
+      "width": 205.2,
+      "height": 64,
+      "bounds": {
+        "$id": "value-34",
+        "x": 24,
+        "y": 144,
+        "width": 205.2,
+        "height": 64
+      },
+      "center": {
+        "$id": "value-35",
+        "x": 126.6,
+        "y": 176
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-36",
+        "$values": [
+          {
+            "$id": "value-37",
+            "fillColor": "#ffffff",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-38",
+        "$values": [
+          {
+            "$id": "value-39",
+            "strokeColor": "#dce3d7",
+            "strokeColorRefFile": null,
+            "strokeColorRefId": null,
+            "strokeOpacity": 1,
+            "strokeStyle": "solid",
+            "strokeWidth": 1,
+            "strokeAlignment": "inner",
+            "strokeCapStart": null,
+            "strokeCapEnd": null,
+            "strokeColorGradient": null,
+            "strokeImage": null
+          }
+        ]
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-40",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-41",
+        "fill": "color.neutral.white",
+        "strokeColor": "color.border.default"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c28795f",
+    "id": "cd720ada-34f1-80c0-8008-bd253c28795f",
+    "name": "文本",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd253c28795f",
+      "type": "text",
+      "name": "文本",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-42",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-43",
+        "$values": []
+      },
+      "x": 35,
+      "y": 153,
+      "parentIndex": 3,
+      "parentX": 35,
+      "parentY": 153,
+      "boardX": 35,
+      "boardY": 153,
+      "width": 187.19999999999982,
+      "height": 17,
+      "bounds": {
+        "$id": "value-44",
+        "x": 35,
+        "y": 153,
+        "width": 187.19999999999982,
+        "height": 17
+      },
+      "center": {
+        "$id": "value-45",
+        "x": 128.5999999999999,
+        "y": 161.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-46",
+        "$values": [
+          {
+            "$id": "value-47",
+            "fillColor": "#5e6d5c",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-48",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-49",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-50",
+        "fill": "color.text.secondary",
+        "fontSize": "font.size.body"
+      },
+      "characters": "每威力伤害期望",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "500",
+      "fontSize": "12",
+      "fontWeight": "500",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "left",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-51",
+        "x": 35,
+        "y": 152.296875,
+        "width": 84,
+        "height": 17
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c2df93c",
+    "id": "cd720ada-34f1-80c0-8008-bd253c2df93c",
+    "name": "文本",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd253c2df93c",
+      "type": "text",
+      "name": "文本",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-52",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-53",
+        "$values": []
+      },
+      "x": 35,
+      "y": 173,
+      "parentIndex": 4,
+      "parentX": 35,
+      "parentY": 173,
+      "boardX": 35,
+      "boardY": 173,
+      "width": 187.19999999999982,
+      "height": 27,
+      "bounds": {
+        "$id": "value-54",
+        "x": 35,
+        "y": 173,
+        "width": 187.19999999999982,
+        "height": 27
+      },
+      "center": {
+        "$id": "value-55",
+        "x": 128.5999999999999,
+        "y": 186.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-56",
+        "$values": [
+          {
+            "$id": "value-57",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-58",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-59",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-60",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.heading"
+      },
+      "characters": "95.5413252",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "600",
+      "fontSize": "18",
+      "fontWeight": "600",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "left",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-61",
+        "x": 35,
+        "y": 172.703125,
+        "width": 99.5625,
+        "height": 26
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c341d71",
+    "id": "cd720ada-34f1-80c0-8008-bd253c341d71",
+    "name": "结果指标卡",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd253c341d71",
+      "type": "rectangle",
+      "name": "结果指标卡",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 8,
+      "borderRadiusTopLeft": 8,
+      "borderRadiusTopRight": 8,
+      "borderRadiusBottomRight": 8,
+      "borderRadiusBottomLeft": 8,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-62",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-63",
+        "$values": []
+      },
+      "x": 238.2,
+      "y": 144,
+      "parentIndex": 5,
+      "parentX": 238.2,
+      "parentY": 144,
+      "boardX": 238.2,
+      "boardY": 144,
+      "width": 205.20000000000002,
+      "height": 64,
+      "bounds": {
+        "$id": "value-64",
+        "x": 238.2,
+        "y": 144,
+        "width": 205.2,
+        "height": 64
+      },
+      "center": {
+        "$id": "value-65",
+        "x": 340.79999999999995,
+        "y": 176
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-66",
+        "$values": [
+          {
+            "$id": "value-67",
+            "fillColor": "#ffffff",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-68",
+        "$values": [
+          {
+            "$id": "value-69",
+            "strokeColor": "#dce3d7",
+            "strokeColorRefFile": null,
+            "strokeColorRefId": null,
+            "strokeOpacity": 1,
+            "strokeStyle": "solid",
+            "strokeWidth": 1,
+            "strokeAlignment": "inner",
+            "strokeCapStart": null,
+            "strokeCapEnd": null,
+            "strokeColorGradient": null,
+            "strokeImage": null
+          }
+        ]
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-70",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-71",
+        "fill": "color.neutral.white",
+        "strokeColor": "color.border.default"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253c3736b2",
+    "id": "cd720ada-34f1-80c0-8008-bd253c3736b2",
+    "name": "文本",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd253c3736b2",
+      "type": "text",
+      "name": "文本",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-72",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-73",
+        "$values": []
+      },
+      "x": 249.1999999999971,
+      "y": 153,
+      "parentIndex": 6,
+      "parentX": 249.1999999999971,
+      "parentY": 153,
+      "boardX": 249.1999999999971,
+      "boardY": 153,
+      "width": 187.1999999999971,
+      "height": 17,
+      "bounds": {
+        "$id": "value-74",
+        "x": 249.1999999999971,
+        "y": 153,
+        "width": 187.1999999999971,
+        "height": 17
+      },
+      "center": {
+        "$id": "value-75",
+        "x": 342.79999999999563,
+        "y": 161.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-76",
+        "$values": [
+          {
+            "$id": "value-77",
+            "fillColor": "#5e6d5c",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-78",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-79",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-80",
+        "fill": "color.text.secondary",
+        "fontSize": "font.size.body"
+      },
+      "characters": "GCD",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "500",
+      "fontSize": "12",
+      "fontWeight": "500",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "left",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-81",
+        "x": 249.1999999999971,
+        "y": 152.296875,
+        "width": 24.5625,
+        "height": 17
+      }
+    },
+    "childrenRefs": []
+  }
+]

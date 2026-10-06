@@ -1,16 +1,11 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties, Dispatch, SetStateAction } from "react";
-import { createPortal } from "react-dom";
+import type { Dispatch, SetStateAction } from "react";
 import {
   ArrowRight,
   Check,
-  ChevronDown,
   CircleHelp,
-  Compass,
   Play,
   Plus,
-  RotateCcw,
-  Search,
   X,
 } from "lucide-react";
 import {
@@ -46,14 +41,26 @@ import {
   JobPicker,
   WizardProgress,
 } from "./ui/WizardNavigation";
+import { AppHeader, type AppPage } from "./ui/app-header/AppHeader";
+import { SingleWorkbenchLayout, SingleWorkbenchFlow } from "./ui/single-workbench/layout/SingleWorkbenchLayout";
+import { SingleWorkbenchMain } from "./ui/single-workbench/main/SingleWorkbenchMain";
+import { SingleWorkbenchSidebar } from "./ui/single-workbench/sidebar/SingleWorkbenchSidebar";
+import { SingleConditionSummary } from "./ui/single-workbench/summary/SingleConditionSummary";
+import { SingleCombatSpeedSection } from "./ui/single-workbench/combat/SingleCombatSpeedSection";
+import { SingleEquipmentRangeSection } from "./ui/single-workbench/range/SingleEquipmentRangeSection";
+import { SingleEquipmentRestrictionsSection } from "./ui/single-workbench/restrictions/SingleEquipmentRestrictionsSection";
+import { SearchableGearDropdown as SearchableDropdown, VirtualGearOptions } from "./ui/single-workbench/restrictions/SearchableGearDropdown";
+import { GearMark } from "./ui/single-workbench/restrictions/GearMark";
 import { SearchProgress } from "./ui/SearchProgress";
 import { ConfigSnapshot } from "./ui/ConfigSnapshot";
 import { SearchHistory } from "./ui/SearchHistory";
 import { SingleSearchProgress } from "./ui/SingleSearchProgress";
+import { SingleJobResultView } from "./ui/single-result/SingleJobResultView";
+import { SingleJobGearTable } from "./ui/single-result/SingleJobGearTable";
+import { stringifyReferenceGearset } from "./ui/reference-gearset-share";
 import type {
   SingleSearchCurrentModelMetrics,
   SingleSearchProgressState,
-  SingleSearchSecondRoundVerification,
   SingleSearchSlotCandidateCount,
 } from "./ui/SingleSearchProgress";
 import { createSearchHistory, finishSearchHistory, type SearchHistoryRecord } from "./ui/search-history";
@@ -61,7 +68,14 @@ import type { WizardStep } from "./ui/WizardNavigation";
 
 const displayedDataVersion = dataProvenance.sources?.find((source) => source.kind === "mcp" && source.gameVersion)?.gameVersion ?? dataProvenance.commit.slice(0, 12);
 
-type Page = "single" | "joint";
+type Page = AppPage;
+type SingleGcdMode = "any" | "tiers" | "speed";
+type SingleGcdFeasibility = {
+  key: string;
+  status: "loading" | "ready" | "error";
+  tiers: number[];
+  error?: string;
+};
 type CommonSlot = GearSlot;
 
 const slotLabels: Record<GearSlot, string> = {
@@ -170,7 +184,45 @@ const defaultCommonSlots: CommonSlot[] = [
   "ring2",
 ];
 
+const pldWorkbenchDesignRestrictions = {
+  excludedSources: ["新月岛/北征之章", "点数/记忆", "零式/重量级"],
+  excludedGearNames: [
+    "改良型宫廷爱人御敌战甲",
+    "虚王盾",
+    "瓦纳·迪尔御敌马裤",
+  ],
+  forcedGearNames: {
+    weapon: "帕拉佐钻石剑",
+    head: "瓦纳·迪尔御敌战冠",
+    ring: "改良型王国黄铜御敌戒指",
+  } satisfies Partial<Record<GearSlot, string>>,
+} as const;
+
+function findDesignGearId(jobId: JobId, slot: GearSlot, name: string): number | undefined {
+  return gears.find((gear) =>
+    gear.name === name &&
+    gear.slot === (slot === "ring2" ? "ring" : slot) &&
+    gear.jobs.includes(jobId),
+  )?.id;
+}
+
 function makeConfig(jobId: JobId): OptimizationConfig {
+  const isDesignJob = jobId === "PLD";
+  const excludedGearIds = isDesignJob
+    ? pldWorkbenchDesignRestrictions.excludedGearNames
+        .map((name) => gears.find((gear) => gear.name === name && gear.jobs.includes(jobId))?.id)
+        .filter((id): id is number => id !== undefined)
+    : [];
+  const forcedGear = isDesignJob
+    ? Object.fromEntries(
+        Object.entries(pldWorkbenchDesignRestrictions.forcedGearNames)
+          .map(([slot, name]) => [
+            slot,
+            findDesignGearId(jobId, slot as GearSlot, name),
+          ] as const)
+          .filter((entry): entry is [string, number] => entry[1] !== undefined),
+      ) as Partial<Record<GearSlot, number>>
+    : {};
   return {
     jobId,
     minItemLevel: jobSchemas[jobId].defaultItemLevel?.[0] ?? Math.max(bounds[0], bounds[1] - 15),
@@ -185,12 +237,27 @@ function makeConfig(jobId: JobId): OptimizationConfig {
     toughnessMinPercent: undefined,
     maximizeTenacity: false,
     objective: "damage",
-    excludedSources: [],
-    excludedGearIds: [],
-    forcedGear: {},
+    excludedSources: isDesignJob ? [...pldWorkbenchDesignRestrictions.excludedSources] : [],
+    excludedGearIds,
+    forcedGear,
     sharedSlots: [],
     foodId: 0,
   };
+}
+
+function normalizeSingleWorkbenchConfig(config: OptimizationConfig): OptimizationConfig {
+  if (config.gcdChoices !== undefined || config.gcdTarget === undefined) return { ...config };
+  return {
+    ...config,
+    gcdTarget: undefined,
+    gcdChoices: [config.gcdTarget],
+    objective: "damage",
+  };
+}
+
+function singleGcdModeForConfig(config: OptimizationConfig): SingleGcdMode {
+  if (config.speedMin !== undefined || config.speedMax !== undefined) return "speed";
+  return config.gcdTarget !== undefined || config.gcdChoices !== undefined ? "tiers" : "speed";
 }
 
 function currentPage(): Page {
@@ -218,57 +285,6 @@ function setConfigPatch(
   setConfig((current) => ({ ...current, ...patch }));
 }
 
-function Header({
-  page,
-  onReset,
-}: {
-  page: Page;
-  onReset: () => void;
-}) {
-  return (
-    <header className="topbar">
-      <div className="brand">
-        <div className="brand-mark">
-          <Compass size={20} />
-        </div>
-        <div>
-          <div className="brand-name">青瓷分析台</div>
-          <div className="brand-sub">最终幻想14 配装优化工具</div>
-        </div>
-      </div>
-      <nav className="page-nav" aria-label="搜索页面">
-        <a
-          href="#/single"
-          className={page === "single" ? "active" : ""}
-          aria-current={page === "single" ? "page" : undefined}
-        >
-          单职业配装
-        </a>
-        <a
-          href="#/joint"
-          className={page === "joint" ? "active" : ""}
-          aria-current={page === "joint" ? "page" : undefined}
-        >
-          多职业联合搜索
-        </a>
-      </nav>
-      <div className="topbar-meta">
-        <span className="status-dot" />
-        <span>数据版本 {displayedDataVersion}</span>
-        <span className="vertical-rule" />
-        <button
-          className="icon-button"
-          aria-label="重置当前页面配置"
-          title="重置当前页面配置"
-          onClick={onReset}
-        >
-          <RotateCcw size={17} />
-        </button>
-      </div>
-    </header>
-  );
-}
-
 function NumberField({
   label,
   value,
@@ -278,6 +294,7 @@ function NumberField({
   step = 1,
   unit,
   placeholder,
+  className,
 }: {
   label: string;
   value: number | undefined;
@@ -287,9 +304,10 @@ function NumberField({
   step?: number;
   unit?: string;
   placeholder?: string;
+  className?: string;
 }) {
   return (
-    <label className="number-field">
+    <label className={className ? `number-field ${className}` : "number-field"}>
       <span>{label}</span>
       <span className="number-input-wrap">
         <input
@@ -339,15 +357,17 @@ function SelectField({
   onChange,
   disabled = false,
   children,
+  className,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   disabled?: boolean;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <label className="config-field">
+    <label className={className ? `config-field ${className}` : "config-field"}>
       <span className="field-label">{label}</span>
       <select disabled={disabled} value={value} onChange={(event) => onChange(event.target.value)}>
         {children}
@@ -356,196 +376,16 @@ function SelectField({
   );
 }
 
-function SearchableDropdown({
-  label,
-  placeholder,
-  query,
-  onQueryChange,
-  open,
-  onOpenChange,
-  selectedLabel,
-  children,
-}: {
-  label: string;
-  placeholder: string;
-  query: string;
-  onQueryChange: (query: string) => void;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  selectedLabel?: string;
-  children: React.ReactNode;
-}) {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const [panelPosition, setPanelPosition] = useState<{
-    left: number;
-    width: number;
-    maxHeight: number;
-    opensUp: boolean;
-    edge: number;
-  }>();
-
-  useEffect(() => {
-    if (!open) return;
-    const closeOnOutsideClick = (event: PointerEvent) => {
-      const target = event.target as Node;
-      if (!rootRef.current?.contains(target) && !panelRef.current?.contains(target)) onOpenChange(false);
-    };
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onOpenChange(false);
-    };
-    document.addEventListener("pointerdown", closeOnOutsideClick);
-    document.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.removeEventListener("pointerdown", closeOnOutsideClick);
-      document.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [open, onOpenChange]);
-
-  useLayoutEffect(() => {
-    if (!open) {
-      setPanelPosition(undefined);
-      return;
-    }
-    const updatePosition = () => {
-      const rect = triggerRef.current?.getBoundingClientRect();
-      if (!rect) return;
-      const gap = 5;
-      const viewportPadding = 8;
-      const desiredHeight = 244;
-      const spaceBelow = Math.max(0, window.innerHeight - rect.bottom - gap - viewportPadding);
-      const spaceAbove = Math.max(0, rect.top - gap - viewportPadding);
-      const opensUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow;
-      const availableSpace = opensUp ? spaceAbove : spaceBelow;
-      const width = Math.min(Math.max(rect.width, 260), window.innerWidth - viewportPadding * 2);
-      setPanelPosition({
-        left: Math.min(Math.max(viewportPadding, rect.left), window.innerWidth - width - viewportPadding),
-        width,
-        maxHeight: Math.min(desiredHeight, availableSpace),
-        opensUp,
-        edge: opensUp ? window.innerHeight - rect.top + gap : rect.bottom + gap,
-      });
-    };
-    updatePosition();
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-    };
-  }, [open]);
-
-  const panelStyle = panelPosition ? {
-    position: "fixed",
-    left: panelPosition.left,
-    width: panelPosition.width,
-    maxHeight: panelPosition.maxHeight,
-    top: panelPosition.opensUp ? undefined : panelPosition.edge,
-    bottom: panelPosition.opensUp ? panelPosition.edge : undefined,
-  } as CSSProperties : undefined;
-
-  return (
-    <div className="single-searchable-dropdown" ref={rootRef}>
-      <button
-        ref={triggerRef}
-        type="button"
-        className="single-searchable-dropdown-trigger"
-        aria-label={label}
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        onClick={() => onOpenChange(!open)}
-      >
-        <Search size={15} aria-hidden="true" />
-        <span>{selectedLabel || placeholder}</span>
-        <ChevronDown size={15} aria-hidden="true" />
-      </button>
-      {open && panelPosition && createPortal(<div
-        ref={panelRef}
-        className={`single-searchable-dropdown-panel${panelPosition.opensUp ? " opens-up" : ""}`}
-        role="dialog"
-        aria-label={`${label}筛选列表`}
-        style={panelStyle}
-      >
-        <label className="single-searchable-dropdown-search">
-          <Search size={14} aria-hidden="true" />
-          <input
-            type="search"
-            autoFocus
-            aria-label={`搜索${label}`}
-            placeholder={placeholder}
-            value={query}
-            onChange={(event) => onQueryChange(event.target.value)}
-          />
-        </label>
-        <div className="single-searchable-dropdown-options">{children}</div>
-      </div>, document.body)}
-    </div>
-  );
-}
-
-function VirtualGearOptions({
-  items,
-  query,
-  onSelect,
-  selectedId,
-}: {
-  items: Gear[];
-  query: string;
-  onSelect: (gear: Gear) => void;
-  selectedId?: number;
-}) {
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const [scrollTop, setScrollTop] = useState(0);
-  const rowHeight = 36;
-  const viewportHeight = Math.min(180, items.length * rowHeight);
-  const firstIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - 2);
-  const lastIndex = Math.min(items.length, firstIndex + Math.ceil(viewportHeight / rowHeight) + 5);
-
-  useEffect(() => {
-    if (viewportRef.current) viewportRef.current.scrollTop = 0;
-    setScrollTop(0);
-  }, [query]);
-
-  return <div
-    ref={viewportRef}
-    role="listbox"
-    aria-label="装备候选"
-    className="single-virtual-options-viewport"
-    tabIndex={0}
-    style={{ height: viewportHeight }}
-    onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}
-  >
-    <div className="single-virtual-options-track" style={{ height: items.length * rowHeight }}>
-      {items.slice(firstIndex, lastIndex).map((gear, offset) => {
-        const index = firstIndex + offset;
-        return <button
-          type="button"
-          role="option"
-          aria-selected={gear.id === selectedId}
-          aria-posinset={index + 1}
-          aria-setsize={items.length}
-          className="single-searchable-dropdown-option"
-          key={gear.id}
-          style={{ top: index * rowHeight, height: rowHeight }}
-          onClick={() => onSelect(gear)}
-        >
-          <span>{gear.name}</span>
-          <small>{slotLabels[gear.slot]} · 品级 {gear.level}</small>
-        </button>;
-      })}
-    </div>
-  </div>;
-}
-
 function JobConfigFields({
   config,
   setConfig,
   showFood,
   step = "all",
   singleWorkbench = false,
+  singleGcdMode,
+  onSingleGcdModeChange,
+  onSingleGcdFeasibilityChange,
   singleObjectiveLabel,
-  singleObjectiveDescription,
   onEdited,
 }: {
   config: OptimizationConfig;
@@ -553,8 +393,10 @@ function JobConfigFields({
   showFood: boolean;
   step?: WizardStep | "all";
   singleWorkbench?: boolean;
+  singleGcdMode?: SingleGcdMode;
+  onSingleGcdModeChange?: (mode: SingleGcdMode) => void;
+  onSingleGcdFeasibilityChange?: Dispatch<SetStateAction<SingleGcdFeasibility | undefined>>;
   singleObjectiveLabel?: string;
-  singleObjectiveDescription?: string;
   onEdited?: () => void;
 }) {
   const [sourceQuery, setSourceQuery] = useState("");
@@ -571,8 +413,12 @@ function JobConfigFields({
   const [feasibleGcds, setFeasibleGcds] = useState<number[]>();
   const [feasibleGcdsKey, setFeasibleGcdsKey] = useState<string>();
   const [findingGcds, setFindingGcds] = useState(false);
+  const [gcdQueryAttempt, setGcdQueryAttempt] = useState(0);
   const [gcdProgress, setGcdProgress] = useState("");
   const [gcdError, setGcdError] = useState<string>();
+  const [gcdDropdownOpen, setGcdDropdownOpen] = useState(false);
+  const [visibleGcdChipCount, setVisibleGcdChipCount] = useState(Number.MAX_SAFE_INTEGER);
+  const gcdChipsRef = useRef<HTMLSpanElement>(null);
   const gcdAbortController = useRef<AbortController | undefined>(undefined);
   const [forcedSlot, setForcedSlot] = useState<GearSlot>(
     slotsForJob(config.jobId)[0] ?? "weapon",
@@ -643,23 +489,135 @@ function JobConfigFields({
     .map((id) => gears.find((gear) => gear.id === id))
     .filter((gear): gear is Gear => gear !== undefined);
   const availableSlots = slotsForJob(config.jobId);
-  const gcdMode = config.gcdChoices !== undefined
-    ? "multiple"
-    : config.gcdTarget === undefined
-      ? "any"
-      : "single";
+  const selectedGcds = config.gcdChoices ?? (config.gcdTarget === undefined ? [] : [config.gcdTarget]);
+  const selectedGcdKey = selectedGcds.join(",");
+  const gcdMode = singleWorkbench
+    ? singleGcdMode === "speed" ? "speed" : singleGcdMode === "tiers" ? "multiple" : "any"
+    : config.gcdChoices !== undefined
+      ? "multiple"
+      : config.gcdTarget === undefined
+        ? "any"
+        : "single";
+
+  useLayoutEffect(() => {
+    const chips = gcdChipsRef.current;
+    if (!chips) return;
+
+    const fitVisibleChips = () => {
+      const availableWidth = chips.getBoundingClientRect().width;
+      if (availableWidth <= 0 || selectedGcds.length === 0) return;
+
+      const measuredChipWidth = chips.querySelector<HTMLElement>(".single-gcd-chip-measure:not(.is-overflow)")
+        ?.getBoundingClientRect().width ?? 0;
+      const measuredOverflowWidth = chips.querySelector<HTMLElement>(".single-gcd-chip-measure.is-overflow")
+        ?.getBoundingClientRect().width ?? 0;
+      const chipWidth = measuredChipWidth || 50;
+      const overflowWidth = measuredOverflowWidth || 26;
+      const gap = Number.parseFloat(getComputedStyle(chips).columnGap) || 0;
+      let fittedCount = selectedGcds.length;
+
+      while (fittedCount > 0) {
+        const chipRowWidth = fittedCount * chipWidth + Math.max(0, fittedCount - 1) * gap;
+        const overflowGap = fittedCount > 0 ? gap : 0;
+        const needsOverflow = fittedCount < selectedGcds.length;
+        if (chipRowWidth + (needsOverflow ? overflowGap + overflowWidth : 0) <= availableWidth) break;
+        fittedCount -= 1;
+      }
+
+      if (fittedCount < selectedGcds.length && overflowWidth > availableWidth) fittedCount = 0;
+      setVisibleGcdChipCount((current) => current === fittedCount ? current : fittedCount);
+    };
+
+    fitVisibleChips();
+    const resizeObserver = typeof ResizeObserver === "undefined"
+      ? undefined
+      : new ResizeObserver(fitVisibleChips);
+    resizeObserver?.observe(chips);
+    window.addEventListener("resize", fitVisibleChips);
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", fitVisibleChips);
+    };
+  }, [selectedGcdKey, gcdMode]);
   const gcdQueryKey = JSON.stringify({
     ...config,
+    objective: undefined,
     gcdTarget: undefined,
     gcdChoices: undefined,
   });
+  const gcdQueryConfig = useMemo<OptimizationConfig>(
+    () => ({ ...config, objective: "damage", gcdTarget: undefined, gcdChoices: undefined }),
+    [gcdQueryKey],
+  );
   const gcdSelectionReady =
     feasibleGcdsKey === gcdQueryKey && feasibleGcds !== undefined;
+  const unavailableSelectedGcds = gcdSelectionReady
+    ? selectedGcds.filter((gcd) => !feasibleGcds?.includes(gcd))
+    : [];
   const speedStatName =
     jobSchemas[config.jobId].role === "healer" ||
     jobSchemas[config.jobId].role === "int"
       ? "咏速"
       : "技速";
+
+  useEffect(() => {
+    if (!singleWorkbench) return;
+    if (singleGcdMode !== "tiers") {
+      setFindingGcds(false);
+      setGcdProgress("");
+      setGcdError(undefined);
+      onSingleGcdFeasibilityChange?.(undefined);
+      return;
+    }
+    if (gcdSelectionReady) {
+      setFindingGcds(false);
+      setGcdProgress("");
+      setGcdError(undefined);
+      onSingleGcdFeasibilityChange?.((current) => {
+        const tiers = feasibleGcds ?? [];
+        return current?.key === gcdQueryKey && current.status === "ready" &&
+          current.tiers.length === tiers.length && current.tiers.every((tier, index) => tier === tiers[index])
+          ? current
+          : { key: gcdQueryKey, status: "ready", tiers };
+      });
+      return;
+    }
+    gcdAbortController.current?.abort();
+    const controller = new AbortController();
+    gcdAbortController.current = controller;
+    setFindingGcds(true);
+    setGcdError(undefined);
+    onSingleGcdFeasibilityChange?.((current) =>
+      current?.key === gcdQueryKey && current.status === "loading"
+        ? current
+        : { key: gcdQueryKey, status: "loading", tiers: [] },
+    );
+    const timer = window.setTimeout(() => {
+      findFeasibleGcds(gcdQueryConfig, {
+        signal: controller.signal,
+        onProgress: (message) => setGcdProgress(searchProgressText(message)),
+      }).then((choices) => {
+        if (controller.signal.aborted) return;
+        setFeasibleGcds(choices);
+        setFeasibleGcdsKey(gcdQueryKey);
+        onSingleGcdFeasibilityChange?.({ key: gcdQueryKey, status: "ready", tiers: choices });
+        setGcdProgress("");
+        setFindingGcds(false);
+      }).catch((caught: unknown) => {
+        if (controller.signal.aborted) return;
+        const message = searchMessageText(caught instanceof Error ? caught.message : String(caught));
+        setGcdError(message);
+        onSingleGcdFeasibilityChange?.({ key: gcdQueryKey, status: "error", tiers: [], error: message });
+        setGcdProgress("");
+        setFindingGcds(false);
+      });
+    }, 180);
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+      if (gcdAbortController.current === controller) gcdAbortController.current = undefined;
+    };
+  }, [singleWorkbench, singleGcdMode, gcdSelectionReady, gcdQueryKey, gcdQueryConfig, gcdQueryAttempt, feasibleGcds, onSingleGcdFeasibilityChange]);
 
   function update<K extends keyof OptimizationConfig>(
     key: K,
@@ -723,6 +681,31 @@ function JobConfigFields({
       );
       setGcdChoicesDirty(false);
     }
+  }
+
+  function setSingleMode(mode: SingleGcdMode) {
+    onEdited?.();
+    onSingleGcdModeChange?.(mode);
+    setGcdDropdownOpen(false);
+    setConfig((current) => {
+      if (mode === "any") {
+        return { ...current, gcdTarget: undefined, gcdChoices: undefined, speedMin: undefined, speedMax: undefined, objective: "dps" };
+      }
+      if (mode === "tiers") {
+        const choices = current.gcdChoices ?? (current.gcdTarget === undefined ? [] : [current.gcdTarget]);
+        return {
+          ...current,
+          gcdTarget: undefined,
+          gcdChoices: choices,
+          speedMin: undefined,
+          speedMax: undefined,
+          objective: choices.length === 1 ? "damage" : "dps",
+        };
+      }
+      return { ...current, gcdTarget: undefined, gcdChoices: undefined, objective: "dps" };
+    });
+    setGcdChoicesText("");
+    setGcdChoicesDirty(false);
   }
 
   function setGcdChoices(text: string) {
@@ -862,9 +845,10 @@ function JobConfigFields({
         </div>
       </div>}
 
-      {singleWorkbench && <h2 className="single-workbench-section-heading single-workbench-combat-heading">战斗速度与目标</h2>}
+      <SingleCombatSpeedSection enabled={singleWorkbench}>
       {(step === "all" || step === 2) && <details className={`advanced-section${singleWorkbench ? " single-combat-conditions" : ""}`} open={singleWorkbench ? true : undefined}>
-      <summary>
+      {singleWorkbench && <summary aria-hidden="true" />}
+      {!singleWorkbench && <summary>
         <span>{singleWorkbench ? "战斗速度与目标" : "GCD、速度与坚韧条件"}</span>
         <span className="advanced-summary">
           {config.gcdChoices?.length
@@ -879,30 +863,96 @@ function JobConfigFields({
             ? ` · 坚韧条件 ${Number(config.minTenacity !== undefined) + Number(config.toughnessMinPercent !== undefined) + Number(config.maximizeTenacity)}`
             : ""}
         </span>
-      </summary>
+      </summary>}
       <div className={singleWorkbench ? "config-section single-gcd-section" : "config-section"}>
-        <div className="field-label with-help">
-          <span>GCD 约束</span>
-          <span title="可以接受一个 GCD 档位，也可以给出多个可接受档位。">
-            <CircleHelp size={14} />
-          </span>
-        </div>
-        <select
-          aria-label="GCD 约束类型"
-          value={gcdMode}
-          onChange={(event) => setGcdMode(event.target.value)}
-        >
-          <option value="any">不限</option>
-          <option value="single">指定一个档位</option>
-          <option value="multiple">接受多个档位</option>
-        </select>
-        {singleWorkbench && singleObjectiveLabel && <section className="single-objective-display" aria-label="自动选择的搜索指标">
-          <span>当前优化指标</span>
-          <strong>{singleObjectiveLabel}</strong>
-          <p>{singleObjectiveDescription}</p>
-        </section>}
-        {gcdMode === "single" && (
-          <NumberField
+        {singleWorkbench ? <>
+          <div className="single-gcd-controls">
+            <span className="single-gcd-label">GCD 约束</span>
+            <span className="single-gcd-mode-control">
+              <select
+                aria-label="GCD 约束类型"
+                value={gcdMode}
+                onChange={(event) => setSingleMode(event.target.value === "multiple" ? "tiers" : event.target.value as SingleGcdMode)}
+              >
+                <option value="any">不限</option>
+                <option value="multiple">指定 GCD 档位</option>
+                <option value="speed">自定义速度范围</option>
+              </select>
+              <span className="single-gcd-mode-caret" aria-hidden="true">⌄</span>
+            </span>
+            {gcdMode === "multiple" && <div className="single-gcd-choice-control">
+              <button
+                type="button"
+                className="single-gcd-choice-trigger"
+                aria-label="选择 GCD 档位"
+                aria-expanded={gcdDropdownOpen}
+                onClick={() => setGcdDropdownOpen((open) => !open)}
+              >
+                {selectedGcds.length > 0 ? <span className="single-gcd-chips" ref={gcdChipsRef}>
+                  {selectedGcds.slice(0, visibleGcdChipCount).map((gcd) => <span className="single-gcd-chip" key={gcd}>{gcd.toFixed(2)} 秒</span>)}
+                  {selectedGcds.length > visibleGcdChipCount && <span className="single-gcd-chip is-overflow">…</span>}
+                  <span className="single-gcd-chip single-gcd-chip-measure" aria-hidden="true">0.00 秒</span>
+                  <span className="single-gcd-chip is-overflow single-gcd-chip-measure" aria-hidden="true">…</span>
+                </span> : <span className="single-gcd-choice-placeholder">
+                  {findingGcds ? "正在查询档位" : gcdSelectionReady && feasibleGcds?.length === 0 ? "当前无可行档位" : "选择档位"}
+                </span>}
+                <span className="single-gcd-choice-caret" aria-hidden="true">⌄</span>
+              </button>
+              {gcdDropdownOpen && <div className="single-gcd-choice-menu" role="group" aria-label="可行 GCD 档位">
+                {!gcdSelectionReady && <p className="single-gcd-choice-empty">{findingGcds ? "正在查询可行档位…" : "等待可行档位查询"}</p>}
+                {gcdSelectionReady && feasibleGcds?.length === 0 && <p className="single-gcd-choice-empty">当前条件下没有可行档位。</p>}
+                {gcdSelectionReady && feasibleGcds?.map((gcd) => <label className="single-gcd-choice-option" key={gcd}>
+                  <input
+                    type="checkbox"
+                    checked={selectedGcds.includes(gcd)}
+                    onChange={(event) => toggleFeasibleGcd(gcd, event.target.checked)}
+                  />
+                  <span>{gcd.toFixed(2)} 秒</span>
+                  {selectedGcds.includes(gcd) && <Check size={14} aria-hidden="true" />}
+                </label>)}
+                {unavailableSelectedGcds.map((gcd) => <label className="single-gcd-choice-option is-unavailable" key={`unavailable-${gcd}`}>
+                  <input
+                    type="checkbox"
+                    checked
+                    onChange={() => toggleFeasibleGcd(gcd, false)}
+                  />
+                  <span>{gcd.toFixed(2)} 秒 · 当前条件下不可行</span>
+                </label>)}
+                <p className="single-gcd-choice-note">{gcdSelectionReady ? "档位数量按选择结果自动适配" : "档位按当前职业与搜索条件查询"}</p>
+              </div>}
+            </div>}
+            {gcdMode === "speed" && <div className="single-speed-inline">
+              <span>{speedStatName}</span>
+              <label><span className="sr-only">最低{speedStatName}</span><input type="number" min={0} value={config.speedMin ?? ""} placeholder="最低" onChange={(event) => update("speedMin", event.target.value === "" ? undefined : Number(event.target.value))} /></label>
+              <span className="single-speed-separator">–</span>
+              <label><span className="sr-only">最高{speedStatName}</span><input type="number" min={0} value={config.speedMax ?? ""} placeholder="最高" onChange={(event) => update("speedMax", event.target.value === "" ? undefined : Number(event.target.value))} /></label>
+            </div>}
+          </div>
+          {singleObjectiveLabel && <section className="single-objective-display" aria-label="自动选择的搜索指标">
+            <span>当前优化指标</span>
+            <strong>{singleObjectiveLabel}</strong>
+          </section>}
+          {gcdError && <span className="gcd-query-error" role="alert">
+            {gcdError}
+            {singleGcdMode === "tiers" && <button type="button" className="single-gcd-query-retry" onClick={() => setGcdQueryAttempt((attempt) => attempt + 1)}>重新查询</button>}
+          </span>}
+        </> : <>
+          <div className="field-label with-help">
+            <span>GCD 约束</span>
+            <span title="可以接受一个 GCD 档位，也可以给出多个可接受档位。">
+              <CircleHelp size={14} />
+            </span>
+          </div>
+          <select
+            aria-label="GCD 约束类型"
+            value={gcdMode}
+            onChange={(event) => setGcdMode(event.target.value)}
+          >
+            <option value="any">不限</option>
+            <option value="single">指定一个档位</option>
+            <option value="multiple">接受多个档位</option>
+          </select>
+          {gcdMode === "single" && <NumberField
             label="目标 GCD"
             value={config.gcdTarget}
             min={1}
@@ -910,21 +960,14 @@ function JobConfigFields({
             step={0.01}
             unit="秒"
             onChange={(value) => update("gcdTarget", value)}
-          />
-        )}
-        {gcdMode === "multiple" && (
-          <label className="number-field">
+          />}
+          {gcdMode === "multiple" && <label className="number-field">
             <span>可接受的 GCD 档位</span>
-            <input
-              type="text"
-              value={gcdChoicesText}
-              placeholder="例如 2.48, 2.50"
-              onChange={(event) => setGcdChoices(event.target.value)}
-            />
+            <input type="text" value={gcdChoicesText} placeholder="例如 2.48, 2.50" onChange={(event) => setGcdChoices(event.target.value)} />
             <small>使用逗号分隔，每个档位都作为独立约束参与搜索。</small>
-          </label>
-        )}
-        {(!singleWorkbench || gcdMode !== "any") && <button
+          </label>}
+        </>}
+        {!singleWorkbench && gcdMode !== "any" && <button
           type="button"
           className="gcd-calculate-button"
           onClick={findingGcds ? () => gcdAbortController.current?.abort() : calculateFeasibleGcds}
@@ -932,9 +975,9 @@ function JobConfigFields({
           {findingGcds ? <X size={14} /> : <CircleHelp size={14} />}
           {findingGcds ? "取消查询" : "计算可行 GCD 档位"}
         </button>}
-        {gcdProgress && <span className="gcd-result-note">{gcdProgress}</span>}
-        {gcdError && <span className="gcd-query-error">{gcdError}</span>}
-        {gcdSelectionReady && (
+        {!singleWorkbench && gcdProgress && <span className="gcd-result-note">{gcdProgress}</span>}
+        {!singleWorkbench && gcdError && <span className="gcd-query-error">{gcdError}</span>}
+        {!singleWorkbench && gcdSelectionReady && (
           <div className="feasible-gcd-panel">
             <div className="feasible-gcd-heading">
               <span>找到 {feasibleGcds.length} 个可行档位</span>
@@ -983,34 +1026,7 @@ function JobConfigFields({
         )}
       </div>
 
-      {singleWorkbench ? <details className="single-custom-speed">
-        <summary>
-          <span>高级自定义速度范围</span>
-          <span className="single-custom-speed-status">
-            {config.speedMin !== undefined || config.speedMax !== undefined ? "已启用" : "未启用"}
-          </span>
-          <span className="single-custom-speed-help" title="自定义速度范围与 GCD 档位互斥，并按范围内可行档位自动选择指标。" aria-label="自定义速度范围说明">
-            <CircleHelp size={14} aria-hidden="true" />
-          </span>
-        </summary>
-        <div className="config-section">
-          <div className="field-label">{speedStatName}范围</div>
-          <div className="field-grid two">
-            <NumberField
-              label={"最低" + speedStatName}
-              value={config.speedMin}
-              min={0}
-              onChange={(value) => update("speedMin", value)}
-            />
-            <NumberField
-              label={"最高" + speedStatName}
-              value={config.speedMax}
-              min={0}
-              onChange={(value) => update("speedMax", value)}
-            />
-          </div>
-        </div>
-      </details> : <div className="config-section">
+      {!singleWorkbench && <div className="config-section">
         <div className="field-label">{speedStatName}范围</div>
         <div className="field-grid two">
           <NumberField
@@ -1040,9 +1056,9 @@ function JobConfigFields({
                 : "none";
           return <>
             <label className="config-field">
-              <span className="field-label">坚韧方式</span>
+              <span className="field-label">坚韧约束</span>
               <select
-                aria-label="坚韧方式"
+                aria-label="坚韧约束"
                 value={toughnessMode}
                 onChange={(event) => {
                   onEdited?.();
@@ -1105,16 +1121,18 @@ function JobConfigFields({
         </>}
       </div>}
       </details>}
+      </SingleCombatSpeedSection>
 
-      {(step === "all" || step === 3) && singleWorkbench && <section className="single-workbench-range">
-        <h2 className="single-workbench-section-heading">装备范围与食物</h2>
-        <div className="candidate-range-group">
+      {(step === "all" || step === 3) && singleWorkbench && <SingleEquipmentRangeSection
+        note={jobSchemas[config.jobId].ignoreWeaponItemLevel && <p className="field-hint">武器不按装备品级区间筛选，仍须满足职业与穿戴等级限制。</p>}
+      >
           <NumberField
             label="同步品级"
             value={config.syncLevel}
             min={1}
             max={bounds[1]}
             placeholder="不限"
+            className="single-range-sync-field"
             onChange={(value) => update("syncLevel", value)}
           />
           <div className="single-item-level-range">
@@ -1140,14 +1158,13 @@ function JobConfigFields({
           {showFood && <SelectField
             label="食物"
             value={String(config.foodId)}
+            className="single-range-food-field"
             onChange={(value) => update("foodId", Number(value))}
           >
             <option value="0">自动选择</option>
             {availableFoods.map((food) => <option key={food.id} value={food.id}>{food.name}</option>)}
           </SelectField>}
-        </div>
-        {jobSchemas[config.jobId].ignoreWeaponItemLevel && <p className="field-hint">武器不按装备品级区间筛选，仍须满足职业与穿戴等级限制。</p>}
-      </section>}
+      </SingleEquipmentRangeSection>}
 
       {(step === "all" || step === 3) && <>
       {!singleWorkbench && jobSchemas[config.jobId].ignoreWeaponItemLevel && <p className="field-hint">武器不按装备品级区间筛选，仍须满足职业与穿戴等级限制。</p>}
@@ -1173,9 +1190,8 @@ function JobConfigFields({
         </SelectField>
       )}
 
-      {singleWorkbench && <h2 className="single-workbench-section-heading single-workbench-restrictions-heading">装备限制</h2>}
-      {singleWorkbench ? <div className="single-restriction-columns">
-        <section className="single-restriction-column single-restriction-left" aria-label="来源与排除装备">
+      {singleWorkbench ? <SingleEquipmentRestrictionsSection
+      left={<section className="single-restriction-column single-restriction-left" aria-label="来源与排除装备">
           <div className="single-restriction-editor">
             <div className="single-restriction-editor-heading">
               <h3>来源限制</h3>
@@ -1196,22 +1212,23 @@ function JobConfigFields({
                     type="button"
                     role="option"
                     aria-selected="false"
-                    className="single-searchable-dropdown-option"
+                    data-option-kind="source"
                     key={source}
                     onClick={() => update("excludedSources", [...config.excludedSources, source])}
                   >
                     <span>{source}</span>
                     <small>{count} 件装备</small>
-                    <Plus size={14} aria-hidden="true" />
                   </button>
                 ))}
-              {!sourceOptions.some(([source]) => !config.excludedSources.includes(source)) && <p className="single-searchable-dropdown-note">没有匹配的来源。</p>}
+              {!sourceOptions.some(([source]) => !config.excludedSources.includes(source)) && <p>没有匹配的来源。</p>}
             </SearchableDropdown>
             <div className="single-restriction-selected-list" aria-label="已排除来源">
               {config.excludedSources.map((source) => (
-                <div className="single-restriction-row" key={source}>
-                  <span>{source}</span>
-                  <span className="single-restriction-row-detail">来源</span>
+                <div className="single-restriction-row single-restriction-row--source" key={source}>
+                  <span className="single-restriction-row-main">
+                    <span className="single-restriction-row-name">{source}</span>
+                    <span className="single-restriction-count">{jobGears.filter((gear) => gear.source?.startsWith(source)).length} 件</span>
+                  </span>
                   <button type="button" aria-label={`恢复来源 ${source}`} onClick={() => update("excludedSources", config.excludedSources.filter((item) => item !== source))}><X size={14} /></button>
                 </div>
               ))}
@@ -1234,25 +1251,27 @@ function JobConfigFields({
               {excludeSuggestions.length > 0 ? <VirtualGearOptions
                 items={excludeSuggestions}
                 query={equipmentQuery}
+                slotLabels={slotLabels}
                 onSelect={(gear) => {
                   excludeGear(gear);
                   setEquipmentDropdownOpen(false);
                 }}
-              /> : <p className="single-searchable-dropdown-note">没有匹配装备。</p>}
+              /> : <p>没有匹配装备。</p>}
             </SearchableDropdown>
             <div className="single-restriction-selected-list" aria-label="已排除装备">
               {excludedGears.map((gear) => (
-                <div className="single-restriction-row" key={gear.id}>
-                  <span>{gear.name}</span>
-                  <span className="single-restriction-row-detail">{slotLabels[gear.slot]} · {gear.source ?? "上游未标注"}</span>
+                <div className="single-restriction-row single-restriction-row--excluded" key={gear.id}>
+                  <span className="single-restriction-row-slot">{slotLabels[gear.slot]}</span>
+                  <GearMark />
+                  <span className="single-restriction-row-name">{gear.name}</span>
+                  <span className="single-restriction-row-source">{gear.source ?? "上游未标注"}</span>
                   <button type="button" aria-label={`恢复装备 ${gear.name}`} onClick={() => update("excludedGearIds", (config.excludedGearIds ?? []).filter((id) => id !== gear.id))}><X size={14} /></button>
                 </div>
               ))}
             </div>
           </div>
-        </section>
-
-        <section className="single-restriction-column single-forced-gear" aria-label="强制使用装备">
+        </section>}
+      right={<section className="single-restriction-column single-forced-gear" aria-label="强制使用装备">
           <div className="single-restriction-editor-heading">
             <h3>强制使用装备</h3>
             <span>{forcedGearEntries.length ? `${forcedGearEntries.length} 件` : "可选"}</span>
@@ -1271,6 +1290,7 @@ function JobConfigFields({
               {availableSlots.map((slot) => <option key={slot} value={slot}>{slotLabels[slot]}</option>)}
             </select>
             <SearchableDropdown
+              className="single-forced-gear-search"
               label="选择强制装备"
               placeholder={`搜索${slotLabels[forcedSlot]}装备`}
               query={forcedSearch}
@@ -1283,11 +1303,12 @@ function JobConfigFields({
                 items={forceSuggestions}
                 query={forcedSearch}
                 selectedId={forcedGearSelection}
+                slotLabels={slotLabels}
                 onSelect={(gear) => {
                   setForcedGearSelection(gear.id);
                   setForcedDropdownOpen(false);
                 }}
-              /> : <p className="single-searchable-dropdown-note">没有匹配装备。</p>}
+              /> : <p>没有匹配装备。</p>}
             </SearchableDropdown>
             <button
               type="button"
@@ -1301,9 +1322,10 @@ function JobConfigFields({
           </div>
           <div className="single-restriction-selected-list" aria-label="已强制使用装备">
             {forcedGearEntries.map(({ slot, id, gear }) => (
-              <div className="single-restriction-row" key={slot}>
-                <span>{gear?.name ?? `装备 ${id}`}</span>
-                <span className="single-restriction-row-detail">{slotLabels[slot]}</span>
+              <div className="single-restriction-row single-restriction-row--forced" key={slot}>
+                <span className="single-restriction-row-slot">{slotLabels[slot]}</span>
+                <GearMark />
+                <span className="single-restriction-row-name">{gear?.name ?? `装备 ${id}`}</span>
                 <button type="button" aria-label={`移除强制装备 ${gear?.name ?? id}`} onClick={() => {
                   onEdited?.();
                   setConfig((current) => {
@@ -1315,8 +1337,8 @@ function JobConfigFields({
               </div>
             ))}
           </div>
-        </section>
-      </div> : <details className="advanced-section">
+        </section>}
+      /> : <details className="advanced-section">
         <summary>
           <span>来源与装备限制</span>
           <span className="advanced-summary">
@@ -1565,90 +1587,78 @@ function GearTable({
 }) {
   const actualFoodStats = appliedFoodStats(result, config);
   const job = jobSchemas[config.jobId];
-  const preferredStatOrder: Stat[] = [job.mainStat, "VIT", "CRT", "DET", "DHT", "TEN", "SKS", "SPS", "PIE"];
+  const speedStat: Stat = job.role === "healer" || job.role === "int" ? "SPS" : "SKS";
+  const attackStat: Stat = job.mainStat === "VIT" ? "STR" : job.mainStat;
+  const preferredStatOrder: Stat[] = [attackStat, "CRT", "DET", "DHT", speedStat, "VIT"];
   const statColumns = compact
-    ? [
-        ...preferredStatOrder.filter((stat, index) =>
-          job.stats.includes(stat) && preferredStatOrder.indexOf(stat) === index,
-        ),
-        ...job.stats.filter((stat) => !preferredStatOrder.includes(stat)),
-      ]
+    ? preferredStatOrder.filter((stat, index) =>
+        preferredStatOrder.indexOf(stat) === index &&
+        (stat === attackStat || job.stats.includes(stat)),
+      )
     : [];
-  const tableGridStyle = compact
-    ? {
-        gridTemplateColumns: [
-          "72px",
-          "minmax(126px, 0.85fr)",
-          ...statColumns.map(() => "24px"),
-          "minmax(260px, 2fr)",
-          "minmax(100px, 0.85fr)",
-          "36px",
-        ].join(" "),
-      }
-    : undefined;
+  const weaponDamageStat: Stat = job.mainStat === "INT" || job.mainStat === "MND" ? "MDMG" : "PDMG";
   const displaySlots: GearSlot[] = [
     "weapon", "offhand", "head", "body", "hands", "legs", "feet",
     "earrings", "necklace", "bracelet", "ring", "ring2",
   ];
+  if (compact) {
+    return <SingleJobGearTable
+      result={result}
+      foodStats={actualFoodStats}
+      statColumns={statColumns}
+      weaponDamageStat={weaponDamageStat}
+      slotLabels={slotLabels}
+      statName={statName}
+      statValue={statValue}
+      isStatAtCap={(gear, stat) => {
+        const value = gear.stats[stat];
+        return value !== undefined && value > 0 &&
+          combatStats.includes(stat as (typeof combatStats)[number]) &&
+          isGearBaseStatAtCap(gear, stat);
+      }}
+    />;
+  }
   return (
     <div className="equipment-table-wrap">
     <div className="gear-table equipment-table">
-      <div className="gear-table-head" style={tableGridStyle}>
+      <div className="gear-table-head">
         <span>部位</span>
         <span>装备</span>
-        {compact
-          ? statColumns.map((stat) => <span className="single-job-stat-heading" key={stat}>{statName(stat)}</span>)
-          : <span>实际属性</span>}
-        <span>魔晶石</span>
-        <span>来源</span>
-        <span>品级</span>
+        <span>实际属性</span>
+        <>
+          <span>魔晶石</span>
+          <span>来源</span>
+          <span>品级</span>
+        </>
       </div>
       {displaySlots.map((slot) => {
         const item = result.gear.find((gear) => gear.slot === slot);
         if (!item) return null;
         const isForced = config.forcedGear[item.slot] === item.id;
         return (
-          <div className="gear-row" key={item.slot + "-" + item.id} style={tableGridStyle}>
+          <div className="gear-row" key={item.slot + "-" + item.id}>
             <div className="slot-cell">
               <span className="slot-icon">{slotLabels[item.slot].slice(0, 1)}</span>
               <span>{slotLabels[item.slot]}</span>
             </div>
             <strong>{item.name}</strong>
-            {compact
-              ? statColumns.map((stat) => {
-                  const value = item.finalStats[stat];
+            <div className="gear-stats">
+              {Object.entries(item.finalStats)
+                .filter(([, value]) => value !== undefined && value > 0)
+                .map(([stat, value]) => {
                   const isCapped =
-                    value !== undefined && value > 0 &&
                     combatStats.includes(stat as (typeof combatStats)[number]) &&
-                    isGearBaseStatAtCap(item, stat);
+                    isGearBaseStatAtCap(item, stat as Stat);
                   return (
                     <span
                       key={stat}
-                      className={"single-job-stat-cell" + (isCapped ? " at-cap" : "")}
-                      aria-label={`${statName(stat)} ${value === undefined ? "无" : statValue(stat, value)}`}
-                      title={statName(stat)}
+                      className={"gear-stat" + (isCapped ? " at-cap" : "")}
                     >
-                      {value !== undefined && value > 0 ? statValue(stat, value) : "—"}
+                      {statName(stat)} {statValue(stat, value)}
                     </span>
                   );
-                })
-              : <div className="gear-stats">
-                  {Object.entries(item.finalStats)
-                    .filter(([, value]) => value !== undefined && value > 0)
-                    .map(([stat, value]) => {
-                      const isCapped =
-                        combatStats.includes(stat as (typeof combatStats)[number]) &&
-                        isGearBaseStatAtCap(item, stat as Stat);
-                      return (
-                        <span
-                          key={stat}
-                          className={"gear-stat" + (isCapped ? " at-cap" : "")}
-                        >
-                          {statName(stat)} {statValue(stat, value)}
-                        </span>
-                      );
-                    })}
-                </div>}
+                })}
+            </div>
             <div className="melds">
               {item.melds.length ? (
                 item.melds.map((meld, index) => (
@@ -1661,41 +1671,31 @@ function GearTable({
               )}
               {isForced && <span className="locked">已锁定</span>}
             </div>
-            <span className="source-text">{item.source ?? "上游未标注"}</span>
-            <span className="level-tag">{item.level}</span>
+            <>
+              <span className="source-text">{item.source ?? "上游未标注"}</span>
+              <span className="level-tag">{item.level}</span>
+            </>
           </div>
         );
       })}
-      <div className="food-row" style={tableGridStyle}>
+      <div className="food-row">
         <div className="slot-cell">
           <span className="slot-icon food">食</span>
           <span>食物</span>
         </div>
         <strong>{result.food.name}</strong>
-        {compact
-          ? statColumns.map((stat) => {
-              const value = actualFoodStats[stat];
-              return (
-                <span
-                  key={stat}
-                  className="single-job-stat-cell"
-                  aria-label={`${statName(stat)} ${value === undefined ? "无加成" : statValue(stat, value)}`}
-                  title={statName(stat)}
-                >
-                  {value === undefined ? "—" : statValue(stat, value)}
-                </span>
-              );
-            })
-          : <div className="gear-stats">
-              {Object.entries(actualFoodStats)
-                .map(([key, value]) => statName(key) + " " + value)
-                .join(" · ") || "无属性加成"}
-            </div>}
+        <div className="gear-stats">
+          {Object.entries(actualFoodStats)
+            .map(([key, value]) => statName(key) + " " + value)
+            .join(" · ") || "无属性加成"}
+        </div>
         <div className="melds">
           <span className="food-bonus">实际生效</span>
         </div>
-        <span className="source-text">上游食物数据</span>
-        <span className="level-tag">{result.food.level}</span>
+        <>
+          <span className="source-text">上游食物数据</span>
+          <span className="level-tag">{result.food.level}</span>
+        </>
       </div>
     </div>
     </div>
@@ -1704,249 +1704,29 @@ function GearTable({
 
 type SingleSummaryView = "workbench" | "progress" | "result";
 
-function SingleRestrictionPopover({
-  label,
-  count,
-  emptyText,
-  children,
-}: {
-  label: string;
-  count: number;
-  emptyText: string;
-  children: React.ReactNode;
-}) {
-  const [open, setOpen] = useState(false);
-  const container = useRef<HTMLDivElement>(null);
-  const trigger = useRef<HTMLButtonElement>(null);
-  const panel = useRef<HTMLDivElement>(null);
-  const detailsList = useRef<HTMLDivElement>(null);
-  const [panelPosition, setPanelPosition] = useState<{
-    left: number;
-    top: number;
-    width: number;
-    maxHeight: number;
-  }>();
-
-  useEffect(() => {
-    if (!open) return;
-    const closeOutside = (event: PointerEvent) => {
-      if (
-        event.target instanceof Node &&
-        !container.current?.contains(event.target) &&
-        !panel.current?.contains(event.target)
-      ) setOpen(false);
-    };
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setOpen(false);
-        trigger.current?.focus();
-      }
-    };
-    document.addEventListener("pointerdown", closeOutside);
-    document.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.removeEventListener("pointerdown", closeOutside);
-      document.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [open]);
-
-  useLayoutEffect(() => {
-    if (!open) {
-      setPanelPosition(undefined);
-      return;
-    }
-    const updatePosition = () => {
-      const triggerRect = trigger.current?.getBoundingClientRect();
-      if (!triggerRect) return;
-      const viewportPadding = 8;
-      const gap = 10;
-      const width = Math.min(350, Math.max(0, window.innerWidth - viewportPadding * 2));
-      const maxHeight = Math.max(0, window.innerHeight - viewportPadding * 2);
-      const panelHeight = Math.min(
-        panel.current?.getBoundingClientRect().height ?? Math.min(430, maxHeight),
-        maxHeight,
-      );
-      const left = Math.max(
-        viewportPadding,
-        Math.min(triggerRect.left - gap - width, window.innerWidth - width - viewportPadding),
-      );
-      const top = Math.max(
-        viewportPadding,
-        Math.min(triggerRect.top - 2, window.innerHeight - panelHeight - viewportPadding),
-      );
-      setPanelPosition((current) =>
-        current &&
-        Math.abs(current.left - left) < 0.5 &&
-        Math.abs(current.top - top) < 0.5 &&
-        Math.abs(current.width - width) < 0.5 &&
-        Math.abs(current.maxHeight - maxHeight) < 0.5
-          ? current
-          : { left, top, width, maxHeight },
-      );
-    };
-    updatePosition();
-    detailsList.current?.focus({ preventScroll: true });
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
-    const resizeObserver = typeof ResizeObserver === "undefined"
-      ? undefined
-      : new ResizeObserver(updatePosition);
-    if (panel.current) resizeObserver?.observe(panel.current);
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
-      resizeObserver?.disconnect();
-    };
-  }, [open]);
-
-  const panelStyle: CSSProperties = panelPosition ?? {
-    position: "fixed",
-    left: 8,
-    top: 8,
-    width: Math.min(350, Math.max(0, window.innerWidth - 16)),
-    maxHeight: Math.max(0, window.innerHeight - 16),
-  };
-
-  return (
-    <div className="single-summary-popover" ref={container}>
-      <button
-        ref={trigger}
-        type="button"
-        className="single-summary-popover-trigger"
-        aria-expanded={open}
-        aria-haspopup="dialog"
-        onClick={() => setOpen((value) => !value)}
-      >
-        <span>{label}</span>
-        <strong>{count ? `${count} 项` : "无限制"}</strong>
-      </button>
-      {open && createPortal(<div
-        ref={panel}
-        className="single-summary-popover-panel"
-        role="dialog"
-        aria-label={label}
-        style={panelStyle}
-      >
-        <h3>{label}</h3>
-        <div
-          ref={detailsList}
-          className="single-summary-popover-list"
-          role="region"
-          aria-label={`${label}详情`}
-          tabIndex={0}
-        >
-          {count ? children : <p>{emptyText}</p>}
-        </div>
-      </div>, document.body)}
-    </div>
-  );
-}
-
-function SingleConditionSummary({
-  config,
-  view,
-  result,
-  startedAtISO,
-  dataVersion,
-  onEdit,
-}: {
-  config: OptimizationConfig;
-  view: SingleSummaryView;
-  result?: OptimizationResult;
-  startedAtISO?: string;
-  dataVersion?: string;
-  onEdit?: () => void;
-}) {
+function referenceGearsetUrl(result: OptimizationResult, config: OptimizationConfig): string {
   const job = jobSchemas[config.jobId];
-  const gcd = config.gcdChoices !== undefined
-    ? config.gcdChoices.length ? config.gcdChoices.map((value) => `${value.toFixed(2)} 秒`).join("、") : "未选择档位"
-    : config.gcdTarget === undefined ? "不限" : `${config.gcdTarget.toFixed(2)} 秒`;
-  const speedName = job.role === "healer" || job.role === "int" ? "咏速" : "技速";
-  const speed = config.speedMin === undefined && config.speedMax === undefined
-    ? "不限"
-    : `${config.speedMin ?? "不限"}–${config.speedMax ?? "不限"}`;
-  const food = config.foodId === 0
-    ? "自动选择"
-    : foods.find((item) => item.id === config.foodId)?.name ?? `食物编号 ${config.foodId}`;
-  const forced = Object.entries(config.forcedGear)
-    .filter((entry): entry is [string, number] => entry[1] !== undefined)
-    .map(([slot, id]) => ({ slot: slot as GearSlot, id, gear: gears.find((item) => item.id === id) }));
-  const excluded = (config.excludedGearIds ?? [])
-    .map((id) => gears.find((item) => item.id === id))
-    .filter((gear): gear is Gear => gear !== undefined);
-  const target = config.objective === "dps" ? "每秒每威力伤害期望" : "每威力伤害期望";
-
-  return (
-    <div className={`single-condition-summary is-${view}`}>
-      <header className="single-condition-summary-heading">
-        <div>
-          <p>{view === "result" ? "配装结果" : view === "progress" ? "搜索条件" : "条件摘要"}</p>
-          <h2>{job.name}</h2>
-        </div>
-        {view === "result" && onEdit && <button type="button" className="text-button" onClick={onEdit}>修改条件</button>}
-      </header>
-
-      {view === "result" && <section className="single-summary-section" aria-label="结果身份">
-        <h3>结果身份</h3>
-        <dl className="single-summary-identity">
-          <div><dt>搜索时间</dt><dd>{startedAtISO ? new Date(startedAtISO).toLocaleString("zh-CN") : "—"}</dd></div>
-          <div><dt>数据版本</dt><dd>{dataVersion ?? "—"}</dd></div>
-        </dl>
-      </section>}
-
-      {view === "result" && result && <section className="single-summary-section">
-        <h3>配装总属性</h3>
-        <div className="single-result-total-stats">
-          {Object.entries(result.stats).filter(([, value]) => value && value > 0).map(([stat, value]) => (
-            <div key={stat}><span>{statName(stat)}</span><strong>{statValue(stat, value)}</strong></div>
-          ))}
-        </div>
-      </section>}
-
-      {view === "result" && result && <section className="single-summary-section">
-        <h3>伤害与防御</h3>
-        <div className="single-result-effects">
-          <div><span>暴击伤害</span><strong>{(result.effects.crtDamage * 100).toFixed(1)}%</strong></div>
-          <div><span>信念加成</span><strong>{(result.effects.detDamage * 100).toFixed(2)}%</strong></div>
-          <div><span>坚韧伤害</span><strong>{(result.effects.tenDamage * 100).toFixed(2)}%</strong></div>
-          <div><span>坚韧减伤</span><strong>{(result.effects.tenMitigation * 100).toFixed(2)}%</strong></div>
-          <div><span>生命值</span><strong>{result.effects.hp.toLocaleString()}</strong></div>
-          <div><span>每 3 秒魔力恢复</span><strong>{result.effects.mp.toLocaleString()}</strong></div>
-        </div>
-      </section>}
-
-      <section className="single-summary-section single-summary-conditions">
-        <h3>搜索条件</h3>
-        <dl className="single-summary-rows">
-          <div><dt>优化指标</dt><dd>{target}</dd></div>
-          <div><dt>装备品级</dt><dd>{config.minItemLevel}–{config.maxItemLevel}</dd></div>
-          <div><dt>同步品级</dt><dd>{config.syncLevel === undefined ? "未启用" : config.syncLevel}</dd></div>
-          <div><dt>GCD</dt><dd>{gcd}</dd></div>
-          <div><dt>{speedName}范围</dt><dd>{speed}</dd></div>
-          {job.role === "tank" && <div><dt>坚韧方式</dt><dd>{config.maximizeTenacity
-            ? "候选范围内最高坚韧"
-            : config.toughnessMinPercent !== undefined
-              ? `最低减伤 ${config.toughnessMinPercent}%`
-              : config.minTenacity !== undefined
-                ? `最低坚韧 ${config.minTenacity}`
-                : "不限"}</dd></div>}
-          <div><dt>食物</dt><dd>{food}</dd></div>
-        </dl>
-        <div className="single-summary-restrictions">
-          <SingleRestrictionPopover label="来源限制" count={config.excludedSources.length} emptyText="没有排除来源。">
-            {config.excludedSources.map((source) => <div className="single-summary-popover-row" key={source}><span>{source}</span><small>已排除</small></div>)}
-          </SingleRestrictionPopover>
-          <SingleRestrictionPopover label="强制装备" count={forced.length} emptyText="没有强制装备。">
-            {forced.map(({ slot, id, gear: item }) => <div className="single-summary-popover-row" key={slot}><span>{item?.name ?? `装备 ${id}`}</span><small>{slotLabels[slot]}</small></div>)}
-          </SingleRestrictionPopover>
-          <SingleRestrictionPopover label="排除装备" count={excluded.length} emptyText="没有排除装备。">
-            {excluded.map((item) => <div className="single-summary-popover-row" key={item.id}><span>{item.name}</span><small>{slotLabels[item.slot]} · {item.source ?? "上游未标注"}</small></div>)}
-          </SingleRestrictionPopover>
-        </div>
-        {view !== "result" && <p className="single-summary-note">食物、装备候选、属性上限与计算规则均来自当前项目数据。</p>}
-      </section>
-    </div>
-  );
+  const gears = result.gear.map((gear) => {
+    const synced = config.syncLevel !== undefined && gear.level > config.syncLevel;
+    const customStats: Partial<Record<Stat, number>> | undefined = gear.customParameters?.length
+      ? Object.fromEntries([...new Set(gear.customParameters.map(({ stat }) => stat))]
+          .map((stat) => [stat, Math.max(0, (gear.finalStats[stat] ?? 0) - (gear.stats[stat] ?? 0))] as const)
+          .filter(([, value]) => value > 0))
+      : undefined;
+    return {
+      id: gear.id,
+      materias: customStats || synced ? [] : gear.melds.map(({ stat, grade }) => [stat, grade] as const),
+      ...(customStats ? { customStats } : {}),
+    };
+  });
+  const share = stringifyReferenceGearset({
+    job: config.jobId,
+    role: job.role,
+    jobLevel: config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel,
+    ...(config.syncLevel === undefined ? {} : { syncLevel: config.syncLevel }),
+    gears,
+  });
+  return share ? `https://asvel.github.io/ffxiv-gearing/?${share}` : "";
 }
 
 function ResultPanel({
@@ -1959,7 +1739,6 @@ function ResultPanel({
   stale = false,
   onEditConfig,
   compact = false,
-  currentReview,
   searchStartedAt,
   resultDataVersion,
 }: {
@@ -1972,7 +1751,6 @@ function ResultPanel({
   stale?: boolean;
   onEditConfig?: () => void;
   compact?: boolean;
-  currentReview?: React.ReactNode;
   searchStartedAt?: string;
   resultDataVersion?: string;
 }) {
@@ -2000,17 +1778,28 @@ function ResultPanel({
     baseline && baseline.score > 0
       ? ((result.score / baseline.score) * 100).toFixed(4) + "%"
       : undefined;
+  if (compact) {
+    return <SingleJobResultView
+      result={result}
+      referenceUrl={referenceGearsetUrl(result, config)}
+      table={<GearTable result={result} config={config} compact />}
+      summary={<SingleConditionSummary
+        config={config}
+        view="result"
+        result={result}
+        startedAtISO={searchStartedAt}
+        dataVersion={resultDataVersion}
+      />}
+    />;
+  }
   return (
-    <div className={"result-workspace" + (compact ? " single-result-workspace" : "")}>
-      <div className={compact ? "single-result-main" : undefined}>
+    <div className="result-workspace">
+      <div>
       <div className="result-completion" role="status">
         <Check size={18} aria-hidden="true" />
         <div>
           <strong>{stale ? "历史搜索已完成 · 当前条件待更新" : "搜索已完成"}</strong>
-          <p>
-            求解与结果复核已完成；最优结果限于本次候选与约束。
-            {compact && <> 目标值 {result.score.toFixed(7)}（{result.objective === "dps" ? "每秒每威力伤害期望" : "每威力伤害期望"}） · 用时 {(result.durationMs / 1000).toFixed(1)} 秒</>}
-          </p>
+          <p>求解与结果复核已完成；最优结果限于本次候选与约束。</p>
         </div>
       </div>
       {stale && <div className="stale-notice result-stale-note" role="status">
@@ -2020,17 +1809,13 @@ function ResultPanel({
         <Metric
           label="每威力伤害期望"
           value={result.effects.damage.toFixed(7)}
-          accent
         />
         <Metric label="GCD" value={result.effects.gcd.toFixed(2) + " 秒"} />
         <Metric label="暴击率" value={(result.effects.crtChance * 100).toFixed(1) + "%"} />
         <Metric label="直击率" value={(result.effects.dhtChance * 100).toFixed(1) + "%"} />
-        <Metric
-          label={compact ? "每秒每威力伤害期望" : "按 GCD 折算"}
-          value={result.damagePerSecond.toFixed(7)}
-        />
+        <Metric label="按 GCD 折算" value={result.damagePerSecond.toFixed(7)} />
       </div>
-      {!compact && <div className="result-toolbar">
+      <div className="result-toolbar">
         <div>
           <h2>推荐配装</h2>
           <span className="muted">
@@ -2042,19 +1827,11 @@ function ResultPanel({
             最高坚韧 {result.maximumTenacity.toLocaleString()}
           </span>
         )}
-      </div>}
-      <GearTable result={result} config={config} compact={compact} />
       </div>
-      <div className={compact ? "single-result-aside" : undefined}>
-      {compact && <SingleConditionSummary
-        config={config}
-        view="result"
-        result={result}
-        startedAtISO={searchStartedAt}
-        dataVersion={resultDataVersion}
-        onEdit={onEditConfig}
-      />}
-      {!compact && <div className="result-section result-attributes">
+      <GearTable result={result} config={config} />
+      </div>
+      <div>
+      <div className="result-section result-attributes">
         <div className="result-toolbar">
           <div>
             <h2>配装总属性</h2>
@@ -2073,7 +1850,7 @@ function ResultPanel({
         </div>
         <div className="effect-summary">
           <div>
-            <span>坚韧伤害</span>
+            <span>坚韧伤害加成</span>
             <strong>{(result.effects.tenDamage * 100).toFixed(2)}%</strong>
           </div>
           <div>
@@ -2089,8 +1866,8 @@ function ResultPanel({
             <strong>{result.effects.mp.toLocaleString()}</strong>
           </div>
         </div>
-      </div>}
-      {!compact && <ConfigSnapshot config={config} onEdit={onEditConfig} />}
+      </div>
+      <ConfigSnapshot config={config} onEdit={onEditConfig} />
       </div>
     </div>
   );
@@ -2156,18 +1933,11 @@ function candidateSlotLabel(slot: string): string {
   return slotLabels[slot as GearSlot] ?? slot;
 }
 
-function singleProgressStatus(message: string): string {
-  if (message.includes("候选准备完成")) return "候选与搜索模型已准备完成";
-  if (message.includes("最高坚韧")) return "正在确定候选范围内的最高坚韧";
-  if (message.includes("签名带")) return "正在检查是否还有更优候选";
-  if (message.includes("还原并复核") || message.includes("精确候选已核验")) return "正在核验候选方案";
-  return "正在搜索配装";
-}
-
-function SinglePage() {
-  const [selectedJob, setSelectedJob] = useState<JobId | null>(null);
-  const [config, setConfig] = useState<OptimizationConfig>(() => makeConfig("SAM"));
-  const [view, setView] = useState<"choose" | "workbench" | "progress" | "result">("choose");
+function SinglePage({ onReset }: { onReset: () => void }) {
+  const [selectedJob, setSelectedJob] = useState<JobId | null>("PLD");
+  const [config, setConfig] = useState<OptimizationConfig>(() => makeConfig("PLD"));
+  const [singleGcdMode, setSingleGcdMode] = useState<SingleGcdMode>("speed");
+  const [view, setView] = useState<"choose" | "workbench" | "progress" | "result">("workbench");
   const [result, setResult] = useState<OptimizationResult>();
   const [resultConfig, setResultConfig] = useState<OptimizationConfig>();
   const [resultStartedAt, setResultStartedAt] = useState<string>();
@@ -2181,21 +1951,21 @@ function SinglePage() {
   const [historyError, setHistoryError] = useState<string>();
   const [searchProgress, setSearchProgress] = useState<SingleSearchProgressState>({
     phase: "prepare",
-    statusMessage: "",
     startedAt: Date.now(),
     hasFeasibleCandidate: false,
   });
   const [activeSearchConfig, setActiveSearchConfig] = useState<OptimizationConfig>();
   const [customGcdCoverage, setCustomGcdCoverage] = useState<{ key: string; tiers: number[] }>();
   const [customGcdError, setCustomGcdError] = useState<string>();
+  const [singleGcdFeasibility, setSingleGcdFeasibility] = useState<SingleGcdFeasibility>();
   const abortController = useRef<AbortController | undefined>(undefined);
-  const verifiedCombinationCount = useRef<number | undefined>(undefined);
 
   const currentKey = selectedJob ? JSON.stringify(config) : "";
   const stale = result !== undefined && resultKey !== currentKey;
   const job = selectedJob ? jobSchemas[selectedJob] : undefined;
-  const customSpeedActive = config.speedMin !== undefined || config.speedMax !== undefined;
-  const gcdSelectionActive = config.gcdTarget !== undefined || config.gcdChoices !== undefined;
+  const customSpeedHasBounds = config.speedMin !== undefined || config.speedMax !== undefined;
+  const customSpeedActive = singleGcdMode === "speed" || customSpeedHasBounds;
+  const gcdSelectionActive = singleGcdMode === "tiers" || config.gcdTarget !== undefined || config.gcdChoices !== undefined;
   const hasLegacyGcdSpeedConflict = customSpeedActive && gcdSelectionActive;
   const customGcdQueryKey = JSON.stringify({
     ...config,
@@ -2209,28 +1979,60 @@ function SinglePage() {
   );
   const currentGcdCoverage =
     customGcdCoverage?.key === customGcdQueryKey ? customGcdCoverage.tiers : undefined;
+  const currentTierFeasibility =
+    singleGcdFeasibility?.key === customGcdQueryKey ? singleGcdFeasibility : undefined;
+  const selectedGcds = config.gcdChoices ?? (config.gcdTarget === undefined ? [] : [config.gcdTarget]);
+  const selectedGcdsAreFeasible = currentTierFeasibility?.status === "ready" &&
+    selectedGcds.length > 0 && selectedGcds.every((gcd) => currentTierFeasibility.tiers.includes(gcd));
+  const selectedGcdsIncludeUnavailable = currentTierFeasibility?.status === "ready" &&
+    selectedGcds.some((gcd) => !currentTierFeasibility.tiers.includes(gcd));
   const derivedObjective = hasLegacyGcdSpeedConflict
     ? undefined
     : customSpeedActive
-      ? currentGcdCoverage === undefined
-        ? undefined
-        : currentGcdCoverage.length === 1 ? "damage" : "dps"
-      : config.gcdTarget !== undefined || (config.gcdChoices?.length ?? 0) === 1
+      ? !customSpeedHasBounds
+        ? "dps"
+        : currentGcdCoverage === undefined
+          ? undefined
+          : currentGcdCoverage.length === 1 ? "damage" : "dps"
+      : singleGcdMode === "tiers"
+        ? (config.gcdChoices?.length ?? 0) === 1 ? "damage" : "dps"
+        : config.gcdTarget !== undefined || (config.gcdChoices?.length ?? 0) === 1
         ? "damage"
         : "dps";
   const displayObjective = derivedObjective ?? config.objective ?? "damage";
   const canStartSearch =
     selectedJob !== null &&
     !hasLegacyGcdSpeedConflict &&
-    (!customSpeedActive || (currentGcdCoverage !== undefined && currentGcdCoverage.length > 0)) &&
+    (singleGcdMode === "tiers"
+      ? selectedGcdsAreFeasible
+      : customSpeedActive
+        ? !customSpeedHasBounds || (currentGcdCoverage !== undefined && currentGcdCoverage.length > 0)
+        : true) &&
     !running;
+  const singleGcdActionMessage = hasLegacyGcdSpeedConflict
+    ? "请先选择 GCD 条件或自定义速度范围。"
+    : singleGcdMode === "tiers"
+      ? !currentTierFeasibility || currentTierFeasibility.status === "loading"
+        ? "正在查询当前条件下的可行 GCD 档位…"
+        : currentTierFeasibility.status === "error"
+          ? "可行 GCD 档位查询失败，请重新查询。"
+          : selectedGcds.length === 0
+            ? "请选择至少一个可行 GCD 档位。"
+            : selectedGcdsIncludeUnavailable
+              ? "请移除当前条件下不可行的已选 GCD 档位。"
+              : "已就绪 · 搜索结果将严格满足以上条件"
+      : customSpeedActive && customSpeedHasBounds && currentGcdCoverage === undefined
+        ? "正在计算速度范围覆盖的 GCD 档位…"
+        : customSpeedActive && customSpeedHasBounds && currentGcdCoverage?.length === 0
+          ? "当前速度范围没有可行 GCD 档位。"
+          : "已就绪 · 搜索结果将严格满足以上条件";
 
   useEffect(() => () => {
     abortController.current?.abort();
   }, []);
 
   useEffect(() => {
-    if (view !== "workbench" || !selectedJob || !customSpeedActive || gcdSelectionActive) {
+    if (view !== "workbench" || !selectedJob || !customSpeedActive || !customSpeedHasBounds || gcdSelectionActive) {
       setCustomGcdCoverage(undefined);
       setCustomGcdError(undefined);
       return;
@@ -2255,14 +2057,14 @@ function SinglePage() {
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, [view, selectedJob, customSpeedActive, gcdSelectionActive, customGcdQueryKey, customGcdQueryConfig]);
+  }, [view, selectedJob, customSpeedActive, customSpeedHasBounds, gcdSelectionActive, customGcdQueryKey, customGcdQueryConfig]);
 
   useEffect(() => {
-    if (view !== "workbench" || !selectedJob || customSpeedActive || hasLegacyGcdSpeedConflict || !derivedObjective) return;
+    if (view !== "workbench" || !selectedJob || hasLegacyGcdSpeedConflict || !derivedObjective) return;
     setConfig((current) => current.objective === derivedObjective
       ? current
       : { ...current, objective: derivedObjective });
-  }, [view, selectedJob, customSpeedActive, hasLegacyGcdSpeedConflict, derivedObjective]);
+  }, [view, selectedJob, hasLegacyGcdSpeedConflict, derivedObjective]);
 
   function cancelSearch() {
     abortController.current?.abort();
@@ -2281,7 +2083,8 @@ function SinglePage() {
     }
     if (running) cancelSearch();
     setSelectedJob(jobId);
-    setConfig(makeConfig(jobId));
+    setConfig({ ...makeConfig(jobId), objective: "dps" });
+    setSingleGcdMode("speed");
     setResult(undefined);
     setResultConfig(undefined);
     setResultStartedAt(undefined);
@@ -2297,10 +2100,19 @@ function SinglePage() {
     abortController.current?.abort();
     setRunning(false);
     setSelectedJob(record.config.jobId);
-    setConfig({
+    const loadedConfig = normalizeSingleWorkbenchConfig({
       ...record.config,
       jobLevel: jobSchemas[record.config.jobId].maxJobLevel ?? defaultJobLevel,
     });
+    if (
+      singleGcdModeForConfig(loadedConfig) === "speed" &&
+      loadedConfig.speedMin === undefined &&
+      loadedConfig.speedMax === undefined
+    ) {
+      loadedConfig.objective = "dps";
+    }
+    setConfig(loadedConfig);
+    setSingleGcdMode(singleGcdModeForConfig(loadedConfig));
     setResult(undefined);
     setResultConfig(undefined);
     setResultStartedAt(undefined);
@@ -2316,12 +2128,14 @@ function SinglePage() {
     abortController.current?.abort();
     setRunning(false);
     setSelectedJob(record.config.jobId);
-    setConfig(record.config);
+    const loadedConfig = normalizeSingleWorkbenchConfig(record.config);
+    setConfig(loadedConfig);
+    setSingleGcdMode(singleGcdModeForConfig(loadedConfig));
     setResult(record.result);
     setResultConfig(record.config);
     setResultStartedAt(record.startedAtISO);
     setResultDataVersion(record.dataVersion);
-    setResultKey(JSON.stringify(record.config));
+    setResultKey(JSON.stringify(loadedConfig));
     setHasAttempted(true);
     setView("result");
     setStatusMessage("已载入该次搜索结果。");
@@ -2342,11 +2156,9 @@ function SinglePage() {
     const controller = new AbortController();
     abortController.current = controller;
     const startedAt = Date.now();
-    verifiedCombinationCount.current = undefined;
     setActiveSearchConfig(searchConfig);
     setSearchProgress({
       phase: "prepare",
-      statusMessage: "正在准备候选与搜索模型",
       startedAt,
       hasFeasibleCandidate: false,
     });
@@ -2380,8 +2192,6 @@ function SinglePage() {
         signal: controller.signal,
         onProgress: (message) => {
           if (controller.signal.aborted || abortController.current !== controller) return;
-          const verifiedMatch = message.match(/精确候选已核验\s+(\d+)\s+个/);
-          if (verifiedMatch) verifiedCombinationCount.current = Number(verifiedMatch[1]);
           const verificationStarted =
             message.includes("还原并复核") ||
             message.includes("精确候选已核验") ||
@@ -2389,8 +2199,7 @@ function SinglePage() {
           setSearchProgress((current) => ({
             ...current,
             phase: verificationStarted ? "verify" : current.phase === "prepare" ? "solve" : current.phase,
-            statusMessage: singleProgressStatus(message),
-          hasFeasibleCandidate: current.hasFeasibleCandidate || message.includes("精确候选已核验"),
+            hasFeasibleCandidate: current.hasFeasibleCandidate || message.includes("精确候选已核验"),
           }));
         },
         onCandidateCounts: (counts: SearchCandidateCounts) => {
@@ -2403,7 +2212,6 @@ function SinglePage() {
           setSearchProgress((current) => ({
             ...current,
             phase: "solve",
-            statusMessage: "候选与搜索模型已准备完成",
             slotCandidateCounts,
             foodCandidateCount: counts.foodCount,
           }));
@@ -2426,25 +2234,11 @@ function SinglePage() {
             constraints: event.rowCount,
           };
           setSearchProgress((current) => {
-            let secondRoundVerification: SingleSearchSecondRoundVerification | undefined;
-            if (secondRoundModel) {
-              const prior = current.secondRoundVerification;
-              const newRoundStarted = current.currentModel?.model === event.model && current.currentModel.completed === true;
-              const round = prior === undefined ? 2 : newRoundStarted ? prior.round + 1 : prior.round;
-              secondRoundVerification = {
-                round,
-                ...(verifiedCombinationCount.current === undefined
-                  ? {}
-                  : { verifiedCombinations: verifiedCombinationCount.current }),
-              };
-            }
             return {
               ...current,
               phase: secondRoundModel ? "verify" : current.phase === "prepare" ? "solve" : current.phase,
-              statusMessage: secondRoundModel ? "正在核验候选方案" : current.statusMessage,
               hasFeasibleCandidate: current.hasFeasibleCandidate || foundObjectiveCandidate,
               currentModel: model,
-              ...(secondRoundModel ? { secondRoundVerification } : {}),
             };
           });
         },
@@ -2491,31 +2285,23 @@ function SinglePage() {
     }
   }
 
-  const customGcdSummary = customSpeedActive
-    ? currentGcdCoverage === undefined
-      ? customGcdError ? "暂时无法确定可行 GCD 档位" : "正在查询自定义速度范围覆盖的 GCD 档位…"
-      : currentGcdCoverage.length === 0
-        ? "没有可行 GCD 档位"
-        : "覆盖 " + currentGcdCoverage.length + " 个可行 GCD 档位"
-    : config.gcdChoices?.length
-      ? config.gcdChoices.map((value) => value.toFixed(2) + " 秒").join("、")
-      : config.gcdTarget === undefined ? "不限" : config.gcdTarget.toFixed(2) + " 秒";
   const objectiveLabel = displayObjective === "dps" ? "每秒每威力伤害期望" : "每威力伤害期望";
-  const objectiveDescription = customSpeedActive
-    ? customGcdSummary + "，指标按可行档位自动选择。"
-    : config.gcdTarget !== undefined
-      ? "只允许一个 GCD 档位，使用每威力伤害期望。"
-      : "不限 GCD 或允许多个档位，使用每秒每威力伤害期望。";
 
   function keepGcdAndClearSpeed() {
-    const objective = config.gcdTarget !== undefined || (config.gcdChoices?.length ?? 0) === 1 ? "damage" : "dps";
-    setConfig((current) => ({ ...current, speedMin: undefined, speedMax: undefined, objective }));
+    setConfig((current) => {
+      const normalized = normalizeSingleWorkbenchConfig(current);
+      const objective = normalized.gcdTarget !== undefined || normalized.gcdChoices?.length === 1 ? "damage" : "dps";
+      return { ...normalized, speedMin: undefined, speedMax: undefined, objective };
+    });
+    const normalized = normalizeSingleWorkbenchConfig(config);
+    setSingleGcdMode(normalized.gcdTarget !== undefined || normalized.gcdChoices !== undefined ? "tiers" : "any");
     setCustomGcdCoverage(undefined);
     clearOutcomeMessages();
   }
 
   function keepSpeedAndClearGcd() {
     setConfig((current) => ({ ...current, gcdTarget: undefined, gcdChoices: undefined }));
+    setSingleGcdMode("speed");
     setCustomGcdCoverage(undefined);
     clearOutcomeMessages();
   }
@@ -2531,7 +2317,13 @@ function SinglePage() {
   );
 
   return (
-    <main className="single-flow">
+    <>
+    <AppHeader
+      page="single"
+      dataVersion={displayedDataVersion}
+      onReset={onReset}
+    />
+    <SingleWorkbenchFlow workbench={view === "workbench"}>
       {view === "choose" && <section className="single-job-selection">
         <header className="single-workbench-heading">
           <div>
@@ -2552,85 +2344,61 @@ function SinglePage() {
         </footer>
       </section>}
 
-      {view === "workbench" && selectedJob && job && <div className="single-workbench-layout">
-        <section className="single-workbench-main" aria-label="单职业搜索参数">
-          <header className="single-workbench-heading">
-            <div>
-              <p className="single-section-kicker">单职业配装 · {roleNames[job.role]}</p>
-              <h1>{job.name} 搜索条件</h1>
-              <p>所有条件在同一工作台内持续生效；选择完成后即可开始搜索。</p>
-            </div>
-            <button type="button" className="text-button" onClick={() => setView("choose")}>更换职业</button>
-          </header>
-
-          {hasLegacyGcdSpeedConflict && <section className="single-config-warning" role="alert">
-            <strong>这组历史条件同时设置了 GCD 档位和自定义速度范围。</strong>
-            <p>新工作台要求两者互斥，请选择保留其中一项后再搜索。</p>
-            <div>
-              <button type="button" onClick={keepGcdAndClearSpeed}>保留 GCD 档位</button>
-              <button type="button" onClick={keepSpeedAndClearGcd}>保留自定义速度</button>
-            </div>
-          </section>}
-
-          {customGcdError && <p className="single-gcd-error" role="alert">{customGcdError}</p>}
-          {historyError && <p role="alert" className="history-error">{historyError}</p>}
-          {!result && <StatusPanel
+      {view === "workbench" && selectedJob && job && <SingleWorkbenchLayout
+        main={<SingleWorkbenchMain
+          roleLabel={job.role === "tank" ? "坦克" : roleNames[job.role]}
+          jobName={job.name}
+          onChangeJob={() => setView("choose")}
+          notices={<>
+            {hasLegacyGcdSpeedConflict && <section className="single-config-warning" role="alert">
+              <strong>这组历史条件同时设置了 GCD 档位和自定义速度范围。</strong>
+              <p>新工作台要求两者互斥，请选择保留其中一项后再搜索。</p>
+              <div>
+                <button type="button" onClick={keepGcdAndClearSpeed}>保留 GCD 档位</button>
+                <button type="button" onClick={keepSpeedAndClearGcd}>保留自定义速度</button>
+              </div>
+            </section>}
+            {customGcdError && <p className="single-gcd-error" role="alert">{customGcdError}</p>}
+            {historyError && <p role="alert" className="history-error">{historyError}</p>}
+          </>}
+          status={!result && <StatusPanel
             running={false}
             progress=""
             error={error}
             message={statusMessage}
             onCancel={cancelSearch}
           />}
-
-          <div className="single-workbench-settings">
-            <JobConfigFields
-              config={{ ...config, objective: displayObjective }}
-              setConfig={setConfig}
-              showFood
-              step="all"
-              singleWorkbench
-              singleObjectiveLabel={objectiveLabel}
-              singleObjectiveDescription={objectiveDescription}
-              onEdited={clearOutcomeMessages}
-            />
-          </div>
-
-          {hasAttempted && (error || statusMessage) && !result && <ResultPanel
+          fields={<JobConfigFields
+            config={{ ...config, objective: displayObjective }}
+            setConfig={setConfig}
+            showFood
+            step="all"
+            singleWorkbench
+            singleGcdMode={singleGcdMode}
+            onSingleGcdModeChange={setSingleGcdMode}
+            onSingleGcdFeasibilityChange={setSingleGcdFeasibility}
+            singleObjectiveLabel={objectiveLabel}
+            onEdited={clearOutcomeMessages}
+          />}
+          outcome={hasAttempted && (error || statusMessage) && !result && <ResultPanel
             config={config}
             attempted={hasAttempted}
             failed={error !== undefined}
             statusMessage={statusMessage}
           />}
-
-          <div className="single-workbench-history">{searchHistory}</div>
-          <footer className="footer single-page-footer">
-            <span>纯前端计算 · 可离线运行</span>
-            <span>数据版本 {displayedDataVersion}</span>
-          </footer>
-        </section>
-
-        <aside className="single-workbench-aside" aria-label="当前搜索条件摘要">
-          <SingleConditionSummary
+        />}
+        sidebar={<SingleWorkbenchSidebar
+          summary={<SingleConditionSummary
             config={{ ...config, objective: displayObjective }}
             view="workbench"
-          />
-          <div className="single-workbench-actionbar">
-            <span>
-              {customSpeedActive && currentGcdCoverage === undefined
-                ? "正在计算速度范围覆盖的 GCD 档位…"
-                : hasLegacyGcdSpeedConflict
-                  ? "请先选择 GCD 条件或自定义速度范围。"
-                  : customSpeedActive && currentGcdCoverage?.length === 0
-                    ? "当前速度范围没有可行 GCD 档位。"
-                    : "已就绪 · 搜索结果将严格满足以上条件"}
-            </span>
-            <button type="button" className="run-button" disabled={!canStartSearch} onClick={runSearch}>
-              <Play size={16} fill="currentColor" />
-              开始搜索
-            </button>
-          </div>
-        </aside>
-      </div>}
+            gcdMode={singleGcdMode}
+          />}
+          status={singleGcdActionMessage}
+          canStartSearch={canStartSearch}
+          onStartSearch={runSearch}
+          history={searchHistory}
+        />}
+      />}
 
       {view === "progress" && activeSearchConfig && selectedJob && <SingleSearchProgress
         jobName={jobSchemas[selectedJob].name}
@@ -2654,7 +2422,8 @@ function SinglePage() {
           clearOutcomeMessages();
         }}
       />}
-    </main>
+    </SingleWorkbenchFlow>
+    </>
   );
 }
 
@@ -3192,11 +2961,13 @@ export function App() {
 
   return (
     <div className="app-shell">
-      <Header page={page} onReset={() => setResetVersion((version) => version + 1)} />
       {page === "joint" ? (
-        <JointPage key={"joint-" + resetVersion} />
+        <>
+          <AppHeader page={page} dataVersion={displayedDataVersion} onReset={() => setResetVersion((version) => version + 1)} />
+          <JointPage key={"joint-" + resetVersion} />
+        </>
       ) : (
-        <SinglePage key={"single-" + resetVersion} />
+        <SinglePage key={"single-" + resetVersion} onReset={() => setResetVersion((version) => version + 1)} />
       )}
     </div>
   );

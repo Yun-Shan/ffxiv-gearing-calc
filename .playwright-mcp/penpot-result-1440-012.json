@@ -1,0 +1,1360 @@
+[
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25428171ca",
+    "id": "cd720ada-34f1-80c0-8008-bd25428171ca",
+    "name": "矩形",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd25428171ca",
+      "type": "rectangle",
+      "name": "矩形",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1267",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1268",
+        "$values": []
+      },
+      "x": 34,
+      "y": 536,
+      "parentIndex": 127,
+      "parentX": 34,
+      "parentY": 536,
+      "boardX": 34,
+      "boardY": 536,
+      "width": 1042,
+      "height": 1,
+      "bounds": {
+        "$id": "value-1269",
+        "x": 34,
+        "y": 536,
+        "width": 1042,
+        "height": 1
+      },
+      "center": {
+        "$id": "value-1270",
+        "x": 555,
+        "y": 536.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1271",
+        "$values": [
+          {
+            "$id": "value-1272",
+            "fillColor": "#eef2ea",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1273",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1274",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1275",
+        "fill": "color.surface.subtle"
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25428b3885",
+    "id": "cd720ada-34f1-80c0-8008-bd25428b3885",
+    "name": "装备信息",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd25428b3885",
+      "type": "text",
+      "name": "装备信息",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1276",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1277",
+        "$values": []
+      },
+      "x": 36,
+      "y": 537,
+      "parentIndex": 128,
+      "parentX": 36,
+      "parentY": 537,
+      "boardX": 36,
+      "boardY": 537,
+      "width": 56.08999999999969,
+      "height": 29,
+      "bounds": {
+        "$id": "value-1278",
+        "x": 36,
+        "y": 537,
+        "width": 56.08999999999969,
+        "height": 29
+      },
+      "center": {
+        "$id": "value-1279",
+        "x": 64.04499999999985,
+        "y": 551.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1280",
+        "$values": [
+          {
+            "$id": "value-1281",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1282",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1283",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1284",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.compact"
+      },
+      "characters": "手镯",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "regular",
+      "fontSize": "10",
+      "fontWeight": "400",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "left",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-1285",
+        "x": 36,
+        "y": 543.5,
+        "width": 20,
+        "height": 15
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25429ed734",
+    "id": "cd720ada-34f1-80c0-8008-bd25429ed734",
+    "name": "装备信息",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd25429ed734",
+      "type": "text",
+      "name": "装备信息",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1286",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1287",
+        "$values": []
+      },
+      "x": 96.09000000000015,
+      "y": 537,
+      "parentIndex": 129,
+      "parentX": 96.09000000000015,
+      "parentY": 537,
+      "boardX": 96.09000000000015,
+      "boardY": 537,
+      "width": 201.60000000000218,
+      "height": 29,
+      "bounds": {
+        "$id": "value-1288",
+        "x": 96.09000000000015,
+        "y": 537,
+        "width": 201.60000000000218,
+        "height": 29
+      },
+      "center": {
+        "$id": "value-1289",
+        "x": 196.89000000000124,
+        "y": 551.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1290",
+        "$values": [
+          {
+            "$id": "value-1291",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1292",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1293",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1294",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.body"
+      },
+      "characters": "总冠军强攻手镯",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "600",
+      "fontSize": "12",
+      "fontWeight": "600",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "left",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-1295",
+        "x": 96.09000000000015,
+        "y": 542.296875,
+        "width": 84,
+        "height": 17
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2542b37450",
+    "id": "cd720ada-34f1-80c0-8008-bd2542b37450",
+    "name": "装备信息",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd2542b37450",
+      "type": "text",
+      "name": "装备信息",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1296",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1297",
+        "$values": []
+      },
+      "x": 303.6899999999987,
+      "y": 537,
+      "parentIndex": 130,
+      "parentX": 303.6899999999987,
+      "parentY": 537,
+      "boardX": 303.6899999999987,
+      "boardY": 537,
+      "width": 108.18000000000029,
+      "height": 29,
+      "bounds": {
+        "$id": "value-1298",
+        "x": 303.6899999999987,
+        "y": 537,
+        "width": 108.18000000000029,
+        "height": 29
+      },
+      "center": {
+        "$id": "value-1299",
+        "x": 357.77999999999884,
+        "y": 551.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1300",
+        "$values": [
+          {
+            "$id": "value-1301",
+            "fillColor": "#5e6d5c",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1302",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1303",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1304",
+        "fill": "color.text.secondary",
+        "fontSize": "font.size.compact"
+      },
+      "characters": "零式/重量级",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "regular",
+      "fontSize": "10",
+      "fontWeight": "400",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "left",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-1305",
+        "x": 303.6899999999987,
+        "y": 543.5,
+        "width": 53.921875,
+        "height": 15
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2542c73d20",
+    "id": "cd720ada-34f1-80c0-8008-bd2542c73d20",
+    "name": "装备信息",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd2542c73d20",
+      "type": "text",
+      "name": "装备信息",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1306",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1307",
+        "$values": []
+      },
+      "x": 417.869999999999,
+      "y": 537,
+      "parentIndex": 131,
+      "parentX": 417.869999999999,
+      "parentY": 537,
+      "boardX": 417.869999999999,
+      "boardY": 537,
+      "width": 43.823999999996886,
+      "height": 29,
+      "bounds": {
+        "$id": "value-1308",
+        "x": 417.869999999999,
+        "y": 537,
+        "width": 43.823999999996886,
+        "height": 29
+      },
+      "center": {
+        "$id": "value-1309",
+        "x": 439.7819999999974,
+        "y": 551.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1310",
+        "$values": [
+          {
+            "$id": "value-1311",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1312",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1313",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1314",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.body"
+      },
+      "characters": "790",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "regular",
+      "fontSize": "12",
+      "fontWeight": "400",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "left",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-1315",
+        "x": 417.869999999999,
+        "y": 542.296875,
+        "width": 19.984375,
+        "height": 17
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2542def113",
+    "id": "cd720ada-34f1-80c0-8008-bd2542def113",
+    "name": "装备属性",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd2542def113",
+      "type": "text",
+      "name": "装备属性",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1316",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1317",
+        "$values": []
+      },
+      "x": 751.0680000000066,
+      "y": 537,
+      "parentIndex": 132,
+      "parentX": 751.0680000000066,
+      "parentY": 537,
+      "boardX": 751.0680000000066,
+      "boardY": 537,
+      "width": 47.97599999999875,
+      "height": 29,
+      "bounds": {
+        "$id": "value-1318",
+        "x": 751.0680000000066,
+        "y": 537,
+        "width": 47.97599999999875,
+        "height": 29
+      },
+      "center": {
+        "$id": "value-1319",
+        "x": 775.056000000006,
+        "y": 551.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1320",
+        "$values": [
+          {
+            "$id": "value-1321",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1322",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1323",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1324",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.body"
+      },
+      "characters": "402",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "regular",
+      "fontSize": "12",
+      "fontWeight": "400",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-1325",
+        "x": 765.0523750000066,
+        "y": 542.296875,
+        "width": 19.984375,
+        "height": 17
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2542f7cdda",
+    "id": "cd720ada-34f1-80c0-8008-bd2542f7cdda",
+    "name": "装备属性",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd2542f7cdda",
+      "type": "text",
+      "name": "装备属性",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1326",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1327",
+        "$values": []
+      },
+      "x": 1020.9480000000066,
+      "y": 537,
+      "parentIndex": 133,
+      "parentX": 1020.9480000000066,
+      "parentY": 537,
+      "boardX": 1020.9480000000066,
+      "boardY": 537,
+      "width": 47.9760000000025,
+      "height": 29,
+      "bounds": {
+        "$id": "value-1328",
+        "x": 1020.9480000000066,
+        "y": 537,
+        "width": 47.9760000000025,
+        "height": 29
+      },
+      "center": {
+        "$id": "value-1329",
+        "x": 1044.9360000000079,
+        "y": 551.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1330",
+        "$values": [
+          {
+            "$id": "value-1331",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1332",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1333",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1334",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.body"
+      },
+      "characters": "451",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "regular",
+      "fontSize": "12",
+      "fontWeight": "400",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-1335",
+        "x": 1034.9323750000067,
+        "y": 542.296875,
+        "width": 19.984375,
+        "height": 17
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25430e9bd4",
+    "id": "cd720ada-34f1-80c0-8008-bd25430e9bd4",
+    "name": "装备属性",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd25430e9bd4",
+      "type": "text",
+      "name": "装备属性",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1336",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1337",
+        "$values": []
+      },
+      "x": 805.0440000000066,
+      "y": 537,
+      "parentIndex": 134,
+      "parentX": 805.0440000000066,
+      "parentY": 537,
+      "boardX": 805.0440000000066,
+      "boardY": 537,
+      "width": 47.97599999999875,
+      "height": 29,
+      "bounds": {
+        "$id": "value-1338",
+        "x": 805.0440000000066,
+        "y": 537,
+        "width": 47.97599999999875,
+        "height": 29
+      },
+      "center": {
+        "$id": "value-1339",
+        "x": 829.032000000006,
+        "y": 551.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1340",
+        "$values": [
+          {
+            "$id": "value-1341",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1342",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1343",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1344",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.body"
+      },
+      "characters": "212",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "700",
+      "fontSize": "12",
+      "fontWeight": "700",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-1345",
+        "x": 818.4033750000066,
+        "y": 542.296875,
+        "width": 21.25,
+        "height": 17
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25432498c7",
+    "id": "cd720ada-34f1-80c0-8008-bd25432498c7",
+    "name": "装备属性",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd25432498c7",
+      "type": "text",
+      "name": "装备属性",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1346",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1347",
+        "$values": []
+      },
+      "x": 859.0200000000066,
+      "y": 537,
+      "parentIndex": 135,
+      "parentX": 859.0200000000066,
+      "parentY": 537,
+      "boardX": 859.0200000000066,
+      "boardY": 537,
+      "width": 47.97600000000239,
+      "height": 29,
+      "bounds": {
+        "$id": "value-1348",
+        "x": 859.0200000000066,
+        "y": 537,
+        "width": 47.97600000000239,
+        "height": 29
+      },
+      "center": {
+        "$id": "value-1349",
+        "x": 883.0080000000078,
+        "y": 551.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1350",
+        "$values": [
+          {
+            "$id": "value-1351",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1352",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1353",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1354",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.body"
+      },
+      "characters": "148",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "regular",
+      "fontSize": "12",
+      "fontWeight": "400",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-1355",
+        "x": 873.0043750000066,
+        "y": 542.296875,
+        "width": 19.984375,
+        "height": 17
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd25433ac064",
+    "id": "cd720ada-34f1-80c0-8008-bd25433ac064",
+    "name": "装备属性",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd25433ac064",
+      "type": "text",
+      "name": "装备属性",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1356",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1357",
+        "$values": []
+      },
+      "x": 912.9960000000066,
+      "y": 537,
+      "parentIndex": 136,
+      "parentX": 912.9960000000066,
+      "parentY": 537,
+      "boardX": 912.9960000000066,
+      "boardY": 537,
+      "width": 47.97600000000239,
+      "height": 29,
+      "bounds": {
+        "$id": "value-1358",
+        "x": 912.9960000000066,
+        "y": 537,
+        "width": 47.97600000000239,
+        "height": 29
+      },
+      "center": {
+        "$id": "value-1359",
+        "x": 936.9840000000078,
+        "y": 551.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1360",
+        "$values": [
+          {
+            "$id": "value-1361",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1362",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1363",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1364",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.body"
+      },
+      "characters": "—",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "regular",
+      "fontSize": "12",
+      "fontWeight": "400",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-1365",
+        "x": 931.6053750000066,
+        "y": 542.296875,
+        "width": 10.734375,
+        "height": 17
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd2543546645",
+    "id": "cd720ada-34f1-80c0-8008-bd2543546645",
+    "name": "装备属性",
+    "type": "text",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd2543546645",
+      "type": "text",
+      "name": "装备属性",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": null,
+      "borderRadiusTopLeft": null,
+      "borderRadiusTopRight": null,
+      "borderRadiusBottomRight": null,
+      "borderRadiusBottomLeft": null,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1366",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1367",
+        "$values": []
+      },
+      "x": 966.9720000000066,
+      "y": 537,
+      "parentIndex": 137,
+      "parentX": 966.9720000000066,
+      "parentY": 537,
+      "boardX": 966.9720000000066,
+      "boardY": 537,
+      "width": 47.97600000000239,
+      "height": 29,
+      "bounds": {
+        "$id": "value-1368",
+        "x": 966.9720000000066,
+        "y": 537,
+        "width": 47.97600000000239,
+        "height": 29
+      },
+      "center": {
+        "$id": "value-1369",
+        "x": 990.9600000000078,
+        "y": 551.5
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1370",
+        "$values": [
+          {
+            "$id": "value-1371",
+            "fillColor": "#2d3d31",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1372",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1373",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1374",
+        "fill": "color.text.primary",
+        "fontSize": "font.size.body"
+      },
+      "characters": "108",
+      "growType": "fixed",
+      "fontId": "gfont-noto-sans-sc",
+      "fontFamily": "Noto Sans SC",
+      "fontVariantId": "regular",
+      "fontSize": "12",
+      "fontWeight": "400",
+      "fontStyle": "normal",
+      "lineHeight": "1.2",
+      "letterSpacing": "0",
+      "textTransform": "none",
+      "textDecoration": "none",
+      "direction": "ltr",
+      "align": "center",
+      "verticalAlign": "center",
+      "textBounds": {
+        "$id": "value-1375",
+        "x": 980.9563750000066,
+        "y": 542.296875,
+        "width": 19.984375,
+        "height": 17
+      }
+    },
+    "childrenRefs": []
+  },
+  {
+    "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd254386ae7b",
+    "id": "cd720ada-34f1-80c0-8008-bd254386ae7b",
+    "name": "矩形",
+    "type": "rectangle",
+    "parentRef": {
+      "id": "cd720ada-34f1-80c0-8008-bd253bd7f3f9",
+      "name": "01 最小视口 · 1440×695",
+      "type": "board",
+      "shapeRef": "shape-id:cd720ada-34f1-80c0-8008-bd253bd7f3f9"
+    },
+    "properties": {
+      "id": "cd720ada-34f1-80c0-8008-bd254386ae7b",
+      "type": "rectangle",
+      "name": "矩形",
+      "blocked": false,
+      "hidden": false,
+      "visible": true,
+      "proportionLock": false,
+      "constraintsHorizontal": "left",
+      "constraintsVertical": "top",
+      "fixedWhenScrolling": false,
+      "borderRadius": 0,
+      "borderRadiusTopLeft": 0,
+      "borderRadiusTopRight": 0,
+      "borderRadiusBottomRight": 0,
+      "borderRadiusBottomLeft": 0,
+      "opacity": null,
+      "blendMode": "normal",
+      "shadows": {
+        "$id": "value-1376",
+        "$values": []
+      },
+      "blur": null,
+      "backgroundBlur": null,
+      "exports": {
+        "$id": "value-1377",
+        "$values": []
+      },
+      "x": 25,
+      "y": 568,
+      "parentIndex": 138,
+      "parentX": 25,
+      "parentY": 568,
+      "boardX": 25,
+      "boardY": 568,
+      "width": 1060,
+      "height": 32,
+      "bounds": {
+        "$id": "value-1378",
+        "x": 25,
+        "y": 568,
+        "width": 1060,
+        "height": 32
+      },
+      "center": {
+        "$id": "value-1379",
+        "x": 555,
+        "y": 584
+      },
+      "rotation": 0,
+      "flipX": false,
+      "flipY": false,
+      "fills": {
+        "$id": "value-1380",
+        "$values": [
+          {
+            "$id": "value-1381",
+            "fillColor": "#f8f9f5",
+            "fillOpacity": 1,
+            "fillColorGradient": null,
+            "fillColorRefFile": null,
+            "fillColorRefId": null,
+            "fillImage": null
+          }
+        ]
+      },
+      "strokes": {
+        "$id": "value-1382",
+        "$values": []
+      },
+      "layoutChild": null,
+      "layoutCell": null,
+      "interactions": {
+        "$id": "value-1383",
+        "$values": []
+      },
+      "tokens": {
+        "$id": "value-1384",
+        "fill": "color.surface.canvas"
+      }
+    },
+    "childrenRefs": []
+  }
+]

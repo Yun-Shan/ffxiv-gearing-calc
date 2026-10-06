@@ -1,0 +1,30 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - generic "关闭" [ref=e6]:
+      - button "关闭" [ref=e7]
+    - generic [ref=e10]:
+      - generic [ref=e14]: 登录
+      - generic [ref=e15]: Penpot 是免费且开源的设计工具，用于设计与代码之间的协作
+      - generic [ref=e16]:
+        - generic [ref=e17] [cursor=pointer]: 使用 Google 登录
+        - generic [ref=e20] [cursor=pointer]: 使用 GitHub 登录
+        - generic [ref=e23] [cursor=pointer]: 使用 GitLab 登录
+      - separator
+      - generic [ref=e26]:
+        - generic [ref=e29] [cursor=pointer]:
+          - text: 工作邮件地址
+          - textbox "工作邮件地址" [ref=e31]
+        - generic [ref=e32]: 忘记密码？
+        - button "继续" [disabled] [ref=e35]
+      - separator
+      - generic [ref=e37]: 现在还没有账号？ 创建账号
+  - generic [ref=e40]:
+    - generic [ref=e41]:
+      - text: This website uses first-party and third-party cookies to enhance navigation, analyze traffic, and personalize content. You can accept all, reject them, or customize their use.
+      - link "Cookie Policy" [ref=e42] [cursor=pointer]:
+        - /url: https://penpot.app/cookie
+      - text: .
+    - generic [ref=e43]:
+      - button "Accept all" [ref=e44]
+      - button "Reject all" [ref=e45]
+      - button "Customize cookies" [ref=e46]

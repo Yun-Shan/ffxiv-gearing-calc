@@ -1,0 +1,210 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [aria-hidden] [ref=e7]: ✧
+      - generic [ref=e8]:
+        - generic [ref=e9]: 青瓷分析台
+        - generic [ref=e10]: 最终幻想14 配装优化工具
+    - navigation "搜索页面" [ref=e11]:
+      - link "单职业配装" [ref=e12] [cursor=pointer]:
+        - /url: "#/single"
+      - link "多职业联合搜索" [ref=e13] [cursor=pointer]:
+        - /url: "#/joint"
+    - generic [ref=e14]:
+      - generic [ref=e16]: 数据版本 2026.09.15.0000.0000
+      - button "重置当前页面配置" [ref=e18] [cursor=pointer]
+  - main [ref=e22]:
+    - generic [ref=e296]:
+      - region "单职业搜索参数" [ref=e297]:
+        - generic [ref=e298]:
+          - generic [ref=e299]:
+            - paragraph [ref=e300]: 单职业配装 · 防护职业
+            - heading "骑士 搜索条件" [level=1] [ref=e301]
+          - button "更换职业" [ref=e302] [cursor=pointer]
+        - status [ref=e303]:
+          - generic [ref=e306]:
+            - strong [ref=e307]: 搜索已取消
+            - paragraph [ref=e308]: 搜索已取消。本次搜索已立即停止，可以调整条件后重新开始。
+        - generic [ref=e310]:
+          - region "战斗速度与目标" [ref=e311]:
+            - heading "战斗速度与目标" [level=2] [ref=e312]
+            - group [ref=e313]:
+              - generic [ref=e314]:
+                - generic [ref=e315]:
+                  - generic [ref=e316]: GCD 约束
+                  - generic [ref=e317]:
+                    - combobox "GCD 约束类型" [ref=e318]:
+                      - option "不限"
+                      - option "指定 GCD 档位"
+                      - option "自定义速度范围" [selected]
+                    - generic [aria-hidden]: ⌄
+                  - generic [ref=e319]:
+                    - generic [ref=e320]: 技速
+                    - generic [ref=e321]:
+                      - generic [ref=e322]: 最低技速
+                      - spinbutton "最低技速" [ref=e323]
+                    - generic [ref=e324]: –
+                    - generic [ref=e325]:
+                      - generic [ref=e326]: 最高技速
+                      - spinbutton "最高技速" [ref=e327]
+                - region "自动选择的搜索指标" [ref=e328]:
+                  - generic [ref=e329]: 当前优化指标
+                  - strong [ref=e330]: 每秒每威力伤害期望
+              - generic [ref=e332]:
+                - generic [ref=e333]: 坚韧约束
+                - combobox "坚韧约束" [ref=e334]:
+                  - option "不限" [selected]
+                  - option "最低坚韧值"
+                  - option "最低减伤比例"
+                  - option "候选范围内最高坚韧"
+          - region "装备范围与食物" [ref=e335]:
+            - heading "装备范围与食物" [level=2] [ref=e336]
+            - generic [ref=e337]:
+              - generic [ref=e338]:
+                - generic [ref=e339]: 同步品级
+                - spinbutton "同步品级" [ref=e341]
+              - generic [ref=e342]:
+                - generic [ref=e343]: 装备品级
+                - generic [ref=e344]:
+                  - generic [ref=e345]:
+                    - generic [ref=e346]: 最低装备品级
+                    - spinbutton "最低装备品级" [ref=e348]: "780"
+                  - generic [aria-hidden] [ref=e349]: –
+                  - generic [ref=e350]:
+                    - generic [ref=e351]: 最高装备品级
+                    - spinbutton "最高装备品级" [ref=e353]: "795"
+              - generic [ref=e354]:
+                - generic [ref=e355]: 食物
+                - combobox "食物" [ref=e356]:
+                  - option "自动选择" [selected]
+                  - option "苍穹鸡蛋汤"
+                  - option "田园番茄面"
+                  - option "烟肉蛋酱拌面"
+                  - option "豆腐味噌汁"
+                  - option "鱼汁"
+                  - option "番茄炖蛋"
+                  - option "浓缩奶油咖啡"
+                  - option "黄油煎迷雾菠菜"
+                  - option "炸蟹饼"
+                  - option "近东虾咖喱"
+                  - option "鲑鱼干"
+                  - option "酱炒饭"
+                  - option "奶油热巧克力"
+                  - option "巧克力奶油蛋糕"
+                  - option "圆扇刺梨蛋糕"
+                  - option "图拉尔水果挞"
+                  - option "酿柿子椒"
+                  - option "牧羊人夹饼"
+                  - option "酸柠檬腌鱼"
+                  - option "香煎面拖旗鱼"
+                  - option "椒麻鳗鱼"
+                  - option "黄金鳗鱼派"
+                  - option "烤干酪辣味玉米片"
+                  - option "焦糖爆米花"
+                  - option "梅干星磅蛋糕"
+                  - option "梅干灵矿蛋糕"
+                  - option "犎牛奶汁焗菜"
+                  - option "新薯浓汤"
+                  - option "炖剑山芋"
+                  - option "剑山芋沙拉"
+                  - option "蛤蜊糕"
+                  - option "圆蛤羹"
+          - region "装备限制" [ref=e357]:
+            - heading "装备限制" [level=2] [ref=e358]
+            - generic [ref=e359]:
+              - region "来源与排除装备" [ref=e360]:
+                - generic [ref=e361]:
+                  - generic [ref=e362]:
+                    - heading "来源限制" [level=3] [ref=e363]
+                    - generic [ref=e364]: 可选
+                  - generic [ref=e366]:
+                    - generic [aria-hidden] [ref=e367]: ⌕
+                    - combobox "选择来源限制" [ref=e368]
+                    - button "展开选择来源限制候选" [ref=e369] [cursor=pointer]:
+                      - generic [aria-hidden] [ref=e370]: ⌄
+                  - generic "已排除来源" [ref=e371]
+                - generic [ref=e372]:
+                  - generic [ref=e373]:
+                    - heading "排除指定装备" [level=3] [ref=e374]
+                    - generic [ref=e375]: 可选
+                  - generic [ref=e377]:
+                    - generic [aria-hidden] [ref=e378]: ⌕
+                    - combobox "选择排除装备" [ref=e379]
+                    - button "展开选择排除装备候选" [ref=e380] [cursor=pointer]:
+                      - generic [aria-hidden] [ref=e381]: ⌄
+                  - generic "已排除装备" [ref=e382]
+              - region "强制使用装备" [ref=e383]:
+                - generic [ref=e384]:
+                  - heading "强制使用装备" [level=3] [ref=e385]
+                  - generic [ref=e386]: 可选
+                - generic [ref=e387]:
+                  - combobox "选择装备部位" [ref=e388]:
+                    - option "武器" [selected]
+                    - option "盾牌"
+                    - option "头部"
+                    - option "身体"
+                    - option "手部"
+                    - option "腿部"
+                    - option "脚部"
+                    - option "耳饰"
+                    - option "项链"
+                    - option "手镯"
+                    - option "戒指1"
+                    - option "戒指2"
+                  - generic [ref=e390]:
+                    - generic [aria-hidden] [ref=e391]: ⌕
+                    - combobox "选择强制装备" [ref=e392]
+                    - button "展开选择强制装备候选" [ref=e393] [cursor=pointer]:
+                      - generic [aria-hidden] [ref=e394]: ⌄
+                  - button "添加" [disabled] [ref=e395]
+                - generic "已强制使用装备" [ref=e396]
+        - generic [ref=e397]:
+          - heading "搜索已取消" [level=2] [ref=e402]
+          - paragraph [ref=e403]: 本次搜索已停止，当前没有新的推荐结果；确认条件后可以重新开始。
+      - complementary "当前搜索条件摘要" [ref=e404]:
+        - generic [ref=e406]:
+          - generic [ref=e408]:
+            - paragraph [ref=e409]: 条件摘要
+            - heading "骑士" [level=2] [ref=e410]
+          - generic [ref=e411]:
+            - heading "搜索条件" [level=3] [ref=e412]
+            - generic [ref=e413]:
+              - generic [ref=e414]:
+                - term [ref=e415]: 优化指标
+                - definition [ref=e416]: 每秒每威力伤害期望
+              - generic [ref=e417]:
+                - term [ref=e418]: 装备品级
+                - definition [ref=e419]: 780–795
+              - generic [ref=e420]:
+                - term [ref=e421]: 同步品级
+                - definition [ref=e422]: 未启用
+              - generic [ref=e423]:
+                - term [ref=e424]: GCD
+                - definition [ref=e425]: 不限
+              - generic [ref=e426]:
+                - term [ref=e427]: 技速范围
+                - definition [ref=e428]: 不限
+              - generic [ref=e429]:
+                - term [ref=e430]: 坚韧约束
+                - definition [ref=e431]: 不限
+              - generic [ref=e432]:
+                - term [ref=e433]: 食物
+                - definition [ref=e434]: 自动选择
+            - generic [ref=e435]:
+              - button "来源限制 不限" [ref=e437] [cursor=pointer]:
+                - generic [ref=e438]: 来源限制
+                - strong [ref=e439]: 不限
+              - button "强制装备 不限" [ref=e441] [cursor=pointer]:
+                - generic [ref=e442]: 强制装备
+                - strong [ref=e443]: 不限
+              - button "排除装备 不限" [ref=e445] [cursor=pointer]:
+                - generic [ref=e446]: 排除装备
+                - strong [ref=e447]: 不限
+        - generic [ref=e448]:
+          - generic [ref=e449]: 已就绪 · 搜索结果将严格满足以上条件
+          - button "开始搜索" [ref=e450] [cursor=pointer]
+        - generic [ref=e453]:
+          - generic [ref=e454]: 纯前端计算 · 可离线运行
+          - group [ref=e455]:
+            - generic "高级设置" [ref=e456] [cursor=pointer]
+            - text: 展开

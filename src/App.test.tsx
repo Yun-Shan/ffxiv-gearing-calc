@@ -70,6 +70,7 @@ import { App } from "./App";
 import {
   dataProvenance,
   foods,
+  gears,
   jobIds,
   jobSchemas,
   type JobId,
@@ -243,8 +244,10 @@ function mockAbortableSearch(): void {
 }
 
 function sampleResult(): OptimizationResult {
+  const sampleWeapon = gears.find((gear) => gear.slot === "weapon" && gear.jobs.includes("SAM"));
+  if (!sampleWeapon) throw new Error("测试需要一件有效的武士武器");
   return {
-    gear: [],
+    gear: [{ ...sampleWeapon, melds: [], finalStats: {} }],
     food: foods[0],
     stats: {},
     effects: {
@@ -432,66 +435,93 @@ describe("单职业连续搜索工作台", () => {
     expect(optimizeMock).not.toHaveBeenCalled();
   });
 
-  it("自动按 GCD 档位或自定义速度范围选择指标，并保持速度与 GCD 互斥", async () => {
+  it("按设计稿提供不限、GCD 档位和自定义速度三种互斥状态", async () => {
     chooseJob("WAR");
+    const mode = () => host.querySelector<HTMLSelectElement>('select[aria-label="GCD 约束类型"]')!;
+    expect([...mode().options].map((option) => [option.value, option.textContent])).toEqual([
+      ["any", "不限"],
+      ["multiple", "指定 GCD 档位"],
+      ["speed", "自定义速度范围"],
+    ]);
+    expect(mode().value).toBe("speed");
     expect(host.querySelector(".single-objective-display")?.textContent).toContain("每秒每威力伤害期望");
-    expect(host.querySelector(".single-custom-speed-status")?.textContent).toContain("未启用");
+    expect(host.querySelector(".single-gcd-choice-trigger")).toBeNull();
+    expect(host.querySelector(".single-speed-inline")).not.toBeNull();
+    expect(textField("最低技速").value).toBe("");
+    expect(textField("最高技速").value).toBe("");
+    expect(host.querySelector(".single-speed-separator")?.textContent).toBe("–");
+    expect(buttonNamed("开始搜索").disabled).toBe(false);
+    expect(host.querySelector(".single-workbench-actionbar")?.textContent).toContain("已就绪");
     expect(textField("坚韧方式")).toBeDefined();
 
-    selectValue("坚韧方式", "minimum");
-    expect(textField("最低坚韧值")).toBeDefined();
-    expect(() => textField("最低减伤比例")).toThrow();
-    selectValue("坚韧方式", "mitigation");
-    expect(textField("最低减伤比例")).toBeDefined();
-    expect(() => textField("最低坚韧值")).toThrow();
-    selectValue("坚韧方式", "maximum");
-    expect(host.textContent).toContain("使用当前候选范围内能够达到的最高坚韧值");
-    expect(() => textField("最低减伤比例")).toThrow();
-
-    selectAriaValue("GCD 约束类型", "single");
-    inputValue("目标 GCD", "2.40");
+    selectAriaValue("GCD 约束类型", "multiple");
+    expect(host.querySelector(".single-gcd-choice-trigger")?.textContent).toContain("正在查询档位");
+    expect(buttonNamed("开始搜索").disabled).toBe(true);
+    await settleApp(260);
+    expect(findFeasibleGcdsMock).toHaveBeenCalledTimes(1);
+    expect(findFeasibleGcdsMock.mock.calls.at(-1)?.[0]).toMatchObject({
+      gcdTarget: undefined,
+      gcdChoices: undefined,
+      speedMin: undefined,
+      speedMax: undefined,
+    });
+    click(buttonNamed("选择 GCD 档位"));
+    expect(host.querySelectorAll(".single-gcd-choice-option input[type=checkbox]")).toHaveLength(2);
+    const tierCheckboxes = [...host.querySelectorAll<HTMLInputElement>(".single-gcd-choice-option input[type=checkbox]")];
+    act(() => tierCheckboxes[0]!.click());
     expect(host.querySelector(".single-objective-display")?.textContent).toContain("每威力伤害期望");
+    expect(buttonNamed("开始搜索").disabled).toBe(false);
+    act(() => tierCheckboxes[1]!.click());
+    expect(host.querySelectorAll(".single-gcd-chip:not(.single-gcd-chip-measure)")).toHaveLength(2);
+    expect(host.querySelector(".single-objective-display")?.textContent).toContain("每秒每威力伤害期望");
 
-    openDetails(detailsNamed("高级自定义速度范围"));
+    selectAriaValue("GCD 约束类型", "any");
+    expect(host.querySelector(".single-gcd-choice-trigger")).toBeNull();
+    expect(host.querySelector(".single-objective-display")?.textContent).toContain("每秒每威力伤害期望");
+
+    selectAriaValue("GCD 约束类型", "speed");
+    expect(host.querySelector(".single-speed-inline > span:first-child")?.textContent).toBe("技速");
+    expect(buttonNamed("开始搜索").disabled).toBe(false);
     inputValue("最低技速", "1234");
     await settleApp(340);
-    expect(host.querySelector(".single-custom-speed-status")?.textContent).toContain("已启用");
     expect(findFeasibleGcdsMock).toHaveBeenCalled();
     expect(findFeasibleGcdsMock.mock.calls.at(-1)?.[0]).toMatchObject({
       speedMin: 1234,
       gcdTarget: undefined,
       gcdChoices: undefined,
     });
-    expect(host.querySelector(".single-objective-display")?.textContent).toContain("覆盖 2 个可行 GCD 档位");
     expect(host.querySelector(".single-objective-display")?.textContent).toContain("每秒每威力伤害期望");
     expect(buttonNamed("开始搜索").disabled).toBe(false);
+  });
 
-    selectAriaValue("GCD 约束类型", "single");
-    click(buttonNamed("计算可行 GCD 档位"));
-    await settleApp();
-    const singleFeasibleGcd = host.querySelector<HTMLButtonElement>(".feasible-gcd-option > button");
-    expect(singleFeasibleGcd).not.toBeNull();
-    click(singleFeasibleGcd!);
-    expect((textField("最低技速") as HTMLInputElement).value).toBe("");
-    expect(host.querySelector(".single-config-warning")).toBeNull();
-    expect(host.querySelector(".single-objective-display")?.textContent).toContain("每威力伤害期望");
-    expect(buttonNamed("开始搜索").disabled).toBe(false);
-
-    openDetails(detailsNamed("高级自定义速度范围"));
-    inputValue("最低技速", "1234");
-    await settleApp(340);
+  it("GCD 档位标签按当前控件宽度自适应显示", async () => {
+    findFeasibleGcdsMock.mockResolvedValue([2.5, 2.48, 2.46, 2.44]);
+    chooseJob("WAR");
     selectAriaValue("GCD 约束类型", "multiple");
-    click(buttonNamed("计算可行 GCD 档位"));
-    await settleApp();
-    click(buttonNamed("全部设为多档"));
-    await settleApp();
-    expect((textField("最低技速") as HTMLInputElement).value).toBe("");
-    expect(host.querySelector(".single-config-warning")).toBeNull();
-    expect(host.querySelector(".single-objective-display")?.textContent).toContain("每秒每威力伤害期望");
+    await settleApp(260);
+    click(buttonNamed("选择 GCD 档位"));
+    const choices = [...host.querySelectorAll<HTMLInputElement>(".single-gcd-choice-option input[type=checkbox]")];
+    expect(choices).toHaveLength(4);
+    act(() => choices.forEach((choice) => choice.click()));
 
-    selectAriaValue("GCD 约束类型", "single");
-    expect(host.querySelector(".single-condition-summary")?.textContent).toContain("不限");
-    expect(host.querySelector(".single-objective-display")?.textContent).toContain("每威力伤害期望");
+    const chips = host.querySelector<HTMLElement>(".single-gcd-chips")!;
+    let availableWidth = 190;
+    Object.defineProperty(chips, "getBoundingClientRect", {
+      configurable: true,
+      value: () => ({
+        x: 0, y: 0, width: availableWidth, height: 24,
+        top: 0, right: availableWidth, bottom: 24, left: 0,
+        toJSON: () => ({}),
+      }) as DOMRect,
+    });
+    act(() => window.dispatchEvent(new Event("resize")));
+    expect(chips.querySelectorAll(".single-gcd-chip:not(.single-gcd-chip-measure):not(.is-overflow)")).toHaveLength(3);
+    expect(chips.querySelectorAll(".single-gcd-chip.is-overflow:not(.single-gcd-chip-measure)")).toHaveLength(1);
+
+    availableWidth = 230;
+    act(() => window.dispatchEvent(new Event("resize")));
+    expect(chips.querySelectorAll(".single-gcd-chip:not(.single-gcd-chip-measure):not(.is-overflow)")).toHaveLength(4);
+    expect(chips.querySelectorAll(".single-gcd-chip.is-overflow:not(.single-gcd-chip-measure)")).toHaveLength(0);
   });
 
   it("进度页显示真实槽位候选和当前模型数据；单轮不显示核验组合计数", async () => {
@@ -577,11 +607,12 @@ describe("单职业连续搜索工作台", () => {
       });
     });
     expect(host.querySelector('[aria-label="搜索阶段"]')).not.toBeNull();
-    expect(host.textContent).toContain("正在寻找可行配装");
+    expect(host.textContent).toContain("正在寻找符合条件的最优配装");
     expect(host.querySelector('[role="progressbar"]')).toBeNull();
     expect(host.textContent).toContain("870");
     expect(host.textContent).toContain("32");
-    expect(host.textContent).toContain("仅描述当前模型");
+    expect(host.textContent).toContain("当前算法搜索状态");
+    expect(host.textContent).not.toContain("仅描述当前模型");
     expect(host.textContent).toContain("793");
     expect(host.textContent).toContain("46,103");
     expect(host.textContent).toContain("3,281");
@@ -614,8 +645,8 @@ describe("单职业连续搜索工作台", () => {
       variableCount: 10,
       rowCount: 5,
     }));
-    expect(host.textContent).toContain("第 2 轮");
-    expect(host.textContent).toContain("已核验 1 组候选组合");
+    expect(host.textContent).not.toContain("第 2 轮");
+    expect(host.textContent).not.toContain("已核验 1 组候选组合");
     click(buttonNamed("取消搜索"));
     await settleApp();
     expect(host.querySelector('[aria-label="搜索阶段"]')).toBeNull();
@@ -636,13 +667,14 @@ describe("单职业连续搜索工作台", () => {
       ],
       foodCount: 1,
     }));
-    expect(host.querySelector(".single-search-candidate-grid")?.getAttribute("style"))
-      .toContain("--single-search-grid-columns: 6");
+    expect(host.querySelectorAll(".single-search-candidate-slot")).toHaveLength(12);
+    expect(host.querySelector(".single-search-candidate-heading")?.textContent)
+      .toContain("装备与食物候选");
     click(buttonNamed("取消搜索"));
     await settleApp();
   });
 
-  it("结果页保留目标值和耗时，隐藏基线比例及候选条目，并允许修改条件", async () => {
+  it("结果页按稿显示目标值、推荐表格和摘要，并允许修改条件", async () => {
     chooseJob("SAM");
     optimizeMock.mockResolvedValueOnce(sampleResult());
     await startSearchAndSettle();
@@ -650,12 +682,14 @@ describe("单职业连续搜索工作台", () => {
 
     expect(host.querySelector(".single-result-workspace")).not.toBeNull();
     expect(host.querySelector('[aria-label="搜索阶段"]')).toBeNull();
-    expect(host.textContent).toContain("目标值 1.0000000（每威力伤害期望）");
-    expect(host.textContent).toContain("用时 0.0 秒");
-    expect(host.textContent).toContain("求解与结果复核已完成；最优结果限于本次候选与约束。");
+    const resultTitlebar = host.querySelector<HTMLElement>(".single-result-titlebar");
+    expect(normalizedText(resultTitlebar!)).toContain("配装结果");
+    expect(normalizedText(resultTitlebar!)).toContain("目标值 1.0000000");
+    expect(normalizedText(resultTitlebar!)).toContain("用时 0.0 秒");
+    expect(normalizedText(resultTitlebar!)).not.toContain("武士");
+    expect(host.querySelector(".single-result-titlebar")).not.toBeNull();
     expect(host.querySelector(".single-result-workspace .result-toolbar h2")).toBeNull();
-    expect(host.querySelector(".single-result-workspace .result-completion")?.textContent)
-      .toContain("目标值 1.0000000（每威力伤害期望） · 用时 0.0 秒");
+    expect(host.querySelector(".single-result-workspace .result-completion")).toBeNull();
     expect(host.textContent).not.toContain("基线比例");
     expect(host.textContent).not.toContain("个候选");
     expect([...host.querySelectorAll(".single-result-workspace .result-conclusion .stat-pill")]
@@ -666,24 +700,36 @@ describe("单职业连续搜索工作台", () => {
       "直击率",
       "每秒每威力伤害期望",
     ]);
-    const resultTableHead = host.querySelector<HTMLElement>(".single-result-workspace .gear-table-head");
-    const resultFoodRow = host.querySelector<HTMLElement>(".single-result-workspace .food-row");
-    expect(resultFoodRow?.style.gridTemplateColumns).toBe(resultTableHead?.style.gridTemplateColumns);
-    expect(resultFoodRow?.style.gridTemplateColumns.startsWith("72px ")).toBe(true);
-    expect(resultFoodRow?.style.gridTemplateColumns.endsWith("36px")).toBe(true);
-    expect(resultFoodRow?.style.gridTemplateColumns.split(" ").filter((column) => column === "24px"))
-      .toHaveLength(jobSchemas.SAM.stats.length);
-    expect(host.textContent).toContain("结果身份");
-    expect(host.textContent).toContain("配装总属性");
+    const resultMetrics = [...host.querySelectorAll<HTMLElement>(".single-result-workspace .result-conclusion .stat-pill")];
+    expect(resultMetrics[0]?.classList.contains("accent")).toBe(false);
+    expect(resultMetrics.at(-1)?.classList.contains("accent")).toBe(true);
+    const resultTable = host.querySelector<HTMLTableElement>(".single-result-workspace table.single-job-gear-table");
+    expect(resultTable?.tagName).toBe("TABLE");
+    expect(resultTable?.caption?.textContent).toContain("推荐配装装备属性表");
+    expect(resultTable?.tHead?.querySelectorAll('th[scope="col"]')).toHaveLength(11);
+    expect([...resultTable!.tBodies[0]!.rows].map((row) => row.className)).toEqual([
+      "gear-row",
+      "food-row",
+      "gear-total-row",
+    ]);
+    const recommendationHeading = host.querySelector<HTMLElement>(".single-result-table-heading");
+    expect(recommendationHeading?.querySelector("h2")?.textContent).toBe("推荐配装");
+    const shareLink = recommendationHeading?.querySelector<HTMLAnchorElement>(".single-result-open-link");
+    expect(shareLink?.href).toContain("asvel.github.io/ffxiv-gearing/");
     expect(host.textContent).toContain("伤害与防御");
-    expect(host.textContent).toContain("搜索条件");
+    expect(host.textContent).toContain("搜索条件与限制");
+    expect(host.textContent).not.toContain("结果身份");
+    expect(host.textContent).not.toContain("配装总属性");
+    const resultAsideSections = [...host.querySelectorAll<HTMLElement>(".single-result-aside .single-summary-section h3")]
+      .map((heading) => normalizedText(heading));
+    expect(resultAsideSections).toEqual(["伤害与防御", "搜索条件与限制"]);
     const resultEffects = host.querySelector(".single-result-workspace .single-result-effects");
     expect(normalizedText(resultEffects!)).toContain("暴击伤害");
     expect(normalizedText(resultEffects!)).toContain("信念加成");
     expect(normalizedText(resultEffects!)).not.toContain("GCD");
     expect(normalizedText(resultEffects!)).not.toContain("暴击率");
     expect(normalizedText(resultEffects!)).not.toContain("直击率");
-    expect(host.querySelectorAll(".single-job-stat-heading")).toHaveLength(jobSchemas.SAM.stats.length);
+    expect(host.querySelectorAll(".single-job-stat-heading")).toHaveLength(6);
 
     click(buttonNamed("修改条件"));
     expect(host.querySelector(".single-result-workspace")).toBeNull();
@@ -773,6 +819,46 @@ describe("单职业连续搜索工作台", () => {
       jobLevel: jobSchemas.SAM.maxJobLevel,
       minItemLevel: legacyConfig.minItemLevel,
       maxItemLevel: legacyConfig.maxItemLevel,
+    });
+  });
+
+  it("载入只有旧 gcdTarget 的历史条件后，转换为可搜索的单档选择", async () => {
+    const legacyConfig: OptimizationConfig = {
+      ...testJobConfig("SAM"),
+      gcdTarget: 2.48,
+      objective: "damage",
+    };
+    const startedAtISO = new Date(Date.UTC(2026, 9, 2, 12, 0, 0)).toISOString();
+    historyStore.records.push({
+      id: "legacy-single-gcd-target",
+      kind: "single",
+      config: legacyConfig,
+      dataVersion: currentDataVersion(),
+      status: "failed",
+      startedAtISO,
+      finishedAtISO: new Date(Date.parse(startedAtISO) + 1_000).toISOString(),
+      error: "旧 GCD 条件",
+    });
+
+    remountApp();
+    await settleApp();
+    openSearchHistory();
+    await settleApp();
+    const legacyRecord = historyCardContaining(jobSchemas.SAM.name + " ·");
+    click(legacyRecord.querySelector<HTMLButtonElement>(".search-history-load-config")!);
+    await settleApp();
+
+    expect(host.querySelector<HTMLSelectElement>('select[aria-label="GCD 约束类型"]')?.value).toBe("multiple");
+    expect(host.querySelector(".single-gcd-choice-trigger")?.textContent).toContain("2.48");
+    expect(host.querySelector(".single-objective-display")?.textContent).toContain("每威力伤害期望");
+    expect(buttonNamed("开始搜索").disabled).toBe(false);
+
+    optimizeMock.mockResolvedValueOnce(sampleResult());
+    await startSearchAndSettle();
+    expect(optimizeMock.mock.calls.at(-1)?.[0]).toMatchObject({
+      gcdTarget: undefined,
+      gcdChoices: [2.48],
+      objective: "damage",
     });
   });
 

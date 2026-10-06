@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Check } from "lucide-react";
+import styles from "./SingleSearchProgress.module.css";
 
 export type SingleSearchPhase = "prepare" | "solve" | "verify";
 
@@ -24,22 +24,14 @@ export interface SingleSearchCurrentModelMetrics {
   constraints?: number;
 }
 
-export interface SingleSearchSecondRoundVerification {
-  round: number;
-  verifiedCombinations?: number;
-}
-
 export interface SingleSearchProgressState {
   phase: SingleSearchPhase;
-  /** Human-readable status mapped from real search state; do not pass raw callback payloads. */
-  statusMessage: string;
   /** Unix timestamp in milliseconds. */
   startedAt: number;
   hasFeasibleCandidate: boolean;
   slotCandidateCounts?: readonly SingleSearchSlotCandidateCount[];
   foodCandidateCount?: number;
   currentModel?: SingleSearchCurrentModelMetrics;
-  secondRoundVerification?: SingleSearchSecondRoundVerification;
 }
 
 export interface SingleSearchProgressProps {
@@ -128,6 +120,10 @@ export function SingleSearchProgress({
   const foodCandidateCount = progress.foodCandidateCount;
   const hasFoodCount = isNonnegativeInteger(foodCandidateCount);
   const hasCandidateCounts = slotCandidateCounts.length > 0 || hasFoodCount;
+  const candidateCounts = [
+    ...slotCandidateCounts.map((candidate) => ({ ...candidate, kind: "equipment" as const })),
+    ...(hasFoodCount ? [{ label: "食物", count: foodCandidateCount, kind: "food" as const }] : []),
+  ];
   const currentModel = progress.currentModel;
   const modelComplete = currentModel ? isModelComplete(currentModel) : false;
   const gap = currentModel ? formatGap(currentModel, modelComplete) : undefined;
@@ -139,41 +135,44 @@ export function SingleSearchProgress({
     isNonnegativeInteger(currentModel.variables) ||
     isNonnegativeInteger(currentModel.constraints)
   );
-  const roundVerification = progress.secondRoundVerification;
-  const verifiedCombinations = roundVerification?.verifiedCombinations;
-  const showSecondRoundVerification =
-    roundVerification !== undefined &&
-    Number.isInteger(roundVerification.round) &&
-    roundVerification.round >= 2 &&
-    isNonnegativeInteger(verifiedCombinations);
-  const searchStatus = progress.hasFeasibleCandidate
-    ? "已找到待核验方案，正在检查是否还有更优方案"
-    : "正在寻找可行配装";
+  const modelNodes = currentModel?.nodes;
+  const lpIterations = currentModel?.lpIterations;
+  const statusMessage = progress.phase === "prepare"
+    ? "正在准备候选与搜索模型"
+    : progress.phase === "verify"
+      ? "已找到待核验方案，正在检查是否还有更优方案"
+      : progress.hasFeasibleCandidate
+        ? "已找到可行方案，正在继续搜索更优配装"
+        : "正在寻找符合条件的最优配装";
 
   return (
-    <div className="single-search-progress-page">
-      <div className="single-search-progress-layout">
-        <main className="single-search-progress-main">
-          <header className="single-search-progress-header">
+    <div className={styles.page}>
+      <div className={styles.layout}>
+        <main className={styles.main}>
+          <header className={styles.header}>
             <div>
-              <p className="single-search-progress-eyebrow">单职业配装搜索</p>
+              <p className={styles.eyebrow}>单职业配装搜索</p>
               <h1>{jobName}</h1>
             </div>
           </header>
 
-          <ol className="single-search-stage-track" aria-label="搜索阶段">
+          <ol className={styles.stageTrack} aria-label="搜索阶段">
             {SEARCH_STAGES.map((stage, index) => {
               const isCurrent = index === stageIndex;
               const isComplete = index < stageIndex;
-              const stateClass = isCurrent ? "is-current" : isComplete ? "is-complete" : "is-upcoming";
+              const stateClass = isCurrent
+                ? styles.isCurrent
+                : isComplete
+                  ? styles.isComplete
+                  : styles.isUpcoming;
               return (
                 <li
-                  className={`single-search-stage ${stateClass}`}
+                  className={`${styles.stage} ${stateClass}`}
                   key={stage.phase}
                   aria-current={isCurrent ? "step" : undefined}
                 >
-                  <span className="single-search-stage-index" aria-hidden="true">
-                    {isComplete ? <Check size={14} strokeWidth={3} /> : index + 1}
+                  <span className={styles.stageIndex} aria-hidden="true">
+                    {isComplete ? "✓" : index + 1}
                   </span>
                   <span>{stage.label}</span>
                 </li>
@@ -182,66 +181,42 @@ export function SingleSearchProgress({
           </ol>
 
           {hasCandidateCounts && (
-            <section className="single-search-candidate-row" aria-label="候选数量">
-              {slotCandidateCounts.length > 0 && (
-                <div className="single-search-equipment-candidates">
-                  <h2>装备候选</h2>
-                  <div
-                    className="single-search-candidate-grid"
-                    style={{
-                      "--single-search-grid-columns": String(Math.max(1, Math.ceil(slotCandidateCounts.length / 2))),
-                    } as React.CSSProperties}
-                  >
-                    {slotCandidateCounts.map(({ label, count }) => (
-                      <div className="single-search-candidate-slot" key={label}>
-                        <span className="single-search-candidate-slot-label">{label}</span>
-                        <strong className="single-search-candidate-slot-count">{formatCount(count)}</strong>
-                      </div>
-                    ))}
-                  </div>
+            <section className={styles.candidateRow} aria-label="候选数量">
+              <div className={styles.equipmentCandidates}>
+                <div className={styles.candidateGrid}>
+                  {candidateCounts.map(({ label, count, kind }, index) => (
+                    <div
+                      className={`${styles.candidateSlot}${kind === "food" ? ` ${styles.isFoodCandidate}` : ""}`}
+                      key={`${kind}-${index}`}
+                    >
+                      <span className={styles.candidateSlotLabel}>{label}</span>
+                      <strong className={styles.candidateSlotCount}>{formatCount(count)}</strong>
+                    </div>
+                  ))}
                 </div>
-              )}
-              {hasFoodCount && (
-                <div className="single-search-food-candidates">
-                  <h2>食物候选</h2>
-                  <strong>{formatCount(foodCandidateCount)}</strong>
-                </div>
-              )}
+              </div>
+              <h2 className={styles.candidateHeading}>装备与食物候选</h2>
             </section>
           )}
 
-          <section className="single-search-live-status" aria-live="polite">
-            <p className="single-search-status-primary">{searchStatus}</p>
-            {progress.phase === "verify" && (
-              <p className="single-search-status-verification">正在核验候选方案</p>
-            )}
-            {progress.statusMessage.trim().length > 0 && (
-              <p className="single-search-status-detail">{progress.statusMessage}</p>
-            )}
-            <p className="single-search-elapsed-time">
+          <section className={styles.liveStatus} aria-live="polite">
+            <p className={styles.statusPrimary}>{statusMessage}</p>
+            <p className={styles.elapsedTime}>
               已用时 {formatElapsedTime(progress.startedAt, now)}
             </p>
           </section>
 
           {hasVisibleModelMetrics && currentModel && (
-            <section className="single-search-model-metrics" aria-label="当前模型求解信息">
-              <div className="single-search-model-heading">
-                <h2>当前模型工作状态</h2>
-                <span>仅描述当前模型</span>
+            <section className={styles.modelMetrics} aria-label="当前算法搜索状态">
+              <div className={styles.modelHeading}>
+                <h2>当前算法搜索状态</h2>
               </div>
-              {modelComplete && (
-                <p className="single-search-model-complete">当前模型已完成</p>
-              )}
-              <div className="single-search-model-metric-grid">
+              <div className={styles.modelMetricGrid}>
                 {gap !== undefined && <div><span>当前模型差距</span><strong>{gap}</strong></div>}
-                {isNonnegativeInteger(currentModel.nodes) && (
-                  <div><span>已探索节点</span><strong>{formatCount(currentModel.nodes)}</strong></div>
-                )}
-                {isNonnegativeInteger(currentModel.lpIterations) && (
-                  <div><span>线性规划迭代数</span><strong>{formatCount(currentModel.lpIterations)}</strong></div>
-                )}
+                {isNonnegativeInteger(modelNodes) && <div><span>已探索节点</span><strong>{formatCount(modelNodes)}</strong></div>}
+                {isNonnegativeInteger(lpIterations) && <div><span>线性规划迭代数</span><strong>{formatCount(lpIterations)}</strong></div>}
                 {(isNonnegativeInteger(currentModel.variables) || isNonnegativeInteger(currentModel.constraints)) && (
-                  <div>
+                  <div className={styles.modelScale}>
                     <span>模型规模</span>
                     <strong>
                       {isNonnegativeInteger(currentModel.variables) && `${formatCount(currentModel.variables)} 个变量`}
@@ -251,22 +226,14 @@ export function SingleSearchProgress({
                   </div>
                 )}
               </div>
-              <p className="single-search-model-note">
-                求解数据仅描述当前模型，不代表整场搜索完成比例。
-              </p>
             </section>
-          )}
-
-          {showSecondRoundVerification && roundVerification && isNonnegativeInteger(verifiedCombinations) && (
-            <p className="single-search-round-verification">
-              正在第 {roundVerification.round} 轮，已核验 {formatCount(verifiedCombinations)} 组候选组合
-            </p>
           )}
         </main>
 
-        <aside className="single-search-progress-rail" aria-label="搜索条件摘要">
-          <div className="single-search-progress-summary">{rightSummary}</div>
-          <button className="single-search-cancel-button" type="button" onClick={onCancel}>
+        <aside className={styles.rail} aria-label="搜索条件摘要">
+          <div className={styles.summary}>{rightSummary}</div>
+          <p className={styles.assurance}>搜索中 · 搜索结果将严格满足以上条件</p>
+          <button className={styles.cancelButton} type="button" onClick={onCancel}>
             取消搜索
           </button>
         </aside>
