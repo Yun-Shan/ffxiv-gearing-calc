@@ -42,7 +42,7 @@
 }
 
 @media (min-width: 1600px) {
-  .section { margin-top: 13px; }
+  .section { margin-top: 17px; }
   .title { margin-bottom: 16px; font-size: 17px; line-height: 26px; }
   .columns { height: 375px; grid-template-columns: minmax(0, 1.158fr) minmax(0, 1fr); gap: 22px; }
   .section :global(.single-restriction-editor-heading) { min-height: 23px; margin-bottom: 7px; }

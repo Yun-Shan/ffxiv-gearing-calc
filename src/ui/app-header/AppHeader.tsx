@@ -16,11 +16,10 @@ export function AppHeader({
     <header className={styles.header}>
       <div className={styles.brand}>
         <div className={styles.mark}>
-          <span aria-hidden="true">✧</span>
+          <span className={styles.innerMark} aria-hidden="true">✧</span>
         </div>
         <div className={styles.identity}>
-          <div className={styles.name}>青瓷分析台</div>
-          <div className={styles.subtitle}>最终幻想14 配装优化工具</div>
+          <div className={styles.name}>FFXIV 自动配装器</div>
         </div>
       </div>
       <nav className={styles.nav} aria-label="搜索页面">
@@ -39,19 +38,16 @@ export function AppHeader({
           多职业联合搜索
         </a>
       </nav>
-      <div className={styles.meta}>
-        <span className={styles.dot} />
-        <span>数据版本 {dataVersion}</span>
-        <span className={styles.separator} />
+      {page === "joint" && <div className={styles.actions}>
         <button
           className={styles.reset}
           aria-label="重置当前页面配置"
-          title="重置当前页面配置"
+          title={`重置当前页面配置 · 数据版本 ${dataVersion}`}
           onClick={onReset}
         >
           <RotateCcw size={17} />
         </button>
-      </div>
+      </div>}
     </header>
   );
 }

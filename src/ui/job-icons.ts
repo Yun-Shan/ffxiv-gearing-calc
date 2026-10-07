@@ -23,4 +23,5 @@ export const jobIcons: Record<JobId, string> = {
   "RDM": "/assets/jobs/RDM.png",
   "PCT": "/assets/jobs/PCT.png",
   "BLU": "/assets/jobs/BLU.png",
+  "BST": "/assets/jobs/BST.png",
 };

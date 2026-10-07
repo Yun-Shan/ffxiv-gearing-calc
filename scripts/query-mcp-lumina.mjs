@@ -10,6 +10,7 @@ import {
   itemReturnFields,
   mandervilleReturnFields,
   classJobReturnFields,
+  supportedJobIds,
 } from "./mcp-lumina-import.mjs";
 
 const root = resolve(import.meta.dirname, "..");
@@ -23,10 +24,7 @@ const defaultCommand = "F:\\Workspace\\VisualStudio\\ffxiv\\mcp\\mcp-ffxiv-lumin
 const command = process.env.FFXIV_MCP_LUMINA_COMMAND ?? defaultCommand;
 const concurrency = Math.max(1, Number(process.env.FFXIV_MCP_LUMINA_CONCURRENCY ?? 4));
 const scope = process.env.FFXIV_MCP_LUMINA_SCOPE ?? "all";
-const supportedJobs = [
-  "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN", "SAM", "RPR", "VPR",
-  "BRD", "MCH", "DNC", "BLM", "SMN", "RDM", "PCT", "BLU",
-];
+const supportedJobs = supportedJobIds;
 const slotIds = new Set([1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13]);
 const fields = (values) => values.join(",");
 const categoryFields = fields(supportedJobs);

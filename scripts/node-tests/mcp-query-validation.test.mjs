@@ -25,3 +25,23 @@ test("装备唯一性保留真实布尔值，查询字段含 IsUnique", () => {
   assert.equal(normalizeMcpGearRow({ fields: { ...fields, IsUnique: true } }, fallback, category).unique, true);
   assert.equal(normalizeMcpGearRow({ fields }, fallback, category).unique, undefined);
 });
+
+test("刷新后的职业分类行会将 BST 标记为可穿戴职业", () => {
+  const item = {
+    fields: {
+      Name: "参考测试装备",
+      LevelItem: 130,
+      LevelEquip: 50,
+      ClassJobCategory: 30,
+      EquipSlotCategory: 4,
+      MateriaSlotCount: 2,
+    },
+  };
+  const normalized = normalizeMcpGearRow(
+    item,
+    { slot: "body", stats: {}, jobCategory: 30 },
+    { rowId: 30, fields: { BST: true } },
+  );
+
+  assert.deepEqual(normalized.jobs, ["BST"]);
+});

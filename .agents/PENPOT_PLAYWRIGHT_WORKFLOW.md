@@ -4,10 +4,18 @@
 
 ## 工具和会话约束
 
-- 只能在 Playwright 中打开和操作 Penpot 页面。不要用内置浏览器、CUA 或其他浏览器会话打开同一 Penpot 文件，以免打断 MCP 插件连接。
+- 只能通过 Playwright 建立和控制访问 Penpot 的浏览器会话。不要用内置浏览器、CUA 或其他浏览器会话打开同一 Penpot 文件，以免打断 MCP 插件连接；Penpot 内容读写按下方的 MCP 优先级执行。
 - 同一时刻只允许一个 agent 控制 Playwright。交接控制权前先结束原控制者的浏览器操作；新控制者在 Playwright 中重新打开指定 Penpot 页面并确认 MCP 插件已连接。
 - 开始调用 Penpot MCP 前先阅读其 High-level Overview。工具文档或返回数据是操作依据；不要凭记忆猜测 Penpot API 的成员或结果结构。
 - 复用当前已连接的 Penpot Playwright 标签页。读取本地应用时可使用同一 Playwright 会话中的另一标签页，但仍由同一 agent 控制。
+
+## Penpot 内容读写优先级
+
+- 读取或修改 Penpot 页面、画板、图层、组件及样式时，只要 Penpot MCP 提供相应能力，就优先使用 Penpot MCP；不要用 Playwright 点击或脚本重复完成 MCP 已支持的内容写入。
+- 通过 `mcp__penpot__execute_code` 写入设计内容前，先用 Penpot API 文档确认要用的方法和参数。写入后回读相关结构与属性，并导出目标画板核对结果。
+- 跨页面写入时使用 `await penpot.openPage(pageOrId)` 激活目标页面，再确认 `penpot.currentPage`。Penpot MCP 的结构写入只作用于当前激活页；页面切换不必通过 Playwright 点击图层面板或页面列表完成。
+- Playwright 主要用于建立和检查浏览器会话、读取浏览器状态、验证页面渲染，以及执行 Penpot MCP 尚未提供的必要 UI 操作。若必须用 Playwright 写入 Penpot 内容，应先确认对应操作无法通过 Penpot MCP 完成，并在操作后用 Penpot MCP 回读核验。
+- 视觉核对优先使用 Penpot 导出工具。只有需要检查浏览器中的实际渲染，或 Penpot 导出无法满足核对目标时，才使用 Playwright 截图。
 
 ## 结构化读取
 

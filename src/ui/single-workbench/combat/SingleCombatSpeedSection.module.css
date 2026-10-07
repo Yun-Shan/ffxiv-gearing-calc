@@ -13,16 +13,20 @@
 .section :global(.single-combat-conditions > .config-section) { margin: 0; padding: 0; }
 
 .section :global(.single-combat-conditions > .single-gcd-section) {
+  box-sizing: border-box;
   display: flex;
+  flex: 0 0 46px;
+  height: 46px;
   min-height: 46px;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 0 0 6px;
+  margin-top: -1px;
+  padding: 0 12px 0 0;
   border-bottom: 1px solid #dce3d7;
 }
 
-.section :global(.single-gcd-controls) { display: flex; position: relative; flex: 0 1 529px; min-width: 0; align-items: center; gap: 0; }
+.section :global(.single-gcd-controls) { display: flex; position: relative; flex: 0 1 clamp(440px, calc(18.5417vw + 173px), 529px); min-width: 0; align-items: center; gap: 0; }
 .section :global(.single-gcd-label) { display: flex; flex: 0 0 clamp(116px, calc(5.8333vw + 32px), 144px); align-items: center; height: 32px; color: #354a37; font-size: clamp(12px, calc(.4167vw + 6px), 14px); font-weight: 700; white-space: nowrap; }
 .section :global(.single-gcd-mode-control) { display: flex; position: relative; flex: 0 0 clamp(118px, calc(3.75vw + 64px), 136px); width: clamp(118px, calc(3.75vw + 64px), 136px); height: clamp(28px, calc(1.6667vw + 4px), 36px); margin-left: clamp(12px, .8333vw, 16px); }
 .section :global(.single-gcd-mode-control > select) { box-sizing: border-box; width: 100%; height: 100%; appearance: none; padding: 2px 27px 2px 9px; border: 1px solid #cbd5c7; border-radius: 3px; background: #fff; color: #354a37; text-align: left; font: 500 clamp(10px, calc(.4167vw + 4px), 12px) "Noto Sans SC", sans-serif; }
@@ -57,16 +61,16 @@
 .section :global(.single-speed-separator) { display: inline-flex; width: 14px; height: clamp(26px, calc(1.6667vw + 2px), 34px); align-items: center; justify-content: center; margin-right: clamp(4px, calc(.625vw - 5px), 7px); color: #687568; font-size: 10px; }
 .section :global(.single-gcd-section .gcd-query-error) { grid-column: 1 / -1; color: #994b32; font-size: 11px; }
 .section :global(.single-gcd-query-retry) { margin-left: 8px; padding: 2px 6px; border: 1px solid #cfa58f; border-radius: 3px; background: #fff; color: #8b422f; font-size: inherit; cursor: pointer; }
-.section :global(.single-gcd-section .single-objective-display) { box-sizing: border-box; display: flex; flex: 0 0 218px; min-height: 46px; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0; margin: 0; padding: 0 0 0 17px; border-left: 1px solid #dce3d7; }
+.section :global(.single-gcd-section .single-objective-display) { box-sizing: border-box; display: flex; flex: 0 0 218px; height: calc(100% + 2px); min-height: 0; align-self: stretch; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0; margin: -1px 0; padding: 0 0 0 17px; border-left: 1px solid #dce3d7; }
 .section :global(.single-objective-display > span) { color: #68764c; font-size: 10px; font-weight: 700; }
 .section :global(.single-objective-display > strong) { color: #354a37; font-size: 15px; line-height: 1.35; }
-.section :global(.single-combat-conditions > .config-section:last-child) { display: grid; width: min(100%, 470px); grid-template-columns: 122px minmax(0, 1fr); align-items: center; gap: 6px; margin: 8px 0 0; padding: 0 0 7px; border-bottom: 1px solid #dce3d7; }
-.section :global(.single-combat-conditions > .config-section:last-child > .field-label) { display: none; }
-.section :global(.single-combat-conditions > .config-section:last-child > .config-field) { display: grid; grid-column: 1 / -1; grid-template-columns: 122px minmax(0, 1fr); align-items: center; gap: 6px; margin: 0; }
-.section :global(.single-combat-conditions > .config-section:last-child > .config-field > .field-label) { margin: 0; color: #354a37; font-size: 11px; font-weight: 600; }
-.section :global(.single-combat-conditions > .config-section:last-child > .config-field > select) { width: 100%; height: 28px; min-height: 28px; padding: 0 10px; border: 1px solid #cbd5c7; border-radius: 3px; background: #fff; color: #354a37; font-size: 11px; }
-.section :global(.single-combat-conditions > .config-section:last-child > .number-field),
-.section :global(.single-combat-conditions > .config-section:last-child > .field-hint) { grid-column: 2; margin: 0; }
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child) { display: grid; width: min(100%, 470px); grid-template-columns: 122px minmax(0, 1fr); align-items: center; gap: 6px; margin: 8px 0 0; padding: 0 0 7px; border-bottom: 1px solid #dce3d7; }
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .field-label) { display: none; }
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field) { display: grid; grid-column: 1 / -1; grid-template-columns: 122px minmax(0, 1fr); align-items: center; gap: 6px; margin: 0; }
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field > .field-label) { margin: 0; color: #354a37; font-size: 11px; font-weight: 600; }
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field > select) { width: 100%; height: 28px; min-height: 28px; padding: 0 10px; border: 1px solid #cbd5c7; border-radius: 3px; background: #fff; color: #354a37; font-size: 11px; }
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .number-field),
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .field-hint) { grid-column: 2; margin: 0; }
 
 @media (min-width: 1200px) and (max-width: 1439px) {
   .section :global(.single-gcd-controls) { width: 440px; min-width: 440px; height: 32px; flex: 0 0 440px; align-self: flex-start; flex-wrap: nowrap; margin-top: 3px; }
@@ -90,24 +94,30 @@
   .section { box-sizing: border-box; flex: 0 0 117px; height: 117px; margin-top: 17px; }
   .title { height: 22px; margin: 0; font-size: 16px; line-height: 1.2; }
   .section :global(.single-combat-conditions) { padding-bottom: 0; }
+  .section :global(.single-combat-conditions > .single-gcd-section) { margin-top: -1px; }
+  .section :global(.single-gcd-controls) { margin-top: 2px; }
 }
 
 @media (min-width: 1600px) {
-  .title { margin-top: 2px; }
-  .section :global(.single-combat-conditions > .config-section:last-child) { box-sizing: border-box; width: 550px; grid-template-columns: 145px 390px; column-gap: 15px; margin: 25px 0 0; padding-block: 3px; }
-  .section :global(.single-combat-conditions > .config-section:last-child > .config-field) { grid-template-columns: 145px 390px; gap: 15px; }
-  .section :global(.single-combat-conditions > .config-section:last-child > .config-field > .field-label) { font-size: 13px; }
-  .section :global(.single-combat-conditions > .config-section:last-child > .config-field > select) { height: 36px; min-height: 36px; font-size: 12px; }
+  .title { height: 26px; margin: 0; font-size: 18px; line-height: 26px; }
+  .section { min-height: 171px; }
+  .section :global(.single-combat-conditions) { margin-top: 25px; }
+  .section :global(.single-combat-conditions > .single-gcd-section) { flex-basis: 55px; height: 55px; min-height: 55px; margin-top: 0; }
+  .section :global(.single-gcd-controls) { margin-top: 6px; }
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child) { box-sizing: border-box; width: 550px; grid-template-columns: 145px 390px; column-gap: 15px; margin: 25px 0 0; padding-block: 3px; }
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field) { grid-template-columns: 145px 390px; gap: 15px; }
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field > .field-label) { font-size: 13px; }
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field > select) { height: 36px; min-height: 36px; font-size: 12px; }
 }
 
 @media (max-width: 1199px) {
-  .section :global(.single-combat-conditions > .single-gcd-section) { flex-wrap: wrap; gap: 8px; padding: 8px 0; }
+  .section :global(.single-combat-conditions > .single-gcd-section) { flex: 0 0 auto; height: auto; min-height: 0; align-items: flex-start; flex-wrap: wrap; gap: 8px; padding: 8px 0; }
   .section :global(.single-gcd-controls) { flex: 1 1 100%; width: 100%; height: auto; min-height: 32px; flex-wrap: wrap; }
   .section :global(.single-gcd-mode-control) { flex: 1 1 145px; }
   .section :global(.single-speed-inline) { margin-left: auto; }
-  .section :global(.single-objective-display) { flex: 1 1 100%; min-height: 0; margin-left: 0; padding: 5px 0 0; border-top: 1px solid #dce3d7; border-left: 0; }
-  .section :global(.single-combat-conditions > .config-section:last-child),
-  .section :global(.single-combat-conditions > .config-section:last-child > .config-field) { grid-template-columns: 112px minmax(0, 1fr); }
+  .section :global(.single-combat-conditions > .single-gcd-section > .single-objective-display) { flex: 1 1 100%; width: 100%; height: auto; min-height: 0; align-self: auto; margin: 0; padding: 5px 0 0; border-top: 1px solid #dce3d7; border-left: 0; }
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child),
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field) { grid-template-columns: 112px minmax(0, 1fr); }
 }
 
 @media (max-width: 760px) {
@@ -117,6 +127,6 @@
   .section :global(.single-gcd-mode-control) { flex: 1 1 145px; }
   .section :global(.single-speed-inline) { margin-left: auto; }
   .section :global(.single-objective-display) { flex-basis: 100%; }
-  .section :global(.single-combat-conditions > .config-section:last-child),
-  .section :global(.single-combat-conditions > .config-section:last-child > .config-field) { grid-template-columns: 112px minmax(0, 1fr); }
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child),
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field) { grid-template-columns: 112px minmax(0, 1fr); }
 }

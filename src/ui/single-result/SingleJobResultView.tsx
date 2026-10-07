@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Share2 } from "lucide-react";
 import type { OptimizationResult } from "../../domain";
+import { SinglePageSidePanel } from "../single-workbench/layout/SinglePageSidePanel";
 import styles from "./SingleJobResultView.module.css";
 
 export function SingleJobResultView({
@@ -16,10 +17,10 @@ export function SingleJobResultView({
 }) {
   return (
     <div className={`${styles.workspace} single-result-workspace`}>
-      <main className={styles.main}>
+      <section className={styles.main} aria-labelledby="single-result-title">
         <header className={styles.titlebar}>
           <div>
-            <h1>配装结果</h1>
+            <h1 id="single-result-title">配装结果</h1>
             <p>
               目标值 {result.score.toFixed(7)}（
               {result.objective === "dps" ? "每秒每威力伤害期望" : "每威力伤害期望"}
@@ -46,11 +47,11 @@ export function SingleJobResultView({
           )}
         </div>
         <div className={styles.tableScope}>{table}</div>
-      </main>
+      </section>
 
-      <aside className={styles.aside} aria-label="配装条件摘要">
+      <SinglePageSidePanel className={styles.aside} ariaLabel="配装条件摘要">
         {summary}
-      </aside>
+      </SinglePageSidePanel>
     </div>
   );
 }

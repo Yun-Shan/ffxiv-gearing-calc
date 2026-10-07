@@ -15,6 +15,10 @@ export interface SearchHistoryProps {
   currentDataVersion: string;
   /** Increment after App finishes creating/updating a search record. */
   refreshKey?: number;
+  /** Whether the history list should start expanded on the profession selection page. */
+  defaultOpen?: boolean;
+  /** Hide the disclosure row when the selection page presents the list as its primary content. */
+  hideSummary?: boolean;
   onLoadConfig: (record: SearchHistoryRecord) => void;
   onLoadResult: (record: SearchHistoryRecord) => void;
 }
@@ -72,6 +76,8 @@ export function SearchHistory({
   kind,
   currentDataVersion,
   refreshKey = 0,
+  defaultOpen = false,
+  hideSummary = false,
   onLoadConfig,
   onLoadResult,
 }: SearchHistoryProps) {
@@ -105,11 +111,12 @@ export function SearchHistory({
   const pageRecords = records.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE);
 
   return (
-    <details className="search-history">
+    <details className={`search-history${hideSummary ? " is-selection-history" : ""}`} open={defaultOpen} aria-label={hideSummary ? "搜索记录" : undefined}>
       <summary className="search-history-summary">
         <History size={16} aria-hidden="true" />
         <span>搜索记录（{loading || loadError ? "—" : records.length} 次）</span>
       </summary>
+      {hideSummary && <h2 className="sr-only">搜索记录</h2>}
       <div className="search-history-content">
         {loading && <p className="search-history-message" role="status">正在读取本地搜索记录…</p>}
         {!loading && loadError && (

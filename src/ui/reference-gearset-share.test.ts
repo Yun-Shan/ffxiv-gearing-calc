@@ -31,4 +31,18 @@ describe("reference gearset share compatibility", () => {
     };
     expect(stringifyReferenceGearset(gearset)).toBe("7tM6ar4jjt5Ln4QOqG1");
   });
+
+  it("encodes BST with the upstream v6 job index", () => {
+    const gearset = {
+      job: "BST" as const,
+      role: "str" as const,
+      jobLevel: 50,
+      gears: [
+        { id: 2228, materias: [] },
+        { id: 2630, materias: [["CRT", 12], ["SKS", 11]] as const },
+        { id: 2999, materias: [] },
+      ],
+    };
+    expect(stringifyReferenceGearset(gearset)).toBe("1997WKuo5hrggLRU1");
+  });
 });

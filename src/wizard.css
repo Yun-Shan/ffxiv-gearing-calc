@@ -197,14 +197,11 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 }
 
 /* Single-job continuous workbench */
-.single-flow { display: block; width: 100%; height: calc(100vh - 60px); min-height: 0; overflow: hidden; background: #fff; }
-.single-job-selection { max-width: 1240px; margin: 0 auto; padding: 30px 34px 24px; }
+.single-flow { display: block; width: 100%; height: calc(100vh - 72px); min-height: 0; overflow: hidden; background: #fff; }
 .single-workbench-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 8px; }
 .single-workbench-heading h1 { margin: 0 0 4px; font-size: 23px; line-height: 1.25; }
 .single-workbench-heading p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
 .single-section-kicker { margin: 0 0 5px !important; color: #718044 !important; font-size: 11px !important; font-weight: 700; letter-spacing: .09em; }
-.single-job-selection-actions { display: flex; justify-content: flex-end; align-items: center; gap: 16px; padding: 12px 0; }
-.single-page-footer { justify-content: space-between; flex-wrap: wrap; gap: 6px 18px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
 .single-config-warning { margin: 12px 0; padding: 13px; border: 1px solid #c99752; background: #fff8e9; color: #674b22; }
 .single-config-warning strong { font-size: 13px; }
 .single-config-warning p { margin: 5px 0 10px; font-size: 12px; }
@@ -221,13 +218,23 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .single-objective-display > p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
 
 /* Shared single-job right summary and outward-opening restriction details */
+.single-page-side-panel {
+  box-sizing: border-box;
+  border-top: 3px solid var(--color-illustration-sage, #81914b);
+  background-color: #f8f9f5;
+  background-image:
+    linear-gradient(rgb(248 249 245 / 75%), rgb(248 249 245 / 75%)),
+    url("/assets/wizard-atmosphere.png");
+  background-position: center, right bottom;
+  background-size: cover, cover;
+  background-repeat: no-repeat;
+}
 
 /* Dedicated progress view: three stages and live solver facts, without a total estimate. */
 
 /* Completed single-job result: keep the equipment table at the wider left column. */
 @media (max-width: 760px) {
-  .single-flow { height: auto; min-height: calc(100vh - 60px); overflow: visible; }
-  .single-job-selection { padding: 22px 18px; }
+  .single-flow { height: auto; min-height: calc(100vh - 104px); overflow: visible; }
   .single-workbench-heading { gap: 10px; }
   .single-workbench-heading h1 { font-size: 23px; }
   .single-forced-gear { padding: 0; border-left: 0; }
@@ -313,6 +320,146 @@ button:focus-visible, a:focus-visible, summary:focus-visible, input:focus-visibl
 .single-speed-separator { display: inline-flex; width: 14px; height: 28px; align-items: center; justify-content: center; color: #74816c; font-size: 10px; }
 .single-gcd-section .gcd-query-error { grid-column: 1 / -1; color: #994b32; font-size: 11px; }
 .single-gcd-query-retry { margin-left: 8px; padding: 2px 6px; border: 1px solid #cfa58f; border-radius: 3px; background: #fff; color: #8b422f; font-size: inherit; cursor: pointer; }
+
+/* Penpot profession selection entry screen */
+.single-selection-layout {
+  box-sizing: border-box;
+  display: grid;
+  width: 100%;
+  max-width: 1920px;
+  height: 100%;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) clamp(308px, 18.75vw, 360px);
+  gap: 24px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.single-selection-layout > .single-job-selection {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 960px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 8px 0 18px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.single-selection-layout > .single-job-selection::-webkit-scrollbar { display: none; }
+.single-selection-heading { margin-bottom: 13px; }
+.single-selection-heading h1 { margin: 0; color: #354a37; font-size: 24px; font-weight: 700; line-height: 31px; }
+.single-selection-heading .single-section-kicker { margin-bottom: 2px !important; color: #708e3c !important; font-size: 11px !important; letter-spacing: .04em; line-height: 15px; }
+.single-selection-layout .job-groups { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.single-selection-layout .job-group {
+  box-sizing: border-box;
+  display: grid;
+  height: 52px;
+  min-width: 0;
+  grid-template-columns: 144px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  margin: 0;
+  padding: 0 24px 0 8px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--job-tint, #f3f7f6);
+}
+@media (min-width: 1600px) {
+  .single-selection-heading {
+    margin-bottom: 25.5px;
+  }
+  .single-selection-layout .job-group {
+    grid-template-columns: 164px minmax(0, 1fr);
+  }
+  .single-selection-layout .job-groups {
+    margin-top: 0;
+  }
+}
+.single-selection-layout .job-group h2,
+.single-selection-layout .job-group h3 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: #354a37;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+}
+.single-selection-layout .job-cards { display: flex; min-width: 0; flex-wrap: wrap; gap: 8px; }
+.single-selection-layout .job-card {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 0 0 114px;
+  width: 114px;
+  min-width: 0;
+  height: 36px;
+  min-height: 36px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 3px 7px;
+  border: 1px solid #b7aa8a;
+  border-radius: 9px;
+  background: rgb(255 255 255 / 62%);
+  color: #354a37;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.single-selection-layout .job-card:hover { border-color: var(--job-color, #708e3c); background: #fff; }
+.single-selection-layout .job-card.is-selected { border-color: var(--job-color, #518e89); background: #fff; box-shadow: 0 0 0 1px var(--job-color, #518e89); color: #245e5b; }
+.single-selection-layout .job-card-badge {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border-radius: 7px;
+  background: #eef2e8;
+  color: var(--job-color, #4f8d87);
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: -.03em;
+}
+.single-selection-layout .job-card-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.single-selection-layout .job-group--tank { --job-tint: #e8f0f7; --job-color: #637d69; }
+.single-selection-layout .job-group--healer { --job-tint: #eaf2e6; --job-color: #758a59; }
+.single-selection-layout .job-group--str { --job-tint: #f5eae5; --job-color: #997354; }
+.single-selection-layout .job-group--dex { --job-tint: #f6f0e4; --job-color: #8a7951; }
+.single-selection-layout .job-group--int { --job-tint: #f0ecf5; --job-color: #7b6d92; }
+.single-selection-layout .job-group--limited { --job-tint: #e7f1ef; --job-color: #638781; }
+.single-selection-layout .search-history { margin-top: 10px; }
+.single-selection-layout .search-history.is-selection-history > .search-history-summary { display: none; }
+.single-selection-layout .search-history.is-selection-history .search-history-content { padding-top: 5px; }
+
+@media (max-width: 900px) and (min-width: 761px) {
+  .single-selection-layout { grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; }
+  .single-selection-layout > .single-job-selection { padding-inline: 14px; }
+  .single-selection-layout .job-group { grid-template-columns: 78px minmax(0, 1fr); gap: 6px; }
+  .single-selection-layout .job-group h2,
+  .single-selection-layout .job-group h3 { padding-left: 6px; font-size: 11px; }
+  .single-selection-layout .job-card { padding-right: 7px; font-size: 11px; }
+}
+
+@media (max-width: 760px) {
+  .single-selection-layout { display: flex; height: auto; min-height: calc(100svh - 104px); flex-direction: column; gap: 20px; overflow: visible; }
+  .single-selection-layout > .single-job-selection { max-width: none; padding: 24px 16px 0; overflow: visible; }
+  .single-selection-heading { margin-bottom: 18px; }
+  .single-selection-heading h1 { font-size: 23px; }
+  .single-selection-layout .job-group { grid-template-columns: 84px minmax(0, 1fr); }
+  .single-selection-layout .job-group h2,
+  .single-selection-layout .job-group h3 { font-size: 11px; }
+  .single-selection-layout .job-card { min-height: 34px; padding-right: 8px; font-size: 11px; }
+  .single-selection-layout .search-history { margin-top: 15px; }
+}
+
+@media (max-width: 1439px) {
+  .single-selection-layout .job-group { height: auto; min-height: 52px; padding-block: 8px; }
+}
 
 @media (min-width: 1440px) {
   .app-shell .single-flow:has(.single-result-workspace) { background: #f4f6f3; }

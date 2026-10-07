@@ -13,8 +13,8 @@
 - 进入生产数据的 MCP 查询结果必须保存为可复现、可校验的导入产物，并至少记录服务器、Sheet/类型/成员、查询范围、查询或导入时间及可取得的版本信息。参考项目数据必须记录仓库 URL、精确 commit、导入时间和源文件清单。
 - 所有来源最终都必须由 `scripts/update-data.mjs` 统一生成 `src/data/generated-data.json`，禁止手工编辑生成文件。
 - `Item.Name` 为空或仅含空白的物品视为游戏中已移除，导入时排除，不进入装备、食物候选及任何后续计算；不得使用参考项目旧名称恢复该物品。名称字段缺失或格式错误属于数据错误，必须明确失败。
-- `scripts/query-mcp-lumina.mjs` 负责启动环境提供的 Lumina MCP stdio 服务器并生成 `src/data/mcp-lumina.snapshot.json`；查询结果不得由聊天文本或手工复制构造。默认查询参考项目中的全部可用装备、战斗食物、职业分类、22 个受支持职业的 `ClassJob` 行、食物效果、`ItemLevel`、`BaseParam`、`Materia` 和 `MandervilleWeaponEnhance` 行（当前已知的一类自定义参数武器表）。职业行须先用 `ClassJob.Abbreviation` 通过 `search_rows` 发现，再以 `get_rows` 批量读取；不得写死或凭记忆录入 row ID。
-- 职业原生等级属性修正和职业名称使用 `ClassJob` 的 MCP 字段；职业角色、主副属性、GCD/特性/队伍公式、等级上限及默认品级范围使用参考项目 `src/game.ts` 中对应职业 schema，并按职业记录各字段来源。青魔法师 `BLU` 属于受支持职业，MCP 行用于名称、原生 modifiers、限职和盾牌能力核验，等级上限及默认品级范围来自参考 schema。
+- `scripts/query-mcp-lumina.mjs` 负责启动环境提供的 Lumina MCP stdio 服务器并生成 `src/data/mcp-lumina.snapshot.json`；查询结果不得由聊天文本或手工复制构造。默认查询参考项目中的全部可用装备、战斗食物、职业分类、23 个受支持职业的 `ClassJob` 行、食物效果、`ItemLevel`、`BaseParam`、`Materia` 和 `MandervilleWeaponEnhance` 行（当前已知的一类自定义参数武器表）。职业行须先用 `ClassJob.Abbreviation` 通过 `search_rows` 发现，再以 `get_rows` 批量读取；不得写死或凭记忆录入 row ID。
+- 职业原生等级属性修正和职业名称使用 `ClassJob` 的 MCP 字段；职业角色、主副属性、GCD/特性/队伍公式、等级上限及默认品级范围使用参考项目 `src/game.ts` 中对应职业 schema，并按职业记录各字段来源。青魔法师 `BLU` 与驯兽师 `BST` 属于受支持限职，MCP 行用于名称、原生 modifiers、限职和盾牌能力核验，等级上限及默认品级范围来自参考 schema。
 - 青魔法师每点 INT 对应的魔法武器伤害加值表在 Lumina MCP 的 Sheet 清单和 `ClassJob` 字段中均不存在。只有在当前 MCP 快照保存了 `list_sheets` 与 `ClassJob` 的 `describe_sheet` 结果并确认没有对应表/字段时，才允许从参考项目读取映射；来源文件为 `data/out/bluMdmgAdditions.js`、`data/in/bluMdmgAdditions.txt` 与 `data/convert.ts`。更新器必须逐项校验导出与原始测量文本一致，且所有数值均为非负安全整数，禁止缺失兜底、截短或近似。
 - `scripts/update-data.mjs` 读取 MCP 快照并优先覆盖参考项目中的同 ID 数据；MCP 未返回的字段或行才保留参考项目值，并在 `dataSources` 中记录缺失范围和回退位置。当前统一更新器仍解析参考仓库的以下原始导出作为补缺和领域常量来源：
   - `data/out/gears-*.js`
@@ -24,7 +24,7 @@
   - `data/out/slotCaps.js`
   - `data/out/roleCaps.js`
   - `src/game.ts`
-- 当前快照游戏版本为 `2026.09.15.0000.0000`，服务器验证版本为 `2026.08.05.0000.0000`，版本警告及通用查询可用性声明保存在快照中，覆盖 21964 件可用战斗装备、420 种战斗食物、22 个职业、230 个 `ItemLevel` 行、12 个 `BaseParam` 行、1417 个 `Materia` 行及 62 个 `MandervilleWeaponEnhance` 自定义参数武器行。`ItemFood` 行 1800 在该版本动作表中被引用但不存在；参考项目没有把 1800 用作该类食物效果参数，因此它不是必需的食物效果行。导入器只记录该查询缺口，并继续使用同一食物动作中其余 MCP 效果字段，不虚构缺失行。
+- 当前快照游戏版本为 `2026.09.15.0000.0000`，服务器验证版本为 `2026.08.05.0000.0000`，版本警告及通用查询可用性声明保存在快照中，覆盖 22023 件可用战斗装备、420 种战斗食物、23 个职业、230 个 `ItemLevel` 行、12 个 `BaseParam` 行、1417 个 `Materia` 行及 62 个 `MandervilleWeaponEnhance` 自定义参数武器行。刷新 `ClassJobCategory` Schema 后，行 30 的 `BST` 字段确认可用且为 `true`；查询、生成和分类解析统一使用同一受支持职业清单，确保该字段进入装备适用集合。`ItemFood` 行 1800 在该版本动作表中被引用但不存在；参考项目没有把 1800 用作该类食物效果参数，因此它不是必需的食物效果行。导入器只记录该查询缺口，并继续使用同一食物动作中其余 MCP 效果字段，不虚构缺失行。
 - MCP 与参考项目均缺少装备、食物、职业、魔晶石或属性上限表时必须直接失败，不能用虚构、近似或内置兜底数据继续运行。
 - `ClassJobCategory` 只负责判断装备是否适用于目标职业，必须以实时 `ffxiv-mcp-lumina` 的 `Item.ClassJobCategory` 和对应 `ClassJobCategory` 行作为生产依据；参考项目中的分类映射不再作为该用途的事实来源，也不再要求两边分类 ID、显示文字或职业集合逐项一致。
 - 分析 `ClassJobCategory`、`ClassJob` 等 MCP 数据时，必须实时调用 `ffxiv-mcp-lumina` 的 `describe_sheet`、`search_rows`、`get_row` 或 `get_rows`；不得把本地 `mcp-lumina.snapshot.json` 当作 MCP 实时查询结果。实时结果必须记录服务器、Sheet、字段、行 ID、查询范围、游戏版本和查询时间。
@@ -137,7 +137,7 @@ effective = min(cap, current + materiaValue)
 
 ## 5. 当前边界
 
-- 数据更新器已接入脚本化 `ffxiv-mcp-lumina` 查询产物；当前快照覆盖全部 21964 件可用战斗装备、420 种战斗食物和 22 个职业（包括 80 级上限的青魔法师）。`ClassJob` 原生职业属性修正来自 MCP；参考项目继续提供 GCD/特性/队伍公式、等级与默认品级 schema、族群常量及其余领域边界数据。仅青魔法师 INT 对应的魔法武器伤害加值表在 MCP 中缺失，使用已逐项核对的参考项目原始测量导出。
+- 数据更新器已接入脚本化 `ffxiv-mcp-lumina` 查询产物；当前快照覆盖全部 22023 件可用战斗装备、420 种战斗食物和 23 个职业（包括 80 级上限的青魔法师，以及 50 级上限、独立盾牌槽的驯兽师）。`ClassJob` 原生职业属性修正来自 MCP；参考项目继续提供 GCD/特性/队伍公式、等级与默认品级 schema、族群常量及其余领域边界数据。仅青魔法师 INT 对应的魔法武器伤害加值表在 MCP 中缺失，使用已逐项核对的参考项目原始测量导出。
 - 支持装备品级同步，同步普通装备按同步品级属性上限压缩且魔晶石失效；自定义参数武器保留参数分配并封顶。
 - 领域公式仍按职业等级修正计算。单职业新搜索及载入后的搜索条件归一到当前职业数据定义的最高等级；历史结果保留原计算值。联合搜索可按职业设置等级。
 - 支持合法禁断属性组合与等级限制，不计算成功率或镶嵌成本。

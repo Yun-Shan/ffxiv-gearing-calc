@@ -1,0 +1,143 @@
+.aside {
+  box-sizing: border-box;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 8px 16px 14px;
+}
+
+.panelHeader {
+  padding-bottom: 4px;
+  border-bottom: 1px solid #9eac98;
+}
+
+.panelHeader h2 {
+  margin: 0;
+  color: #354a37;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.announcement {
+  margin-top: 22px;
+}
+
+.announcement h3 {
+  margin: 0;
+  color: #354a37;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.emptyState {
+  display: flex;
+  min-height: 76px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  box-sizing: border-box;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #edf2e8;
+}
+
+.emptyState strong {
+  color: #40503e;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.emptyState p {
+  margin: 0;
+  color: #6f7c6b;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.footer {
+  display: grid;
+  gap: 22px;
+  margin-top: auto;
+  color: #75836b;
+  font-size: 9px;
+}
+
+.version {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  color: #75836b;
+  line-height: 17px;
+}
+
+.version strong {
+  color: #708e3c;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.footerMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  line-height: 1.4;
+}
+
+.advancedSettings {
+  position: relative;
+  color: #087f80;
+  white-space: nowrap;
+}
+
+.advancedSettings summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.advancedSettings summary::-webkit-details-marker { display: none; }
+
+.advancedSettings button {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: calc(100% + 8px);
+  display: flex;
+  min-width: 168px;
+  min-height: 36px;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid #dce7e5;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 5px 14px rgb(28 46 62 / 10%);
+  color: #3d5a62;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.advancedSettings button:hover {
+  border-color: #a9cfcb;
+  background: #f8fcfb;
+}
+
+@media (max-width: 760px) {
+  .aside {
+    min-height: 200px;
+    padding: 18px 18px 16px;
+  }
+
+  .emptyState {
+    min-height: 96px;
+  }
+}

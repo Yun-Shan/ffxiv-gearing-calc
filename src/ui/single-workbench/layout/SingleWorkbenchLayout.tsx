@@ -15,7 +15,7 @@ export function SingleWorkbenchLayout({
   main: ReactNode;
   sidebar: ReactNode;
 }) {
-  return <div className={`${styles.layout} ${penpotLayoutUtilities}`}>{main}{sidebar}</div>;
+  return <div className={`${styles.layout} single-workbench-layout ${penpotLayoutUtilities}`}>{main}{sidebar}</div>;
 }
 
 export function SingleWorkbenchFlow({ children, workbench = false }: { children: ReactNode; workbench?: boolean }) {

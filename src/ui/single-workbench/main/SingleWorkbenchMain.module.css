@@ -82,7 +82,7 @@
 
 @media (min-width: 1600px) {
   .main { padding-top: 23px; }
-  .heading { flex-basis: 64px; min-height: 64px; margin-bottom: 27px; }
+  .heading { flex-basis: 64px; min-height: 64px; margin-bottom: 29px; }
 }
 
 @media (max-width: 760px) {

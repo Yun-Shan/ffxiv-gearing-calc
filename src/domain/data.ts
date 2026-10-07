@@ -57,6 +57,7 @@ function assertGameData(data: GeneratedGameData): void {
       typeof schema.maxJobLevel !== "number" ||
       !Number.isSafeInteger(schema.maxJobLevel) ||
       !supportedLevels.has(schema.maxJobLevel) ||
+      typeof schema.isLimitedJob !== "boolean" ||
       typeof schema.ignoreWeaponItemLevel !== "boolean"
     )
       throw new Error(`职业 ${jobId} 的等级或默认品级 metadata 无效，请运行 npm run data:update`);
@@ -65,6 +66,7 @@ function assertGameData(data: GeneratedGameData): void {
   if (
     !blueMage ||
     blueMage.maxJobLevel === undefined ||
+    blueMage.isLimitedJob !== true ||
     !blueMage.ignoreWeaponItemLevel ||
     blueMage.mainStat !== "INT" ||
     blueMage.attackStat !== "INT" ||
@@ -86,6 +88,19 @@ function assertGameData(data: GeneratedGameData): void {
     blueMage.partyBonus <= 0
   )
     throw new Error("青魔法师职业数据不完整，请运行 npm run data:update");
+  const beastmaster = data.jobSchemas.BST;
+  if (
+    !beastmaster ||
+    beastmaster.isLimitedJob !== true ||
+    beastmaster.maxJobLevel !== 50 ||
+    beastmaster.role !== "str" ||
+    beastmaster.mainStat !== "STR" ||
+    !beastmaster.stats.includes("SKS") ||
+    beastmaster.stats.includes("SPS") ||
+    !data.gears.some((gear) => gear.jobs.includes("BST") && gear.slot === "weapon") ||
+    !data.gears.some((gear) => gear.jobs.includes("BST") && gear.slot === "offhand")
+  )
+    throw new Error("驯兽师职业或武器/盾牌装备数据不完整，请运行 npm run data:update");
   if (
     !Array.isArray(data.bluMdmgAdditions) ||
     data.bluMdmgAdditions.length === 0 ||

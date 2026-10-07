@@ -157,12 +157,6 @@
   overflow-x: hidden;
   overflow-y: auto;
   padding: 8px 16px 18px;
-  border-top: 3px solid #81914b;
-  background-color: var(--color-neutral-white);
-  background-image: linear-gradient(rgb(237 241 230 / 40%), rgb(237 241 230 / 40%)), linear-gradient(rgb(255 255 255 / 60%), rgb(255 255 255 / 60%)), url("/assets/solo-search-summary-panel-bg.jpg");
-  background-position: center, center, right bottom;
-  background-size: cover, cover, cover;
-  background-repeat: no-repeat;
 }
 
 .tableScope { flex: 0 0 auto; min-width: 0; }

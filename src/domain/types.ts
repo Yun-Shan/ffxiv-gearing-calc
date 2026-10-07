@@ -38,7 +38,8 @@ export type JobId =
   | "BLU"
   | "SMN"
   | "RDM"
-  | "PCT";
+  | "PCT"
+  | "BST";
 export type GearSlot =
   | "weapon"
   | "offhand"
@@ -108,6 +109,7 @@ export interface Materia {
 export interface JobSchema {
   id: JobId;
   name: string;
+  isLimitedJob: boolean;
   role: "tank" | "healer" | "str" | "dex" | "int";
   mainStat: "STR" | "DEX" | "INT" | "MND" | "VIT";
   secondaryStat: "SKS" | "SPS" | "TEN" | "PIE" | "DHT";

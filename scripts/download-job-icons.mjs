@@ -369,7 +369,7 @@ function buildIconsModule(jobs) {
 async function main() {
   const generatedData = JSON.parse(await readFile(generatedDataPath, "utf8"));
   const jobIds = Object.keys(generatedData.jobSchemas ?? {});
-  if (jobIds.length !== 22) throw new Error(`当前生成数据应包含 22 个职业，实际 ${jobIds.length} 个`);
+  if (jobIds.length !== 23) throw new Error(`当前生成数据应包含 23 个职业，实际 ${jobIds.length} 个`);
   if (new Set(jobIds).size !== jobIds.length) throw new Error("职业 ID 重复");
 
   const queried = await queryClassJobs(jobIds, generatedData);

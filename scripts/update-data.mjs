@@ -20,6 +20,7 @@ import {
   normalizeMcpItemLevel,
   normalizeMcpMateriaRows,
   rowMap,
+  supportedJobIds,
 } from "./mcp-lumina-import.mjs";
 
 const root = resolve(import.meta.dirname, "..");
@@ -32,10 +33,8 @@ const mcpSnapshotPath = resolve(
   process.env.FFXIV_MCP_LUMINA_SNAPSHOT ?? resolve(root, "src", "data", "mcp-lumina.snapshot.json"),
 );
 const offline = process.argv.includes("--offline");
-const supportedJobs = [
-  "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN",
-  "SAM", "RPR", "VPR", "BRD", "MCH", "DNC", "BLM", "SMN", "RDM", "PCT", "BLU",
-];
+const supportedJobs = supportedJobIds;
+const limitedJobIds = new Set(["BLU", "BST"]);
 const importStartedAt = new Date().toISOString();
 let currentCommit = "unknown";
 const combatMateriaStats = ["CRT", "DET", "DHT", "SKS", "SPS", "TEN", "PIE"];
@@ -219,9 +218,9 @@ function normalizeJobSchemas(rawSchemas, snapshot) {
       const mcpSchema = normalizeMcpClassJobRow(classJobRow);
       if (!mcpSchema || mcpSchema.abbreviation !== id)
         throw new Error(`MCP ClassJob 行 ${rowId} 缺少职业 ${id} 的完整字段`);
-      if (id === "BLU" && !mcpSchema.isLimitedJob)
-        throw new Error("MCP ClassJob 未将 BLU 标记为限职，拒绝生成职业数据");
-      if (id !== "BLU" && mcpSchema.isLimitedJob)
+      if (limitedJobIds.has(id) && !mcpSchema.isLimitedJob)
+        throw new Error(`MCP ClassJob 未将 ${id} 标记为限职，拒绝生成职业数据`);
+      if (!limitedJobIds.has(id) && mcpSchema.isLimitedJob)
         throw new Error(`当前支持职业 ${id} 被 MCP 标记为限职，请核对支持职业清单`);
       if (!Array.isArray(schema.defaultItemLevel) || schema.defaultItemLevel.length !== 2 ||
           schema.defaultItemLevel.some((value) => !Number.isSafeInteger(value) || value < 1) ||
@@ -247,6 +246,7 @@ function normalizeJobSchemas(rawSchemas, snapshot) {
       return [id, {
         id,
         name: mcpSchema.name,
+        isLimitedJob: mcpSchema.isLimitedJob,
         role,
         mainStat: schema.mainStat,
         secondaryStat: schema.secondaryStat,

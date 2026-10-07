@@ -142,14 +142,14 @@ function jobLevelFor(config: OptimizationConfig): number {
 
 function jobSlots(jobId: JobId): string[] {
   return [
-    ...nonRingSlotOrder.filter((slot) => slot !== "offhand" || jobId === "PLD"),
+    ...nonRingSlotOrder.filter((slot) => slot !== "offhand" || jobId === "PLD" || jobId === "BST"),
     "rings",
   ];
 }
 
 export function slotsForJob(jobId: JobId): GearSlot[] {
   return [
-    ...nonRingSlotOrder.filter((slot) => slot !== "offhand" || jobId === "PLD"),
+    ...nonRingSlotOrder.filter((slot) => slot !== "offhand" || jobId === "PLD" || jobId === "BST"),
     "ring",
     "ring2",
   ];

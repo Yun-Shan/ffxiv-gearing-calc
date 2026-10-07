@@ -1,9 +1,12 @@
 import type { JobId, JobSchema, Stat, Stats } from "../domain/types";
 
-const JOB_ORDER: readonly JobId[] = [
-  "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN",
-  "SAM", "RPR", "VPR", "BRD", "MCH", "DNC", "BLM", "SMN", "RDM", "PCT", "BLU",
-];
+const JOB_INDEX: Partial<Record<JobId, number>> = {
+  PLD: 0, WAR: 1, DRK: 2, GNB: 3, WHM: 4, SCH: 5, AST: 6, SGE: 7,
+  MNK: 8, DRG: 9, NIN: 10, SAM: 11, RPR: 12, VPR: 13, BRD: 14,
+  MCH: 15, DNC: 16, BLM: 17, SMN: 18, RDM: 19, PCT: 20, BLU: 21,
+  // Asvel share v6 places BST after the omitted crafting and gathering job codes.
+  BST: 33,
+};
 
 const JOB_LEVELS = [50, 60, 70, 80, 90, 100] as const;
 const MATERIA_STATS: Record<JobSchema["role"], readonly Stat[]> = {
@@ -41,7 +44,9 @@ function base62Encode(value: bigint): string {
 
 /** Encodes the compatible Asvel gearset share format while preserving job and sync levels. */
 export function stringifyReferenceGearset(gearset: ReferenceGearset): string | undefined {
-  const jobIndex = JOB_ORDER.indexOf(gearset.job);
+  const jobIndex = JOB_INDEX[gearset.job] ?? -1;
+  const shareVersion = gearset.job === "BST" ? 6 : 5;
+  const jobRange = shareVersion === 6 ? 34 : 33;
   const jobLevelIndex = JOB_LEVELS.indexOf(gearset.jobLevel as (typeof JOB_LEVELS)[number]);
   const statDecode = MATERIA_STATS[gearset.role];
   if (jobIndex < 0 || jobLevelIndex < 0 || gearset.gears.length === 0) return undefined;
@@ -160,7 +165,7 @@ export function stringifyReferenceGearset(gearset: ReferenceGearset): string | u
   } else {
     writeBoolean(false);
   }
-  write(jobIndex, 33);
-  write(5, 77);
+  write(jobIndex, jobRange);
+  write(shareVersion, 77);
   return base62Encode(result);
 }

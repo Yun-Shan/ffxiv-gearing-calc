@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { SinglePageSidePanel } from "./single-workbench/layout/SinglePageSidePanel";
 import styles from "./SingleSearchProgress.module.css";
 
 export type SingleSearchPhase = "prepare" | "solve" | "verify";
@@ -39,6 +40,8 @@ export interface SingleSearchProgressProps {
   progress: SingleSearchProgressState;
   rightSummary: ReactNode;
   onCancel: () => void;
+  onReset: () => void;
+  history: ReactNode;
 }
 
 const SEARCH_STAGES: ReadonlyArray<{ phase: SingleSearchPhase; label: string }> = [
@@ -107,6 +110,8 @@ export function SingleSearchProgress({
   progress,
   rightSummary,
   onCancel,
+  onReset,
+  history,
 }: SingleSearchProgressProps) {
   const [now, setNow] = useState(() => Date.now());
 
@@ -148,11 +153,11 @@ export function SingleSearchProgress({
   return (
     <div className={styles.page}>
       <div className={styles.layout}>
-        <main className={styles.main}>
+        <section className={styles.main} aria-labelledby="single-search-progress-title">
           <header className={styles.header}>
             <div>
               <p className={styles.eyebrow}>单职业配装搜索</p>
-              <h1>{jobName}</h1>
+              <h1 id="single-search-progress-title">{jobName}</h1>
             </div>
           </header>
 
@@ -228,15 +233,25 @@ export function SingleSearchProgress({
               </div>
             </section>
           )}
-        </main>
+        </section>
 
-        <aside className={styles.rail} aria-label="搜索条件摘要">
+        <SinglePageSidePanel className={styles.rail} ariaLabel="搜索条件摘要">
           <div className={styles.summary}>{rightSummary}</div>
           <p className={styles.assurance}>搜索中 · 搜索结果将严格满足以上条件</p>
           <button className={styles.cancelButton} type="button" onClick={onCancel}>
             取消搜索
           </button>
-        </aside>
+          <footer className={styles.railFooter}>
+            <span>纯前端计算 · 可离线运行</span>
+            <details className={styles.advanced}>
+              <summary>高级设置</summary>
+              <div className={styles.advancedMenu}>
+                <button type="button" className={styles.resetButton} onClick={onReset}>重置当前页面配置</button>
+                <div className={styles.history}>{history}</div>
+              </div>
+            </details>
+          </footer>
+        </SinglePageSidePanel>
       </div>
     </div>
   );

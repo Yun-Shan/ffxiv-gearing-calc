@@ -54,6 +54,7 @@ import { GearMark } from "./ui/single-workbench/restrictions/GearMark";
 import { SearchProgress } from "./ui/SearchProgress";
 import { ConfigSnapshot } from "./ui/ConfigSnapshot";
 import { SearchHistory } from "./ui/SearchHistory";
+import { JobSelectionSidebar } from "./ui/single-workbench/JobSelectionSidebar";
 import { SingleSearchProgress } from "./ui/SingleSearchProgress";
 import { SingleJobResultView } from "./ui/single-result/SingleJobResultView";
 import { SingleJobGearTable } from "./ui/single-result/SingleJobGearTable";
@@ -184,45 +185,7 @@ const defaultCommonSlots: CommonSlot[] = [
   "ring2",
 ];
 
-const pldWorkbenchDesignRestrictions = {
-  excludedSources: ["新月岛/北征之章", "点数/记忆", "零式/重量级"],
-  excludedGearNames: [
-    "改良型宫廷爱人御敌战甲",
-    "虚王盾",
-    "瓦纳·迪尔御敌马裤",
-  ],
-  forcedGearNames: {
-    weapon: "帕拉佐钻石剑",
-    head: "瓦纳·迪尔御敌战冠",
-    ring: "改良型王国黄铜御敌戒指",
-  } satisfies Partial<Record<GearSlot, string>>,
-} as const;
-
-function findDesignGearId(jobId: JobId, slot: GearSlot, name: string): number | undefined {
-  return gears.find((gear) =>
-    gear.name === name &&
-    gear.slot === (slot === "ring2" ? "ring" : slot) &&
-    gear.jobs.includes(jobId),
-  )?.id;
-}
-
 function makeConfig(jobId: JobId): OptimizationConfig {
-  const isDesignJob = jobId === "PLD";
-  const excludedGearIds = isDesignJob
-    ? pldWorkbenchDesignRestrictions.excludedGearNames
-        .map((name) => gears.find((gear) => gear.name === name && gear.jobs.includes(jobId))?.id)
-        .filter((id): id is number => id !== undefined)
-    : [];
-  const forcedGear = isDesignJob
-    ? Object.fromEntries(
-        Object.entries(pldWorkbenchDesignRestrictions.forcedGearNames)
-          .map(([slot, name]) => [
-            slot,
-            findDesignGearId(jobId, slot as GearSlot, name),
-          ] as const)
-          .filter((entry): entry is [string, number] => entry[1] !== undefined),
-      ) as Partial<Record<GearSlot, number>>
-    : {};
   return {
     jobId,
     minItemLevel: jobSchemas[jobId].defaultItemLevel?.[0] ?? Math.max(bounds[0], bounds[1] - 15),
@@ -237,9 +200,9 @@ function makeConfig(jobId: JobId): OptimizationConfig {
     toughnessMinPercent: undefined,
     maximizeTenacity: false,
     objective: "damage",
-    excludedSources: isDesignJob ? [...pldWorkbenchDesignRestrictions.excludedSources] : [],
-    excludedGearIds,
-    forcedGear,
+    excludedSources: [],
+    excludedGearIds: [],
+    forcedGear: {},
     sharedSlots: [],
     foodId: 0,
   };
@@ -273,7 +236,7 @@ function statValue(stat: string, value: number): string {
 }
 
 function slotsForJob(jobId: JobId): GearSlot[] {
-  return jobId === "PLD"
+  return jobId === "PLD" || jobId === "BST"
     ? combatSlots
     : combatSlots.filter((slot) => slot !== "offhand");
 }
@@ -1934,10 +1897,10 @@ function candidateSlotLabel(slot: string): string {
 }
 
 function SinglePage({ onReset }: { onReset: () => void }) {
-  const [selectedJob, setSelectedJob] = useState<JobId | null>("PLD");
+  const [selectedJob, setSelectedJob] = useState<JobId | null>(null);
   const [config, setConfig] = useState<OptimizationConfig>(() => makeConfig("PLD"));
-  const [singleGcdMode, setSingleGcdMode] = useState<SingleGcdMode>("speed");
-  const [view, setView] = useState<"choose" | "workbench" | "progress" | "result">("workbench");
+  const [singleGcdMode, setSingleGcdMode] = useState<SingleGcdMode>("any");
+  const [view, setView] = useState<"choose" | "workbench" | "progress" | "result">("choose");
   const [result, setResult] = useState<OptimizationResult>();
   const [resultConfig, setResultConfig] = useState<OptimizationConfig>();
   const [resultStartedAt, setResultStartedAt] = useState<string>();
@@ -2070,6 +2033,13 @@ function SinglePage({ onReset }: { onReset: () => void }) {
     abortController.current?.abort();
   }
 
+  function abortSearchForNavigation() {
+    const controller = abortController.current;
+    abortController.current = undefined;
+    controller?.abort();
+    setRunning(false);
+  }
+
   function clearOutcomeMessages() {
     setError(undefined);
     setStatusMessage(undefined);
@@ -2084,7 +2054,7 @@ function SinglePage({ onReset }: { onReset: () => void }) {
     if (running) cancelSearch();
     setSelectedJob(jobId);
     setConfig({ ...makeConfig(jobId), objective: "dps" });
-    setSingleGcdMode("speed");
+    setSingleGcdMode("any");
     setResult(undefined);
     setResultConfig(undefined);
     setResultStartedAt(undefined);
@@ -2097,8 +2067,7 @@ function SinglePage({ onReset }: { onReset: () => void }) {
 
   function loadHistoryConfig(record: SearchHistoryRecord) {
     if (record.kind !== "single") return;
-    abortController.current?.abort();
-    setRunning(false);
+    abortSearchForNavigation();
     setSelectedJob(record.config.jobId);
     const loadedConfig = normalizeSingleWorkbenchConfig({
       ...record.config,
@@ -2125,8 +2094,7 @@ function SinglePage({ onReset }: { onReset: () => void }) {
 
   function loadHistoryResult(record: SearchHistoryRecord) {
     if (record.kind !== "single" || !record.result || record.dataVersion !== displayedDataVersion) return;
-    abortController.current?.abort();
-    setRunning(false);
+    abortSearchForNavigation();
     setSelectedJob(record.config.jobId);
     const loadedConfig = normalizeSingleWorkbenchConfig(record.config);
     setConfig(loadedConfig);
@@ -2311,6 +2279,8 @@ function SinglePage({ onReset }: { onReset: () => void }) {
       kind="single"
       currentDataVersion={displayedDataVersion}
       refreshKey={historyRefresh}
+      defaultOpen={view === "choose"}
+      hideSummary={view === "choose"}
       onLoadConfig={loadHistoryConfig}
       onLoadResult={loadHistoryResult}
     />
@@ -2324,25 +2294,17 @@ function SinglePage({ onReset }: { onReset: () => void }) {
       onReset={onReset}
     />
     <SingleWorkbenchFlow workbench={view === "workbench"}>
-      {view === "choose" && <section className="single-job-selection">
-        <header className="single-workbench-heading">
-          <div>
-            <p className="single-section-kicker">单职业配装</p>
-            <h1>选择职业</h1>
-            <p>选择一个职业后，集中设置该职业的搜索条件。</p>
-          </div>
-        </header>
-        <JobPicker value={selectedJob} onChange={chooseJob} />
-        {selectedJob && <div className="single-job-selection-actions">
-          <span>{jobSchemas[selectedJob].name} · {roleNames[jobSchemas[selectedJob].role]} 已选择</span>
-          <button type="button" className="run-button" onClick={() => setView("workbench")}>继续配置</button>
-        </div>}
-        {searchHistory}
-        <footer className="footer single-page-footer">
-          <span>纯前端计算 · 可离线运行</span>
-          <span>数据版本 {displayedDataVersion}</span>
-        </footer>
-      </section>}
+      {view === "choose" && <div className="single-selection-layout">
+        <section className="single-job-selection" aria-labelledby="single-selection-title">
+          <header className="single-selection-heading">
+            <p className="single-section-kicker">单职业配装 · 配装流程</p>
+            <h1 id="single-selection-title">选择职业</h1>
+          </header>
+          <JobPicker value={selectedJob} onChange={chooseJob} />
+          {searchHistory}
+        </section>
+        <JobSelectionSidebar dataVersion={displayedDataVersion} onReset={onReset} />
+      </div>}
 
       {view === "workbench" && selectedJob && job && <SingleWorkbenchLayout
         main={<SingleWorkbenchMain
@@ -2396,6 +2358,7 @@ function SinglePage({ onReset }: { onReset: () => void }) {
           status={singleGcdActionMessage}
           canStartSearch={canStartSearch}
           onStartSearch={runSearch}
+          onReset={onReset}
           history={searchHistory}
         />}
       />}
@@ -2405,6 +2368,8 @@ function SinglePage({ onReset }: { onReset: () => void }) {
         progress={searchProgress}
         rightSummary={<SingleConditionSummary config={activeSearchConfig} view="progress" />}
         onCancel={cancelSearch}
+        onReset={onReset}
+        history={searchHistory}
       />}
 
       {view === "result" && result && !stale && <ResultPanel

@@ -47,8 +47,8 @@
 }
 
 @media (min-width: 1600px) {
-  .section { min-height: 108px; margin-top: 10px; }
-  .title { margin-bottom: 13px; }
+  .section { min-height: 108px; margin-top: 16px; }
+  .title { height: 24px; margin-bottom: 13px; font-size: 16px; line-height: 24px; }
   .fields { align-items: flex-start; }
   .section :global(.single-range-sync-field) { display: grid; flex: 0 0 212px; grid-template-columns: 74px minmax(0, 1fr); align-items: center; gap: 6px; height: 42px; }
   .section :global(.single-range-sync-field > span:first-child),
@@ -66,7 +66,7 @@
   .section :global(.single-item-level-values .number-input-wrap) { border: 0; background: transparent; }
   .section :global(.single-item-level-values .number-input-wrap input) { width: 100%; padding: 0 2px; font-size: 14px; }
   .section :global(.single-item-level-values > span) { display: inline-flex; flex: 0 0 22px; height: 42px; align-items: center; justify-content: center; margin: 0 6px 0 8px; font-size: 15px; }
-  .section :global(.single-range-food-field) { display: flex; flex: 0 0 auto; flex-direction: row; align-items: center; gap: 8px; margin-left: 62px; }
+  .section :global(.single-range-food-field) { display: flex; flex: 0 0 auto; flex-direction: row; align-items: center; gap: 8px; margin-left: 57px; }
   .section :global(.single-range-food-field > .field-label) { width: 48px; }
   .section :global(.single-range-food-field > select) { width: 338px; }
 }

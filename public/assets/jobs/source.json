@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-03T09:14:03.354Z",
+  "generatedAt": "2026-10-07T12:08:40.771Z",
   "mcp": {
     "server": "ffxiv-mcp-lumina",
     "transport": "stdio",
     "gameVersion": "2026.09.15.0000.0000",
     "validatedVersion": "2026.08.05.0000.0000",
     "schemaVersion": "latest",
-    "queryTime": "2026-10-03T09:13:58.0775695+00:00",
+    "queryTime": "2026-10-07T12:08:21.2248424+00:00",
     "versionWarnings": [
       {
         "code": "GameVersionMismatch",
@@ -20,7 +20,7 @@
       "content": [
         {
           "type": "text",
-          "text": "{\"status\":\"degraded\",\"serverVersion\":\"1.0.0\",\"gamePath\":\"F:\\\\Game\\\\FF14\\\\\\u6700\\u7EC8\\u5E7B\\u60F3XIV\",\"detectedVersion\":\"2026.09.15.0000.0000\",\"validatedVersion\":\"2026.08.05.0000.0000\",\"schemaAvailable\":true,\"schemaVersion\":\"latest\",\"cacheEnabled\":true,\"cacheTTLSeconds\":300,\"uptimeSeconds\":4,\"warnings\":[{\"code\":\"GameVersionMismatch\",\"message\":\"Detected game version 2026.09.15.0000.0000 differs from last validated version 2026.08.05.0000.0000. FFXIV convenience tools (get_jobs, get_duties, get_localized_labels) may return incorrect data. Generic tools (get_row, search_rows, etc.) are unaffected.\",\"detectedVersion\":\"2026.09.15.0000.0000\",\"validatedVersion\":\"2026.08.05.0000.0000\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.0775695\\u002B00:00\"}"
+          "text": "{\"status\":\"degraded\",\"serverVersion\":\"1.0.0\",\"gamePath\":\"E:\\\\Game\\\\FFXIV\\\\\\u6700\\u7EC8\\u5E7B\\u60F3XIV\",\"detectedVersion\":\"2026.09.15.0000.0000\",\"validatedVersion\":\"2026.08.05.0000.0000\",\"schemaAvailable\":true,\"schemaVersion\":\"latest\",\"cacheEnabled\":true,\"cacheTTLSeconds\":300,\"uptimeSeconds\":2,\"warnings\":[{\"code\":\"GameVersionMismatch\",\"message\":\"Detected game version 2026.09.15.0000.0000 differs from last validated version 2026.08.05.0000.0000. FFXIV convenience tools (get_jobs, get_duties, get_localized_labels) may return incorrect data. Generic tools (get_row, search_rows, etc.) are unaffected.\",\"detectedVersion\":\"2026.09.15.0000.0000\",\"validatedVersion\":\"2026.08.05.0000.0000\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.2248424\\u002B00:00\"}"
         }
       ]
     },
@@ -35,7 +35,7 @@
         "content": [
           {
             "type": "text",
-            "text": "{\"sheet\":\"ClassJob\",\"rowCount\":46,\"columns\":[{\"index\":0,\"name\":\"Name\",\"type\":\"string\"},{\"index\":1,\"name\":\"Abbreviation\",\"type\":\"string\"},{\"index\":2,\"name\":\"NameFemale\",\"type\":\"string\"},{\"index\":3,\"name\":\"CanQueueForDuty\",\"type\":\"bool\"},{\"index\":4,\"name\":\"NameEnglish\",\"type\":\"string\"},{\"index\":5,\"name\":\"ItemSoulCrystal\",\"type\":\"uint\"},{\"index\":6,\"name\":\"UnlockQuest\",\"type\":\"uint\"},{\"index\":7,\"name\":\"RelicQuest\",\"type\":\"uint\"},{\"index\":8,\"name\":\"Prerequisite\",\"type\":\"uint\"},{\"index\":9,\"name\":\"ReplaceAction\",\"type\":\"int\"},{\"index\":10,\"name\":\"ReplaceActionPvP\",\"type\":\"int\"},{\"index\":11,\"name\":\"Unknown9\",\"type\":\"int\"},{\"index\":12,\"name\":\"ItemStartingWeaponMainHand\",\"type\":\"int\"},{\"index\":13,\"name\":\"ItemStartingWeaponOffHand\",\"type\":\"int\"},{\"index\":14,\"name\":\"ModifierHitPoints\",\"type\":\"uint\"},{\"index\":15,\"name\":\"ModifierManaPoints\",\"type\":\"uint\"},{\"index\":16,\"name\":\"ModifierStrength\",\"type\":\"uint\"},{\"index\":17,\"name\":\"ModifierVitality\",\"type\":\"uint\"},{\"index\":18,\"name\":\"ModifierDexterity\",\"type\":\"uint\"},{\"index\":19,\"name\":\"ModifierIntelligence\",\"type\":\"uint\"},{\"index\":20,\"name\":\"ModifierMind\",\"type\":\"uint\"},{\"index\":21,\"name\":\"ModifierPiety\",\"type\":\"uint\"},{\"index\":22,\"name\":\"Unknown2\",\"type\":\"uint\"},{\"index\":23,\"name\":\"Unknown3\",\"type\":\"uint\"},{\"index\":24,\"name\":\"Unknown4\",\"type\":\"uint\"},{\"index\":25,\"name\":\"Unknown5\",\"type\":\"uint\"},{\"index\":26,\"name\":\"Unknown6\",\"type\":\"uint\"},{\"index\":27,\"name\":\"Unknown7\",\"type\":\"uint\"},{\"index\":28,\"name\":\"LimitBreak1\",\"type\":\"uint\"},{\"index\":29,\"name\":\"LimitBreak2\",\"type\":\"uint\"},{\"index\":30,\"name\":\"LimitBreak3\",\"type\":\"uint\"},{\"index\":31,\"name\":\"ClassJobCategory\",\"type\":\"uint\"},{\"index\":32,\"name\":\"Unknown8\",\"type\":\"uint\"},{\"index\":33,\"name\":\"JobIndex\",\"type\":\"uint\"},{\"index\":34,\"name\":\"PvPBaseParamValue\",\"type\":\"uint\"},{\"index\":35,\"name\":\"PvPActionSortRow\",\"type\":\"uint\"},{\"index\":36,\"name\":\"PvPInitialSelectActionTrait\",\"type\":\"uint\"},{\"index\":37,\"name\":\"ClassJobParent\",\"type\":\"uint\"},{\"index\":38,\"name\":\"Role\",\"type\":\"uint\"},{\"index\":39,\"name\":\"StartingTown\",\"type\":\"uint\"},{\"index\":40,\"name\":\"PrimaryStat\",\"type\":\"uint\"},{\"index\":41,\"name\":\"UIPriority\",\"type\":\"uint\"},{\"index\":42,\"name\":\"StartingLevel\",\"type\":\"uint\"},{\"index\":43,\"name\":\"PartyBonus\",\"type\":\"uint\"},{\"index\":44,\"name\":\"JobType\",\"type\":\"uint\"},{\"index\":45,\"name\":\"ExpArrayIndex\",\"type\":\"int\"},{\"index\":46,\"name\":\"BattleClassIndex\",\"type\":\"int\"},{\"index\":47,\"name\":\"DohDolJobIndex\",\"type\":\"int\"},{\"index\":48,\"name\":\"MonsterNote\",\"type\":\"int\"},{\"index\":49,\"name\":\"IsLimitedJob\",\"type\":\"bool\"},{\"index\":50,\"name\":\"CanWearShield\",\"type\":\"bool\"}],\"languages\":[\"chs\"],\"schema\":{\"available\":true,\"version\":\"latest\",\"note\":\"Column names are derived from EXDSchema and are best-effort.\"},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.1660087\\u002B00:00\"}"
+            "text": "{\"sheet\":\"ClassJob\",\"rowCount\":46,\"columns\":[{\"index\":0,\"name\":\"Name\",\"type\":\"string\"},{\"index\":1,\"name\":\"Abbreviation\",\"type\":\"string\"},{\"index\":2,\"name\":\"NameFemale\",\"type\":\"string\"},{\"index\":3,\"name\":\"CanQueueForDuty\",\"type\":\"bool\"},{\"index\":4,\"name\":\"NameEnglish\",\"type\":\"string\"},{\"index\":5,\"name\":\"ItemSoulCrystal\",\"type\":\"uint\"},{\"index\":6,\"name\":\"UnlockQuest\",\"type\":\"uint\"},{\"index\":7,\"name\":\"RelicQuest\",\"type\":\"uint\"},{\"index\":8,\"name\":\"Prerequisite\",\"type\":\"uint\"},{\"index\":9,\"name\":\"ReplaceAction\",\"type\":\"int\"},{\"index\":10,\"name\":\"ReplaceActionPvP\",\"type\":\"int\"},{\"index\":11,\"name\":\"Unknown9\",\"type\":\"int\"},{\"index\":12,\"name\":\"ItemStartingWeaponMainHand\",\"type\":\"int\"},{\"index\":13,\"name\":\"ItemStartingWeaponOffHand\",\"type\":\"int\"},{\"index\":14,\"name\":\"ModifierHitPoints\",\"type\":\"uint\"},{\"index\":15,\"name\":\"ModifierManaPoints\",\"type\":\"uint\"},{\"index\":16,\"name\":\"ModifierStrength\",\"type\":\"uint\"},{\"index\":17,\"name\":\"ModifierVitality\",\"type\":\"uint\"},{\"index\":18,\"name\":\"ModifierDexterity\",\"type\":\"uint\"},{\"index\":19,\"name\":\"ModifierIntelligence\",\"type\":\"uint\"},{\"index\":20,\"name\":\"ModifierMind\",\"type\":\"uint\"},{\"index\":21,\"name\":\"ModifierPiety\",\"type\":\"uint\"},{\"index\":22,\"name\":\"Unknown2\",\"type\":\"uint\"},{\"index\":23,\"name\":\"Unknown3\",\"type\":\"uint\"},{\"index\":24,\"name\":\"Unknown4\",\"type\":\"uint\"},{\"index\":25,\"name\":\"Unknown5\",\"type\":\"uint\"},{\"index\":26,\"name\":\"Unknown6\",\"type\":\"uint\"},{\"index\":27,\"name\":\"Unknown7\",\"type\":\"uint\"},{\"index\":28,\"name\":\"LimitBreak1\",\"type\":\"uint\"},{\"index\":29,\"name\":\"LimitBreak2\",\"type\":\"uint\"},{\"index\":30,\"name\":\"LimitBreak3\",\"type\":\"uint\"},{\"index\":31,\"name\":\"ClassJobCategory\",\"type\":\"uint\"},{\"index\":32,\"name\":\"Unknown8\",\"type\":\"uint\"},{\"index\":33,\"name\":\"JobIndex\",\"type\":\"uint\"},{\"index\":34,\"name\":\"PvPBaseParamValue\",\"type\":\"uint\"},{\"index\":35,\"name\":\"PvPActionSortRow\",\"type\":\"uint\"},{\"index\":36,\"name\":\"PvPInitialSelectActionTrait\",\"type\":\"uint\"},{\"index\":37,\"name\":\"ClassJobParent\",\"type\":\"uint\"},{\"index\":38,\"name\":\"Role\",\"type\":\"uint\"},{\"index\":39,\"name\":\"StartingTown\",\"type\":\"uint\"},{\"index\":40,\"name\":\"PrimaryStat\",\"type\":\"uint\"},{\"index\":41,\"name\":\"UIPriority\",\"type\":\"uint\"},{\"index\":42,\"name\":\"StartingLevel\",\"type\":\"uint\"},{\"index\":43,\"name\":\"PartyBonus\",\"type\":\"uint\"},{\"index\":44,\"name\":\"JobType\",\"type\":\"uint\"},{\"index\":45,\"name\":\"ExpArrayIndex\",\"type\":\"int\"},{\"index\":46,\"name\":\"BattleClassIndex\",\"type\":\"int\"},{\"index\":47,\"name\":\"DohDolJobIndex\",\"type\":\"int\"},{\"index\":48,\"name\":\"MonsterNote\",\"type\":\"int\"},{\"index\":49,\"name\":\"IsLimitedJob\",\"type\":\"bool\"},{\"index\":50,\"name\":\"CanWearShield\",\"type\":\"bool\"}],\"languages\":[\"chs\"],\"schema\":{\"available\":true,\"version\":\"latest\",\"note\":\"Column names are derived from EXDSchema and are best-effort.\"},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.2941087\\u002B00:00\"}"
           }
         ]
       }
@@ -48,7 +48,7 @@
         "abbreviation": "PLD",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2066079+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3210323+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -64,7 +64,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"PLD\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":19,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9A91\\u58EB\",\"Abbreviation\":\"PLD\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2055003\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2066079\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"PLD\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":19,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9A91\\u58EB\",\"Abbreviation\":\"PLD\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3206848\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3210323\\u002B00:00\"}"
             }
           ]
         }
@@ -76,7 +76,7 @@
         "abbreviation": "WAR",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2065808+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3284397+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -92,7 +92,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"WAR\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":21,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u6218\\u58EB\",\"Abbreviation\":\"WAR\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2054790\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2065808\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"WAR\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":21,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u6218\\u58EB\",\"Abbreviation\":\"WAR\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3284176\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3284397\\u002B00:00\"}"
             }
           ]
         }
@@ -104,7 +104,7 @@
         "abbreviation": "DRK",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2065983+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3290271+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -120,7 +120,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"DRK\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":32,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u6697\\u9ED1\\u9A91\\u58EB\",\"Abbreviation\":\"DRK\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2055093\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2065983\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"DRK\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":32,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u6697\\u9ED1\\u9A91\\u58EB\",\"Abbreviation\":\"DRK\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3290199\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3290271\\u002B00:00\"}"
             }
           ]
         }
@@ -132,7 +132,7 @@
         "abbreviation": "GNB",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2065928+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3294365+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -148,7 +148,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"GNB\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":37,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u7EDD\\u67AA\\u6218\\u58EB\",\"Abbreviation\":\"GNB\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2054910\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2065928\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"GNB\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":37,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u7EDD\\u67AA\\u6218\\u58EB\",\"Abbreviation\":\"GNB\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3294316\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3294365\\u002B00:00\"}"
             }
           ]
         }
@@ -160,7 +160,7 @@
         "abbreviation": "WHM",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2190143+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3298059+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -176,7 +176,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"WHM\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":24,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u767D\\u9B54\\u6CD5\\u5E08\",\"Abbreviation\":\"WHM\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2189640\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2190143\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"WHM\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":24,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u767D\\u9B54\\u6CD5\\u5E08\",\"Abbreviation\":\"WHM\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3297966\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3298059\\u002B00:00\"}"
             }
           ]
         }
@@ -188,7 +188,7 @@
         "abbreviation": "SCH",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2209811+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3301599+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -204,7 +204,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"SCH\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":28,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u5B66\\u8005\",\"Abbreviation\":\"SCH\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2209582\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2209811\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"SCH\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":28,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u5B66\\u8005\",\"Abbreviation\":\"SCH\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3301525\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3301599\\u002B00:00\"}"
             }
           ]
         }
@@ -216,7 +216,7 @@
         "abbreviation": "AST",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2213772+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3305465+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -232,7 +232,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"AST\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":33,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u5360\\u661F\\u672F\\u58EB\",\"Abbreviation\":\"AST\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2213588\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2213772\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"AST\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":33,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u5360\\u661F\\u672F\\u58EB\",\"Abbreviation\":\"AST\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3305393\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3305465\\u002B00:00\"}"
             }
           ]
         }
@@ -244,7 +244,7 @@
         "abbreviation": "SGE",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2215404+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3309208+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -260,7 +260,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"SGE\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":40,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u8D24\\u8005\",\"Abbreviation\":\"SGE\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2215340\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2215404\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"SGE\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":40,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u8D24\\u8005\",\"Abbreviation\":\"SGE\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3309164\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3309208\\u002B00:00\"}"
             }
           ]
         }
@@ -272,7 +272,7 @@
         "abbreviation": "MNK",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2216167+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3312771+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -288,7 +288,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"MNK\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":20,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u6B66\\u50E7\",\"Abbreviation\":\"MNK\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2215992\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2216167\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"MNK\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":20,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u6B66\\u50E7\",\"Abbreviation\":\"MNK\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3312669\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3312771\\u002B00:00\"}"
             }
           ]
         }
@@ -300,7 +300,7 @@
         "abbreviation": "DRG",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2219167+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3316544+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -316,7 +316,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"DRG\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":22,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9F99\\u9A91\\u58EB\",\"Abbreviation\":\"DRG\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2218424\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2219167\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"DRG\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":22,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9F99\\u9A91\\u58EB\",\"Abbreviation\":\"DRG\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3316437\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3316544\\u002B00:00\"}"
             }
           ]
         }
@@ -328,7 +328,7 @@
         "abbreviation": "NIN",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2221071+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3321947+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -344,7 +344,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"NIN\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":30,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u5FCD\\u8005\",\"Abbreviation\":\"NIN\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2220790\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2221071\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"NIN\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":30,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u5FCD\\u8005\",\"Abbreviation\":\"NIN\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3321858\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3321947\\u002B00:00\"}"
             }
           ]
         }
@@ -356,7 +356,7 @@
         "abbreviation": "SAM",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2220991+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3326325+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -372,7 +372,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"SAM\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":34,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u6B66\\u58EB\",\"Abbreviation\":\"SAM\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2220805\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2220991\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"SAM\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":34,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u6B66\\u58EB\",\"Abbreviation\":\"SAM\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3326259\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3326325\\u002B00:00\"}"
             }
           ]
         }
@@ -384,7 +384,7 @@
         "abbreviation": "RPR",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2223619+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3330099+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -400,7 +400,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"RPR\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":39,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9490\\u9570\\u5BA2\",\"Abbreviation\":\"RPR\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2223528\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2223619\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"RPR\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":39,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9490\\u9570\\u5BA2\",\"Abbreviation\":\"RPR\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3330049\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3330099\\u002B00:00\"}"
             }
           ]
         }
@@ -412,7 +412,7 @@
         "abbreviation": "VPR",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2225418+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3333558+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -428,7 +428,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"VPR\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":41,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u8770\\u86C7\\u5251\\u58EB\",\"Abbreviation\":\"VPR\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2225347\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2225418\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"VPR\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":41,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u8770\\u86C7\\u5251\\u58EB\",\"Abbreviation\":\"VPR\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3333526\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3333558\\u002B00:00\"}"
             }
           ]
         }
@@ -440,7 +440,7 @@
         "abbreviation": "BRD",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2227601+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3336973+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -456,7 +456,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"BRD\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":23,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u541F\\u6E38\\u8BD7\\u4EBA\",\"Abbreviation\":\"BRD\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2227273\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2227601\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"BRD\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":23,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u541F\\u6E38\\u8BD7\\u4EBA\",\"Abbreviation\":\"BRD\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3336848\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3336973\\u002B00:00\"}"
             }
           ]
         }
@@ -468,7 +468,7 @@
         "abbreviation": "MCH",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2227401+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3340313+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -484,7 +484,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"MCH\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":31,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u673A\\u5DE5\\u58EB\",\"Abbreviation\":\"MCH\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2227087\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2227401\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"MCH\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":31,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u673A\\u5DE5\\u58EB\",\"Abbreviation\":\"MCH\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3340190\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3340313\\u002B00:00\"}"
             }
           ]
         }
@@ -496,7 +496,7 @@
         "abbreviation": "DNC",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2228544+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3343473+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -512,7 +512,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"DNC\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":38,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u821E\\u8005\",\"Abbreviation\":\"DNC\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2228485\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2228544\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"DNC\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":38,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u821E\\u8005\",\"Abbreviation\":\"DNC\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3343428\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3343473\\u002B00:00\"}"
             }
           ]
         }
@@ -524,7 +524,7 @@
         "abbreviation": "BLM",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2232389+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3346838+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -540,7 +540,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"BLM\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":25,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9ED1\\u9B54\\u6CD5\\u5E08\",\"Abbreviation\":\"BLM\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2231942\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2232389\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"BLM\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":25,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9ED1\\u9B54\\u6CD5\\u5E08\",\"Abbreviation\":\"BLM\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3346747\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3346838\\u002B00:00\"}"
             }
           ]
         }
@@ -552,7 +552,7 @@
         "abbreviation": "SMN",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2233995+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3349609+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -568,7 +568,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"SMN\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":27,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u53EC\\u5524\\u5E08\",\"Abbreviation\":\"SMN\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2233767\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2233995\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"SMN\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":27,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u53EC\\u5524\\u5E08\",\"Abbreviation\":\"SMN\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3349528\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3349609\\u002B00:00\"}"
             }
           ]
         }
@@ -580,7 +580,7 @@
         "abbreviation": "RDM",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2234005+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3354876+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -596,7 +596,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"RDM\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":35,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u8D64\\u9B54\\u6CD5\\u5E08\",\"Abbreviation\":\"RDM\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2233848\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2234005\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"RDM\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":35,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u8D64\\u9B54\\u6CD5\\u5E08\",\"Abbreviation\":\"RDM\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3354818\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3354876\\u002B00:00\"}"
             }
           ]
         }
@@ -608,7 +608,7 @@
         "abbreviation": "PCT",
         "isLimitedJob": false,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2235045+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3358423+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -624,7 +624,7 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"PCT\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":42,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u7ED8\\u7075\\u6CD5\\u5E08\",\"Abbreviation\":\"PCT\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2235001\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2235045\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"PCT\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":42,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u7ED8\\u7075\\u6CD5\\u5E08\",\"Abbreviation\":\"PCT\",\"IsLimitedJob\":false},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3358393\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3358423\\u002B00:00\"}"
             }
           ]
         }
@@ -636,7 +636,7 @@
         "abbreviation": "BLU",
         "isLimitedJob": true,
         "gameVersion": "2026.09.15.0000.0000",
-        "queriedAt": "2026-10-03T09:13:58.2237221+00:00",
+        "queriedAt": "2026-10-07T12:08:21.3362404+00:00",
         "request": {
           "tool": "search_rows",
           "arguments": {
@@ -652,7 +652,35 @@
           "content": [
             {
               "type": "text",
-              "text": "{\"sheet\":\"ClassJob\",\"query\":\"BLU\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":36,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9752\\u9B54\\u6CD5\\u5E08\",\"Abbreviation\":\"BLU\",\"IsLimitedJob\":true},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2237152\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-03T09:13:58.2237221\\u002B00:00\"}"
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"BLU\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":36,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9752\\u9B54\\u6CD5\\u5E08\",\"Abbreviation\":\"BLU\",\"IsLimitedJob\":true},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3362341\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3362404\\u002B00:00\"}"
+            }
+          ]
+        }
+      },
+      {
+        "jobId": "BST",
+        "rowId": 43,
+        "name": "驯兽师",
+        "abbreviation": "BST",
+        "isLimitedJob": true,
+        "gameVersion": "2026.09.15.0000.0000",
+        "queriedAt": "2026-10-07T12:08:21.3366438+00:00",
+        "request": {
+          "tool": "search_rows",
+          "arguments": {
+            "sheet": "ClassJob",
+            "query": "BST",
+            "textFields": "Abbreviation",
+            "returnFields": "Name,Abbreviation,IsLimitedJob",
+            "limit": 200,
+            "languages": "chs"
+          }
+        },
+        "response": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"sheet\":\"ClassJob\",\"query\":\"BST\",\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"totalMatches\":1,\"offset\":0,\"limit\":200,\"rowsScanned\":46,\"results\":[{\"sheet\":\"ClassJob\",\"rowId\":43,\"languagesRequested\":[\"chs\"],\"languagesReturned\":[\"chs\"],\"fallbackUsed\":false,\"fields\":{\"Name\":\"\\u9A6F\\u517D\\u5E08\",\"Abbreviation\":\"BST\",\"IsLimitedJob\":true},\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3366412\\u002B00:00\"}],\"gameVersion\":\"2026.09.15.0000.0000\",\"timestamp\":\"2026-10-07T12:08:21.3366438\\u002B00:00\"}"
             }
           ]
         }
@@ -664,8 +692,8 @@
     "apiVersion": "v2",
     "endpoint": "https://v2.xivapi.com/api/asset",
     "assetPattern": "ui/icon/062000/0621{ClassJob rowId padded to 2 digits}.tex",
-    "requestedAt": "2026-10-03T09:13:58.224Z",
-    "completedAt": "2026-10-03T09:14:03.354Z",
+    "requestedAt": "2026-10-07T12:08:21.337Z",
+    "completedAt": "2026-10-07T12:08:40.771Z",
     "gameVersion": null,
     "gameVersionNote": "XIVAPI asset responses did not expose a game-version header; ClassJob row IDs are tied to the MCP gameVersion above.",
     "icons": {
@@ -681,8 +709,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062119.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062119.tex&format=png",
-          "requestedAt": "2026-10-03T09:13:58.224Z",
-          "downloadedAt": "2026-10-03T09:13:59.405Z",
+          "requestedAt": "2026-10-07T12:08:21.337Z",
+          "downloadedAt": "2026-10-07T12:08:23.022Z",
           "contentType": "image/png",
           "etag": "\"a649f7d3137da362.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -702,8 +730,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062121.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062121.tex&format=png",
-          "requestedAt": "2026-10-03T09:13:58.271Z",
-          "downloadedAt": "2026-10-03T09:13:59.402Z",
+          "requestedAt": "2026-10-07T12:08:23.026Z",
+          "downloadedAt": "2026-10-07T12:08:23.739Z",
           "contentType": "image/png",
           "etag": "\"72284277a575e4df.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -723,8 +751,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062132.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062132.tex&format=png",
-          "requestedAt": "2026-10-03T09:13:58.272Z",
-          "downloadedAt": "2026-10-03T09:13:59.404Z",
+          "requestedAt": "2026-10-07T12:08:23.741Z",
+          "downloadedAt": "2026-10-07T12:08:24.440Z",
           "contentType": "image/png",
           "etag": "\"faeeaa2af3f17dc3.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -744,8 +772,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062137.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062137.tex&format=png",
-          "requestedAt": "2026-10-03T09:13:58.273Z",
-          "downloadedAt": "2026-10-03T09:13:59.397Z",
+          "requestedAt": "2026-10-07T12:08:24.442Z",
+          "downloadedAt": "2026-10-07T12:08:25.174Z",
           "contentType": "image/png",
           "etag": "\"c215cf246d22b0f1.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -765,8 +793,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062124.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062124.tex&format=png",
-          "requestedAt": "2026-10-03T09:13:59.401Z",
-          "downloadedAt": "2026-10-03T09:14:00.116Z",
+          "requestedAt": "2026-10-07T12:08:25.177Z",
+          "downloadedAt": "2026-10-07T12:08:25.908Z",
           "contentType": "image/png",
           "etag": "\"1fc3db12b05e0351.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -786,8 +814,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062128.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062128.tex&format=png",
-          "requestedAt": "2026-10-03T09:13:59.403Z",
-          "downloadedAt": "2026-10-03T09:14:00.248Z",
+          "requestedAt": "2026-10-07T12:08:25.910Z",
+          "downloadedAt": "2026-10-07T12:08:26.663Z",
           "contentType": "image/png",
           "etag": "\"b5f81ce9fe18ece0.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -807,8 +835,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062133.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062133.tex&format=png",
-          "requestedAt": "2026-10-03T09:13:59.404Z",
-          "downloadedAt": "2026-10-03T09:14:00.127Z",
+          "requestedAt": "2026-10-07T12:08:26.664Z",
+          "downloadedAt": "2026-10-07T12:08:27.395Z",
           "contentType": "image/png",
           "etag": "\"6176822b0f99013e.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -828,8 +856,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062140.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062140.tex&format=png",
-          "requestedAt": "2026-10-03T09:13:59.406Z",
-          "downloadedAt": "2026-10-03T09:14:00.129Z",
+          "requestedAt": "2026-10-07T12:08:27.396Z",
+          "downloadedAt": "2026-10-07T12:08:28.075Z",
           "contentType": "image/png",
           "etag": "\"e11d739d7c38040c.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -849,8 +877,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062120.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062120.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:00.117Z",
-          "downloadedAt": "2026-10-03T09:14:00.897Z",
+          "requestedAt": "2026-10-07T12:08:28.644Z",
+          "downloadedAt": "2026-10-07T12:08:29.358Z",
           "contentType": "image/png",
           "etag": "\"43ce678d20daf866.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -870,8 +898,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062122.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062122.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:00.127Z",
-          "downloadedAt": "2026-10-03T09:14:00.987Z",
+          "requestedAt": "2026-10-07T12:08:29.359Z",
+          "downloadedAt": "2026-10-07T12:08:30.095Z",
           "contentType": "image/png",
           "etag": "\"8b2e51c5b7f79ff0.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -891,8 +919,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062130.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062130.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:00.133Z",
-          "downloadedAt": "2026-10-03T09:14:01.004Z",
+          "requestedAt": "2026-10-07T12:08:30.096Z",
+          "downloadedAt": "2026-10-07T12:08:30.797Z",
           "contentType": "image/png",
           "etag": "\"0256c7bee88e535e.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -912,8 +940,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062134.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062134.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:00.249Z",
-          "downloadedAt": "2026-10-03T09:14:01.025Z",
+          "requestedAt": "2026-10-07T12:08:30.799Z",
+          "downloadedAt": "2026-10-07T12:08:31.490Z",
           "contentType": "image/png",
           "etag": "\"dcc0a7250cefa1fa.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -933,8 +961,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062139.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062139.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:00.898Z",
-          "downloadedAt": "2026-10-03T09:14:01.747Z",
+          "requestedAt": "2026-10-07T12:08:31.493Z",
+          "downloadedAt": "2026-10-07T12:08:32.217Z",
           "contentType": "image/png",
           "etag": "\"dbc9cb4b1750eb80.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -954,8 +982,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062141.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062141.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:00.987Z",
-          "downloadedAt": "2026-10-03T09:14:01.707Z",
+          "requestedAt": "2026-10-07T12:08:32.443Z",
+          "downloadedAt": "2026-10-07T12:08:33.127Z",
           "contentType": "image/png",
           "etag": "\"4957fc4266873f46.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -975,8 +1003,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062123.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062123.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:01.005Z",
-          "downloadedAt": "2026-10-03T09:14:01.768Z",
+          "requestedAt": "2026-10-07T12:08:33.129Z",
+          "downloadedAt": "2026-10-07T12:08:33.862Z",
           "contentType": "image/png",
           "etag": "\"ddcdc89289d0aaca.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -996,8 +1024,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062131.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062131.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:01.026Z",
-          "downloadedAt": "2026-10-03T09:14:01.754Z",
+          "requestedAt": "2026-10-07T12:08:34.089Z",
+          "downloadedAt": "2026-10-07T12:08:34.983Z",
           "contentType": "image/png",
           "etag": "\"b502c9268d1210be.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -1017,8 +1045,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062138.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062138.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:01.709Z",
-          "downloadedAt": "2026-10-03T09:14:02.569Z",
+          "requestedAt": "2026-10-07T12:08:34.983Z",
+          "downloadedAt": "2026-10-07T12:08:35.669Z",
           "contentType": "image/png",
           "etag": "\"35bc9982a8b8a3e0.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -1038,8 +1066,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062125.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062125.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:01.748Z",
-          "downloadedAt": "2026-10-03T09:14:02.483Z",
+          "requestedAt": "2026-10-07T12:08:35.761Z",
+          "downloadedAt": "2026-10-07T12:08:36.535Z",
           "contentType": "image/png",
           "etag": "\"eb90baa30e0b0f22.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -1059,8 +1087,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062127.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062127.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:01.755Z",
-          "downloadedAt": "2026-10-03T09:14:02.482Z",
+          "requestedAt": "2026-10-07T12:08:36.630Z",
+          "downloadedAt": "2026-10-07T12:08:37.377Z",
           "contentType": "image/png",
           "etag": "\"7654d70a13d87349.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -1080,8 +1108,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062135.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062135.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:01.768Z",
-          "downloadedAt": "2026-10-03T09:14:02.507Z",
+          "requestedAt": "2026-10-07T12:08:37.460Z",
+          "downloadedAt": "2026-10-07T12:08:38.166Z",
           "contentType": "image/png",
           "etag": "\"39d8af48c5724f4f.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -1101,8 +1129,8 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062142.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062142.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:02.482Z",
-          "downloadedAt": "2026-10-03T09:14:03.348Z",
+          "requestedAt": "2026-10-07T12:08:38.435Z",
+          "downloadedAt": "2026-10-07T12:08:39.153Z",
           "contentType": "image/png",
           "etag": "\"fe3a4bcafbf42c9a.541c0c12e07da325.4\"",
           "lastModified": null,
@@ -1122,10 +1150,31 @@
           "apiVersion": "v2",
           "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062136.tex&format=png",
           "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062136.tex&format=png",
-          "requestedAt": "2026-10-03T09:14:02.483Z",
-          "downloadedAt": "2026-10-03T09:14:03.203Z",
+          "requestedAt": "2026-10-07T12:08:39.240Z",
+          "downloadedAt": "2026-10-07T12:08:39.918Z",
           "contentType": "image/png",
           "etag": "\"a0859ee4cdecf4c3.541c0c12e07da325.4\"",
+          "lastModified": null,
+          "apiVersionHeader": null,
+          "gameVersionHeader": null
+        }
+      },
+      "BST": {
+        "rowId": 43,
+        "file": "BST.png",
+        "sha256": "9b0bdc2b453d837e403c3f86f91fb9b9fcc7cd702a18f1362bf7d8064bf208c6",
+        "width": 32,
+        "height": 32,
+        "byteLength": 2548,
+        "source": {
+          "service": "XIVAPI",
+          "apiVersion": "v2",
+          "requestedUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062143.tex&format=png",
+          "finalUrl": "https://v2.xivapi.com/api/asset?path=ui%2Ficon%2F062000%2F062143.tex&format=png",
+          "requestedAt": "2026-10-07T12:08:39.958Z",
+          "downloadedAt": "2026-10-07T12:08:40.679Z",
+          "contentType": "image/png",
+          "etag": "\"e85de550092bd125.541c0c12e07da325.4\"",
           "lastModified": null,
           "apiVersionHeader": null,
           "gameVersionHeader": null

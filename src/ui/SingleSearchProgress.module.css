@@ -76,12 +76,19 @@
 .modelMetricGrid > div:nth-child(-n + 3) strong { font: 18px/1.2 "DM Mono", monospace; }
 .modelMetricGrid > .modelScale strong { font-size: var(--font-size-label); }
 
-.rail { display: flex; flex: 0 0 306px; min-width: 0; min-height: 0; height: 100%; flex-direction: column; box-sizing: border-box; overflow: hidden; padding: 8px 16px 18px; border: 0; border-top: 3px solid var(--color-accent-olive); background-color: var(--color-neutral-white); background-image: linear-gradient(rgb(237 241 230 / 40%), rgb(237 241 230 / 40%)), linear-gradient(rgb(255 255 255 / 60%), rgb(255 255 255 / 60%)), url("/assets/solo-search-summary-panel-bg.jpg"); background-position: center, center, right bottom; background-size: cover, cover, cover; background-repeat: no-repeat; }
+.rail { display: flex; flex: 0 0 306px; min-width: 0; min-height: 0; height: 100%; flex-direction: column; box-sizing: border-box; overflow: visible; padding: 8px 16px 12px; }
 .summary { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
 .assurance { flex: 0 0 auto; margin: 10px 0 12px; padding-top: 10px; border-top: 1px solid var(--color-border-emphasis); color: var(--color-text-secondary); font-size: var(--font-size-caption); line-height: 16px; }
 .cancelButton { flex: 0 0 auto; width: 100%; min-height: 42px; margin-top: auto; border: 1px solid var(--color-accent-teal); border-radius: 4px; color: var(--color-neutral-white); background: var(--color-accent-teal); font-size: var(--font-size-compact); font-weight: 700; cursor: pointer; }
 .cancelButton:hover { background: #076d6e; }
 .cancelButton:focus-visible { outline: 2px solid var(--color-text-primary); outline-offset: 2px; }
+.railFooter { position: relative; z-index: 2; display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 8px; margin-top: 7px; padding-bottom: 3px; color: #75836b; font-size: 8px; }
+.advanced { position: relative; color: #087f80; }
+.advanced > summary { cursor: pointer; font-size: 10px; font-weight: 600; list-style: none; }
+.advanced > summary::-webkit-details-marker { display: none; }
+.advancedMenu { position: absolute; right: 0; bottom: calc(100% + 8px); z-index: 10; width: min(520px, calc(100vw - 32px)); max-height: min(70vh, 500px); overflow: auto; padding: 12px; border: 1px solid #cbd4c3; background: #fff; box-shadow: 0 12px 32px rgb(25 38 26 / 19%); }
+.resetButton { display: flex; min-height: 32px; align-items: center; margin: 0 0 8px auto; padding: 5px 8px; border: 1px solid #dce7e5; border-radius: 4px; background: #fff; color: #3d5a62; font: inherit; cursor: pointer; }
+.history :global(.search-history) { margin: 0; }
 
 @media (min-width: 1441px) {
   .page { max-width: none; height: calc(100vh - 72px); }

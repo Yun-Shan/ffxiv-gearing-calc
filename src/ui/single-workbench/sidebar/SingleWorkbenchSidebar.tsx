@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { Play } from "lucide-react";
+import { Play, RotateCcw } from "lucide-react";
+import { SinglePageSidePanel } from "../layout/SinglePageSidePanel";
 import styles from "./SingleWorkbenchSidebar.module.css";
 
 export function SingleWorkbenchSidebar({
@@ -7,16 +8,18 @@ export function SingleWorkbenchSidebar({
   status,
   canStartSearch,
   onStartSearch,
+  onReset,
   history,
 }: {
   summary: ReactNode;
   status: string;
   canStartSearch: boolean;
   onStartSearch: () => void;
+  onReset: () => void;
   history: ReactNode;
 }) {
   return (
-    <aside className={styles.sidebar} aria-label="当前搜索条件摘要">
+    <SinglePageSidePanel className={styles.sidebar} ariaLabel="当前搜索条件摘要">
       <div className={styles.summary}>{summary}</div>
       <div className={styles.actionbar}>
         <span className={canStartSearch ? styles.ready : styles.pending}>{status}</span>
@@ -29,9 +32,13 @@ export function SingleWorkbenchSidebar({
         <span>纯前端计算 · 可离线运行</span>
         <details className={styles.advanced}>
           <summary>高级设置</summary>
+          <button type="button" className={styles.resetButton} onClick={onReset}>
+            <RotateCcw size={13} />
+            重置当前页面配置
+          </button>
           <div className={styles.history}>{history}</div>
         </details>
       </footer>
-    </aside>
+    </SinglePageSidePanel>
   );
 }

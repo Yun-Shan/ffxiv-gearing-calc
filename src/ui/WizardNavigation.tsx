@@ -1,7 +1,6 @@
 import { Check } from "lucide-react";
 import { jobIds, jobSchemas } from "../domain";
 import type { JobId } from "../domain";
-import { jobIcons } from "./job-icons";
 
 export type WizardStep = 1 | 2 | 3 | 4;
 
@@ -15,10 +14,16 @@ const steps: { id: WizardStep; label: string; detail: string }[] = [
 const roleGroups = [
   { role: "tank", label: "防护职业" },
   { role: "healer", label: "治疗职业" },
-  { role: "str", label: "力量职业" },
-  { role: "dex", label: "灵巧职业" },
-  { role: "int", label: "智力职业" },
+  { role: "str", label: "近战物理职业" },
+  { role: "dex", label: "远程物理职业" },
+  { role: "int", label: "远程魔法职业" },
 ] as const;
+
+// NIN uses DEX as its primary stat, but belongs with melee jobs in the picker.
+const pickerRoleOverrides: Partial<Record<JobId, (typeof roleGroups)[number]["role"]>> = {
+  NIN: "str",
+  VPR: "str",
+};
 
 export function WizardProgress({
   step,
@@ -75,14 +80,28 @@ export function JobPicker({
   value: JobId | null;
   onChange: (jobId: JobId) => void;
 }) {
+  const groups = [
+    ...roleGroups.map(({ role, label }) => ({
+      id: role,
+      label,
+      jobs: jobIds.filter((jobId) =>
+        (pickerRoleOverrides[jobId] ?? jobSchemas[jobId].role) === role && !jobSchemas[jobId].isLimitedJob,
+      ),
+    })),
+    {
+      id: "limited",
+      label: "限制特职",
+      jobs: jobIds.filter((jobId) => jobSchemas[jobId].isLimitedJob),
+    },
+  ];
+
   return (
     <div className="job-groups" aria-label="按职业角色选择">
-      {roleGroups.map(({ role, label }) => {
-        const jobs = jobIds.filter((jobId) => jobSchemas[jobId].role === role);
+      {groups.map(({ id, label, jobs }) => {
         if (jobs.length === 0) return null;
         return (
-          <section className="job-group" key={role} aria-labelledby={`job-group-${role}`}>
-            <h2 className="job-group-title" id={`job-group-${role}`}>{label}</h2>
+          <section className={`job-group job-group--${id}`} key={id} aria-labelledby={`job-group-${id}`}>
+            <h2 className="job-group-title" id={`job-group-${id}`}>{label}</h2>
             <div className="job-cards">
               {jobs.map((jobId) => {
                 const selected = value === jobId;
@@ -91,11 +110,12 @@ export function JobPicker({
                     type="button"
                     className={"job-card" + (selected ? " is-selected" : "")}
                     key={jobId}
+                    aria-label={jobSchemas[jobId].name}
                     aria-pressed={selected}
                     onClick={() => onChange(jobId)}
                   >
-                    <img className="job-card-icon" src={jobIcons[jobId]} width={24} height={24} alt="" aria-hidden="true" />
-                    <span>{jobSchemas[jobId].name}</span>
+                    <span className="job-card-badge" aria-hidden="true">{jobId}</span>
+                    <span className="job-card-name">{jobSchemas[jobId].name}</span>
                   </button>
                 );
               })}

@@ -6,6 +6,11 @@
 
 export const MCP_SERVER = "ffxiv-mcp-lumina";
 
+export const supportedJobIds = [
+  "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN",
+  "SAM", "RPR", "VPR", "BRD", "MCH", "DNC", "BLM", "SMN", "RDM", "PCT", "BLU", "BST",
+];
+
 export const itemReturnFields = [
   "Name",
   "DamagePhys",
@@ -155,11 +160,6 @@ const statByBaseParam = new Map([
   [46, "SPS"],
 ]);
 
-const classJobFields = [
-  "PLD", "MNK", "WAR", "DRG", "BRD", "WHM", "BLM", "SMN", "SCH", "NIN",
-  "MCH", "DRK", "AST", "SAM", "RDM", "GNB", "DNC", "RPR", "SGE", "VPR", "PCT", "BLU",
-];
-
 function numberOrUndefined(value) {
   return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
@@ -285,7 +285,7 @@ export function normalizeMcpGearRow(row, fallback, categoryRow, options = {}) {
   const required = ["LevelItem", "LevelEquip", "ClassJobCategory", "EquipSlotCategory"];
   if (required.some((name) => itemFields[name] === undefined)) return undefined;
   const jobs = categoryFields
-    ? classJobFields.filter((job) => categoryFields[job] === true)
+    ? supportedJobIds.filter((job) => categoryFields[job] === true)
     : [];
   if (!jobs.length) return undefined;
   const rawSlot = numberOrUndefined(itemFields.EquipSlotCategory);
