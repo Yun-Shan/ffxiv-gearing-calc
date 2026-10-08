@@ -9,11 +9,13 @@ export function SingleJobResultView({
   table,
   summary,
   referenceUrl,
+  onEditConfig,
 }: {
   result: OptimizationResult;
   table: ReactNode;
   summary: ReactNode;
   referenceUrl: string;
+  onEditConfig?: () => void;
 }) {
   return (
     <div className={`${styles.workspace} single-result-workspace`}>
@@ -51,6 +53,9 @@ export function SingleJobResultView({
 
       <SinglePageSidePanel className={styles.aside} ariaLabel="配装条件摘要">
         {summary}
+        {onEditConfig && <button className={styles.editConditions} type="button" onClick={onEditConfig}>
+          编辑当前条件
+        </button>}
       </SinglePageSidePanel>
     </div>
   );

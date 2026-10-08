@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap");
 
 :root {
   --color-text-primary: #2d3d31;
@@ -35,7 +35,7 @@
   --font-size-control: 16px;
   --font-size-heading: 18px;
   --font-size-display: 24px;
-  font-family: "Manrope", "Noto Sans SC", sans-serif;
+  font-family: "Noto Sans SC", sans-serif;
   color: var(--color-text-primary);
   background: var(--color-surface-canvas);
   font-synthesis: none;
@@ -63,7 +63,7 @@ button {
   align-items: center;
 }
 .section-kicker, .footer {
-  font-family: "DM Mono", monospace;
+  font-family: "Noto Sans SC", sans-serif;
   letter-spacing: 0.08em;
 }
 .status-dot {
@@ -130,15 +130,15 @@ button {
   outline: 0;
   color: #1d2d34;
   background: transparent;
-  font-family: "DM Mono", monospace;
+  font-family: "Noto Sans SC", sans-serif;
   font-size: 12px;
 }
 .number-input-wrap span {
   padding-right: 11px;
   color: #83918d;
   font:
-    10px "DM Mono",
-    monospace;
+    10px "Noto Sans SC",
+    sans-serif;
 }
 .gcd-calculate-button {
   width: 100%;
@@ -167,8 +167,8 @@ button {
   margin-top: 7px;
   color: #83918d;
   font:
-    10px "DM Mono",
-    monospace;
+    10px "Noto Sans SC",
+    sans-serif;
 }
 .rule {
   height: 1px;
@@ -187,8 +187,8 @@ button {
   font-style: normal;
   color: #9aa9a4;
   font:
-    10px "DM Mono",
-    monospace;
+    10px "Noto Sans SC",
+    sans-serif;
 }
 .checkbox {
   width: 16px;
@@ -254,8 +254,8 @@ button {
   gap: 7px;
   color: #71817b;
   font:
-    10px "DM Mono",
-    monospace;
+    10px "Noto Sans SC",
+    sans-serif;
 }
 .metric-strip {
   display: grid;
@@ -280,8 +280,8 @@ button {
 .stat-pill strong {
   color: #243734;
   font:
-    600 20px "DM Mono",
-    monospace;
+    600 20px "Noto Sans SC",
+    sans-serif;
   letter-spacing: 0;
 }
 .stat-pill.accent {
@@ -327,8 +327,8 @@ button {
   padding: 0 15px;
   color: #879590;
   font:
-    9px "DM Mono",
-    monospace;
+    9px "Noto Sans SC",
+    sans-serif;
   text-transform: uppercase;
 }
 .gear-row, .food-row {
@@ -359,8 +359,8 @@ button {
   background: #e5ebe8;
   border: 1px solid #cad5d0;
   font:
-    10px "DM Mono",
-    monospace;
+    10px "Noto Sans SC",
+    sans-serif;
 }
 .slot-icon.food {
   color: #6d8533;
@@ -383,8 +383,8 @@ button {
 .gear-stat {
   color: #526861;
   font:
-    10px "DM Mono",
-    monospace;
+    10px "Noto Sans SC",
+    sans-serif;
   white-space: nowrap;
 }
 .gear-stat.at-cap {
@@ -401,8 +401,8 @@ button {
   color: #66852e;
   background: #edf5d6;
   font:
-    10px "DM Mono",
-    monospace;
+    10px "Noto Sans SC",
+    sans-serif;
 }
 .locked {
   display: inline-flex;
@@ -421,14 +421,14 @@ button {
 .level-tag {
   color: #60716b;
   font:
-    11px "DM Mono",
-    monospace;
+    11px "Noto Sans SC",
+    sans-serif;
 }
 .food-bonus {
   color: #71833f;
   font:
-    10px "DM Mono",
-    monospace;
+    10px "Noto Sans SC",
+    sans-serif;
 }
 .stats-grid {
   display: grid;
@@ -449,16 +449,16 @@ button {
 .stat-card span {
   color: #879690;
   font:
-    10px "DM Mono",
-    monospace;
+    10px "Noto Sans SC",
+    sans-serif;
 }
 .stat-card strong {
   display: block;
   margin: 9px 0 12px;
   color: #2c403c;
   font:
-    18px "DM Mono",
-    monospace;
+    18px "Noto Sans SC",
+    sans-serif;
 }
 .effect-summary {
   display: grid;
@@ -480,8 +480,8 @@ button {
 .effect-summary strong {
   color: #314842;
   font:
-    14px "DM Mono",
-    monospace;
+    14px "Noto Sans SC",
+    sans-serif;
 }
 .empty-state {
   min-height: 360px;
@@ -722,8 +722,8 @@ button {
   margin-left: auto;
   color: #9aa6a1;
   font:
-    10px "DM Mono",
-    monospace;
+    10px "Noto Sans SC",
+    sans-serif;
   font-style: normal;
 }
 .restriction-details {
@@ -749,7 +749,7 @@ button {
   content: "+";
   width: 13px;
   color: #71883d;
-  font: 15px "DM Mono", monospace;
+  font: 15px "Noto Sans SC", sans-serif;
 }
 .restriction-details[open] summary::before {
   content: "−";
@@ -1125,8 +1125,8 @@ button {
 .joint-score-card > div:first-child strong {
   color: #4b6627;
   font:
-    600 26px "DM Mono",
-    monospace;
+    600 26px "Noto Sans SC",
+    sans-serif;
 }
 .joint-score-card > div:first-child > span, .joint-score-meta span {
   color: #798575;
@@ -1259,8 +1259,8 @@ button {
   border: 0;
   background: transparent;
   font:
-    10px "DM Mono",
-    monospace;
+    10px "Noto Sans SC",
+    sans-serif;
 }
 .feasible-gcd-option > button:hover, .feasible-gcd-option > button.selected {
   color: #55732c;

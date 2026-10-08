@@ -17,7 +17,7 @@ import {
   dataProvenance,
   findFeasibleGcds,
   foods,
-  gears,
+  getGearById,
   gameData,
   gearOptionsFor,
   isGearBaseStatAtCap,
@@ -166,12 +166,14 @@ function searchProgressText(message: string): string {
   return "正在核验候选配装与约束…";
 }
 
-const bounds = gears.reduce(
-  ([min, max], gear) => [Math.min(min, gear.level), Math.max(max, gear.level)],
-  [Number.POSITIVE_INFINITY, 0],
-);
+const bounds = [gameData.gearMinLevel, gameData.gearMaxLevel] as const;
 const availableFoods = foods.filter((food) => food.best && food.stats.VIT);
 const defaultJobLevel = 100;
+// Mirrors the entries marked popular in Asvel's sync-level selector.
+const popularSyncLevels = [795, 735, 700, 695, 665, 635, 605, 475, 375, 345, 300] as const;
+const selectableSyncLevels = popularSyncLevels.filter((level) =>
+  gameData.levelCaps.level.includes(level),
+);
 const defaultCommonSlots: CommonSlot[] = [
   "head",
   "body",
@@ -339,6 +341,32 @@ function SelectField({
   );
 }
 
+function SyncLevelField({
+  value,
+  onChange,
+  inactiveLabel,
+  className,
+}: {
+  value: number | undefined;
+  onChange: (value: number | undefined) => void;
+  inactiveLabel: string;
+  className?: string;
+}) {
+  return (
+    <SelectField
+      label="同步品级"
+      value={value === undefined ? "" : String(value)}
+      className={className}
+      onChange={(selected) => onChange(selected === "" ? undefined : Number(selected))}
+    >
+      <option value="">{inactiveLabel}</option>
+      {selectableSyncLevels.map((level) => (
+        <option key={level} value={level}>{level}</option>
+      ))}
+    </SelectField>
+  );
+}
+
 function JobConfigFields({
   config,
   setConfig,
@@ -443,13 +471,13 @@ function JobConfigFields({
     .map(([slot, id]) => ({
       slot: slot as GearSlot,
       id: id as number,
-      gear: gears.find((item) => item.id === id),
+      gear: getGearById(id),
     }));
   const selectedForcedGear = forcedGearSelection === undefined
     ? undefined
     : jobGears.find((gear) => gear.id === forcedGearSelection);
   const excludedGears = (config.excludedGearIds ?? [])
-    .map((id) => gears.find((gear) => gear.id === id))
+    .map((id) => getGearById(id))
     .filter((gear): gear is Gear => gear !== undefined);
   const availableSlots = slotsForJob(config.jobId);
   const selectedGcds = config.gcdChoices ?? (config.gcdTarget === undefined ? [] : [config.gcdTarget]);
@@ -777,12 +805,9 @@ function JobConfigFields({
 
       {(step === "all" || step === 3) && !singleWorkbench && <div className="candidate-range-group">
         <div className="field-grid one">
-          <NumberField
-            label="同步品级"
+          <SyncLevelField
             value={config.syncLevel}
-            min={1}
-            max={bounds[1]}
-            placeholder="不启用"
+            inactiveLabel="不启用"
             onChange={(value) => update("syncLevel", value)}
           />
         </div>
@@ -1089,12 +1114,9 @@ function JobConfigFields({
       {(step === "all" || step === 3) && singleWorkbench && <SingleEquipmentRangeSection
         note={jobSchemas[config.jobId].ignoreWeaponItemLevel && <p className="field-hint">武器不按装备品级区间筛选，仍须满足职业与穿戴等级限制。</p>}
       >
-          <NumberField
-            label="同步品级"
+          <SyncLevelField
             value={config.syncLevel}
-            min={1}
-            max={bounds[1]}
-            placeholder="不限"
+            inactiveLabel="不限"
             className="single-range-sync-field"
             onChange={(value) => update("syncLevel", value)}
           />
@@ -1753,6 +1775,7 @@ function ResultPanel({
         startedAtISO={searchStartedAt}
         dataVersion={resultDataVersion}
       />}
+      onEditConfig={onEditConfig}
     />;
   }
   return (
@@ -2407,6 +2430,9 @@ function jointJobSummary(config: OptimizationConfig): string {
   const food = config.foodId === 0
     ? "自动食物"
     : foods.find((item) => item.id === config.foodId)?.name ?? "食物 " + config.foodId;
+  const sync = config.syncLevel === undefined
+    ? "同步未启用"
+    : `同步品级 ${config.syncLevel}`;
   const restrictionCount = config.excludedSources.length +
     (config.excludedGearIds?.length ?? 0) +
     Object.values(config.forcedGear).filter((id) => id !== undefined).length;
@@ -2418,7 +2444,7 @@ function jointJobSummary(config: OptimizationConfig): string {
   const tankConditions = job.role === "tank"
     ? " · 坚韧条件 " + tankConditionCount + " 项"
     : "";
-  return `${config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel} 级 · 品级 ${config.minItemLevel}–${config.maxItemLevel} · ${food} · ${gcd} · ${speed} · 限制 ${restrictionCount} 项${tankConditions}`;
+  return `${config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel} 级 · 品级 ${config.minItemLevel}–${config.maxItemLevel} · ${sync} · ${food} · ${gcd} · ${speed} · 限制 ${restrictionCount} 项${tankConditions}`;
 }
 
 function JointPage() {

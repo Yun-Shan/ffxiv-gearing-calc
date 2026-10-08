@@ -29,3 +29,5 @@ workerScope.addEventListener("message", async (event) => {
     workerScope.postMessage({ kind: "error", message: error.message, name: error.name });
   }
 });
+
+workerScope.postMessage({ kind: "ready" });

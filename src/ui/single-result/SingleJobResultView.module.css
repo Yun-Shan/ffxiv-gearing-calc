@@ -159,6 +159,25 @@
   padding: 8px 16px 18px;
 }
 
+.editConditions {
+  display: flex;
+  width: 100%;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px;
+  border: 1px solid #bfcfc8;
+  border-radius: 6px;
+  background: var(--color-neutral-white);
+  color: var(--color-accent-teal);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.editConditions:hover { border-color: var(--color-accent-olive); background: var(--color-surface-subtle); }
+.editConditions:focus-visible { outline: 2px solid var(--color-accent-olive); outline-offset: 2px; }
+
 .tableScope { flex: 0 0 auto; min-width: 0; }
 
 @media (min-width: 1600px) {

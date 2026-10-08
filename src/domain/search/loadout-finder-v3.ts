@@ -29,7 +29,7 @@ export type JointLoadoutV3Options = {
   foodStrategy: "shared" | "independent";
   /** Defaults to raw damage; DPS uses exact product/GCD fractions. */
   objective?: "damage" | "dps";
-  /** One wall-clock budget for baselines and the complete outer search; capped at 235 seconds. */
+  /** Optional wall-clock budget reserved for tests and acceptance runs; capped at 235 seconds. */
   maxSearchMs?: number;
   /** FIFO-bounded cache for restricted inner MIP results. Defaults to 2048 entries. */
   cacheLimit?: number;
@@ -66,7 +66,7 @@ export type JointLoadoutJobResultV3 = ExactMipResult & {
 
 export type JointLoadoutV3Statistics = {
   elapsedMs: number;
-  timeLimitMs: number;
+  timeLimitMs?: number;
   outerNodes: number;
   completeNodes: number;
   upperBoundPrunes: number;
@@ -105,8 +105,13 @@ type JobContext = {
 };
 type MutableStatistics = Omit<JointLoadoutV3Statistics, "elapsedMs" | "timeLimitMs" | "rssBytes" | "heapUsedBytes" | "cacheLimit">;
 
-const MAX_SEARCH_MS = 235_000;
+const MAX_ACCEPTANCE_SEARCH_MS = 235_000;
 const RSS_LIMIT_BYTES = 3.5 * 1024 * 1024 * 1024;
+
+function minimumTimeLimit(...limits: (number | undefined)[]): number | undefined {
+  const definedLimits = limits.filter((limit): limit is number => limit !== undefined);
+  return definedLimits.length === 0 ? undefined : Math.min(...definedLimits);
+}
 
 function bigintGcd(a: bigint, b: bigint): bigint {
   let left = a < 0n ? -a : a;
@@ -539,7 +544,7 @@ function makeJobOptions(
   fixed: ReadonlyMap<string, CommonChoice>,
   projections: ReadonlyMap<string, SharedSlotProjection>,
   foodChoice: FoodChoice | undefined,
-  maxSearchMs: number,
+  maxSearchMs: number | undefined,
   objective: "damage" | "dps",
   isCancelled?: () => boolean,
 ): ExactMipOptions {
@@ -571,13 +576,14 @@ function makeJobOptions(
     };
   }
 
+  const effectiveTimeLimit = minimumTimeLimit(maxSearchMs, context.job.options.maxSearchMs);
   return {
     ...context.job.options,
     slots,
     foods,
     constraints,
     objective,
-    maxSearchMs: Math.min(maxSearchMs, context.job.options.maxSearchMs ?? MAX_SEARCH_MS),
+    ...(effectiveTimeLimit === undefined ? {} : { maxSearchMs: effectiveTimeLimit }),
     ...(isCancelled === undefined ? {} : { isCancelled }),
   };
 }
@@ -585,14 +591,14 @@ function makeJobOptions(
 function statisticsSnapshot(
   mutable: MutableStatistics,
   startedAt: number,
-  timeLimitMs: number,
+  timeLimitMs: number | undefined,
   cacheLimit: number,
   cacheEntries: number,
 ): JointLoadoutV3Statistics {
   return {
     ...mutable,
     elapsedMs: performance.now() - startedAt,
-    timeLimitMs,
+    ...(timeLimitMs === undefined ? {} : { timeLimitMs }),
     cacheLimit,
     cacheEntries,
     ...getMemoryUsageSnapshot(),
@@ -604,12 +610,16 @@ export async function findBestJointLoadoutV3(
   options: JointLoadoutV3Options,
 ): Promise<JointLoadoutV3Result | undefined> {
   const startedAt = performance.now();
-  const requestedMs = options.maxSearchMs ?? MAX_SEARCH_MS;
-  if (!Number.isFinite(requestedMs) || requestedMs <= 0) {
+  const requestedMs = options.maxSearchMs;
+  if (requestedMs !== undefined && (!Number.isFinite(requestedMs) || requestedMs <= 0)) {
     throw new RangeError("V3 maxSearchMs 必须是正有限数");
   }
-  const timeLimitMs = Math.min(requestedMs, MAX_SEARCH_MS);
-  const deadline = startedAt + timeLimitMs;
+  const timeLimitMs = requestedMs === undefined
+    ? undefined
+    : Math.min(requestedMs, MAX_ACCEPTANCE_SEARCH_MS);
+  const deadline = timeLimitMs === undefined ? Number.POSITIVE_INFINITY : startedAt + timeLimitMs;
+  const remainingTimeLimit = () =>
+    timeLimitMs === undefined ? undefined : Math.floor(deadline - performance.now());
   const objective = options.objective ?? "damage";
   if (objective !== "damage" && objective !== "dps") {
     throw new RangeError("V3 objective 必须是 damage 或 dps");
@@ -638,7 +648,7 @@ export async function findBestJointLoadoutV3(
   };
   const assertWithinBudget = (stage: string) => {
     throwIfCancelled(cancellationRequested);
-    if (performance.now() >= deadline) {
+    if (timeLimitMs !== undefined && performance.now() >= deadline) {
       throw new Error(`V3 搜索超过 ${timeLimitMs}ms，未完成最优性证明（${stage}）；未返回近似结果`);
     }
     const memory = getMemoryUsageSnapshot();
@@ -765,19 +775,20 @@ export async function findBestJointLoadoutV3(
 
   assertWithinBudget("单职业最优基线");
   for (const context of contexts) {
-    const remainingMs = Math.floor(deadline - performance.now());
-    if (remainingMs <= 0) {
+    const remainingMs = remainingTimeLimit();
+    if (remainingMs !== undefined && remainingMs <= 0) {
       throw new Error(`V3 搜索超过 ${timeLimitMs}ms，未完成最优性证明（单职业最优基线）；未返回近似结果`);
     }
     mutable.innerSolves++;
     mutable.cacheMisses++;
     options.onProgress?.(`V3：正在计算 ${context.job.id} 的单职业最优伤害基线`);
     const onSolverCallback = options.onSolverCallback ?? context.job.options.onSolverCallback;
+    const exactMipTimeLimit = minimumTimeLimit(remainingMs, context.job.options.maxSearchMs);
     const optimum = await findBestLoadoutExactMip({
       ...context.job.options,
       slots: context.solverSlots,
       objective,
-      maxSearchMs: Math.min(remainingMs, context.job.options.maxSearchMs ?? MAX_SEARCH_MS),
+      ...(exactMipTimeLimit === undefined ? {} : { maxSearchMs: exactMipTimeLimit }),
       isCancelled: cancellationRequested,
       onProgress: options.onProgress === undefined
         ? context.job.options.onProgress
@@ -898,8 +909,8 @@ export async function findBestJointLoadoutV3(
 
     async function solveAndRemember(): Promise<ExactMipResult | undefined> {
       assertWithinBudget("受限单职业求解");
-      const remainingMs = Math.floor(deadline - performance.now());
-      if (remainingMs <= 0) {
+      const remainingMs = remainingTimeLimit();
+      if (remainingMs !== undefined && remainingMs <= 0) {
         throw new Error(`V3 搜索超过 ${timeLimitMs}ms，未完成最优性证明（受限单职业求解）；未返回近似结果`);
       }
       mutable.innerSolves++;
@@ -1015,7 +1026,7 @@ export async function findBestJointLoadoutV3(
       if (stopAtProvenCeiling) break;
     }
     const initialResults = best === undefined ? [] : contexts.map((context) => best!.jobResults[context.job.id]!);
-    const remainingMs = Math.floor(deadline - performance.now());
+    const remainingMs = remainingTimeLimit();
     const onSolverProgress = contexts[0]!.job.options.onSolverProgress;
     const onSolverCallback = options.onSolverCallback ?? contexts[0]!.job.options.onSolverCallback;
     const joint = stopAtProvenCeiling ? undefined : await findBestJointFactorMip({

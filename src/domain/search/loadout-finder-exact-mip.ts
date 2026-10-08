@@ -329,7 +329,9 @@ async function solveIntegerModel(
     request.integerVariables,
   );
   const lpReadyAt = performance.now();
-  const timeLimit = Math.max(0.05, request.timeLimitMs / 1000);
+  const timeLimit = request.timeLimitMs === undefined
+    ? undefined
+    : Math.max(0.05, request.timeLimitMs / 1000);
   const startedAt = performance.now();
   let lastMipCheckpointAt = startedAt;
   let modelReadyMs = 0;
@@ -337,8 +339,15 @@ async function solveIntegerModel(
   let finalStatus = "unknown";
   const result = await highs.withModel({ format: "lp", data: text }, (native) => {
     modelReadyMs = performance.now() - lpReadyAt;
-    native.options.set({ output_flag: request.onCallback !== undefined, log_to_console: false, presolve: "on",
-      mip_rel_gap: 0, mip_abs_gap: 0, mip_min_logging_interval: 1, time_limit: timeLimit });
+    native.options.set({
+      output_flag: request.onCallback !== undefined,
+      log_to_console: false,
+      presolve: "on",
+      mip_rel_gap: 0,
+      mip_abs_gap: 0,
+      mip_min_logging_interval: 1,
+      ...(timeLimit === undefined ? {} : { time_limit: timeLimit }),
+    });
     if (request.solutionHint !== undefined && request.solutionHint.size > 0) {
       const entries = [...request.solutionHint]
         .map(([name, value]) => [native.getColByName(name), value] as const)
@@ -960,7 +969,7 @@ export async function findBestJointFactorMip(options: {
   foodIdentity: (food: FoodInfo) => string;
   objective: "damage" | "dps";
   initialResults?: readonly ExactMipResult[];
-  maxSearchMs: number;
+  maxSearchMs?: number;
   onProgress?: (message: string) => void;
   onSolverProgress?: (event: LinearMipProgress) => void;
   onSolverCallback?: (event: HighsCallbackTrace) => void;
@@ -1741,8 +1750,12 @@ export async function findBestJointFactorMip(options: {
       const thresholdNumerator = best.numerator - BigInt(options.jobs.length - 1) * best.denominator;
       if (thresholdNumerator > 0n) prepareSharedPairUpperBounds(thresholdNumerator, best.denominator);
     }
-    const remaining = options.maxSearchMs - (performance.now() - startedAt);
-    if (remaining <= 0) throw new Error("联合因子 MIP 达到时限，未完成最优性复核");
+    const remaining = options.maxSearchMs === undefined
+      ? undefined
+      : options.maxSearchMs - (performance.now() - startedAt);
+    if (remaining !== undefined && remaining <= 0) {
+      throw new Error("联合因子 MIP 达到时限，未完成最优性复核");
+    }
     const memory = getMemoryUsageSnapshot();
     if (memory.rssBytes !== undefined && memory.rssBytes > 3.5 * 1024 ** 3) {
       throw new Error("联合因子 MIP 达到内存保护线");
@@ -2486,8 +2499,12 @@ export async function findBestLoadoutExactMip(
 ): Promise<ExactMipResult | undefined> {
   const startedAt = performance.now();
   throwIfCancelled(options.isCancelled);
-  const maxSearchMs = options.maxSearchMs ?? 110_000;
-  if (!Number.isFinite(maxSearchMs) || maxSearchMs <= 0) throw new RangeError("maxSearchMs 必须是正有限值");
+  const maxSearchMs = options.maxSearchMs;
+  if (maxSearchMs !== undefined && (!Number.isFinite(maxSearchMs) || maxSearchMs <= 0)) {
+    throw new RangeError("maxSearchMs 必须是正有限值");
+  }
+  const timeLimitReached = () =>
+    maxSearchMs !== undefined && performance.now() - startedAt >= maxSearchMs;
   const modelPreparationStartedAt = performance.now();
   const prepared = await prepareExactMipModel(options);
   const modelPreparationMs = performance.now() - modelPreparationStartedAt;
@@ -2649,9 +2666,12 @@ export async function findBestLoadoutExactMip(
   let solverRuns = 0;
   let solverWallMs = 0;
   const greedyMipStartStartedAt = performance.now();
+  const greedyStartDeadline = maxSearchMs === undefined
+    ? performance.now() + 100
+    : Math.min(startedAt + maxSearchMs, performance.now() + 100);
   const initialStart = greedyMipStart(options, model, useDps,
-    Math.min(startedAt + maxSearchMs, performance.now() + 100),
-    () => options.isCancelled?.() === true || performance.now() >= startedAt + maxSearchMs);
+    greedyStartDeadline,
+    () => options.isCancelled?.() === true || timeLimitReached());
   const greedyMipStartMs = performance.now() - greedyMipStartStartedAt;
   let maximumSurrogate = Number.NEGATIVE_INFINITY;
   let nextSurrogate: number | undefined;
@@ -2664,8 +2684,12 @@ export async function findBestLoadoutExactMip(
     minimumSurrogate?: number,
   ): Promise<LinearMipSolution> => {
     throwIfCancelled(options.isCancelled);
-    const remainingMs = maxSearchMs - (performance.now() - startedAt);
-    if (remainingMs <= 0) throw new Error("精确 MIP 搜索达到时限，未完成最优性证明");
+    const remainingMs = maxSearchMs === undefined
+      ? undefined
+      : maxSearchMs - (performance.now() - startedAt);
+    if (remainingMs !== undefined && remainingMs <= 0) {
+      throw new Error("精确 MIP 搜索达到时限，未完成最优性证明");
+    }
     const rows = [...model.rows];
     if (minimumSurrogate !== undefined) {
       const maximumOffset = groups.reduce((total, group) =>
@@ -2755,13 +2779,13 @@ export async function findBestLoadoutExactMip(
           incumbent: best.factors,
           qMinimum: firstSurrogate - errorBand,
           qMaximum: firstSurrogate,
-          deadline: () => performance.now() - startedAt >= maxSearchMs,
+          deadline: timeLimitReached,
           isPossiblyFeasible: isPossiblyFeasibleFactorTuple,
         });
         signatureBandElapsedMs += performance.now() - bandStartedAt;
         lastSignatureBandIncumbent = incumbentKey;
       }
-      if (performance.now() - startedAt >= maxSearchMs) {
+      if (timeLimitReached()) {
         throw new Error("精确 MIP 搜索达到时限，未完成最优性证明");
       }
       if (!lastSignatureBandMayContainBetter) {
@@ -2864,7 +2888,7 @@ export async function findBestLoadoutExactMip(
     }
     excludedSignatures.push(selectedSignature);
     options.onProgress?.(`精确候选已核验 ${excludedSignatures.length} 个；固定点上界=${surrogate}`);
-    if (performance.now() - startedAt >= maxSearchMs) {
+    if (timeLimitReached()) {
       throw new Error("精确 MIP 搜索达到时限，未完成最优性证明");
     }
   }

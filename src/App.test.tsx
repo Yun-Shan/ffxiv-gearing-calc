@@ -425,14 +425,45 @@ describe("单职业连续搜索工作台", () => {
     expect(optimizeMock).not.toHaveBeenCalled();
 
     chooseJob("SAM");
-    expect(host.querySelector(".single-workbench-heading")?.textContent).toContain(jobSchemas.SAM.name);
+    expect(host.querySelector('section[aria-label="单职业搜索参数"] h1')?.textContent).toContain(jobSchemas.SAM.name);
     expect(() => textField("职业等级")).toThrow();
     expect(textField("最低装备品级")).toBeDefined();
     expect(textField("同步品级")).toBeDefined();
     expect(textField("食物")).toBeDefined();
     expect(buttonNamed("开始搜索").disabled).toBe(false);
-    expect(host.querySelector(".single-workbench-aside")).not.toBeNull();
+    expect(host.querySelector('aside[aria-label="当前搜索条件摘要"]')).not.toBeNull();
     expect(optimizeMock).not.toHaveBeenCalled();
+  });
+
+  it("同步品级可不启用，且只提供参考项目标粗的档位", () => {
+    chooseJob("SAM");
+    const syncLevel = textField("同步品级");
+    expect(syncLevel).toBeInstanceOf(HTMLSelectElement);
+    const select = syncLevel as HTMLSelectElement;
+    expect([...select.options].map((option) => option.value)).toEqual([
+      "",
+      "795",
+      "735",
+      "700",
+      "695",
+      "665",
+      "635",
+      "605",
+      "475",
+      "375",
+      "345",
+      "300",
+    ]);
+    expect(select.value).toBe("");
+    expect(host.querySelector('aside[aria-label="当前搜索条件摘要"]')?.textContent).toContain("未启用");
+
+    selectValue("同步品级", "735");
+    expect(select.value).toBe("735");
+    expect(host.querySelector('aside[aria-label="当前搜索条件摘要"]')?.textContent).toContain("735");
+
+    selectValue("同步品级", "");
+    expect(select.value).toBe("");
+    expect(host.querySelector('aside[aria-label="当前搜索条件摘要"]')?.textContent).toContain("未启用");
   });
 
   it("按设计稿提供不限、GCD 档位和自定义速度三种互斥状态", async () => {
@@ -443,16 +474,15 @@ describe("单职业连续搜索工作台", () => {
       ["multiple", "指定 GCD 档位"],
       ["speed", "自定义速度范围"],
     ]);
-    expect(mode().value).toBe("speed");
+    expect(mode().value).toBe("any");
     expect(host.querySelector(".single-objective-display")?.textContent).toContain("每秒每威力伤害期望");
     expect(host.querySelector(".single-gcd-choice-trigger")).toBeNull();
-    expect(host.querySelector(".single-speed-inline")).not.toBeNull();
-    expect(textField("最低技速").value).toBe("");
-    expect(textField("最高技速").value).toBe("");
-    expect(host.querySelector(".single-speed-separator")?.textContent).toBe("–");
+    expect(host.querySelector(".single-speed-inline")).toBeNull();
+    expect(() => textField("最低技速")).toThrow();
+    expect(() => textField("最高技速")).toThrow();
     expect(buttonNamed("开始搜索").disabled).toBe(false);
-    expect(host.querySelector(".single-workbench-actionbar")?.textContent).toContain("已就绪");
-    expect(textField("坚韧方式")).toBeDefined();
+    expect(host.querySelector('aside[aria-label="当前搜索条件摘要"]')?.textContent).toContain("已就绪");
+    expect(textField("坚韧约束")).toBeDefined();
 
     selectAriaValue("GCD 约束类型", "multiple");
     expect(host.querySelector(".single-gcd-choice-trigger")?.textContent).toContain("正在查询档位");
@@ -481,6 +511,9 @@ describe("单职业连续搜索工作台", () => {
 
     selectAriaValue("GCD 约束类型", "speed");
     expect(host.querySelector(".single-speed-inline > span:first-child")?.textContent).toBe("技速");
+    expect(textField("最低技速").value).toBe("");
+    expect(textField("最高技速").value).toBe("");
+    expect(host.querySelector(".single-speed-separator")?.textContent).toBe("–");
     expect(buttonNamed("开始搜索").disabled).toBe(false);
     inputValue("最低技速", "1234");
     await settleApp(340);
@@ -629,8 +662,11 @@ describe("单职业连续搜索工作台", () => {
       variableCount: 3281,
       rowCount: 358,
     }));
-    expect(host.textContent).toContain("已找到待核验方案，正在检查是否还有更优方案");
+    expect(host.textContent).toContain("已找到可行方案，正在继续搜索更优配装");
     act(() => callbacks?.onProgress?.("精确候选已核验 1 个；固定点上界=123"));
+    expect(host.textContent).toContain("已找到待核验方案，正在检查是否还有更优方案");
+    expect(host.querySelector('[aria-label="搜索阶段"] [aria-current="step"]')?.textContent)
+      .toContain("核验候选与最优性");
     expect(host.textContent).not.toContain("已核验 1 组");
     expect(host.textContent).not.toContain("第 2 轮");
     act(() => callbacks?.onSolverProgress?.({
@@ -667,8 +703,8 @@ describe("单职业连续搜索工作台", () => {
       ],
       foodCount: 1,
     }));
-    expect(host.querySelectorAll(".single-search-candidate-slot")).toHaveLength(12);
-    expect(host.querySelector(".single-search-candidate-heading")?.textContent)
+    expect(host.querySelectorAll('[aria-label="候选数量"] strong')).toHaveLength(12);
+    expect(host.querySelector('[aria-label="候选数量"] h2')?.textContent)
       .toContain("装备与食物候选");
     click(buttonNamed("取消搜索"));
     await settleApp();
@@ -682,17 +718,18 @@ describe("单职业连续搜索工作台", () => {
 
     expect(host.querySelector(".single-result-workspace")).not.toBeNull();
     expect(host.querySelector('[aria-label="搜索阶段"]')).toBeNull();
-    const resultTitlebar = host.querySelector<HTMLElement>(".single-result-titlebar");
-    expect(normalizedText(resultTitlebar!)).toContain("配装结果");
-    expect(normalizedText(resultTitlebar!)).toContain("目标值 1.0000000");
-    expect(normalizedText(resultTitlebar!)).toContain("用时 0.0 秒");
-    expect(normalizedText(resultTitlebar!)).not.toContain("武士");
-    expect(host.querySelector(".single-result-titlebar")).not.toBeNull();
+    const resultTitle = host.querySelector<HTMLElement>("#single-result-title");
+    expect(resultTitle?.textContent).toBe("配装结果");
+    const resultHeading = resultTitle?.parentElement;
+    expect(normalizedText(resultHeading!)).toContain("目标值 1.0000000");
+    expect(normalizedText(resultHeading!)).toContain("用时 0.0 秒");
+    expect(normalizedText(resultHeading!)).not.toContain("武士");
     expect(host.querySelector(".single-result-workspace .result-toolbar h2")).toBeNull();
     expect(host.querySelector(".single-result-workspace .result-completion")).toBeNull();
     expect(host.textContent).not.toContain("基线比例");
     expect(host.textContent).not.toContain("个候选");
-    expect([...host.querySelectorAll(".single-result-workspace .result-conclusion .stat-pill")]
+    const metricsSection = host.querySelector<HTMLElement>('[aria-label="伤害指标"]');
+    expect([...metricsSection!.children]
       .map((item) => normalizedText(item.querySelector("span") ?? item))).toEqual([
       "每威力伤害期望",
       "GCD",
@@ -700,38 +737,43 @@ describe("单职业连续搜索工作台", () => {
       "直击率",
       "每秒每威力伤害期望",
     ]);
-    const resultMetrics = [...host.querySelectorAll<HTMLElement>(".single-result-workspace .result-conclusion .stat-pill")];
-    expect(resultMetrics[0]?.classList.contains("accent")).toBe(false);
-    expect(resultMetrics.at(-1)?.classList.contains("accent")).toBe(true);
-    const resultTable = host.querySelector<HTMLTableElement>(".single-result-workspace table.single-job-gear-table");
+    const resultTable = host.querySelector<HTMLTableElement>(".single-result-workspace table");
     expect(resultTable?.tagName).toBe("TABLE");
     expect(resultTable?.caption?.textContent).toContain("推荐配装装备属性表");
-    expect(resultTable?.tHead?.querySelectorAll('th[scope="col"]')).toHaveLength(11);
-    expect([...resultTable!.tBodies[0]!.rows].map((row) => row.className)).toEqual([
-      "gear-row",
-      "food-row",
-      "gear-total-row",
+    const columnHeadings = [...resultTable!.tHead!.querySelectorAll('th[scope="col"]')]
+      .map(normalizedText);
+    expect(columnHeadings).toEqual([
+      "部位", "装备名称", "来源", "品级", "魔晶石 / 生效属性",
+      "力量", "暴击", "信念", "直击", "技速", "耐力",
     ]);
-    const recommendationHeading = host.querySelector<HTMLElement>(".single-result-table-heading");
-    expect(recommendationHeading?.querySelector("h2")?.textContent).toBe("推荐配装");
-    const shareLink = recommendationHeading?.querySelector<HTMLAnchorElement>(".single-result-open-link");
+    const bodyRows = [...resultTable!.tBodies[0]!.rows];
+    expect(bodyRows).toHaveLength(2);
+    expect(bodyRows.map((row) => normalizedText(row.querySelector('th[scope="row"]')!)))
+      .toEqual(["武器", "食物"]);
+    expect(normalizedText(resultTable!.tFoot!.rows[0]!.querySelector('th[scope="row"]')!))
+      .toBe("总属性");
+    const recommendationHeading = [...host.querySelectorAll("h2")]
+      .find((heading) => normalizedText(heading) === "推荐配装");
+    expect(recommendationHeading).toBeDefined();
+    const shareLink = host.querySelector<HTMLAnchorElement>('a[href*="asvel.github.io/ffxiv-gearing/"]');
     expect(shareLink?.href).toContain("asvel.github.io/ffxiv-gearing/");
     expect(host.textContent).toContain("伤害与防御");
     expect(host.textContent).toContain("搜索条件与限制");
     expect(host.textContent).not.toContain("结果身份");
     expect(host.textContent).not.toContain("配装总属性");
-    const resultAsideSections = [...host.querySelectorAll<HTMLElement>(".single-result-aside .single-summary-section h3")]
+    const resultAside = host.querySelector<HTMLElement>('aside[aria-label="配装条件摘要"]');
+    const resultAsideSections = [...resultAside!.querySelectorAll("h3")]
       .map((heading) => normalizedText(heading));
     expect(resultAsideSections).toEqual(["伤害与防御", "搜索条件与限制"]);
-    const resultEffects = host.querySelector(".single-result-workspace .single-result-effects");
+    const resultEffects = [...resultAside!.querySelectorAll("section")]
+      .find((section) => normalizedText(section.querySelector("h3") ?? section) === "伤害与防御");
     expect(normalizedText(resultEffects!)).toContain("暴击伤害");
     expect(normalizedText(resultEffects!)).toContain("信念加成");
     expect(normalizedText(resultEffects!)).not.toContain("GCD");
     expect(normalizedText(resultEffects!)).not.toContain("暴击率");
     expect(normalizedText(resultEffects!)).not.toContain("直击率");
-    expect(host.querySelectorAll(".single-job-stat-heading")).toHaveLength(6);
 
-    click(buttonNamed("修改条件"));
+    click(buttonNamed("编辑当前条件"));
     expect(host.querySelector(".single-result-workspace")).toBeNull();
     expect(host.querySelector(".single-workbench-layout")).not.toBeNull();
     expect(optimizeMock).toHaveBeenCalledTimes(1);
@@ -750,7 +792,7 @@ describe("单职业连续搜索工作台", () => {
       config: { jobId: "SAM", jobLevel: jobSchemas.SAM.maxJobLevel },
     });
 
-    click(buttonNamed("修改条件"));
+    click(buttonNamed("编辑当前条件"));
     expect(() => textField("职业等级")).toThrow();
     optimizeMock.mockResolvedValueOnce(sampleResult());
     await startSearchAndSettle();
@@ -762,7 +804,7 @@ describe("单职业连续搜索工作台", () => {
       jobSchemas.SAM.maxJobLevel,
     ]);
 
-    click(buttonNamed("修改条件"));
+    click(buttonNamed("编辑当前条件"));
     openSearchHistory();
     await settleApp();
     expect(normalizedText(detailsNamed("搜索记录"))).toContain("2 次");
@@ -770,11 +812,11 @@ describe("单职业连续搜索工作台", () => {
     expect(normalizedText(firstRecord)).not.toContain(`${jobSchemas.SAM.name} · ${jobSchemas.SAM.maxJobLevel} 级 ·`);
     click(firstRecord.querySelector<HTMLButtonElement>(".search-history-load-result")!);
     expect(host.querySelector(".single-result-workspace")).not.toBeNull();
-    expect(host.querySelector(".single-result-summary, .single-condition-summary.is-result")).not.toBeNull();
+    expect(host.querySelector('aside[aria-label="配装条件摘要"]')).not.toBeNull();
     expect(host.textContent).toContain("数据版本");
     expect(host.textContent).not.toContain("职业等级");
 
-    click(buttonNamed("修改条件"));
+    click(buttonNamed("编辑当前条件"));
     await settleApp();
     openSearchHistory();
     const savedRecord = historyCardContaining(jobSchemas.SAM.name + " ·");
@@ -846,7 +888,7 @@ describe("单职业连续搜索工作台", () => {
     await settleApp();
     const legacyRecord = historyCardContaining(jobSchemas.SAM.name + " ·");
     click(legacyRecord.querySelector<HTMLButtonElement>(".search-history-load-config")!);
-    await settleApp();
+    await settleApp(240);
 
     expect(host.querySelector<HTMLSelectElement>('select[aria-label="GCD 约束类型"]')?.value).toBe("multiple");
     expect(host.querySelector(".single-gcd-choice-trigger")?.textContent).toContain("2.48");
@@ -864,31 +906,31 @@ describe("单职业连续搜索工作台", () => {
 
   it("限制详情可键盘访问，浮窗内点击保持打开，Esc 或外部点击会收起", () => {
     chooseJob("SAM");
-    const summary = host.querySelector(".single-condition-summary.is-workbench");
+    const summary = host.querySelector('aside[aria-label="当前搜索条件摘要"]');
     expect(summary).not.toBeNull();
-    const triggers = [...summary!.querySelectorAll<HTMLButtonElement>(".single-summary-popover-trigger")];
+    const triggers = [...summary!.querySelectorAll<HTMLButtonElement>('[aria-haspopup="dialog"]')];
     expect(triggers).toHaveLength(3);
     click(triggers[0]!);
     expect(triggers[0]!.getAttribute("aria-expanded")).toBe("true");
-    const panel = document.body.querySelector(".single-summary-popover-panel");
+    const panel = document.body.querySelector('[role="dialog"]');
     expect(panel).not.toBeNull();
     expect(summary!.contains(panel)).toBe(false);
-    const panelList = panel!.querySelector<HTMLElement>(".single-summary-popover-list");
+    const panelList = panel!.querySelector<HTMLElement>('[role="region"][tabindex="0"]');
     expect(panelList).not.toBeNull();
     expect(panelList!.tabIndex).toBe(0);
     expect(document.activeElement).toBe(panelList);
 
     act(() => panelList!.dispatchEvent(new Event("pointerdown", { bubbles: true })));
-    expect(document.body.querySelector(".single-summary-popover-panel")).not.toBeNull();
+    expect(document.body.querySelector('[role="dialog"]')).not.toBeNull();
 
     act(() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
-    expect(document.body.querySelector(".single-summary-popover-panel")).toBeNull();
+    expect(document.body.querySelector('[role="dialog"]')).toBeNull();
     expect(document.activeElement).toBe(triggers[0]);
 
     act(() => triggers[0]!.click());
-    expect(document.body.querySelector(".single-summary-popover-panel")).not.toBeNull();
-    act(() => host.querySelector(".single-objective-display")!.dispatchEvent(new Event("pointerdown", { bubbles: true })));
-    expect(document.body.querySelector(".single-summary-popover-panel")).toBeNull();
+    expect(document.body.querySelector('[role="dialog"]')).not.toBeNull();
+    act(() => host.querySelector('[aria-label="自动选择的搜索指标"]')!.dispatchEvent(new Event("pointerdown", { bubbles: true })));
+    expect(document.body.querySelector('[role="dialog"]')).toBeNull();
     expect(triggers[0]!.getAttribute("aria-expanded")).toBe("false");
   });
 
@@ -933,6 +975,11 @@ describe("多职业联合搜索保持现状", () => {
     const rdmCard = [...host.querySelectorAll<HTMLDetailsElement>(".job-config-card")]
       .find((card) => normalizedText(card.querySelector("summary") ?? card).includes(jobSchemas.RDM.name));
     expect(rdmCard).toBeDefined();
+    expect(rdmCard!.querySelector("summary")?.textContent).toContain("同步未启用");
+    selectValue("同步品级", "735");
+    expect(rdmCard!.querySelector("summary")?.textContent).toContain("同步品级 735");
+    selectValue("同步品级", "");
+    expect(rdmCard!.querySelector("summary")?.textContent).toContain("同步未启用");
     openDetails(rdmCard!);
     const rdmFields = rdmCard!.querySelector<HTMLElement>(".job-fields");
     expect(rdmFields?.querySelector(":scope > .job-level-field")).not.toBeNull();

@@ -68,7 +68,7 @@ export type LinearMipRequest = {
   variables: readonly LinearMipVariable[];
   binaryVariables: readonly string[];
   integerVariables: readonly string[];
-  timeLimitMs: number;
+  timeLimitMs?: number;
   solutionHint?: ReadonlyMap<string, number>;
   onProgress?: (event: LinearMipProgress) => void;
   onCallback?: (event: HighsCallbackTrace) => void;

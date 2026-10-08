@@ -138,14 +138,14 @@ describe("optimizer runtime boundaries", () => {
       .toThrow("不支持的职业等级");
   });
 
-  it("rejects unavailable sync data and preserves an Error cancellation reason", () => {
+  it("only requires sync caps when a candidate needs them and preserves an Error cancellation reason", () => {
     const controller = new AbortController();
     controller.abort(new Error("用户中止"));
     expect(() => findFeasibleGcdsLocally(configFor("SAM"), { signal: controller.signal }))
       .toThrow(expect.objectContaining({ name: "AbortError", message: "用户中止" }));
     const unavailableSync = Math.max(...gameData.levelCaps.level) + 1;
     expect(() => findFeasibleGcdsLocally({ ...configFor("SAM"), syncLevel: unavailableSync }))
-      .toThrow();
+      .not.toThrow();
   });
 
   it("uses the same GCD and DPS constraints for forced real equipment", async () => {
@@ -157,7 +157,7 @@ describe("optimizer runtime boundaries", () => {
     expect(findFeasibleGcdsLocally({ ...fixed, speedMin: Number.MAX_SAFE_INTEGER })).toEqual([]);
   }, 30_000);
 
-  it("fails closed for malformed imported materia, custom-weapon, and ring metadata", async () => {
+  it("fails closed for malformed materia and custom-weapon data, and treats missing unique as false", async () => {
     const base = configFor("SAM");
 
     const materiaWeapon = gearOptionsFor(base, "weapon")
@@ -188,7 +188,9 @@ describe("optimizer runtime boundaries", () => {
     fixed.forcedGear = { ...fixed.forcedGear, ring: ring.id, ring2: ring.id };
     Reflect.deleteProperty(ring, "unique");
     try {
-      await expect(runOptimizationLocally(fixed)).rejects.toThrow("缺少 IsUnique 上游字段");
+      const result = await runOptimizationLocally(fixed);
+      expect(result?.gear.filter((item) => item.id === ring.id).map((item) => item.slot).sort())
+        .toEqual(["ring", "ring2"]);
     } finally {
       ring.unique = originalUnique;
     }

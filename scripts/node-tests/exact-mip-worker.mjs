@@ -1,12 +1,16 @@
 import { parentPort, workerData } from "node:worker_threads";
-import {
-  createDamageGcdVectorEvaluator,
-  equippedSpeedRangeForGcd,
-  equippedToughnessForMitigationPercent,
-} from "../../src/domain/search/equipped-effects.ts";
-import { findBestLoadoutExactMip } from "../../src/domain/search/loadout-finder-exact-mip.ts";
+
+globalThis.__FFXIV_GENERATED_DATA_BINARY__ = new Uint8Array(workerData.generatedDataBinary);
 
 try {
+  const [{
+    createDamageGcdVectorEvaluator,
+    equippedSpeedRangeForGcd,
+    equippedToughnessForMitigationPercent,
+  }, { findBestLoadoutExactMip }] = await Promise.all([
+    import("../../src/domain/search/equipped-effects.ts"),
+    import("../../src/domain/search/loadout-finder-exact-mip.ts"),
+  ]);
   const statIndexes = new Map(workerData.statIndexes);
   const evaluationFunction = createDamageGcdVectorEvaluator(
     workerData.job,

@@ -1,11 +1,11 @@
-import { foods, gears, jobSchemas, type OptimizationConfig } from "../domain";
+import { foods, getGearById, jobSchemas, type OptimizationConfig } from "../domain";
 
 export function ConfigSnapshot({ config, onEdit }: {
   config: OptimizationConfig;
   onEdit?: () => void;
 }) {
   const speedName = ["healer", "int"].includes(jobSchemas[config.jobId].role) ? "咏速" : "技速";
-  const equipmentName = (id: number) => gears.find((gear) => gear.id === id)?.name ?? `装备编号 ${id}`;
+  const equipmentName = (id: number) => getGearById(id)?.name ?? `装备编号 ${id}`;
   const rows: [string, string][] = [
     ["职业与等级", `${jobSchemas[config.jobId].name} · ${config.jobLevel ?? jobSchemas[config.jobId].maxJobLevel} 级`],
     ["优化目标", config.objective === "dps" ? "按 GCD 折算" : "每威力伤害期望"],

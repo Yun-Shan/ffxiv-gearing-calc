@@ -4,7 +4,7 @@
   --accent: #087f80;
   --accent-soft: #edf8f7;
   --line: #dde5eb;
-  font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  font-family: "Noto Sans SC", sans-serif;
   color: var(--ink);
   background: #fff;
   font-variant-numeric: tabular-nums;

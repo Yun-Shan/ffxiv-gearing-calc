@@ -1,4 +1,13 @@
-import { foods, gameData, gears, materiaGradeRequiredLevels } from "./data.ts";
+import {
+  foods,
+  gameData,
+  getGearAtRecordIndex,
+  getGearById,
+  materiaGradeRequiredLevels,
+} from "./data.ts";
+import { calculateFeasibleGcdTiers } from "./gcd-tier-calculator.ts";
+import { gearOptionsFor, jobLevelFor, slotsForJob } from "./gear-options.ts";
+export { gearOptionsFor, slotsForJob } from "./gear-options.ts";
 import { currentLevel, jobSchemas } from "./jobs.ts";
 import {
   addStats,
@@ -92,12 +101,12 @@ const combatStatSet = new Set<Stat>([
 // These are vector coordinates internal to the optimizer. They are derived from
 // the generated data's Stat names and are never Lumina BaseParam row IDs.
 const attributeStats: Stat[] = (() => {
-  const stats = new Set<Stat>(["PDMG", "MDMG", "DLY"]);
-  for (const gear of gameData.gears) {
-    for (const stat of Object.keys(gear.stats) as Stat[]) {
-      if (combatStatSet.has(stat)) stats.add(stat);
-    }
-  }
+  const stats = new Set<Stat>([
+    "PDMG",
+    "MDMG",
+    "DLY",
+    ...(gameData.gearStatNames as Stat[]),
+  ]);
   for (const food of gameData.foods) {
     for (const stat of Object.keys(food.stats) as Stat[]) {
       if (combatStatSet.has(stat)) stats.add(stat);
@@ -129,29 +138,10 @@ function throwIfAborted(signal?: AbortSignal): void {
   if (signal?.aborted) throw abortError(signal.reason);
 }
 
-function jobLevelFor(config: OptimizationConfig): number {
-  const schema = jobSchemas[config.jobId];
-  if (schema === undefined) throw new RangeError(`缺少职业 ${config.jobId} 的领域规则`);
-  const maxJobLevel = schema.maxJobLevel ?? currentLevel;
-  const level = config.jobLevel ?? Math.min(currentLevel, maxJobLevel);
-  if (!Number.isSafeInteger(level) || level > maxJobLevel || !Object.hasOwn(gameData.jobLevelModifiers, level)) {
-    throw new RangeError(`不支持的职业等级：${level}`);
-  }
-  return level;
-}
-
 function jobSlots(jobId: JobId): string[] {
   return [
     ...nonRingSlotOrder.filter((slot) => slot !== "offhand" || jobId === "PLD" || jobId === "BST"),
     "rings",
-  ];
-}
-
-export function slotsForJob(jobId: JobId): GearSlot[] {
-  return [
-    ...nonRingSlotOrder.filter((slot) => slot !== "offhand" || jobId === "PLD" || jobId === "BST"),
-    "ring",
-    "ring2",
   ];
 }
 
@@ -506,10 +496,6 @@ function candidatePools(
       equipmentIdentity(candidate.equipment), candidate,
     ]),
   ).values()];
-  if (ringCandidates.some(({ gear }) => gear.unique === undefined)) {
-    const missing = ringCandidates.find(({ gear }) => gear.unique === undefined)!.gear;
-    throw new Error(`装备 ${missing.id} 缺少 IsUnique 上游字段，无法生成戒指组合`);
-  }
   const estimatedRingPairs = firstCandidates.length * secondCandidates.length;
   if (estimatedRingPairs > 1_000_000) {
     throw new Error(
@@ -519,11 +505,8 @@ function candidatePools(
   const ringPairInfos = buildRingPairEquipInfos(
     ringCandidates.map(({ equipment }) => equipment),
     (itemId) => {
-      const gear = gears.find((candidate) => candidate.id === itemId);
-      if (gear?.unique === undefined) {
-        throw new Error(`戒指装备 ${itemId} 缺少 IsUnique 上游字段`);
-      }
-      return gear.unique;
+      const gear = getGearById(itemId);
+      return gear?.unique === true;
     },
   ).filter((pair) => {
     const [first, second] = pair.ringEquips;
@@ -904,118 +887,16 @@ export function findFeasibleGcdsLocally(
   config: OptimizationConfig,
   options: SearchOptions = {},
 ): number[] {
-  throwIfAborted(options.signal);
-  const job = jobSchemas[config.jobId];
-  const speedStat = getSpeedStat(job);
-  const speedIndex = attributeIndex.get(speedStat)!;
-  const tenacityIndex = attributeIndex.get("TEN")!;
-  const prepared = prepareSearch(config, options);
-  if (prepared.slots.some((slot) => slot.candidates.length === 0) || !prepared.foods.length) return [];
-  let states = new Map<number, number>([[0, 0]]);
-  for (const slot of prepared.slots) {
-    const next = new Map<number, number>();
-    for (const [speed, tenacity] of states) {
-      for (const equipment of slot.candidates) {
-        const profile = {
-          speed: equipment.baseParams.find((param) => param.baseParamId === speedIndex)?.value ?? 0,
-          tenacity: equipment.baseParams.find((param) => param.baseParamId === tenacityIndex)?.value ?? 0,
-        };
-        const totalSpeed = speed + profile.speed;
-        const totalTenacity = tenacity + profile.tenacity;
-        next.set(totalSpeed, Math.max(next.get(totalSpeed) ?? Number.NEGATIVE_INFINITY, totalTenacity));
-      }
-    }
-    states = next;
-    if (!states.size) return [];
-  }
-  const baseStats = calculateBaseStats(job, jobLevelFor(config));
-  // Keep the best TEN contribution for every effective speed/GCD. Foods can
-  // improve speed or TEN, so evaluate them after the equipment profile is built.
-  const finalStates = new Map<number, number>();
-  for (const [speedContribution, tenacityContribution] of states) {
-    for (const food of foodsFor(config)) {
-      const applicableFood = foodStatsForJob(food, config.jobId);
-      const totalStats = applyFood(
-        {
-          ...baseStats,
-          [speedStat]: (baseStats[speedStat] ?? 0) + speedContribution,
-          TEN: (baseStats.TEN ?? 0) + tenacityContribution,
-        },
-        applicableFood.stats,
-        applicableFood.statRates,
-      );
-      const effectiveSpeedContribution = (totalStats[speedStat] ?? 0) - (baseStats[speedStat] ?? 0);
-      const effectiveTenacityContribution = (totalStats.TEN ?? 0) - (baseStats.TEN ?? 0);
-      if (config.speedMin !== undefined && (totalStats[speedStat] ?? 0) < config.speedMin) continue;
-      if (config.speedMax !== undefined && (totalStats[speedStat] ?? 0) > config.speedMax) continue;
-      const minimumTenacity = Math.max(
-        Math.max(0, (config.minTenacity ?? config.toughnessMin ?? 0) - (baseStats.TEN ?? 0)),
-        config.toughnessMinPercent === undefined
-          ? 0
-          : equippedToughnessForMitigationPercent(
-              config.jobId,
-              jobLevelFor(config),
-              config.toughnessMinPercent,
-            ),
-      );
-      finalStates.set(effectiveSpeedContribution,
-        Math.max(finalStates.get(effectiveSpeedContribution) ?? Number.NEGATIVE_INFINITY, effectiveTenacityContribution));
-      throwIfAborted(options.signal);
-    }
-  }
-  for (const [speed, tenacity] of finalStates) {
-    const minimumTenacity = Math.max(
-      Math.max(0, (config.minTenacity ?? config.toughnessMin ?? 0) - (baseStats.TEN ?? 0)),
-      config.toughnessMinPercent === undefined
-        ? 0
-        : equippedToughnessForMitigationPercent(
-            config.jobId,
-            jobLevelFor(config),
-            config.toughnessMinPercent,
-          ),
-    );
-    if (tenacity < minimumTenacity) finalStates.delete(speed);
-  }
-  const maximumTenacity = config.maximizeTenacity && job.role === "tank"
-    ? Math.max(Number.NEGATIVE_INFINITY, ...finalStates.values())
-    : undefined;
-  return [...finalStates.entries()]
-    .filter(([, tenacity]) =>
-      maximumTenacity === undefined ? true : tenacity === maximumTenacity)
-    .map(([speedContribution]) => {
-      const effects = equippedEffects(config.jobId, jobLevelFor(config), {
-        [speedStat]: speedContribution,
-      });
-      return effects?.gcd;
-    })
-    .filter((gcd): gcd is number => gcd !== undefined)
-    .filter((gcd, index, all) => all.indexOf(gcd) === index)
-    .sort((left, right) => right - left);
+  return calculateFeasibleGcdTiers(config, options, {
+    getJobLevel: jobLevelFor,
+    gearOptionsFor,
+    slotsForJob,
+  });
 }
-
 export async function findFeasibleGcds(
   config: OptimizationConfig,
   options: SearchOptions = {},
 ): Promise<number[]> {
   const { optimizeInWorker } = await import("./worker-client");
   return optimizeInWorker({ kind: "gcds", config }, options);
-}
-
-export function gearOptionsFor(config: OptimizationConfig, slot: GearSlot): Gear[] {
-  const actualSlot = slot === "ring2" ? "ring" : slot;
-  const job = jobSchemas[config.jobId];
-  const characterLevel = jobLevelFor(config);
-  const excluded = new Set(config.excludedGearIds ?? []);
-  return gears.filter((gear) =>
-    gear.slot === actualSlot &&
-    gear.equipLevel <= characterLevel &&
-    !excluded.has(gear.id) &&
-    isGearUsable(
-      gear,
-      job,
-      actualSlot === "weapon" && job.ignoreWeaponItemLevel ? 0 : config.minItemLevel,
-      actualSlot === "weapon" && job.ignoreWeaponItemLevel ? Number.POSITIVE_INFINITY : config.maxItemLevel,
-      config.excludedSources,
-    ),
-  );
 }

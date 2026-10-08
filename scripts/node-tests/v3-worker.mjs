@@ -1,7 +1,9 @@
 import { parentPort, workerData } from "node:worker_threads";
-import { runJointOptimizationLocally } from "../../src/domain/optimizer.ts";
 
 if (!parentPort) throw new Error("V3 worker 缺少 parentPort");
+
+globalThis.__FFXIV_GENERATED_DATA_BINARY__ = new Uint8Array(workerData.dataBinary);
+const { runJointOptimizationLocally } = await import("../../src/domain/optimizer.ts");
 
 try {
   const result = await runJointOptimizationLocally(workerData.config, {

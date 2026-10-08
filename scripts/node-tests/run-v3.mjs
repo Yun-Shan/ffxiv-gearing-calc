@@ -1,9 +1,17 @@
 import { createHash } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
 import { Worker } from "node:worker_threads";
-import { gameData } from "../../src/domain/data.ts";
-import { jobSchemas } from "../../src/domain/jobs.ts";
-import { slotsForJob } from "../../src/domain/optimizer.ts";
+
+const generatedDataBytes = new Uint8Array(await readFile(
+  new URL("../../src/data/generated-data.bin", import.meta.url),
+));
+globalThis.__FFXIV_GENERATED_DATA_BINARY__ = generatedDataBytes;
+const [{ gameData }, { jobSchemas }, { slotsForJob }] = await Promise.all([
+  import("../../src/domain/data.ts"),
+  import("../../src/domain/jobs.ts"),
+  import("../../src/domain/optimizer.ts"),
+]);
 
 const DEFAULT_JOBS = ["RDM", "BLM"];
 const MAX_SEARCH_MS = 235_000;
@@ -381,7 +389,7 @@ function runInWorker(config, maxSearchMs, startedAt) {
 
     try {
       worker = new Worker(new URL("./v3-worker.mjs", import.meta.url), {
-        workerData: { config },
+        workerData: { config, dataBinary: generatedDataBytes },
         resourceLimits: { maxOldGenerationSizeMb: 2560 },
       });
     } catch (error) {

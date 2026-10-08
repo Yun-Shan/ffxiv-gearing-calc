@@ -10,7 +10,7 @@ npm run data:test:v3    # 正式领域层的多职业联合搜索验收
 npm test                # Vitest 单元测试，包括 src/domain 中的规则与算法测试
 ```
 
-`data:test:v3` 从 `src/data/generated-data.json` 读取经更新器生成的数据，并调用 `runJointOptimizationLocally`。默认场景使用赤魔与黑魔、职业数据中的默认品级范围、共享非武器装备槽与共享食物、每威力伤害期望目标，搜索时限为 235 秒，进程 RSS 保护线为 3.5 GiB。验收时打印输入场景、数据版本、各职业的联合结果与单独最优基线、证明信息和统计。
+`data:test:v3` 从 `src/data/generated-data.bin` 读取经更新器生成的数据，并调用 `runJointOptimizationLocally`。默认场景使用赤魔与黑魔、职业数据中的默认品级范围、共享非武器装备槽与共享食物、每威力伤害期望目标，搜索时限为 235 秒，进程 RSS 保护线为 3.5 GiB。验收时打印输入场景、数据版本、各职业的联合结果与单独最优基线、证明信息和统计。
 
 历史验收结果可能使用不同的 MCP 查询输入、品级/同步范围和探索期脚本。当前入口使用生成数据和 UI 共用的正式候选准备路径，因此新旧记录的数字不构成同一输入场景的直接性能比较；旧运行说明保存在 `scripts/archive/旧版Node验收说明.md`。
 

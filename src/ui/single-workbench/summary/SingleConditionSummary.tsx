@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
-import { foods, gears, jobSchemas, type Gear, type GearSlot, type OptimizationConfig, type OptimizationResult } from "../../../domain";
+import { foods, getGearById, jobSchemas, type Gear, type GearSlot, type OptimizationConfig, type OptimizationResult } from "../../../domain";
 import styles from "./SingleConditionSummary.module.css";
 
 const slotLabels: Record<GearSlot, string> = {
@@ -182,9 +182,9 @@ export function SingleConditionSummary({
     : foods.find((item) => item.id === config.foodId)?.name ?? `食物编号 ${config.foodId}`;
   const forced = Object.entries(config.forcedGear)
     .filter((entry): entry is [string, number] => entry[1] !== undefined)
-    .map(([slot, id]) => ({ slot: slot as GearSlot, id, gear: gears.find((item) => item.id === id) }));
+    .map(([slot, id]) => ({ slot: slot as GearSlot, id, gear: getGearById(id) }));
   const excluded = (config.excludedGearIds ?? [])
-    .map((id) => gears.find((item) => item.id === id))
+    .map((id) => getGearById(id))
     .filter((gear): gear is Gear => gear !== undefined);
   const target = config.objective === "dps" ? "每秒每威力伤害期望" : "每威力伤害期望";
 

@@ -4,9 +4,10 @@ import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { inflateSync } from "node:zlib";
 import { allowsGenericQueries } from "./mcp-query-validation.mjs";
+import { decodeGeneratedData } from "../src/data/binary-format.mjs";
 
 const root = resolve(import.meta.dirname, "..");
-const generatedDataPath = resolve(root, "src", "data", "generated-data.json");
+const generatedDataPath = resolve(root, "src", "data", "generated-data.bin");
 const assetDir = resolve(root, "public", "assets", "jobs");
 const iconsModulePath = resolve(root, "src", "ui", "job-icons.ts");
 const snapshotPath = resolve(assetDir, "source.json");
@@ -249,7 +250,7 @@ function validateGeneratedJob(jobId, schema) {
     source.kind === "mcp" && source.server === "ffxiv-mcp-lumina" && source.sheet === "ClassJob",
   );
   if (rowSources.length !== 1 || rowSources[0].rowIds?.length !== 1)
-    throw new Error(`generated-data.json 中 ${jobId} 缺少唯一 ClassJob MCP 行来源`);
+    throw new Error(`generated-data.bin 中 ${jobId} 缺少唯一 ClassJob MCP 行来源`);
   return Number(rowSources[0].rowIds[0]);
 }
 
@@ -367,7 +368,7 @@ function buildIconsModule(jobs) {
 }
 
 async function main() {
-  const generatedData = JSON.parse(await readFile(generatedDataPath, "utf8"));
+  const generatedData = await decodeGeneratedData(await readFile(generatedDataPath));
   const jobIds = Object.keys(generatedData.jobSchemas ?? {});
   if (jobIds.length !== 23) throw new Error(`当前生成数据应包含 23 个职业，实际 ${jobIds.length} 个`);
   if (new Set(jobIds).size !== jobIds.length) throw new Error("职业 ID 重复");

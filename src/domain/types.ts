@@ -68,10 +68,8 @@ export interface Gear {
   stats: Stats;
   materiaSlots: number;
   materiaAdvanced?: true;
-  /** Item-level unique flag when it is available in the generated source data. */
+  /** Item-level unique restriction; runtime data treats an absent source value as false. */
   unique?: boolean;
-  hq?: true;
-  customizable?: true;
   customParameters?: CustomWeaponParameter[];
   source?: string;
   jobs: JobId[];
@@ -213,6 +211,7 @@ export interface OptimizationConfig {
   forcedGear: Partial<Record<GearSlot, number>>;
   sharedSlots?: GearSlot[];
   foodId: number;
+  /** Test/acceptance-only execution budget; frontend worker requests ignore this field. */
   maxSearchMs?: number;
 }
 
@@ -223,6 +222,7 @@ export interface JointOptimizationConfig {
   commonSlots: CommonGearSlot[];
   foodStrategy: "shared" | "independent";
   objective?: "damage" | "dps";
+  /** Test/acceptance-only execution budget; frontend worker requests ignore this field. */
   maxSearchMs?: number;
   cacheLimit?: number;
 }
@@ -277,7 +277,7 @@ export interface JointOptimizationResult {
   };
   statistics: {
     elapsedMs: number;
-    timeLimitMs: number;
+    timeLimitMs?: number;
     outerNodes: number;
     completeNodes: number;
     upperBoundPrunes: number;
