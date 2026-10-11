@@ -17,7 +17,8 @@ import {
   markSharedAccessoryPairDominancePath,
 } from "./shared-accessory-pair-dominance-policy.ts";
 import { gameData } from "../data.ts";
-import type { EquipInfo, FoodInfo, ParamInfo, SharedSlotProjection } from "./types.ts";
+import type { EquipInfo, FoodInfo, SharedSlotProjection } from "./types.ts";
+import { equipmentIdentity } from "./equipment-identity.ts";
 import type { Stat } from "../types.ts";
 import { getMemoryUsageSnapshot } from "./memory-usage.ts";
 import { throwIfCancelled } from "./cancellation.ts";
@@ -179,28 +180,6 @@ function integerDamageProduct(factors: IntegerDamageFactors): bigint {
     throw new RangeError(`伤害因子不是正安全整数：${values.join(",")}`);
   }
   return values.reduce((product, value) => product * BigInt(value), 1n);
-}
-
-function sortedParams(params: readonly ParamInfo[]): readonly (readonly [number, number])[] {
-  return params
-    .map(({ baseParamId, value }) => [baseParamId, value] as const)
-    .sort((left, right) => left[0] - right[0] || left[1] - right[1]);
-}
-
-/** Includes the full materia result and nested ring identities, not just itemId or summed ring stats. */
-function equipmentIdentity(equipment: EquipInfo): string {
-  const ringEquips = (equipment as EquipInfo & { ringEquips?: readonly EquipInfo[] }).ringEquips;
-  const ringKeys = ringEquips?.map(equipmentIdentity).sort();
-  return JSON.stringify({
-    ...(ringKeys === undefined ? { itemId: equipment.itemId } : {}),
-    ...(equipment.variantKey === undefined ? {} : { variantKey: equipment.variantKey }),
-    itemLevel: equipment.itemLevel,
-    baseParams: sortedParams(equipment.baseParams),
-    PDMG: equipment.PDMG,
-    MDMG: equipment.MDMG,
-    DLY: equipment.DLY,
-    ...(ringKeys === undefined ? {} : { ringEquips: ringKeys }),
-  });
 }
 
 type RingPairInfo = EquipInfo & { ringEquips: readonly [EquipInfo, EquipInfo] };

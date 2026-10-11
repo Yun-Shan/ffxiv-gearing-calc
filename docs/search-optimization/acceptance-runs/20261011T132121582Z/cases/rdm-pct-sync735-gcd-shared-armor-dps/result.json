@@ -1,0 +1,4229 @@
+{
+  "id": "rdm-pct-sync735-gcd-shared-armor-dps",
+  "title": "RDM+PCT，同步 735，730–795，共享防具与常规饰品、食物，受 GCD 约束，DPS",
+  "scenario": {
+    "id": "rdm-pct-sync735-gcd-shared-armor-dps",
+    "title": "RDM+PCT，同步 735，730–795，共享防具与常规饰品、食物，受 GCD 约束，DPS",
+    "jobs": [
+      "RDM",
+      "PCT"
+    ],
+    "itemLevelRange": [
+      730,
+      795
+    ],
+    "syncLevel": 735,
+    "objective": "dps",
+    "commonSlots": [
+      "head",
+      "body",
+      "hands",
+      "legs",
+      "feet",
+      "earrings",
+      "necklace",
+      "bracelet"
+    ],
+    "foodStrategy": "shared",
+    "jobConstraints": {
+      "RDM": {
+        "gcd": 2.48
+      },
+      "PCT": {
+        "gcdChoices": [
+          2.48,
+          2.5
+        ]
+      }
+    },
+    "searchDefaults": {
+      "maximizeTenacity": false,
+      "excludedSources": [],
+      "forcedGear": {},
+      "foodId": 0
+    },
+    "expected": {
+      "normalizedJointValueAtLeast": {
+        "numerator": "2",
+        "denominator": "1"
+      }
+    },
+    "soloObjectiveScoreAtLeast": {
+      "RDM": {
+        "minimum": 36.769120086402275,
+        "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+        "matchingRecordCount": 4,
+        "source": {
+          "record": "docs/search-optimization/耗时优化记录.7z",
+          "archivedRunId": "20261009T165822206Z",
+          "caseId": "rdm-pct-sync735-gcd-shared-armor-dps",
+          "sourceFilename": "result.json",
+          "jsonPointer": "/output/jobs/RDM/soloOptimum/objectiveScore"
+        }
+      },
+      "PCT": {
+        "minimum": 36.769120086402275,
+        "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+        "matchingRecordCount": 4,
+        "source": {
+          "record": "docs/search-optimization/耗时优化记录.7z",
+          "archivedRunId": "20261009T165822206Z",
+          "caseId": "rdm-pct-sync735-gcd-shared-armor-dps",
+          "sourceFilename": "result.json",
+          "jsonPointer": "/output/jobs/PCT/soloOptimum/objectiveScore"
+        }
+      }
+    },
+    "missingSoloObjectiveScoreThresholdJobs": [],
+    "historicalFastestMs": 4789,
+    "optimizationTargetMs": 60000,
+    "historyLabel": "当前项目最快",
+    "historySource": "docs/search-optimization/耗时优化记录.7z",
+    "strategyTags": [
+      "joint",
+      "joint-2",
+      "job-count-2",
+      "sync",
+      "shared-equipment",
+      "shared-food",
+      "gcd-constrained",
+      "objective-dps"
+    ],
+    "timeoutMs": 300000,
+    "execution": {
+      "command": "D:\\Develop\\nodejs\\node.exe",
+      "args": [
+        "--max-old-space-size=2560",
+        "--experimental-strip-types",
+        "D:\\Workspace\\AI\\ffxiv-gearing-calc\\scripts\\node-tests\\run-v3.mjs"
+      ],
+      "cwd": "D:\\Workspace\\AI\\ffxiv-gearing-calc",
+      "heapCapMiB": 2560,
+      "stdioCapture": "direct-file-descriptors",
+      "profileTiming": true,
+      "parentWatchdogTimeoutMs": 300000,
+      "runnerSearchTimeoutMs": null
+    },
+    "process": [
+      "node",
+      "--max-old-space-size=2560",
+      "--experimental-strip-types",
+      "scripts/node-tests/run-v3.mjs"
+    ],
+    "environment": {
+      "FFXIV_PROFILE_TIMING": "1"
+    },
+    "inputIntegrity": {
+      "suiteBaseline": {
+        "capturedAt": "2026-10-11T13:21:21.917Z",
+        "strategySources": [
+          {
+            "path": "docs/search-optimization/tools/run-acceptance.mjs",
+            "sha256": "3503f917a5ab9fe4a18a0bb06571704d1fff22b8a726833726068d0fddb7a5e2",
+            "bytes": 66040
+          },
+          {
+            "path": "docs/search-optimization/tools/run-single.mjs",
+            "sha256": "98fe3a4e5214b7ceb2506784b882fef52b3937ab4a557bef5bcf5a0f32d2aa78",
+            "bytes": 10620
+          },
+          {
+            "path": "docs/search-optimization/tools/single-worker.mjs",
+            "sha256": "9f91aff728d2b5d81d624d11f18e2af1929e8cfed85fd9c9d97eedd2da6b28f5",
+            "bytes": 1271
+          },
+          {
+            "path": "docs/search-optimization/tools/timing-acceptance.mjs",
+            "sha256": "3b5169d0d0dd202158246b5ab22accd157e86aa9d97016d817e35f17d460fd35",
+            "bytes": 3153
+          },
+          {
+            "path": "package-lock.json",
+            "sha256": "2115cd728a048956f4be4e57a6a7bffd4b38b2d0c9da3602556d347c2bffe1e2",
+            "bytes": 136671
+          },
+          {
+            "path": "package.json",
+            "sha256": "733a59311cd0ac2696e40e024f54d45e7541436995bd6372d5562a96a8d378f7",
+            "bytes": 1526
+          },
+          {
+            "path": "scripts/node-tests/exact-mip-worker.mjs",
+            "sha256": "f4d66d8cf555433b971a08714f85918b52af0738d4845732678faffedce6283f",
+            "bytes": 2030
+          },
+          {
+            "path": "scripts/node-tests/run-v3.mjs",
+            "sha256": "66adff7b3d5a2b1ab78e9ef29ebe2a209fd148c5dbf786e93cdeb0940bdb708b",
+            "bytes": 17964
+          },
+          {
+            "path": "scripts/node-tests/v3-worker.mjs",
+            "sha256": "5f586a5ed7c066662ff4c2b0448466694e5a18f4e9863f31f2b97a049bf56933",
+            "bytes": 1045
+          },
+          {
+            "path": "src/domain/data.ts",
+            "sha256": "6e3d29eca861bb83943de212f4d8a4b5f6b3327d62cd41971ead417b3cf56185",
+            "bytes": 7759
+          },
+          {
+            "path": "src/domain/index.ts",
+            "sha256": "0f6c87a30020f5774d4003c7c7cbba35aa28797485f386c72af5229fa43ca8ef",
+            "bytes": 127
+          },
+          {
+            "path": "src/domain/jobs.ts",
+            "sha256": "0fb771c0b388449fcb70cf444edc8e8dcbe295cce0bd8be7f159d6348c00a71e",
+            "bytes": 336
+          },
+          {
+            "path": "src/domain/optimizer.ts",
+            "sha256": "d0b36af95431c00fbb62d4569c09172ea8736cbbb5182a54ce8ec209d150dbcc",
+            "bytes": 1295
+          },
+          {
+            "path": "src/domain/optimizer.worker.ts",
+            "sha256": "ef14efc8eaae2672f7f21aaead7af686066a043a87b24ac74a9c630a4aa71422",
+            "bytes": 1811
+          },
+          {
+            "path": "src/domain/optimizer/context.ts",
+            "sha256": "3c59fbb591c36d959badfff68da18783ae6bb76da8b760394b9d694df760db5f",
+            "bytes": 3987
+          },
+          {
+            "path": "src/domain/optimizer/equipment-candidates.ts",
+            "sha256": "9206e4a1f3de2ea3c945f02d067edd4e640d34b1701c9ebf1d08b3266a9ad1e4",
+            "bytes": 23962
+          },
+          {
+            "path": "src/domain/optimizer/gcd-search.ts",
+            "sha256": "bc7caee1f67ba2635bee130ae0683567d11fee6fd4f357528792a5bbc6de0ce5",
+            "bytes": 5160
+          },
+          {
+            "path": "src/domain/optimizer/joint-search.ts",
+            "sha256": "f3edfc684ef68e3a524d2aaa5e796937336c6e625a06ffc7f30e1bc4c4c963ef",
+            "bytes": 14562
+          },
+          {
+            "path": "src/domain/optimizer/result-assembly.ts",
+            "sha256": "89c53eb4e035f47f1aa378523803ccb5fd1b032650ac355d59851c76f114bff2",
+            "bytes": 3713
+          },
+          {
+            "path": "src/domain/optimizer/search-preparation.ts",
+            "sha256": "9363f043eecb61e4f5c9fdadab6bb5af5f401d317d5b582e783fb05bac57384b",
+            "bytes": 7593
+          },
+          {
+            "path": "src/domain/optimizer/single-search.ts",
+            "sha256": "6e689fd84a48f7f9b824ab6d59c65c6b2c0670c74dbda382b0bbe3e87179a86a",
+            "bytes": 3169
+          },
+          {
+            "path": "src/domain/rules.ts",
+            "sha256": "5f7bb7cd5d825e6e4e9e507905470e037493498074b4ad2a2d149c60aadd7352",
+            "bytes": 6659
+          },
+          {
+            "path": "src/domain/search/baseline-worker-policy.ts",
+            "sha256": "b4f2b0f03170d4ce3db92fcc547ca239c045a0f4a47f80c03b221ce24feeaad0",
+            "bytes": 621
+          },
+          {
+            "path": "src/domain/search/cancellation.ts",
+            "sha256": "20ac2f8267ee705f28ab5370cae6e9475ab193037e8fbb35d60466e1b32e7d14",
+            "bytes": 202
+          },
+          {
+            "path": "src/domain/search/candidate-pareto.ts",
+            "sha256": "35b1dc71dccdd7cc1a8734d144589d39d05669b918b09369343c6ee14646db61",
+            "bytes": 4062
+          },
+          {
+            "path": "src/domain/search/candidate-resource-support-policy.ts",
+            "sha256": "7f04b0db0c4a6b639feaf56947ca97b51fffca79fc319f251513c5db84aa21b1",
+            "bytes": 9779
+          },
+          {
+            "path": "src/domain/search/equipment-candidates.ts",
+            "sha256": "f0ea04ec18cbef047a2c6ff46a26610168f6ccefa1517ba71d36c58888625fa6",
+            "bytes": 241
+          },
+          {
+            "path": "src/domain/search/equipment-identity.ts",
+            "sha256": "8d9f7ea3bbd439e4fa47bb38e5a931f6b72c2084811a7f92d5d4434b703234b3",
+            "bytes": 1072
+          },
+          {
+            "path": "src/domain/search/equipment-sync.ts",
+            "sha256": "f0bb5455717dfe131742b8e1a38b2857b9cec03006268a43582590f79b4859db",
+            "bytes": 199
+          },
+          {
+            "path": "src/domain/search/equipped-effects.ts",
+            "sha256": "2f544fec239865d5dcf9f7488eb4cbb69cbb3a803f64ea34a6849ac8451046ce",
+            "bytes": 16026
+          },
+          {
+            "path": "src/domain/search/exact-mip-candidate-upper-bound.ts",
+            "sha256": "0fcab255d2bba46e8e4eecdc3bd8219035ee6813b3cfa47be593e9ff4d06ddda",
+            "bytes": 5629
+          },
+          {
+            "path": "src/domain/search/factor-resource-budget-upper-bound.ts",
+            "sha256": "4582df7c6a21c23690a8642c796ffc953b2af485eca280b3fea016e801720e05",
+            "bytes": 6007
+          },
+          {
+            "path": "src/domain/search/highs-browser.ts",
+            "sha256": "e2ade8afd0030eafa37ef20e84f9e593eebdcc2b12ae6fbd13fcf2a854ddb71e",
+            "bytes": 250
+          },
+          {
+            "path": "src/domain/search/highs-runtime.d.ts",
+            "sha256": "81f1599e1511c3de3e313e3352e1d51f70562c4ff5cd09f1475b88d3f599656a",
+            "bytes": 92
+          },
+          {
+            "path": "src/domain/search/index.ts",
+            "sha256": "426597abdbc1842aa85addb56e9081638bcc1eb226e30bad16bd092219c929bb",
+            "bytes": 388
+          },
+          {
+            "path": "src/domain/search/joint-candidate-upper-bound.ts",
+            "sha256": "c6e5f8a8c576b9cd7ef642810f2399ee0f680debfad2378b2fd0f6b7d2d395a1",
+            "bytes": 879
+          },
+          {
+            "path": "src/domain/search/joint-substat-reachability.ts",
+            "sha256": "0ab7d79eb29e12f84aee8c95ed48a39a997e83f377a69401df2b4f5619a0fca9",
+            "bytes": 20459
+          },
+          {
+            "path": "src/domain/search/linear-mip.ts",
+            "sha256": "4d738d9aa5867d1e56bd3468a1570df45cce1428f4d5597905f77f8eb361c861",
+            "bytes": 2136
+          },
+          {
+            "path": "src/domain/search/loadout-finder-exact-mip.ts",
+            "sha256": "5237665e432bb259eebf228c94212304307ca95ffa88f029d31a9d949d955e7a",
+            "bytes": 322691
+          },
+          {
+            "path": "src/domain/search/loadout-finder-v3.ts",
+            "sha256": "63dc20de6108bccfe10233cc7df1f43b3257bc45d35049aae13e248668aa2eab",
+            "bytes": 93794
+          },
+          {
+            "path": "src/domain/search/memory-usage.ts",
+            "sha256": "258b168466f5d8ec0bfc35a531205bb6c9d16c4ecf33a6e229e1c1d05e61127a",
+            "bytes": 881
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-browser-adapter.ts",
+            "sha256": "8356939f7d28ece0df59020a7ff54962eb4fa428480a37eb4415a1dd30ebd26f",
+            "bytes": 951
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-browser.worker.ts",
+            "sha256": "4aa526576cf725895fdc93aa3d05cd505c23a59a1dcfe1f22925d3ca9124f8c6",
+            "bytes": 1429
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-executor.ts",
+            "sha256": "17a8d1c4750b9882e5c59dcd33b506c692608c0a23e9213822f3b7090d28930e",
+            "bytes": 20521
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-node-adapter.mjs",
+            "sha256": "040acb0f2a9e61be0daef3b34cc36048e450bd96d6e966493971daf54932492d",
+            "bytes": 818
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-node.worker.ts",
+            "sha256": "7985b8922497a2d9f743521cc62b2c7f00b8e602bb89f4e33493de591ed49e17",
+            "bytes": 1445
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-solver.ts",
+            "sha256": "16923d464e84c45d26772f2edbbe281a7f12419f374dc68db9faa7d0f4681a7e",
+            "bytes": 8361
+          },
+          {
+            "path": "src/domain/search/ring-pairs.ts",
+            "sha256": "43f8224539f02c6305064d5e8029784e0442581f51a222b9fe715d4d7cf6c93b",
+            "bytes": 2192
+          },
+          {
+            "path": "src/domain/search/search-types.ts",
+            "sha256": "d4a6baa0ac9300e2cedc312676de515afa55914531364b5ce80b11b3a811ef64",
+            "bytes": 632
+          },
+          {
+            "path": "src/domain/search/shared-accessory-pair-dominance-policy.ts",
+            "sha256": "56f1dd98975da7b07f4a33066ecc024ff2c307fe8413bc8609232189fbc35b8d",
+            "bytes": 2145
+          },
+          {
+            "path": "src/domain/search/shared-accessory-pair-dominance.ts",
+            "sha256": "3d4bcc92e6eafa22ab2ba23d358a8c156f35be7f9e8102d49dd39a2111848730",
+            "bytes": 5292
+          },
+          {
+            "path": "src/domain/search/signature-band.ts",
+            "sha256": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+            "bytes": 17911
+          },
+          {
+            "path": "src/domain/search/substat-factor-budget.ts",
+            "sha256": "d30d20c2e8873f40a1427257a8fc5baa0f668bea3b06459414aa98dc4b71bc19",
+            "bytes": 6286
+          },
+          {
+            "path": "src/domain/search/types.ts",
+            "sha256": "ef5a8b3b5f59a017fe6b451c7c6c8c61b320a65c7e8d4e68f23bbe20c51960ff",
+            "bytes": 1606
+          },
+          {
+            "path": "src/domain/types.ts",
+            "sha256": "712424758f10e16bc01a59b3b207dc53f07d1ce9c9cdf3b88378d6ecf78a951c",
+            "bytes": 7022
+          },
+          {
+            "path": "src/domain/worker-client.ts",
+            "sha256": "355f3e6f91ff1937e9a14edf7a5a8d2e293df44cee8e6da1424846793067c321",
+            "bytes": 4671
+          }
+        ],
+        "generatedData": {
+          "path": "src/data/generated-data.json",
+          "sha256": "879ea3412fd4641521fdfd3a0e8a70c6461a9255629213e4a493fdabcd2a19ff",
+          "bytes": 42383568
+        }
+      },
+      "before": {
+        "checkedAt": "2026-10-11T13:22:03.088Z",
+        "strategySources": [
+          {
+            "path": "docs/search-optimization/tools/run-acceptance.mjs",
+            "sha256": "3503f917a5ab9fe4a18a0bb06571704d1fff22b8a726833726068d0fddb7a5e2",
+            "bytes": 66040
+          },
+          {
+            "path": "docs/search-optimization/tools/run-single.mjs",
+            "sha256": "98fe3a4e5214b7ceb2506784b882fef52b3937ab4a557bef5bcf5a0f32d2aa78",
+            "bytes": 10620
+          },
+          {
+            "path": "docs/search-optimization/tools/single-worker.mjs",
+            "sha256": "9f91aff728d2b5d81d624d11f18e2af1929e8cfed85fd9c9d97eedd2da6b28f5",
+            "bytes": 1271
+          },
+          {
+            "path": "docs/search-optimization/tools/timing-acceptance.mjs",
+            "sha256": "3b5169d0d0dd202158246b5ab22accd157e86aa9d97016d817e35f17d460fd35",
+            "bytes": 3153
+          },
+          {
+            "path": "package-lock.json",
+            "sha256": "2115cd728a048956f4be4e57a6a7bffd4b38b2d0c9da3602556d347c2bffe1e2",
+            "bytes": 136671
+          },
+          {
+            "path": "package.json",
+            "sha256": "733a59311cd0ac2696e40e024f54d45e7541436995bd6372d5562a96a8d378f7",
+            "bytes": 1526
+          },
+          {
+            "path": "scripts/node-tests/exact-mip-worker.mjs",
+            "sha256": "f4d66d8cf555433b971a08714f85918b52af0738d4845732678faffedce6283f",
+            "bytes": 2030
+          },
+          {
+            "path": "scripts/node-tests/run-v3.mjs",
+            "sha256": "66adff7b3d5a2b1ab78e9ef29ebe2a209fd148c5dbf786e93cdeb0940bdb708b",
+            "bytes": 17964
+          },
+          {
+            "path": "scripts/node-tests/v3-worker.mjs",
+            "sha256": "5f586a5ed7c066662ff4c2b0448466694e5a18f4e9863f31f2b97a049bf56933",
+            "bytes": 1045
+          },
+          {
+            "path": "src/domain/data.ts",
+            "sha256": "6e3d29eca861bb83943de212f4d8a4b5f6b3327d62cd41971ead417b3cf56185",
+            "bytes": 7759
+          },
+          {
+            "path": "src/domain/index.ts",
+            "sha256": "0f6c87a30020f5774d4003c7c7cbba35aa28797485f386c72af5229fa43ca8ef",
+            "bytes": 127
+          },
+          {
+            "path": "src/domain/jobs.ts",
+            "sha256": "0fb771c0b388449fcb70cf444edc8e8dcbe295cce0bd8be7f159d6348c00a71e",
+            "bytes": 336
+          },
+          {
+            "path": "src/domain/optimizer.ts",
+            "sha256": "d0b36af95431c00fbb62d4569c09172ea8736cbbb5182a54ce8ec209d150dbcc",
+            "bytes": 1295
+          },
+          {
+            "path": "src/domain/optimizer.worker.ts",
+            "sha256": "ef14efc8eaae2672f7f21aaead7af686066a043a87b24ac74a9c630a4aa71422",
+            "bytes": 1811
+          },
+          {
+            "path": "src/domain/optimizer/context.ts",
+            "sha256": "3c59fbb591c36d959badfff68da18783ae6bb76da8b760394b9d694df760db5f",
+            "bytes": 3987
+          },
+          {
+            "path": "src/domain/optimizer/equipment-candidates.ts",
+            "sha256": "9206e4a1f3de2ea3c945f02d067edd4e640d34b1701c9ebf1d08b3266a9ad1e4",
+            "bytes": 23962
+          },
+          {
+            "path": "src/domain/optimizer/gcd-search.ts",
+            "sha256": "bc7caee1f67ba2635bee130ae0683567d11fee6fd4f357528792a5bbc6de0ce5",
+            "bytes": 5160
+          },
+          {
+            "path": "src/domain/optimizer/joint-search.ts",
+            "sha256": "f3edfc684ef68e3a524d2aaa5e796937336c6e625a06ffc7f30e1bc4c4c963ef",
+            "bytes": 14562
+          },
+          {
+            "path": "src/domain/optimizer/result-assembly.ts",
+            "sha256": "89c53eb4e035f47f1aa378523803ccb5fd1b032650ac355d59851c76f114bff2",
+            "bytes": 3713
+          },
+          {
+            "path": "src/domain/optimizer/search-preparation.ts",
+            "sha256": "9363f043eecb61e4f5c9fdadab6bb5af5f401d317d5b582e783fb05bac57384b",
+            "bytes": 7593
+          },
+          {
+            "path": "src/domain/optimizer/single-search.ts",
+            "sha256": "6e689fd84a48f7f9b824ab6d59c65c6b2c0670c74dbda382b0bbe3e87179a86a",
+            "bytes": 3169
+          },
+          {
+            "path": "src/domain/rules.ts",
+            "sha256": "5f7bb7cd5d825e6e4e9e507905470e037493498074b4ad2a2d149c60aadd7352",
+            "bytes": 6659
+          },
+          {
+            "path": "src/domain/search/baseline-worker-policy.ts",
+            "sha256": "b4f2b0f03170d4ce3db92fcc547ca239c045a0f4a47f80c03b221ce24feeaad0",
+            "bytes": 621
+          },
+          {
+            "path": "src/domain/search/cancellation.ts",
+            "sha256": "20ac2f8267ee705f28ab5370cae6e9475ab193037e8fbb35d60466e1b32e7d14",
+            "bytes": 202
+          },
+          {
+            "path": "src/domain/search/candidate-pareto.ts",
+            "sha256": "35b1dc71dccdd7cc1a8734d144589d39d05669b918b09369343c6ee14646db61",
+            "bytes": 4062
+          },
+          {
+            "path": "src/domain/search/candidate-resource-support-policy.ts",
+            "sha256": "7f04b0db0c4a6b639feaf56947ca97b51fffca79fc319f251513c5db84aa21b1",
+            "bytes": 9779
+          },
+          {
+            "path": "src/domain/search/equipment-candidates.ts",
+            "sha256": "f0ea04ec18cbef047a2c6ff46a26610168f6ccefa1517ba71d36c58888625fa6",
+            "bytes": 241
+          },
+          {
+            "path": "src/domain/search/equipment-identity.ts",
+            "sha256": "8d9f7ea3bbd439e4fa47bb38e5a931f6b72c2084811a7f92d5d4434b703234b3",
+            "bytes": 1072
+          },
+          {
+            "path": "src/domain/search/equipment-sync.ts",
+            "sha256": "f0bb5455717dfe131742b8e1a38b2857b9cec03006268a43582590f79b4859db",
+            "bytes": 199
+          },
+          {
+            "path": "src/domain/search/equipped-effects.ts",
+            "sha256": "2f544fec239865d5dcf9f7488eb4cbb69cbb3a803f64ea34a6849ac8451046ce",
+            "bytes": 16026
+          },
+          {
+            "path": "src/domain/search/exact-mip-candidate-upper-bound.ts",
+            "sha256": "0fcab255d2bba46e8e4eecdc3bd8219035ee6813b3cfa47be593e9ff4d06ddda",
+            "bytes": 5629
+          },
+          {
+            "path": "src/domain/search/factor-resource-budget-upper-bound.ts",
+            "sha256": "4582df7c6a21c23690a8642c796ffc953b2af485eca280b3fea016e801720e05",
+            "bytes": 6007
+          },
+          {
+            "path": "src/domain/search/highs-browser.ts",
+            "sha256": "e2ade8afd0030eafa37ef20e84f9e593eebdcc2b12ae6fbd13fcf2a854ddb71e",
+            "bytes": 250
+          },
+          {
+            "path": "src/domain/search/highs-runtime.d.ts",
+            "sha256": "81f1599e1511c3de3e313e3352e1d51f70562c4ff5cd09f1475b88d3f599656a",
+            "bytes": 92
+          },
+          {
+            "path": "src/domain/search/index.ts",
+            "sha256": "426597abdbc1842aa85addb56e9081638bcc1eb226e30bad16bd092219c929bb",
+            "bytes": 388
+          },
+          {
+            "path": "src/domain/search/joint-candidate-upper-bound.ts",
+            "sha256": "c6e5f8a8c576b9cd7ef642810f2399ee0f680debfad2378b2fd0f6b7d2d395a1",
+            "bytes": 879
+          },
+          {
+            "path": "src/domain/search/joint-substat-reachability.ts",
+            "sha256": "0ab7d79eb29e12f84aee8c95ed48a39a997e83f377a69401df2b4f5619a0fca9",
+            "bytes": 20459
+          },
+          {
+            "path": "src/domain/search/linear-mip.ts",
+            "sha256": "4d738d9aa5867d1e56bd3468a1570df45cce1428f4d5597905f77f8eb361c861",
+            "bytes": 2136
+          },
+          {
+            "path": "src/domain/search/loadout-finder-exact-mip.ts",
+            "sha256": "5237665e432bb259eebf228c94212304307ca95ffa88f029d31a9d949d955e7a",
+            "bytes": 322691
+          },
+          {
+            "path": "src/domain/search/loadout-finder-v3.ts",
+            "sha256": "63dc20de6108bccfe10233cc7df1f43b3257bc45d35049aae13e248668aa2eab",
+            "bytes": 93794
+          },
+          {
+            "path": "src/domain/search/memory-usage.ts",
+            "sha256": "258b168466f5d8ec0bfc35a531205bb6c9d16c4ecf33a6e229e1c1d05e61127a",
+            "bytes": 881
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-browser-adapter.ts",
+            "sha256": "8356939f7d28ece0df59020a7ff54962eb4fa428480a37eb4415a1dd30ebd26f",
+            "bytes": 951
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-browser.worker.ts",
+            "sha256": "4aa526576cf725895fdc93aa3d05cd505c23a59a1dcfe1f22925d3ca9124f8c6",
+            "bytes": 1429
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-executor.ts",
+            "sha256": "17a8d1c4750b9882e5c59dcd33b506c692608c0a23e9213822f3b7090d28930e",
+            "bytes": 20521
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-node-adapter.mjs",
+            "sha256": "040acb0f2a9e61be0daef3b34cc36048e450bd96d6e966493971daf54932492d",
+            "bytes": 818
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-node.worker.ts",
+            "sha256": "7985b8922497a2d9f743521cc62b2c7f00b8e602bb89f4e33493de591ed49e17",
+            "bytes": 1445
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-solver.ts",
+            "sha256": "16923d464e84c45d26772f2edbbe281a7f12419f374dc68db9faa7d0f4681a7e",
+            "bytes": 8361
+          },
+          {
+            "path": "src/domain/search/ring-pairs.ts",
+            "sha256": "43f8224539f02c6305064d5e8029784e0442581f51a222b9fe715d4d7cf6c93b",
+            "bytes": 2192
+          },
+          {
+            "path": "src/domain/search/search-types.ts",
+            "sha256": "d4a6baa0ac9300e2cedc312676de515afa55914531364b5ce80b11b3a811ef64",
+            "bytes": 632
+          },
+          {
+            "path": "src/domain/search/shared-accessory-pair-dominance-policy.ts",
+            "sha256": "56f1dd98975da7b07f4a33066ecc024ff2c307fe8413bc8609232189fbc35b8d",
+            "bytes": 2145
+          },
+          {
+            "path": "src/domain/search/shared-accessory-pair-dominance.ts",
+            "sha256": "3d4bcc92e6eafa22ab2ba23d358a8c156f35be7f9e8102d49dd39a2111848730",
+            "bytes": 5292
+          },
+          {
+            "path": "src/domain/search/signature-band.ts",
+            "sha256": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+            "bytes": 17911
+          },
+          {
+            "path": "src/domain/search/substat-factor-budget.ts",
+            "sha256": "d30d20c2e8873f40a1427257a8fc5baa0f668bea3b06459414aa98dc4b71bc19",
+            "bytes": 6286
+          },
+          {
+            "path": "src/domain/search/types.ts",
+            "sha256": "ef5a8b3b5f59a017fe6b451c7c6c8c61b320a65c7e8d4e68f23bbe20c51960ff",
+            "bytes": 1606
+          },
+          {
+            "path": "src/domain/types.ts",
+            "sha256": "712424758f10e16bc01a59b3b207dc53f07d1ce9c9cdf3b88378d6ecf78a951c",
+            "bytes": 7022
+          },
+          {
+            "path": "src/domain/worker-client.ts",
+            "sha256": "355f3e6f91ff1937e9a14edf7a5a8d2e293df44cee8e6da1424846793067c321",
+            "bytes": 4671
+          }
+        ],
+        "captureErrors": [],
+        "generatedData": {
+          "path": "src/data/generated-data.json",
+          "sha256": "879ea3412fd4641521fdfd3a0e8a70c6461a9255629213e4a493fdabcd2a19ff",
+          "bytes": 42383568
+        }
+      },
+      "beforeChangedPaths": [],
+      "after": {
+        "checkedAt": "2026-10-11T13:22:08.675Z",
+        "strategySources": [
+          {
+            "path": "docs/search-optimization/tools/run-acceptance.mjs",
+            "sha256": "3503f917a5ab9fe4a18a0bb06571704d1fff22b8a726833726068d0fddb7a5e2",
+            "bytes": 66040
+          },
+          {
+            "path": "docs/search-optimization/tools/run-single.mjs",
+            "sha256": "98fe3a4e5214b7ceb2506784b882fef52b3937ab4a557bef5bcf5a0f32d2aa78",
+            "bytes": 10620
+          },
+          {
+            "path": "docs/search-optimization/tools/single-worker.mjs",
+            "sha256": "9f91aff728d2b5d81d624d11f18e2af1929e8cfed85fd9c9d97eedd2da6b28f5",
+            "bytes": 1271
+          },
+          {
+            "path": "docs/search-optimization/tools/timing-acceptance.mjs",
+            "sha256": "3b5169d0d0dd202158246b5ab22accd157e86aa9d97016d817e35f17d460fd35",
+            "bytes": 3153
+          },
+          {
+            "path": "package-lock.json",
+            "sha256": "2115cd728a048956f4be4e57a6a7bffd4b38b2d0c9da3602556d347c2bffe1e2",
+            "bytes": 136671
+          },
+          {
+            "path": "package.json",
+            "sha256": "733a59311cd0ac2696e40e024f54d45e7541436995bd6372d5562a96a8d378f7",
+            "bytes": 1526
+          },
+          {
+            "path": "scripts/node-tests/exact-mip-worker.mjs",
+            "sha256": "f4d66d8cf555433b971a08714f85918b52af0738d4845732678faffedce6283f",
+            "bytes": 2030
+          },
+          {
+            "path": "scripts/node-tests/run-v3.mjs",
+            "sha256": "66adff7b3d5a2b1ab78e9ef29ebe2a209fd148c5dbf786e93cdeb0940bdb708b",
+            "bytes": 17964
+          },
+          {
+            "path": "scripts/node-tests/v3-worker.mjs",
+            "sha256": "5f586a5ed7c066662ff4c2b0448466694e5a18f4e9863f31f2b97a049bf56933",
+            "bytes": 1045
+          },
+          {
+            "path": "src/domain/data.ts",
+            "sha256": "6e3d29eca861bb83943de212f4d8a4b5f6b3327d62cd41971ead417b3cf56185",
+            "bytes": 7759
+          },
+          {
+            "path": "src/domain/index.ts",
+            "sha256": "0f6c87a30020f5774d4003c7c7cbba35aa28797485f386c72af5229fa43ca8ef",
+            "bytes": 127
+          },
+          {
+            "path": "src/domain/jobs.ts",
+            "sha256": "0fb771c0b388449fcb70cf444edc8e8dcbe295cce0bd8be7f159d6348c00a71e",
+            "bytes": 336
+          },
+          {
+            "path": "src/domain/optimizer.ts",
+            "sha256": "d0b36af95431c00fbb62d4569c09172ea8736cbbb5182a54ce8ec209d150dbcc",
+            "bytes": 1295
+          },
+          {
+            "path": "src/domain/optimizer.worker.ts",
+            "sha256": "ef14efc8eaae2672f7f21aaead7af686066a043a87b24ac74a9c630a4aa71422",
+            "bytes": 1811
+          },
+          {
+            "path": "src/domain/optimizer/context.ts",
+            "sha256": "3c59fbb591c36d959badfff68da18783ae6bb76da8b760394b9d694df760db5f",
+            "bytes": 3987
+          },
+          {
+            "path": "src/domain/optimizer/equipment-candidates.ts",
+            "sha256": "9206e4a1f3de2ea3c945f02d067edd4e640d34b1701c9ebf1d08b3266a9ad1e4",
+            "bytes": 23962
+          },
+          {
+            "path": "src/domain/optimizer/gcd-search.ts",
+            "sha256": "bc7caee1f67ba2635bee130ae0683567d11fee6fd4f357528792a5bbc6de0ce5",
+            "bytes": 5160
+          },
+          {
+            "path": "src/domain/optimizer/joint-search.ts",
+            "sha256": "f3edfc684ef68e3a524d2aaa5e796937336c6e625a06ffc7f30e1bc4c4c963ef",
+            "bytes": 14562
+          },
+          {
+            "path": "src/domain/optimizer/result-assembly.ts",
+            "sha256": "89c53eb4e035f47f1aa378523803ccb5fd1b032650ac355d59851c76f114bff2",
+            "bytes": 3713
+          },
+          {
+            "path": "src/domain/optimizer/search-preparation.ts",
+            "sha256": "9363f043eecb61e4f5c9fdadab6bb5af5f401d317d5b582e783fb05bac57384b",
+            "bytes": 7593
+          },
+          {
+            "path": "src/domain/optimizer/single-search.ts",
+            "sha256": "6e689fd84a48f7f9b824ab6d59c65c6b2c0670c74dbda382b0bbe3e87179a86a",
+            "bytes": 3169
+          },
+          {
+            "path": "src/domain/rules.ts",
+            "sha256": "5f7bb7cd5d825e6e4e9e507905470e037493498074b4ad2a2d149c60aadd7352",
+            "bytes": 6659
+          },
+          {
+            "path": "src/domain/search/baseline-worker-policy.ts",
+            "sha256": "b4f2b0f03170d4ce3db92fcc547ca239c045a0f4a47f80c03b221ce24feeaad0",
+            "bytes": 621
+          },
+          {
+            "path": "src/domain/search/cancellation.ts",
+            "sha256": "20ac2f8267ee705f28ab5370cae6e9475ab193037e8fbb35d60466e1b32e7d14",
+            "bytes": 202
+          },
+          {
+            "path": "src/domain/search/candidate-pareto.ts",
+            "sha256": "35b1dc71dccdd7cc1a8734d144589d39d05669b918b09369343c6ee14646db61",
+            "bytes": 4062
+          },
+          {
+            "path": "src/domain/search/candidate-resource-support-policy.ts",
+            "sha256": "7f04b0db0c4a6b639feaf56947ca97b51fffca79fc319f251513c5db84aa21b1",
+            "bytes": 9779
+          },
+          {
+            "path": "src/domain/search/equipment-candidates.ts",
+            "sha256": "f0ea04ec18cbef047a2c6ff46a26610168f6ccefa1517ba71d36c58888625fa6",
+            "bytes": 241
+          },
+          {
+            "path": "src/domain/search/equipment-identity.ts",
+            "sha256": "8d9f7ea3bbd439e4fa47bb38e5a931f6b72c2084811a7f92d5d4434b703234b3",
+            "bytes": 1072
+          },
+          {
+            "path": "src/domain/search/equipment-sync.ts",
+            "sha256": "f0bb5455717dfe131742b8e1a38b2857b9cec03006268a43582590f79b4859db",
+            "bytes": 199
+          },
+          {
+            "path": "src/domain/search/equipped-effects.ts",
+            "sha256": "2f544fec239865d5dcf9f7488eb4cbb69cbb3a803f64ea34a6849ac8451046ce",
+            "bytes": 16026
+          },
+          {
+            "path": "src/domain/search/exact-mip-candidate-upper-bound.ts",
+            "sha256": "0fcab255d2bba46e8e4eecdc3bd8219035ee6813b3cfa47be593e9ff4d06ddda",
+            "bytes": 5629
+          },
+          {
+            "path": "src/domain/search/factor-resource-budget-upper-bound.ts",
+            "sha256": "4582df7c6a21c23690a8642c796ffc953b2af485eca280b3fea016e801720e05",
+            "bytes": 6007
+          },
+          {
+            "path": "src/domain/search/highs-browser.ts",
+            "sha256": "e2ade8afd0030eafa37ef20e84f9e593eebdcc2b12ae6fbd13fcf2a854ddb71e",
+            "bytes": 250
+          },
+          {
+            "path": "src/domain/search/highs-runtime.d.ts",
+            "sha256": "81f1599e1511c3de3e313e3352e1d51f70562c4ff5cd09f1475b88d3f599656a",
+            "bytes": 92
+          },
+          {
+            "path": "src/domain/search/index.ts",
+            "sha256": "426597abdbc1842aa85addb56e9081638bcc1eb226e30bad16bd092219c929bb",
+            "bytes": 388
+          },
+          {
+            "path": "src/domain/search/joint-candidate-upper-bound.ts",
+            "sha256": "c6e5f8a8c576b9cd7ef642810f2399ee0f680debfad2378b2fd0f6b7d2d395a1",
+            "bytes": 879
+          },
+          {
+            "path": "src/domain/search/joint-substat-reachability.ts",
+            "sha256": "0ab7d79eb29e12f84aee8c95ed48a39a997e83f377a69401df2b4f5619a0fca9",
+            "bytes": 20459
+          },
+          {
+            "path": "src/domain/search/linear-mip.ts",
+            "sha256": "4d738d9aa5867d1e56bd3468a1570df45cce1428f4d5597905f77f8eb361c861",
+            "bytes": 2136
+          },
+          {
+            "path": "src/domain/search/loadout-finder-exact-mip.ts",
+            "sha256": "5237665e432bb259eebf228c94212304307ca95ffa88f029d31a9d949d955e7a",
+            "bytes": 322691
+          },
+          {
+            "path": "src/domain/search/loadout-finder-v3.ts",
+            "sha256": "63dc20de6108bccfe10233cc7df1f43b3257bc45d35049aae13e248668aa2eab",
+            "bytes": 93794
+          },
+          {
+            "path": "src/domain/search/memory-usage.ts",
+            "sha256": "258b168466f5d8ec0bfc35a531205bb6c9d16c4ecf33a6e229e1c1d05e61127a",
+            "bytes": 881
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-browser-adapter.ts",
+            "sha256": "8356939f7d28ece0df59020a7ff54962eb4fa428480a37eb4415a1dd30ebd26f",
+            "bytes": 951
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-browser.worker.ts",
+            "sha256": "4aa526576cf725895fdc93aa3d05cd505c23a59a1dcfe1f22925d3ca9124f8c6",
+            "bytes": 1429
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-executor.ts",
+            "sha256": "17a8d1c4750b9882e5c59dcd33b506c692608c0a23e9213822f3b7090d28930e",
+            "bytes": 20521
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-node-adapter.mjs",
+            "sha256": "040acb0f2a9e61be0daef3b34cc36048e450bd96d6e966493971daf54932492d",
+            "bytes": 818
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-node.worker.ts",
+            "sha256": "7985b8922497a2d9f743521cc62b2c7f00b8e602bb89f4e33493de591ed49e17",
+            "bytes": 1445
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-solver.ts",
+            "sha256": "16923d464e84c45d26772f2edbbe281a7f12419f374dc68db9faa7d0f4681a7e",
+            "bytes": 8361
+          },
+          {
+            "path": "src/domain/search/ring-pairs.ts",
+            "sha256": "43f8224539f02c6305064d5e8029784e0442581f51a222b9fe715d4d7cf6c93b",
+            "bytes": 2192
+          },
+          {
+            "path": "src/domain/search/search-types.ts",
+            "sha256": "d4a6baa0ac9300e2cedc312676de515afa55914531364b5ce80b11b3a811ef64",
+            "bytes": 632
+          },
+          {
+            "path": "src/domain/search/shared-accessory-pair-dominance-policy.ts",
+            "sha256": "56f1dd98975da7b07f4a33066ecc024ff2c307fe8413bc8609232189fbc35b8d",
+            "bytes": 2145
+          },
+          {
+            "path": "src/domain/search/shared-accessory-pair-dominance.ts",
+            "sha256": "3d4bcc92e6eafa22ab2ba23d358a8c156f35be7f9e8102d49dd39a2111848730",
+            "bytes": 5292
+          },
+          {
+            "path": "src/domain/search/signature-band.ts",
+            "sha256": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+            "bytes": 17911
+          },
+          {
+            "path": "src/domain/search/substat-factor-budget.ts",
+            "sha256": "d30d20c2e8873f40a1427257a8fc5baa0f668bea3b06459414aa98dc4b71bc19",
+            "bytes": 6286
+          },
+          {
+            "path": "src/domain/search/types.ts",
+            "sha256": "ef5a8b3b5f59a017fe6b451c7c6c8c61b320a65c7e8d4e68f23bbe20c51960ff",
+            "bytes": 1606
+          },
+          {
+            "path": "src/domain/types.ts",
+            "sha256": "712424758f10e16bc01a59b3b207dc53f07d1ce9c9cdf3b88378d6ecf78a951c",
+            "bytes": 7022
+          },
+          {
+            "path": "src/domain/worker-client.ts",
+            "sha256": "355f3e6f91ff1937e9a14edf7a5a8d2e293df44cee8e6da1424846793067c321",
+            "bytes": 4671
+          }
+        ],
+        "captureErrors": [],
+        "generatedData": {
+          "path": "src/data/generated-data.json",
+          "sha256": "879ea3412fd4641521fdfd3a0e8a70c6461a9255629213e4a493fdabcd2a19ff",
+          "bytes": 42383568
+        }
+      },
+      "afterChangedPaths": [],
+      "changedPaths": [],
+      "status": "matched-through-case"
+    }
+  },
+  "startedAt": "2026-10-11T13:22:03.154Z",
+  "finishedAt": "2026-10-11T13:22:08.739Z",
+  "elapsedWallMs": 5492,
+  "childStarted": true,
+  "childExitCode": 0,
+  "childSignal": null,
+  "interrupted": false,
+  "interruptionSignal": null,
+  "timedOut": false,
+  "spawnError": null,
+  "measuredSearchMs": 5088,
+  "optimizationTargetMs": 60000,
+  "optimizationTargetMet": true,
+  "optimizationTargetGapMs": 0,
+  "historicalFastestMs": 4789,
+  "historyLabel": "当前项目最快",
+  "historySource": "docs/search-optimization/耗时优化记录.7z",
+  "execution": {
+    "command": "D:\\Develop\\nodejs\\node.exe",
+    "args": [
+      "--max-old-space-size=2560",
+      "--experimental-strip-types",
+      "D:\\Workspace\\AI\\ffxiv-gearing-calc\\scripts\\node-tests\\run-v3.mjs"
+    ],
+    "cwd": "D:\\Workspace\\AI\\ffxiv-gearing-calc",
+    "heapCapMiB": 2560,
+    "stdioCapture": "direct-file-descriptors",
+    "profileTiming": true,
+    "parentWatchdogTimeoutMs": 300000,
+    "runnerSearchTimeoutMs": null
+  },
+  "runtimeInputIntegrity": {
+    "suiteBaseline": {
+      "capturedAt": "2026-10-11T13:21:21.917Z",
+      "strategySources": [
+        {
+          "path": "docs/search-optimization/tools/run-acceptance.mjs",
+          "sha256": "3503f917a5ab9fe4a18a0bb06571704d1fff22b8a726833726068d0fddb7a5e2",
+          "bytes": 66040
+        },
+        {
+          "path": "docs/search-optimization/tools/run-single.mjs",
+          "sha256": "98fe3a4e5214b7ceb2506784b882fef52b3937ab4a557bef5bcf5a0f32d2aa78",
+          "bytes": 10620
+        },
+        {
+          "path": "docs/search-optimization/tools/single-worker.mjs",
+          "sha256": "9f91aff728d2b5d81d624d11f18e2af1929e8cfed85fd9c9d97eedd2da6b28f5",
+          "bytes": 1271
+        },
+        {
+          "path": "docs/search-optimization/tools/timing-acceptance.mjs",
+          "sha256": "3b5169d0d0dd202158246b5ab22accd157e86aa9d97016d817e35f17d460fd35",
+          "bytes": 3153
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "2115cd728a048956f4be4e57a6a7bffd4b38b2d0c9da3602556d347c2bffe1e2",
+          "bytes": 136671
+        },
+        {
+          "path": "package.json",
+          "sha256": "733a59311cd0ac2696e40e024f54d45e7541436995bd6372d5562a96a8d378f7",
+          "bytes": 1526
+        },
+        {
+          "path": "scripts/node-tests/exact-mip-worker.mjs",
+          "sha256": "f4d66d8cf555433b971a08714f85918b52af0738d4845732678faffedce6283f",
+          "bytes": 2030
+        },
+        {
+          "path": "scripts/node-tests/run-v3.mjs",
+          "sha256": "66adff7b3d5a2b1ab78e9ef29ebe2a209fd148c5dbf786e93cdeb0940bdb708b",
+          "bytes": 17964
+        },
+        {
+          "path": "scripts/node-tests/v3-worker.mjs",
+          "sha256": "5f586a5ed7c066662ff4c2b0448466694e5a18f4e9863f31f2b97a049bf56933",
+          "bytes": 1045
+        },
+        {
+          "path": "src/domain/data.ts",
+          "sha256": "6e3d29eca861bb83943de212f4d8a4b5f6b3327d62cd41971ead417b3cf56185",
+          "bytes": 7759
+        },
+        {
+          "path": "src/domain/index.ts",
+          "sha256": "0f6c87a30020f5774d4003c7c7cbba35aa28797485f386c72af5229fa43ca8ef",
+          "bytes": 127
+        },
+        {
+          "path": "src/domain/jobs.ts",
+          "sha256": "0fb771c0b388449fcb70cf444edc8e8dcbe295cce0bd8be7f159d6348c00a71e",
+          "bytes": 336
+        },
+        {
+          "path": "src/domain/optimizer.ts",
+          "sha256": "d0b36af95431c00fbb62d4569c09172ea8736cbbb5182a54ce8ec209d150dbcc",
+          "bytes": 1295
+        },
+        {
+          "path": "src/domain/optimizer.worker.ts",
+          "sha256": "ef14efc8eaae2672f7f21aaead7af686066a043a87b24ac74a9c630a4aa71422",
+          "bytes": 1811
+        },
+        {
+          "path": "src/domain/optimizer/context.ts",
+          "sha256": "3c59fbb591c36d959badfff68da18783ae6bb76da8b760394b9d694df760db5f",
+          "bytes": 3987
+        },
+        {
+          "path": "src/domain/optimizer/equipment-candidates.ts",
+          "sha256": "9206e4a1f3de2ea3c945f02d067edd4e640d34b1701c9ebf1d08b3266a9ad1e4",
+          "bytes": 23962
+        },
+        {
+          "path": "src/domain/optimizer/gcd-search.ts",
+          "sha256": "bc7caee1f67ba2635bee130ae0683567d11fee6fd4f357528792a5bbc6de0ce5",
+          "bytes": 5160
+        },
+        {
+          "path": "src/domain/optimizer/joint-search.ts",
+          "sha256": "f3edfc684ef68e3a524d2aaa5e796937336c6e625a06ffc7f30e1bc4c4c963ef",
+          "bytes": 14562
+        },
+        {
+          "path": "src/domain/optimizer/result-assembly.ts",
+          "sha256": "89c53eb4e035f47f1aa378523803ccb5fd1b032650ac355d59851c76f114bff2",
+          "bytes": 3713
+        },
+        {
+          "path": "src/domain/optimizer/search-preparation.ts",
+          "sha256": "9363f043eecb61e4f5c9fdadab6bb5af5f401d317d5b582e783fb05bac57384b",
+          "bytes": 7593
+        },
+        {
+          "path": "src/domain/optimizer/single-search.ts",
+          "sha256": "6e689fd84a48f7f9b824ab6d59c65c6b2c0670c74dbda382b0bbe3e87179a86a",
+          "bytes": 3169
+        },
+        {
+          "path": "src/domain/rules.ts",
+          "sha256": "5f7bb7cd5d825e6e4e9e507905470e037493498074b4ad2a2d149c60aadd7352",
+          "bytes": 6659
+        },
+        {
+          "path": "src/domain/search/baseline-worker-policy.ts",
+          "sha256": "b4f2b0f03170d4ce3db92fcc547ca239c045a0f4a47f80c03b221ce24feeaad0",
+          "bytes": 621
+        },
+        {
+          "path": "src/domain/search/cancellation.ts",
+          "sha256": "20ac2f8267ee705f28ab5370cae6e9475ab193037e8fbb35d60466e1b32e7d14",
+          "bytes": 202
+        },
+        {
+          "path": "src/domain/search/candidate-pareto.ts",
+          "sha256": "35b1dc71dccdd7cc1a8734d144589d39d05669b918b09369343c6ee14646db61",
+          "bytes": 4062
+        },
+        {
+          "path": "src/domain/search/candidate-resource-support-policy.ts",
+          "sha256": "7f04b0db0c4a6b639feaf56947ca97b51fffca79fc319f251513c5db84aa21b1",
+          "bytes": 9779
+        },
+        {
+          "path": "src/domain/search/equipment-candidates.ts",
+          "sha256": "f0ea04ec18cbef047a2c6ff46a26610168f6ccefa1517ba71d36c58888625fa6",
+          "bytes": 241
+        },
+        {
+          "path": "src/domain/search/equipment-identity.ts",
+          "sha256": "8d9f7ea3bbd439e4fa47bb38e5a931f6b72c2084811a7f92d5d4434b703234b3",
+          "bytes": 1072
+        },
+        {
+          "path": "src/domain/search/equipment-sync.ts",
+          "sha256": "f0bb5455717dfe131742b8e1a38b2857b9cec03006268a43582590f79b4859db",
+          "bytes": 199
+        },
+        {
+          "path": "src/domain/search/equipped-effects.ts",
+          "sha256": "2f544fec239865d5dcf9f7488eb4cbb69cbb3a803f64ea34a6849ac8451046ce",
+          "bytes": 16026
+        },
+        {
+          "path": "src/domain/search/exact-mip-candidate-upper-bound.ts",
+          "sha256": "0fcab255d2bba46e8e4eecdc3bd8219035ee6813b3cfa47be593e9ff4d06ddda",
+          "bytes": 5629
+        },
+        {
+          "path": "src/domain/search/factor-resource-budget-upper-bound.ts",
+          "sha256": "4582df7c6a21c23690a8642c796ffc953b2af485eca280b3fea016e801720e05",
+          "bytes": 6007
+        },
+        {
+          "path": "src/domain/search/highs-browser.ts",
+          "sha256": "e2ade8afd0030eafa37ef20e84f9e593eebdcc2b12ae6fbd13fcf2a854ddb71e",
+          "bytes": 250
+        },
+        {
+          "path": "src/domain/search/highs-runtime.d.ts",
+          "sha256": "81f1599e1511c3de3e313e3352e1d51f70562c4ff5cd09f1475b88d3f599656a",
+          "bytes": 92
+        },
+        {
+          "path": "src/domain/search/index.ts",
+          "sha256": "426597abdbc1842aa85addb56e9081638bcc1eb226e30bad16bd092219c929bb",
+          "bytes": 388
+        },
+        {
+          "path": "src/domain/search/joint-candidate-upper-bound.ts",
+          "sha256": "c6e5f8a8c576b9cd7ef642810f2399ee0f680debfad2378b2fd0f6b7d2d395a1",
+          "bytes": 879
+        },
+        {
+          "path": "src/domain/search/joint-substat-reachability.ts",
+          "sha256": "0ab7d79eb29e12f84aee8c95ed48a39a997e83f377a69401df2b4f5619a0fca9",
+          "bytes": 20459
+        },
+        {
+          "path": "src/domain/search/linear-mip.ts",
+          "sha256": "4d738d9aa5867d1e56bd3468a1570df45cce1428f4d5597905f77f8eb361c861",
+          "bytes": 2136
+        },
+        {
+          "path": "src/domain/search/loadout-finder-exact-mip.ts",
+          "sha256": "5237665e432bb259eebf228c94212304307ca95ffa88f029d31a9d949d955e7a",
+          "bytes": 322691
+        },
+        {
+          "path": "src/domain/search/loadout-finder-v3.ts",
+          "sha256": "63dc20de6108bccfe10233cc7df1f43b3257bc45d35049aae13e248668aa2eab",
+          "bytes": 93794
+        },
+        {
+          "path": "src/domain/search/memory-usage.ts",
+          "sha256": "258b168466f5d8ec0bfc35a531205bb6c9d16c4ecf33a6e229e1c1d05e61127a",
+          "bytes": 881
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-browser-adapter.ts",
+          "sha256": "8356939f7d28ece0df59020a7ff54962eb4fa428480a37eb4415a1dd30ebd26f",
+          "bytes": 951
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-browser.worker.ts",
+          "sha256": "4aa526576cf725895fdc93aa3d05cd505c23a59a1dcfe1f22925d3ca9124f8c6",
+          "bytes": 1429
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-executor.ts",
+          "sha256": "17a8d1c4750b9882e5c59dcd33b506c692608c0a23e9213822f3b7090d28930e",
+          "bytes": 20521
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-node-adapter.mjs",
+          "sha256": "040acb0f2a9e61be0daef3b34cc36048e450bd96d6e966493971daf54932492d",
+          "bytes": 818
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-node.worker.ts",
+          "sha256": "7985b8922497a2d9f743521cc62b2c7f00b8e602bb89f4e33493de591ed49e17",
+          "bytes": 1445
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-solver.ts",
+          "sha256": "16923d464e84c45d26772f2edbbe281a7f12419f374dc68db9faa7d0f4681a7e",
+          "bytes": 8361
+        },
+        {
+          "path": "src/domain/search/ring-pairs.ts",
+          "sha256": "43f8224539f02c6305064d5e8029784e0442581f51a222b9fe715d4d7cf6c93b",
+          "bytes": 2192
+        },
+        {
+          "path": "src/domain/search/search-types.ts",
+          "sha256": "d4a6baa0ac9300e2cedc312676de515afa55914531364b5ce80b11b3a811ef64",
+          "bytes": 632
+        },
+        {
+          "path": "src/domain/search/shared-accessory-pair-dominance-policy.ts",
+          "sha256": "56f1dd98975da7b07f4a33066ecc024ff2c307fe8413bc8609232189fbc35b8d",
+          "bytes": 2145
+        },
+        {
+          "path": "src/domain/search/shared-accessory-pair-dominance.ts",
+          "sha256": "3d4bcc92e6eafa22ab2ba23d358a8c156f35be7f9e8102d49dd39a2111848730",
+          "bytes": 5292
+        },
+        {
+          "path": "src/domain/search/signature-band.ts",
+          "sha256": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+          "bytes": 17911
+        },
+        {
+          "path": "src/domain/search/substat-factor-budget.ts",
+          "sha256": "d30d20c2e8873f40a1427257a8fc5baa0f668bea3b06459414aa98dc4b71bc19",
+          "bytes": 6286
+        },
+        {
+          "path": "src/domain/search/types.ts",
+          "sha256": "ef5a8b3b5f59a017fe6b451c7c6c8c61b320a65c7e8d4e68f23bbe20c51960ff",
+          "bytes": 1606
+        },
+        {
+          "path": "src/domain/types.ts",
+          "sha256": "712424758f10e16bc01a59b3b207dc53f07d1ce9c9cdf3b88378d6ecf78a951c",
+          "bytes": 7022
+        },
+        {
+          "path": "src/domain/worker-client.ts",
+          "sha256": "355f3e6f91ff1937e9a14edf7a5a8d2e293df44cee8e6da1424846793067c321",
+          "bytes": 4671
+        }
+      ],
+      "generatedData": {
+        "path": "src/data/generated-data.json",
+        "sha256": "879ea3412fd4641521fdfd3a0e8a70c6461a9255629213e4a493fdabcd2a19ff",
+        "bytes": 42383568
+      }
+    },
+    "before": {
+      "checkedAt": "2026-10-11T13:22:03.088Z",
+      "strategySources": [
+        {
+          "path": "docs/search-optimization/tools/run-acceptance.mjs",
+          "sha256": "3503f917a5ab9fe4a18a0bb06571704d1fff22b8a726833726068d0fddb7a5e2",
+          "bytes": 66040
+        },
+        {
+          "path": "docs/search-optimization/tools/run-single.mjs",
+          "sha256": "98fe3a4e5214b7ceb2506784b882fef52b3937ab4a557bef5bcf5a0f32d2aa78",
+          "bytes": 10620
+        },
+        {
+          "path": "docs/search-optimization/tools/single-worker.mjs",
+          "sha256": "9f91aff728d2b5d81d624d11f18e2af1929e8cfed85fd9c9d97eedd2da6b28f5",
+          "bytes": 1271
+        },
+        {
+          "path": "docs/search-optimization/tools/timing-acceptance.mjs",
+          "sha256": "3b5169d0d0dd202158246b5ab22accd157e86aa9d97016d817e35f17d460fd35",
+          "bytes": 3153
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "2115cd728a048956f4be4e57a6a7bffd4b38b2d0c9da3602556d347c2bffe1e2",
+          "bytes": 136671
+        },
+        {
+          "path": "package.json",
+          "sha256": "733a59311cd0ac2696e40e024f54d45e7541436995bd6372d5562a96a8d378f7",
+          "bytes": 1526
+        },
+        {
+          "path": "scripts/node-tests/exact-mip-worker.mjs",
+          "sha256": "f4d66d8cf555433b971a08714f85918b52af0738d4845732678faffedce6283f",
+          "bytes": 2030
+        },
+        {
+          "path": "scripts/node-tests/run-v3.mjs",
+          "sha256": "66adff7b3d5a2b1ab78e9ef29ebe2a209fd148c5dbf786e93cdeb0940bdb708b",
+          "bytes": 17964
+        },
+        {
+          "path": "scripts/node-tests/v3-worker.mjs",
+          "sha256": "5f586a5ed7c066662ff4c2b0448466694e5a18f4e9863f31f2b97a049bf56933",
+          "bytes": 1045
+        },
+        {
+          "path": "src/domain/data.ts",
+          "sha256": "6e3d29eca861bb83943de212f4d8a4b5f6b3327d62cd41971ead417b3cf56185",
+          "bytes": 7759
+        },
+        {
+          "path": "src/domain/index.ts",
+          "sha256": "0f6c87a30020f5774d4003c7c7cbba35aa28797485f386c72af5229fa43ca8ef",
+          "bytes": 127
+        },
+        {
+          "path": "src/domain/jobs.ts",
+          "sha256": "0fb771c0b388449fcb70cf444edc8e8dcbe295cce0bd8be7f159d6348c00a71e",
+          "bytes": 336
+        },
+        {
+          "path": "src/domain/optimizer.ts",
+          "sha256": "d0b36af95431c00fbb62d4569c09172ea8736cbbb5182a54ce8ec209d150dbcc",
+          "bytes": 1295
+        },
+        {
+          "path": "src/domain/optimizer.worker.ts",
+          "sha256": "ef14efc8eaae2672f7f21aaead7af686066a043a87b24ac74a9c630a4aa71422",
+          "bytes": 1811
+        },
+        {
+          "path": "src/domain/optimizer/context.ts",
+          "sha256": "3c59fbb591c36d959badfff68da18783ae6bb76da8b760394b9d694df760db5f",
+          "bytes": 3987
+        },
+        {
+          "path": "src/domain/optimizer/equipment-candidates.ts",
+          "sha256": "9206e4a1f3de2ea3c945f02d067edd4e640d34b1701c9ebf1d08b3266a9ad1e4",
+          "bytes": 23962
+        },
+        {
+          "path": "src/domain/optimizer/gcd-search.ts",
+          "sha256": "bc7caee1f67ba2635bee130ae0683567d11fee6fd4f357528792a5bbc6de0ce5",
+          "bytes": 5160
+        },
+        {
+          "path": "src/domain/optimizer/joint-search.ts",
+          "sha256": "f3edfc684ef68e3a524d2aaa5e796937336c6e625a06ffc7f30e1bc4c4c963ef",
+          "bytes": 14562
+        },
+        {
+          "path": "src/domain/optimizer/result-assembly.ts",
+          "sha256": "89c53eb4e035f47f1aa378523803ccb5fd1b032650ac355d59851c76f114bff2",
+          "bytes": 3713
+        },
+        {
+          "path": "src/domain/optimizer/search-preparation.ts",
+          "sha256": "9363f043eecb61e4f5c9fdadab6bb5af5f401d317d5b582e783fb05bac57384b",
+          "bytes": 7593
+        },
+        {
+          "path": "src/domain/optimizer/single-search.ts",
+          "sha256": "6e689fd84a48f7f9b824ab6d59c65c6b2c0670c74dbda382b0bbe3e87179a86a",
+          "bytes": 3169
+        },
+        {
+          "path": "src/domain/rules.ts",
+          "sha256": "5f7bb7cd5d825e6e4e9e507905470e037493498074b4ad2a2d149c60aadd7352",
+          "bytes": 6659
+        },
+        {
+          "path": "src/domain/search/baseline-worker-policy.ts",
+          "sha256": "b4f2b0f03170d4ce3db92fcc547ca239c045a0f4a47f80c03b221ce24feeaad0",
+          "bytes": 621
+        },
+        {
+          "path": "src/domain/search/cancellation.ts",
+          "sha256": "20ac2f8267ee705f28ab5370cae6e9475ab193037e8fbb35d60466e1b32e7d14",
+          "bytes": 202
+        },
+        {
+          "path": "src/domain/search/candidate-pareto.ts",
+          "sha256": "35b1dc71dccdd7cc1a8734d144589d39d05669b918b09369343c6ee14646db61",
+          "bytes": 4062
+        },
+        {
+          "path": "src/domain/search/candidate-resource-support-policy.ts",
+          "sha256": "7f04b0db0c4a6b639feaf56947ca97b51fffca79fc319f251513c5db84aa21b1",
+          "bytes": 9779
+        },
+        {
+          "path": "src/domain/search/equipment-candidates.ts",
+          "sha256": "f0ea04ec18cbef047a2c6ff46a26610168f6ccefa1517ba71d36c58888625fa6",
+          "bytes": 241
+        },
+        {
+          "path": "src/domain/search/equipment-identity.ts",
+          "sha256": "8d9f7ea3bbd439e4fa47bb38e5a931f6b72c2084811a7f92d5d4434b703234b3",
+          "bytes": 1072
+        },
+        {
+          "path": "src/domain/search/equipment-sync.ts",
+          "sha256": "f0bb5455717dfe131742b8e1a38b2857b9cec03006268a43582590f79b4859db",
+          "bytes": 199
+        },
+        {
+          "path": "src/domain/search/equipped-effects.ts",
+          "sha256": "2f544fec239865d5dcf9f7488eb4cbb69cbb3a803f64ea34a6849ac8451046ce",
+          "bytes": 16026
+        },
+        {
+          "path": "src/domain/search/exact-mip-candidate-upper-bound.ts",
+          "sha256": "0fcab255d2bba46e8e4eecdc3bd8219035ee6813b3cfa47be593e9ff4d06ddda",
+          "bytes": 5629
+        },
+        {
+          "path": "src/domain/search/factor-resource-budget-upper-bound.ts",
+          "sha256": "4582df7c6a21c23690a8642c796ffc953b2af485eca280b3fea016e801720e05",
+          "bytes": 6007
+        },
+        {
+          "path": "src/domain/search/highs-browser.ts",
+          "sha256": "e2ade8afd0030eafa37ef20e84f9e593eebdcc2b12ae6fbd13fcf2a854ddb71e",
+          "bytes": 250
+        },
+        {
+          "path": "src/domain/search/highs-runtime.d.ts",
+          "sha256": "81f1599e1511c3de3e313e3352e1d51f70562c4ff5cd09f1475b88d3f599656a",
+          "bytes": 92
+        },
+        {
+          "path": "src/domain/search/index.ts",
+          "sha256": "426597abdbc1842aa85addb56e9081638bcc1eb226e30bad16bd092219c929bb",
+          "bytes": 388
+        },
+        {
+          "path": "src/domain/search/joint-candidate-upper-bound.ts",
+          "sha256": "c6e5f8a8c576b9cd7ef642810f2399ee0f680debfad2378b2fd0f6b7d2d395a1",
+          "bytes": 879
+        },
+        {
+          "path": "src/domain/search/joint-substat-reachability.ts",
+          "sha256": "0ab7d79eb29e12f84aee8c95ed48a39a997e83f377a69401df2b4f5619a0fca9",
+          "bytes": 20459
+        },
+        {
+          "path": "src/domain/search/linear-mip.ts",
+          "sha256": "4d738d9aa5867d1e56bd3468a1570df45cce1428f4d5597905f77f8eb361c861",
+          "bytes": 2136
+        },
+        {
+          "path": "src/domain/search/loadout-finder-exact-mip.ts",
+          "sha256": "5237665e432bb259eebf228c94212304307ca95ffa88f029d31a9d949d955e7a",
+          "bytes": 322691
+        },
+        {
+          "path": "src/domain/search/loadout-finder-v3.ts",
+          "sha256": "63dc20de6108bccfe10233cc7df1f43b3257bc45d35049aae13e248668aa2eab",
+          "bytes": 93794
+        },
+        {
+          "path": "src/domain/search/memory-usage.ts",
+          "sha256": "258b168466f5d8ec0bfc35a531205bb6c9d16c4ecf33a6e229e1c1d05e61127a",
+          "bytes": 881
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-browser-adapter.ts",
+          "sha256": "8356939f7d28ece0df59020a7ff54962eb4fa428480a37eb4415a1dd30ebd26f",
+          "bytes": 951
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-browser.worker.ts",
+          "sha256": "4aa526576cf725895fdc93aa3d05cd505c23a59a1dcfe1f22925d3ca9124f8c6",
+          "bytes": 1429
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-executor.ts",
+          "sha256": "17a8d1c4750b9882e5c59dcd33b506c692608c0a23e9213822f3b7090d28930e",
+          "bytes": 20521
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-node-adapter.mjs",
+          "sha256": "040acb0f2a9e61be0daef3b34cc36048e450bd96d6e966493971daf54932492d",
+          "bytes": 818
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-node.worker.ts",
+          "sha256": "7985b8922497a2d9f743521cc62b2c7f00b8e602bb89f4e33493de591ed49e17",
+          "bytes": 1445
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-solver.ts",
+          "sha256": "16923d464e84c45d26772f2edbbe281a7f12419f374dc68db9faa7d0f4681a7e",
+          "bytes": 8361
+        },
+        {
+          "path": "src/domain/search/ring-pairs.ts",
+          "sha256": "43f8224539f02c6305064d5e8029784e0442581f51a222b9fe715d4d7cf6c93b",
+          "bytes": 2192
+        },
+        {
+          "path": "src/domain/search/search-types.ts",
+          "sha256": "d4a6baa0ac9300e2cedc312676de515afa55914531364b5ce80b11b3a811ef64",
+          "bytes": 632
+        },
+        {
+          "path": "src/domain/search/shared-accessory-pair-dominance-policy.ts",
+          "sha256": "56f1dd98975da7b07f4a33066ecc024ff2c307fe8413bc8609232189fbc35b8d",
+          "bytes": 2145
+        },
+        {
+          "path": "src/domain/search/shared-accessory-pair-dominance.ts",
+          "sha256": "3d4bcc92e6eafa22ab2ba23d358a8c156f35be7f9e8102d49dd39a2111848730",
+          "bytes": 5292
+        },
+        {
+          "path": "src/domain/search/signature-band.ts",
+          "sha256": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+          "bytes": 17911
+        },
+        {
+          "path": "src/domain/search/substat-factor-budget.ts",
+          "sha256": "d30d20c2e8873f40a1427257a8fc5baa0f668bea3b06459414aa98dc4b71bc19",
+          "bytes": 6286
+        },
+        {
+          "path": "src/domain/search/types.ts",
+          "sha256": "ef5a8b3b5f59a017fe6b451c7c6c8c61b320a65c7e8d4e68f23bbe20c51960ff",
+          "bytes": 1606
+        },
+        {
+          "path": "src/domain/types.ts",
+          "sha256": "712424758f10e16bc01a59b3b207dc53f07d1ce9c9cdf3b88378d6ecf78a951c",
+          "bytes": 7022
+        },
+        {
+          "path": "src/domain/worker-client.ts",
+          "sha256": "355f3e6f91ff1937e9a14edf7a5a8d2e293df44cee8e6da1424846793067c321",
+          "bytes": 4671
+        }
+      ],
+      "captureErrors": [],
+      "generatedData": {
+        "path": "src/data/generated-data.json",
+        "sha256": "879ea3412fd4641521fdfd3a0e8a70c6461a9255629213e4a493fdabcd2a19ff",
+        "bytes": 42383568
+      }
+    },
+    "beforeChangedPaths": [],
+    "after": {
+      "checkedAt": "2026-10-11T13:22:08.675Z",
+      "strategySources": [
+        {
+          "path": "docs/search-optimization/tools/run-acceptance.mjs",
+          "sha256": "3503f917a5ab9fe4a18a0bb06571704d1fff22b8a726833726068d0fddb7a5e2",
+          "bytes": 66040
+        },
+        {
+          "path": "docs/search-optimization/tools/run-single.mjs",
+          "sha256": "98fe3a4e5214b7ceb2506784b882fef52b3937ab4a557bef5bcf5a0f32d2aa78",
+          "bytes": 10620
+        },
+        {
+          "path": "docs/search-optimization/tools/single-worker.mjs",
+          "sha256": "9f91aff728d2b5d81d624d11f18e2af1929e8cfed85fd9c9d97eedd2da6b28f5",
+          "bytes": 1271
+        },
+        {
+          "path": "docs/search-optimization/tools/timing-acceptance.mjs",
+          "sha256": "3b5169d0d0dd202158246b5ab22accd157e86aa9d97016d817e35f17d460fd35",
+          "bytes": 3153
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "2115cd728a048956f4be4e57a6a7bffd4b38b2d0c9da3602556d347c2bffe1e2",
+          "bytes": 136671
+        },
+        {
+          "path": "package.json",
+          "sha256": "733a59311cd0ac2696e40e024f54d45e7541436995bd6372d5562a96a8d378f7",
+          "bytes": 1526
+        },
+        {
+          "path": "scripts/node-tests/exact-mip-worker.mjs",
+          "sha256": "f4d66d8cf555433b971a08714f85918b52af0738d4845732678faffedce6283f",
+          "bytes": 2030
+        },
+        {
+          "path": "scripts/node-tests/run-v3.mjs",
+          "sha256": "66adff7b3d5a2b1ab78e9ef29ebe2a209fd148c5dbf786e93cdeb0940bdb708b",
+          "bytes": 17964
+        },
+        {
+          "path": "scripts/node-tests/v3-worker.mjs",
+          "sha256": "5f586a5ed7c066662ff4c2b0448466694e5a18f4e9863f31f2b97a049bf56933",
+          "bytes": 1045
+        },
+        {
+          "path": "src/domain/data.ts",
+          "sha256": "6e3d29eca861bb83943de212f4d8a4b5f6b3327d62cd41971ead417b3cf56185",
+          "bytes": 7759
+        },
+        {
+          "path": "src/domain/index.ts",
+          "sha256": "0f6c87a30020f5774d4003c7c7cbba35aa28797485f386c72af5229fa43ca8ef",
+          "bytes": 127
+        },
+        {
+          "path": "src/domain/jobs.ts",
+          "sha256": "0fb771c0b388449fcb70cf444edc8e8dcbe295cce0bd8be7f159d6348c00a71e",
+          "bytes": 336
+        },
+        {
+          "path": "src/domain/optimizer.ts",
+          "sha256": "d0b36af95431c00fbb62d4569c09172ea8736cbbb5182a54ce8ec209d150dbcc",
+          "bytes": 1295
+        },
+        {
+          "path": "src/domain/optimizer.worker.ts",
+          "sha256": "ef14efc8eaae2672f7f21aaead7af686066a043a87b24ac74a9c630a4aa71422",
+          "bytes": 1811
+        },
+        {
+          "path": "src/domain/optimizer/context.ts",
+          "sha256": "3c59fbb591c36d959badfff68da18783ae6bb76da8b760394b9d694df760db5f",
+          "bytes": 3987
+        },
+        {
+          "path": "src/domain/optimizer/equipment-candidates.ts",
+          "sha256": "9206e4a1f3de2ea3c945f02d067edd4e640d34b1701c9ebf1d08b3266a9ad1e4",
+          "bytes": 23962
+        },
+        {
+          "path": "src/domain/optimizer/gcd-search.ts",
+          "sha256": "bc7caee1f67ba2635bee130ae0683567d11fee6fd4f357528792a5bbc6de0ce5",
+          "bytes": 5160
+        },
+        {
+          "path": "src/domain/optimizer/joint-search.ts",
+          "sha256": "f3edfc684ef68e3a524d2aaa5e796937336c6e625a06ffc7f30e1bc4c4c963ef",
+          "bytes": 14562
+        },
+        {
+          "path": "src/domain/optimizer/result-assembly.ts",
+          "sha256": "89c53eb4e035f47f1aa378523803ccb5fd1b032650ac355d59851c76f114bff2",
+          "bytes": 3713
+        },
+        {
+          "path": "src/domain/optimizer/search-preparation.ts",
+          "sha256": "9363f043eecb61e4f5c9fdadab6bb5af5f401d317d5b582e783fb05bac57384b",
+          "bytes": 7593
+        },
+        {
+          "path": "src/domain/optimizer/single-search.ts",
+          "sha256": "6e689fd84a48f7f9b824ab6d59c65c6b2c0670c74dbda382b0bbe3e87179a86a",
+          "bytes": 3169
+        },
+        {
+          "path": "src/domain/rules.ts",
+          "sha256": "5f7bb7cd5d825e6e4e9e507905470e037493498074b4ad2a2d149c60aadd7352",
+          "bytes": 6659
+        },
+        {
+          "path": "src/domain/search/baseline-worker-policy.ts",
+          "sha256": "b4f2b0f03170d4ce3db92fcc547ca239c045a0f4a47f80c03b221ce24feeaad0",
+          "bytes": 621
+        },
+        {
+          "path": "src/domain/search/cancellation.ts",
+          "sha256": "20ac2f8267ee705f28ab5370cae6e9475ab193037e8fbb35d60466e1b32e7d14",
+          "bytes": 202
+        },
+        {
+          "path": "src/domain/search/candidate-pareto.ts",
+          "sha256": "35b1dc71dccdd7cc1a8734d144589d39d05669b918b09369343c6ee14646db61",
+          "bytes": 4062
+        },
+        {
+          "path": "src/domain/search/candidate-resource-support-policy.ts",
+          "sha256": "7f04b0db0c4a6b639feaf56947ca97b51fffca79fc319f251513c5db84aa21b1",
+          "bytes": 9779
+        },
+        {
+          "path": "src/domain/search/equipment-candidates.ts",
+          "sha256": "f0ea04ec18cbef047a2c6ff46a26610168f6ccefa1517ba71d36c58888625fa6",
+          "bytes": 241
+        },
+        {
+          "path": "src/domain/search/equipment-identity.ts",
+          "sha256": "8d9f7ea3bbd439e4fa47bb38e5a931f6b72c2084811a7f92d5d4434b703234b3",
+          "bytes": 1072
+        },
+        {
+          "path": "src/domain/search/equipment-sync.ts",
+          "sha256": "f0bb5455717dfe131742b8e1a38b2857b9cec03006268a43582590f79b4859db",
+          "bytes": 199
+        },
+        {
+          "path": "src/domain/search/equipped-effects.ts",
+          "sha256": "2f544fec239865d5dcf9f7488eb4cbb69cbb3a803f64ea34a6849ac8451046ce",
+          "bytes": 16026
+        },
+        {
+          "path": "src/domain/search/exact-mip-candidate-upper-bound.ts",
+          "sha256": "0fcab255d2bba46e8e4eecdc3bd8219035ee6813b3cfa47be593e9ff4d06ddda",
+          "bytes": 5629
+        },
+        {
+          "path": "src/domain/search/factor-resource-budget-upper-bound.ts",
+          "sha256": "4582df7c6a21c23690a8642c796ffc953b2af485eca280b3fea016e801720e05",
+          "bytes": 6007
+        },
+        {
+          "path": "src/domain/search/highs-browser.ts",
+          "sha256": "e2ade8afd0030eafa37ef20e84f9e593eebdcc2b12ae6fbd13fcf2a854ddb71e",
+          "bytes": 250
+        },
+        {
+          "path": "src/domain/search/highs-runtime.d.ts",
+          "sha256": "81f1599e1511c3de3e313e3352e1d51f70562c4ff5cd09f1475b88d3f599656a",
+          "bytes": 92
+        },
+        {
+          "path": "src/domain/search/index.ts",
+          "sha256": "426597abdbc1842aa85addb56e9081638bcc1eb226e30bad16bd092219c929bb",
+          "bytes": 388
+        },
+        {
+          "path": "src/domain/search/joint-candidate-upper-bound.ts",
+          "sha256": "c6e5f8a8c576b9cd7ef642810f2399ee0f680debfad2378b2fd0f6b7d2d395a1",
+          "bytes": 879
+        },
+        {
+          "path": "src/domain/search/joint-substat-reachability.ts",
+          "sha256": "0ab7d79eb29e12f84aee8c95ed48a39a997e83f377a69401df2b4f5619a0fca9",
+          "bytes": 20459
+        },
+        {
+          "path": "src/domain/search/linear-mip.ts",
+          "sha256": "4d738d9aa5867d1e56bd3468a1570df45cce1428f4d5597905f77f8eb361c861",
+          "bytes": 2136
+        },
+        {
+          "path": "src/domain/search/loadout-finder-exact-mip.ts",
+          "sha256": "5237665e432bb259eebf228c94212304307ca95ffa88f029d31a9d949d955e7a",
+          "bytes": 322691
+        },
+        {
+          "path": "src/domain/search/loadout-finder-v3.ts",
+          "sha256": "63dc20de6108bccfe10233cc7df1f43b3257bc45d35049aae13e248668aa2eab",
+          "bytes": 93794
+        },
+        {
+          "path": "src/domain/search/memory-usage.ts",
+          "sha256": "258b168466f5d8ec0bfc35a531205bb6c9d16c4ecf33a6e229e1c1d05e61127a",
+          "bytes": 881
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-browser-adapter.ts",
+          "sha256": "8356939f7d28ece0df59020a7ff54962eb4fa428480a37eb4415a1dd30ebd26f",
+          "bytes": 951
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-browser.worker.ts",
+          "sha256": "4aa526576cf725895fdc93aa3d05cd505c23a59a1dcfe1f22925d3ca9124f8c6",
+          "bytes": 1429
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-executor.ts",
+          "sha256": "17a8d1c4750b9882e5c59dcd33b506c692608c0a23e9213822f3b7090d28930e",
+          "bytes": 20521
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-node-adapter.mjs",
+          "sha256": "040acb0f2a9e61be0daef3b34cc36048e450bd96d6e966493971daf54932492d",
+          "bytes": 818
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-node.worker.ts",
+          "sha256": "7985b8922497a2d9f743521cc62b2c7f00b8e602bb89f4e33493de591ed49e17",
+          "bytes": 1445
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-solver.ts",
+          "sha256": "16923d464e84c45d26772f2edbbe281a7f12419f374dc68db9faa7d0f4681a7e",
+          "bytes": 8361
+        },
+        {
+          "path": "src/domain/search/ring-pairs.ts",
+          "sha256": "43f8224539f02c6305064d5e8029784e0442581f51a222b9fe715d4d7cf6c93b",
+          "bytes": 2192
+        },
+        {
+          "path": "src/domain/search/search-types.ts",
+          "sha256": "d4a6baa0ac9300e2cedc312676de515afa55914531364b5ce80b11b3a811ef64",
+          "bytes": 632
+        },
+        {
+          "path": "src/domain/search/shared-accessory-pair-dominance-policy.ts",
+          "sha256": "56f1dd98975da7b07f4a33066ecc024ff2c307fe8413bc8609232189fbc35b8d",
+          "bytes": 2145
+        },
+        {
+          "path": "src/domain/search/shared-accessory-pair-dominance.ts",
+          "sha256": "3d4bcc92e6eafa22ab2ba23d358a8c156f35be7f9e8102d49dd39a2111848730",
+          "bytes": 5292
+        },
+        {
+          "path": "src/domain/search/signature-band.ts",
+          "sha256": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+          "bytes": 17911
+        },
+        {
+          "path": "src/domain/search/substat-factor-budget.ts",
+          "sha256": "d30d20c2e8873f40a1427257a8fc5baa0f668bea3b06459414aa98dc4b71bc19",
+          "bytes": 6286
+        },
+        {
+          "path": "src/domain/search/types.ts",
+          "sha256": "ef5a8b3b5f59a017fe6b451c7c6c8c61b320a65c7e8d4e68f23bbe20c51960ff",
+          "bytes": 1606
+        },
+        {
+          "path": "src/domain/types.ts",
+          "sha256": "712424758f10e16bc01a59b3b207dc53f07d1ce9c9cdf3b88378d6ecf78a951c",
+          "bytes": 7022
+        },
+        {
+          "path": "src/domain/worker-client.ts",
+          "sha256": "355f3e6f91ff1937e9a14edf7a5a8d2e293df44cee8e6da1424846793067c321",
+          "bytes": 4671
+        }
+      ],
+      "captureErrors": [],
+      "generatedData": {
+        "path": "src/data/generated-data.json",
+        "sha256": "879ea3412fd4641521fdfd3a0e8a70c6461a9255629213e4a493fdabcd2a19ff",
+        "bytes": 42383568
+      }
+    },
+    "afterChangedPaths": [],
+    "changedPaths": [],
+    "status": "matched-through-case"
+  },
+  "soloObjectiveScores": [
+    {
+      "job": "RDM",
+      "expectedMinimum": 36.769120086402275,
+      "actualSoloOptimum": 36.769120086402275,
+      "actualJointObjectiveScore": 36.769120086402275,
+      "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+      "matchingRecordCount": 4,
+      "source": {
+        "record": "docs/search-optimization/耗时优化记录.7z",
+        "archivedRunId": "20261009T165822206Z",
+        "caseId": "rdm-pct-sync735-gcd-shared-armor-dps",
+        "sourceFilename": "result.json",
+        "jsonPointer": "/output/jobs/RDM/soloOptimum/objectiveScore"
+      },
+      "passed": true
+    },
+    {
+      "job": "PCT",
+      "expectedMinimum": 36.769120086402275,
+      "actualSoloOptimum": 36.769120086402275,
+      "actualJointObjectiveScore": 36.769120086402275,
+      "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+      "matchingRecordCount": 4,
+      "source": {
+        "record": "docs/search-optimization/耗时优化记录.7z",
+        "archivedRunId": "20261009T165822206Z",
+        "caseId": "rdm-pct-sync735-gcd-shared-armor-dps",
+        "sourceFilename": "result.json",
+        "jsonPointer": "/output/jobs/PCT/soloOptimum/objectiveScore"
+      },
+      "passed": true
+    }
+  ],
+  "timingToleranceMs": 1000,
+  "timingTolerancePolicy": "fixed-1000ms",
+  "allowedMilliseconds": 5789,
+  "strategy": {
+    "entrypoint": "scripts/node-tests/run-v3.mjs -> runJointOptimizationLocally -> exact per-job baselines and joint proof",
+    "jobCount": 2,
+    "commonSlots": [
+      "head",
+      "body",
+      "hands",
+      "legs",
+      "feet",
+      "earrings",
+      "necklace",
+      "bracelet"
+    ],
+    "foodStrategy": "shared",
+    "strategyTags": [
+      "joint",
+      "joint-2",
+      "job-count-2",
+      "sync",
+      "shared-equipment",
+      "shared-food",
+      "gcd-constrained",
+      "objective-dps"
+    ],
+    "exactSearchesByJob": {
+      "RDM": [
+        {
+          "model": "RDM:exact_search_RDM",
+          "elapsedMs": 4248.9332,
+          "solverRuns": 1,
+          "variables": 1530,
+          "constraints": 375,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "candidateUpperBound": null,
+          "conditionalResourceSupport": {
+            "candidateBands": 0,
+            "rowsAdded": 0,
+            "nonzerosAdded": 0,
+            "skipReason": "disabled-by-policy"
+          }
+        }
+      ],
+      "PCT": [
+        {
+          "model": "PCT:exact_search_PCT",
+          "elapsedMs": 4517.0655,
+          "solverRuns": 1,
+          "variables": 1532,
+          "constraints": 377,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": true,
+          "candidateUpperBound": null,
+          "conditionalResourceSupport": {
+            "candidateBands": 0,
+            "rowsAdded": 0,
+            "nonzerosAdded": 0,
+            "skipReason": "disabled-by-policy"
+          }
+        }
+      ]
+    },
+    "jointModelEvents": [],
+    "orderedProfilePhases": [
+      {
+        "sequence": 1,
+        "phase": "candidate-upper-bound-gate",
+        "backend": "HiGHS",
+        "model": "RDM:RDM:candidate_upper_bound_gate",
+        "job": "RDM",
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": null,
+        "constraints": null,
+        "profile": {
+          "phase": "candidate-upper-bound-gate",
+          "job": "RDM",
+          "candidateCount": 310,
+          "trustedCanonicalEvaluator": true,
+          "enabled": false,
+          "resourceBudgetCandidateProfile": "default"
+        }
+      },
+      {
+        "sequence": 2,
+        "phase": "candidate-upper-bound-gate",
+        "backend": "HiGHS",
+        "model": "PCT:PCT:candidate_upper_bound_gate",
+        "job": "PCT",
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": null,
+        "constraints": null,
+        "profile": {
+          "phase": "candidate-upper-bound-gate",
+          "job": "PCT",
+          "candidateCount": 310,
+          "trustedCanonicalEvaluator": true,
+          "enabled": false,
+          "resourceBudgetCandidateProfile": "default"
+        }
+      },
+      {
+        "sequence": 3,
+        "phase": "highs-call-start",
+        "backend": "HiGHS",
+        "model": "RDM:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": 1530,
+        "constraints": 374,
+        "profile": {
+          "phase": "highs-call-start",
+          "variables": 1530,
+          "constraints": 374,
+          "nonzeros": 21257,
+          "objectiveTerms": 1062,
+          "hintTerms": 1530
+        }
+      },
+      {
+        "sequence": 4,
+        "phase": "highs-call-start",
+        "backend": "HiGHS",
+        "model": "PCT:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": 1532,
+        "constraints": 376,
+        "profile": {
+          "phase": "highs-call-start",
+          "variables": 1532,
+          "constraints": 376,
+          "nonzeros": 21364,
+          "objectiveTerms": 1062,
+          "hintTerms": 1532
+        }
+      },
+      {
+        "sequence": 5,
+        "phase": "highs-solve-start",
+        "backend": "HiGHS",
+        "model": "PCT:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": 1532,
+        "constraints": 376,
+        "profile": {
+          "phase": "highs-solve-start",
+          "getHighsMs": 19.409099999999967,
+          "lpSerializationMs": 3.6259000000000015,
+          "modelImportMs": 29.299100000000067,
+          "lpCharacters": 377471,
+          "variables": 1532,
+          "constraints": 376,
+          "nonzeros": 21364
+        }
+      },
+      {
+        "sequence": 6,
+        "phase": "highs-solve-start",
+        "backend": "HiGHS",
+        "model": "RDM:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": 1530,
+        "constraints": 374,
+        "profile": {
+          "phase": "highs-solve-start",
+          "getHighsMs": 21.752700000000004,
+          "lpSerializationMs": 3.830600000000004,
+          "modelImportMs": 32.134399999999914,
+          "lpCharacters": 375683,
+          "variables": 1530,
+          "constraints": 374,
+          "nonzeros": 21257
+        }
+      },
+      {
+        "sequence": 7,
+        "phase": "highs-solve-end",
+        "backend": "HiGHS",
+        "model": "RDM:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": 4143.9096,
+        "status": "Optimal",
+        "solverRuns": null,
+        "variables": null,
+        "constraints": null,
+        "profile": {
+          "phase": "highs-solve-end",
+          "status": "Optimal",
+          "getHighsMs": 21.752700000000004,
+          "lpSerializationMs": 3.830600000000004,
+          "modelImportMs": 32.134399999999914,
+          "nativeRunMs": 4077.8986000000004,
+          "totalMs": 4143.9096,
+          "lpCharacters": 375683
+        }
+      },
+      {
+        "sequence": 8,
+        "phase": "exact-search-summary",
+        "backend": "HiGHS",
+        "model": "RDM:exact_search_RDM",
+        "job": "RDM",
+        "elapsedMs": 4248.9332,
+        "status": null,
+        "solverRuns": 1,
+        "variables": 1530,
+        "constraints": 375,
+        "profile": {
+          "phase": "exact-search-summary",
+          "job": "RDM",
+          "elapsedMs": 4248.9332,
+          "modelPreparationMs": 62.214200000000005,
+          "greedyMipStartMs": 8.005199999999945,
+          "solverWallMs": 4144.167,
+          "otherSearchMs": 10.066399999999703,
+          "resourceBudgetCandidateCuts": 0,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "solverRuns": 1,
+          "incumbentCandidateUpperBoundCuts": 0,
+          "excludedSignatures": 1,
+          "signatureBandChecks": 1,
+          "signatureBandElapsedMs": 24.480400000000373,
+          "signatureBandProof": true,
+          "variables": 1530,
+          "constraints": 375,
+          "reachableFactorClassesRemoved": 153,
+          "reachableAttributePruningSkipped": 0,
+          "reachableWeaponFactorClassesRemoved": 0,
+          "reachableWeaponPruningSkipped": 0,
+          "maximumSurrogate": 43872535042374,
+          "memoryUsage": {
+            "rssBytes": 1110769664,
+            "heapUsedBytes": 119451120
+          },
+          "conditionalResourceSupport": {
+            "candidateBands": 0,
+            "rowsAdded": 0,
+            "nonzerosAdded": 0,
+            "skipReason": "disabled-by-policy"
+          }
+        }
+      },
+      {
+        "sequence": 9,
+        "phase": "highs-solve-end",
+        "backend": "HiGHS",
+        "model": "PCT:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": 4413.5031,
+        "status": "Optimal",
+        "solverRuns": null,
+        "variables": null,
+        "constraints": null,
+        "profile": {
+          "phase": "highs-solve-end",
+          "status": "Optimal",
+          "getHighsMs": 19.409099999999967,
+          "lpSerializationMs": 3.6259000000000015,
+          "modelImportMs": 29.299100000000067,
+          "nativeRunMs": 4352.994699999999,
+          "totalMs": 4413.5031,
+          "lpCharacters": 377471
+        }
+      },
+      {
+        "sequence": 10,
+        "phase": "exact-search-summary",
+        "backend": "HiGHS",
+        "model": "PCT:exact_search_PCT",
+        "job": "PCT",
+        "elapsedMs": 4517.0655,
+        "status": null,
+        "solverRuns": 1,
+        "variables": 1532,
+        "constraints": 377,
+        "profile": {
+          "phase": "exact-search-summary",
+          "job": "PCT",
+          "elapsedMs": 4517.0655,
+          "modelPreparationMs": 60.240999999999985,
+          "greedyMipStartMs": 8.39829999999995,
+          "solverWallMs": 4413.6878,
+          "otherSearchMs": 10.097400000000562,
+          "resourceBudgetCandidateCuts": 0,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": true,
+          "solverRuns": 1,
+          "incumbentCandidateUpperBoundCuts": 0,
+          "excludedSignatures": 1,
+          "signatureBandChecks": 1,
+          "signatureBandElapsedMs": 24.64099999999962,
+          "signatureBandProof": true,
+          "variables": 1532,
+          "constraints": 377,
+          "reachableFactorClassesRemoved": 153,
+          "reachableAttributePruningSkipped": 0,
+          "reachableWeaponFactorClassesRemoved": 0,
+          "reachableWeaponPruningSkipped": 0,
+          "maximumSurrogate": 43872535042374,
+          "memoryUsage": {
+            "rssBytes": 1114394624,
+            "heapUsedBytes": 147117976
+          },
+          "conditionalResourceSupport": {
+            "candidateBands": 0,
+            "rowsAdded": 0,
+            "nonzerosAdded": 0,
+            "skipReason": "disabled-by-policy"
+          }
+        }
+      }
+    ],
+    "solverProfileEventCount": 10,
+    "solverProfiles": [
+      {
+        "sequence": 1,
+        "backend": "HiGHS",
+        "model": "RDM:RDM:candidate_upper_bound_gate",
+        "profile": {
+          "phase": "candidate-upper-bound-gate",
+          "job": "RDM",
+          "candidateCount": 310,
+          "trustedCanonicalEvaluator": true,
+          "enabled": false,
+          "resourceBudgetCandidateProfile": "default"
+        }
+      },
+      {
+        "sequence": 2,
+        "backend": "HiGHS",
+        "model": "PCT:PCT:candidate_upper_bound_gate",
+        "profile": {
+          "phase": "candidate-upper-bound-gate",
+          "job": "PCT",
+          "candidateCount": 310,
+          "trustedCanonicalEvaluator": true,
+          "enabled": false,
+          "resourceBudgetCandidateProfile": "default"
+        }
+      },
+      {
+        "sequence": 3,
+        "backend": "HiGHS",
+        "model": "RDM:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-call-start",
+          "variables": 1530,
+          "constraints": 374,
+          "nonzeros": 21257,
+          "objectiveTerms": 1062,
+          "hintTerms": 1530
+        }
+      },
+      {
+        "sequence": 4,
+        "backend": "HiGHS",
+        "model": "PCT:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-call-start",
+          "variables": 1532,
+          "constraints": 376,
+          "nonzeros": 21364,
+          "objectiveTerms": 1062,
+          "hintTerms": 1532
+        }
+      },
+      {
+        "sequence": 5,
+        "backend": "HiGHS",
+        "model": "PCT:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-solve-start",
+          "getHighsMs": 19.409099999999967,
+          "lpSerializationMs": 3.6259000000000015,
+          "modelImportMs": 29.299100000000067,
+          "lpCharacters": 377471,
+          "variables": 1532,
+          "constraints": 376,
+          "nonzeros": 21364
+        }
+      },
+      {
+        "sequence": 6,
+        "backend": "HiGHS",
+        "model": "RDM:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-solve-start",
+          "getHighsMs": 21.752700000000004,
+          "lpSerializationMs": 3.830600000000004,
+          "modelImportMs": 32.134399999999914,
+          "lpCharacters": 375683,
+          "variables": 1530,
+          "constraints": 374,
+          "nonzeros": 21257
+        }
+      },
+      {
+        "sequence": 7,
+        "backend": "HiGHS",
+        "model": "RDM:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-solve-end",
+          "status": "Optimal",
+          "getHighsMs": 21.752700000000004,
+          "lpSerializationMs": 3.830600000000004,
+          "modelImportMs": 32.134399999999914,
+          "nativeRunMs": 4077.8986000000004,
+          "totalMs": 4143.9096,
+          "lpCharacters": 375683
+        }
+      },
+      {
+        "sequence": 8,
+        "backend": "HiGHS",
+        "model": "RDM:exact_search_RDM",
+        "profile": {
+          "phase": "exact-search-summary",
+          "job": "RDM",
+          "elapsedMs": 4248.9332,
+          "modelPreparationMs": 62.214200000000005,
+          "greedyMipStartMs": 8.005199999999945,
+          "solverWallMs": 4144.167,
+          "otherSearchMs": 10.066399999999703,
+          "resourceBudgetCandidateCuts": 0,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "solverRuns": 1,
+          "incumbentCandidateUpperBoundCuts": 0,
+          "excludedSignatures": 1,
+          "signatureBandChecks": 1,
+          "signatureBandElapsedMs": 24.480400000000373,
+          "signatureBandProof": true,
+          "variables": 1530,
+          "constraints": 375,
+          "reachableFactorClassesRemoved": 153,
+          "reachableAttributePruningSkipped": 0,
+          "reachableWeaponFactorClassesRemoved": 0,
+          "reachableWeaponPruningSkipped": 0,
+          "maximumSurrogate": 43872535042374,
+          "memoryUsage": {
+            "rssBytes": 1110769664,
+            "heapUsedBytes": 119451120
+          },
+          "conditionalResourceSupport": {
+            "candidateBands": 0,
+            "rowsAdded": 0,
+            "nonzerosAdded": 0,
+            "skipReason": "disabled-by-policy"
+          }
+        }
+      },
+      {
+        "sequence": 9,
+        "backend": "HiGHS",
+        "model": "PCT:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-solve-end",
+          "status": "Optimal",
+          "getHighsMs": 19.409099999999967,
+          "lpSerializationMs": 3.6259000000000015,
+          "modelImportMs": 29.299100000000067,
+          "nativeRunMs": 4352.994699999999,
+          "totalMs": 4413.5031,
+          "lpCharacters": 377471
+        }
+      },
+      {
+        "sequence": 10,
+        "backend": "HiGHS",
+        "model": "PCT:exact_search_PCT",
+        "profile": {
+          "phase": "exact-search-summary",
+          "job": "PCT",
+          "elapsedMs": 4517.0655,
+          "modelPreparationMs": 60.240999999999985,
+          "greedyMipStartMs": 8.39829999999995,
+          "solverWallMs": 4413.6878,
+          "otherSearchMs": 10.097400000000562,
+          "resourceBudgetCandidateCuts": 0,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": true,
+          "solverRuns": 1,
+          "incumbentCandidateUpperBoundCuts": 0,
+          "excludedSignatures": 1,
+          "signatureBandChecks": 1,
+          "signatureBandElapsedMs": 24.64099999999962,
+          "signatureBandProof": true,
+          "variables": 1532,
+          "constraints": 377,
+          "reachableFactorClassesRemoved": 153,
+          "reachableAttributePruningSkipped": 0,
+          "reachableWeaponFactorClassesRemoved": 0,
+          "reachableWeaponPruningSkipped": 0,
+          "maximumSurrogate": 43872535042374,
+          "memoryUsage": {
+            "rssBytes": 1114394624,
+            "heapUsedBytes": 147117976
+          },
+          "conditionalResourceSupport": {
+            "candidateBands": 0,
+            "rowsAdded": 0,
+            "nonzerosAdded": 0,
+            "skipReason": "disabled-by-policy"
+          }
+        }
+      }
+    ],
+    "observedSearchStatistics": {
+      "outerNodes": 0,
+      "completeNodes": 0,
+      "upperBoundPrunes": 0,
+      "relaxedOptimaAttained": 0,
+      "innerSolves": 2,
+      "parentResultReuses": 0,
+      "cacheHits": 0,
+      "cacheMisses": 2,
+      "cacheEntries": 0,
+      "elapsedMs": 4791.515200000001,
+      "timeLimitMs": "unlimited",
+      "cacheLimit": 2048,
+      "rssBytes": 1135992832,
+      "heapUsedBytes": 140268816
+    },
+    "sourceSnapshotDirectory": "../../strategy-snapshot"
+  },
+  "solverProfiles": [
+    {
+      "sequence": 1,
+      "backend": "HiGHS",
+      "model": "RDM:RDM:candidate_upper_bound_gate",
+      "profile": {
+        "phase": "candidate-upper-bound-gate",
+        "job": "RDM",
+        "candidateCount": 310,
+        "trustedCanonicalEvaluator": true,
+        "enabled": false,
+        "resourceBudgetCandidateProfile": "default"
+      }
+    },
+    {
+      "sequence": 2,
+      "backend": "HiGHS",
+      "model": "PCT:PCT:candidate_upper_bound_gate",
+      "profile": {
+        "phase": "candidate-upper-bound-gate",
+        "job": "PCT",
+        "candidateCount": 310,
+        "trustedCanonicalEvaluator": true,
+        "enabled": false,
+        "resourceBudgetCandidateProfile": "default"
+      }
+    },
+    {
+      "sequence": 3,
+      "backend": "HiGHS",
+      "model": "RDM:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-call-start",
+        "variables": 1530,
+        "constraints": 374,
+        "nonzeros": 21257,
+        "objectiveTerms": 1062,
+        "hintTerms": 1530
+      }
+    },
+    {
+      "sequence": 4,
+      "backend": "HiGHS",
+      "model": "PCT:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-call-start",
+        "variables": 1532,
+        "constraints": 376,
+        "nonzeros": 21364,
+        "objectiveTerms": 1062,
+        "hintTerms": 1532
+      }
+    },
+    {
+      "sequence": 5,
+      "backend": "HiGHS",
+      "model": "PCT:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-solve-start",
+        "getHighsMs": 19.409099999999967,
+        "lpSerializationMs": 3.6259000000000015,
+        "modelImportMs": 29.299100000000067,
+        "lpCharacters": 377471,
+        "variables": 1532,
+        "constraints": 376,
+        "nonzeros": 21364
+      }
+    },
+    {
+      "sequence": 6,
+      "backend": "HiGHS",
+      "model": "RDM:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-solve-start",
+        "getHighsMs": 21.752700000000004,
+        "lpSerializationMs": 3.830600000000004,
+        "modelImportMs": 32.134399999999914,
+        "lpCharacters": 375683,
+        "variables": 1530,
+        "constraints": 374,
+        "nonzeros": 21257
+      }
+    },
+    {
+      "sequence": 7,
+      "backend": "HiGHS",
+      "model": "RDM:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-solve-end",
+        "status": "Optimal",
+        "getHighsMs": 21.752700000000004,
+        "lpSerializationMs": 3.830600000000004,
+        "modelImportMs": 32.134399999999914,
+        "nativeRunMs": 4077.8986000000004,
+        "totalMs": 4143.9096,
+        "lpCharacters": 375683
+      }
+    },
+    {
+      "sequence": 8,
+      "backend": "HiGHS",
+      "model": "RDM:exact_search_RDM",
+      "profile": {
+        "phase": "exact-search-summary",
+        "job": "RDM",
+        "elapsedMs": 4248.9332,
+        "modelPreparationMs": 62.214200000000005,
+        "greedyMipStartMs": 8.005199999999945,
+        "solverWallMs": 4144.167,
+        "otherSearchMs": 10.066399999999703,
+        "resourceBudgetCandidateCuts": 0,
+        "primaryResourceSupportsEnabled": false,
+        "mainStatResourceSupportEnabled": false,
+        "solverRuns": 1,
+        "incumbentCandidateUpperBoundCuts": 0,
+        "excludedSignatures": 1,
+        "signatureBandChecks": 1,
+        "signatureBandElapsedMs": 24.480400000000373,
+        "signatureBandProof": true,
+        "variables": 1530,
+        "constraints": 375,
+        "reachableFactorClassesRemoved": 153,
+        "reachableAttributePruningSkipped": 0,
+        "reachableWeaponFactorClassesRemoved": 0,
+        "reachableWeaponPruningSkipped": 0,
+        "maximumSurrogate": 43872535042374,
+        "memoryUsage": {
+          "rssBytes": 1110769664,
+          "heapUsedBytes": 119451120
+        },
+        "conditionalResourceSupport": {
+          "candidateBands": 0,
+          "rowsAdded": 0,
+          "nonzerosAdded": 0,
+          "skipReason": "disabled-by-policy"
+        }
+      }
+    },
+    {
+      "sequence": 9,
+      "backend": "HiGHS",
+      "model": "PCT:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-solve-end",
+        "status": "Optimal",
+        "getHighsMs": 19.409099999999967,
+        "lpSerializationMs": 3.6259000000000015,
+        "modelImportMs": 29.299100000000067,
+        "nativeRunMs": 4352.994699999999,
+        "totalMs": 4413.5031,
+        "lpCharacters": 377471
+      }
+    },
+    {
+      "sequence": 10,
+      "backend": "HiGHS",
+      "model": "PCT:exact_search_PCT",
+      "profile": {
+        "phase": "exact-search-summary",
+        "job": "PCT",
+        "elapsedMs": 4517.0655,
+        "modelPreparationMs": 60.240999999999985,
+        "greedyMipStartMs": 8.39829999999995,
+        "solverWallMs": 4413.6878,
+        "otherSearchMs": 10.097400000000562,
+        "resourceBudgetCandidateCuts": 0,
+        "primaryResourceSupportsEnabled": false,
+        "mainStatResourceSupportEnabled": true,
+        "solverRuns": 1,
+        "incumbentCandidateUpperBoundCuts": 0,
+        "excludedSignatures": 1,
+        "signatureBandChecks": 1,
+        "signatureBandElapsedMs": 24.64099999999962,
+        "signatureBandProof": true,
+        "variables": 1532,
+        "constraints": 377,
+        "reachableFactorClassesRemoved": 153,
+        "reachableAttributePruningSkipped": 0,
+        "reachableWeaponFactorClassesRemoved": 0,
+        "reachableWeaponPruningSkipped": 0,
+        "maximumSurrogate": 43872535042374,
+        "memoryUsage": {
+          "rssBytes": 1114394624,
+          "heapUsedBytes": 147117976
+        },
+        "conditionalResourceSupport": {
+          "candidateBands": 0,
+          "rowsAdded": 0,
+          "nonzerosAdded": 0,
+          "skipReason": "disabled-by-policy"
+        }
+      }
+    }
+  ],
+  "checks": [
+    {
+      "name": "child-exited-normally",
+      "passed": true,
+      "actual": {
+        "exitCode": 0,
+        "timedOut": false
+      }
+    },
+    {
+      "name": "result-json-found",
+      "passed": true,
+      "actual": "parsed"
+    },
+    {
+      "name": "proof-complete",
+      "passed": true,
+      "actual": true
+    },
+    {
+      "name": "solo-objective-score-at-least-history-RDM",
+      "passed": true,
+      "expectedMinimum": 36.769120086402275,
+      "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+      "matchingRecordCount": 4,
+      "source": {
+        "record": "docs/search-optimization/耗时优化记录.7z",
+        "archivedRunId": "20261009T165822206Z",
+        "caseId": "rdm-pct-sync735-gcd-shared-armor-dps",
+        "sourceFilename": "result.json",
+        "jsonPointer": "/output/jobs/RDM/soloOptimum/objectiveScore"
+      },
+      "actualSoloOptimum": 36.769120086402275,
+      "actualJointObjectiveScore": 36.769120086402275
+    },
+    {
+      "name": "solo-objective-score-at-least-history-PCT",
+      "passed": true,
+      "expectedMinimum": 36.769120086402275,
+      "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+      "matchingRecordCount": 4,
+      "source": {
+        "record": "docs/search-optimization/耗时优化记录.7z",
+        "archivedRunId": "20261009T165822206Z",
+        "caseId": "rdm-pct-sync735-gcd-shared-armor-dps",
+        "sourceFilename": "result.json",
+        "jsonPointer": "/output/jobs/PCT/soloOptimum/objectiveScore"
+      },
+      "actualSoloOptimum": 36.769120086402275,
+      "actualJointObjectiveScore": 36.769120086402275
+    },
+    {
+      "name": "exact-normalized-result-at-least-history",
+      "passed": true,
+      "expected": {
+        "numerator": "2",
+        "denominator": "1"
+      },
+      "actual": {
+        "numerator": "2",
+        "denominator": "1",
+        "approximate": 2
+      }
+    },
+    {
+      "name": "within-historical-fastest-tolerance",
+      "passed": true,
+      "expectedMaximumMs": 5789,
+      "actualMs": 5088,
+      "toleranceMs": 1000,
+      "policy": "fixed-1000ms"
+    },
+    {
+      "name": "runtime-inputs-match-suite-baseline-before-case",
+      "passed": true,
+      "expected": "suite snapshot SHA-256",
+      "changedPaths": []
+    },
+    {
+      "name": "runtime-inputs-match-suite-baseline-after-case",
+      "passed": true,
+      "expected": "suite snapshot SHA-256",
+      "changedPaths": []
+    }
+  ],
+  "passed": true,
+  "stdoutLog": "cases/rdm-pct-sync735-gcd-shared-armor-dps/stdout.log",
+  "stderrLog": "cases/rdm-pct-sync735-gcd-shared-armor-dps/stderr.log",
+  "output": {
+    "objective": "dps",
+    "normalizedJointValue": {
+      "numerator": "2",
+      "denominator": "1",
+      "approximate": 2
+    },
+    "commonFood": {
+      "itemId": 49240,
+      "name": "焦糖爆米花",
+      "itemLevel": 770,
+      "attributes": {
+        "VIT": 297,
+        "DET": 151,
+        "CRT": 91
+      }
+    },
+    "commonEquipment": {
+      "头部": [
+        {
+          "slot": "头部",
+          "itemId": 43076,
+          "name": "改良型绿咬鹃咏咒兜帽",
+          "itemLevel": 730,
+          "attributes": {
+            "INT": 371,
+            "VIT": 352,
+            "CRT": 236,
+            "DET": 165,
+            "DHT": 108
+          },
+          "materia": [
+            {
+              "stat": "DHT",
+              "value": 54,
+              "grade": 12
+            },
+            {
+              "stat": "DHT",
+              "value": 54,
+              "grade": 12
+            }
+          ]
+        }
+      ],
+      "身体": [
+        {
+          "slot": "身体",
+          "itemId": 49711,
+          "name": "总冠军咏咒外袍",
+          "itemLevel": 790,
+          "attributes": {
+            "INT": 605,
+            "VIT": 579,
+            "CRT": 379,
+            "DET": 299
+          },
+          "materia": []
+        }
+      ],
+      "手部": [
+        {
+          "slot": "手部",
+          "itemId": 47140,
+          "name": "雾忆咏咒护臂",
+          "itemLevel": 735,
+          "attributes": {
+            "INT": 381,
+            "VIT": 365,
+            "DHT": 239,
+            "DET": 167,
+            "CRT": 108
+          },
+          "materia": [
+            {
+              "stat": "CRT",
+              "value": 54,
+              "grade": 12
+            },
+            {
+              "stat": "CRT",
+              "value": 54,
+              "grade": 12
+            }
+          ]
+        }
+      ],
+      "腿部": [
+        {
+          "slot": "腿部",
+          "itemId": 47141,
+          "name": "雾忆咏咒打底裤",
+          "itemLevel": 735,
+          "attributes": {
+            "INT": 605,
+            "VIT": 579,
+            "CRT": 379,
+            "DHT": 373
+          },
+          "materia": [
+            {
+              "stat": "DHT",
+              "value": 54,
+              "grade": 12
+            },
+            {
+              "stat": "DHT",
+              "value": 54,
+              "grade": 12
+            }
+          ]
+        }
+      ],
+      "脚部": [
+        {
+          "slot": "脚部",
+          "itemId": 47142,
+          "name": "雾忆咏咒长靴",
+          "itemLevel": 735,
+          "attributes": {
+            "INT": 381,
+            "VIT": 365,
+            "DHT": 239,
+            "DET": 167,
+            "CRT": 108
+          },
+          "materia": [
+            {
+              "stat": "CRT",
+              "value": 54,
+              "grade": 12
+            },
+            {
+              "stat": "CRT",
+              "value": 54,
+              "grade": 12
+            }
+          ]
+        }
+      ],
+      "耳饰": [
+        {
+          "slot": "耳饰",
+          "itemId": 43162,
+          "name": "黑马冠军咏咒耳坠",
+          "itemLevel": 730,
+          "attributes": {
+            "INT": 292,
+            "VIT": 277,
+            "DET": 186,
+            "CRT": 184,
+            "DHT": 54
+          },
+          "materia": [
+            {
+              "stat": "CRT",
+              "value": 54,
+              "grade": 12
+            },
+            {
+              "stat": "DHT",
+              "value": 54,
+              "grade": 12
+            }
+          ]
+        }
+      ],
+      "项链": [
+        {
+          "slot": "项链",
+          "itemId": 43090,
+          "name": "改良型绿咬鹃咏咒项链",
+          "itemLevel": 730,
+          "attributes": {
+            "INT": 292,
+            "VIT": 277,
+            "CRT": 186,
+            "DHT": 130,
+            "DET": 108
+          },
+          "materia": [
+            {
+              "stat": "DET",
+              "value": 54,
+              "grade": 12
+            },
+            {
+              "stat": "DET",
+              "value": 54,
+              "grade": 12
+            }
+          ]
+        }
+      ],
+      "手镯": [
+        {
+          "slot": "手镯",
+          "itemId": 43172,
+          "name": "黑马冠军咏咒手镯",
+          "itemLevel": 730,
+          "attributes": {
+            "INT": 292,
+            "VIT": 277,
+            "DHT": 186,
+            "CRT": 184,
+            "DET": 54
+          },
+          "materia": [
+            {
+              "stat": "CRT",
+              "value": 54,
+              "grade": 12
+            },
+            {
+              "stat": "DET",
+              "value": 54,
+              "grade": 12
+            }
+          ]
+        }
+      ]
+    },
+    "jobs": {
+      "RDM": {
+        "joint": {
+          "job": "RDM",
+          "damagePerPotency": 91.18741781427764,
+          "gcd": 2.48,
+          "damagePerSecond": 36.769120086402275,
+          "objectiveScore": 36.769120086402275,
+          "totalAttributes": {
+            "PDMG": 0,
+            "MDMG": 146,
+            "INT": 4940,
+            "CRT": 3038,
+            "DET": 2368,
+            "DHT": 1989,
+            "SPS": 528,
+            "VIT": 4962,
+            "DLY": 3440
+          },
+          "durationMs": 4248.9332,
+          "searchedCandidates": 399,
+          "food": {
+            "itemId": 49240,
+            "name": "焦糖爆米花",
+            "itemLevel": 770,
+            "attributes": {
+              "VIT": 297,
+              "DET": 151,
+              "CRT": 91
+            }
+          },
+          "equipment": [
+            {
+              "slot": "主手",
+              "itemId": 51014,
+              "name": "幻境刺剑·秘影",
+              "itemLevel": 795,
+              "attributes": {
+                "INT": 628,
+                "VIT": 600,
+                "MDMG": 146,
+                "DLY": 3440,
+                "CRT": 393,
+                "DET": 393,
+                "SPS": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "DET",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "SPS",
+                  "value": 108,
+                  "grade": 0
+                }
+              ]
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 43100,
+              "name": "改良型绿咬鹃咏咒戒指",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "CRT": 186,
+                "DET": 184,
+                "DHT": 54
+              },
+              "materia": [
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 43177,
+              "name": "黑马冠军咏咒指环",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "DHT": 186,
+                "CRT": 184,
+                "DET": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 43162,
+              "name": "黑马冠军咏咒耳坠",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "DET": 186,
+                "CRT": 184,
+                "DHT": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "项链",
+              "itemId": 43090,
+              "name": "改良型绿咬鹃咏咒项链",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "CRT": 186,
+                "DHT": 130,
+                "DET": 108
+              },
+              "materia": [
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手镯",
+              "itemId": 43172,
+              "name": "黑马冠军咏咒手镯",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "DHT": 186,
+                "CRT": 184,
+                "DET": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "头部",
+              "itemId": 43076,
+              "name": "改良型绿咬鹃咏咒兜帽",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 371,
+                "VIT": 352,
+                "CRT": 236,
+                "DET": 165,
+                "DHT": 108
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手部",
+              "itemId": 47140,
+              "name": "雾忆咏咒护臂",
+              "itemLevel": 735,
+              "attributes": {
+                "INT": 381,
+                "VIT": 365,
+                "DHT": 239,
+                "DET": 167,
+                "CRT": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "腿部",
+              "itemId": 47141,
+              "name": "雾忆咏咒打底裤",
+              "itemLevel": 735,
+              "attributes": {
+                "INT": 605,
+                "VIT": 579,
+                "CRT": 379,
+                "DHT": 373
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "脚部",
+              "itemId": 47142,
+              "name": "雾忆咏咒长靴",
+              "itemLevel": 735,
+              "attributes": {
+                "INT": 381,
+                "VIT": 365,
+                "DHT": 239,
+                "DET": 167,
+                "CRT": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "身体",
+              "itemId": 49711,
+              "name": "总冠军咏咒外袍",
+              "itemLevel": 790,
+              "attributes": {
+                "INT": 605,
+                "VIT": 579,
+                "CRT": 379,
+                "DET": 299
+              },
+              "materia": []
+            }
+          ]
+        },
+        "soloOptimum": {
+          "job": "RDM",
+          "damagePerPotency": 91.18741781427764,
+          "gcd": 2.48,
+          "damagePerSecond": 36.769120086402275,
+          "objectiveScore": 36.769120086402275,
+          "totalAttributes": {
+            "PDMG": 0,
+            "MDMG": 146,
+            "INT": 4940,
+            "CRT": 3038,
+            "DET": 2368,
+            "DHT": 1989,
+            "SPS": 528,
+            "VIT": 4962,
+            "DLY": 3440
+          },
+          "durationMs": 4248.9332,
+          "searchedCandidates": 399,
+          "food": {
+            "itemId": 49240,
+            "name": "焦糖爆米花",
+            "itemLevel": 770,
+            "attributes": {
+              "VIT": 297,
+              "DET": 151,
+              "CRT": 91
+            }
+          },
+          "equipment": [
+            {
+              "slot": "主手",
+              "itemId": 51014,
+              "name": "幻境刺剑·秘影",
+              "itemLevel": 795,
+              "attributes": {
+                "INT": 628,
+                "VIT": 600,
+                "MDMG": 146,
+                "DLY": 3440,
+                "CRT": 393,
+                "DET": 393,
+                "SPS": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "DET",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "SPS",
+                  "value": 108,
+                  "grade": 0
+                }
+              ]
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 43100,
+              "name": "改良型绿咬鹃咏咒戒指",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "CRT": 186,
+                "DET": 184,
+                "DHT": 54
+              },
+              "materia": [
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 43177,
+              "name": "黑马冠军咏咒指环",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "DHT": 186,
+                "CRT": 184,
+                "DET": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 43162,
+              "name": "黑马冠军咏咒耳坠",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "DET": 186,
+                "CRT": 184,
+                "DHT": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "项链",
+              "itemId": 43090,
+              "name": "改良型绿咬鹃咏咒项链",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "CRT": 186,
+                "DHT": 130,
+                "DET": 108
+              },
+              "materia": [
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手镯",
+              "itemId": 43172,
+              "name": "黑马冠军咏咒手镯",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "DHT": 186,
+                "CRT": 184,
+                "DET": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "头部",
+              "itemId": 43076,
+              "name": "改良型绿咬鹃咏咒兜帽",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 371,
+                "VIT": 352,
+                "CRT": 236,
+                "DET": 165,
+                "DHT": 108
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手部",
+              "itemId": 47140,
+              "name": "雾忆咏咒护臂",
+              "itemLevel": 735,
+              "attributes": {
+                "INT": 381,
+                "VIT": 365,
+                "DHT": 239,
+                "DET": 167,
+                "CRT": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "腿部",
+              "itemId": 47141,
+              "name": "雾忆咏咒打底裤",
+              "itemLevel": 735,
+              "attributes": {
+                "INT": 605,
+                "VIT": 579,
+                "CRT": 379,
+                "DHT": 373
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "脚部",
+              "itemId": 47142,
+              "name": "雾忆咏咒长靴",
+              "itemLevel": 735,
+              "attributes": {
+                "INT": 381,
+                "VIT": 365,
+                "DHT": 239,
+                "DET": 167,
+                "CRT": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "身体",
+              "itemId": 49711,
+              "name": "总冠军咏咒外袍",
+              "itemLevel": 790,
+              "attributes": {
+                "INT": 605,
+                "VIT": 579,
+                "CRT": 379,
+                "DET": 299
+              },
+              "materia": []
+            }
+          ]
+        }
+      },
+      "PCT": {
+        "joint": {
+          "job": "PCT",
+          "damagePerPotency": 91.18741781427764,
+          "gcd": 2.48,
+          "damagePerSecond": 36.769120086402275,
+          "objectiveScore": 36.769120086402275,
+          "totalAttributes": {
+            "PDMG": 0,
+            "MDMG": 146,
+            "INT": 4940,
+            "CRT": 3038,
+            "DET": 2368,
+            "DHT": 1989,
+            "SPS": 528,
+            "VIT": 4962,
+            "DLY": 2960
+          },
+          "durationMs": 4517.0655,
+          "searchedCandidates": 399,
+          "food": {
+            "itemId": 49240,
+            "name": "焦糖爆米花",
+            "itemLevel": 770,
+            "attributes": {
+              "VIT": 297,
+              "DET": 151,
+              "CRT": 91
+            }
+          },
+          "equipment": [
+            {
+              "slot": "主手",
+              "itemId": 51020,
+              "name": "幻境圆笔·秘影",
+              "itemLevel": 795,
+              "attributes": {
+                "INT": 628,
+                "VIT": 600,
+                "MDMG": 146,
+                "DLY": 2960,
+                "CRT": 393,
+                "DET": 393,
+                "SPS": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "DET",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "SPS",
+                  "value": 108,
+                  "grade": 0
+                }
+              ]
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 43100,
+              "name": "改良型绿咬鹃咏咒戒指",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "CRT": 186,
+                "DET": 184,
+                "DHT": 54
+              },
+              "materia": [
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 43177,
+              "name": "黑马冠军咏咒指环",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "DHT": 186,
+                "CRT": 184,
+                "DET": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 43162,
+              "name": "黑马冠军咏咒耳坠",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "DET": 186,
+                "CRT": 184,
+                "DHT": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "项链",
+              "itemId": 43090,
+              "name": "改良型绿咬鹃咏咒项链",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "CRT": 186,
+                "DHT": 130,
+                "DET": 108
+              },
+              "materia": [
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手镯",
+              "itemId": 43172,
+              "name": "黑马冠军咏咒手镯",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "DHT": 186,
+                "CRT": 184,
+                "DET": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "头部",
+              "itemId": 43076,
+              "name": "改良型绿咬鹃咏咒兜帽",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 371,
+                "VIT": 352,
+                "CRT": 236,
+                "DET": 165,
+                "DHT": 108
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手部",
+              "itemId": 47140,
+              "name": "雾忆咏咒护臂",
+              "itemLevel": 735,
+              "attributes": {
+                "INT": 381,
+                "VIT": 365,
+                "DHT": 239,
+                "DET": 167,
+                "CRT": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "腿部",
+              "itemId": 47141,
+              "name": "雾忆咏咒打底裤",
+              "itemLevel": 735,
+              "attributes": {
+                "INT": 605,
+                "VIT": 579,
+                "CRT": 379,
+                "DHT": 373
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "脚部",
+              "itemId": 47142,
+              "name": "雾忆咏咒长靴",
+              "itemLevel": 735,
+              "attributes": {
+                "INT": 381,
+                "VIT": 365,
+                "DHT": 239,
+                "DET": 167,
+                "CRT": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "身体",
+              "itemId": 49711,
+              "name": "总冠军咏咒外袍",
+              "itemLevel": 790,
+              "attributes": {
+                "INT": 605,
+                "VIT": 579,
+                "CRT": 379,
+                "DET": 299
+              },
+              "materia": []
+            }
+          ]
+        },
+        "soloOptimum": {
+          "job": "PCT",
+          "damagePerPotency": 91.18741781427764,
+          "gcd": 2.48,
+          "damagePerSecond": 36.769120086402275,
+          "objectiveScore": 36.769120086402275,
+          "totalAttributes": {
+            "PDMG": 0,
+            "MDMG": 146,
+            "INT": 4940,
+            "CRT": 3038,
+            "DET": 2368,
+            "DHT": 1989,
+            "SPS": 528,
+            "VIT": 4962,
+            "DLY": 2960
+          },
+          "durationMs": 4517.0655,
+          "searchedCandidates": 399,
+          "food": {
+            "itemId": 49240,
+            "name": "焦糖爆米花",
+            "itemLevel": 770,
+            "attributes": {
+              "VIT": 297,
+              "DET": 151,
+              "CRT": 91
+            }
+          },
+          "equipment": [
+            {
+              "slot": "主手",
+              "itemId": 51020,
+              "name": "幻境圆笔·秘影",
+              "itemLevel": 795,
+              "attributes": {
+                "INT": 628,
+                "VIT": 600,
+                "MDMG": 146,
+                "DLY": 2960,
+                "CRT": 393,
+                "DET": 393,
+                "SPS": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "DET",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "SPS",
+                  "value": 108,
+                  "grade": 0
+                }
+              ]
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 43100,
+              "name": "改良型绿咬鹃咏咒戒指",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "CRT": 186,
+                "DET": 184,
+                "DHT": 54
+              },
+              "materia": [
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 43177,
+              "name": "黑马冠军咏咒指环",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "DHT": 186,
+                "CRT": 184,
+                "DET": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 43162,
+              "name": "黑马冠军咏咒耳坠",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "DET": 186,
+                "CRT": 184,
+                "DHT": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "项链",
+              "itemId": 43090,
+              "name": "改良型绿咬鹃咏咒项链",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "CRT": 186,
+                "DHT": 130,
+                "DET": 108
+              },
+              "materia": [
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手镯",
+              "itemId": 43172,
+              "name": "黑马冠军咏咒手镯",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 292,
+                "VIT": 277,
+                "DHT": 186,
+                "CRT": 184,
+                "DET": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "头部",
+              "itemId": 43076,
+              "name": "改良型绿咬鹃咏咒兜帽",
+              "itemLevel": 730,
+              "attributes": {
+                "INT": 371,
+                "VIT": 352,
+                "CRT": 236,
+                "DET": 165,
+                "DHT": 108
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手部",
+              "itemId": 47140,
+              "name": "雾忆咏咒护臂",
+              "itemLevel": 735,
+              "attributes": {
+                "INT": 381,
+                "VIT": 365,
+                "DHT": 239,
+                "DET": 167,
+                "CRT": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "腿部",
+              "itemId": 47141,
+              "name": "雾忆咏咒打底裤",
+              "itemLevel": 735,
+              "attributes": {
+                "INT": 605,
+                "VIT": 579,
+                "CRT": 379,
+                "DHT": 373
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "脚部",
+              "itemId": 47142,
+              "name": "雾忆咏咒长靴",
+              "itemLevel": 735,
+              "attributes": {
+                "INT": 381,
+                "VIT": 365,
+                "DHT": 239,
+                "DET": 167,
+                "CRT": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "身体",
+              "itemId": 49711,
+              "name": "总冠军咏咒外袍",
+              "itemLevel": 790,
+              "attributes": {
+                "INT": 605,
+                "VIT": 579,
+                "CRT": 379,
+                "DET": 299
+              },
+              "materia": []
+            }
+          ]
+        }
+      }
+    },
+    "proof": {
+      "complete": true,
+      "objective": "dps",
+      "optimalityScope": "传入的每职业槽位候选（含两个独立戒指槽及跨槽 unique 约束）、完整装备身份交集、食物列表和约束范围",
+      "outerBound": "单职业最优基线归一化后，每职业比例不超过 1；总和不超过职业数减 1 加比例乘积，乘积仅筛选可能改进的因子签名；最终总和使用 BigInt 有理数比较",
+      "innerSolverStatus": "Optimal",
+      "formalCertificate": false,
+      "numericalLimitation": "HiGHS 报告 Optimal，或经保守取整的 MIP 对偶上界已不高于精确 BigInt incumbent；模型行与属性重建均已复核，但这些求解器结果不是独立形式化证书",
+      "terminationReason": "已达到各职业单独最优基线之和这一全局上界"
+    },
+    "statistics": {
+      "outerNodes": 0,
+      "completeNodes": 0,
+      "upperBoundPrunes": 0,
+      "relaxedOptimaAttained": 0,
+      "innerSolves": 2,
+      "parentResultReuses": 0,
+      "cacheHits": 0,
+      "cacheMisses": 2,
+      "cacheEntries": 0,
+      "elapsedMs": 4791.515200000001,
+      "timeLimitMs": "unlimited",
+      "cacheLimit": 2048,
+      "rssBytes": 1135992832,
+      "heapUsedBytes": 140268816
+    },
+    "runtime": {
+      "elapsedMs": 5088,
+      "peakRssBytes": 1379938304,
+      "rssLimitBytes": 3758096384,
+      "timeoutMs": "unlimited"
+    }
+  },
+  "error": null
+}

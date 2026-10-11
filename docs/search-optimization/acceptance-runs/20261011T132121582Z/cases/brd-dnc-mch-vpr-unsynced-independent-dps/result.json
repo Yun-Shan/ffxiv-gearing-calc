@@ -1,0 +1,6207 @@
+{
+  "id": "brd-dnc-mch-vpr-unsynced-independent-dps",
+  "title": "BRD+DNC+MCH+VPR，无同步，770–795，不共享装备与食物，DPS",
+  "scenario": {
+    "id": "brd-dnc-mch-vpr-unsynced-independent-dps",
+    "title": "BRD+DNC+MCH+VPR，无同步，770–795，不共享装备与食物，DPS",
+    "jobs": [
+      "BRD",
+      "DNC",
+      "MCH",
+      "VPR"
+    ],
+    "itemLevelRange": [
+      770,
+      795
+    ],
+    "objective": "dps",
+    "commonSlots": [],
+    "foodStrategy": "independent",
+    "jobConstraints": {},
+    "searchDefaults": {
+      "maximizeTenacity": false,
+      "excludedSources": [],
+      "forcedGear": {},
+      "foodId": 0
+    },
+    "expected": {
+      "normalizedJointValueAtLeast": {
+        "numerator": "4",
+        "denominator": "1"
+      }
+    },
+    "soloObjectiveScoreAtLeast": {
+      "BRD": {
+        "minimum": 50.07705056381793,
+        "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+        "matchingRecordCount": 4,
+        "source": {
+          "record": "docs/search-optimization/耗时优化记录.7z",
+          "archivedRunId": "20261009T165822206Z",
+          "caseId": "brd-dnc-mch-vpr-unsynced-independent-dps",
+          "sourceFilename": "result.json",
+          "jsonPointer": "/output/jobs/BRD/soloOptimum/objectiveScore"
+        }
+      },
+      "DNC": {
+        "minimum": 50.07705056381793,
+        "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+        "matchingRecordCount": 4,
+        "source": {
+          "record": "docs/search-optimization/耗时优化记录.7z",
+          "archivedRunId": "20261009T165822206Z",
+          "caseId": "brd-dnc-mch-vpr-unsynced-independent-dps",
+          "sourceFilename": "result.json",
+          "jsonPointer": "/output/jobs/DNC/soloOptimum/objectiveScore"
+        }
+      },
+      "MCH": {
+        "minimum": 50.07705056381793,
+        "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+        "matchingRecordCount": 4,
+        "source": {
+          "record": "docs/search-optimization/耗时优化记录.7z",
+          "archivedRunId": "20261009T165822206Z",
+          "caseId": "brd-dnc-mch-vpr-unsynced-independent-dps",
+          "sourceFilename": "result.json",
+          "jsonPointer": "/output/jobs/MCH/soloOptimum/objectiveScore"
+        }
+      },
+      "VPR": {
+        "minimum": 48.5175189601382,
+        "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+        "matchingRecordCount": 4,
+        "source": {
+          "record": "docs/search-optimization/耗时优化记录.7z",
+          "archivedRunId": "20261009T165822206Z",
+          "caseId": "brd-dnc-mch-vpr-unsynced-independent-dps",
+          "sourceFilename": "result.json",
+          "jsonPointer": "/output/jobs/VPR/soloOptimum/objectiveScore"
+        }
+      }
+    },
+    "missingSoloObjectiveScoreThresholdJobs": [],
+    "historicalFastestMs": 23443,
+    "optimizationTargetMs": 120000,
+    "historyLabel": "当前项目最快完整证明",
+    "historySource": "docs/search-optimization/耗时优化记录.7z",
+    "strategyTags": [
+      "joint",
+      "joint-4",
+      "job-count-4",
+      "unsynced",
+      "unshared-equipment",
+      "independent-food",
+      "objective-dps"
+    ],
+    "timeoutMs": 300000,
+    "execution": {
+      "command": "D:\\Develop\\nodejs\\node.exe",
+      "args": [
+        "--max-old-space-size=2560",
+        "--experimental-strip-types",
+        "D:\\Workspace\\AI\\ffxiv-gearing-calc\\scripts\\node-tests\\run-v3.mjs"
+      ],
+      "cwd": "D:\\Workspace\\AI\\ffxiv-gearing-calc",
+      "heapCapMiB": 2560,
+      "stdioCapture": "direct-file-descriptors",
+      "profileTiming": true,
+      "parentWatchdogTimeoutMs": 300000,
+      "runnerSearchTimeoutMs": null
+    },
+    "process": [
+      "node",
+      "--max-old-space-size=2560",
+      "--experimental-strip-types",
+      "scripts/node-tests/run-v3.mjs"
+    ],
+    "environment": {
+      "FFXIV_PROFILE_TIMING": "1"
+    },
+    "inputIntegrity": {
+      "suiteBaseline": {
+        "capturedAt": "2026-10-11T13:21:21.917Z",
+        "strategySources": [
+          {
+            "path": "docs/search-optimization/tools/run-acceptance.mjs",
+            "sha256": "3503f917a5ab9fe4a18a0bb06571704d1fff22b8a726833726068d0fddb7a5e2",
+            "bytes": 66040
+          },
+          {
+            "path": "docs/search-optimization/tools/run-single.mjs",
+            "sha256": "98fe3a4e5214b7ceb2506784b882fef52b3937ab4a557bef5bcf5a0f32d2aa78",
+            "bytes": 10620
+          },
+          {
+            "path": "docs/search-optimization/tools/single-worker.mjs",
+            "sha256": "9f91aff728d2b5d81d624d11f18e2af1929e8cfed85fd9c9d97eedd2da6b28f5",
+            "bytes": 1271
+          },
+          {
+            "path": "docs/search-optimization/tools/timing-acceptance.mjs",
+            "sha256": "3b5169d0d0dd202158246b5ab22accd157e86aa9d97016d817e35f17d460fd35",
+            "bytes": 3153
+          },
+          {
+            "path": "package-lock.json",
+            "sha256": "2115cd728a048956f4be4e57a6a7bffd4b38b2d0c9da3602556d347c2bffe1e2",
+            "bytes": 136671
+          },
+          {
+            "path": "package.json",
+            "sha256": "733a59311cd0ac2696e40e024f54d45e7541436995bd6372d5562a96a8d378f7",
+            "bytes": 1526
+          },
+          {
+            "path": "scripts/node-tests/exact-mip-worker.mjs",
+            "sha256": "f4d66d8cf555433b971a08714f85918b52af0738d4845732678faffedce6283f",
+            "bytes": 2030
+          },
+          {
+            "path": "scripts/node-tests/run-v3.mjs",
+            "sha256": "66adff7b3d5a2b1ab78e9ef29ebe2a209fd148c5dbf786e93cdeb0940bdb708b",
+            "bytes": 17964
+          },
+          {
+            "path": "scripts/node-tests/v3-worker.mjs",
+            "sha256": "5f586a5ed7c066662ff4c2b0448466694e5a18f4e9863f31f2b97a049bf56933",
+            "bytes": 1045
+          },
+          {
+            "path": "src/domain/data.ts",
+            "sha256": "6e3d29eca861bb83943de212f4d8a4b5f6b3327d62cd41971ead417b3cf56185",
+            "bytes": 7759
+          },
+          {
+            "path": "src/domain/index.ts",
+            "sha256": "0f6c87a30020f5774d4003c7c7cbba35aa28797485f386c72af5229fa43ca8ef",
+            "bytes": 127
+          },
+          {
+            "path": "src/domain/jobs.ts",
+            "sha256": "0fb771c0b388449fcb70cf444edc8e8dcbe295cce0bd8be7f159d6348c00a71e",
+            "bytes": 336
+          },
+          {
+            "path": "src/domain/optimizer.ts",
+            "sha256": "d0b36af95431c00fbb62d4569c09172ea8736cbbb5182a54ce8ec209d150dbcc",
+            "bytes": 1295
+          },
+          {
+            "path": "src/domain/optimizer.worker.ts",
+            "sha256": "ef14efc8eaae2672f7f21aaead7af686066a043a87b24ac74a9c630a4aa71422",
+            "bytes": 1811
+          },
+          {
+            "path": "src/domain/optimizer/context.ts",
+            "sha256": "3c59fbb591c36d959badfff68da18783ae6bb76da8b760394b9d694df760db5f",
+            "bytes": 3987
+          },
+          {
+            "path": "src/domain/optimizer/equipment-candidates.ts",
+            "sha256": "9206e4a1f3de2ea3c945f02d067edd4e640d34b1701c9ebf1d08b3266a9ad1e4",
+            "bytes": 23962
+          },
+          {
+            "path": "src/domain/optimizer/gcd-search.ts",
+            "sha256": "bc7caee1f67ba2635bee130ae0683567d11fee6fd4f357528792a5bbc6de0ce5",
+            "bytes": 5160
+          },
+          {
+            "path": "src/domain/optimizer/joint-search.ts",
+            "sha256": "f3edfc684ef68e3a524d2aaa5e796937336c6e625a06ffc7f30e1bc4c4c963ef",
+            "bytes": 14562
+          },
+          {
+            "path": "src/domain/optimizer/result-assembly.ts",
+            "sha256": "89c53eb4e035f47f1aa378523803ccb5fd1b032650ac355d59851c76f114bff2",
+            "bytes": 3713
+          },
+          {
+            "path": "src/domain/optimizer/search-preparation.ts",
+            "sha256": "9363f043eecb61e4f5c9fdadab6bb5af5f401d317d5b582e783fb05bac57384b",
+            "bytes": 7593
+          },
+          {
+            "path": "src/domain/optimizer/single-search.ts",
+            "sha256": "6e689fd84a48f7f9b824ab6d59c65c6b2c0670c74dbda382b0bbe3e87179a86a",
+            "bytes": 3169
+          },
+          {
+            "path": "src/domain/rules.ts",
+            "sha256": "5f7bb7cd5d825e6e4e9e507905470e037493498074b4ad2a2d149c60aadd7352",
+            "bytes": 6659
+          },
+          {
+            "path": "src/domain/search/baseline-worker-policy.ts",
+            "sha256": "b4f2b0f03170d4ce3db92fcc547ca239c045a0f4a47f80c03b221ce24feeaad0",
+            "bytes": 621
+          },
+          {
+            "path": "src/domain/search/cancellation.ts",
+            "sha256": "20ac2f8267ee705f28ab5370cae6e9475ab193037e8fbb35d60466e1b32e7d14",
+            "bytes": 202
+          },
+          {
+            "path": "src/domain/search/candidate-pareto.ts",
+            "sha256": "35b1dc71dccdd7cc1a8734d144589d39d05669b918b09369343c6ee14646db61",
+            "bytes": 4062
+          },
+          {
+            "path": "src/domain/search/candidate-resource-support-policy.ts",
+            "sha256": "7f04b0db0c4a6b639feaf56947ca97b51fffca79fc319f251513c5db84aa21b1",
+            "bytes": 9779
+          },
+          {
+            "path": "src/domain/search/equipment-candidates.ts",
+            "sha256": "f0ea04ec18cbef047a2c6ff46a26610168f6ccefa1517ba71d36c58888625fa6",
+            "bytes": 241
+          },
+          {
+            "path": "src/domain/search/equipment-identity.ts",
+            "sha256": "8d9f7ea3bbd439e4fa47bb38e5a931f6b72c2084811a7f92d5d4434b703234b3",
+            "bytes": 1072
+          },
+          {
+            "path": "src/domain/search/equipment-sync.ts",
+            "sha256": "f0bb5455717dfe131742b8e1a38b2857b9cec03006268a43582590f79b4859db",
+            "bytes": 199
+          },
+          {
+            "path": "src/domain/search/equipped-effects.ts",
+            "sha256": "2f544fec239865d5dcf9f7488eb4cbb69cbb3a803f64ea34a6849ac8451046ce",
+            "bytes": 16026
+          },
+          {
+            "path": "src/domain/search/exact-mip-candidate-upper-bound.ts",
+            "sha256": "0fcab255d2bba46e8e4eecdc3bd8219035ee6813b3cfa47be593e9ff4d06ddda",
+            "bytes": 5629
+          },
+          {
+            "path": "src/domain/search/factor-resource-budget-upper-bound.ts",
+            "sha256": "4582df7c6a21c23690a8642c796ffc953b2af485eca280b3fea016e801720e05",
+            "bytes": 6007
+          },
+          {
+            "path": "src/domain/search/highs-browser.ts",
+            "sha256": "e2ade8afd0030eafa37ef20e84f9e593eebdcc2b12ae6fbd13fcf2a854ddb71e",
+            "bytes": 250
+          },
+          {
+            "path": "src/domain/search/highs-runtime.d.ts",
+            "sha256": "81f1599e1511c3de3e313e3352e1d51f70562c4ff5cd09f1475b88d3f599656a",
+            "bytes": 92
+          },
+          {
+            "path": "src/domain/search/index.ts",
+            "sha256": "426597abdbc1842aa85addb56e9081638bcc1eb226e30bad16bd092219c929bb",
+            "bytes": 388
+          },
+          {
+            "path": "src/domain/search/joint-candidate-upper-bound.ts",
+            "sha256": "c6e5f8a8c576b9cd7ef642810f2399ee0f680debfad2378b2fd0f6b7d2d395a1",
+            "bytes": 879
+          },
+          {
+            "path": "src/domain/search/joint-substat-reachability.ts",
+            "sha256": "0ab7d79eb29e12f84aee8c95ed48a39a997e83f377a69401df2b4f5619a0fca9",
+            "bytes": 20459
+          },
+          {
+            "path": "src/domain/search/linear-mip.ts",
+            "sha256": "4d738d9aa5867d1e56bd3468a1570df45cce1428f4d5597905f77f8eb361c861",
+            "bytes": 2136
+          },
+          {
+            "path": "src/domain/search/loadout-finder-exact-mip.ts",
+            "sha256": "5237665e432bb259eebf228c94212304307ca95ffa88f029d31a9d949d955e7a",
+            "bytes": 322691
+          },
+          {
+            "path": "src/domain/search/loadout-finder-v3.ts",
+            "sha256": "63dc20de6108bccfe10233cc7df1f43b3257bc45d35049aae13e248668aa2eab",
+            "bytes": 93794
+          },
+          {
+            "path": "src/domain/search/memory-usage.ts",
+            "sha256": "258b168466f5d8ec0bfc35a531205bb6c9d16c4ecf33a6e229e1c1d05e61127a",
+            "bytes": 881
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-browser-adapter.ts",
+            "sha256": "8356939f7d28ece0df59020a7ff54962eb4fa428480a37eb4415a1dd30ebd26f",
+            "bytes": 951
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-browser.worker.ts",
+            "sha256": "4aa526576cf725895fdc93aa3d05cd505c23a59a1dcfe1f22925d3ca9124f8c6",
+            "bytes": 1429
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-executor.ts",
+            "sha256": "17a8d1c4750b9882e5c59dcd33b506c692608c0a23e9213822f3b7090d28930e",
+            "bytes": 20521
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-node-adapter.mjs",
+            "sha256": "040acb0f2a9e61be0daef3b34cc36048e450bd96d6e966493971daf54932492d",
+            "bytes": 818
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-node.worker.ts",
+            "sha256": "7985b8922497a2d9f743521cc62b2c7f00b8e602bb89f4e33493de591ed49e17",
+            "bytes": 1445
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-solver.ts",
+            "sha256": "16923d464e84c45d26772f2edbbe281a7f12419f374dc68db9faa7d0f4681a7e",
+            "bytes": 8361
+          },
+          {
+            "path": "src/domain/search/ring-pairs.ts",
+            "sha256": "43f8224539f02c6305064d5e8029784e0442581f51a222b9fe715d4d7cf6c93b",
+            "bytes": 2192
+          },
+          {
+            "path": "src/domain/search/search-types.ts",
+            "sha256": "d4a6baa0ac9300e2cedc312676de515afa55914531364b5ce80b11b3a811ef64",
+            "bytes": 632
+          },
+          {
+            "path": "src/domain/search/shared-accessory-pair-dominance-policy.ts",
+            "sha256": "56f1dd98975da7b07f4a33066ecc024ff2c307fe8413bc8609232189fbc35b8d",
+            "bytes": 2145
+          },
+          {
+            "path": "src/domain/search/shared-accessory-pair-dominance.ts",
+            "sha256": "3d4bcc92e6eafa22ab2ba23d358a8c156f35be7f9e8102d49dd39a2111848730",
+            "bytes": 5292
+          },
+          {
+            "path": "src/domain/search/signature-band.ts",
+            "sha256": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+            "bytes": 17911
+          },
+          {
+            "path": "src/domain/search/substat-factor-budget.ts",
+            "sha256": "d30d20c2e8873f40a1427257a8fc5baa0f668bea3b06459414aa98dc4b71bc19",
+            "bytes": 6286
+          },
+          {
+            "path": "src/domain/search/types.ts",
+            "sha256": "ef5a8b3b5f59a017fe6b451c7c6c8c61b320a65c7e8d4e68f23bbe20c51960ff",
+            "bytes": 1606
+          },
+          {
+            "path": "src/domain/types.ts",
+            "sha256": "712424758f10e16bc01a59b3b207dc53f07d1ce9c9cdf3b88378d6ecf78a951c",
+            "bytes": 7022
+          },
+          {
+            "path": "src/domain/worker-client.ts",
+            "sha256": "355f3e6f91ff1937e9a14edf7a5a8d2e293df44cee8e6da1424846793067c321",
+            "bytes": 4671
+          }
+        ],
+        "generatedData": {
+          "path": "src/data/generated-data.json",
+          "sha256": "879ea3412fd4641521fdfd3a0e8a70c6461a9255629213e4a493fdabcd2a19ff",
+          "bytes": 42383568
+        }
+      },
+      "before": {
+        "checkedAt": "2026-10-11T13:25:01.350Z",
+        "strategySources": [
+          {
+            "path": "docs/search-optimization/tools/run-acceptance.mjs",
+            "sha256": "3503f917a5ab9fe4a18a0bb06571704d1fff22b8a726833726068d0fddb7a5e2",
+            "bytes": 66040
+          },
+          {
+            "path": "docs/search-optimization/tools/run-single.mjs",
+            "sha256": "98fe3a4e5214b7ceb2506784b882fef52b3937ab4a557bef5bcf5a0f32d2aa78",
+            "bytes": 10620
+          },
+          {
+            "path": "docs/search-optimization/tools/single-worker.mjs",
+            "sha256": "9f91aff728d2b5d81d624d11f18e2af1929e8cfed85fd9c9d97eedd2da6b28f5",
+            "bytes": 1271
+          },
+          {
+            "path": "docs/search-optimization/tools/timing-acceptance.mjs",
+            "sha256": "3b5169d0d0dd202158246b5ab22accd157e86aa9d97016d817e35f17d460fd35",
+            "bytes": 3153
+          },
+          {
+            "path": "package-lock.json",
+            "sha256": "2115cd728a048956f4be4e57a6a7bffd4b38b2d0c9da3602556d347c2bffe1e2",
+            "bytes": 136671
+          },
+          {
+            "path": "package.json",
+            "sha256": "733a59311cd0ac2696e40e024f54d45e7541436995bd6372d5562a96a8d378f7",
+            "bytes": 1526
+          },
+          {
+            "path": "scripts/node-tests/exact-mip-worker.mjs",
+            "sha256": "f4d66d8cf555433b971a08714f85918b52af0738d4845732678faffedce6283f",
+            "bytes": 2030
+          },
+          {
+            "path": "scripts/node-tests/run-v3.mjs",
+            "sha256": "66adff7b3d5a2b1ab78e9ef29ebe2a209fd148c5dbf786e93cdeb0940bdb708b",
+            "bytes": 17964
+          },
+          {
+            "path": "scripts/node-tests/v3-worker.mjs",
+            "sha256": "5f586a5ed7c066662ff4c2b0448466694e5a18f4e9863f31f2b97a049bf56933",
+            "bytes": 1045
+          },
+          {
+            "path": "src/domain/data.ts",
+            "sha256": "6e3d29eca861bb83943de212f4d8a4b5f6b3327d62cd41971ead417b3cf56185",
+            "bytes": 7759
+          },
+          {
+            "path": "src/domain/index.ts",
+            "sha256": "0f6c87a30020f5774d4003c7c7cbba35aa28797485f386c72af5229fa43ca8ef",
+            "bytes": 127
+          },
+          {
+            "path": "src/domain/jobs.ts",
+            "sha256": "0fb771c0b388449fcb70cf444edc8e8dcbe295cce0bd8be7f159d6348c00a71e",
+            "bytes": 336
+          },
+          {
+            "path": "src/domain/optimizer.ts",
+            "sha256": "d0b36af95431c00fbb62d4569c09172ea8736cbbb5182a54ce8ec209d150dbcc",
+            "bytes": 1295
+          },
+          {
+            "path": "src/domain/optimizer.worker.ts",
+            "sha256": "ef14efc8eaae2672f7f21aaead7af686066a043a87b24ac74a9c630a4aa71422",
+            "bytes": 1811
+          },
+          {
+            "path": "src/domain/optimizer/context.ts",
+            "sha256": "3c59fbb591c36d959badfff68da18783ae6bb76da8b760394b9d694df760db5f",
+            "bytes": 3987
+          },
+          {
+            "path": "src/domain/optimizer/equipment-candidates.ts",
+            "sha256": "9206e4a1f3de2ea3c945f02d067edd4e640d34b1701c9ebf1d08b3266a9ad1e4",
+            "bytes": 23962
+          },
+          {
+            "path": "src/domain/optimizer/gcd-search.ts",
+            "sha256": "bc7caee1f67ba2635bee130ae0683567d11fee6fd4f357528792a5bbc6de0ce5",
+            "bytes": 5160
+          },
+          {
+            "path": "src/domain/optimizer/joint-search.ts",
+            "sha256": "f3edfc684ef68e3a524d2aaa5e796937336c6e625a06ffc7f30e1bc4c4c963ef",
+            "bytes": 14562
+          },
+          {
+            "path": "src/domain/optimizer/result-assembly.ts",
+            "sha256": "89c53eb4e035f47f1aa378523803ccb5fd1b032650ac355d59851c76f114bff2",
+            "bytes": 3713
+          },
+          {
+            "path": "src/domain/optimizer/search-preparation.ts",
+            "sha256": "9363f043eecb61e4f5c9fdadab6bb5af5f401d317d5b582e783fb05bac57384b",
+            "bytes": 7593
+          },
+          {
+            "path": "src/domain/optimizer/single-search.ts",
+            "sha256": "6e689fd84a48f7f9b824ab6d59c65c6b2c0670c74dbda382b0bbe3e87179a86a",
+            "bytes": 3169
+          },
+          {
+            "path": "src/domain/rules.ts",
+            "sha256": "5f7bb7cd5d825e6e4e9e507905470e037493498074b4ad2a2d149c60aadd7352",
+            "bytes": 6659
+          },
+          {
+            "path": "src/domain/search/baseline-worker-policy.ts",
+            "sha256": "b4f2b0f03170d4ce3db92fcc547ca239c045a0f4a47f80c03b221ce24feeaad0",
+            "bytes": 621
+          },
+          {
+            "path": "src/domain/search/cancellation.ts",
+            "sha256": "20ac2f8267ee705f28ab5370cae6e9475ab193037e8fbb35d60466e1b32e7d14",
+            "bytes": 202
+          },
+          {
+            "path": "src/domain/search/candidate-pareto.ts",
+            "sha256": "35b1dc71dccdd7cc1a8734d144589d39d05669b918b09369343c6ee14646db61",
+            "bytes": 4062
+          },
+          {
+            "path": "src/domain/search/candidate-resource-support-policy.ts",
+            "sha256": "7f04b0db0c4a6b639feaf56947ca97b51fffca79fc319f251513c5db84aa21b1",
+            "bytes": 9779
+          },
+          {
+            "path": "src/domain/search/equipment-candidates.ts",
+            "sha256": "f0ea04ec18cbef047a2c6ff46a26610168f6ccefa1517ba71d36c58888625fa6",
+            "bytes": 241
+          },
+          {
+            "path": "src/domain/search/equipment-identity.ts",
+            "sha256": "8d9f7ea3bbd439e4fa47bb38e5a931f6b72c2084811a7f92d5d4434b703234b3",
+            "bytes": 1072
+          },
+          {
+            "path": "src/domain/search/equipment-sync.ts",
+            "sha256": "f0bb5455717dfe131742b8e1a38b2857b9cec03006268a43582590f79b4859db",
+            "bytes": 199
+          },
+          {
+            "path": "src/domain/search/equipped-effects.ts",
+            "sha256": "2f544fec239865d5dcf9f7488eb4cbb69cbb3a803f64ea34a6849ac8451046ce",
+            "bytes": 16026
+          },
+          {
+            "path": "src/domain/search/exact-mip-candidate-upper-bound.ts",
+            "sha256": "0fcab255d2bba46e8e4eecdc3bd8219035ee6813b3cfa47be593e9ff4d06ddda",
+            "bytes": 5629
+          },
+          {
+            "path": "src/domain/search/factor-resource-budget-upper-bound.ts",
+            "sha256": "4582df7c6a21c23690a8642c796ffc953b2af485eca280b3fea016e801720e05",
+            "bytes": 6007
+          },
+          {
+            "path": "src/domain/search/highs-browser.ts",
+            "sha256": "e2ade8afd0030eafa37ef20e84f9e593eebdcc2b12ae6fbd13fcf2a854ddb71e",
+            "bytes": 250
+          },
+          {
+            "path": "src/domain/search/highs-runtime.d.ts",
+            "sha256": "81f1599e1511c3de3e313e3352e1d51f70562c4ff5cd09f1475b88d3f599656a",
+            "bytes": 92
+          },
+          {
+            "path": "src/domain/search/index.ts",
+            "sha256": "426597abdbc1842aa85addb56e9081638bcc1eb226e30bad16bd092219c929bb",
+            "bytes": 388
+          },
+          {
+            "path": "src/domain/search/joint-candidate-upper-bound.ts",
+            "sha256": "c6e5f8a8c576b9cd7ef642810f2399ee0f680debfad2378b2fd0f6b7d2d395a1",
+            "bytes": 879
+          },
+          {
+            "path": "src/domain/search/joint-substat-reachability.ts",
+            "sha256": "0ab7d79eb29e12f84aee8c95ed48a39a997e83f377a69401df2b4f5619a0fca9",
+            "bytes": 20459
+          },
+          {
+            "path": "src/domain/search/linear-mip.ts",
+            "sha256": "4d738d9aa5867d1e56bd3468a1570df45cce1428f4d5597905f77f8eb361c861",
+            "bytes": 2136
+          },
+          {
+            "path": "src/domain/search/loadout-finder-exact-mip.ts",
+            "sha256": "5237665e432bb259eebf228c94212304307ca95ffa88f029d31a9d949d955e7a",
+            "bytes": 322691
+          },
+          {
+            "path": "src/domain/search/loadout-finder-v3.ts",
+            "sha256": "63dc20de6108bccfe10233cc7df1f43b3257bc45d35049aae13e248668aa2eab",
+            "bytes": 93794
+          },
+          {
+            "path": "src/domain/search/memory-usage.ts",
+            "sha256": "258b168466f5d8ec0bfc35a531205bb6c9d16c4ecf33a6e229e1c1d05e61127a",
+            "bytes": 881
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-browser-adapter.ts",
+            "sha256": "8356939f7d28ece0df59020a7ff54962eb4fa428480a37eb4415a1dd30ebd26f",
+            "bytes": 951
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-browser.worker.ts",
+            "sha256": "4aa526576cf725895fdc93aa3d05cd505c23a59a1dcfe1f22925d3ca9124f8c6",
+            "bytes": 1429
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-executor.ts",
+            "sha256": "17a8d1c4750b9882e5c59dcd33b506c692608c0a23e9213822f3b7090d28930e",
+            "bytes": 20521
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-node-adapter.mjs",
+            "sha256": "040acb0f2a9e61be0daef3b34cc36048e450bd96d6e966493971daf54932492d",
+            "bytes": 818
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-node.worker.ts",
+            "sha256": "7985b8922497a2d9f743521cc62b2c7f00b8e602bb89f4e33493de591ed49e17",
+            "bytes": 1445
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-solver.ts",
+            "sha256": "16923d464e84c45d26772f2edbbe281a7f12419f374dc68db9faa7d0f4681a7e",
+            "bytes": 8361
+          },
+          {
+            "path": "src/domain/search/ring-pairs.ts",
+            "sha256": "43f8224539f02c6305064d5e8029784e0442581f51a222b9fe715d4d7cf6c93b",
+            "bytes": 2192
+          },
+          {
+            "path": "src/domain/search/search-types.ts",
+            "sha256": "d4a6baa0ac9300e2cedc312676de515afa55914531364b5ce80b11b3a811ef64",
+            "bytes": 632
+          },
+          {
+            "path": "src/domain/search/shared-accessory-pair-dominance-policy.ts",
+            "sha256": "56f1dd98975da7b07f4a33066ecc024ff2c307fe8413bc8609232189fbc35b8d",
+            "bytes": 2145
+          },
+          {
+            "path": "src/domain/search/shared-accessory-pair-dominance.ts",
+            "sha256": "3d4bcc92e6eafa22ab2ba23d358a8c156f35be7f9e8102d49dd39a2111848730",
+            "bytes": 5292
+          },
+          {
+            "path": "src/domain/search/signature-band.ts",
+            "sha256": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+            "bytes": 17911
+          },
+          {
+            "path": "src/domain/search/substat-factor-budget.ts",
+            "sha256": "d30d20c2e8873f40a1427257a8fc5baa0f668bea3b06459414aa98dc4b71bc19",
+            "bytes": 6286
+          },
+          {
+            "path": "src/domain/search/types.ts",
+            "sha256": "ef5a8b3b5f59a017fe6b451c7c6c8c61b320a65c7e8d4e68f23bbe20c51960ff",
+            "bytes": 1606
+          },
+          {
+            "path": "src/domain/types.ts",
+            "sha256": "712424758f10e16bc01a59b3b207dc53f07d1ce9c9cdf3b88378d6ecf78a951c",
+            "bytes": 7022
+          },
+          {
+            "path": "src/domain/worker-client.ts",
+            "sha256": "355f3e6f91ff1937e9a14edf7a5a8d2e293df44cee8e6da1424846793067c321",
+            "bytes": 4671
+          }
+        ],
+        "captureErrors": [],
+        "generatedData": {
+          "path": "src/data/generated-data.json",
+          "sha256": "879ea3412fd4641521fdfd3a0e8a70c6461a9255629213e4a493fdabcd2a19ff",
+          "bytes": 42383568
+        }
+      },
+      "beforeChangedPaths": [],
+      "after": {
+        "checkedAt": "2026-10-11T13:25:27.375Z",
+        "strategySources": [
+          {
+            "path": "docs/search-optimization/tools/run-acceptance.mjs",
+            "sha256": "3503f917a5ab9fe4a18a0bb06571704d1fff22b8a726833726068d0fddb7a5e2",
+            "bytes": 66040
+          },
+          {
+            "path": "docs/search-optimization/tools/run-single.mjs",
+            "sha256": "98fe3a4e5214b7ceb2506784b882fef52b3937ab4a557bef5bcf5a0f32d2aa78",
+            "bytes": 10620
+          },
+          {
+            "path": "docs/search-optimization/tools/single-worker.mjs",
+            "sha256": "9f91aff728d2b5d81d624d11f18e2af1929e8cfed85fd9c9d97eedd2da6b28f5",
+            "bytes": 1271
+          },
+          {
+            "path": "docs/search-optimization/tools/timing-acceptance.mjs",
+            "sha256": "3b5169d0d0dd202158246b5ab22accd157e86aa9d97016d817e35f17d460fd35",
+            "bytes": 3153
+          },
+          {
+            "path": "package-lock.json",
+            "sha256": "2115cd728a048956f4be4e57a6a7bffd4b38b2d0c9da3602556d347c2bffe1e2",
+            "bytes": 136671
+          },
+          {
+            "path": "package.json",
+            "sha256": "733a59311cd0ac2696e40e024f54d45e7541436995bd6372d5562a96a8d378f7",
+            "bytes": 1526
+          },
+          {
+            "path": "scripts/node-tests/exact-mip-worker.mjs",
+            "sha256": "f4d66d8cf555433b971a08714f85918b52af0738d4845732678faffedce6283f",
+            "bytes": 2030
+          },
+          {
+            "path": "scripts/node-tests/run-v3.mjs",
+            "sha256": "66adff7b3d5a2b1ab78e9ef29ebe2a209fd148c5dbf786e93cdeb0940bdb708b",
+            "bytes": 17964
+          },
+          {
+            "path": "scripts/node-tests/v3-worker.mjs",
+            "sha256": "5f586a5ed7c066662ff4c2b0448466694e5a18f4e9863f31f2b97a049bf56933",
+            "bytes": 1045
+          },
+          {
+            "path": "src/domain/data.ts",
+            "sha256": "6e3d29eca861bb83943de212f4d8a4b5f6b3327d62cd41971ead417b3cf56185",
+            "bytes": 7759
+          },
+          {
+            "path": "src/domain/index.ts",
+            "sha256": "0f6c87a30020f5774d4003c7c7cbba35aa28797485f386c72af5229fa43ca8ef",
+            "bytes": 127
+          },
+          {
+            "path": "src/domain/jobs.ts",
+            "sha256": "0fb771c0b388449fcb70cf444edc8e8dcbe295cce0bd8be7f159d6348c00a71e",
+            "bytes": 336
+          },
+          {
+            "path": "src/domain/optimizer.ts",
+            "sha256": "d0b36af95431c00fbb62d4569c09172ea8736cbbb5182a54ce8ec209d150dbcc",
+            "bytes": 1295
+          },
+          {
+            "path": "src/domain/optimizer.worker.ts",
+            "sha256": "ef14efc8eaae2672f7f21aaead7af686066a043a87b24ac74a9c630a4aa71422",
+            "bytes": 1811
+          },
+          {
+            "path": "src/domain/optimizer/context.ts",
+            "sha256": "3c59fbb591c36d959badfff68da18783ae6bb76da8b760394b9d694df760db5f",
+            "bytes": 3987
+          },
+          {
+            "path": "src/domain/optimizer/equipment-candidates.ts",
+            "sha256": "9206e4a1f3de2ea3c945f02d067edd4e640d34b1701c9ebf1d08b3266a9ad1e4",
+            "bytes": 23962
+          },
+          {
+            "path": "src/domain/optimizer/gcd-search.ts",
+            "sha256": "bc7caee1f67ba2635bee130ae0683567d11fee6fd4f357528792a5bbc6de0ce5",
+            "bytes": 5160
+          },
+          {
+            "path": "src/domain/optimizer/joint-search.ts",
+            "sha256": "f3edfc684ef68e3a524d2aaa5e796937336c6e625a06ffc7f30e1bc4c4c963ef",
+            "bytes": 14562
+          },
+          {
+            "path": "src/domain/optimizer/result-assembly.ts",
+            "sha256": "89c53eb4e035f47f1aa378523803ccb5fd1b032650ac355d59851c76f114bff2",
+            "bytes": 3713
+          },
+          {
+            "path": "src/domain/optimizer/search-preparation.ts",
+            "sha256": "9363f043eecb61e4f5c9fdadab6bb5af5f401d317d5b582e783fb05bac57384b",
+            "bytes": 7593
+          },
+          {
+            "path": "src/domain/optimizer/single-search.ts",
+            "sha256": "6e689fd84a48f7f9b824ab6d59c65c6b2c0670c74dbda382b0bbe3e87179a86a",
+            "bytes": 3169
+          },
+          {
+            "path": "src/domain/rules.ts",
+            "sha256": "5f7bb7cd5d825e6e4e9e507905470e037493498074b4ad2a2d149c60aadd7352",
+            "bytes": 6659
+          },
+          {
+            "path": "src/domain/search/baseline-worker-policy.ts",
+            "sha256": "b4f2b0f03170d4ce3db92fcc547ca239c045a0f4a47f80c03b221ce24feeaad0",
+            "bytes": 621
+          },
+          {
+            "path": "src/domain/search/cancellation.ts",
+            "sha256": "20ac2f8267ee705f28ab5370cae6e9475ab193037e8fbb35d60466e1b32e7d14",
+            "bytes": 202
+          },
+          {
+            "path": "src/domain/search/candidate-pareto.ts",
+            "sha256": "35b1dc71dccdd7cc1a8734d144589d39d05669b918b09369343c6ee14646db61",
+            "bytes": 4062
+          },
+          {
+            "path": "src/domain/search/candidate-resource-support-policy.ts",
+            "sha256": "7f04b0db0c4a6b639feaf56947ca97b51fffca79fc319f251513c5db84aa21b1",
+            "bytes": 9779
+          },
+          {
+            "path": "src/domain/search/equipment-candidates.ts",
+            "sha256": "f0ea04ec18cbef047a2c6ff46a26610168f6ccefa1517ba71d36c58888625fa6",
+            "bytes": 241
+          },
+          {
+            "path": "src/domain/search/equipment-identity.ts",
+            "sha256": "8d9f7ea3bbd439e4fa47bb38e5a931f6b72c2084811a7f92d5d4434b703234b3",
+            "bytes": 1072
+          },
+          {
+            "path": "src/domain/search/equipment-sync.ts",
+            "sha256": "f0bb5455717dfe131742b8e1a38b2857b9cec03006268a43582590f79b4859db",
+            "bytes": 199
+          },
+          {
+            "path": "src/domain/search/equipped-effects.ts",
+            "sha256": "2f544fec239865d5dcf9f7488eb4cbb69cbb3a803f64ea34a6849ac8451046ce",
+            "bytes": 16026
+          },
+          {
+            "path": "src/domain/search/exact-mip-candidate-upper-bound.ts",
+            "sha256": "0fcab255d2bba46e8e4eecdc3bd8219035ee6813b3cfa47be593e9ff4d06ddda",
+            "bytes": 5629
+          },
+          {
+            "path": "src/domain/search/factor-resource-budget-upper-bound.ts",
+            "sha256": "4582df7c6a21c23690a8642c796ffc953b2af485eca280b3fea016e801720e05",
+            "bytes": 6007
+          },
+          {
+            "path": "src/domain/search/highs-browser.ts",
+            "sha256": "e2ade8afd0030eafa37ef20e84f9e593eebdcc2b12ae6fbd13fcf2a854ddb71e",
+            "bytes": 250
+          },
+          {
+            "path": "src/domain/search/highs-runtime.d.ts",
+            "sha256": "81f1599e1511c3de3e313e3352e1d51f70562c4ff5cd09f1475b88d3f599656a",
+            "bytes": 92
+          },
+          {
+            "path": "src/domain/search/index.ts",
+            "sha256": "426597abdbc1842aa85addb56e9081638bcc1eb226e30bad16bd092219c929bb",
+            "bytes": 388
+          },
+          {
+            "path": "src/domain/search/joint-candidate-upper-bound.ts",
+            "sha256": "c6e5f8a8c576b9cd7ef642810f2399ee0f680debfad2378b2fd0f6b7d2d395a1",
+            "bytes": 879
+          },
+          {
+            "path": "src/domain/search/joint-substat-reachability.ts",
+            "sha256": "0ab7d79eb29e12f84aee8c95ed48a39a997e83f377a69401df2b4f5619a0fca9",
+            "bytes": 20459
+          },
+          {
+            "path": "src/domain/search/linear-mip.ts",
+            "sha256": "4d738d9aa5867d1e56bd3468a1570df45cce1428f4d5597905f77f8eb361c861",
+            "bytes": 2136
+          },
+          {
+            "path": "src/domain/search/loadout-finder-exact-mip.ts",
+            "sha256": "5237665e432bb259eebf228c94212304307ca95ffa88f029d31a9d949d955e7a",
+            "bytes": 322691
+          },
+          {
+            "path": "src/domain/search/loadout-finder-v3.ts",
+            "sha256": "63dc20de6108bccfe10233cc7df1f43b3257bc45d35049aae13e248668aa2eab",
+            "bytes": 93794
+          },
+          {
+            "path": "src/domain/search/memory-usage.ts",
+            "sha256": "258b168466f5d8ec0bfc35a531205bb6c9d16c4ecf33a6e229e1c1d05e61127a",
+            "bytes": 881
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-browser-adapter.ts",
+            "sha256": "8356939f7d28ece0df59020a7ff54962eb4fa428480a37eb4415a1dd30ebd26f",
+            "bytes": 951
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-browser.worker.ts",
+            "sha256": "4aa526576cf725895fdc93aa3d05cd505c23a59a1dcfe1f22925d3ca9124f8c6",
+            "bytes": 1429
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-executor.ts",
+            "sha256": "17a8d1c4750b9882e5c59dcd33b506c692608c0a23e9213822f3b7090d28930e",
+            "bytes": 20521
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-node-adapter.mjs",
+            "sha256": "040acb0f2a9e61be0daef3b34cc36048e450bd96d6e966493971daf54932492d",
+            "bytes": 818
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-node.worker.ts",
+            "sha256": "7985b8922497a2d9f743521cc62b2c7f00b8e602bb89f4e33493de591ed49e17",
+            "bytes": 1445
+          },
+          {
+            "path": "src/domain/search/parallel-baseline-solver.ts",
+            "sha256": "16923d464e84c45d26772f2edbbe281a7f12419f374dc68db9faa7d0f4681a7e",
+            "bytes": 8361
+          },
+          {
+            "path": "src/domain/search/ring-pairs.ts",
+            "sha256": "43f8224539f02c6305064d5e8029784e0442581f51a222b9fe715d4d7cf6c93b",
+            "bytes": 2192
+          },
+          {
+            "path": "src/domain/search/search-types.ts",
+            "sha256": "d4a6baa0ac9300e2cedc312676de515afa55914531364b5ce80b11b3a811ef64",
+            "bytes": 632
+          },
+          {
+            "path": "src/domain/search/shared-accessory-pair-dominance-policy.ts",
+            "sha256": "56f1dd98975da7b07f4a33066ecc024ff2c307fe8413bc8609232189fbc35b8d",
+            "bytes": 2145
+          },
+          {
+            "path": "src/domain/search/shared-accessory-pair-dominance.ts",
+            "sha256": "3d4bcc92e6eafa22ab2ba23d358a8c156f35be7f9e8102d49dd39a2111848730",
+            "bytes": 5292
+          },
+          {
+            "path": "src/domain/search/signature-band.ts",
+            "sha256": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+            "bytes": 17911
+          },
+          {
+            "path": "src/domain/search/substat-factor-budget.ts",
+            "sha256": "d30d20c2e8873f40a1427257a8fc5baa0f668bea3b06459414aa98dc4b71bc19",
+            "bytes": 6286
+          },
+          {
+            "path": "src/domain/search/types.ts",
+            "sha256": "ef5a8b3b5f59a017fe6b451c7c6c8c61b320a65c7e8d4e68f23bbe20c51960ff",
+            "bytes": 1606
+          },
+          {
+            "path": "src/domain/types.ts",
+            "sha256": "712424758f10e16bc01a59b3b207dc53f07d1ce9c9cdf3b88378d6ecf78a951c",
+            "bytes": 7022
+          },
+          {
+            "path": "src/domain/worker-client.ts",
+            "sha256": "355f3e6f91ff1937e9a14edf7a5a8d2e293df44cee8e6da1424846793067c321",
+            "bytes": 4671
+          }
+        ],
+        "captureErrors": [],
+        "generatedData": {
+          "path": "src/data/generated-data.json",
+          "sha256": "879ea3412fd4641521fdfd3a0e8a70c6461a9255629213e4a493fdabcd2a19ff",
+          "bytes": 42383568
+        }
+      },
+      "afterChangedPaths": [],
+      "changedPaths": [],
+      "status": "matched-through-case"
+    }
+  },
+  "startedAt": "2026-10-11T13:25:01.426Z",
+  "finishedAt": "2026-10-11T13:25:27.440Z",
+  "elapsedWallMs": 25918,
+  "childStarted": true,
+  "childExitCode": 0,
+  "childSignal": null,
+  "interrupted": false,
+  "interruptionSignal": null,
+  "timedOut": false,
+  "spawnError": null,
+  "measuredSearchMs": 25483,
+  "optimizationTargetMs": 120000,
+  "optimizationTargetMet": true,
+  "optimizationTargetGapMs": 0,
+  "historicalFastestMs": 23443,
+  "historyLabel": "当前项目最快完整证明",
+  "historySource": "docs/search-optimization/耗时优化记录.7z",
+  "execution": {
+    "command": "D:\\Develop\\nodejs\\node.exe",
+    "args": [
+      "--max-old-space-size=2560",
+      "--experimental-strip-types",
+      "D:\\Workspace\\AI\\ffxiv-gearing-calc\\scripts\\node-tests\\run-v3.mjs"
+    ],
+    "cwd": "D:\\Workspace\\AI\\ffxiv-gearing-calc",
+    "heapCapMiB": 2560,
+    "stdioCapture": "direct-file-descriptors",
+    "profileTiming": true,
+    "parentWatchdogTimeoutMs": 300000,
+    "runnerSearchTimeoutMs": null
+  },
+  "runtimeInputIntegrity": {
+    "suiteBaseline": {
+      "capturedAt": "2026-10-11T13:21:21.917Z",
+      "strategySources": [
+        {
+          "path": "docs/search-optimization/tools/run-acceptance.mjs",
+          "sha256": "3503f917a5ab9fe4a18a0bb06571704d1fff22b8a726833726068d0fddb7a5e2",
+          "bytes": 66040
+        },
+        {
+          "path": "docs/search-optimization/tools/run-single.mjs",
+          "sha256": "98fe3a4e5214b7ceb2506784b882fef52b3937ab4a557bef5bcf5a0f32d2aa78",
+          "bytes": 10620
+        },
+        {
+          "path": "docs/search-optimization/tools/single-worker.mjs",
+          "sha256": "9f91aff728d2b5d81d624d11f18e2af1929e8cfed85fd9c9d97eedd2da6b28f5",
+          "bytes": 1271
+        },
+        {
+          "path": "docs/search-optimization/tools/timing-acceptance.mjs",
+          "sha256": "3b5169d0d0dd202158246b5ab22accd157e86aa9d97016d817e35f17d460fd35",
+          "bytes": 3153
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "2115cd728a048956f4be4e57a6a7bffd4b38b2d0c9da3602556d347c2bffe1e2",
+          "bytes": 136671
+        },
+        {
+          "path": "package.json",
+          "sha256": "733a59311cd0ac2696e40e024f54d45e7541436995bd6372d5562a96a8d378f7",
+          "bytes": 1526
+        },
+        {
+          "path": "scripts/node-tests/exact-mip-worker.mjs",
+          "sha256": "f4d66d8cf555433b971a08714f85918b52af0738d4845732678faffedce6283f",
+          "bytes": 2030
+        },
+        {
+          "path": "scripts/node-tests/run-v3.mjs",
+          "sha256": "66adff7b3d5a2b1ab78e9ef29ebe2a209fd148c5dbf786e93cdeb0940bdb708b",
+          "bytes": 17964
+        },
+        {
+          "path": "scripts/node-tests/v3-worker.mjs",
+          "sha256": "5f586a5ed7c066662ff4c2b0448466694e5a18f4e9863f31f2b97a049bf56933",
+          "bytes": 1045
+        },
+        {
+          "path": "src/domain/data.ts",
+          "sha256": "6e3d29eca861bb83943de212f4d8a4b5f6b3327d62cd41971ead417b3cf56185",
+          "bytes": 7759
+        },
+        {
+          "path": "src/domain/index.ts",
+          "sha256": "0f6c87a30020f5774d4003c7c7cbba35aa28797485f386c72af5229fa43ca8ef",
+          "bytes": 127
+        },
+        {
+          "path": "src/domain/jobs.ts",
+          "sha256": "0fb771c0b388449fcb70cf444edc8e8dcbe295cce0bd8be7f159d6348c00a71e",
+          "bytes": 336
+        },
+        {
+          "path": "src/domain/optimizer.ts",
+          "sha256": "d0b36af95431c00fbb62d4569c09172ea8736cbbb5182a54ce8ec209d150dbcc",
+          "bytes": 1295
+        },
+        {
+          "path": "src/domain/optimizer.worker.ts",
+          "sha256": "ef14efc8eaae2672f7f21aaead7af686066a043a87b24ac74a9c630a4aa71422",
+          "bytes": 1811
+        },
+        {
+          "path": "src/domain/optimizer/context.ts",
+          "sha256": "3c59fbb591c36d959badfff68da18783ae6bb76da8b760394b9d694df760db5f",
+          "bytes": 3987
+        },
+        {
+          "path": "src/domain/optimizer/equipment-candidates.ts",
+          "sha256": "9206e4a1f3de2ea3c945f02d067edd4e640d34b1701c9ebf1d08b3266a9ad1e4",
+          "bytes": 23962
+        },
+        {
+          "path": "src/domain/optimizer/gcd-search.ts",
+          "sha256": "bc7caee1f67ba2635bee130ae0683567d11fee6fd4f357528792a5bbc6de0ce5",
+          "bytes": 5160
+        },
+        {
+          "path": "src/domain/optimizer/joint-search.ts",
+          "sha256": "f3edfc684ef68e3a524d2aaa5e796937336c6e625a06ffc7f30e1bc4c4c963ef",
+          "bytes": 14562
+        },
+        {
+          "path": "src/domain/optimizer/result-assembly.ts",
+          "sha256": "89c53eb4e035f47f1aa378523803ccb5fd1b032650ac355d59851c76f114bff2",
+          "bytes": 3713
+        },
+        {
+          "path": "src/domain/optimizer/search-preparation.ts",
+          "sha256": "9363f043eecb61e4f5c9fdadab6bb5af5f401d317d5b582e783fb05bac57384b",
+          "bytes": 7593
+        },
+        {
+          "path": "src/domain/optimizer/single-search.ts",
+          "sha256": "6e689fd84a48f7f9b824ab6d59c65c6b2c0670c74dbda382b0bbe3e87179a86a",
+          "bytes": 3169
+        },
+        {
+          "path": "src/domain/rules.ts",
+          "sha256": "5f7bb7cd5d825e6e4e9e507905470e037493498074b4ad2a2d149c60aadd7352",
+          "bytes": 6659
+        },
+        {
+          "path": "src/domain/search/baseline-worker-policy.ts",
+          "sha256": "b4f2b0f03170d4ce3db92fcc547ca239c045a0f4a47f80c03b221ce24feeaad0",
+          "bytes": 621
+        },
+        {
+          "path": "src/domain/search/cancellation.ts",
+          "sha256": "20ac2f8267ee705f28ab5370cae6e9475ab193037e8fbb35d60466e1b32e7d14",
+          "bytes": 202
+        },
+        {
+          "path": "src/domain/search/candidate-pareto.ts",
+          "sha256": "35b1dc71dccdd7cc1a8734d144589d39d05669b918b09369343c6ee14646db61",
+          "bytes": 4062
+        },
+        {
+          "path": "src/domain/search/candidate-resource-support-policy.ts",
+          "sha256": "7f04b0db0c4a6b639feaf56947ca97b51fffca79fc319f251513c5db84aa21b1",
+          "bytes": 9779
+        },
+        {
+          "path": "src/domain/search/equipment-candidates.ts",
+          "sha256": "f0ea04ec18cbef047a2c6ff46a26610168f6ccefa1517ba71d36c58888625fa6",
+          "bytes": 241
+        },
+        {
+          "path": "src/domain/search/equipment-identity.ts",
+          "sha256": "8d9f7ea3bbd439e4fa47bb38e5a931f6b72c2084811a7f92d5d4434b703234b3",
+          "bytes": 1072
+        },
+        {
+          "path": "src/domain/search/equipment-sync.ts",
+          "sha256": "f0bb5455717dfe131742b8e1a38b2857b9cec03006268a43582590f79b4859db",
+          "bytes": 199
+        },
+        {
+          "path": "src/domain/search/equipped-effects.ts",
+          "sha256": "2f544fec239865d5dcf9f7488eb4cbb69cbb3a803f64ea34a6849ac8451046ce",
+          "bytes": 16026
+        },
+        {
+          "path": "src/domain/search/exact-mip-candidate-upper-bound.ts",
+          "sha256": "0fcab255d2bba46e8e4eecdc3bd8219035ee6813b3cfa47be593e9ff4d06ddda",
+          "bytes": 5629
+        },
+        {
+          "path": "src/domain/search/factor-resource-budget-upper-bound.ts",
+          "sha256": "4582df7c6a21c23690a8642c796ffc953b2af485eca280b3fea016e801720e05",
+          "bytes": 6007
+        },
+        {
+          "path": "src/domain/search/highs-browser.ts",
+          "sha256": "e2ade8afd0030eafa37ef20e84f9e593eebdcc2b12ae6fbd13fcf2a854ddb71e",
+          "bytes": 250
+        },
+        {
+          "path": "src/domain/search/highs-runtime.d.ts",
+          "sha256": "81f1599e1511c3de3e313e3352e1d51f70562c4ff5cd09f1475b88d3f599656a",
+          "bytes": 92
+        },
+        {
+          "path": "src/domain/search/index.ts",
+          "sha256": "426597abdbc1842aa85addb56e9081638bcc1eb226e30bad16bd092219c929bb",
+          "bytes": 388
+        },
+        {
+          "path": "src/domain/search/joint-candidate-upper-bound.ts",
+          "sha256": "c6e5f8a8c576b9cd7ef642810f2399ee0f680debfad2378b2fd0f6b7d2d395a1",
+          "bytes": 879
+        },
+        {
+          "path": "src/domain/search/joint-substat-reachability.ts",
+          "sha256": "0ab7d79eb29e12f84aee8c95ed48a39a997e83f377a69401df2b4f5619a0fca9",
+          "bytes": 20459
+        },
+        {
+          "path": "src/domain/search/linear-mip.ts",
+          "sha256": "4d738d9aa5867d1e56bd3468a1570df45cce1428f4d5597905f77f8eb361c861",
+          "bytes": 2136
+        },
+        {
+          "path": "src/domain/search/loadout-finder-exact-mip.ts",
+          "sha256": "5237665e432bb259eebf228c94212304307ca95ffa88f029d31a9d949d955e7a",
+          "bytes": 322691
+        },
+        {
+          "path": "src/domain/search/loadout-finder-v3.ts",
+          "sha256": "63dc20de6108bccfe10233cc7df1f43b3257bc45d35049aae13e248668aa2eab",
+          "bytes": 93794
+        },
+        {
+          "path": "src/domain/search/memory-usage.ts",
+          "sha256": "258b168466f5d8ec0bfc35a531205bb6c9d16c4ecf33a6e229e1c1d05e61127a",
+          "bytes": 881
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-browser-adapter.ts",
+          "sha256": "8356939f7d28ece0df59020a7ff54962eb4fa428480a37eb4415a1dd30ebd26f",
+          "bytes": 951
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-browser.worker.ts",
+          "sha256": "4aa526576cf725895fdc93aa3d05cd505c23a59a1dcfe1f22925d3ca9124f8c6",
+          "bytes": 1429
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-executor.ts",
+          "sha256": "17a8d1c4750b9882e5c59dcd33b506c692608c0a23e9213822f3b7090d28930e",
+          "bytes": 20521
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-node-adapter.mjs",
+          "sha256": "040acb0f2a9e61be0daef3b34cc36048e450bd96d6e966493971daf54932492d",
+          "bytes": 818
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-node.worker.ts",
+          "sha256": "7985b8922497a2d9f743521cc62b2c7f00b8e602bb89f4e33493de591ed49e17",
+          "bytes": 1445
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-solver.ts",
+          "sha256": "16923d464e84c45d26772f2edbbe281a7f12419f374dc68db9faa7d0f4681a7e",
+          "bytes": 8361
+        },
+        {
+          "path": "src/domain/search/ring-pairs.ts",
+          "sha256": "43f8224539f02c6305064d5e8029784e0442581f51a222b9fe715d4d7cf6c93b",
+          "bytes": 2192
+        },
+        {
+          "path": "src/domain/search/search-types.ts",
+          "sha256": "d4a6baa0ac9300e2cedc312676de515afa55914531364b5ce80b11b3a811ef64",
+          "bytes": 632
+        },
+        {
+          "path": "src/domain/search/shared-accessory-pair-dominance-policy.ts",
+          "sha256": "56f1dd98975da7b07f4a33066ecc024ff2c307fe8413bc8609232189fbc35b8d",
+          "bytes": 2145
+        },
+        {
+          "path": "src/domain/search/shared-accessory-pair-dominance.ts",
+          "sha256": "3d4bcc92e6eafa22ab2ba23d358a8c156f35be7f9e8102d49dd39a2111848730",
+          "bytes": 5292
+        },
+        {
+          "path": "src/domain/search/signature-band.ts",
+          "sha256": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+          "bytes": 17911
+        },
+        {
+          "path": "src/domain/search/substat-factor-budget.ts",
+          "sha256": "d30d20c2e8873f40a1427257a8fc5baa0f668bea3b06459414aa98dc4b71bc19",
+          "bytes": 6286
+        },
+        {
+          "path": "src/domain/search/types.ts",
+          "sha256": "ef5a8b3b5f59a017fe6b451c7c6c8c61b320a65c7e8d4e68f23bbe20c51960ff",
+          "bytes": 1606
+        },
+        {
+          "path": "src/domain/types.ts",
+          "sha256": "712424758f10e16bc01a59b3b207dc53f07d1ce9c9cdf3b88378d6ecf78a951c",
+          "bytes": 7022
+        },
+        {
+          "path": "src/domain/worker-client.ts",
+          "sha256": "355f3e6f91ff1937e9a14edf7a5a8d2e293df44cee8e6da1424846793067c321",
+          "bytes": 4671
+        }
+      ],
+      "generatedData": {
+        "path": "src/data/generated-data.json",
+        "sha256": "879ea3412fd4641521fdfd3a0e8a70c6461a9255629213e4a493fdabcd2a19ff",
+        "bytes": 42383568
+      }
+    },
+    "before": {
+      "checkedAt": "2026-10-11T13:25:01.350Z",
+      "strategySources": [
+        {
+          "path": "docs/search-optimization/tools/run-acceptance.mjs",
+          "sha256": "3503f917a5ab9fe4a18a0bb06571704d1fff22b8a726833726068d0fddb7a5e2",
+          "bytes": 66040
+        },
+        {
+          "path": "docs/search-optimization/tools/run-single.mjs",
+          "sha256": "98fe3a4e5214b7ceb2506784b882fef52b3937ab4a557bef5bcf5a0f32d2aa78",
+          "bytes": 10620
+        },
+        {
+          "path": "docs/search-optimization/tools/single-worker.mjs",
+          "sha256": "9f91aff728d2b5d81d624d11f18e2af1929e8cfed85fd9c9d97eedd2da6b28f5",
+          "bytes": 1271
+        },
+        {
+          "path": "docs/search-optimization/tools/timing-acceptance.mjs",
+          "sha256": "3b5169d0d0dd202158246b5ab22accd157e86aa9d97016d817e35f17d460fd35",
+          "bytes": 3153
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "2115cd728a048956f4be4e57a6a7bffd4b38b2d0c9da3602556d347c2bffe1e2",
+          "bytes": 136671
+        },
+        {
+          "path": "package.json",
+          "sha256": "733a59311cd0ac2696e40e024f54d45e7541436995bd6372d5562a96a8d378f7",
+          "bytes": 1526
+        },
+        {
+          "path": "scripts/node-tests/exact-mip-worker.mjs",
+          "sha256": "f4d66d8cf555433b971a08714f85918b52af0738d4845732678faffedce6283f",
+          "bytes": 2030
+        },
+        {
+          "path": "scripts/node-tests/run-v3.mjs",
+          "sha256": "66adff7b3d5a2b1ab78e9ef29ebe2a209fd148c5dbf786e93cdeb0940bdb708b",
+          "bytes": 17964
+        },
+        {
+          "path": "scripts/node-tests/v3-worker.mjs",
+          "sha256": "5f586a5ed7c066662ff4c2b0448466694e5a18f4e9863f31f2b97a049bf56933",
+          "bytes": 1045
+        },
+        {
+          "path": "src/domain/data.ts",
+          "sha256": "6e3d29eca861bb83943de212f4d8a4b5f6b3327d62cd41971ead417b3cf56185",
+          "bytes": 7759
+        },
+        {
+          "path": "src/domain/index.ts",
+          "sha256": "0f6c87a30020f5774d4003c7c7cbba35aa28797485f386c72af5229fa43ca8ef",
+          "bytes": 127
+        },
+        {
+          "path": "src/domain/jobs.ts",
+          "sha256": "0fb771c0b388449fcb70cf444edc8e8dcbe295cce0bd8be7f159d6348c00a71e",
+          "bytes": 336
+        },
+        {
+          "path": "src/domain/optimizer.ts",
+          "sha256": "d0b36af95431c00fbb62d4569c09172ea8736cbbb5182a54ce8ec209d150dbcc",
+          "bytes": 1295
+        },
+        {
+          "path": "src/domain/optimizer.worker.ts",
+          "sha256": "ef14efc8eaae2672f7f21aaead7af686066a043a87b24ac74a9c630a4aa71422",
+          "bytes": 1811
+        },
+        {
+          "path": "src/domain/optimizer/context.ts",
+          "sha256": "3c59fbb591c36d959badfff68da18783ae6bb76da8b760394b9d694df760db5f",
+          "bytes": 3987
+        },
+        {
+          "path": "src/domain/optimizer/equipment-candidates.ts",
+          "sha256": "9206e4a1f3de2ea3c945f02d067edd4e640d34b1701c9ebf1d08b3266a9ad1e4",
+          "bytes": 23962
+        },
+        {
+          "path": "src/domain/optimizer/gcd-search.ts",
+          "sha256": "bc7caee1f67ba2635bee130ae0683567d11fee6fd4f357528792a5bbc6de0ce5",
+          "bytes": 5160
+        },
+        {
+          "path": "src/domain/optimizer/joint-search.ts",
+          "sha256": "f3edfc684ef68e3a524d2aaa5e796937336c6e625a06ffc7f30e1bc4c4c963ef",
+          "bytes": 14562
+        },
+        {
+          "path": "src/domain/optimizer/result-assembly.ts",
+          "sha256": "89c53eb4e035f47f1aa378523803ccb5fd1b032650ac355d59851c76f114bff2",
+          "bytes": 3713
+        },
+        {
+          "path": "src/domain/optimizer/search-preparation.ts",
+          "sha256": "9363f043eecb61e4f5c9fdadab6bb5af5f401d317d5b582e783fb05bac57384b",
+          "bytes": 7593
+        },
+        {
+          "path": "src/domain/optimizer/single-search.ts",
+          "sha256": "6e689fd84a48f7f9b824ab6d59c65c6b2c0670c74dbda382b0bbe3e87179a86a",
+          "bytes": 3169
+        },
+        {
+          "path": "src/domain/rules.ts",
+          "sha256": "5f7bb7cd5d825e6e4e9e507905470e037493498074b4ad2a2d149c60aadd7352",
+          "bytes": 6659
+        },
+        {
+          "path": "src/domain/search/baseline-worker-policy.ts",
+          "sha256": "b4f2b0f03170d4ce3db92fcc547ca239c045a0f4a47f80c03b221ce24feeaad0",
+          "bytes": 621
+        },
+        {
+          "path": "src/domain/search/cancellation.ts",
+          "sha256": "20ac2f8267ee705f28ab5370cae6e9475ab193037e8fbb35d60466e1b32e7d14",
+          "bytes": 202
+        },
+        {
+          "path": "src/domain/search/candidate-pareto.ts",
+          "sha256": "35b1dc71dccdd7cc1a8734d144589d39d05669b918b09369343c6ee14646db61",
+          "bytes": 4062
+        },
+        {
+          "path": "src/domain/search/candidate-resource-support-policy.ts",
+          "sha256": "7f04b0db0c4a6b639feaf56947ca97b51fffca79fc319f251513c5db84aa21b1",
+          "bytes": 9779
+        },
+        {
+          "path": "src/domain/search/equipment-candidates.ts",
+          "sha256": "f0ea04ec18cbef047a2c6ff46a26610168f6ccefa1517ba71d36c58888625fa6",
+          "bytes": 241
+        },
+        {
+          "path": "src/domain/search/equipment-identity.ts",
+          "sha256": "8d9f7ea3bbd439e4fa47bb38e5a931f6b72c2084811a7f92d5d4434b703234b3",
+          "bytes": 1072
+        },
+        {
+          "path": "src/domain/search/equipment-sync.ts",
+          "sha256": "f0bb5455717dfe131742b8e1a38b2857b9cec03006268a43582590f79b4859db",
+          "bytes": 199
+        },
+        {
+          "path": "src/domain/search/equipped-effects.ts",
+          "sha256": "2f544fec239865d5dcf9f7488eb4cbb69cbb3a803f64ea34a6849ac8451046ce",
+          "bytes": 16026
+        },
+        {
+          "path": "src/domain/search/exact-mip-candidate-upper-bound.ts",
+          "sha256": "0fcab255d2bba46e8e4eecdc3bd8219035ee6813b3cfa47be593e9ff4d06ddda",
+          "bytes": 5629
+        },
+        {
+          "path": "src/domain/search/factor-resource-budget-upper-bound.ts",
+          "sha256": "4582df7c6a21c23690a8642c796ffc953b2af485eca280b3fea016e801720e05",
+          "bytes": 6007
+        },
+        {
+          "path": "src/domain/search/highs-browser.ts",
+          "sha256": "e2ade8afd0030eafa37ef20e84f9e593eebdcc2b12ae6fbd13fcf2a854ddb71e",
+          "bytes": 250
+        },
+        {
+          "path": "src/domain/search/highs-runtime.d.ts",
+          "sha256": "81f1599e1511c3de3e313e3352e1d51f70562c4ff5cd09f1475b88d3f599656a",
+          "bytes": 92
+        },
+        {
+          "path": "src/domain/search/index.ts",
+          "sha256": "426597abdbc1842aa85addb56e9081638bcc1eb226e30bad16bd092219c929bb",
+          "bytes": 388
+        },
+        {
+          "path": "src/domain/search/joint-candidate-upper-bound.ts",
+          "sha256": "c6e5f8a8c576b9cd7ef642810f2399ee0f680debfad2378b2fd0f6b7d2d395a1",
+          "bytes": 879
+        },
+        {
+          "path": "src/domain/search/joint-substat-reachability.ts",
+          "sha256": "0ab7d79eb29e12f84aee8c95ed48a39a997e83f377a69401df2b4f5619a0fca9",
+          "bytes": 20459
+        },
+        {
+          "path": "src/domain/search/linear-mip.ts",
+          "sha256": "4d738d9aa5867d1e56bd3468a1570df45cce1428f4d5597905f77f8eb361c861",
+          "bytes": 2136
+        },
+        {
+          "path": "src/domain/search/loadout-finder-exact-mip.ts",
+          "sha256": "5237665e432bb259eebf228c94212304307ca95ffa88f029d31a9d949d955e7a",
+          "bytes": 322691
+        },
+        {
+          "path": "src/domain/search/loadout-finder-v3.ts",
+          "sha256": "63dc20de6108bccfe10233cc7df1f43b3257bc45d35049aae13e248668aa2eab",
+          "bytes": 93794
+        },
+        {
+          "path": "src/domain/search/memory-usage.ts",
+          "sha256": "258b168466f5d8ec0bfc35a531205bb6c9d16c4ecf33a6e229e1c1d05e61127a",
+          "bytes": 881
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-browser-adapter.ts",
+          "sha256": "8356939f7d28ece0df59020a7ff54962eb4fa428480a37eb4415a1dd30ebd26f",
+          "bytes": 951
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-browser.worker.ts",
+          "sha256": "4aa526576cf725895fdc93aa3d05cd505c23a59a1dcfe1f22925d3ca9124f8c6",
+          "bytes": 1429
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-executor.ts",
+          "sha256": "17a8d1c4750b9882e5c59dcd33b506c692608c0a23e9213822f3b7090d28930e",
+          "bytes": 20521
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-node-adapter.mjs",
+          "sha256": "040acb0f2a9e61be0daef3b34cc36048e450bd96d6e966493971daf54932492d",
+          "bytes": 818
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-node.worker.ts",
+          "sha256": "7985b8922497a2d9f743521cc62b2c7f00b8e602bb89f4e33493de591ed49e17",
+          "bytes": 1445
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-solver.ts",
+          "sha256": "16923d464e84c45d26772f2edbbe281a7f12419f374dc68db9faa7d0f4681a7e",
+          "bytes": 8361
+        },
+        {
+          "path": "src/domain/search/ring-pairs.ts",
+          "sha256": "43f8224539f02c6305064d5e8029784e0442581f51a222b9fe715d4d7cf6c93b",
+          "bytes": 2192
+        },
+        {
+          "path": "src/domain/search/search-types.ts",
+          "sha256": "d4a6baa0ac9300e2cedc312676de515afa55914531364b5ce80b11b3a811ef64",
+          "bytes": 632
+        },
+        {
+          "path": "src/domain/search/shared-accessory-pair-dominance-policy.ts",
+          "sha256": "56f1dd98975da7b07f4a33066ecc024ff2c307fe8413bc8609232189fbc35b8d",
+          "bytes": 2145
+        },
+        {
+          "path": "src/domain/search/shared-accessory-pair-dominance.ts",
+          "sha256": "3d4bcc92e6eafa22ab2ba23d358a8c156f35be7f9e8102d49dd39a2111848730",
+          "bytes": 5292
+        },
+        {
+          "path": "src/domain/search/signature-band.ts",
+          "sha256": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+          "bytes": 17911
+        },
+        {
+          "path": "src/domain/search/substat-factor-budget.ts",
+          "sha256": "d30d20c2e8873f40a1427257a8fc5baa0f668bea3b06459414aa98dc4b71bc19",
+          "bytes": 6286
+        },
+        {
+          "path": "src/domain/search/types.ts",
+          "sha256": "ef5a8b3b5f59a017fe6b451c7c6c8c61b320a65c7e8d4e68f23bbe20c51960ff",
+          "bytes": 1606
+        },
+        {
+          "path": "src/domain/types.ts",
+          "sha256": "712424758f10e16bc01a59b3b207dc53f07d1ce9c9cdf3b88378d6ecf78a951c",
+          "bytes": 7022
+        },
+        {
+          "path": "src/domain/worker-client.ts",
+          "sha256": "355f3e6f91ff1937e9a14edf7a5a8d2e293df44cee8e6da1424846793067c321",
+          "bytes": 4671
+        }
+      ],
+      "captureErrors": [],
+      "generatedData": {
+        "path": "src/data/generated-data.json",
+        "sha256": "879ea3412fd4641521fdfd3a0e8a70c6461a9255629213e4a493fdabcd2a19ff",
+        "bytes": 42383568
+      }
+    },
+    "beforeChangedPaths": [],
+    "after": {
+      "checkedAt": "2026-10-11T13:25:27.375Z",
+      "strategySources": [
+        {
+          "path": "docs/search-optimization/tools/run-acceptance.mjs",
+          "sha256": "3503f917a5ab9fe4a18a0bb06571704d1fff22b8a726833726068d0fddb7a5e2",
+          "bytes": 66040
+        },
+        {
+          "path": "docs/search-optimization/tools/run-single.mjs",
+          "sha256": "98fe3a4e5214b7ceb2506784b882fef52b3937ab4a557bef5bcf5a0f32d2aa78",
+          "bytes": 10620
+        },
+        {
+          "path": "docs/search-optimization/tools/single-worker.mjs",
+          "sha256": "9f91aff728d2b5d81d624d11f18e2af1929e8cfed85fd9c9d97eedd2da6b28f5",
+          "bytes": 1271
+        },
+        {
+          "path": "docs/search-optimization/tools/timing-acceptance.mjs",
+          "sha256": "3b5169d0d0dd202158246b5ab22accd157e86aa9d97016d817e35f17d460fd35",
+          "bytes": 3153
+        },
+        {
+          "path": "package-lock.json",
+          "sha256": "2115cd728a048956f4be4e57a6a7bffd4b38b2d0c9da3602556d347c2bffe1e2",
+          "bytes": 136671
+        },
+        {
+          "path": "package.json",
+          "sha256": "733a59311cd0ac2696e40e024f54d45e7541436995bd6372d5562a96a8d378f7",
+          "bytes": 1526
+        },
+        {
+          "path": "scripts/node-tests/exact-mip-worker.mjs",
+          "sha256": "f4d66d8cf555433b971a08714f85918b52af0738d4845732678faffedce6283f",
+          "bytes": 2030
+        },
+        {
+          "path": "scripts/node-tests/run-v3.mjs",
+          "sha256": "66adff7b3d5a2b1ab78e9ef29ebe2a209fd148c5dbf786e93cdeb0940bdb708b",
+          "bytes": 17964
+        },
+        {
+          "path": "scripts/node-tests/v3-worker.mjs",
+          "sha256": "5f586a5ed7c066662ff4c2b0448466694e5a18f4e9863f31f2b97a049bf56933",
+          "bytes": 1045
+        },
+        {
+          "path": "src/domain/data.ts",
+          "sha256": "6e3d29eca861bb83943de212f4d8a4b5f6b3327d62cd41971ead417b3cf56185",
+          "bytes": 7759
+        },
+        {
+          "path": "src/domain/index.ts",
+          "sha256": "0f6c87a30020f5774d4003c7c7cbba35aa28797485f386c72af5229fa43ca8ef",
+          "bytes": 127
+        },
+        {
+          "path": "src/domain/jobs.ts",
+          "sha256": "0fb771c0b388449fcb70cf444edc8e8dcbe295cce0bd8be7f159d6348c00a71e",
+          "bytes": 336
+        },
+        {
+          "path": "src/domain/optimizer.ts",
+          "sha256": "d0b36af95431c00fbb62d4569c09172ea8736cbbb5182a54ce8ec209d150dbcc",
+          "bytes": 1295
+        },
+        {
+          "path": "src/domain/optimizer.worker.ts",
+          "sha256": "ef14efc8eaae2672f7f21aaead7af686066a043a87b24ac74a9c630a4aa71422",
+          "bytes": 1811
+        },
+        {
+          "path": "src/domain/optimizer/context.ts",
+          "sha256": "3c59fbb591c36d959badfff68da18783ae6bb76da8b760394b9d694df760db5f",
+          "bytes": 3987
+        },
+        {
+          "path": "src/domain/optimizer/equipment-candidates.ts",
+          "sha256": "9206e4a1f3de2ea3c945f02d067edd4e640d34b1701c9ebf1d08b3266a9ad1e4",
+          "bytes": 23962
+        },
+        {
+          "path": "src/domain/optimizer/gcd-search.ts",
+          "sha256": "bc7caee1f67ba2635bee130ae0683567d11fee6fd4f357528792a5bbc6de0ce5",
+          "bytes": 5160
+        },
+        {
+          "path": "src/domain/optimizer/joint-search.ts",
+          "sha256": "f3edfc684ef68e3a524d2aaa5e796937336c6e625a06ffc7f30e1bc4c4c963ef",
+          "bytes": 14562
+        },
+        {
+          "path": "src/domain/optimizer/result-assembly.ts",
+          "sha256": "89c53eb4e035f47f1aa378523803ccb5fd1b032650ac355d59851c76f114bff2",
+          "bytes": 3713
+        },
+        {
+          "path": "src/domain/optimizer/search-preparation.ts",
+          "sha256": "9363f043eecb61e4f5c9fdadab6bb5af5f401d317d5b582e783fb05bac57384b",
+          "bytes": 7593
+        },
+        {
+          "path": "src/domain/optimizer/single-search.ts",
+          "sha256": "6e689fd84a48f7f9b824ab6d59c65c6b2c0670c74dbda382b0bbe3e87179a86a",
+          "bytes": 3169
+        },
+        {
+          "path": "src/domain/rules.ts",
+          "sha256": "5f7bb7cd5d825e6e4e9e507905470e037493498074b4ad2a2d149c60aadd7352",
+          "bytes": 6659
+        },
+        {
+          "path": "src/domain/search/baseline-worker-policy.ts",
+          "sha256": "b4f2b0f03170d4ce3db92fcc547ca239c045a0f4a47f80c03b221ce24feeaad0",
+          "bytes": 621
+        },
+        {
+          "path": "src/domain/search/cancellation.ts",
+          "sha256": "20ac2f8267ee705f28ab5370cae6e9475ab193037e8fbb35d60466e1b32e7d14",
+          "bytes": 202
+        },
+        {
+          "path": "src/domain/search/candidate-pareto.ts",
+          "sha256": "35b1dc71dccdd7cc1a8734d144589d39d05669b918b09369343c6ee14646db61",
+          "bytes": 4062
+        },
+        {
+          "path": "src/domain/search/candidate-resource-support-policy.ts",
+          "sha256": "7f04b0db0c4a6b639feaf56947ca97b51fffca79fc319f251513c5db84aa21b1",
+          "bytes": 9779
+        },
+        {
+          "path": "src/domain/search/equipment-candidates.ts",
+          "sha256": "f0ea04ec18cbef047a2c6ff46a26610168f6ccefa1517ba71d36c58888625fa6",
+          "bytes": 241
+        },
+        {
+          "path": "src/domain/search/equipment-identity.ts",
+          "sha256": "8d9f7ea3bbd439e4fa47bb38e5a931f6b72c2084811a7f92d5d4434b703234b3",
+          "bytes": 1072
+        },
+        {
+          "path": "src/domain/search/equipment-sync.ts",
+          "sha256": "f0bb5455717dfe131742b8e1a38b2857b9cec03006268a43582590f79b4859db",
+          "bytes": 199
+        },
+        {
+          "path": "src/domain/search/equipped-effects.ts",
+          "sha256": "2f544fec239865d5dcf9f7488eb4cbb69cbb3a803f64ea34a6849ac8451046ce",
+          "bytes": 16026
+        },
+        {
+          "path": "src/domain/search/exact-mip-candidate-upper-bound.ts",
+          "sha256": "0fcab255d2bba46e8e4eecdc3bd8219035ee6813b3cfa47be593e9ff4d06ddda",
+          "bytes": 5629
+        },
+        {
+          "path": "src/domain/search/factor-resource-budget-upper-bound.ts",
+          "sha256": "4582df7c6a21c23690a8642c796ffc953b2af485eca280b3fea016e801720e05",
+          "bytes": 6007
+        },
+        {
+          "path": "src/domain/search/highs-browser.ts",
+          "sha256": "e2ade8afd0030eafa37ef20e84f9e593eebdcc2b12ae6fbd13fcf2a854ddb71e",
+          "bytes": 250
+        },
+        {
+          "path": "src/domain/search/highs-runtime.d.ts",
+          "sha256": "81f1599e1511c3de3e313e3352e1d51f70562c4ff5cd09f1475b88d3f599656a",
+          "bytes": 92
+        },
+        {
+          "path": "src/domain/search/index.ts",
+          "sha256": "426597abdbc1842aa85addb56e9081638bcc1eb226e30bad16bd092219c929bb",
+          "bytes": 388
+        },
+        {
+          "path": "src/domain/search/joint-candidate-upper-bound.ts",
+          "sha256": "c6e5f8a8c576b9cd7ef642810f2399ee0f680debfad2378b2fd0f6b7d2d395a1",
+          "bytes": 879
+        },
+        {
+          "path": "src/domain/search/joint-substat-reachability.ts",
+          "sha256": "0ab7d79eb29e12f84aee8c95ed48a39a997e83f377a69401df2b4f5619a0fca9",
+          "bytes": 20459
+        },
+        {
+          "path": "src/domain/search/linear-mip.ts",
+          "sha256": "4d738d9aa5867d1e56bd3468a1570df45cce1428f4d5597905f77f8eb361c861",
+          "bytes": 2136
+        },
+        {
+          "path": "src/domain/search/loadout-finder-exact-mip.ts",
+          "sha256": "5237665e432bb259eebf228c94212304307ca95ffa88f029d31a9d949d955e7a",
+          "bytes": 322691
+        },
+        {
+          "path": "src/domain/search/loadout-finder-v3.ts",
+          "sha256": "63dc20de6108bccfe10233cc7df1f43b3257bc45d35049aae13e248668aa2eab",
+          "bytes": 93794
+        },
+        {
+          "path": "src/domain/search/memory-usage.ts",
+          "sha256": "258b168466f5d8ec0bfc35a531205bb6c9d16c4ecf33a6e229e1c1d05e61127a",
+          "bytes": 881
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-browser-adapter.ts",
+          "sha256": "8356939f7d28ece0df59020a7ff54962eb4fa428480a37eb4415a1dd30ebd26f",
+          "bytes": 951
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-browser.worker.ts",
+          "sha256": "4aa526576cf725895fdc93aa3d05cd505c23a59a1dcfe1f22925d3ca9124f8c6",
+          "bytes": 1429
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-executor.ts",
+          "sha256": "17a8d1c4750b9882e5c59dcd33b506c692608c0a23e9213822f3b7090d28930e",
+          "bytes": 20521
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-node-adapter.mjs",
+          "sha256": "040acb0f2a9e61be0daef3b34cc36048e450bd96d6e966493971daf54932492d",
+          "bytes": 818
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-node.worker.ts",
+          "sha256": "7985b8922497a2d9f743521cc62b2c7f00b8e602bb89f4e33493de591ed49e17",
+          "bytes": 1445
+        },
+        {
+          "path": "src/domain/search/parallel-baseline-solver.ts",
+          "sha256": "16923d464e84c45d26772f2edbbe281a7f12419f374dc68db9faa7d0f4681a7e",
+          "bytes": 8361
+        },
+        {
+          "path": "src/domain/search/ring-pairs.ts",
+          "sha256": "43f8224539f02c6305064d5e8029784e0442581f51a222b9fe715d4d7cf6c93b",
+          "bytes": 2192
+        },
+        {
+          "path": "src/domain/search/search-types.ts",
+          "sha256": "d4a6baa0ac9300e2cedc312676de515afa55914531364b5ce80b11b3a811ef64",
+          "bytes": 632
+        },
+        {
+          "path": "src/domain/search/shared-accessory-pair-dominance-policy.ts",
+          "sha256": "56f1dd98975da7b07f4a33066ecc024ff2c307fe8413bc8609232189fbc35b8d",
+          "bytes": 2145
+        },
+        {
+          "path": "src/domain/search/shared-accessory-pair-dominance.ts",
+          "sha256": "3d4bcc92e6eafa22ab2ba23d358a8c156f35be7f9e8102d49dd39a2111848730",
+          "bytes": 5292
+        },
+        {
+          "path": "src/domain/search/signature-band.ts",
+          "sha256": "776072136296f14bc2df6d1a0267a7058e2b5625d4e5b59e2984bcf556ad0862",
+          "bytes": 17911
+        },
+        {
+          "path": "src/domain/search/substat-factor-budget.ts",
+          "sha256": "d30d20c2e8873f40a1427257a8fc5baa0f668bea3b06459414aa98dc4b71bc19",
+          "bytes": 6286
+        },
+        {
+          "path": "src/domain/search/types.ts",
+          "sha256": "ef5a8b3b5f59a017fe6b451c7c6c8c61b320a65c7e8d4e68f23bbe20c51960ff",
+          "bytes": 1606
+        },
+        {
+          "path": "src/domain/types.ts",
+          "sha256": "712424758f10e16bc01a59b3b207dc53f07d1ce9c9cdf3b88378d6ecf78a951c",
+          "bytes": 7022
+        },
+        {
+          "path": "src/domain/worker-client.ts",
+          "sha256": "355f3e6f91ff1937e9a14edf7a5a8d2e293df44cee8e6da1424846793067c321",
+          "bytes": 4671
+        }
+      ],
+      "captureErrors": [],
+      "generatedData": {
+        "path": "src/data/generated-data.json",
+        "sha256": "879ea3412fd4641521fdfd3a0e8a70c6461a9255629213e4a493fdabcd2a19ff",
+        "bytes": 42383568
+      }
+    },
+    "afterChangedPaths": [],
+    "changedPaths": [],
+    "status": "matched-through-case"
+  },
+  "soloObjectiveScores": [
+    {
+      "job": "BRD",
+      "expectedMinimum": 50.07705056381793,
+      "actualSoloOptimum": 50.07705056381793,
+      "actualJointObjectiveScore": 50.07705056381793,
+      "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+      "matchingRecordCount": 4,
+      "source": {
+        "record": "docs/search-optimization/耗时优化记录.7z",
+        "archivedRunId": "20261009T165822206Z",
+        "caseId": "brd-dnc-mch-vpr-unsynced-independent-dps",
+        "sourceFilename": "result.json",
+        "jsonPointer": "/output/jobs/BRD/soloOptimum/objectiveScore"
+      },
+      "passed": true
+    },
+    {
+      "job": "DNC",
+      "expectedMinimum": 50.07705056381793,
+      "actualSoloOptimum": 50.07705056381793,
+      "actualJointObjectiveScore": 50.07705056381793,
+      "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+      "matchingRecordCount": 4,
+      "source": {
+        "record": "docs/search-optimization/耗时优化记录.7z",
+        "archivedRunId": "20261009T165822206Z",
+        "caseId": "brd-dnc-mch-vpr-unsynced-independent-dps",
+        "sourceFilename": "result.json",
+        "jsonPointer": "/output/jobs/DNC/soloOptimum/objectiveScore"
+      },
+      "passed": true
+    },
+    {
+      "job": "MCH",
+      "expectedMinimum": 50.07705056381793,
+      "actualSoloOptimum": 50.07705056381793,
+      "actualJointObjectiveScore": 50.07705056381793,
+      "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+      "matchingRecordCount": 4,
+      "source": {
+        "record": "docs/search-optimization/耗时优化记录.7z",
+        "archivedRunId": "20261009T165822206Z",
+        "caseId": "brd-dnc-mch-vpr-unsynced-independent-dps",
+        "sourceFilename": "result.json",
+        "jsonPointer": "/output/jobs/MCH/soloOptimum/objectiveScore"
+      },
+      "passed": true
+    },
+    {
+      "job": "VPR",
+      "expectedMinimum": 48.5175189601382,
+      "actualSoloOptimum": 48.5175189601382,
+      "actualJointObjectiveScore": 48.5175189601382,
+      "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+      "matchingRecordCount": 4,
+      "source": {
+        "record": "docs/search-optimization/耗时优化记录.7z",
+        "archivedRunId": "20261009T165822206Z",
+        "caseId": "brd-dnc-mch-vpr-unsynced-independent-dps",
+        "sourceFilename": "result.json",
+        "jsonPointer": "/output/jobs/VPR/soloOptimum/objectiveScore"
+      },
+      "passed": true
+    }
+  ],
+  "timingToleranceMs": 2344.3,
+  "timingTolerancePolicy": "10-percent",
+  "allowedMilliseconds": 25787.3,
+  "strategy": {
+    "entrypoint": "scripts/node-tests/run-v3.mjs -> runJointOptimizationLocally -> exact per-job baselines and joint proof",
+    "jobCount": 4,
+    "commonSlots": [],
+    "foodStrategy": "independent",
+    "strategyTags": [
+      "joint",
+      "joint-4",
+      "job-count-4",
+      "unsynced",
+      "unshared-equipment",
+      "independent-food",
+      "objective-dps"
+    ],
+    "exactSearchesByJob": {
+      "VPR": [
+        {
+          "model": "VPR:exact_search_VPR",
+          "elapsedMs": 20917.3851,
+          "solverRuns": 1,
+          "variables": 2196,
+          "constraints": 393,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "candidateUpperBound": null,
+          "conditionalResourceSupport": {
+            "candidateBands": 11,
+            "rowsAdded": 11,
+            "weightedRowsAdded": 11,
+            "nonzerosAdded": 30166,
+            "weightedResourceWeights": {
+              "main": 9,
+              "weapon": 256,
+              "det": 2,
+              "ten": 0,
+              "crt": 2,
+              "dht": 2,
+              "gcd": 3
+            }
+          }
+        }
+      ],
+      "BRD": [
+        {
+          "model": "BRD:exact_search_BRD",
+          "elapsedMs": 21434.184699999998,
+          "solverRuns": 1,
+          "variables": 2195,
+          "constraints": 393,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "candidateUpperBound": null,
+          "conditionalResourceSupport": {
+            "candidateBands": 11,
+            "rowsAdded": 11,
+            "weightedRowsAdded": 11,
+            "nonzerosAdded": 30224,
+            "weightedResourceWeights": {
+              "main": 9,
+              "weapon": 256,
+              "det": 2,
+              "ten": 0,
+              "crt": 2,
+              "dht": 2,
+              "gcd": 3
+            }
+          }
+        }
+      ],
+      "MCH": [
+        {
+          "model": "MCH:exact_search_MCH",
+          "elapsedMs": 22716.0136,
+          "solverRuns": 1,
+          "variables": 2201,
+          "constraints": 393,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "candidateUpperBound": null,
+          "conditionalResourceSupport": {
+            "candidateBands": 11,
+            "rowsAdded": 11,
+            "weightedRowsAdded": 11,
+            "nonzerosAdded": 30236,
+            "weightedResourceWeights": {
+              "main": 9,
+              "weapon": 256,
+              "det": 2,
+              "ten": 0,
+              "crt": 2,
+              "dht": 2,
+              "gcd": 3
+            }
+          }
+        }
+      ],
+      "DNC": [
+        {
+          "model": "DNC:exact_search_DNC",
+          "elapsedMs": 24829.4145,
+          "solverRuns": 1,
+          "variables": 2223,
+          "constraints": 393,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "candidateUpperBound": null,
+          "conditionalResourceSupport": {
+            "candidateBands": 11,
+            "rowsAdded": 11,
+            "weightedRowsAdded": 11,
+            "nonzerosAdded": 30700,
+            "weightedResourceWeights": {
+              "main": 9,
+              "weapon": 256,
+              "det": 2,
+              "ten": 0,
+              "crt": 2,
+              "dht": 2,
+              "gcd": 3
+            }
+          }
+        }
+      ]
+    },
+    "jointModelEvents": [],
+    "orderedProfilePhases": [
+      {
+        "sequence": 1,
+        "phase": "candidate-upper-bound-gate",
+        "backend": "HiGHS",
+        "model": "VPR:VPR:candidate_upper_bound_gate",
+        "job": "VPR",
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": null,
+        "constraints": null,
+        "profile": {
+          "phase": "candidate-upper-bound-gate",
+          "job": "VPR",
+          "candidateCount": 723,
+          "trustedCanonicalEvaluator": true,
+          "enabled": false,
+          "resourceBudgetCandidateProfile": "disabled"
+        }
+      },
+      {
+        "sequence": 2,
+        "phase": "candidate-upper-bound-gate",
+        "backend": "HiGHS",
+        "model": "BRD:BRD:candidate_upper_bound_gate",
+        "job": "BRD",
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": null,
+        "constraints": null,
+        "profile": {
+          "phase": "candidate-upper-bound-gate",
+          "job": "BRD",
+          "candidateCount": 719,
+          "trustedCanonicalEvaluator": true,
+          "enabled": false,
+          "resourceBudgetCandidateProfile": "disabled"
+        }
+      },
+      {
+        "sequence": 3,
+        "phase": "candidate-upper-bound-gate",
+        "backend": "HiGHS",
+        "model": "DNC:DNC:candidate_upper_bound_gate",
+        "job": "DNC",
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": null,
+        "constraints": null,
+        "profile": {
+          "phase": "candidate-upper-bound-gate",
+          "job": "DNC",
+          "candidateCount": 726,
+          "trustedCanonicalEvaluator": true,
+          "enabled": false,
+          "resourceBudgetCandidateProfile": "disabled"
+        }
+      },
+      {
+        "sequence": 4,
+        "phase": "candidate-upper-bound-gate",
+        "backend": "HiGHS",
+        "model": "MCH:MCH:candidate_upper_bound_gate",
+        "job": "MCH",
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": null,
+        "constraints": null,
+        "profile": {
+          "phase": "candidate-upper-bound-gate",
+          "job": "MCH",
+          "candidateCount": 725,
+          "trustedCanonicalEvaluator": true,
+          "enabled": false,
+          "resourceBudgetCandidateProfile": "disabled"
+        }
+      },
+      {
+        "sequence": 5,
+        "phase": "highs-call-start",
+        "backend": "HiGHS",
+        "model": "VPR:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": 2196,
+        "constraints": 392,
+        "profile": {
+          "phase": "highs-call-start",
+          "variables": 2196,
+          "constraints": 392,
+          "nonzeros": 56808,
+          "objectiveTerms": 1313,
+          "hintTerms": 2196
+        }
+      },
+      {
+        "sequence": 6,
+        "phase": "highs-call-start",
+        "backend": "HiGHS",
+        "model": "BRD:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": 2195,
+        "constraints": 392,
+        "profile": {
+          "phase": "highs-call-start",
+          "variables": 2195,
+          "constraints": 392,
+          "nonzeros": 56915,
+          "objectiveTerms": 1316,
+          "hintTerms": 2195
+        }
+      },
+      {
+        "sequence": 7,
+        "phase": "highs-call-start",
+        "backend": "HiGHS",
+        "model": "MCH:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": 2201,
+        "constraints": 392,
+        "profile": {
+          "phase": "highs-call-start",
+          "variables": 2201,
+          "constraints": 392,
+          "nonzeros": 56981,
+          "objectiveTerms": 1316,
+          "hintTerms": 2201
+        }
+      },
+      {
+        "sequence": 8,
+        "phase": "highs-call-start",
+        "backend": "HiGHS",
+        "model": "DNC:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": 2223,
+        "constraints": 392,
+        "profile": {
+          "phase": "highs-call-start",
+          "variables": 2223,
+          "constraints": 392,
+          "nonzeros": 57517,
+          "objectiveTerms": 1337,
+          "hintTerms": 2223
+        }
+      },
+      {
+        "sequence": 9,
+        "phase": "highs-solve-start",
+        "backend": "HiGHS",
+        "model": "DNC:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": 2223,
+        "constraints": 392,
+        "profile": {
+          "phase": "highs-solve-start",
+          "getHighsMs": 44.77249999999981,
+          "lpSerializationMs": 11.986499999999978,
+          "modelImportMs": 86.93209999999999,
+          "lpCharacters": 930352,
+          "variables": 2223,
+          "constraints": 392,
+          "nonzeros": 57517
+        }
+      },
+      {
+        "sequence": 10,
+        "phase": "highs-solve-start",
+        "backend": "HiGHS",
+        "model": "VPR:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": 2196,
+        "constraints": 392,
+        "profile": {
+          "phase": "highs-solve-start",
+          "getHighsMs": 45.6567,
+          "lpSerializationMs": 14.97160000000008,
+          "modelImportMs": 94.01569999999992,
+          "lpCharacters": 918132,
+          "variables": 2196,
+          "constraints": 392,
+          "nonzeros": 56808
+        }
+      },
+      {
+        "sequence": 11,
+        "phase": "highs-solve-start",
+        "backend": "HiGHS",
+        "model": "BRD:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": 2195,
+        "constraints": 392,
+        "profile": {
+          "phase": "highs-solve-start",
+          "getHighsMs": 45.5476000000001,
+          "lpSerializationMs": 8.777900000000045,
+          "modelImportMs": 91.92229999999995,
+          "lpCharacters": 919593,
+          "variables": 2195,
+          "constraints": 392,
+          "nonzeros": 56915
+        }
+      },
+      {
+        "sequence": 12,
+        "phase": "highs-solve-start",
+        "backend": "HiGHS",
+        "model": "MCH:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": null,
+        "status": null,
+        "solverRuns": null,
+        "variables": 2201,
+        "constraints": 392,
+        "profile": {
+          "phase": "highs-solve-start",
+          "getHighsMs": 45.22210000000018,
+          "lpSerializationMs": 10.638799999999947,
+          "modelImportMs": 91.72289999999998,
+          "lpCharacters": 920579,
+          "variables": 2201,
+          "constraints": 392,
+          "nonzeros": 56981
+        }
+      },
+      {
+        "sequence": 13,
+        "phase": "highs-solve-end",
+        "backend": "HiGHS",
+        "model": "VPR:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": 20420.033,
+        "status": "Optimal",
+        "solverRuns": null,
+        "variables": null,
+        "constraints": null,
+        "profile": {
+          "phase": "highs-solve-end",
+          "status": "Optimal",
+          "getHighsMs": 45.6567,
+          "lpSerializationMs": 14.97160000000008,
+          "modelImportMs": 94.01569999999992,
+          "nativeRunMs": 20256.5775,
+          "totalMs": 20420.033,
+          "lpCharacters": 918132
+        }
+      },
+      {
+        "sequence": 14,
+        "phase": "exact-search-summary",
+        "backend": "HiGHS",
+        "model": "VPR:exact_search_VPR",
+        "job": "VPR",
+        "elapsedMs": 20917.3851,
+        "status": null,
+        "solverRuns": 1,
+        "variables": 2196,
+        "constraints": 393,
+        "profile": {
+          "phase": "exact-search-summary",
+          "job": "VPR",
+          "elapsedMs": 20917.3851,
+          "modelPreparationMs": 83.08310000000006,
+          "greedyMipStartMs": 14.257600000000025,
+          "solverWallMs": 20420.2549,
+          "otherSearchMs": 18.037899999999354,
+          "resourceBudgetCandidateCuts": 0,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "solverRuns": 1,
+          "incumbentCandidateUpperBoundCuts": 0,
+          "excludedSignatures": 1,
+          "signatureBandChecks": 1,
+          "signatureBandElapsedMs": 381.7515999999996,
+          "signatureBandProof": true,
+          "variables": 2196,
+          "constraints": 393,
+          "reachableFactorClassesRemoved": 94,
+          "reachableAttributePruningSkipped": 0,
+          "reachableWeaponFactorClassesRemoved": 2,
+          "reachableWeaponPruningSkipped": 0,
+          "maximumSurrogate": 44412165890412,
+          "memoryUsage": {
+            "rssBytes": 1994899456,
+            "heapUsedBytes": 153794928
+          },
+          "conditionalResourceSupport": {
+            "candidateBands": 11,
+            "rowsAdded": 11,
+            "weightedRowsAdded": 11,
+            "nonzerosAdded": 30166,
+            "weightedResourceWeights": {
+              "main": 9,
+              "weapon": 256,
+              "det": 2,
+              "ten": 0,
+              "crt": 2,
+              "dht": 2,
+              "gcd": 3
+            }
+          }
+        }
+      },
+      {
+        "sequence": 15,
+        "phase": "highs-solve-end",
+        "backend": "HiGHS",
+        "model": "BRD:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": 20928.0957,
+        "status": "Optimal",
+        "solverRuns": null,
+        "variables": null,
+        "constraints": null,
+        "profile": {
+          "phase": "highs-solve-end",
+          "status": "Optimal",
+          "getHighsMs": 45.5476000000001,
+          "lpSerializationMs": 8.777900000000045,
+          "modelImportMs": 91.92229999999995,
+          "nativeRunMs": 20771.5674,
+          "totalMs": 20928.0957,
+          "lpCharacters": 919593
+        }
+      },
+      {
+        "sequence": 16,
+        "phase": "exact-search-summary",
+        "backend": "HiGHS",
+        "model": "BRD:exact_search_BRD",
+        "job": "BRD",
+        "elapsedMs": 21434.184699999998,
+        "status": null,
+        "solverRuns": 1,
+        "variables": 2195,
+        "constraints": 393,
+        "profile": {
+          "phase": "exact-search-summary",
+          "job": "BRD",
+          "elapsedMs": 21434.184699999998,
+          "modelPreparationMs": 77.3193,
+          "greedyMipStartMs": 17.430399999999963,
+          "solverWallMs": 20928.2838,
+          "otherSearchMs": 17.753099999994447,
+          "resourceBudgetCandidateCuts": 0,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "solverRuns": 1,
+          "incumbentCandidateUpperBoundCuts": 0,
+          "excludedSignatures": 1,
+          "signatureBandChecks": 1,
+          "signatureBandElapsedMs": 393.39810000000216,
+          "signatureBandProof": true,
+          "variables": 2195,
+          "constraints": 393,
+          "reachableFactorClassesRemoved": 95,
+          "reachableAttributePruningSkipped": 0,
+          "reachableWeaponFactorClassesRemoved": 2,
+          "reachableWeaponPruningSkipped": 0,
+          "maximumSurrogate": 44261482215790,
+          "memoryUsage": {
+            "rssBytes": 1984274432,
+            "heapUsedBytes": 132110976
+          },
+          "conditionalResourceSupport": {
+            "candidateBands": 11,
+            "rowsAdded": 11,
+            "weightedRowsAdded": 11,
+            "nonzerosAdded": 30224,
+            "weightedResourceWeights": {
+              "main": 9,
+              "weapon": 256,
+              "det": 2,
+              "ten": 0,
+              "crt": 2,
+              "dht": 2,
+              "gcd": 3
+            }
+          }
+        }
+      },
+      {
+        "sequence": 17,
+        "phase": "highs-solve-end",
+        "backend": "HiGHS",
+        "model": "MCH:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": 22189.1061,
+        "status": "Optimal",
+        "solverRuns": null,
+        "variables": null,
+        "constraints": null,
+        "profile": {
+          "phase": "highs-solve-end",
+          "status": "Optimal",
+          "getHighsMs": 45.22210000000018,
+          "lpSerializationMs": 10.638799999999947,
+          "modelImportMs": 91.72289999999998,
+          "nativeRunMs": 22032.773999999998,
+          "totalMs": 22189.1061,
+          "lpCharacters": 920579
+        }
+      },
+      {
+        "sequence": 18,
+        "phase": "exact-search-summary",
+        "backend": "HiGHS",
+        "model": "MCH:exact_search_MCH",
+        "job": "MCH",
+        "elapsedMs": 22716.0136,
+        "status": null,
+        "solverRuns": 1,
+        "variables": 2201,
+        "constraints": 393,
+        "profile": {
+          "phase": "exact-search-summary",
+          "job": "MCH",
+          "elapsedMs": 22716.0136,
+          "modelPreparationMs": 74.68079999999998,
+          "greedyMipStartMs": 17.0705999999999,
+          "solverWallMs": 22189.2894,
+          "otherSearchMs": 16.379499999999098,
+          "resourceBudgetCandidateCuts": 0,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "solverRuns": 1,
+          "incumbentCandidateUpperBoundCuts": 0,
+          "excludedSignatures": 1,
+          "signatureBandChecks": 1,
+          "signatureBandElapsedMs": 418.59330000000045,
+          "signatureBandProof": true,
+          "variables": 2201,
+          "constraints": 393,
+          "reachableFactorClassesRemoved": 95,
+          "reachableAttributePruningSkipped": 0,
+          "reachableWeaponFactorClassesRemoved": 2,
+          "reachableWeaponPruningSkipped": 0,
+          "maximumSurrogate": 44261482215790,
+          "memoryUsage": {
+            "rssBytes": 1990664192,
+            "heapUsedBytes": 153458488
+          },
+          "conditionalResourceSupport": {
+            "candidateBands": 11,
+            "rowsAdded": 11,
+            "weightedRowsAdded": 11,
+            "nonzerosAdded": 30236,
+            "weightedResourceWeights": {
+              "main": 9,
+              "weapon": 256,
+              "det": 2,
+              "ten": 0,
+              "crt": 2,
+              "dht": 2,
+              "gcd": 3
+            }
+          }
+        }
+      },
+      {
+        "sequence": 19,
+        "phase": "highs-solve-end",
+        "backend": "HiGHS",
+        "model": "DNC:exact_damage_initial#1",
+        "job": null,
+        "elapsedMs": 24250.880400000002,
+        "status": "Optimal",
+        "solverRuns": null,
+        "variables": null,
+        "constraints": null,
+        "profile": {
+          "phase": "highs-solve-end",
+          "status": "Optimal",
+          "getHighsMs": 44.77249999999981,
+          "lpSerializationMs": 11.986499999999978,
+          "modelImportMs": 86.93209999999999,
+          "nativeRunMs": 24097.0069,
+          "totalMs": 24250.880400000002,
+          "lpCharacters": 930352
+        }
+      },
+      {
+        "sequence": 20,
+        "phase": "exact-search-summary",
+        "backend": "HiGHS",
+        "model": "DNC:exact_search_DNC",
+        "job": "DNC",
+        "elapsedMs": 24829.4145,
+        "status": null,
+        "solverRuns": 1,
+        "variables": 2223,
+        "constraints": 393,
+        "profile": {
+          "phase": "exact-search-summary",
+          "job": "DNC",
+          "elapsedMs": 24829.4145,
+          "modelPreparationMs": 76.1626,
+          "greedyMipStartMs": 18.176199999999994,
+          "solverWallMs": 24251.072399999997,
+          "otherSearchMs": 16.72559999999794,
+          "resourceBudgetCandidateCuts": 0,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "solverRuns": 1,
+          "incumbentCandidateUpperBoundCuts": 0,
+          "excludedSignatures": 1,
+          "signatureBandChecks": 1,
+          "signatureBandElapsedMs": 467.27770000000237,
+          "signatureBandProof": true,
+          "variables": 2223,
+          "constraints": 393,
+          "reachableFactorClassesRemoved": 74,
+          "reachableAttributePruningSkipped": 0,
+          "reachableWeaponFactorClassesRemoved": 1,
+          "reachableWeaponPruningSkipped": 0,
+          "maximumSurrogate": 44261482215790,
+          "memoryUsage": {
+            "rssBytes": 2026401792,
+            "heapUsedBytes": 153075680
+          },
+          "conditionalResourceSupport": {
+            "candidateBands": 11,
+            "rowsAdded": 11,
+            "weightedRowsAdded": 11,
+            "nonzerosAdded": 30700,
+            "weightedResourceWeights": {
+              "main": 9,
+              "weapon": 256,
+              "det": 2,
+              "ten": 0,
+              "crt": 2,
+              "dht": 2,
+              "gcd": 3
+            }
+          }
+        }
+      }
+    ],
+    "solverProfileEventCount": 20,
+    "solverProfiles": [
+      {
+        "sequence": 1,
+        "backend": "HiGHS",
+        "model": "VPR:VPR:candidate_upper_bound_gate",
+        "profile": {
+          "phase": "candidate-upper-bound-gate",
+          "job": "VPR",
+          "candidateCount": 723,
+          "trustedCanonicalEvaluator": true,
+          "enabled": false,
+          "resourceBudgetCandidateProfile": "disabled"
+        }
+      },
+      {
+        "sequence": 2,
+        "backend": "HiGHS",
+        "model": "BRD:BRD:candidate_upper_bound_gate",
+        "profile": {
+          "phase": "candidate-upper-bound-gate",
+          "job": "BRD",
+          "candidateCount": 719,
+          "trustedCanonicalEvaluator": true,
+          "enabled": false,
+          "resourceBudgetCandidateProfile": "disabled"
+        }
+      },
+      {
+        "sequence": 3,
+        "backend": "HiGHS",
+        "model": "DNC:DNC:candidate_upper_bound_gate",
+        "profile": {
+          "phase": "candidate-upper-bound-gate",
+          "job": "DNC",
+          "candidateCount": 726,
+          "trustedCanonicalEvaluator": true,
+          "enabled": false,
+          "resourceBudgetCandidateProfile": "disabled"
+        }
+      },
+      {
+        "sequence": 4,
+        "backend": "HiGHS",
+        "model": "MCH:MCH:candidate_upper_bound_gate",
+        "profile": {
+          "phase": "candidate-upper-bound-gate",
+          "job": "MCH",
+          "candidateCount": 725,
+          "trustedCanonicalEvaluator": true,
+          "enabled": false,
+          "resourceBudgetCandidateProfile": "disabled"
+        }
+      },
+      {
+        "sequence": 5,
+        "backend": "HiGHS",
+        "model": "VPR:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-call-start",
+          "variables": 2196,
+          "constraints": 392,
+          "nonzeros": 56808,
+          "objectiveTerms": 1313,
+          "hintTerms": 2196
+        }
+      },
+      {
+        "sequence": 6,
+        "backend": "HiGHS",
+        "model": "BRD:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-call-start",
+          "variables": 2195,
+          "constraints": 392,
+          "nonzeros": 56915,
+          "objectiveTerms": 1316,
+          "hintTerms": 2195
+        }
+      },
+      {
+        "sequence": 7,
+        "backend": "HiGHS",
+        "model": "MCH:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-call-start",
+          "variables": 2201,
+          "constraints": 392,
+          "nonzeros": 56981,
+          "objectiveTerms": 1316,
+          "hintTerms": 2201
+        }
+      },
+      {
+        "sequence": 8,
+        "backend": "HiGHS",
+        "model": "DNC:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-call-start",
+          "variables": 2223,
+          "constraints": 392,
+          "nonzeros": 57517,
+          "objectiveTerms": 1337,
+          "hintTerms": 2223
+        }
+      },
+      {
+        "sequence": 9,
+        "backend": "HiGHS",
+        "model": "DNC:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-solve-start",
+          "getHighsMs": 44.77249999999981,
+          "lpSerializationMs": 11.986499999999978,
+          "modelImportMs": 86.93209999999999,
+          "lpCharacters": 930352,
+          "variables": 2223,
+          "constraints": 392,
+          "nonzeros": 57517
+        }
+      },
+      {
+        "sequence": 10,
+        "backend": "HiGHS",
+        "model": "VPR:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-solve-start",
+          "getHighsMs": 45.6567,
+          "lpSerializationMs": 14.97160000000008,
+          "modelImportMs": 94.01569999999992,
+          "lpCharacters": 918132,
+          "variables": 2196,
+          "constraints": 392,
+          "nonzeros": 56808
+        }
+      },
+      {
+        "sequence": 11,
+        "backend": "HiGHS",
+        "model": "BRD:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-solve-start",
+          "getHighsMs": 45.5476000000001,
+          "lpSerializationMs": 8.777900000000045,
+          "modelImportMs": 91.92229999999995,
+          "lpCharacters": 919593,
+          "variables": 2195,
+          "constraints": 392,
+          "nonzeros": 56915
+        }
+      },
+      {
+        "sequence": 12,
+        "backend": "HiGHS",
+        "model": "MCH:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-solve-start",
+          "getHighsMs": 45.22210000000018,
+          "lpSerializationMs": 10.638799999999947,
+          "modelImportMs": 91.72289999999998,
+          "lpCharacters": 920579,
+          "variables": 2201,
+          "constraints": 392,
+          "nonzeros": 56981
+        }
+      },
+      {
+        "sequence": 13,
+        "backend": "HiGHS",
+        "model": "VPR:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-solve-end",
+          "status": "Optimal",
+          "getHighsMs": 45.6567,
+          "lpSerializationMs": 14.97160000000008,
+          "modelImportMs": 94.01569999999992,
+          "nativeRunMs": 20256.5775,
+          "totalMs": 20420.033,
+          "lpCharacters": 918132
+        }
+      },
+      {
+        "sequence": 14,
+        "backend": "HiGHS",
+        "model": "VPR:exact_search_VPR",
+        "profile": {
+          "phase": "exact-search-summary",
+          "job": "VPR",
+          "elapsedMs": 20917.3851,
+          "modelPreparationMs": 83.08310000000006,
+          "greedyMipStartMs": 14.257600000000025,
+          "solverWallMs": 20420.2549,
+          "otherSearchMs": 18.037899999999354,
+          "resourceBudgetCandidateCuts": 0,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "solverRuns": 1,
+          "incumbentCandidateUpperBoundCuts": 0,
+          "excludedSignatures": 1,
+          "signatureBandChecks": 1,
+          "signatureBandElapsedMs": 381.7515999999996,
+          "signatureBandProof": true,
+          "variables": 2196,
+          "constraints": 393,
+          "reachableFactorClassesRemoved": 94,
+          "reachableAttributePruningSkipped": 0,
+          "reachableWeaponFactorClassesRemoved": 2,
+          "reachableWeaponPruningSkipped": 0,
+          "maximumSurrogate": 44412165890412,
+          "memoryUsage": {
+            "rssBytes": 1994899456,
+            "heapUsedBytes": 153794928
+          },
+          "conditionalResourceSupport": {
+            "candidateBands": 11,
+            "rowsAdded": 11,
+            "weightedRowsAdded": 11,
+            "nonzerosAdded": 30166,
+            "weightedResourceWeights": {
+              "main": 9,
+              "weapon": 256,
+              "det": 2,
+              "ten": 0,
+              "crt": 2,
+              "dht": 2,
+              "gcd": 3
+            }
+          }
+        }
+      },
+      {
+        "sequence": 15,
+        "backend": "HiGHS",
+        "model": "BRD:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-solve-end",
+          "status": "Optimal",
+          "getHighsMs": 45.5476000000001,
+          "lpSerializationMs": 8.777900000000045,
+          "modelImportMs": 91.92229999999995,
+          "nativeRunMs": 20771.5674,
+          "totalMs": 20928.0957,
+          "lpCharacters": 919593
+        }
+      },
+      {
+        "sequence": 16,
+        "backend": "HiGHS",
+        "model": "BRD:exact_search_BRD",
+        "profile": {
+          "phase": "exact-search-summary",
+          "job": "BRD",
+          "elapsedMs": 21434.184699999998,
+          "modelPreparationMs": 77.3193,
+          "greedyMipStartMs": 17.430399999999963,
+          "solverWallMs": 20928.2838,
+          "otherSearchMs": 17.753099999994447,
+          "resourceBudgetCandidateCuts": 0,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "solverRuns": 1,
+          "incumbentCandidateUpperBoundCuts": 0,
+          "excludedSignatures": 1,
+          "signatureBandChecks": 1,
+          "signatureBandElapsedMs": 393.39810000000216,
+          "signatureBandProof": true,
+          "variables": 2195,
+          "constraints": 393,
+          "reachableFactorClassesRemoved": 95,
+          "reachableAttributePruningSkipped": 0,
+          "reachableWeaponFactorClassesRemoved": 2,
+          "reachableWeaponPruningSkipped": 0,
+          "maximumSurrogate": 44261482215790,
+          "memoryUsage": {
+            "rssBytes": 1984274432,
+            "heapUsedBytes": 132110976
+          },
+          "conditionalResourceSupport": {
+            "candidateBands": 11,
+            "rowsAdded": 11,
+            "weightedRowsAdded": 11,
+            "nonzerosAdded": 30224,
+            "weightedResourceWeights": {
+              "main": 9,
+              "weapon": 256,
+              "det": 2,
+              "ten": 0,
+              "crt": 2,
+              "dht": 2,
+              "gcd": 3
+            }
+          }
+        }
+      },
+      {
+        "sequence": 17,
+        "backend": "HiGHS",
+        "model": "MCH:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-solve-end",
+          "status": "Optimal",
+          "getHighsMs": 45.22210000000018,
+          "lpSerializationMs": 10.638799999999947,
+          "modelImportMs": 91.72289999999998,
+          "nativeRunMs": 22032.773999999998,
+          "totalMs": 22189.1061,
+          "lpCharacters": 920579
+        }
+      },
+      {
+        "sequence": 18,
+        "backend": "HiGHS",
+        "model": "MCH:exact_search_MCH",
+        "profile": {
+          "phase": "exact-search-summary",
+          "job": "MCH",
+          "elapsedMs": 22716.0136,
+          "modelPreparationMs": 74.68079999999998,
+          "greedyMipStartMs": 17.0705999999999,
+          "solverWallMs": 22189.2894,
+          "otherSearchMs": 16.379499999999098,
+          "resourceBudgetCandidateCuts": 0,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "solverRuns": 1,
+          "incumbentCandidateUpperBoundCuts": 0,
+          "excludedSignatures": 1,
+          "signatureBandChecks": 1,
+          "signatureBandElapsedMs": 418.59330000000045,
+          "signatureBandProof": true,
+          "variables": 2201,
+          "constraints": 393,
+          "reachableFactorClassesRemoved": 95,
+          "reachableAttributePruningSkipped": 0,
+          "reachableWeaponFactorClassesRemoved": 2,
+          "reachableWeaponPruningSkipped": 0,
+          "maximumSurrogate": 44261482215790,
+          "memoryUsage": {
+            "rssBytes": 1990664192,
+            "heapUsedBytes": 153458488
+          },
+          "conditionalResourceSupport": {
+            "candidateBands": 11,
+            "rowsAdded": 11,
+            "weightedRowsAdded": 11,
+            "nonzerosAdded": 30236,
+            "weightedResourceWeights": {
+              "main": 9,
+              "weapon": 256,
+              "det": 2,
+              "ten": 0,
+              "crt": 2,
+              "dht": 2,
+              "gcd": 3
+            }
+          }
+        }
+      },
+      {
+        "sequence": 19,
+        "backend": "HiGHS",
+        "model": "DNC:exact_damage_initial#1",
+        "profile": {
+          "phase": "highs-solve-end",
+          "status": "Optimal",
+          "getHighsMs": 44.77249999999981,
+          "lpSerializationMs": 11.986499999999978,
+          "modelImportMs": 86.93209999999999,
+          "nativeRunMs": 24097.0069,
+          "totalMs": 24250.880400000002,
+          "lpCharacters": 930352
+        }
+      },
+      {
+        "sequence": 20,
+        "backend": "HiGHS",
+        "model": "DNC:exact_search_DNC",
+        "profile": {
+          "phase": "exact-search-summary",
+          "job": "DNC",
+          "elapsedMs": 24829.4145,
+          "modelPreparationMs": 76.1626,
+          "greedyMipStartMs": 18.176199999999994,
+          "solverWallMs": 24251.072399999997,
+          "otherSearchMs": 16.72559999999794,
+          "resourceBudgetCandidateCuts": 0,
+          "primaryResourceSupportsEnabled": false,
+          "mainStatResourceSupportEnabled": false,
+          "solverRuns": 1,
+          "incumbentCandidateUpperBoundCuts": 0,
+          "excludedSignatures": 1,
+          "signatureBandChecks": 1,
+          "signatureBandElapsedMs": 467.27770000000237,
+          "signatureBandProof": true,
+          "variables": 2223,
+          "constraints": 393,
+          "reachableFactorClassesRemoved": 74,
+          "reachableAttributePruningSkipped": 0,
+          "reachableWeaponFactorClassesRemoved": 1,
+          "reachableWeaponPruningSkipped": 0,
+          "maximumSurrogate": 44261482215790,
+          "memoryUsage": {
+            "rssBytes": 2026401792,
+            "heapUsedBytes": 153075680
+          },
+          "conditionalResourceSupport": {
+            "candidateBands": 11,
+            "rowsAdded": 11,
+            "weightedRowsAdded": 11,
+            "nonzerosAdded": 30700,
+            "weightedResourceWeights": {
+              "main": 9,
+              "weapon": 256,
+              "det": 2,
+              "ten": 0,
+              "crt": 2,
+              "dht": 2,
+              "gcd": 3
+            }
+          }
+        }
+      }
+    ],
+    "observedSearchStatistics": {
+      "outerNodes": 1,
+      "completeNodes": 1,
+      "upperBoundPrunes": 0,
+      "relaxedOptimaAttained": 1,
+      "innerSolves": 4,
+      "parentResultReuses": 0,
+      "cacheHits": 0,
+      "cacheMisses": 4,
+      "cacheEntries": 4,
+      "elapsedMs": 25103.577400000002,
+      "timeLimitMs": "unlimited",
+      "cacheLimit": 2048,
+      "rssBytes": 2023489536,
+      "heapUsedBytes": 123686088
+    },
+    "sourceSnapshotDirectory": "../../strategy-snapshot"
+  },
+  "solverProfiles": [
+    {
+      "sequence": 1,
+      "backend": "HiGHS",
+      "model": "VPR:VPR:candidate_upper_bound_gate",
+      "profile": {
+        "phase": "candidate-upper-bound-gate",
+        "job": "VPR",
+        "candidateCount": 723,
+        "trustedCanonicalEvaluator": true,
+        "enabled": false,
+        "resourceBudgetCandidateProfile": "disabled"
+      }
+    },
+    {
+      "sequence": 2,
+      "backend": "HiGHS",
+      "model": "BRD:BRD:candidate_upper_bound_gate",
+      "profile": {
+        "phase": "candidate-upper-bound-gate",
+        "job": "BRD",
+        "candidateCount": 719,
+        "trustedCanonicalEvaluator": true,
+        "enabled": false,
+        "resourceBudgetCandidateProfile": "disabled"
+      }
+    },
+    {
+      "sequence": 3,
+      "backend": "HiGHS",
+      "model": "DNC:DNC:candidate_upper_bound_gate",
+      "profile": {
+        "phase": "candidate-upper-bound-gate",
+        "job": "DNC",
+        "candidateCount": 726,
+        "trustedCanonicalEvaluator": true,
+        "enabled": false,
+        "resourceBudgetCandidateProfile": "disabled"
+      }
+    },
+    {
+      "sequence": 4,
+      "backend": "HiGHS",
+      "model": "MCH:MCH:candidate_upper_bound_gate",
+      "profile": {
+        "phase": "candidate-upper-bound-gate",
+        "job": "MCH",
+        "candidateCount": 725,
+        "trustedCanonicalEvaluator": true,
+        "enabled": false,
+        "resourceBudgetCandidateProfile": "disabled"
+      }
+    },
+    {
+      "sequence": 5,
+      "backend": "HiGHS",
+      "model": "VPR:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-call-start",
+        "variables": 2196,
+        "constraints": 392,
+        "nonzeros": 56808,
+        "objectiveTerms": 1313,
+        "hintTerms": 2196
+      }
+    },
+    {
+      "sequence": 6,
+      "backend": "HiGHS",
+      "model": "BRD:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-call-start",
+        "variables": 2195,
+        "constraints": 392,
+        "nonzeros": 56915,
+        "objectiveTerms": 1316,
+        "hintTerms": 2195
+      }
+    },
+    {
+      "sequence": 7,
+      "backend": "HiGHS",
+      "model": "MCH:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-call-start",
+        "variables": 2201,
+        "constraints": 392,
+        "nonzeros": 56981,
+        "objectiveTerms": 1316,
+        "hintTerms": 2201
+      }
+    },
+    {
+      "sequence": 8,
+      "backend": "HiGHS",
+      "model": "DNC:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-call-start",
+        "variables": 2223,
+        "constraints": 392,
+        "nonzeros": 57517,
+        "objectiveTerms": 1337,
+        "hintTerms": 2223
+      }
+    },
+    {
+      "sequence": 9,
+      "backend": "HiGHS",
+      "model": "DNC:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-solve-start",
+        "getHighsMs": 44.77249999999981,
+        "lpSerializationMs": 11.986499999999978,
+        "modelImportMs": 86.93209999999999,
+        "lpCharacters": 930352,
+        "variables": 2223,
+        "constraints": 392,
+        "nonzeros": 57517
+      }
+    },
+    {
+      "sequence": 10,
+      "backend": "HiGHS",
+      "model": "VPR:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-solve-start",
+        "getHighsMs": 45.6567,
+        "lpSerializationMs": 14.97160000000008,
+        "modelImportMs": 94.01569999999992,
+        "lpCharacters": 918132,
+        "variables": 2196,
+        "constraints": 392,
+        "nonzeros": 56808
+      }
+    },
+    {
+      "sequence": 11,
+      "backend": "HiGHS",
+      "model": "BRD:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-solve-start",
+        "getHighsMs": 45.5476000000001,
+        "lpSerializationMs": 8.777900000000045,
+        "modelImportMs": 91.92229999999995,
+        "lpCharacters": 919593,
+        "variables": 2195,
+        "constraints": 392,
+        "nonzeros": 56915
+      }
+    },
+    {
+      "sequence": 12,
+      "backend": "HiGHS",
+      "model": "MCH:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-solve-start",
+        "getHighsMs": 45.22210000000018,
+        "lpSerializationMs": 10.638799999999947,
+        "modelImportMs": 91.72289999999998,
+        "lpCharacters": 920579,
+        "variables": 2201,
+        "constraints": 392,
+        "nonzeros": 56981
+      }
+    },
+    {
+      "sequence": 13,
+      "backend": "HiGHS",
+      "model": "VPR:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-solve-end",
+        "status": "Optimal",
+        "getHighsMs": 45.6567,
+        "lpSerializationMs": 14.97160000000008,
+        "modelImportMs": 94.01569999999992,
+        "nativeRunMs": 20256.5775,
+        "totalMs": 20420.033,
+        "lpCharacters": 918132
+      }
+    },
+    {
+      "sequence": 14,
+      "backend": "HiGHS",
+      "model": "VPR:exact_search_VPR",
+      "profile": {
+        "phase": "exact-search-summary",
+        "job": "VPR",
+        "elapsedMs": 20917.3851,
+        "modelPreparationMs": 83.08310000000006,
+        "greedyMipStartMs": 14.257600000000025,
+        "solverWallMs": 20420.2549,
+        "otherSearchMs": 18.037899999999354,
+        "resourceBudgetCandidateCuts": 0,
+        "primaryResourceSupportsEnabled": false,
+        "mainStatResourceSupportEnabled": false,
+        "solverRuns": 1,
+        "incumbentCandidateUpperBoundCuts": 0,
+        "excludedSignatures": 1,
+        "signatureBandChecks": 1,
+        "signatureBandElapsedMs": 381.7515999999996,
+        "signatureBandProof": true,
+        "variables": 2196,
+        "constraints": 393,
+        "reachableFactorClassesRemoved": 94,
+        "reachableAttributePruningSkipped": 0,
+        "reachableWeaponFactorClassesRemoved": 2,
+        "reachableWeaponPruningSkipped": 0,
+        "maximumSurrogate": 44412165890412,
+        "memoryUsage": {
+          "rssBytes": 1994899456,
+          "heapUsedBytes": 153794928
+        },
+        "conditionalResourceSupport": {
+          "candidateBands": 11,
+          "rowsAdded": 11,
+          "weightedRowsAdded": 11,
+          "nonzerosAdded": 30166,
+          "weightedResourceWeights": {
+            "main": 9,
+            "weapon": 256,
+            "det": 2,
+            "ten": 0,
+            "crt": 2,
+            "dht": 2,
+            "gcd": 3
+          }
+        }
+      }
+    },
+    {
+      "sequence": 15,
+      "backend": "HiGHS",
+      "model": "BRD:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-solve-end",
+        "status": "Optimal",
+        "getHighsMs": 45.5476000000001,
+        "lpSerializationMs": 8.777900000000045,
+        "modelImportMs": 91.92229999999995,
+        "nativeRunMs": 20771.5674,
+        "totalMs": 20928.0957,
+        "lpCharacters": 919593
+      }
+    },
+    {
+      "sequence": 16,
+      "backend": "HiGHS",
+      "model": "BRD:exact_search_BRD",
+      "profile": {
+        "phase": "exact-search-summary",
+        "job": "BRD",
+        "elapsedMs": 21434.184699999998,
+        "modelPreparationMs": 77.3193,
+        "greedyMipStartMs": 17.430399999999963,
+        "solverWallMs": 20928.2838,
+        "otherSearchMs": 17.753099999994447,
+        "resourceBudgetCandidateCuts": 0,
+        "primaryResourceSupportsEnabled": false,
+        "mainStatResourceSupportEnabled": false,
+        "solverRuns": 1,
+        "incumbentCandidateUpperBoundCuts": 0,
+        "excludedSignatures": 1,
+        "signatureBandChecks": 1,
+        "signatureBandElapsedMs": 393.39810000000216,
+        "signatureBandProof": true,
+        "variables": 2195,
+        "constraints": 393,
+        "reachableFactorClassesRemoved": 95,
+        "reachableAttributePruningSkipped": 0,
+        "reachableWeaponFactorClassesRemoved": 2,
+        "reachableWeaponPruningSkipped": 0,
+        "maximumSurrogate": 44261482215790,
+        "memoryUsage": {
+          "rssBytes": 1984274432,
+          "heapUsedBytes": 132110976
+        },
+        "conditionalResourceSupport": {
+          "candidateBands": 11,
+          "rowsAdded": 11,
+          "weightedRowsAdded": 11,
+          "nonzerosAdded": 30224,
+          "weightedResourceWeights": {
+            "main": 9,
+            "weapon": 256,
+            "det": 2,
+            "ten": 0,
+            "crt": 2,
+            "dht": 2,
+            "gcd": 3
+          }
+        }
+      }
+    },
+    {
+      "sequence": 17,
+      "backend": "HiGHS",
+      "model": "MCH:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-solve-end",
+        "status": "Optimal",
+        "getHighsMs": 45.22210000000018,
+        "lpSerializationMs": 10.638799999999947,
+        "modelImportMs": 91.72289999999998,
+        "nativeRunMs": 22032.773999999998,
+        "totalMs": 22189.1061,
+        "lpCharacters": 920579
+      }
+    },
+    {
+      "sequence": 18,
+      "backend": "HiGHS",
+      "model": "MCH:exact_search_MCH",
+      "profile": {
+        "phase": "exact-search-summary",
+        "job": "MCH",
+        "elapsedMs": 22716.0136,
+        "modelPreparationMs": 74.68079999999998,
+        "greedyMipStartMs": 17.0705999999999,
+        "solverWallMs": 22189.2894,
+        "otherSearchMs": 16.379499999999098,
+        "resourceBudgetCandidateCuts": 0,
+        "primaryResourceSupportsEnabled": false,
+        "mainStatResourceSupportEnabled": false,
+        "solverRuns": 1,
+        "incumbentCandidateUpperBoundCuts": 0,
+        "excludedSignatures": 1,
+        "signatureBandChecks": 1,
+        "signatureBandElapsedMs": 418.59330000000045,
+        "signatureBandProof": true,
+        "variables": 2201,
+        "constraints": 393,
+        "reachableFactorClassesRemoved": 95,
+        "reachableAttributePruningSkipped": 0,
+        "reachableWeaponFactorClassesRemoved": 2,
+        "reachableWeaponPruningSkipped": 0,
+        "maximumSurrogate": 44261482215790,
+        "memoryUsage": {
+          "rssBytes": 1990664192,
+          "heapUsedBytes": 153458488
+        },
+        "conditionalResourceSupport": {
+          "candidateBands": 11,
+          "rowsAdded": 11,
+          "weightedRowsAdded": 11,
+          "nonzerosAdded": 30236,
+          "weightedResourceWeights": {
+            "main": 9,
+            "weapon": 256,
+            "det": 2,
+            "ten": 0,
+            "crt": 2,
+            "dht": 2,
+            "gcd": 3
+          }
+        }
+      }
+    },
+    {
+      "sequence": 19,
+      "backend": "HiGHS",
+      "model": "DNC:exact_damage_initial#1",
+      "profile": {
+        "phase": "highs-solve-end",
+        "status": "Optimal",
+        "getHighsMs": 44.77249999999981,
+        "lpSerializationMs": 11.986499999999978,
+        "modelImportMs": 86.93209999999999,
+        "nativeRunMs": 24097.0069,
+        "totalMs": 24250.880400000002,
+        "lpCharacters": 930352
+      }
+    },
+    {
+      "sequence": 20,
+      "backend": "HiGHS",
+      "model": "DNC:exact_search_DNC",
+      "profile": {
+        "phase": "exact-search-summary",
+        "job": "DNC",
+        "elapsedMs": 24829.4145,
+        "modelPreparationMs": 76.1626,
+        "greedyMipStartMs": 18.176199999999994,
+        "solverWallMs": 24251.072399999997,
+        "otherSearchMs": 16.72559999999794,
+        "resourceBudgetCandidateCuts": 0,
+        "primaryResourceSupportsEnabled": false,
+        "mainStatResourceSupportEnabled": false,
+        "solverRuns": 1,
+        "incumbentCandidateUpperBoundCuts": 0,
+        "excludedSignatures": 1,
+        "signatureBandChecks": 1,
+        "signatureBandElapsedMs": 467.27770000000237,
+        "signatureBandProof": true,
+        "variables": 2223,
+        "constraints": 393,
+        "reachableFactorClassesRemoved": 74,
+        "reachableAttributePruningSkipped": 0,
+        "reachableWeaponFactorClassesRemoved": 1,
+        "reachableWeaponPruningSkipped": 0,
+        "maximumSurrogate": 44261482215790,
+        "memoryUsage": {
+          "rssBytes": 2026401792,
+          "heapUsedBytes": 153075680
+        },
+        "conditionalResourceSupport": {
+          "candidateBands": 11,
+          "rowsAdded": 11,
+          "weightedRowsAdded": 11,
+          "nonzerosAdded": 30700,
+          "weightedResourceWeights": {
+            "main": 9,
+            "weapon": 256,
+            "det": 2,
+            "ten": 0,
+            "crt": 2,
+            "dht": 2,
+            "gcd": 3
+          }
+        }
+      }
+    }
+  ],
+  "checks": [
+    {
+      "name": "child-exited-normally",
+      "passed": true,
+      "actual": {
+        "exitCode": 0,
+        "timedOut": false
+      }
+    },
+    {
+      "name": "result-json-found",
+      "passed": true,
+      "actual": "parsed"
+    },
+    {
+      "name": "proof-complete",
+      "passed": true,
+      "actual": true
+    },
+    {
+      "name": "solo-objective-score-at-least-history-BRD",
+      "passed": true,
+      "expectedMinimum": 50.07705056381793,
+      "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+      "matchingRecordCount": 4,
+      "source": {
+        "record": "docs/search-optimization/耗时优化记录.7z",
+        "archivedRunId": "20261009T165822206Z",
+        "caseId": "brd-dnc-mch-vpr-unsynced-independent-dps",
+        "sourceFilename": "result.json",
+        "jsonPointer": "/output/jobs/BRD/soloOptimum/objectiveScore"
+      },
+      "actualSoloOptimum": 50.07705056381793,
+      "actualJointObjectiveScore": 50.07705056381793
+    },
+    {
+      "name": "solo-objective-score-at-least-history-DNC",
+      "passed": true,
+      "expectedMinimum": 50.07705056381793,
+      "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+      "matchingRecordCount": 4,
+      "source": {
+        "record": "docs/search-optimization/耗时优化记录.7z",
+        "archivedRunId": "20261009T165822206Z",
+        "caseId": "brd-dnc-mch-vpr-unsynced-independent-dps",
+        "sourceFilename": "result.json",
+        "jsonPointer": "/output/jobs/DNC/soloOptimum/objectiveScore"
+      },
+      "actualSoloOptimum": 50.07705056381793,
+      "actualJointObjectiveScore": 50.07705056381793
+    },
+    {
+      "name": "solo-objective-score-at-least-history-MCH",
+      "passed": true,
+      "expectedMinimum": 50.07705056381793,
+      "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+      "matchingRecordCount": 4,
+      "source": {
+        "record": "docs/search-optimization/耗时优化记录.7z",
+        "archivedRunId": "20261009T165822206Z",
+        "caseId": "brd-dnc-mch-vpr-unsynced-independent-dps",
+        "sourceFilename": "result.json",
+        "jsonPointer": "/output/jobs/MCH/soloOptimum/objectiveScore"
+      },
+      "actualSoloOptimum": 50.07705056381793,
+      "actualJointObjectiveScore": 50.07705056381793
+    },
+    {
+      "name": "solo-objective-score-at-least-history-VPR",
+      "passed": true,
+      "expectedMinimum": 48.5175189601382,
+      "historyLabel": "相同完整场景输入下已保存 Node 记录的最高 soloOptimum.objectiveScore",
+      "matchingRecordCount": 4,
+      "source": {
+        "record": "docs/search-optimization/耗时优化记录.7z",
+        "archivedRunId": "20261009T165822206Z",
+        "caseId": "brd-dnc-mch-vpr-unsynced-independent-dps",
+        "sourceFilename": "result.json",
+        "jsonPointer": "/output/jobs/VPR/soloOptimum/objectiveScore"
+      },
+      "actualSoloOptimum": 48.5175189601382,
+      "actualJointObjectiveScore": 48.5175189601382
+    },
+    {
+      "name": "exact-normalized-result-at-least-history",
+      "passed": true,
+      "expected": {
+        "numerator": "4",
+        "denominator": "1"
+      },
+      "actual": {
+        "numerator": "4",
+        "denominator": "1",
+        "approximate": 4
+      }
+    },
+    {
+      "name": "within-historical-fastest-tolerance",
+      "passed": true,
+      "expectedMaximumMs": 25787.3,
+      "actualMs": 25483,
+      "toleranceMs": 2344.3,
+      "policy": "10-percent"
+    },
+    {
+      "name": "runtime-inputs-match-suite-baseline-before-case",
+      "passed": true,
+      "expected": "suite snapshot SHA-256",
+      "changedPaths": []
+    },
+    {
+      "name": "runtime-inputs-match-suite-baseline-after-case",
+      "passed": true,
+      "expected": "suite snapshot SHA-256",
+      "changedPaths": []
+    }
+  ],
+  "passed": true,
+  "stdoutLog": "cases/brd-dnc-mch-vpr-unsynced-independent-dps/stdout.log",
+  "stderrLog": "cases/brd-dnc-mch-vpr-unsynced-independent-dps/stderr.log",
+  "output": {
+    "objective": "dps",
+    "normalizedJointValue": {
+      "numerator": "4",
+      "denominator": "1",
+      "approximate": 4
+    },
+    "commonFood": null,
+    "commonEquipment": {},
+    "jobs": {
+      "BRD": {
+        "joint": {
+          "job": "BRD",
+          "damagePerPotency": 116.17875730805758,
+          "gcd": 2.32,
+          "damagePerSecond": 50.07705056381793,
+          "objectiveScore": 50.07705056381793,
+          "totalAttributes": {
+            "PDMG": 158,
+            "MDMG": 0,
+            "DEX": 6512,
+            "CRT": 3618,
+            "DET": 1735,
+            "DHT": 1392,
+            "SKS": 1902,
+            "VIT": 7467,
+            "DLY": 3040
+          },
+          "durationMs": 21434.184699999998,
+          "searchedCandidates": 719,
+          "food": {
+            "itemId": 49239,
+            "name": "烤干酪辣味玉米片",
+            "itemLevel": 770,
+            "attributes": {
+              "VIT": 297,
+              "CRT": 151,
+              "SKS": 91
+            }
+          },
+          "equipment": [
+            {
+              "slot": "身体",
+              "itemId": 49696,
+              "name": "总冠军精准外套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "DET": 427,
+                "CRT": 407
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "项链",
+              "itemId": 49722,
+              "name": "总冠军精准项环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 202,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手镯",
+              "itemId": 49650,
+              "name": "改良型王国黄铜精准手镯",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 49717,
+              "name": "总冠军精准耳夹",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DET": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "主手",
+              "itemId": 51004,
+              "name": "幻境琴弓·秘影",
+              "itemLevel": 795,
+              "attributes": {
+                "DEX": 847,
+                "VIT": 943,
+                "PDMG": 158,
+                "DLY": 3040,
+                "CRT": 447,
+                "SKS": 447,
+                "DET": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "SKS",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "DET",
+                  "value": 108,
+                  "grade": 0
+                }
+              ]
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 49655,
+              "name": "改良型王国黄铜精准戒指",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 49732,
+              "name": "总冠军精准指环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "脚部",
+              "itemId": 49622,
+              "name": "改良型王国黄铜精准长靴",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "DHT": 269,
+                "CRT": 242,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手部",
+              "itemId": 49697,
+              "name": "总冠军精准手套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "CRT": 269,
+                "DET": 188,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "头部",
+              "itemId": 49695,
+              "name": "总冠军精准护目镜",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "CRT": 269,
+                "SKS": 188,
+                "DHT": 108
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "腿部",
+              "itemId": 49621,
+              "name": "改良型王国黄铜精准束膝裤",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "CRT": 427,
+                "DHT": 299,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            }
+          ]
+        },
+        "soloOptimum": {
+          "job": "BRD",
+          "damagePerPotency": 116.17875730805758,
+          "gcd": 2.32,
+          "damagePerSecond": 50.07705056381793,
+          "objectiveScore": 50.07705056381793,
+          "totalAttributes": {
+            "PDMG": 158,
+            "MDMG": 0,
+            "DEX": 6512,
+            "CRT": 3618,
+            "DET": 1735,
+            "DHT": 1392,
+            "SKS": 1902,
+            "VIT": 7467,
+            "DLY": 3040
+          },
+          "durationMs": 21434.184699999998,
+          "searchedCandidates": 719,
+          "food": {
+            "itemId": 49239,
+            "name": "烤干酪辣味玉米片",
+            "itemLevel": 770,
+            "attributes": {
+              "VIT": 297,
+              "CRT": 151,
+              "SKS": 91
+            }
+          },
+          "equipment": [
+            {
+              "slot": "身体",
+              "itemId": 49696,
+              "name": "总冠军精准外套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "DET": 427,
+                "CRT": 407
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "项链",
+              "itemId": 49722,
+              "name": "总冠军精准项环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 202,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手镯",
+              "itemId": 49650,
+              "name": "改良型王国黄铜精准手镯",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 49717,
+              "name": "总冠军精准耳夹",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DET": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "主手",
+              "itemId": 51004,
+              "name": "幻境琴弓·秘影",
+              "itemLevel": 795,
+              "attributes": {
+                "DEX": 847,
+                "VIT": 943,
+                "PDMG": 158,
+                "DLY": 3040,
+                "CRT": 447,
+                "SKS": 447,
+                "DET": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "SKS",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "DET",
+                  "value": 108,
+                  "grade": 0
+                }
+              ]
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 49655,
+              "name": "改良型王国黄铜精准戒指",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 49732,
+              "name": "总冠军精准指环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "脚部",
+              "itemId": 49622,
+              "name": "改良型王国黄铜精准长靴",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "DHT": 269,
+                "CRT": 242,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手部",
+              "itemId": 49697,
+              "name": "总冠军精准手套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "CRT": 269,
+                "DET": 188,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "头部",
+              "itemId": 49695,
+              "name": "总冠军精准护目镜",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "CRT": 269,
+                "SKS": 188,
+                "DHT": 108
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "腿部",
+              "itemId": 49621,
+              "name": "改良型王国黄铜精准束膝裤",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "CRT": 427,
+                "DHT": 299,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "DNC": {
+        "joint": {
+          "job": "DNC",
+          "damagePerPotency": 116.17875730805758,
+          "gcd": 2.32,
+          "damagePerSecond": 50.07705056381793,
+          "objectiveScore": 50.07705056381793,
+          "totalAttributes": {
+            "PDMG": 158,
+            "MDMG": 0,
+            "DEX": 6512,
+            "CRT": 3618,
+            "DET": 1735,
+            "DHT": 1392,
+            "SKS": 1902,
+            "VIT": 7467,
+            "DLY": 3120
+          },
+          "durationMs": 24829.4145,
+          "searchedCandidates": 726,
+          "food": {
+            "itemId": 49239,
+            "name": "烤干酪辣味玉米片",
+            "itemLevel": 770,
+            "attributes": {
+              "VIT": 297,
+              "CRT": 151,
+              "SKS": 91
+            }
+          },
+          "equipment": [
+            {
+              "slot": "身体",
+              "itemId": 49696,
+              "name": "总冠军精准外套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "DET": 427,
+                "CRT": 407
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "项链",
+              "itemId": 49722,
+              "name": "总冠军精准项环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 202,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手镯",
+              "itemId": 49650,
+              "name": "改良型王国黄铜精准手镯",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 202,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 49717,
+              "name": "总冠军精准耳夹",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DET": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 49655,
+              "name": "改良型王国黄铜精准戒指",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 202,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 49732,
+              "name": "总冠军精准指环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "主手",
+              "itemId": 51016,
+              "name": "幻境折扇·秘影",
+              "itemLevel": 795,
+              "attributes": {
+                "DEX": 847,
+                "VIT": 943,
+                "PDMG": 158,
+                "DLY": 3120,
+                "CRT": 447,
+                "SKS": 447,
+                "DET": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "SKS",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "DET",
+                  "value": 108,
+                  "grade": 0
+                }
+              ]
+            },
+            {
+              "slot": "脚部",
+              "itemId": 49622,
+              "name": "改良型王国黄铜精准长靴",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "DHT": 269,
+                "CRT": 188,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手部",
+              "itemId": 49697,
+              "name": "总冠军精准手套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "CRT": 269,
+                "DET": 188,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "头部",
+              "itemId": 49695,
+              "name": "总冠军精准护目镜",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "CRT": 269,
+                "SKS": 242,
+                "DHT": 54
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "腿部",
+              "itemId": 49621,
+              "name": "改良型王国黄铜精准束膝裤",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "CRT": 427,
+                "DHT": 299,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            }
+          ]
+        },
+        "soloOptimum": {
+          "job": "DNC",
+          "damagePerPotency": 116.17875730805758,
+          "gcd": 2.32,
+          "damagePerSecond": 50.07705056381793,
+          "objectiveScore": 50.07705056381793,
+          "totalAttributes": {
+            "PDMG": 158,
+            "MDMG": 0,
+            "DEX": 6512,
+            "CRT": 3618,
+            "DET": 1735,
+            "DHT": 1392,
+            "SKS": 1902,
+            "VIT": 7467,
+            "DLY": 3120
+          },
+          "durationMs": 24829.4145,
+          "searchedCandidates": 726,
+          "food": {
+            "itemId": 49239,
+            "name": "烤干酪辣味玉米片",
+            "itemLevel": 770,
+            "attributes": {
+              "VIT": 297,
+              "CRT": 151,
+              "SKS": 91
+            }
+          },
+          "equipment": [
+            {
+              "slot": "身体",
+              "itemId": 49696,
+              "name": "总冠军精准外套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "DET": 427,
+                "CRT": 407
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "项链",
+              "itemId": 49722,
+              "name": "总冠军精准项环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 202,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手镯",
+              "itemId": 49650,
+              "name": "改良型王国黄铜精准手镯",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 202,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 49717,
+              "name": "总冠军精准耳夹",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DET": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 49655,
+              "name": "改良型王国黄铜精准戒指",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 202,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 49732,
+              "name": "总冠军精准指环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "主手",
+              "itemId": 51016,
+              "name": "幻境折扇·秘影",
+              "itemLevel": 795,
+              "attributes": {
+                "DEX": 847,
+                "VIT": 943,
+                "PDMG": 158,
+                "DLY": 3120,
+                "CRT": 447,
+                "SKS": 447,
+                "DET": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "SKS",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "DET",
+                  "value": 108,
+                  "grade": 0
+                }
+              ]
+            },
+            {
+              "slot": "脚部",
+              "itemId": 49622,
+              "name": "改良型王国黄铜精准长靴",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "DHT": 269,
+                "CRT": 188,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手部",
+              "itemId": 49697,
+              "name": "总冠军精准手套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "CRT": 269,
+                "DET": 188,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "头部",
+              "itemId": 49695,
+              "name": "总冠军精准护目镜",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "CRT": 269,
+                "SKS": 242,
+                "DHT": 54
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "腿部",
+              "itemId": 49621,
+              "name": "改良型王国黄铜精准束膝裤",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "CRT": 427,
+                "DHT": 299,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "MCH": {
+        "joint": {
+          "job": "MCH",
+          "damagePerPotency": 116.17875730805758,
+          "gcd": 2.32,
+          "damagePerSecond": 50.07705056381793,
+          "objectiveScore": 50.07705056381793,
+          "totalAttributes": {
+            "PDMG": 158,
+            "MDMG": 0,
+            "DEX": 6512,
+            "CRT": 3618,
+            "DET": 1735,
+            "DHT": 1392,
+            "SKS": 1902,
+            "VIT": 7467,
+            "DLY": 2640
+          },
+          "durationMs": 22716.0136,
+          "searchedCandidates": 725,
+          "food": {
+            "itemId": 49239,
+            "name": "烤干酪辣味玉米片",
+            "itemLevel": 770,
+            "attributes": {
+              "VIT": 297,
+              "CRT": 151,
+              "SKS": 91
+            }
+          },
+          "equipment": [
+            {
+              "slot": "身体",
+              "itemId": 49696,
+              "name": "总冠军精准外套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "DET": 427,
+                "CRT": 407
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "项链",
+              "itemId": 49722,
+              "name": "总冠军精准项环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 202,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手镯",
+              "itemId": 49650,
+              "name": "改良型王国黄铜精准手镯",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 49717,
+              "name": "总冠军精准耳夹",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DET": 148,
+                "DHT": 54,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 49655,
+              "name": "改良型王国黄铜精准戒指",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 202,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 49732,
+              "name": "总冠军精准指环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "主手",
+              "itemId": 51011,
+              "name": "幻境左轮枪·秘影",
+              "itemLevel": 795,
+              "attributes": {
+                "DEX": 847,
+                "VIT": 943,
+                "PDMG": 158,
+                "DLY": 2640,
+                "CRT": 447,
+                "SKS": 447,
+                "DET": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "SKS",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "DET",
+                  "value": 108,
+                  "grade": 0
+                }
+              ]
+            },
+            {
+              "slot": "脚部",
+              "itemId": 49622,
+              "name": "改良型王国黄铜精准长靴",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "DHT": 269,
+                "CRT": 188,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手部",
+              "itemId": 49697,
+              "name": "总冠军精准手套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "CRT": 269,
+                "DET": 188,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "头部",
+              "itemId": 49695,
+              "name": "总冠军精准护目镜",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "CRT": 269,
+                "SKS": 242,
+                "DHT": 54
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "腿部",
+              "itemId": 49621,
+              "name": "改良型王国黄铜精准束膝裤",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "CRT": 427,
+                "DHT": 299,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            }
+          ]
+        },
+        "soloOptimum": {
+          "job": "MCH",
+          "damagePerPotency": 116.17875730805758,
+          "gcd": 2.32,
+          "damagePerSecond": 50.07705056381793,
+          "objectiveScore": 50.07705056381793,
+          "totalAttributes": {
+            "PDMG": 158,
+            "MDMG": 0,
+            "DEX": 6512,
+            "CRT": 3618,
+            "DET": 1735,
+            "DHT": 1392,
+            "SKS": 1902,
+            "VIT": 7467,
+            "DLY": 2640
+          },
+          "durationMs": 22716.0136,
+          "searchedCandidates": 725,
+          "food": {
+            "itemId": 49239,
+            "name": "烤干酪辣味玉米片",
+            "itemLevel": 770,
+            "attributes": {
+              "VIT": 297,
+              "CRT": 151,
+              "SKS": 91
+            }
+          },
+          "equipment": [
+            {
+              "slot": "身体",
+              "itemId": 49696,
+              "name": "总冠军精准外套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "DET": 427,
+                "CRT": 407
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "项链",
+              "itemId": 49722,
+              "name": "总冠军精准项环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 202,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手镯",
+              "itemId": 49650,
+              "name": "改良型王国黄铜精准手镯",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 49717,
+              "name": "总冠军精准耳夹",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DET": 148,
+                "DHT": 54,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 49655,
+              "name": "改良型王国黄铜精准戒指",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 202,
+                "SKS": 54
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 49732,
+              "name": "总冠军精准指环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "主手",
+              "itemId": 51011,
+              "name": "幻境左轮枪·秘影",
+              "itemLevel": 795,
+              "attributes": {
+                "DEX": 847,
+                "VIT": 943,
+                "PDMG": 158,
+                "DLY": 2640,
+                "CRT": 447,
+                "SKS": 447,
+                "DET": 108
+              },
+              "materia": [
+                {
+                  "stat": "CRT",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "SKS",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "DET",
+                  "value": 108,
+                  "grade": 0
+                }
+              ]
+            },
+            {
+              "slot": "脚部",
+              "itemId": 49622,
+              "name": "改良型王国黄铜精准长靴",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "DHT": 269,
+                "CRT": 188,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手部",
+              "itemId": 49697,
+              "name": "总冠军精准手套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "CRT": 269,
+                "DET": 188,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "头部",
+              "itemId": 49695,
+              "name": "总冠军精准护目镜",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "CRT": 269,
+                "SKS": 242,
+                "DHT": 54
+              },
+              "materia": [
+                {
+                  "stat": "DHT",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "腿部",
+              "itemId": 49621,
+              "name": "改良型王国黄铜精准束膝裤",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "CRT": 427,
+                "DHT": 299,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "VPR": {
+        "joint": {
+          "job": "VPR",
+          "damagePerPotency": 93.15363640346534,
+          "gcd": 1.92,
+          "damagePerSecond": 48.5175189601382,
+          "objectiveScore": 48.5175189601382,
+          "totalAttributes": {
+            "PDMG": 158,
+            "MDMG": 0,
+            "DEX": 6490,
+            "CRT": 928,
+            "DET": 2824,
+            "DHT": 2475,
+            "SKS": 2393,
+            "VIT": 7467,
+            "DLY": 2640
+          },
+          "durationMs": 20917.3851,
+          "searchedCandidates": 723,
+          "food": {
+            "itemId": 49246,
+            "name": "剑山芋沙拉",
+            "itemLevel": 770,
+            "attributes": {
+              "VIT": 297,
+              "SKS": 151,
+              "DHT": 91
+            }
+          },
+          "equipment": [
+            {
+              "slot": "身体",
+              "itemId": 49701,
+              "name": "总冠军游击外套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "DET": 427,
+                "DHT": 299,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "项链",
+              "itemId": 49645,
+              "name": "改良型王国黄铜精准项环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手镯",
+              "itemId": 49727,
+              "name": "总冠军精准手镯",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DHT": 212,
+                "DET": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 49640,
+              "name": "改良型王国黄铜精准耳坠",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DHT": 212,
+                "CRT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 49655,
+              "name": "改良型王国黄铜精准戒指",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 49732,
+              "name": "总冠军精准指环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "主手",
+              "itemId": 51019,
+              "name": "幻境双牙·秘影",
+              "itemLevel": 795,
+              "attributes": {
+                "DEX": 847,
+                "VIT": 943,
+                "PDMG": 158,
+                "DLY": 2640,
+                "DET": 447,
+                "SKS": 447,
+                "DHT": 108
+              },
+              "materia": [
+                {
+                  "stat": "DET",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "SKS",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "DHT",
+                  "value": 108,
+                  "grade": 0
+                }
+              ]
+            },
+            {
+              "slot": "手部",
+              "itemId": 49702,
+              "name": "总冠军游击手套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "DET": 269,
+                "SKS": 269
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "腿部",
+              "itemId": 49626,
+              "name": "改良型王国黄铜游击衬裤",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "DET": 427,
+                "DHT": 299,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "头部",
+              "itemId": 49623,
+              "name": "改良型王国黄铜游击鸭舌帽",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "DHT": 269,
+                "DET": 188,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "脚部",
+              "itemId": 49704,
+              "name": "总冠军游击铠靴",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "DHT": 269,
+                "SKS": 242,
+                "DET": 54
+              },
+              "materia": [
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            }
+          ]
+        },
+        "soloOptimum": {
+          "job": "VPR",
+          "damagePerPotency": 93.15363640346534,
+          "gcd": 1.92,
+          "damagePerSecond": 48.5175189601382,
+          "objectiveScore": 48.5175189601382,
+          "totalAttributes": {
+            "PDMG": 158,
+            "MDMG": 0,
+            "DEX": 6490,
+            "CRT": 928,
+            "DET": 2824,
+            "DHT": 2475,
+            "SKS": 2393,
+            "VIT": 7467,
+            "DLY": 2640
+          },
+          "durationMs": 20917.3851,
+          "searchedCandidates": 723,
+          "food": {
+            "itemId": 49246,
+            "name": "剑山芋沙拉",
+            "itemLevel": 770,
+            "attributes": {
+              "VIT": 297,
+              "SKS": 151,
+              "DHT": 91
+            }
+          },
+          "equipment": [
+            {
+              "slot": "身体",
+              "itemId": 49701,
+              "name": "总冠军游击外套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "DET": 427,
+                "DHT": 299,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "项链",
+              "itemId": 49645,
+              "name": "改良型王国黄铜精准项环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "手镯",
+              "itemId": 49727,
+              "name": "总冠军精准手镯",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DHT": 212,
+                "DET": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "耳饰",
+              "itemId": 49640,
+              "name": "改良型王国黄铜精准耳坠",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DHT": 212,
+                "CRT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指1",
+              "itemId": 49655,
+              "name": "改良型王国黄铜精准戒指",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "DET": 212,
+                "CRT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "戒指2",
+              "itemId": 49732,
+              "name": "总冠军精准指环",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 402,
+                "VIT": 451,
+                "CRT": 212,
+                "DHT": 148,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "主手",
+              "itemId": 51019,
+              "name": "幻境双牙·秘影",
+              "itemLevel": 795,
+              "attributes": {
+                "DEX": 847,
+                "VIT": 943,
+                "PDMG": 158,
+                "DLY": 2640,
+                "DET": 447,
+                "SKS": 447,
+                "DHT": 108
+              },
+              "materia": [
+                {
+                  "stat": "DET",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "SKS",
+                  "value": 447,
+                  "grade": 0
+                },
+                {
+                  "stat": "DHT",
+                  "value": 108,
+                  "grade": 0
+                }
+              ]
+            },
+            {
+              "slot": "手部",
+              "itemId": 49702,
+              "name": "总冠军游击手套",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "DET": 269,
+                "SKS": 269
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "腿部",
+              "itemId": 49626,
+              "name": "改良型王国黄铜游击衬裤",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 810,
+                "VIT": 908,
+                "DET": 427,
+                "DHT": 299,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "头部",
+              "itemId": 49623,
+              "name": "改良型王国黄铜游击鸭舌帽",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "DHT": 269,
+                "DET": 188,
+                "SKS": 108
+              },
+              "materia": [
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            },
+            {
+              "slot": "脚部",
+              "itemId": 49704,
+              "name": "总冠军游击铠靴",
+              "itemLevel": 790,
+              "attributes": {
+                "DEX": 510,
+                "VIT": 572,
+                "DHT": 269,
+                "SKS": 242,
+                "DET": 54
+              },
+              "materia": [
+                {
+                  "stat": "DET",
+                  "value": 54,
+                  "grade": 12
+                },
+                {
+                  "stat": "SKS",
+                  "value": 54,
+                  "grade": 12
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "proof": {
+      "complete": true,
+      "objective": "dps",
+      "optimalityScope": "传入的每职业槽位候选（含两个独立戒指槽及跨槽 unique 约束）、完整装备身份交集、食物列表和约束范围",
+      "outerBound": "每个外层节点以各职业在已固定通用装备下独立重优化的 DPS 上界求和；product/GCD 归一化分数用 BigInt 有理数比较",
+      "innerSolverStatus": "Optimal",
+      "formalCertificate": false,
+      "numericalLimitation": "HiGHS 报告 Optimal，或经保守取整的 MIP 对偶上界已不高于精确 BigInt incumbent；模型行与属性重建均已复核，但这些求解器结果不是独立形式化证书",
+      "terminationReason": "已达到各职业单独最优基线之和这一全局上界"
+    },
+    "statistics": {
+      "outerNodes": 1,
+      "completeNodes": 1,
+      "upperBoundPrunes": 0,
+      "relaxedOptimaAttained": 1,
+      "innerSolves": 4,
+      "parentResultReuses": 0,
+      "cacheHits": 0,
+      "cacheMisses": 4,
+      "cacheEntries": 4,
+      "elapsedMs": 25103.577400000002,
+      "timeLimitMs": "unlimited",
+      "cacheLimit": 2048,
+      "rssBytes": 2023489536,
+      "heapUsedBytes": 123686088
+    },
+    "runtime": {
+      "elapsedMs": 25483,
+      "peakRssBytes": 2208313344,
+      "rssLimitBytes": 3758096384,
+      "timeoutMs": "unlimited"
+    }
+  },
+  "error": null
+}
