@@ -73,4 +73,23 @@ describe("double-ring candidates", () => {
       true,
     );
   });
+
+  it("keeps one order per pair when the caller proves both ring slots are symmetric", () => {
+    const unique = ring(10, 100, [[1, 20]]);
+    const repeatable = ring(20, 100, [[1, 10]]);
+
+    const pairs = buildRingPairEquipInfos(
+      [unique, repeatable],
+      (itemId) => itemId === unique.itemId,
+      (left, right) => left.itemId - right.itemId,
+    );
+
+    assert.equal(pairs.length, 2);
+    assert.ok(pairs.some(({ ringEquips }) =>
+      ringEquips[0] === unique && ringEquips[1] === repeatable));
+    assert.ok(pairs.some(({ ringEquips }) =>
+      ringEquips[0] === repeatable && ringEquips[1] === repeatable));
+    assert.equal(pairs.some(({ ringEquips }) =>
+      ringEquips[0] === repeatable && ringEquips[1] === unique), false);
+  });
 });

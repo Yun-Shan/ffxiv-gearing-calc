@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { foods, gears } from "./data";
-import { findFeasibleGcds, gearOptionsFor, optimize, optimizeJoint, slotsForJob } from "./optimizer";
+import {
+  findFeasibleGcds,
+  findFeasibleGcdsLocally,
+  gearOptionsFor,
+  optimize,
+  optimizeJoint,
+  slotsForJob,
+} from "./optimizer";
 import type { OptimizationConfig } from "./types";
 
 const jobIds = ["WHM", "AST"] as const;
@@ -41,6 +48,23 @@ function forcedMageConfig(
   return { ...config, forcedGear };
 }
 
+function unforcedMageConfig(
+  jobId: OptimizationConfig["jobId"],
+  allowedRingIds: readonly [number, number],
+  minItemLevel = 500,
+): OptimizationConfig {
+  const config = forcedMageConfig(jobId, allowedRingIds[0], allowedRingIds[1]);
+  const forcedGear = { ...config.forcedGear };
+  delete forcedGear.ring;
+  delete forcedGear.ring2;
+  const ringConfig = { ...config, minItemLevel, forcedGear, excludedGearIds: [] };
+  const availableRingIds = gearOptionsFor(ringConfig, "ring").map((gear) => gear.id);
+  return {
+    ...ringConfig,
+    excludedGearIds: availableRingIds.filter((id) => !allowedRingIds.includes(id)),
+  };
+}
+
 function lowLevelForcedConfig(
   jobId: OptimizationConfig["jobId"],
   foodId: number,
@@ -69,6 +93,58 @@ function lowLevelForcedConfig(
 }
 
 describe("joint search with independently shared ring slots", () => {
+  it("factorizes a shared pair while preserving other shared slots and rejects a unique duplicate", async () => {
+    const weakRingId = 15133;
+    expect(gears.find((gear) => gear.id === sharedUniqueRingId)?.unique).toBe(true);
+    expect(gears.find((gear) => gear.id === weakRingId)?.unique).toBe(false);
+
+    const ringConfigs = (["WHM", "AST", "SGE", "SCH"] as const).map((jobId) =>
+      unforcedMageConfig(jobId, [sharedUniqueRingId, weakRingId], 1));
+    const sharedBody = gearOptionsFor(ringConfigs[0]!, "body").find((candidate) =>
+      ringConfigs.every((config) => gearOptionsFor(config, "body").some((gear) => gear.id === candidate.id)));
+    expect(sharedBody).toBeDefined();
+    const configs = ringConfigs.map((config) => ({
+      ...config,
+      forcedGear: { ...config.forcedGear, body: sharedBody!.id },
+    }));
+    const candidateSlots = new Map<string, string[]>();
+    const result = await optimizeJoint({
+      jobs: configs,
+      commonSlots: ["body", "rings"],
+      foodStrategy: "shared",
+      objective: "damage",
+      maxSearchMs: 15_000,
+    }, {
+      onCandidateCounts: ({ jobId, slots }) => {
+        candidateSlots.set(jobId, slots.map(({ slot }) => slot));
+      },
+    });
+
+    expect(result).toBeDefined();
+    expect(candidateSlots.size).toBe(configs.length);
+    for (const slots of candidateSlots.values()) {
+      expect(slots).toContain("body");
+      expect(slots).toContain("ring");
+      expect(slots).toContain("ring2");
+      expect(slots).not.toContain("rings");
+    }
+    expect(result!.commonGear.rings).toHaveLength(2);
+    expect(result!.commonGear.body?.map((gear) => gear.id)).toEqual([sharedBody!.id]);
+    expect(result!.commonGear.rings!.map((gear) => gear.id).sort()).toEqual(
+      [sharedUniqueRingId, weakRingId].sort(),
+    );
+    expect(result!.commonGear).not.toHaveProperty("ring");
+    expect(result!.commonGear).not.toHaveProperty("ring2");
+    for (const config of configs) {
+      const equippedRings = result!.jobResults[config.jobId]!.gear
+        .filter((gear) => gear.slot === "ring" || gear.slot === "ring2");
+      expect(equippedRings.map((gear) => gear.id).sort()).toEqual(
+        [sharedUniqueRingId, weakRingId].sort(),
+      );
+      expect(equippedRings.filter((gear) => gear.unique === true)).toHaveLength(1);
+    }
+  });
+
   it("shares one unique ring by full identity while leaving the other ring free", async () => {
     const first = gears.find((gear) => gear.id === sharedUniqueRingId)!;
     const sameStats = gears.find((gear) => gear.id === sameStatsUniqueRingId)!;
@@ -132,6 +208,47 @@ describe("joint search with independently shared ring slots", () => {
       foodStrategy: "independent",
       objective: "damage",
     })).resolves.toBeUndefined();
+  });
+});
+
+describe("single-job independent ring slots", () => {
+  it("keeps asymmetric forced rings as separate exact slots when no ring is shared", async () => {
+    const firstRing = sharedUniqueRingId;
+    const secondRing = sameStatsUniqueRingId;
+    let candidateSlotNames: string[] = [];
+    const result = await optimize(
+      forcedMageConfig("WHM", firstRing, secondRing),
+      { onCandidateCounts: (counts) => { candidateSlotNames = counts.slots.map(({ slot }) => slot); } },
+    );
+
+    expect(result).toBeDefined();
+    expect(candidateSlotNames).toContain("ring");
+    expect(candidateSlotNames).toContain("ring2");
+    expect(candidateSlotNames).not.toContain("rings");
+    expect(result!.gear.filter((gear) => gear.slot === "ring" || gear.slot === "ring2")
+      .map((gear) => gear.id)).toEqual([firstRing, secondRing]);
+  });
+
+  it("rejects two meld variants of one forced unique ring across independent slots", async () => {
+    const ring = gears.find((gear) => gear.id === sharedUniqueRingId)!;
+    expect(ring.unique).toBe(true);
+    expect(ring.materiaSlots).toBeGreaterThan(0);
+    let candidateSlotNames: string[] = [];
+    const result = await optimize(
+      forcedMageConfig("WHM", sharedUniqueRingId, sharedUniqueRingId),
+      { onCandidateCounts: (counts) => { candidateSlotNames = counts.slots.map(({ slot }) => slot); } },
+    );
+
+    expect(candidateSlotNames).toContain("ring");
+    expect(candidateSlotNames).toContain("ring2");
+    expect(candidateSlotNames).not.toContain("rings");
+    expect(result).toBeUndefined();
+  });
+
+  it("keeps unique ring legality in the non-MIP GCD reachability path", () => {
+    expect(findFeasibleGcdsLocally(
+      forcedMageConfig("WHM", sharedUniqueRingId, sharedUniqueRingId),
+    )).toEqual([]);
   });
 });
 
@@ -199,15 +316,15 @@ describe("character equipment level", () => {
   });
 });
 
-describe("shared physical food across job-specific stats", () => {
-  it("matches the same TEN/PIE food identity after each job filters unusable attributes", async () => {
+describe("shared physical food across same-group jobs", () => {
+  it("matches the same TEN/PIE food identity for a joint tank search", async () => {
     for (const stat of ["TEN", "PIE"] as const) {
       const food = foods.find((candidate) => (candidate.stats[stat] ?? 0) > 0);
       expect(food).toBeDefined();
       const result = await optimizeJoint({
         jobs: [
           lowLevelForcedConfig("PLD", food!.id),
-          lowLevelForcedConfig("WHM", food!.id),
+          lowLevelForcedConfig("WAR", food!.id),
         ],
         commonSlots: [],
         foodStrategy: "shared",
@@ -216,7 +333,7 @@ describe("shared physical food across job-specific stats", () => {
       expect(result).toBeDefined();
       expect(result!.commonFood?.id).toBe(food!.id);
       expect(result!.jobResults.PLD!.food.id).toBe(food!.id);
-      expect(result!.jobResults.WHM!.food.id).toBe(food!.id);
+      expect(result!.jobResults.WAR!.food.id).toBe(food!.id);
     }
   });
 });

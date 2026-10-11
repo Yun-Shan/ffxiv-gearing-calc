@@ -12,11 +12,13 @@ import {
   findBestJointFactorMip,
   findBestLoadoutExactMip,
 } from "./loadout-finder-exact-mip.ts";
+import { candidateUpperBoundCannotImproveJointIncumbent } from "./joint-candidate-upper-bound.ts";
 import { buildRingPairEquipInfos } from "./ring-pairs.ts";
 import type {
   ExactMipOptions,
   ExactMipResult,
 } from "./loadout-finder-exact-mip.ts";
+import type { LinearMipProgress } from "./linear-mip.ts";
 import type { EquipInfo, FoodInfo, ParamInfo } from "./types.ts";
 
 // These are isolated vector coordinates for synthetic test objects. Damage
@@ -267,6 +269,93 @@ function pairFixtureJob(
   return { ...job, options: { ...job.options, objective: "damage" } };
 }
 
+function independentRingFixtureJob(base: FixtureJob, rings: readonly EquipInfo[]): FixtureJob {
+  const firstRings = rings.map((ring) => ({
+    ...ring,
+    ringSlotIndex: 0 as const,
+    isUnique: (ring as EquipInfo & { isUnique: boolean }).isUnique,
+  }));
+  const secondRings = rings.map((ring) => ({
+    ...ring,
+    ringSlotIndex: 1 as const,
+    isUnique: (ring as EquipInfo & { isUnique: boolean }).isUnique,
+  }));
+  return {
+    ...base,
+    slotNames: ["weapon", "ring", "ring2"],
+    options: {
+      ...base.options,
+      slots: [base.options.slots[0]!, firstRings, secondRings],
+    },
+  };
+}
+
+function enumerateIndependentRingJob(job: FixtureJob): Candidate[] {
+  const candidates: Candidate[] = [];
+  for (const weapon of job.options.slots[0]!) {
+    for (const first of job.options.slots[1]!) {
+      for (const second of job.options.slots[2]!) {
+        if (first.itemId === second.itemId &&
+          ((first as EquipInfo & { isUnique: boolean }).isUnique ||
+            (second as EquipInfo & { isUnique: boolean }).isUnique)) continue;
+        const selection = [weapon, first, second];
+        const attributes = vectorFor(selection, undefined);
+        const factors = job.evaluateFactors(attributes);
+        assert.ok(factors);
+        candidates.push({ selection, food: undefined, attributes, factors });
+      }
+    }
+  }
+  return candidates;
+}
+
+function independentRingBaseline(job: FixtureJob): IntegerDamageFactors {
+  const candidates = enumerateIndependentRingJob(job);
+  let best = candidates[0]!;
+  for (const candidate of candidates.slice(1)) {
+    if (compare(normalizedScore(candidate.factors, best.factors, "damage"),
+      { numerator: 1n, denominator: 1n }) > 0) best = candidate;
+  }
+  return best.factors;
+}
+
+function independentSharedRingOracle(jobs: readonly FixtureJob[]): {
+  value: Fraction;
+  results: Candidate[];
+} | undefined {
+  const candidateLists = jobs.map(enumerateIndependentRingJob);
+  const baselines = jobs.map(independentRingBaseline);
+  const chosen: Candidate[] = [];
+  let best: { value: Fraction; results: Candidate[] } | undefined;
+  const visit = (jobIndex: number): void => {
+    if (jobIndex < jobs.length) {
+      for (const candidate of candidateLists[jobIndex]!) {
+        chosen[jobIndex] = candidate;
+        visit(jobIndex + 1);
+      }
+      return;
+    }
+    for (let ringSlot = 1; ringSlot <= 2; ringSlot++) {
+      const identity = pairEquipmentIdentity(chosen[0]!.selection[ringSlot]!);
+      if (chosen.some((candidate) => pairEquipmentIdentity(candidate.selection[ringSlot]!) !== identity)) return;
+    }
+    const value = chosen.reduce((sum, candidate, index) => add(sum,
+      normalizedScore(candidate.factors, baselines[index]!, "damage")), { numerator: 0n, denominator: 1n });
+    if (best === undefined || compare(value, best.value) > 0) best = { value, results: [...chosen] };
+  };
+  visit(0);
+  return best;
+}
+
+function independentRingJointArgs(jobs: readonly FixtureJob[]) {
+  return jobs.map((job) => ({
+    id: job.id,
+    slotNames: job.slotNames,
+    options: job.options,
+    baseline: independentRingBaseline(job),
+  }));
+}
+
 function pairEquipmentIdentity(item: EquipInfo): string {
   const pair = (item as EquipInfo & { ringEquips?: readonly [EquipInfo, EquipInfo] }).ringEquips;
   if (pair !== undefined) return JSON.stringify(pair.map(pairEquipmentIdentity).sort());
@@ -383,6 +472,52 @@ function jointJobArgs(jobs: readonly FixtureJob[], objective: Objective) {
   }));
 }
 
+test("a joint incumbent is retained when HiGHS proves its dual upper bound cannot improve it", async () => {
+  const jobs = tradeoffJobs();
+  const expected = jointOracle(jobs, false, "damage");
+  assert.ok(expected);
+  const initialResults = expected.results.map((candidate, index) => {
+    const evaluation = jobs[index]!.options.evaluationFunction(candidate.attributes);
+    assert.ok(evaluation);
+    return {
+      selection: candidate.selection,
+      food: candidate.food,
+      damage: evaluation.damage,
+      statistics: {
+        elapsedMs: 0,
+        solverRuns: 0,
+        excludedSignatures: 0,
+        signatureBandChecks: 0,
+        signatureBandElapsedMs: 0,
+        signatureBandProof: false,
+        variables: 0,
+        constraints: 0,
+        maximumSurrogate: 0,
+        nextSurrogate: undefined,
+        memoryUsage: {},
+      },
+    } satisfies ExactMipResult;
+  });
+  const mipInterrupts: number[] = [];
+  const solved = await findBestJointFactorMip({
+    jobs: jointJobArgs(jobs, "damage"),
+    commonSlots: ["ring"],
+    sharedFood: false,
+    equipmentIdentity: (item) => String(item.itemId),
+    foodIdentity: (item) => String(item.itemId),
+    objective: "damage",
+    initialResults,
+    maxSearchMs: 20_000,
+    onSolverCallback: (event) => {
+      if (event.callbackName === "mipInterrupt") mipInterrupts.push(event.event.data.mip_dual_bound as number);
+    },
+  });
+  assert.ok(solved);
+  assert.ok(solved.innerSolverStatus === "Optimal" || solved.innerSolverStatus === "DualBound");
+  if (solved.innerSolverStatus === "DualBound") assert.ok(mipInterrupts.length > 0);
+  assertJointMatchesEnumeration(solved, expected, jobs, false, "damage");
+});
+
 function assertJointMatchesEnumeration(
   actual: Awaited<ReturnType<typeof findBestJointFactorMip>>,
   expected: ReturnType<typeof jointOracle>,
@@ -429,13 +564,317 @@ function tradeoffJobs(foods: readonly FoodInfo[] = []): FixtureJob[] {
   ];
 }
 
+test("joint candidate threshold comparison includes equality exactly", () => {
+  const incumbent = { numerator: 5n, denominator: 3n };
+  assert.equal(
+    candidateUpperBoundCannotImproveJointIncumbent({ numerator: 2n, denominator: 3n }, incumbent, 2),
+    true,
+  );
+  assert.equal(
+    candidateUpperBoundCannotImproveJointIncumbent({ numerator: 6_667n, denominator: 10_000n }, incumbent, 2),
+    false,
+  );
+  assert.equal(
+    candidateUpperBoundCannotImproveJointIncumbent({ numerator: 1n, denominator: 3n }, incumbent, 2),
+    true,
+  );
+});
+
+test("joint candidate-specific bounds exclude an exact equality and retain the exhaustive optimum", async () => {
+  const weakRing = tradeoffRings[0]!;
+  const strongerRing = tradeoffRings[2]!;
+  const rdmWeapon = equipment(7401, {}, { stat: "MDMG", damage: 160 });
+  const samWeapon = equipment(7402, {}, { stat: "PDMG", damage: 160 });
+  const jobs = [
+    makeJob("RDM", [rdmWeapon], [weakRing], []),
+    makeJob("SAM", [samWeapon], [weakRing], []),
+    makeJob("RDM", [rdmWeapon], [weakRing, strongerRing], []),
+  ];
+  const expected = jointOracle(jobs, false, "damage");
+  assert.ok(expected);
+  const baseline = soloBaseline(jobs[2]!, "damage");
+  const weakCandidate = enumerateJob(jobs[2]!).find((candidate) =>
+    candidate.selection[1]!.itemId === weakRing.itemId);
+  const strongerCandidate = enumerateJob(jobs[2]!).find((candidate) =>
+    candidate.selection[1]!.itemId === strongerRing.itemId);
+  assert.ok(weakCandidate);
+  assert.ok(strongerCandidate);
+  const weakRatio = normalizedScore(weakCandidate.factors, baseline, "damage");
+  const strongerRatio = normalizedScore(strongerCandidate.factors, baseline, "damage");
+  assert.equal(compare(strongerRatio, weakRatio), 1);
+  assert.equal(
+    (expected.value.numerator - 2n * expected.value.denominator) * weakRatio.denominator,
+    weakRatio.numerator * expected.value.denominator,
+    "the current shared incumbent makes the weak candidate's optimistic ratio exactly equal to the strict threshold",
+  );
+
+  const initialResults = jobs.map((job) => {
+    const candidate = enumerateJob(job).find((entry) =>
+      entry.selection[1]!.itemId === weakRing.itemId);
+    assert.ok(candidate);
+    const evaluation = job.options.evaluationFunction(candidate.attributes);
+    assert.ok(evaluation);
+    return {
+      selection: candidate.selection,
+      food: candidate.food,
+      damage: evaluation.damage,
+      statistics: {
+        elapsedMs: 0,
+        solverRuns: 0,
+        excludedSignatures: 0,
+        signatureBandChecks: 0,
+        signatureBandElapsedMs: 0,
+        signatureBandProof: false,
+        variables: 0,
+        constraints: 0,
+        maximumSurrogate: 0,
+        nextSurrogate: undefined,
+        memoryUsage: {},
+      },
+    } satisfies ExactMipResult;
+  });
+  const previousProfileSetting = process.env.FFXIV_PROFILE_TIMING;
+  process.env.FFXIV_PROFILE_TIMING = "1";
+  const progressEvents: LinearMipProgress[] = [];
+  let actual: Awaited<ReturnType<typeof findBestJointFactorMip>>;
+  try {
+    actual = await findBestJointFactorMip({
+      jobs: jointJobArgs(jobs, "damage"),
+      commonSlots: ["ring"],
+      sharedFood: false,
+      equipmentIdentity: (item) => String(item.itemId),
+      foodIdentity: (item) => String(item.itemId),
+      objective: "damage",
+      initialResults,
+      maxSearchMs: 20_000,
+      onSolverProgress: (event) => progressEvents.push(event),
+    });
+  } finally {
+    if (previousProfileSetting === undefined) delete process.env.FFXIV_PROFILE_TIMING;
+    else process.env.FFXIV_PROFILE_TIMING = previousProfileSetting;
+  }
+
+  assertJointMatchesEnumeration(actual, expected, jobs, false, "damage");
+  const iterationReady = progressEvents.find((event) =>
+    event.model === "joint_factor_product" && (event.message ?? "").includes("joint-model-iteration-ready"));
+  assert.ok(iterationReady);
+  const profile = JSON.parse((iterationReady.message ?? "").slice("PROFILE ".length)) as {
+    candidateSpecificUpperBoundCandidates: number;
+    candidateSpecificUpperBoundCutRows: number;
+    candidateSpecificUpperBoundEqualityCuts: number;
+    candidateSpecificUpperBoundSkippedJobs: number;
+  };
+  assert.equal(profile.candidateSpecificUpperBoundSkippedJobs, 0);
+  assert.ok(profile.candidateSpecificUpperBoundCutRows > 0,
+    "the strict-improvement proof model must receive candidate selector rows");
+  assert.ok(profile.candidateSpecificUpperBoundEqualityCuts > 0,
+    "a candidate whose optimistic ratio equals the threshold must be excluded");
+  assert.ok(profile.candidateSpecificUpperBoundCandidates > profile.candidateSpecificUpperBoundCutRows,
+    "the stronger candidate remains eligible while the equality-bound candidate is cut");
+});
+
+test("joint candidate upper bounds fail open for jobs with custom extractors", async () => {
+  const jobs = tradeoffJobs();
+  jobs[0] = {
+    ...jobs[0]!,
+    options: {
+      ...jobs[0]!.options,
+      equipmentAttributeExtractor: (item) => item.baseParams,
+    },
+  };
+  const initialResults = jobs.map((job) => {
+    const candidate = enumerateJob(job).find((entry) =>
+      entry.selection[1]!.itemId === tradeoffRings[1]!.itemId);
+    assert.ok(candidate);
+    const evaluation = job.options.evaluationFunction(candidate.attributes);
+    assert.ok(evaluation);
+    return {
+      selection: candidate.selection,
+      food: candidate.food,
+      damage: evaluation.damage,
+      statistics: {
+        elapsedMs: 0,
+        solverRuns: 0,
+        excludedSignatures: 0,
+        signatureBandChecks: 0,
+        signatureBandElapsedMs: 0,
+        signatureBandProof: false,
+        variables: 0,
+        constraints: 0,
+        maximumSurrogate: 0,
+        nextSurrogate: undefined,
+        memoryUsage: {},
+      },
+    } satisfies ExactMipResult;
+  });
+  const previousProfileSetting = process.env.FFXIV_PROFILE_TIMING;
+  process.env.FFXIV_PROFILE_TIMING = "1";
+  const progressEvents: LinearMipProgress[] = [];
+  try {
+    await findBestJointFactorMip({
+      jobs: jointJobArgs(jobs, "damage"),
+      commonSlots: ["ring"],
+      sharedFood: false,
+      equipmentIdentity: (item) => String(item.itemId),
+      foodIdentity: (item) => String(item.itemId),
+      objective: "damage",
+      initialResults,
+      maxSearchMs: 20_000,
+      onSolverProgress: (event) => progressEvents.push(event),
+    });
+  } finally {
+    if (previousProfileSetting === undefined) delete process.env.FFXIV_PROFILE_TIMING;
+    else process.env.FFXIV_PROFILE_TIMING = previousProfileSetting;
+  }
+  const summary = progressEvents.find((event) =>
+    event.model === "joint_factor_product" && (event.message ?? "").includes("joint-search-summary"));
+  assert.ok(summary);
+  const profile = JSON.parse((summary.message ?? "").slice("PROFILE ".length)) as {
+    candidateSpecificUpperBoundCandidates: number;
+    candidateSpecificUpperBoundSkippedJobs: number;
+  };
+  assert.ok(profile.candidateSpecificUpperBoundSkippedJobs > 0,
+    "a custom extractor must disable candidate-specific pruning for that job");
+  assert.ok(profile.candidateSpecificUpperBoundCandidates > 0,
+    "the unaffected canonical job can still use its safe candidate bounds");
+});
+
+test("joint candidate upper bounds fail open for duplicate food attributes", async () => {
+  const ordinaryFood = food(7_431, [1]);
+  const parameter = ordinaryFood.baseParams[0]!;
+  const duplicateFood: FoodInfo = {
+    ...ordinaryFood,
+    baseParams: [
+      { ...parameter, baseValue: 0 },
+      { ...parameter, baseValue: 200 },
+    ],
+  };
+  const jobs = tradeoffJobs([ordinaryFood]);
+  jobs[0] = {
+    ...jobs[0]!,
+    options: { ...jobs[0]!.options, foods: [duplicateFood] },
+  };
+  const expected = jointOracle(jobs, false, "damage");
+  assert.ok(expected);
+  const initialResults = expected.results.map((candidate, index) => {
+    const evaluation = jobs[index]!.options.evaluationFunction(candidate.attributes);
+    assert.ok(evaluation);
+    return {
+      selection: candidate.selection,
+      food: candidate.food,
+      damage: evaluation.damage,
+      statistics: {
+        elapsedMs: 0,
+        solverRuns: 0,
+        excludedSignatures: 0,
+        signatureBandChecks: 0,
+        signatureBandElapsedMs: 0,
+        signatureBandProof: false,
+        variables: 0,
+        constraints: 0,
+        maximumSurrogate: 0,
+        nextSurrogate: undefined,
+        memoryUsage: {},
+      },
+    } satisfies ExactMipResult;
+  });
+  const previousProfileSetting = process.env.FFXIV_PROFILE_TIMING;
+  process.env.FFXIV_PROFILE_TIMING = "1";
+  const progressEvents: LinearMipProgress[] = [];
+  let actual: Awaited<ReturnType<typeof findBestJointFactorMip>>;
+  try {
+    actual = await findBestJointFactorMip({
+      jobs: jointJobArgs(jobs, "damage"),
+      commonSlots: ["ring"],
+      sharedFood: false,
+      equipmentIdentity: (item) => String(item.itemId),
+      foodIdentity: (item) => String(item.itemId),
+      objective: "damage",
+      initialResults,
+      maxSearchMs: 20_000,
+      onSolverProgress: (event) => progressEvents.push(event),
+    });
+  } finally {
+    if (previousProfileSetting === undefined) delete process.env.FFXIV_PROFILE_TIMING;
+    else process.env.FFXIV_PROFILE_TIMING = previousProfileSetting;
+  }
+
+  assertJointMatchesEnumeration(actual, expected, jobs, false, "damage");
+  const summary = progressEvents.find((event) =>
+    event.model === "joint_factor_product" && (event.message ?? "").includes("joint-search-summary"));
+  assert.ok(summary);
+  const profile = JSON.parse((summary.message ?? "").slice("PROFILE ".length)) as {
+    candidateSpecificUpperBoundCandidates: number;
+    candidateSpecificUpperBoundSkippedJobs: number;
+  };
+  assert.equal(profile.candidateSpecificUpperBoundSkippedJobs, 1,
+    "the job with repeated food attributes must retain its selectors in the strict proof model");
+  assert.ok(profile.candidateSpecificUpperBoundCandidates > 0,
+    "the unaffected job should continue to receive safe candidate bounds");
+});
+
+test("ratio upper-product chain includes baseline factors when group maxima conflict", async () => {
+  const rings = [
+    equipment(7301, { 7: 600, 1: 600, 3: 300, 2: 100 }),
+    equipment(7302, { 7: 600, 1: 600, 3: 100, 2: 1500 }),
+    equipment(7303, { 7: 600, 1: 600, 3: 200, 2: 800 }),
+  ];
+  const jobs = [
+    makeJob("RDM", [equipment(7304, {}, { stat: "MDMG", damage: 160 })], rings, []),
+    makeJob("SAM", [equipment(7305, {}, { stat: "PDMG", damage: 160 })], rings, []),
+    makeJob("RDM", [equipment(7306, {}, { stat: "MDMG", damage: 160 })], rings, []),
+  ];
+  const soloBaselines = jobs.map((job) => soloBaseline(job, "damage"));
+  assert.ok(soloBaselines.every((baseline) => baseline));
+  const maximumDetermination = Math.max(...enumerateJob(jobs[0]!).map((candidate) => candidate.factors.determination));
+  assert.ok(soloBaselines.some((baseline) => baseline!.determination < maximumDetermination),
+    "fixture must make an individual factor maximum differ from the solo baseline factor");
+
+  const expected = jointOracle(jobs, false, "damage");
+  assert.ok(expected);
+  const previousProfileSetting = process.env.FFXIV_PROFILE_TIMING;
+  process.env.FFXIV_PROFILE_TIMING = "1";
+  const progressEvents: LinearMipProgress[] = [];
+  let actual: Awaited<ReturnType<typeof findBestJointFactorMip>>;
+  try {
+    actual = await findBestJointFactorMip({
+      jobs: jointJobArgs(jobs, "damage"),
+      commonSlots: ["ring"],
+      sharedFood: false,
+      equipmentIdentity: (item) => String(item.itemId),
+      foodIdentity: (item) => String(item.itemId),
+      objective: "damage",
+      maxSearchMs: 20_000,
+      onSolverProgress: (event) => progressEvents.push(event),
+    });
+  } finally {
+    if (previousProfileSetting === undefined) delete process.env.FFXIV_PROFILE_TIMING;
+    else process.env.FFXIV_PROFILE_TIMING = previousProfileSetting;
+  }
+  assertJointMatchesEnumeration(actual, expected, jobs, false, "damage");
+  const modelReady = progressEvents.find((event) =>
+    event.model === "joint_factor_product" && (event.message ?? "").includes("joint-model-ready"));
+  assert.ok(modelReady);
+  const profile = JSON.parse((modelReady.message ?? "").slice("PROFILE ".length)) as {
+    ratioUpperBoundProductChainUsed: number;
+    ratioUpperBoundChainRows: number;
+    ratioUpperBoundChainRowLimit: number;
+    reachableFactorClassesRemoved: number;
+  };
+  assert.ok(profile.reachableFactorClassesRemoved > 0,
+    "the reachable-value preprocessing must remove factor classes absent from all fixture loadouts");
+  assert.equal(profile.ratioUpperBoundProductChainUsed, 1,
+    "the small fixture must exercise the integer product upper-bound chain");
+  assert.ok(profile.ratioUpperBoundChainRows <= profile.ratioUpperBoundChainRowLimit);
+});
+
 test("direct joint factor MIP proves the exact shared-gear sum without initial results", async () => {
   const jobs = tradeoffJobs();
   const expected = jointOracle(jobs, false, "damage");
   assert.ok(expected);
 
   // This fixture separates the geometric/product filter's best ring from the
-  // exact arithmetic sum, so a second improving signature is needed.
+  // exact arithmetic sum, so the joint solver must rank by normalized sum.
   const soloBaselines = jobs.map((job) => soloBaseline(job, "damage"));
   const productWinner = tradeoffRings.reduce((best, ring) => {
     const candidateProduct = jobs.reduce((product, job, index) => {
@@ -458,8 +897,466 @@ test("direct joint factor MIP proves the exact shared-gear sum without initial r
   });
 
   assertJointMatchesEnumeration(actual, expected, jobs, false, "damage");
-  assert.ok(actual.signatures >= 2,
-    "the direct call without a warm start must inspect a later factor signature that improves the sum");
+});
+
+test("joint ratio-sum upper bounds keep shared choices that can improve a warm start", async () => {
+  const jobs = tradeoffJobs();
+  const expected = jointOracle(jobs, false, "damage");
+  assert.ok(expected);
+  const options = {
+    jobs: jointJobArgs(jobs, "damage"),
+    commonSlots: ["ring"],
+    sharedFood: false,
+    equipmentIdentity: (item: EquipInfo) => String(item.itemId),
+    foodIdentity: (item: FoodInfo) => String(item.itemId),
+    objective: "damage" as const,
+    maxSearchMs: 20_000,
+  };
+  const solved = await findBestJointFactorMip(options);
+  assertJointMatchesEnumeration(solved, expected, jobs, false, "damage");
+
+  const weakerRingResults = jobs.map((job, index) => {
+    const candidate = enumerateJob(job).find((entry) => entry.selection[1]!.itemId === 7101);
+    assert.ok(candidate);
+    const evaluation = job.options.evaluationFunction(candidate.attributes);
+    assert.ok(evaluation);
+    return {
+      ...solved.results[index]!,
+      selection: candidate.selection,
+      food: undefined,
+      damage: evaluation.damage,
+    };
+  });
+  const actual = await findBestJointFactorMip({ ...options, initialResults: weakerRingResults });
+  assertJointMatchesEnumeration(actual, expected, jobs, false, "damage");
+});
+
+test("shared-pair bounds run for a weak warm start below the individual-ratio threshold", async () => {
+  const sharedWeapons = [
+    equipment(7_401, { [-2]: 1, [-1]: 1 }),
+    equipment(7_402, { [-2]: 50, [-1]: 50 }),
+  ];
+  const rings = [
+    equipment(7_411, { 7: 0, 1: 0 }),
+    equipment(7_412, { 7: 50, 1: 50 }),
+  ];
+  const jobs = [
+    makeJob("RDM", sharedWeapons, rings, []),
+    makeJob("SAM", sharedWeapons, rings, []),
+  ];
+  const initialResults = jobs.map((job) => {
+    const selection = [sharedWeapons[0]!, rings[0]!];
+    const evaluation = job.options.evaluationFunction(vectorFor(selection, undefined));
+    assert.ok(evaluation);
+    return {
+      selection,
+      food: undefined,
+      damage: evaluation.damage,
+      statistics: {
+        elapsedMs: 0,
+        solverRuns: 0,
+        excludedSignatures: 0,
+        signatureBandChecks: 0,
+        signatureBandElapsedMs: 0,
+        signatureBandProof: false,
+        variables: 0,
+        constraints: 0,
+        maximumSurrogate: 0,
+        nextSurrogate: undefined,
+        memoryUsage: {},
+      },
+    } satisfies ExactMipResult;
+  });
+  const initialRatioSum = initialResults.reduce((sum, result, index) => {
+    const factors = jobs[index]!.evaluateFactors(vectorFor(result.selection, result.food));
+    assert.ok(factors);
+    return add(sum, normalizedScore(factors, soloBaseline(jobs[index]!, "damage"), "damage"));
+  }, { numerator: 0n, denominator: 1n });
+  assert.ok(compare(initialRatioSum, { numerator: 1n, denominator: 1n }) < 0,
+    "the shared weak weapon and ring should make the warm-start sum less than one");
+
+  const expected = jointOracle(jobs, false, "damage");
+  assert.ok(expected);
+  const previousProfileSetting = process.env.FFXIV_PROFILE_TIMING;
+  process.env.FFXIV_PROFILE_TIMING = "1";
+  const progressEvents: LinearMipProgress[] = [];
+  let solved: Awaited<ReturnType<typeof findBestJointFactorMip>>;
+  try {
+    solved = await findBestJointFactorMip({
+      jobs: jointJobArgs(jobs, "damage"),
+      commonSlots: ["weapon", "ring"],
+      sharedFood: false,
+      equipmentIdentity: (item) => String(item.itemId),
+      foodIdentity: (item) => String(item.itemId),
+      objective: "damage",
+      initialResults,
+      maxSearchMs: 20_000,
+      onSolverProgress: (event) => progressEvents.push(event),
+    });
+  } finally {
+    if (previousProfileSetting === undefined) delete process.env.FFXIV_PROFILE_TIMING;
+    else process.env.FFXIV_PROFILE_TIMING = previousProfileSetting;
+  }
+  assertJointMatchesEnumeration(solved, expected, jobs, false, "damage");
+  const summary = progressEvents.find((event) =>
+    event.model === "joint_factor_product" && (event.message ?? "").includes("joint-search-summary"));
+  assert.ok(summary);
+  const profile = JSON.parse((summary.message ?? "").slice("PROFILE ".length)) as {
+    sharedPairCandidatesEvaluated: number;
+    sharedPairConflictCuts: number;
+  };
+  assert.ok(profile.sharedPairCandidatesEvaluated > 0,
+    "shared-pair upper bounds must be prepared even when the individual threshold is non-positive");
+  assert.ok(profile.sharedPairConflictCuts > 0,
+    "the weak shared weapon and ring pair should be excluded from the first search model");
+});
+
+test("complete shared assignments are excluded only when exact per-job upper bounds cannot improve", async () => {
+  const jobs = tradeoffJobs();
+  const expected = jointOracle(jobs, false, "damage");
+  assert.ok(expected);
+  const options = {
+    jobs: jointJobArgs(jobs, "damage"),
+    commonSlots: ["ring"],
+    sharedFood: false,
+    equipmentIdentity: (item: EquipInfo) => String(item.itemId),
+    foodIdentity: (item: FoodInfo) => String(item.itemId),
+    objective: "damage" as const,
+    maxSearchMs: 20_000,
+  };
+  const initial = await findBestJointFactorMip(options);
+  assertJointMatchesEnumeration(initial, expected, jobs, false, "damage");
+
+  const previousProfileSetting = process.env.FFXIV_PROFILE_TIMING;
+  process.env.FFXIV_PROFILE_TIMING = "1";
+  const progressEvents: LinearMipProgress[] = [];
+  let actual: Awaited<ReturnType<typeof findBestJointFactorMip>>;
+  try {
+    actual = await findBestJointFactorMip({
+      ...options,
+      initialResults: initial.results,
+      onSolverProgress: (event) => progressEvents.push(event),
+    });
+  } finally {
+    if (previousProfileSetting === undefined) delete process.env.FFXIV_PROFILE_TIMING;
+    else process.env.FFXIV_PROFILE_TIMING = previousProfileSetting;
+  }
+  assertJointMatchesEnumeration(actual, expected, jobs, false, "damage");
+  const jointSummary = progressEvents.find((event) =>
+    event.model === "joint_factor_product" && (event.message ?? "").includes("joint-search-summary"));
+  assert.ok(jointSummary, "the joint factor model should emit its profile summary");
+  const jointProfile = JSON.parse((jointSummary.message ?? "").slice("PROFILE ".length)) as {
+    sharedAssignmentCandidatesEvaluated: number;
+    sharedAssignmentConflictCuts: number;
+  };
+  assert.equal(jointProfile.sharedAssignmentCandidatesEvaluated, 3);
+  assert.ok(jointProfile.sharedAssignmentConflictCuts > 0,
+    "a complete shared choice should be cut only after its exact per-job upper bounds are evaluated");
+});
+
+test("large shared assignment domains use safe prefix upper bounds", async () => {
+  const rings = Array.from({ length: 200 }, (_, index) =>
+    equipment(11_000 + index, { 1: 200, 3: 100, 7: 200 }));
+  const foods = Array.from({ length: 251 }, (_, index) => food(21_000 + index, [3]));
+  const jobs = [
+    makeJob("RDM", [equipment(12_001, {}, { stat: "MDMG", damage: 160 })], rings, foods),
+    makeJob("SAM", [equipment(12_002, {}, { stat: "PDMG", damage: 160 })], rings, foods),
+  ];
+  const jobArguments = jointJobArgs(jobs, "damage");
+  const initialResults = jobs.map((job) => {
+    const selection = [job.options.slots[0]![0]!, rings[0]!];
+    const selectedFood = foods[0]!;
+    const attributes = vectorFor(selection, selectedFood);
+    const evaluation = job.options.evaluationFunction(attributes);
+    assert.ok(evaluation);
+    return {
+      selection,
+      food: selectedFood,
+      damage: evaluation.damage,
+      statistics: {
+        elapsedMs: 0,
+        solverRuns: 0,
+        excludedSignatures: 0,
+        signatureBandChecks: 0,
+        signatureBandElapsedMs: 0,
+        signatureBandProof: false,
+        variables: 0,
+        constraints: 0,
+        maximumSurrogate: 0,
+        nextSurrogate: undefined,
+        memoryUsage: {},
+      },
+    } satisfies ExactMipResult;
+  });
+  const previousProfileSetting = process.env.FFXIV_PROFILE_TIMING;
+  process.env.FFXIV_PROFILE_TIMING = "1";
+  const progressEvents: LinearMipProgress[] = [];
+  let actual: Awaited<ReturnType<typeof findBestJointFactorMip>>;
+  try {
+    actual = await findBestJointFactorMip({
+      jobs: jobArguments,
+      commonSlots: ["ring"],
+      sharedFood: true,
+      equipmentIdentity: (item) => String(item.itemId),
+      foodIdentity: (item) => String(item.itemId),
+      objective: "damage",
+      initialResults,
+      maxSearchMs: 20_000,
+      onSolverProgress: (event) => progressEvents.push(event),
+    });
+  } finally {
+    if (previousProfileSetting === undefined) delete process.env.FFXIV_PROFILE_TIMING;
+    else process.env.FFXIV_PROFILE_TIMING = previousProfileSetting;
+  }
+
+  assert.ok(actual);
+  const value = actual.results.reduce((sum, result, index) => {
+    const factors = jobs[index]!.evaluateFactors(vectorFor(result.selection, result.food));
+    assert.ok(factors);
+    return add(sum, normalizedScore(factors, jobArguments[index]!.baseline, "damage"));
+  }, { numerator: 0n, denominator: 1n });
+  assert.equal(value.numerator, 2n * value.denominator,
+    "prefix cuts must retain the exact optimum across the oversized shared domain");
+
+  const summary = progressEvents.find((event) =>
+    event.model === "joint_factor_product" && (event.message ?? "").includes("joint-search-summary"));
+  assert.ok(summary);
+  const profile = JSON.parse((summary.message ?? "").slice("PROFILE ".length)) as {
+    sharedAssignmentCandidateCount: number;
+    sharedAssignmentPrefixSearchUsed: number;
+    sharedAssignmentPrefixesEvaluated: number;
+    sharedAssignmentConflictCuts: number;
+  };
+  assert.equal(profile.sharedAssignmentCandidateCount, 50_200);
+  assert.equal(profile.sharedAssignmentPrefixSearchUsed, 1);
+  assert.equal(profile.sharedAssignmentPrefixesEvaluated, rings.length,
+    "the exact ring prefix bound should prune the food cross product");
+  assert.ok(profile.sharedAssignmentConflictCuts > 0);
+});
+
+test("large shared assignments stop at the bounded prefix-row cap and retain the optimum", async () => {
+  const rings = Array.from({ length: 2_001 }, (_, index) =>
+    equipment(31_000 + index, { 1: 200, 3: 100, 7: 200 }));
+  const foods = Array.from({ length: 11 }, (_, index) => food(41_000 + index, [3]));
+  const jobIds: readonly JobId[] = ["RDM", "SAM", "RDM", "SAM"];
+  const jobs = jobIds.map((job, index) => ({
+    ...makeJob(job, [equipment(32_000 + index, {}, {
+      stat: job === "RDM" ? "MDMG" : "PDMG",
+      damage: 160,
+    })], rings, foods),
+    id: `${job}-${index}`,
+  }));
+  const jobArguments = jointJobArgs(jobs, "damage");
+  const initialResults = jobs.map((job) => {
+    const selection = [job.options.slots[0]![0]!, rings[0]!];
+    const selectedFood = foods[0]!;
+    const evaluation = job.options.evaluationFunction(vectorFor(selection, selectedFood));
+    assert.ok(evaluation);
+    return {
+      selection,
+      food: selectedFood,
+      damage: evaluation.damage,
+      statistics: {
+        elapsedMs: 0,
+        solverRuns: 0,
+        excludedSignatures: 0,
+        signatureBandChecks: 0,
+        signatureBandElapsedMs: 0,
+        signatureBandProof: false,
+        variables: 0,
+        constraints: 0,
+        maximumSurrogate: 0,
+        nextSurrogate: undefined,
+        memoryUsage: {},
+      },
+    } satisfies ExactMipResult;
+  });
+  const previousProfileSetting = process.env.FFXIV_PROFILE_TIMING;
+  process.env.FFXIV_PROFILE_TIMING = "1";
+  const progressEvents: LinearMipProgress[] = [];
+  let actual: Awaited<ReturnType<typeof findBestJointFactorMip>>;
+  try {
+    actual = await findBestJointFactorMip({
+      jobs: jobArguments,
+      commonSlots: ["ring"],
+      sharedFood: true,
+      equipmentIdentity: (item) => String(item.itemId),
+      foodIdentity: (item) => String(item.itemId),
+      objective: "damage",
+      initialResults,
+      maxSearchMs: 20_000,
+      onSolverProgress: (event) => progressEvents.push(event),
+    });
+  } finally {
+    if (previousProfileSetting === undefined) delete process.env.FFXIV_PROFILE_TIMING;
+    else process.env.FFXIV_PROFILE_TIMING = previousProfileSetting;
+  }
+
+  assert.ok(actual);
+  const value = actual.results.reduce((sum, result, index) => {
+    const factors = jobs[index]!.evaluateFactors(vectorFor(result.selection, result.food));
+    assert.ok(factors);
+    return add(sum, normalizedScore(factors, jobArguments[index]!.baseline, "damage"));
+  }, { numerator: 0n, denominator: 1n });
+  assert.equal(value.numerator, 4n * value.denominator,
+    "the expanded prefix policy must retain the exact four-job optimum");
+
+  const summary = progressEvents.find((event) =>
+    event.model === "joint_factor_product" && (event.message ?? "").includes("joint-search-summary"));
+  assert.ok(summary);
+  const profile = JSON.parse((summary.message ?? "").slice("PROFILE ".length)) as {
+    sharedAssignmentCandidateCount: number;
+    sharedAssignmentPrefixEvaluationLimit: number;
+    sharedAssignmentUpperBoundLimit: number;
+    sharedAssignmentUpperBoundCount: number;
+    sharedAssignmentConflictCuts: number;
+    sharedAssignmentPreprocessingBudgetMs: number;
+  };
+  assert.equal(profile.sharedAssignmentCandidateCount, 22_011);
+  assert.equal(profile.sharedAssignmentPrefixEvaluationLimit, 100_000);
+  assert.equal(profile.sharedAssignmentUpperBoundLimit, 2_000);
+  assert.equal(profile.sharedAssignmentPreprocessingBudgetMs, 400,
+    "the four-job preprocessing budget must remain bounded by two percent of the search limit");
+  assert.equal(profile.sharedAssignmentUpperBoundCount, 2_000,
+    "the optional prefix rows must stop at their configured cap");
+  assert.equal(profile.sharedAssignmentConflictCuts, 2_000);
+});
+
+test("three-job factor pair bounds leave room for the other job's contribution", async () => {
+  const pair = tradeoffJobs();
+  const jobs = [pair[0]!, pair[1]!, { ...pair[0]!, id: "RDM-third" }];
+  const expected = jointOracle(jobs, false, "damage");
+  assert.ok(expected);
+  const options = {
+    jobs: jointJobArgs(jobs, "damage"),
+    commonSlots: ["ring"],
+    sharedFood: false,
+    equipmentIdentity: (item: EquipInfo) => String(item.itemId),
+    foodIdentity: (item: FoodInfo) => String(item.itemId),
+    objective: "damage" as const,
+    maxSearchMs: 20_000,
+  };
+  const previousProfileSetting = process.env.FFXIV_PROFILE_TIMING;
+  process.env.FFXIV_PROFILE_TIMING = "1";
+  const progressEvents: LinearMipProgress[] = [];
+  let solved: Awaited<ReturnType<typeof findBestJointFactorMip>>;
+  try {
+    solved = await findBestJointFactorMip({
+      ...options,
+      onSolverProgress: (event) => progressEvents.push(event),
+    });
+  } finally {
+    if (previousProfileSetting === undefined) delete process.env.FFXIV_PROFILE_TIMING;
+    else process.env.FFXIV_PROFILE_TIMING = previousProfileSetting;
+  }
+  assertJointMatchesEnumeration(solved, expected, jobs, false, "damage");
+  const jointSummary = progressEvents.find((event) =>
+    event.model === "joint_factor_product" && (event.message ?? "").includes("joint-search-summary"));
+  assert.ok(jointSummary, "the joint factor model should emit its profile summary");
+  const summaryMessage = jointSummary.message ?? "";
+  const jointProfile = JSON.parse(summaryMessage.slice("PROFILE ".length)) as {
+    factorClassPairConflictCuts: number;
+    factorClassTripleConflictCuts: number;
+  };
+  assert.ok(jointProfile.factorClassPairConflictCuts > 0,
+    "a three-job factor search should exercise the aggregated cross-job pair cuts");
+  assert.ok(jointProfile.factorClassTripleConflictCuts > 0,
+    `a three-job factor search should exercise exact three-job class conflict cuts: ${JSON.stringify(jointProfile)}`);
+
+  const weakerRingResults = jobs.map((job, index) => {
+    const candidate = enumerateJob(job).find((entry) => entry.selection[1]!.itemId === 7101);
+    assert.ok(candidate);
+    const evaluation = job.options.evaluationFunction(candidate.attributes);
+    assert.ok(evaluation);
+    return {
+      ...solved.results[index]!,
+      selection: candidate.selection,
+      food: undefined,
+      damage: evaluation.damage,
+    };
+  });
+  const actual = await findBestJointFactorMip({ ...options, initialResults: weakerRingResults });
+  assertJointMatchesEnumeration(actual, expected, jobs, false, "damage");
+  assert.ok(actual.results.every((result) => result.selection[1]!.itemId === actual.results[0]!.selection[1]!.itemId),
+    "all three jobs must preserve the same shared gear choice");
+});
+
+test("four-job pair and triple bounds remain active below the individual-ratio threshold", async () => {
+  const pair = tradeoffJobs();
+  const jobs = [
+    pair[0]!,
+    pair[1]!,
+    { ...pair[0]!, id: "RDM-third" },
+    { ...pair[1]!, id: "SAM-fourth" },
+  ];
+  const jobArguments = jointJobArgs(jobs, "damage");
+  const initialResults = jobs.map((job) => {
+    const candidate = enumerateJob(job).find((entry) => entry.selection[1]!.itemId === 7103);
+    assert.ok(candidate);
+    const evaluation = job.options.evaluationFunction(candidate.attributes);
+    assert.ok(evaluation);
+    return {
+      selection: candidate.selection,
+      food: undefined,
+      damage: evaluation.damage,
+      statistics: {
+        elapsedMs: 0,
+        solverRuns: 0,
+        excludedSignatures: 0,
+        signatureBandChecks: 0,
+        signatureBandElapsedMs: 0,
+        signatureBandProof: false,
+        variables: 0,
+        constraints: 0,
+        maximumSurrogate: 0,
+        nextSurrogate: undefined,
+        memoryUsage: {},
+      },
+    } satisfies ExactMipResult;
+  });
+  const initialValue = initialResults.reduce((sum, result, index) => {
+    const factors = jobs[index]!.evaluateFactors(vectorFor(result.selection, result.food));
+    assert.ok(factors);
+    return add(sum, normalizedScore(factors, jobArguments[index]!.baseline, "damage"));
+  }, { numerator: 0n, denominator: 1n });
+  assert.ok(compare(initialValue, { numerator: 3n, denominator: 1n }) < 0,
+    "this incumbent must exercise the non-positive individual-ratio threshold");
+
+  const expected = jointOracle(jobs, false, "damage");
+  assert.ok(expected);
+  const previousProfileSetting = process.env.FFXIV_PROFILE_TIMING;
+  process.env.FFXIV_PROFILE_TIMING = "1";
+  const progressEvents: LinearMipProgress[] = [];
+  let solved: Awaited<ReturnType<typeof findBestJointFactorMip>>;
+  try {
+    solved = await findBestJointFactorMip({
+      jobs: jobArguments,
+      commonSlots: ["ring"],
+      sharedFood: false,
+      equipmentIdentity: (item) => String(item.itemId),
+      foodIdentity: (item) => String(item.itemId),
+      objective: "damage",
+      initialResults,
+      maxSearchMs: 20_000,
+      onSolverProgress: (event) => progressEvents.push(event),
+    });
+  } finally {
+    if (previousProfileSetting === undefined) delete process.env.FFXIV_PROFILE_TIMING;
+    else process.env.FFXIV_PROFILE_TIMING = previousProfileSetting;
+  }
+  assertJointMatchesEnumeration(solved, expected, jobs, false, "damage");
+  const summary = progressEvents.find((event) =>
+    event.model === "joint_factor_product" && (event.message ?? "").includes("joint-search-summary"));
+  assert.ok(summary);
+  const profile = JSON.parse((summary.message ?? "").slice("PROFILE ".length)) as {
+    factorClassPairConflictCuts: number;
+    factorClassTripleConflictCuts: number;
+    factorClassTriplePreprocessingWork: number;
+  };
+  assert.ok(profile.factorClassPairConflictCuts > 0,
+    "two-job total-sum cuts must still run below the individual threshold");
+  assert.ok(profile.factorClassTriplePreprocessingWork > 0,
+    "three-job class bounds must still be scanned below the individual threshold");
 });
 
 test("direct joint factor MIP selects one shared food identity and matches enumeration", async () => {
@@ -529,6 +1426,125 @@ test("joint ring splitting keeps unique item ID variants from occupying both rin
       "variants of one unique item must conflict by physical itemId across both slots",
     );
   }
+});
+
+test("shared factorized rings use one canonical order and retain exact unordered-pair optimality", async () => {
+  const rings = [
+    ringCandidate(1300, "unique-int", { 1: 900, 7: 100 }, true),
+    ringCandidate(1301, "repeatable-str", { 1: 100, 7: 900 }, false),
+    ringCandidate(1302, "repeatable-mixed", { 1: 500, 7: 500 }, false),
+  ];
+  const jobs = tradeoffJobs().map((base) => independentRingFixtureJob(base, rings));
+  const jobSpecificIdentity = pairEquipmentIdentity(rings[2]!);
+  jobs[1] = {
+    ...jobs[1]!,
+    options: {
+      ...jobs[1]!.options,
+      slots: jobs[1]!.options.slots.map((slot, index) => index === 0
+        ? slot
+        : slot.filter((ring) => pairEquipmentIdentity(ring) !== jobSpecificIdentity)),
+    },
+  };
+  const expected = independentSharedRingOracle(jobs);
+  assert.ok(expected);
+  const solveOptions = {
+    jobs: independentRingJointArgs(jobs),
+    commonSlots: ["ring", "ring2"],
+    sharedFood: false,
+    equipmentIdentity: pairEquipmentIdentity,
+    foodIdentity: (item: FoodInfo) => String(item.itemId),
+    objective: "damage" as const,
+    canonicalSharedRingPair: true,
+    maxSearchMs: 20_000,
+  };
+  const actual = await findBestJointFactorMip(solveOptions);
+  assert.ok(actual);
+  const actualValue = actual.results.reduce((sum, result, index) => {
+    const factors = jobs[index]!.evaluateFactors(vectorFor(result.selection, result.food));
+    assert.ok(factors);
+    return add(sum, normalizedScore(factors, independentRingBaseline(jobs[index]!), "damage"));
+  }, { numerator: 0n, denominator: 1n });
+  assert.equal(actualValue.numerator * expected.value.denominator,
+    expected.value.numerator * actualValue.denominator,
+    "canonical symmetry breaking must preserve the exhaustive unordered-pair optimum");
+
+  const identities = [...new Set(rings.map(pairEquipmentIdentity))].sort();
+  const rank = new Map(identities.map((identity, index) => [identity, index]));
+  for (const result of actual.results) {
+    const first = result.selection[1]!;
+    const second = result.selection[2]!;
+    assert.ok(rank.get(pairEquipmentIdentity(first))! <= rank.get(pairEquipmentIdentity(second))!);
+    assert.ok(!(first.itemId === second.itemId &&
+      ((first as EquipInfo & { isUnique: boolean }).isUnique ||
+        (second as EquipInfo & { isUnique: boolean }).isUnique)));
+  }
+
+  const commonIdentities = identities.filter((identity) => jobs.every((job) =>
+    job.options.slots[1]!.some((ring) => pairEquipmentIdentity(ring) === identity) &&
+    job.options.slots[2]!.some((ring) => pairEquipmentIdentity(ring) === identity)));
+  const lowIdentity = commonIdentities[0]!;
+  const highIdentity = commonIdentities.at(-1)!;
+  assert.ok(rank.get(highIdentity)! > rank.get(lowIdentity)!);
+  const reversedInitialResults = actual.results.map((result, index) => {
+    const first = jobs[index]!.options.slots[1]!.find((ring) =>
+      pairEquipmentIdentity(ring) === highIdentity)!;
+    const second = jobs[index]!.options.slots[2]!.find((ring) =>
+      pairEquipmentIdentity(ring) === lowIdentity)!;
+    const selection = [...result.selection];
+    selection[1] = first;
+    selection[2] = second;
+    const evaluation = jobs[index]!.options.evaluationFunction(vectorFor(selection, undefined));
+    assert.ok(evaluation);
+    return { ...result, selection, food: undefined, damage: evaluation.damage };
+  });
+  assert.ok(reversedInitialResults.every((result) =>
+    rank.get(pairEquipmentIdentity(result.selection[1]!))! >
+    rank.get(pairEquipmentIdentity(result.selection[2]!))!));
+  const normalizedWarmStart = await findBestJointFactorMip({
+    ...solveOptions,
+    initialResults: reversedInitialResults,
+  });
+  assert.ok(normalizedWarmStart);
+  for (const result of normalizedWarmStart.results) {
+    assert.ok(rank.get(pairEquipmentIdentity(result.selection[1]!))! <=
+      rank.get(pairEquipmentIdentity(result.selection[2]!))!);
+  }
+});
+
+test("joint initial results reject duplicate unique rings across independent slots", async () => {
+  const rings = [
+    ringCandidate(1400, "unique-a", { 1: 900, 7: 300 }, true),
+    ringCandidate(1400, "unique-b", { 1: 850, 7: 350 }, true),
+    ringCandidate(1401, "repeatable-a", { 1: 400, 7: 400 }, false),
+    ringCandidate(1402, "repeatable-b", { 1: 200, 7: 200 }, false),
+  ];
+  const jobs = tradeoffJobs().map((base) => independentRingFixtureJob(base, rings));
+  const solveOptions = {
+    jobs: independentRingJointArgs(jobs),
+    commonSlots: ["ring", "ring2"],
+    sharedFood: false,
+    equipmentIdentity: pairEquipmentIdentity,
+    foodIdentity: (item: FoodInfo) => String(item.itemId),
+    objective: "damage" as const,
+    canonicalSharedRingPair: true,
+    maxSearchMs: 20_000,
+  };
+  const valid = await findBestJointFactorMip(solveOptions);
+  assert.ok(valid);
+  const uniqueIdentity = pairEquipmentIdentity(rings[0]!);
+  const invalidFirst = jobs[0]!.options.slots[1]!.find((ring) =>
+    pairEquipmentIdentity(ring) === uniqueIdentity)!;
+  const invalidSecond = jobs[0]!.options.slots[2]!.find((ring) =>
+    pairEquipmentIdentity(ring) === uniqueIdentity)!;
+  const initialResults = [...valid.results];
+  const invalidSelection = [...initialResults[0]!.selection];
+  invalidSelection[1] = invalidFirst;
+  invalidSelection[2] = invalidSecond;
+  initialResults[0] = { ...initialResults[0]!, selection: invalidSelection };
+  await assert.rejects(
+    findBestJointFactorMip({ ...solveOptions, initialResults }),
+    /联合初始方案重复使用唯一戒指/,
+  );
 });
 
 test("initial results reject an ordered pair of two variants of one unique ring", async () => {
@@ -748,6 +1764,31 @@ function bestExactDamage(candidates: readonly Candidate[]): bigint {
     0n,
   );
 }
+
+test("exact MIP keeps the better result for a near-tied damage pair", async () => {
+  const rings = [
+    equipment(8401, { 1: 4060, 2: 253, 3: 1144, 4: 771, 5: 471, 6: 699 }),
+    equipment(8402, { 1: 4042, 2: 339, 3: 1211, 4: 1193, 5: 367, 6: 167 }),
+  ];
+  const job = makeJob("RDM", [equipment(8400, {}, { stat: "MDMG", damage: 160 })], rings, []);
+  const candidates = enumerateJob(job);
+  const sorted = [...candidates].sort((left, right) => {
+    const leftProduct = exactProduct(left.factors);
+    const rightProduct = exactProduct(right.factors);
+    return leftProduct > rightProduct ? -1 : leftProduct < rightProduct ? 1 : 0;
+  });
+  const best = exactProduct(sorted[0]!.factors);
+  const next = exactProduct(sorted[1]!.factors);
+  assert.ok(Number(best - next) / Number(best) < 2e-13,
+    "the fixture must keep two distinct exact scores within the scaled objective's Q-unit range");
+
+  const result = await findBestLoadoutExactMip(job.options);
+  assert.ok(result);
+  const actualFactors = job.evaluateFactors(vectorFor(result.selection, result.food));
+  assert.ok(actualFactors);
+  assert.equal(exactProduct(actualFactors), best,
+    "the exact search must return the higher BigInt product despite the nearly equal scores");
+});
 
 test("exact MIP honors lower-only and upper-only speed constraints against enumeration", async () => {
   for (const bound of ["minimum", "maximum"] as const) {

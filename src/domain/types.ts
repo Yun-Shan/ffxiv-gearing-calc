@@ -270,7 +270,7 @@ export interface JointOptimizationResult {
     objective: "damage" | "dps";
     optimalityScope: string;
     outerBound: string;
-    innerSolverStatus: "Optimal";
+    innerSolverStatus: "Optimal" | "DualBound";
     formalCertificate: false;
     numericalLimitation: string;
     terminationReason: string;

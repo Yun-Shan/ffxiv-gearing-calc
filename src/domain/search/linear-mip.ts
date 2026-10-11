@@ -70,6 +70,8 @@ export type LinearMipRequest = {
   integerVariables: readonly string[];
   timeLimitMs?: number;
   solutionHint?: ReadonlyMap<string, number>;
+  /** Interrupt a maximization after its proven dual bound cannot beat an exact incumbent. */
+  stopWhenDualBoundProvesOptimal?: (dualBound: number) => boolean;
   onProgress?: (event: LinearMipProgress) => void;
   onCallback?: (event: HighsCallbackTrace) => void;
 };

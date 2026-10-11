@@ -11,6 +11,8 @@ import {
 } from "./equipped-effects.ts";
 import { findBestJointLoadoutV3 } from "./loadout-finder-v3.ts";
 import type { JointLoadoutV3Result } from "./loadout-finder-v3.ts";
+import { findBestLoadoutExactMip } from "./loadout-finder-exact-mip.ts";
+import { createParallelBaselineExecutor } from "./parallel-baseline-executor.ts";
 import type {
   ExactMipOptions,
   ExactMipResult,
@@ -41,7 +43,7 @@ const attributeIdByStat: Partial<Record<Stat, number>> = {
 };
 
 type JobCode = "RDM" | "SAM" | "WHM" | "RPR" | "VPR" | "MCH" | "PCT";
-type SlotName = "weapon" | "ring" | "head";
+type SlotName = "weapon" | "ring" | "ring2" | "head";
 type JobInput = {
   id: JobCode;
   slotNames: readonly SlotName[];
@@ -156,7 +158,7 @@ const foods: FoodInfo[] = [
 
 function localCandidates(
   job: JobCode,
-  name: Exclude<SlotName, "ring">,
+  name: Exclude<SlotName, "ring" | "ring2">,
 ): EquipInfo[] {
   if (name === "weapon") {
     if (job === "RDM") {
@@ -286,6 +288,7 @@ function makeJob(
   const slotsByName: Record<SlotName, readonly EquipInfo[]> = {
     weapon: options.weaponCandidates ?? localCandidates(job, "weapon"),
     ring: options.ringCandidates ?? sharedRings,
+    ring2: options.ringCandidates ?? sharedRings,
     head: options.headCandidates ?? localCandidates(job, "head"),
   };
   const slots = slotNames.map((name) => slotsByName[name]);
@@ -346,6 +349,37 @@ function makeJob(
       equipmentAttributeExtractor,
       evaluationFunction: options.damageOverride ?? fallbackEvaluation,
       maxSearchMs: 30_000,
+    },
+  };
+}
+
+function jobWithIndependentUniqueRings(job: JobCode): JobInput {
+  const base = makeJob(job, { slotNames: ["weapon", "ring", "head"], foods: [] });
+  const attributes = { 1: 800, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 800, 8: 100, 9: 800, 10: 800 };
+  const uniqueFirst: EquipInfo = {
+    ...equipment(8_620, attributes),
+    ringSlotIndex: 0,
+    isUnique: true,
+  };
+  const uniqueSecond: EquipInfo = {
+    ...equipment(8_620, attributes),
+    ringSlotIndex: 1,
+    isUnique: true,
+  };
+  const ordinarySecond: EquipInfo = {
+    ...equipment(8_621, { 1: 100, 2: 10, 3: 10, 4: 10, 5: 10, 6: 10, 7: 100, 8: 10, 9: 100, 10: 100 }),
+    ringSlotIndex: 1,
+    isUnique: false,
+  };
+  const [weaponSlot, , headSlot] = base.options.slots;
+  assert.ok(weaponSlot);
+  assert.ok(headSlot);
+  return {
+    ...base,
+    slotNames: ["weapon", "ring", "ring2", "head"],
+    options: {
+      ...base.options,
+      slots: [weaponSlot, [uniqueFirst], [uniqueSecond, ordinarySecond], headSlot],
     },
   };
 }
@@ -884,6 +918,155 @@ async function runJoint(
   });
 }
 
+test("V3 preserves the weaker legal ring partner when the stronger candidate conflicts by unique itemId", async () => {
+  const jobs = [jobWithIndependentUniqueRings("RDM"), jobWithIndependentUniqueRings("SAM")];
+  const result = await runJoint(jobs, [], "independent");
+
+  assert.ok(result);
+  assert.equal(result.proof.complete, true);
+  for (const job of jobs) {
+    const selection: readonly EquipInfo[] = result.jobResults[job.id]!.selection;
+    assert.equal(selection[1]!.itemId, 8_620);
+    assert.equal(selection[2]!.itemId, 8_621,
+      "single-slot Pareto pruning must leave the weaker different-ID ring available");
+  }
+});
+
+function markedRing(
+  itemId: number,
+  ringSlotIndex: 0 | 1,
+  attributes: Record<number, number>,
+  isUnique: boolean,
+): EquipInfo {
+  return {
+    ...equipment(itemId, attributes),
+    ringSlotIndex,
+    isUnique,
+  };
+}
+
+async function capturePrunedRings(
+  firstRings: readonly EquipInfo[],
+  secondRings: readonly EquipInfo[],
+  constraints?: ExactMipOptions["constraints"],
+  expectFeasible = true,
+): Promise<readonly [readonly EquipInfo[], readonly EquipInfo[]]> {
+  const base = makeJob("RDM", {
+    slotNames: ["weapon", "ring", "ring2", "head"],
+    ringCandidates: firstRings,
+    weaponCandidates: [equipment(9_700, { "-1": 160, 1: 2_000, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100 })],
+    headCandidates: [equipment(9_701, { 1: 100, 2: 50, 3: 50, 4: 50, 5: 50, 6: 50 })],
+    foods: [],
+  });
+  const slots = [...base.options.slots];
+  slots[2] = secondRings;
+  const jobOptions = { ...base.options, slots, ...(constraints === undefined ? {} : { constraints }) };
+  Reflect.deleteProperty(jobOptions, "equipmentAttributeExtractor");
+
+  let prunedSlots: readonly (readonly EquipInfo[])[] | undefined;
+  const result = await findBestJointLoadoutV3({
+    jobs: [{ id: base.id, slotNames: base.slotNames, options: jobOptions }],
+    commonSlots: [],
+    foodStrategy: "independent",
+    maxSearchMs: 20_000,
+    baselineExecutor: async (tasks) => {
+      if (prunedSlots === undefined) prunedSlots = tasks[0]?.slots;
+      try {
+        return await Promise.all(tasks.map((task) => findBestLoadoutExactMip(task)));
+      } catch (error) {
+        if (expectFeasible) throw error;
+        return tasks.map(() => undefined);
+      }
+    },
+  });
+  if (expectFeasible) assert.ok(result, "the exact fixture should produce a feasible result");
+  else assert.equal(result, undefined, "incomplete unique metadata should fail closed after conservative pruning");
+  assert.ok(prunedSlots, "V3 should submit the initial baseline task");
+  return [prunedSlots[1]!, prunedSlots[2]!];
+}
+
+test("ring pruning shares a frontier across non-unique IDs and unique IDs absent from the opposite slot", async () => {
+  const nonUnique = await capturePrunedRings(
+    [
+      markedRing(9_710, 0, { 1: 100, 2: 60 }, false),
+      markedRing(9_711, 0, { 1: 90, 2: 50 }, false),
+    ],
+    [markedRing(9_712, 1, { 1: 10, 2: 10 }, false)],
+  );
+  assert.deepEqual(nonUnique[0].map(({ itemId }) => itemId), [9_710]);
+
+  const absentUnique = await capturePrunedRings(
+    [
+      markedRing(9_713, 0, { 1: 90, 2: 50 }, true),
+      markedRing(9_714, 0, { 1: 100, 2: 60 }, false),
+    ],
+    [markedRing(9_715, 1, { 1: 10, 2: 10 }, true)],
+  );
+  assert.deepEqual(absentUnique[0].map(({ itemId }) => itemId), [9_714],
+    "a unique ring without an opposite-slot partner has the same empty conflict set as a non-unique ring");
+});
+
+test("ring pruning keeps separate frontiers for distinct unique conflict behavior", async () => {
+  const rings = await capturePrunedRings(
+    [
+      markedRing(9_720, 0, { 1: 100, 2: 60 }, true),
+      markedRing(9_721, 0, { 1: 90, 2: 50 }, false),
+    ],
+    [markedRing(9_720, 1, { 1: 10, 2: 10 }, true)],
+  );
+  assert.deepEqual(rings[0].map(({ itemId }) => itemId), [9_720, 9_721],
+    "the weaker no-conflict ring remains available when the stronger ring conflicts with the opposite slot");
+});
+
+test("ring pruning falls back to per-item frontiers when unique metadata is incomplete", async () => {
+  const rings = await capturePrunedRings(
+    [
+      { ...markedRing(9_725, 0, { 1: 90, 2: 50 }, false), isUnique: undefined },
+      markedRing(9_726, 0, { 1: 100, 2: 60 }, false),
+    ],
+    [markedRing(9_727, 1, { 1: 10, 2: 10 }, false)],
+    undefined,
+    false,
+  );
+  assert.deepEqual(rings[0].map(({ itemId }) => itemId), [9_725, 9_726],
+    "unknown uniqueness must not enable cross-ID pruning");
+});
+
+test("ring pruning deduplicates identical attributes only inside the same conflict group", async () => {
+  const noConflict = await capturePrunedRings(
+    [
+      markedRing(9_730, 0, { 1: 100, 2: 60 }, false),
+      markedRing(9_731, 0, { 1: 100, 2: 60 }, true),
+    ],
+    [markedRing(9_732, 1, { 1: 10, 2: 10 }, true)],
+  );
+  assert.deepEqual(noConflict[0].map(({ itemId }) => itemId), [9_730],
+    "equal attribute vectors retain the first input candidate when conflict behavior also matches");
+
+  const distinctConflictGroups = await capturePrunedRings(
+    [
+      markedRing(9_733, 0, { 1: 100, 2: 60 }, true),
+      markedRing(9_734, 0, { 1: 100, 2: 60 }, false),
+    ],
+    [markedRing(9_733, 1, { 1: 10, 2: 10 }, true)],
+  );
+  assert.deepEqual(distinctConflictGroups[0].map(({ itemId }) => itemId), [9_733, 9_734],
+    "equal vectors with different legal partner sets must both remain");
+});
+
+test("ring pruning keeps speed-distinct candidates when a speed constraint is active", async () => {
+  const rings = await capturePrunedRings(
+    [
+      markedRing(9_740, 0, { 1: 100, 2: 60, 5: 20 }, false),
+      markedRing(9_741, 0, { 1: 90, 2: 50, 5: 30 }, false),
+    ],
+    [markedRing(9_742, 1, { 1: 10, 2: 10, 5: 10 }, false)],
+    { speedMax: 1_000 },
+  );
+  assert.deepEqual(rings[0].map(({ itemId }) => itemId), [9_740, 9_741],
+    "a speed-constrained frontier must not dominate across different speed totals");
+});
+
 test("V3 exactly matches exhaustive joint DAMAGE for 2 and 3 jobs under both food strategies", async () => {
   for (const jobCount of [2, 3]) {
     const jobs = (["RDM", "SAM", "WHM"] as const)
@@ -896,6 +1079,309 @@ test("V3 exactly matches exhaustive joint DAMAGE for 2 and 3 jobs under both foo
       assertMatchesOracle(result, expected, jobs, ["ring"], strategy);
     }
   }
+});
+
+test("small shared-gear domains are estimated before selecting exact warm starts", async () => {
+  const jobs = [makeJob("RDM"), makeJob("SAM")];
+  const commonSlots = ["ring"] as const;
+  const expected = oracle(jobs, commonSlots, "independent");
+  assert.ok(expected);
+  const progress: string[] = [];
+  const result = await findBestJointLoadoutV3({
+    jobs: jobs.map(({ id, slotNames, options }) => ({ id, slotNames, options })),
+    commonSlots,
+    foodStrategy: "independent",
+    onProgress: (message) => progress.push(message),
+  });
+  assertMatchesOracle(result, expected, jobs, commonSlots, "independent");
+  assert.ok(progress.some((message) => message.includes("共享候选组合估分 2 个")),
+    "the exact seed ranking should inspect each combination in this small shared domain");
+});
+
+test("four-job direct joint warm starts preserve the exhaustive normalized optimum", async () => {
+  const jobs = (["RDM", "SAM", "VPR", "MCH"] as const).map((job) =>
+    makeJob(job, { foods: [] }));
+  const expected = oracle(jobs, ["ring"], "independent");
+  assert.ok(expected);
+
+  const actual = await runJoint(jobs, ["ring"], "independent");
+
+  assertMatchesOracle(actual, expected, jobs, ["ring"], "independent");
+  assert.equal(actual?.proof.complete, true);
+});
+
+test("a single shared assignment is proved with exact per-job solves instead of a joint MIP", async () => {
+  const sharedRing = equipment(8_600, { 2: 20, 3: 20, 4: 20, 5: 20, 6: 20, 8: 20 });
+  const jobs = (["RDM", "SAM", "VPR", "MCH"] as const).map((job, index) => {
+    const mainStatId = job === "RDM" ? 1 : job === "SAM" ? 7 : 10;
+    const personalRing = equipment(8_610 + index, { [mainStatId]: 1_000 });
+    return makeJob(job, { ringCandidates: [personalRing, sharedRing], foods: [] });
+  });
+  const expected = oracle(jobs, ["ring"], "independent");
+  assert.ok(expected);
+  for (const job of jobs) {
+    const ringIndex = job.slotNames.indexOf("ring");
+    assert.notEqual(expected.optima[job.id]!.selection[ringIndex]!.itemId, sharedRing.itemId,
+      `${job.id} must have a conflicting independent baseline`);
+  }
+
+  const callbackModels: string[] = [];
+  const actual = await findBestJointLoadoutV3({
+    jobs: jobs.map(({ id, slotNames, options }) => ({ id, slotNames, options })),
+    commonSlots: ["ring"],
+    foodStrategy: "independent",
+    onSolverCallback: (event) => callbackModels.push(event.model),
+  });
+
+  assertMatchesOracle(actual, expected, jobs, ["ring"], "independent");
+  assert.equal(actual!.statistics.outerNodes, 1);
+  assert.equal(actual!.statistics.completeNodes, 1);
+  assert.ok(!callbackModels.some((model) => model.startsWith("joint:")),
+    "the singleton shared domain must be proved without starting the joint factor MIP");
+});
+
+test("fixed shared assignments solve independent job bounds in one parallel batch", async () => {
+  const sharedRing = equipment(8_650, { 2: 25, 3: 25, 4: 25, 5: 25, 6: 25, 8: 25 });
+  const inputJobs = [
+    makeJob("RDM", {
+      ringCandidates: [equipment(8_651, { 1: 900 }), sharedRing],
+      foods: [],
+    }),
+    makeJob("SAM", {
+      ringCandidates: [equipment(8_652, { 7: 900 }), sharedRing],
+      foods: [],
+    }),
+  ];
+  const expected = oracle(inputJobs, ["ring"], "independent");
+  assert.ok(expected);
+  const jobs = inputJobs.map((job) => {
+    const slots = job.options.slots.map((slot) => slot.map((item) => ({
+      ...item,
+      baseParams: [
+        ...item.baseParams,
+        ...(item.PDMG === 0 ? [] : [{ baseParamId: -2, value: item.PDMG }]),
+        ...(item.MDMG === 0 ? [] : [{ baseParamId: -1, value: item.MDMG }]),
+      ],
+    })));
+    const options: ExactMipOptions = { ...job.options, slots };
+    delete options.equipmentAttributeExtractor;
+    return { ...job, options };
+  });
+  const workerExecutor = await createParallelBaselineExecutor();
+  assert.ok(workerExecutor);
+  const taskBatches: string[][] = [];
+  const supportPolicies: (string | undefined)[][] = [];
+  let actual: JointLoadoutV3Result | undefined;
+  try {
+    actual = await findBestJointLoadoutV3({
+      jobs: jobs.map(({ id, slotNames, options }) => ({ id, slotNames, options })),
+      commonSlots: ["ring"],
+      foodStrategy: "independent",
+      maxSearchMs: 20_000,
+      baselineExecutor: async (tasks, control) => {
+        taskBatches.push(tasks.map((task) => task.job));
+        supportPolicies.push(tasks.map((task) => task.candidateResourceSupportProfile));
+        return workerExecutor(tasks, control);
+      },
+    });
+  } finally {
+    await workerExecutor.dispose?.();
+  }
+
+  assertMatchesOracle(actual, expected, inputJobs, ["ring"], "independent");
+  assert.equal(taskBatches.length, 2,
+    "one batch computes the solo baselines and one batch computes the fixed shared assignment");
+  assert.deepEqual(taskBatches.map((batch) => batch.length), [2, 2],
+    "both independent per-job bounds must be submitted together");
+  assert.deepEqual(new Set(taskBatches[1]), new Set(["RDM", "SAM"]));
+  assert.deepEqual(supportPolicies, [["disabled", "disabled"], ["compact", "compact"]],
+    "two-job searches use lean solo baselines and compact restricted proof models");
+});
+
+test("large shared warm starts batch independent constrained job solves", async () => {
+  const sharedRings = [
+    equipment(8_660, { 2: 25, 3: 20, 4: 15, 5: 15, 6: 5, 10: 60 }),
+    equipment(8_661, { 2: 20, 3: 25, 4: 15, 5: 15, 6: 5, 10: 60 }),
+    equipment(8_662, { 2: 15, 3: 20, 4: 25, 5: 15, 6: 5, 10: 60 }),
+  ];
+  const sharedHeads = [
+    equipment(8_670, { 2: 20, 3: 15, 4: 15, 5: 25, 6: 5, 10: 55 }),
+    equipment(8_671, { 2: 15, 3: 20, 4: 15, 5: 25, 6: 5, 10: 55 }),
+    equipment(8_672, { 2: 15, 3: 15, 4: 20, 5: 25, 6: 5, 10: 55 }),
+  ];
+  const inputJobs = (["VPR", "MCH"] as const).map((job, index) => makeJob(job, {
+    ringCandidates: [equipment(8_680 + index, { 2: 10, 3: 10, 4: 10, 5: 10, 6: 5, 10: 1_200 }), ...sharedRings],
+    headCandidates: [equipment(8_690 + index, { 2: 10, 3: 10, 4: 10, 5: 10, 6: 5, 10: 1_100 }), ...sharedHeads],
+    foods: [],
+  }));
+  const expected = oracle(inputJobs, ["ring", "head"], "independent");
+  assert.ok(expected);
+  const workerExecutor = await createParallelBaselineExecutor();
+  assert.ok(workerExecutor);
+  const taskBatches: string[][] = [];
+  const progress: string[] = [];
+  let actual: JointLoadoutV3Result | undefined;
+  try {
+    actual = await findBestJointLoadoutV3({
+      jobs: inputJobs.map(({ id, slotNames, options }) => ({ id, slotNames, options })),
+      commonSlots: ["ring", "head"],
+      foodStrategy: "independent",
+      maxSearchMs: 20_000,
+      onProgress: (message) => progress.push(message),
+      baselineExecutor: async (tasks, control) => {
+        taskBatches.push(tasks.map((task) => task.job));
+        return workerExecutor(tasks, control);
+      },
+    });
+  } finally {
+    await workerExecutor.dispose?.();
+  }
+
+  assertMatchesOracle(actual, expected, inputJobs, ["ring", "head"], "independent");
+  assert.equal(actual!.proof.complete, true);
+  const twoSeedBatch = taskBatches.find((batch) => batch.length === 4);
+  assert.ok(twoSeedBatch, "both large-domain seeds should share one bounded worker batch");
+  assert.equal(twoSeedBatch!.filter((job) => job === "VPR").length, 2);
+  assert.equal(twoSeedBatch!.filter((job) => job === "MCH").length, 2);
+  assert.ok(progress.some((message) =>
+    message.includes("共享候选组合估分 9 个") && message.includes("精确尝试 2 个")),
+  "the fixture should stay on the large-domain, two-seed warm-start path");
+});
+
+test("V3 stops a seed batch as soon as a completed seed proves the global ceiling", async () => {
+  const sharedRings = Array.from({ length: 9 }, (_, index) =>
+    equipment(8_800 + index, { 1: index, 2: 0, 8: 0, 9: 8 - index }),
+  );
+  const inputJobs = (["VPR", "MCH"] as const).map((job, index) => makeJob(job, {
+    ringCandidates: [equipment(8_820 + index, { 2: 100, 8: 10 }), ...sharedRings],
+    headCandidates: [equipment(8_830, { 2: 0, 8: 0 }), equipment(8_831, { 2: 100, 8: 10 })],
+    weaponCandidates: [equipment(8_840, {}, { PDMG: 160 })],
+    foods: [],
+    constraints: { speedMin: 10, speedMax: 10 },
+    damageOverride: (attributes) => ({ damage: attributes[3] ?? 0, gcd: 100 }),
+  }));
+  const jobs = inputJobs.map(({ id, slotNames, options }) => {
+    const workerOptions: ExactMipOptions = { ...options };
+    delete workerOptions.equipmentAttributeExtractor;
+    return { id, slotNames, options: workerOptions };
+  });
+  const taskBatches: string[][] = [];
+  const completedTaskIndexes: number[][] = [];
+  const baselineSelections: string[][] = [];
+  const stoppedAt: number[] = [];
+  let cancelled = false;
+  const run = (onProgress?: (message: string) => void) => findBestJointLoadoutV3({
+    jobs,
+    commonSlots: ["ring"],
+    foodStrategy: "independent",
+    maxSearchMs: 20_000,
+    ...(onProgress === undefined ? {} : { onProgress }),
+    isCancelled: () => cancelled,
+    baselineExecutor: async (tasks, control) => {
+      const results = new Array<ExactMipResult | undefined>(tasks.length).fill(undefined);
+      taskBatches.push(tasks.map((task) => task.job));
+      const completions: number[] = [];
+      completedTaskIndexes.push(completions);
+      for (let index = 0; index < tasks.length; index++) {
+        let result = await findBestLoadoutExactMip(tasks[index]!);
+        assert.ok(result, `fixture task ${tasks[index]!.job} should be feasible`);
+        if (control.onTaskComplete === undefined) {
+          const fixture = inputJobs.find((job) => job.id === tasks[index]!.job)!;
+          const ringIndex = fixture.slotNames.indexOf("ring");
+          const headIndex = fixture.slotNames.indexOf("head");
+          const personalRing = fixture.options.slots[ringIndex]!.find((item) =>
+            item.itemId === 8_820 + inputJobs.indexOf(fixture));
+          const lowHead = fixture.options.slots[headIndex]!.find((item) => item.itemId === 8_830);
+          assert.ok(personalRing && lowHead);
+          const tiedSelection = [...result.selection];
+          tiedSelection[ringIndex] = personalRing;
+          tiedSelection[headIndex] = lowHead;
+          // Both candidates have the same CRT, speed, and weapon factors as the
+          // worker's optimum; select the tied personal-ring optimum so the
+          // first shared seed requires exact refinement.
+          result = { ...result, selection: tiedSelection };
+          baselineSelections.push(result.selection.map((item) => String(item.itemId)));
+        }
+        results[index] = result;
+        completions.push(index);
+        if (control.onTaskComplete?.(index, result) === true) {
+          stoppedAt.push(index);
+          break;
+        }
+      }
+      return results;
+    },
+  });
+
+  const result = await run();
+  assert.ok(result, "the exact search should return its proved incumbent");
+  assert.equal(result.value.numerator, "2");
+  assert.equal(result.value.denominator, "1");
+  assert.equal(result.proof.complete, true);
+  assert.match(result.proof.terminationReason, /全局上界/);
+  assert.equal(stoppedAt.length, 1,
+    `the callback should stop exactly one refinement batch; baselines=${JSON.stringify(baselineSelections)} batches=${JSON.stringify(taskBatches)}`);
+  const stoppedBatchIndex = stoppedAt[0]!;
+  const stoppedBatch = taskBatches.at(-1)!;
+  const stoppedCompletions = completedTaskIndexes.at(-1)!;
+  assert.ok(stoppedBatch.length > stoppedBatchIndex + 1,
+    `another seed task must remain queued when the global ceiling is reached; batch=${JSON.stringify(stoppedBatch)} stoppedAt=${stoppedBatchIndex}`);
+  assert.equal(stoppedCompletions.length, stoppedBatchIndex + 1,
+    "the executor should return without starting later seed tasks");
+
+  cancelled = false;
+  await assert.rejects(
+    run((message) => {
+      if (message.includes("V3 incumbent 更新")) cancelled = true;
+    }).then((value) => value),
+    (error: unknown) => error instanceof Error && error.name === "AbortError",
+    "cancellation requested by the incumbent callback must win over early-stop completion",
+  );
+});
+
+test("baseline Pareto pruning keeps exact optima and leaves dominated shared identities in the joint domain", async () => {
+  const dominatedSharedRing = equipment(8500, { 2: 10, 3: 10 });
+  const rdmSoloRing = equipment(8501, { 2: 20, 3: 20 });
+  const samSoloRing = equipment(8502, { 2: 30, 3: 30 });
+  const headTradeoffs = [
+    equipment(8510, { 1: 80, 2: 60, 3: 15, 7: 20 }),
+    equipment(8511, { 1: 20, 2: 15, 3: 60, 7: 80 }),
+  ];
+  const jobs = [
+    makeJob("RDM", {
+      slotNames: ["weapon", "ring", "head"],
+      weaponCandidates: [equipment(8520, {}, { MDMG: 160 })],
+      ringCandidates: [rdmSoloRing, dominatedSharedRing],
+      headCandidates: headTradeoffs,
+      foods: [],
+    }),
+    makeJob("SAM", {
+      slotNames: ["weapon", "ring", "head"],
+      weaponCandidates: [equipment(8521, {}, { PDMG: 160 })],
+      ringCandidates: [samSoloRing, dominatedSharedRing],
+      headCandidates: headTradeoffs,
+      foods: [],
+    }),
+  ];
+
+  const dominatedVector = vectorFor([dominatedSharedRing], undefined);
+  for (const personalRing of [rdmSoloRing, samSoloRing]) {
+    assert.ok(
+      vectorFor([personalRing], undefined).every((value, index) => value >= dominatedVector[index]!),
+      "the shared ring must be dominated in every attribute coordinate of each solo baseline",
+    );
+  }
+
+  const expected = oracle(jobs, ["ring", "head"], "independent");
+  assert.ok(expected);
+  assert.equal(expected.optima.RDM!.selection[1]!.itemId, rdmSoloRing.itemId);
+  assert.equal(expected.optima.SAM!.selection[1]!.itemId, samSoloRing.itemId);
+
+  const result = await runJoint(jobs, ["ring", "head"], "independent");
+  assertMatchesOracle(result, expected, jobs, ["ring", "head"], "independent");
+  assert.equal(result!.commonEquipments.ring.itemId, dominatedSharedRing.itemId);
+  assert.equal(result!.jobResults.RDM!.selection[1]!.itemId, dominatedSharedRing.itemId);
+  assert.equal(result!.jobResults.SAM!.selection[1]!.itemId, dominatedSharedRing.itemId);
 });
 
 test("shared food identity keeps each job's baseValue when compared with enumeration", async () => {

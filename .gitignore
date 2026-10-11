@@ -26,3 +26,6 @@ Thumbs.db
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Local search-optimization acceptance run artifacts
+docs/search-optimization/acceptance-runs/
