@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
-import { evaluateTimingSamples, timingTolerance } from "./timing-acceptance.mjs";
+import {
+  compareHistoricalTiming,
+  evaluateOptimizationTarget,
+  historicalTimingLabel,
+} from "./timing-acceptance.mjs";
 
 const checks = [];
 function check(name, callback) {
@@ -7,63 +11,55 @@ function check(name, callback) {
   checks.push(name);
 }
 
-check("uses a fixed one-second tolerance below ten seconds", () => {
-  assert.deepEqual(timingTolerance(4_000), {
-    referenceMs: 4_000,
-    toleranceMs: 1_000,
-    maximumMs: 5_000,
-    policy: "fixed-1000ms",
-  });
+const history = {
+  historicalBestMs: 4_000,
+  nineRoundMinMs: 4_200,
+  nineRoundAverageMs: 5_000,
+  nineRoundMaxMs: 5_800,
+};
+
+check("optimization target is independent and includes equality", () => {
+  assert.equal(evaluateOptimizationTarget(60_000, 60_000).status, "met");
+  assert.equal(evaluateOptimizationTarget(60_001, 60_000).status, "missed");
+  assert.equal(evaluateOptimizationTarget(null, 60_000).status, "incomplete");
 });
 
-check("does not repeat a run inside the paired snapshot tolerance", () => {
-  const result = evaluateTimingSamples({ samplesMs: [5_000], referenceMs: 4_000, nineRoundMaximumMs: 5_300 });
-  assert.equal(result.status, "pass-single");
-  assert.equal(result.shouldRepeat, false);
+check("at or below the historical best is successful optimization", () => {
+  const result = compareHistoricalTiming({ actualMs: 3_999, ...history });
+  assert.equal(result.status, "optimized");
   assert.equal(result.passed, true);
-  assert.equal(result.nineRoundMaximumMs, 5_300);
+  assert.equal(result.deltaFromAverageMs, -1_001);
 });
 
-check("requests nine total samples if an over-limit run is within the recorded maximum", () => {
-  const result = evaluateTimingSamples({ samplesMs: [5_200], referenceMs: 4_000, nineRoundMaximumMs: 5_300 });
-  assert.equal(result.status, "repeat-to-nine");
-  assert.equal(result.shouldRepeat, true);
-  assert.equal(result.sampleCount, 1);
-});
-
-check("accepts a nine-sample average within the paired snapshot tolerance", () => {
-  const result = evaluateTimingSamples({
-    samplesMs: [5_200, 4_800, 4_900, 4_850, 4_900, 4_950, 4_850, 4_900, 4_850],
-    referenceMs: 4_000,
-    nineRoundMaximumMs: 5_300,
-  });
-  assert.equal(result.status, "pass-average");
+check("slower than the best but below the nine-round average is a warned success", () => {
+  const result = compareHistoricalTiming({ actualMs: 4_999, ...history });
+  assert.equal(result.status, "optimized-with-warning");
   assert.equal(result.passed, true);
-  assert.ok(result.averageMs <= 5_000);
 });
 
-check("fails a nine-sample average above the paired snapshot tolerance", () => {
-  const result = evaluateTimingSamples({
-    samplesMs: [5_200, 5_100, 5_150, 5_050, 5_200, 5_100, 5_150, 5_050, 5_100],
-    referenceMs: 4_000,
-    nineRoundMaximumMs: 5_300,
-  });
-  assert.equal(result.status, "fail-average");
+check("equal to the nine-round average has no material impact", () => {
+  assert.equal(compareHistoricalTiming({ actualMs: 5_000, ...history }).status, "no-impact");
+});
+
+check("above the average but inside the observed range has no material impact", () => {
+  assert.equal(compareHistoricalTiming({ actualMs: 5_500, ...history }).status, "no-impact");
+});
+
+check("above the nine-round maximum is degradation", () => {
+  const result = compareHistoricalTiming({ actualMs: 5_801, ...history });
+  assert.equal(result.status, "regression");
   assert.equal(result.passed, false);
 });
 
-check("fails without further samples when a run exceeds the recorded maximum", () => {
-  const result = evaluateTimingSamples({ samplesMs: [5_301], referenceMs: 4_000, nineRoundMaximumMs: 5_300 });
-  assert.equal(result.status, "fail-above-nine-round-maximum");
-  assert.equal(result.shouldRepeat, false);
-  assert.equal(result.passed, false);
+check("missing or inconsistent historical data is not silently accepted", () => {
+  assert.equal(compareHistoricalTiming({ actualMs: 4_500, ...history, nineRoundMaxMs: undefined }).status, "unavailable");
+  assert.equal(compareHistoricalTiming({ actualMs: 4_500, ...history, nineRoundMinMs: 5_100 }).status, "unavailable");
 });
 
-check("marks timing unavailable without an exact historical snapshot replay", () => {
-  const result = evaluateTimingSamples({ samplesMs: [12_000], referenceMs: null, nineRoundMaximumMs: 15_000 });
-  assert.equal(result.status, "unavailable");
-  assert.equal(result.passed, undefined);
-  assert.equal(result.shouldRepeat, false);
+check("historical labels remain short", () => {
+  assert.equal(historicalTimingLabel("optimized-with-warning"), "优化成功（提示）");
+  assert.equal(historicalTimingLabel("no-impact"), "耗时无影响");
+  assert.equal(historicalTimingLabel("unknown"), "无法比较");
 });
 
-console.log(`计时验收自检通过：${checks.length} 项`);
+console.log(`耗时验收规则通过：${checks.length} 项`);

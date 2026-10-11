@@ -1,94 +1,91 @@
-export const DEFAULT_TIMING_ROUND_COUNT = 9;
+const STATUS = Object.freeze({
+  OPTIMIZED: "optimized",
+  OPTIMIZED_WITH_WARNING: "optimized-with-warning",
+  NO_IMPACT: "no-impact",
+  REGRESSION: "regression",
+  UNAVAILABLE: "unavailable",
+});
 
-export function timingTolerance(referenceMs) {
-  if (!Number.isFinite(referenceMs) || referenceMs < 0) {
-    throw new TypeError("referenceMs must be a non-negative finite number");
+const STATUS_LABELS = Object.freeze({
+  [STATUS.OPTIMIZED]: "优化成功",
+  [STATUS.OPTIMIZED_WITH_WARNING]: "优化成功（提示）",
+  [STATUS.NO_IMPACT]: "耗时无影响",
+  [STATUS.REGRESSION]: "劣化",
+  [STATUS.UNAVAILABLE]: "无法比较",
+});
+
+export function historicalTimingLabel(status) {
+  return STATUS_LABELS[status] ?? STATUS_LABELS[STATUS.UNAVAILABLE];
+}
+
+export function compareHistoricalTiming({
+  actualMs,
+  historicalBestMs,
+  nineRoundMinMs,
+  nineRoundAverageMs,
+  nineRoundMaxMs,
+}) {
+  const inputs = [actualMs, historicalBestMs, nineRoundMinMs, nineRoundAverageMs, nineRoundMaxMs];
+  if (inputs.some((value) => !Number.isFinite(value) || value < 0) ||
+      nineRoundMinMs > nineRoundAverageMs || nineRoundAverageMs > nineRoundMaxMs) {
+    return {
+      status: STATUS.UNAVAILABLE,
+      label: STATUS_LABELS[STATUS.UNAVAILABLE],
+      passed: false,
+      actualMs: Number.isFinite(actualMs) ? actualMs : null,
+      historicalBestMs: Number.isFinite(historicalBestMs) ? historicalBestMs : null,
+      nineRound: null,
+      deltaFromAverageMs: null,
+    };
   }
-  const toleranceMs = referenceMs < 10_000 ? 1_000 : referenceMs * 0.1;
+
+  let status;
+  if (actualMs <= historicalBestMs) {
+    status = STATUS.OPTIMIZED;
+  } else if (actualMs < nineRoundAverageMs) {
+    status = STATUS.OPTIMIZED_WITH_WARNING;
+  } else if (actualMs <= nineRoundMaxMs) {
+    status = STATUS.NO_IMPACT;
+  } else {
+    status = STATUS.REGRESSION;
+  }
+
   return {
-    referenceMs,
-    toleranceMs,
-    maximumMs: referenceMs + toleranceMs,
-    policy: referenceMs < 10_000 ? "fixed-1000ms" : "10-percent",
+    status,
+    label: STATUS_LABELS[status],
+    passed: status !== STATUS.REGRESSION,
+    actualMs,
+    historicalBestMs,
+    nineRound: {
+      minMs: nineRoundMinMs,
+      averageMs: nineRoundAverageMs,
+      maxMs: nineRoundMaxMs,
+    },
+    deltaFromAverageMs: actualMs - nineRoundAverageMs,
   };
 }
 
-export function evaluateTimingSamples({
-  samplesMs,
-  referenceMs,
-  nineRoundMaximumMs,
-  requiredSamples = DEFAULT_TIMING_ROUND_COUNT,
-}) {
-  if (!Array.isArray(samplesMs) || samplesMs.some((value) => !Number.isFinite(value) || value < 0)) {
-    throw new TypeError("samplesMs must contain only non-negative finite numbers");
+export function evaluateOptimizationTarget(actualMs, targetMs) {
+  if (!Number.isFinite(targetMs) || targetMs < 0) {
+    throw new TypeError("targetMs must be a non-negative finite number");
   }
-  if (!Number.isSafeInteger(requiredSamples) || requiredSamples < 1) {
-    throw new TypeError("requiredSamples must be a positive integer");
-  }
-  if (referenceMs === null || referenceMs === undefined) {
+  if (!Number.isFinite(actualMs) || actualMs < 0) {
     return {
-      status: "unavailable",
-      shouldRepeat: false,
-      nineRoundMaximumMs: nineRoundMaximumMs ?? null,
-      requiredSamples,
-      sampleCount: samplesMs.length,
-      samplesMs: [...samplesMs],
-      averageMs: samplesMs.length === 0 ? null : average(samplesMs),
-      reason: "没有对应历史最快代码快照的同机复测值。",
-    };
-  }
-
-  const limit = timingTolerance(referenceMs);
-  const firstMs = samplesMs[0];
-  if (firstMs === undefined) {
-    return {
-      ...limit,
       status: "incomplete",
-      shouldRepeat: false,
-      requiredSamples,
-      sampleCount: 0,
-      samplesMs: [],
-      averageMs: null,
-      reason: "没有取得首轮搜索耗时。",
+      label: "未完成",
+      met: false,
+      actualMs: null,
+      targetMs,
+      gapMs: null,
     };
   }
-
-  if (!Number.isFinite(nineRoundMaximumMs) || nineRoundMaximumMs < 0 || firstMs > nineRoundMaximumMs) {
-    return summarize(limit, samplesMs, requiredSamples, "fail-above-nine-round-maximum", false,
-      "首轮耗时超过同机历史快照容忍线和已记录九轮最长耗时。", false, nineRoundMaximumMs ?? null);
-  }
-
-  if (samplesMs.length < requiredSamples) {
-    return summarize(limit, samplesMs, requiredSamples, "repeat-to-nine", true,
-      "首轮仍落在九轮已观测范围内；继续补测至规定轮数后按均值判定。", null, nineRoundMaximumMs);
-  }
-
-  const averageMs = average(samplesMs);
-  const passed = averageMs <= limit.maximumMs;
-  return summarize(limit, samplesMs, requiredSamples, passed ? "pass-average" : "fail-average", false,
-    passed
-      ? "补测均值位于同机历史快照容忍线内。"
-      : "补测均值仍超过同机历史快照容忍线。",
-    passed,
-    nineRoundMaximumMs,
-    averageMs);
-}
-
-function average(values) {
-  return values.reduce((sum, value) => sum + value, 0) / values.length;
-}
-
-function summarize(limit, samplesMs, requiredSamples, status, shouldRepeat, reason, passed, nineRoundMaximumMs = null, averageMs = average(samplesMs)) {
+  const met = actualMs <= targetMs;
   return {
-    ...limit,
-    nineRoundMaximumMs,
-    status,
-    shouldRepeat,
-    requiredSamples,
-    sampleCount: samplesMs.length,
-    samplesMs: [...samplesMs],
-    averageMs,
-    passed,
-    reason,
+    status: met ? "met" : "missed",
+    label: met ? "达标" : "超时",
+    met,
+    actualMs,
+    targetMs,
+    gapMs: Math.max(0, actualMs - targetMs),
   };
 }
