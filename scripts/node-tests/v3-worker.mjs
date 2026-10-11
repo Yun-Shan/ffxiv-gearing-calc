@@ -4,9 +4,16 @@ import { runJointOptimizationLocally } from "../../src/domain/optimizer.ts";
 if (!parentPort) throw new Error("V3 worker 缺少 parentPort");
 
 try {
-  const result = await runJointOptimizationLocally(workerData.config, {
+  const profileTimingEnabled = process.env.FFXIV_PROFILE_TIMING === "1";
+  const options = {
     onProgress: (message) => parentPort.postMessage({ type: "progress", message }),
-  });
+    ...(profileTimingEnabled ? {
+      onSolverProgress: (progress) => {
+        if (progress.kind === "log") parentPort.postMessage({ type: "solverProgress", progress });
+      },
+    } : {}),
+  };
+  const result = await runJointOptimizationLocally(workerData.config, options);
   parentPort.postMessage({ type: "result", result });
 } catch (error) {
   parentPort.postMessage({

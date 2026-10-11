@@ -15,6 +15,7 @@ export function isRingPairEquipInfo(
 export function buildRingPairEquipInfos(
   rings: readonly EquipInfo[],
   isUnique: (itemId: number) => boolean,
+  compareSymmetricSlotOrder?: (left: EquipInfo, right: EquipInfo) => number,
 ): RingPairEquipInfo[] {
   const result: RingPairEquipInfo[] = [];
   const uniqueByItemId = new Map<number, boolean>();
@@ -26,6 +27,7 @@ export function buildRingPairEquipInfos(
     .map(([itemId, unique]) => [itemId, unique] as const);
   for (const first of rings) {
     for (const second of rings) {
+      if (compareSymmetricSlotOrder !== undefined && compareSymmetricSlotOrder(first, second) > 0) continue;
       if (first.itemId === second.itemId && uniqueByItemId.get(first.itemId) === true) continue;
 
       const attributes = new Map<number, number>();

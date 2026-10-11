@@ -34,6 +34,10 @@ export type FoodInfo = {
 export type EquipInfo = {
   itemId: number;
   itemLevel: number;
+  /** Identifies an independent first/second ring slot for exact unique-item constraints. */
+  ringSlotIndex?: 0 | 1;
+  /** Physical item uniqueness metadata, retained when ring candidates cross a worker boundary. */
+  isUnique?: boolean;
   /** Stable encoding of custom parameters and actual materia assignment. */
   variantKey?: string;
   key: string;

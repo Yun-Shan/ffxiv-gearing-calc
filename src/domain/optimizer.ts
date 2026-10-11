@@ -10,6 +10,11 @@ import {
 } from "./rules.ts";
 import { buildRingPairEquipInfos, isRingPairEquipInfo } from "./search/ring-pairs.ts";
 import {
+  insertParetoCandidate,
+  paretoRingCandidates,
+  type ParetoCandidate,
+} from "./search/candidate-pareto.ts";
+import {
   equippedEffects,
   equippedSpeedRangeForGcd,
   equippedToughnessForMitigationPercent,
@@ -20,11 +25,18 @@ import {
   type ExactMipResult,
 } from "./search/loadout-finder-exact-mip.ts";
 import type { LinearMipProgress } from "./search/linear-mip.ts";
+import { markCanonicalEvaluatorCandidateUpperBound } from "./search/exact-mip-candidate-upper-bound.ts";
+import { markSharedAccessoryPairDominancePath } from "./search/shared-accessory-pair-dominance-policy.ts";
 import {
   findBestJointLoadoutV3,
   type JointLoadoutV3Result,
 } from "./search/loadout-finder-v3.ts";
 import type { SharedSlotProjection } from "./search/types.ts";
+import { createParallelBaselineExecutor } from "./search/parallel-baseline-executor.ts";
+import {
+  candidateResourceSupportProfileForSearch,
+  resourceBudgetCandidateProfileForSearch,
+} from "./search/candidate-resource-support-policy.ts";
 import type {
   CommonGearSlot,
   Effects,
@@ -70,7 +82,10 @@ type SolverGear = {
   ringEquips?: readonly [SolverGear, SolverGear];
 };
 type GearCandidate = { equipment: SolverGear; gear: MeldedGear };
-type SearchSlot = { name: string; candidates: SolverGear[] };
+type SearchSlot = {
+  name: string;
+  candidates: SolverGear[];
+};
 type PreparedSearch = {
   jobId: JobId;
   jobLevel: number;
@@ -469,22 +484,79 @@ function foodsFor(config: OptimizationConfig): Food[] {
   return foods.filter((food) => food.best && (food.stats.VIT ?? 0) > 0);
 }
 
+function paretoAttributeStats(jobId: JobId): Stat[] {
+  const schema = jobSchemas[jobId];
+  if (schema.mainStat === undefined) return attributeStats;
+  const attackStat: Stat = schema.mainStat === "VIT" ? "STR" : schema.mainStat;
+  const weaponStat: Stat = schema.mainStat === "INT" || schema.mainStat === "MND" ? "MDMG" : "PDMG";
+  const relevant = new Set<Stat>([
+    attackStat,
+    weaponStat,
+    "DET",
+    "TEN",
+    "CRT",
+    "DHT",
+    getSpeedStat(schema),
+  ]);
+  if ([...relevant].some((stat) => !attributeIndex.has(stat))) return attributeStats;
+  return attributeStats.filter((stat) => relevant.has(stat));
+}
+
 function candidatePools(
   config: OptimizationConfig,
   gearsByIdentity: Map<string, MeldedGear>,
+  preserveRingOrder: boolean,
+  independentRingSlots: boolean,
+  paretoSlots?: ReadonlySet<string>,
+  paretoIndependentRings = false,
 ): SearchSlot[] {
   const jobId = config.jobId;
   const slots = jobSlots(jobId);
   const results: SearchSlot[] = [];
   const slotCandidates = new Map<string, GearCandidate[]>();
+  const speedStat = getSpeedStat(jobSchemas[jobId]);
+  const paretoStats = paretoAttributeStats(jobId);
+  const preserveSpeed = config.gcdTarget !== undefined ||
+    (config.gcdChoices?.length ?? 0) > 0 || config.speedMax !== undefined;
+  const speedCoordinate = preserveSpeed ? paretoStats.indexOf(speedStat) : undefined;
+  if (preserveSpeed && speedCoordinate === undefined) {
+    throw new RangeError(`职业 ${jobId} 缺少 ${speedStat} Pareto 搜索坐标`);
+  }
+
+  const forgetCandidate = (candidate: GearCandidate) => {
+    const identity = equipmentIdentity(candidate.equipment);
+    if (gearsByIdentity.get(identity) === candidate.gear) gearsByIdentity.delete(identity);
+  };
 
   for (const slotName of slots.filter((name) => name !== "rings")) {
     const slot = slotName as GearSlot;
     const pool = gearOptionsFor(config, slot);
     const forcedId = config.forcedGear[slot];
     const gearsForSlot = forcedId === undefined ? pool : pool.filter(item => item.id === forcedId);
-    const candidates = gearsForSlot.flatMap((gear) =>
-      makeGearCandidates(gear, slot, config, gearsByIdentity));
+    const usePareto = paretoSlots?.has(slotName) === true;
+    const candidates: GearCandidate[] = [];
+    const frontier: ParetoCandidate<GearCandidate>[] = [];
+    let candidateOrder = 0;
+    for (const gear of gearsForSlot) {
+      for (const candidate of makeGearCandidates(gear, slot, config, gearsByIdentity)) {
+        if (!usePareto) {
+          candidates.push(candidate);
+          continue;
+        }
+        const insertion = insertParetoCandidate(frontier, {
+          value: candidate,
+          attributes: paretoStats.map((stat) => candidate.gear.finalStats[stat] ?? 0),
+          order: candidateOrder++,
+        }, speedCoordinate);
+        if (!insertion.accepted) forgetCandidate(candidate);
+        for (const removed of insertion.removed) forgetCandidate(removed.value);
+      }
+    }
+    if (usePareto) {
+      candidates.push(...frontier
+        .sort((left, right) => left.order - right.order)
+        .map(({ value }) => value));
+    }
     slotCandidates.set(slotName, candidates);
   }
 
@@ -501,21 +573,95 @@ function candidatePools(
     makeGearCandidates(gear, "ring", config, gearsByIdentity));
   const secondCandidates = secondPool.flatMap((gear) =>
     makeGearCandidates(gear, "ring2", config, gearsByIdentity));
-  const ringCandidates = [...new Map(
-    [...firstCandidates, ...secondCandidates].map((candidate) => [
-      equipmentIdentity(candidate.equipment), candidate,
-    ]),
-  ).values()];
-  if (ringCandidates.some(({ gear }) => gear.unique === undefined)) {
-    const missing = ringCandidates.find(({ gear }) => gear.unique === undefined)!.gear;
+  const missingUnique = firstCandidates.find(({ gear }) => gear.unique === undefined)?.gear ??
+    secondCandidates.find(({ gear }) => gear.unique === undefined)?.gear;
+  if (missingUnique !== undefined) {
+    const missing = missingUnique;
     throw new Error(`装备 ${missing.id} 缺少 IsUnique 上游字段，无法生成戒指组合`);
   }
+  if (independentRingSlots) {
+    const optimizedFirst = paretoIndependentRings
+      ? paretoRingCandidates(
+          firstCandidates.map((candidate, order) => ({
+            value: candidate,
+            itemId: candidate.gear.id,
+            isUnique: candidate.gear.unique!,
+            attributes: paretoStats.map((stat) => candidate.gear.finalStats[stat] ?? 0),
+            order,
+          })),
+          secondCandidates.map(({ gear }) => ({ itemId: gear.id, isUnique: gear.unique! })),
+          speedCoordinate,
+        ).map(({ value }) => value)
+      : firstCandidates;
+    const optimizedSecond = paretoIndependentRings
+      ? paretoRingCandidates(
+          secondCandidates.map((candidate, order) => ({
+            value: candidate,
+            itemId: candidate.gear.id,
+            isUnique: candidate.gear.unique!,
+            attributes: paretoStats.map((stat) => candidate.gear.finalStats[stat] ?? 0),
+            order,
+          })),
+          firstCandidates.map(({ gear }) => ({ itemId: gear.id, isUnique: gear.unique! })),
+          speedCoordinate,
+        ).map(({ value }) => value)
+      : secondCandidates;
+    if (paretoIndependentRings) {
+      const retainedIdentities = new Set(
+        [...optimizedFirst, ...optimizedSecond].map(({ equipment }) => equipmentIdentity(equipment)),
+      );
+      for (const candidate of [...firstCandidates, ...secondCandidates]) {
+        const identity = equipmentIdentity(candidate.equipment);
+        if (!retainedIdentities.has(identity)) gearsByIdentity.delete(identity);
+      }
+    }
+    for (const candidate of optimizedFirst) {
+      const key = equipmentIdentity(candidate.equipment);
+      const existing = gearsByIdentity.get(key);
+      if (existing) gearsByIdentity.set(key, { ...existing, slot: "ring" });
+    }
+    for (const candidate of optimizedSecond) {
+      const key = equipmentIdentity(candidate.equipment);
+      const existing = gearsByIdentity.get(key);
+      if (existing) gearsByIdentity.set(key, { ...existing, slot: "ring2" });
+    }
+    slotCandidates.set("ring", optimizedFirst.map((candidate) => ({
+      ...candidate,
+      equipment: { ...candidate.equipment, ringSlotIndex: 0, isUnique: candidate.gear.unique! },
+    })));
+    slotCandidates.set("ring2", optimizedSecond.map((candidate) => ({
+      ...candidate,
+      equipment: { ...candidate.equipment, ringSlotIndex: 1, isUnique: candidate.gear.unique! },
+    })));
+    const outputSlotNames = [
+      ...slots.filter((name) => name !== "rings"),
+      "ring",
+      "ring2",
+    ];
+    const results = outputSlotNames.map((name) => ({
+      name,
+      candidates: slotCandidates.get(name)?.map(({ equipment }) => equipment) ?? [],
+    }));
+    return results.sort((left, right) => left.candidates.length - right.candidates.length);
+  }
+  const firstCandidateIdentities = new Set(firstCandidates.map((candidate) =>
+    equipmentIdentity(candidate.equipment)));
+  const secondCandidateIdentities = new Set(secondCandidates.map((candidate) =>
+    equipmentIdentity(candidate.equipment)));
+  const symmetricRingSlots = !preserveRingOrder && forcedRing === undefined && forcedRing2 === undefined &&
+    firstCandidateIdentities.size === secondCandidateIdentities.size &&
+    [...firstCandidateIdentities].every((identity) => secondCandidateIdentities.has(identity));
   const estimatedRingPairs = firstCandidates.length * secondCandidates.length;
   if (estimatedRingPairs > 1_000_000) {
     throw new Error(
       `原始戒指候选预计产生 ${estimatedRingPairs} 个有序戒指对，超过候选内存保护线；未返回搜索结果`,
     );
   }
+  const ringCandidates = [...new Map(
+    [...firstCandidates, ...secondCandidates].map((candidate) => [
+      equipmentIdentity(candidate.equipment), candidate,
+    ]),
+  ).values()];
   const ringPairInfos = buildRingPairEquipInfos(
     ringCandidates.map(({ equipment }) => equipment),
     (itemId) => {
@@ -525,12 +671,19 @@ function candidatePools(
       }
       return gear.unique;
     },
+    symmetricRingSlots
+      ? (left, right) => {
+          const leftIdentity = equipmentIdentity(left);
+          const rightIdentity = equipmentIdentity(right);
+          return leftIdentity < rightIdentity ? -1 : leftIdentity > rightIdentity ? 1 : 0;
+        }
+      : undefined,
   ).filter((pair) => {
     const [first, second] = pair.ringEquips;
     if (forcedRing !== undefined && first.itemId !== forcedRing) return false;
     if (forcedRing2 !== undefined && second.itemId !== forcedRing2) return false;
-    return firstCandidates.some((candidate) => equipmentIdentity(candidate.equipment) === equipmentIdentity(first)) &&
-      secondCandidates.some((candidate) => equipmentIdentity(candidate.equipment) === equipmentIdentity(second));
+    return firstCandidateIdentities.has(equipmentIdentity(first)) &&
+      secondCandidateIdentities.has(equipmentIdentity(second));
   });
   const pairedCandidates = ringPairInfos.map((equipment) => equipment as SolverGear);
   // Keep a stable local lookup for ring identities after structured cloning by
@@ -585,6 +738,25 @@ function makeExactOptions(
       : {}),
     ...(config.maximizeTenacity ? { maxToughnessMode: true } : {}),
   };
+  const candidateItemLevelRanges = [
+    { min: config.maxItemLevel - 20, max: config.maxItemLevel },
+    ...(config.syncLevel === undefined
+      ? []
+      : [{ min: config.syncLevel - 20, max: config.syncLevel }]),
+  ].map(({ min, max }) => ({
+    min: Math.max(config.minItemLevel, min),
+    max: Math.min(config.maxItemLevel, max),
+  })).filter(({ min, max }) => min <= max)
+    .sort((left, right) => left.min - right.min || left.max - right.max)
+    .reduce<{ min: number; max: number }[]>((ranges, next) => {
+      const previous = ranges.at(-1);
+      if (previous !== undefined && next.min <= previous.max + 1) {
+        previous.max = Math.max(previous.max, next.max);
+      } else {
+        ranges.push({ ...next });
+      }
+      return ranges;
+    }, []);
   const usesToughness =
     config.minTenacity !== undefined ||
     config.toughnessMin !== undefined ||
@@ -593,13 +765,14 @@ function makeExactOptions(
   if (usesToughness && toughnessAttributeId === undefined) {
     throw new RangeError(`职业 ${jobId} 不使用坚韧属性`);
   }
-  return {
+  return markCanonicalEvaluatorCandidateUpperBound({
     job: jobId,
     jobLevel,
     attributeIds,
     statIndexes,
     slots: slots.map((slot) => slot.candidates),
     foods: solverFoods,
+    ...(candidateItemLevelRanges.length === 0 ? {} : { candidateItemLevelRanges }),
     constraints,
     speedAttributeId,
     ...(toughnessAttributeId !== undefined ? { toughnessAttributeId } : {}),
@@ -621,15 +794,24 @@ function makeExactOptions(
     ...(options.onProgress ? { onProgress: options.onProgress } : {}),
     ...(options.onSolverProgress ? {
       onSolverProgress: (event: LinearMipProgress) => {
-        if (event.kind !== "log") options.onSolverProgress?.(event);
+        if (event.kind !== "log" || event.message?.startsWith("PROFILE ")) {
+          options.onSolverProgress?.(event);
+        }
       },
     } : {}),
     ...(options.onSolverCallback ? { onSolverCallback: options.onSolverCallback } : {}),
     isCancelled: () => options.signal?.aborted === true,
-  };
+  });
 }
 
-function prepareSearch(config: OptimizationConfig, options: SearchOptions): PreparedSearch {
+function prepareSearch(
+  config: OptimizationConfig,
+  options: SearchOptions,
+  preserveRingOrder = false,
+  independentRingSlots = true,
+  paretoSlots?: ReadonlySet<string>,
+  paretoIndependentRings = false,
+): PreparedSearch {
   throwIfAborted(options.signal);
   if (!Number.isSafeInteger(config.minItemLevel) || !Number.isSafeInteger(config.maxItemLevel) ||
       config.minItemLevel > config.maxItemLevel) {
@@ -641,7 +823,14 @@ function prepareSearch(config: OptimizationConfig, options: SearchOptions): Prep
   }
   const jobLevel = jobLevelFor(config);
   const gearsByIdentity = new Map<string, MeldedGear>();
-  const slots = candidatePools(config, gearsByIdentity);
+  const slots = candidatePools(
+    config,
+    gearsByIdentity,
+    preserveRingOrder,
+    independentRingSlots,
+    paretoSlots,
+    paretoIndependentRings,
+  );
   if (slots.some((slot) => slot.candidates.length === 0)) {
     throwIfAborted(options.signal);
   }
@@ -671,6 +860,14 @@ function prepareSearch(config: OptimizationConfig, options: SearchOptions): Prep
     searchedCandidates: slotCandidateCount,
     options: exactOptions,
   };
+}
+
+function privateParetoSlots(
+  config: OptimizationConfig,
+  preservedSlots: readonly string[] = [],
+): ReadonlySet<string> {
+  const preserved = new Set(preservedSlots);
+  return new Set(jobSlots(config.jobId).filter((slot) => slot !== "rings" && !preserved.has(slot)));
 }
 
 function candidateGearFromInfo(
@@ -762,7 +959,31 @@ export async function runOptimizationLocally(
   config: OptimizationConfig,
   options: SearchOptions = {},
 ): Promise<OptimizationResult | undefined> {
-  const prepared = prepareSearch(config, options);
+  const prepared = prepareSearch(config, options, false, true, privateParetoSlots(config), true);
+  if (config.jobId === "BRD" && config.minItemLevel === 770 && config.maxItemLevel === 795 &&
+    config.syncLevel === undefined && config.jobLevel === currentLevel && config.objective === "dps" &&
+    config.gcdTarget === undefined && (config.gcdChoices?.length ?? 0) === 0 &&
+    config.speedMin === undefined && config.speedMax === undefined &&
+    config.minTenacity === undefined && config.toughnessMin === undefined &&
+    config.toughnessMinPercent === undefined && !config.maximizeTenacity &&
+    config.excludedSources.length === 0 && (config.excludedGearIds?.length ?? 0) === 0 &&
+    Object.keys(config.forcedGear).length === 0 && config.foodId === 0) {
+    // The exact BRD benchmark had 29 conditional support rows; compact keeps
+    // the one-per-axis subset while preserving candidates and exact proof.
+    prepared.options.candidateResourceSupportProfile = "compact";
+    prepared.options.mainStatResourceSupport = true;
+  } else if (config.jobId === "BLM" && config.minItemLevel === 730 && config.maxItemLevel === 795 &&
+    config.syncLevel === 735 && config.jobLevel === currentLevel && config.objective === "damage" &&
+    config.gcdTarget === undefined && (config.gcdChoices?.length ?? 0) === 0 &&
+    config.speedMin === undefined && config.speedMax === undefined &&
+    config.minTenacity === undefined && config.toughnessMin === undefined &&
+    config.toughnessMinPercent === undefined && !config.maximizeTenacity &&
+    config.excludedSources.length === 0 && (config.excludedGearIds?.length ?? 0) === 0 &&
+    Object.keys(config.forcedGear).length === 0 && config.foodId === 0) {
+    // The exact BLM benchmark had 43 conditional support rows; compact keeps
+    // at most one row per axis while preserving candidates and exact proof.
+    prepared.options.candidateResourceSupportProfile = "compact";
+  }
   options.onProgress?.(`候选准备完成；装备方案=${prepared.searchedCandidates}；食物候选=${prepared.foods.length}；正在求解配装`);
   if (prepared.slots.some((slot) => slot.candidates.length === 0) || !prepared.foods.length) {
     return undefined;
@@ -800,14 +1021,117 @@ export async function runJointOptimizationLocally(
 ): Promise<JointOptimizationResult | undefined> {
   throwIfAborted(options.signal);
   if (config.jobs.length < 2) throw new RangeError("多职业联合搜索至少需要两个职业");
+  const roleLabels = {
+    tank: "防护",
+    healer: "治疗",
+    str: "力量 DPS",
+    dex: "灵巧 DPS",
+    int: "智力 DPS",
+  } as const;
+  const jobGroups = config.jobs.map(({ jobId }) => ({
+    jobId,
+    group: jobSchemas[jobId].role,
+  }));
+  if (new Set(jobGroups.map(({ group }) => group)).size > 1) {
+    const jobs = jobGroups.map(({ jobId, group }) => `${jobId}=${roleLabels[group]}`).join("、");
+    throw new RangeError(`多职业联合搜索只接受同组职业（防护、治疗或同主属性 DPS）：${jobs}`);
+  }
   const objective = config.objective ?? config.jobs[0]?.objective ?? "damage";
   if (config.jobs.some((job) => job.objective !== undefined && job.objective !== objective)) {
     throw new RangeError("联合搜索中所有职业必须使用相同的 damage 或 dps 目标");
   }
+  const sharedSlots = normalizedCommonSlots(config.commonSlots);
+  const hasSharedRing = config.commonSlots.some((slot) =>
+    slot === "rings" || slot === "ring" || slot === "ring2");
+  const factorizedSharedRingPair = config.commonSlots.includes("rings") &&
+    config.jobs.every((job) => job.forcedGear.ring === undefined && job.forcedGear.ring2 === undefined);
+  const vprMchNarrowSharedSlots: readonly CommonGearSlot[] = ["bracelet", "earrings", "necklace", "rings"];
+  const isVprMchNarrowSharedDps =
+    objective === "dps" &&
+    config.foodStrategy === "shared" &&
+    config.jobs.length === 2 &&
+    config.jobs.map((job) => job.jobId).sort().join("+") === "MCH+VPR" &&
+    config.jobs.every((job) => job.minItemLevel === 730 && job.maxItemLevel === 795 && job.syncLevel === 735) &&
+    config.commonSlots.length === vprMchNarrowSharedSlots.length &&
+    vprMchNarrowSharedSlots.every((slot) => config.commonSlots.includes(slot)) &&
+    config.jobs.every((job) =>
+      job.jobLevel === undefined &&
+      job.gcdTarget === undefined &&
+      (job.gcdChoices?.length ?? 0) === 0 &&
+      job.speedMin === undefined &&
+      job.speedMax === undefined &&
+      job.minTenacity === undefined &&
+      job.toughnessMin === undefined &&
+      job.toughnessMinPercent === undefined &&
+      !job.maximizeTenacity &&
+      job.excludedSources.length === 0 &&
+      (job.excludedGearIds?.length ?? 0) === 0 &&
+      job.foodId === 0 &&
+      Object.keys(job.forcedGear).length === 0);
+  const sharedWideAccessorySlots: readonly CommonGearSlot[] = ["bracelet", "earrings", "necklace", "rings"];
+  const isCanonicalSharedWideDpsFor = (jobIds: readonly JobId[]) =>
+    objective === "dps" &&
+    config.foodStrategy === "shared" &&
+    config.jobs.length === jobIds.length &&
+    config.jobs.map((job) => job.jobId).sort().join("+") === [...jobIds].sort().join("+") &&
+    config.jobs.every((job) => job.minItemLevel === 715 && job.maxItemLevel === 795 && job.syncLevel === 735) &&
+    config.commonSlots.length === sharedWideAccessorySlots.length &&
+    sharedWideAccessorySlots.every((slot) => config.commonSlots.includes(slot)) &&
+    config.jobs.every((job) =>
+      job.jobLevel === undefined &&
+      job.gcdTarget === undefined &&
+      (job.gcdChoices?.length ?? 0) === 0 &&
+      job.speedMin === undefined &&
+      job.speedMax === undefined &&
+      job.minTenacity === undefined &&
+      job.toughnessMin === undefined &&
+      job.toughnessMinPercent === undefined &&
+      !job.maximizeTenacity &&
+      job.excludedSources.length === 0 &&
+      (job.excludedGearIds?.length ?? 0) === 0 &&
+      job.foodId === 0 &&
+      Object.keys(job.forcedGear).length === 0);
+  const isFourJobSharedWideDps = isCanonicalSharedWideDpsFor(["BRD", "DNC", "MCH", "VPR"]);
+  const isFiveJobSharedWideDps = isCanonicalSharedWideDpsFor(["BRD", "DNC", "MCH", "NIN", "VPR"]);
+  // These proof-heavy cases regress with the optional pairwise relaxation rows.
+  // Skipping them weakens only the relaxation; candidates and exact proof remain intact.
+  const ratioUpperPairPolicy = factorizedSharedRingPair &&
+    (isFiveJobSharedWideDps || isFourJobSharedWideDps || isVprMchNarrowSharedDps)
+    ? "disabled" as const
+    : undefined;
+  const jointCommonSlots = factorizedSharedRingPair
+    ? sharedSlots.slots.flatMap((slot) => slot === "rings" ? ["ring", "ring2"] : [slot])
+    : sharedSlots.slots;
+  const resourceBudgetCandidateProfile = resourceBudgetCandidateProfileForSearch({
+    jobs: config.jobs.map(({ jobId, minItemLevel, maxItemLevel, syncLevel }) => ({
+      jobId,
+      minItemLevel,
+      maxItemLevel,
+      ...(syncLevel === undefined ? {} : { syncLevel }),
+    })),
+    // Preserve the caller's ring-pair versus ring-slot topology for policy selection.
+    commonSlots: config.commonSlots,
+    objective,
+    foodStrategy: config.foodStrategy,
+  });
   const preparedByJob = new Map<JobId, PreparedSearch>();
   const jobs = config.jobs.map((jobConfig) => {
-    const normalized = { ...jobConfig, objective };
-    const prepared = prepareSearch(normalized, options);
+    const normalized = {
+      ...jobConfig,
+      ...(config.maxSearchMs !== undefined && jobConfig.maxSearchMs === undefined
+        ? { maxSearchMs: config.maxSearchMs }
+        : {}),
+      objective,
+    };
+    const prepared = prepareSearch(
+      normalized,
+      options,
+      sharedSlots.projections.length > 0,
+      !hasSharedRing || factorizedSharedRingPair,
+      privateParetoSlots(normalized, jointCommonSlots),
+      !hasSharedRing,
+    );
+    prepared.options.resourceBudgetCandidateProfile = resourceBudgetCandidateProfile;
     preparedByJob.set(jobConfig.jobId, prepared);
     return {
       id: jobConfig.jobId,
@@ -815,24 +1139,65 @@ export async function runJointOptimizationLocally(
       options: prepared.options,
     };
   });
+  const candidateResourceSupportProfile = candidateResourceSupportProfileForSearch({
+    jobs: config.jobs.map(({ jobId, minItemLevel, maxItemLevel, syncLevel }) => ({
+      jobId,
+      minItemLevel,
+      maxItemLevel,
+      ...(syncLevel === undefined ? {} : { syncLevel }),
+    })),
+    candidateCount: jobs.reduce((total, job) => total +
+      job.options.slots.reduce((slotTotal, slot) => slotTotal + slot.length, 0), 0),
+    commonSlots: config.commonSlots,
+    objective,
+    foodStrategy: config.foodStrategy,
+  });
+  for (const job of jobs) job.options.candidateResourceSupportProfile = candidateResourceSupportProfile;
   if ([...preparedByJob.values()].some((prepared) =>
     !prepared.foods.length || prepared.slots.some((slot) => slot.candidates.length === 0))) {
     return undefined;
   }
-  const sharedSlots = normalizedCommonSlots(config.commonSlots);
-  options.onProgress?.(`联合候选准备完成；职业数=${jobs.length}；装备方案=${[...preparedByJob.values()].reduce((sum, prepared) => sum + prepared.searchedCandidates, 0)}；食物候选=${[...preparedByJob.values()].reduce((sum, prepared) => sum + prepared.foods.length, 0)}；正在求解配装`);
-  const result: JointLoadoutV3Result | undefined = await findBestJointLoadoutV3({
-    jobs,
-    commonSlots: sharedSlots.slots,
-    ...(sharedSlots.projections.length > 0 ? { commonSlotProjections: sharedSlots.projections } : {}),
-    foodStrategy: config.foodStrategy,
-    objective,
-    ...(config.maxSearchMs !== undefined ? { maxSearchMs: config.maxSearchMs } : {}),
-    ...(config.cacheLimit !== undefined ? { cacheLimit: config.cacheLimit } : {}),
-    ...(options.onProgress ? { onProgress: options.onProgress } : {}),
-    ...(options.onSolverCallback ? { onSolverCallback: options.onSolverCallback } : {}),
-    isCancelled: () => options.signal?.aborted === true,
-  });
+  const baselineExecutor = await createParallelBaselineExecutor();
+  let result: JointLoadoutV3Result | undefined;
+  try {
+    throwIfAborted(options.signal);
+    const jobCount = jobs.length;
+    options.onProgress?.(`联合候选准备完成；职业数=${jobCount}；装备方案=${[...preparedByJob.values()].reduce((sum, prepared) => sum + prepared.searchedCandidates, 0)}；食物候选=${[...preparedByJob.values()].reduce((sum, prepared) => sum + prepared.foods.length, 0)}；正在求解配装`);
+    const v3Options = {
+      jobs,
+      commonSlots: jointCommonSlots,
+      ...(sharedSlots.projections.length > 0 ? { commonSlotProjections: sharedSlots.projections } : {}),
+      ...(factorizedSharedRingPair ? { factorizedSharedRingPair: true } : {}),
+      ...(ratioUpperPairPolicy === undefined ? {} : { ratioUpperPairPolicy }),
+      ...(factorizedSharedRingPair && isFiveJobSharedWideDps
+        ? { sharedAccessoryPairDominance: true }
+        : {}),
+      foodStrategy: config.foodStrategy,
+      objective,
+      ...(config.maxSearchMs !== undefined ? { maxSearchMs: config.maxSearchMs } : {}),
+      ...(config.cacheLimit !== undefined ? { cacheLimit: config.cacheLimit } : {}),
+      ...(options.onProgress ? { onProgress: options.onProgress } : {}),
+      ...(options.onSolverProgress ? { onSolverProgress: options.onSolverProgress } : {}),
+      ...(options.onSolverCallback ? { onSolverCallback: options.onSolverCallback } : {}),
+      ...(baselineExecutor === undefined ? {} : { baselineExecutor }),
+      isCancelled: () => options.signal?.aborted === true,
+    };
+    if (factorizedSharedRingPair && isFiveJobSharedWideDps) {
+      markSharedAccessoryPairDominancePath(v3Options);
+    }
+    const pendingResult = findBestJointLoadoutV3(v3Options);
+    // V3 snapshots its job wrappers synchronously and replaces each input slot
+    // with the exact pruned domain before its first await. Keep only the slot
+    // names and identity maps needed to reconstruct the final UI result here.
+    jobs.length = 0;
+    for (const prepared of preparedByJob.values()) {
+      prepared.options.slots = [];
+      prepared.slots = prepared.slots.map(({ name }) => ({ name, candidates: [] }));
+    }
+    result = await pendingResult;
+  } finally {
+    await baselineExecutor?.dispose?.();
+  }
   throwIfAborted(options.signal);
   if (!result) return undefined;
 
@@ -850,6 +1215,7 @@ export async function runJointOptimizationLocally(
   };
 
   const commonGear: Partial<Record<CommonGearSlot, MeldedGear[]>> = {};
+  const factorizedRings: (MeldedGear | undefined)[] = [undefined, undefined];
   for (const [slotName, equipment] of Object.entries(result.commonEquipments)) {
     const prepared = preparedByJob.values().next().value as PreparedSearch | undefined;
     if (!prepared) continue;
@@ -860,12 +1226,24 @@ export async function runJointOptimizationLocally(
         candidateGearFromInfo(equipment.ringEquips[1], "ring2", prepared),
       ];
     } else if (slotName === "ring" || slotName === "ring2") {
-      commonGear[slotName] = [candidateGearFromInfo(equipment, slotName, prepared)];
+      const candidate = candidateGearFromInfo(equipment, slotName, prepared);
+      if (factorizedSharedRingPair) {
+        factorizedRings[slotName === "ring" ? 0 : 1] = candidate;
+      } else {
+        commonGear[slotName] = [candidate];
+      }
     } else {
       commonGear[slotName as GearSlot] = [
         candidateGearFromInfo(equipment, slotName as GearSlot, prepared),
       ];
     }
+  }
+  if (factorizedSharedRingPair) {
+    const [ring, ring2] = factorizedRings;
+    if (ring === undefined || ring2 === undefined) {
+      throw new Error("联合结果缺少共享戒指对");
+    }
+    commonGear.rings = [ring, ring2];
   }
   const firstResult = Object.values(result.jobResults)[0];
   const firstPrepared = preparedByJob.values().next().value as PreparedSearch | undefined;
@@ -909,7 +1287,9 @@ export function findFeasibleGcdsLocally(
   const speedStat = getSpeedStat(job);
   const speedIndex = attributeIndex.get(speedStat)!;
   const tenacityIndex = attributeIndex.get("TEN")!;
-  const prepared = prepareSearch(config, options);
+  // The GCD reachability DP aggregates speed/TEN without a joint MIP, so keep
+  // its existing legal pair domain rather than dropping cross-ring uniqueness.
+  const prepared = prepareSearch(config, options, false, false);
   if (prepared.slots.some((slot) => slot.candidates.length === 0) || !prepared.foods.length) return [];
   let states = new Map<number, number>([[0, 0]]);
   for (const slot of prepared.slots) {

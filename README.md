@@ -25,7 +25,7 @@ npm run test:data
 
 职业图标来自 XIVAPI v2 的游戏资产接口，作为本地图像随应用提供。刷新图标可运行 `node scripts/download-job-icons.mjs`；脚本使用已有 Lumina MCP 服务核对职业编号，下载并校验 PNG，来源与哈希保存在 `public/assets/jobs/source.json`，不更新装备或公式数据。
 
-单职业和多职业联合搜索采用独立流程。单职业支持职业选择、装备与食物范围、搜索限制及 GCD 目标；联合搜索支持各职业约束、共享部位和共享或独立食物。整个项目的前端设计方向、跨页面原则和目标视口见[前端设计总览](docs/前端设计总览.md)，精确画板内容与状态以[Penpot 设计文件](https://design.penpot.app/#/workspace?team-id=71b39894-c9c5-81cd-8008-bc8b2a6ce976&file-id=71b39894-c9c5-81cd-8008-bc8f0497fe39&page-id=385a202b-2e30-80ff-8008-bcd1dbe5cc0b&layout=layers)为准。
+单职业和多职业联合搜索采用独立流程。单职业支持职业选择、装备与食物范围、搜索限制及 GCD 目标；联合搜索支持各职业约束、共享部位和共享或独立食物，并仅接受同组职业：防护、治疗各自为一组，DPS 按力量、灵巧、智力分组。整个项目的前端设计方向、跨页面原则和目标视口见[前端设计总览](docs/前端设计总览.md)，精确画板内容与状态以[Penpot 设计文件](https://design.penpot.app/#/workspace?team-id=71b39894-c9c5-81cd-8008-bc8b2a6ce976&file-id=71b39894-c9c5-81cd-8008-bc8f0497fe39&page-id=385a202b-2e30-80ff-8008-bcd1dbe5cc0b&layout=layers)为准。
 
 搜索记录保存在当前浏览器的本地数据库，记录时间、配置、状态及成功结果。载入成功结果不启动新搜索，数据版本不同的结果不能作为当前数据的推荐。
 
@@ -61,9 +61,9 @@ npm run data:update
 
 ## 维护文档
 
-`npm run data:test:v3` 为正式联合求解器的 Node 验收入口，包装器位于 `scripts/node-tests`，配置见[运行说明](scripts/node-tests/README.md)。算法、正确性说明和[搜索基准记录](docs/搜索基准记录.md)位于 `docs`，基准数据仅用于验收，不是运行时预先打表数据。
+`npm run data:test:v3` 是正式联合求解器的 Node 验收入口。性能优化工具的直接 Node 命令见[搜索耗时优化说明](docs/search-optimization/README.md)；其中全场景验收顺序复测 18 个有效性能条件，包含同步宽域共享装备压力案，并把输入、结果、证明日志、策略 profile、源码快照和生成数据快照保存在 `docs/search-optimization/acceptance-runs`。计时线为历史耗时低于 10 秒时增加 1 秒、其他场景增加 10%；另报告每个职业 30 秒（包含首个职业）的优化目标。运行中按 Ctrl+C 会保存当前案的已收集日志和 profile，并明确标记证明未完成。性能验收工具位于 `docs/search-optimization/tools`，项目原有 Node 测试和正式联合搜索入口仍位于 `scripts/node-tests`；配置见[运行说明](scripts/node-tests/README.md)。算法、正确性说明和[搜索基准记录](docs/搜索基准记录.md)位于 `docs`，基准数据仅用于验收，不是运行时预先打表数据。
 
-`scripts/archive` 保留旧算法探索代码、验收记录和日志，不参与构建类型检查，也不提供 npm 入口；需要手动复现时请先阅读其中的说明。当前 Node 测试与验收入口集中在 `scripts/node-tests`，算法和候选构造均由 `src/domain` 提供。
+`scripts/archive` 保留旧算法探索代码、验收记录和日志，不参与构建类型检查，也不提供 npm 入口；需要手动复现时请先阅读其中的说明。项目原有 Node 测试和正式多职业搜索入口位于 `scripts/node-tests`，搜索性能总结、归档和验收工具位于 `docs/search-optimization`，算法和候选构造均由 `src/domain` 提供。
 
 - [项目规则与实现记录](docs/PROJECT_RULES.md)：游戏规则、数据约束、已修复问题、算法边界和正确演进方向。
 - [已安装算法包的搜索性能分析](docs/已安装算法包搜索性能分析.md)：已安装求解器与当前整数搜索模型的数学适配和性能边界。

@@ -39,17 +39,15 @@ function lowLevelForcedConfig(jobId: JobId, foodId: number): OptimizationConfig 
 }
 
 describe("optimizer public adapter final boundaries", () => {
-  it("keeps independent real foods and normalizes joint DPS against each job baseline", async () => {
+  it("keeps independent real foods and normalizes same-group joint DPS against each job baseline", async () => {
     const tankFood = foods.find((food) => (food.stats.TEN ?? 0) > 0);
     expect(tankFood).toBeDefined();
-    const healerFood = foods.find((food) =>
-      food.id !== tankFood!.id && (food.stats.PIE ?? 0) > 0,
-    );
-    expect(healerFood).toBeDefined();
+    const otherFood = foods.find((food) => food.id !== tankFood!.id);
+    expect(otherFood).toBeDefined();
 
     const jobs = [
       lowLevelForcedConfig("PLD", tankFood!.id),
-      lowLevelForcedConfig("WHM", healerFood!.id),
+      lowLevelForcedConfig("WAR", otherFood!.id),
     ];
     const progressMessages: string[] = [];
     const result = await runJointOptimizationLocally({
@@ -99,6 +97,49 @@ describe("optimizer public adapter final boundaries", () => {
       cacheLimit: 1,
     });
     expect(infeasible).toBeUndefined();
+  }, 30_000);
+
+  it.each([
+    ["RDM", "RPR"],
+    ["RDM", "WHM"],
+    ["PLD", "RPR"],
+  ] as const)("rejects joint search when %s and %s belong to different groups", async (firstJob, secondJob) => {
+    const jobConfig = (jobId: JobId): OptimizationConfig => ({
+      jobId,
+      minItemLevel: 15,
+      maxItemLevel: 20,
+      maximizeTenacity: false,
+      excludedSources: [],
+      forcedGear: {},
+      foodId: 0,
+    });
+
+    await expect(runJointOptimizationLocally({
+      jobs: [jobConfig(firstJob), jobConfig(secondJob)],
+      commonSlots: [],
+      foodStrategy: "independent",
+    })).rejects.toThrow("多职业联合搜索只接受同组职业");
+  });
+
+  it("accepts joint optimization within the healer group", async () => {
+    const healerFood = foods.find((food) => (food.stats.PIE ?? 0) > 0);
+    expect(healerFood).toBeDefined();
+    const result = await runJointOptimizationLocally({
+      jobs: [
+        lowLevelForcedConfig("WHM", healerFood!.id),
+        lowLevelForcedConfig("SCH", healerFood!.id),
+      ],
+      commonSlots: [],
+      foodStrategy: "independent",
+      objective: "dps",
+      maxSearchMs: 15_000,
+      cacheLimit: 1,
+    });
+
+    expect(result).toBeDefined();
+    expect(result!.jobResults.WHM!.food.id).toBe(healerFood!.id);
+    expect(result!.jobResults.SCH!.food.id).toBe(healerFood!.id);
+    expect(result!.value.approximate).toBeCloseTo(2, 12);
   }, 30_000);
 
   it("returns only the attainable GCD at exact speed and toughness bounds", async () => {

@@ -7,6 +7,8 @@ import { slotsForJob } from "../../src/domain/optimizer.ts";
 
 const DEFAULT_JOBS = ["RDM", "BLM"];
 const MAX_SEARCH_MS = 235_000;
+// This disables the time watchdog while retaining the separate RSS guard.
+const UNLIMITED_SEARCH_MS = Number.MAX_SAFE_INTEGER;
 const MAX_RSS_BYTES = Math.floor(3.5 * 1024 * 1024 * 1024);
 
 function readEnvironment(primaryName, aliasName, defaultValue) {
@@ -239,11 +241,22 @@ function parseTimeout() {
     "TIMEOUT_MS",
     String(MAX_SEARCH_MS),
   );
+  if (raw.trim().toLowerCase() === "unlimited") return UNLIMITED_SEARCH_MS;
   const timeout = Number(raw);
   if (!Number.isSafeInteger(timeout) || timeout <= 0 || timeout > MAX_SEARCH_MS) {
-    throw new Error(`DATA_TEST_V3_TIMEOUT_MS 必须是大于 0 且不超过 ${MAX_SEARCH_MS} 的整数`);
+    throw new Error(`DATA_TEST_V3_TIMEOUT_MS 必须是 1 至 ${MAX_SEARCH_MS} 的整数，或 unlimited`);
   }
   return timeout;
+}
+
+function optionalPositiveIntegerEnvironment(name) {
+  const raw = process.env[name];
+  if (raw === undefined || raw.trim() === "") return undefined;
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value) || value <= 0) {
+    throw new Error(`${name} 必须是正安全整数`);
+  }
+  return value;
 }
 
 const slotLabels = {
@@ -372,7 +385,7 @@ function runInWorker(config, maxSearchMs, startedAt) {
         ));
       }
     }, 20);
-    const timeWatchdog = setTimeout(() => {
+    const timeWatchdog = maxSearchMs === UNLIMITED_SEARCH_MS ? undefined : setTimeout(() => {
       updatePeakRss();
       stopWithError(new Error(
         `Node 验收总耗时达到 ${maxSearchMs}ms 时限，已停止且未完成最优性证明`,
@@ -393,6 +406,10 @@ function runInWorker(config, maxSearchMs, startedAt) {
     worker.on("message", (message) => {
       if (message?.type === "progress") {
         console.log(`[搜索进度] ${message.message}`);
+        return;
+      }
+      if (message?.type === "solverProgress") {
+        console.log(`[求解器诊断] ${JSON.stringify(message.progress)}`);
         return;
       }
       if (message?.type === "error") {
@@ -437,16 +454,25 @@ async function main() {
   const foodStrategy = parseFoodStrategy();
   const objective = parseObjective();
   const maxSearchMs = parseTimeout();
+  const minimumItemLevel = optionalPositiveIntegerEnvironment("DATA_TEST_MIN_ITEM_LEVEL");
+  const maximumItemLevel = optionalPositiveIntegerEnvironment("DATA_TEST_MAX_ITEM_LEVEL");
+  const syncLevel = optionalPositiveIntegerEnvironment("DATA_TEST_SYNC_LEVEL");
 
   const jobConfigs = jobs.map((jobId) => {
     const schema = jobSchemas[jobId];
     if (!schema?.defaultItemLevel || schema.defaultItemLevel.length !== 2) {
       throw new Error(`职业 ${jobId} 缺少默认装备品级范围`);
     }
+    const minItemLevel = minimumItemLevel ?? schema.defaultItemLevel[0];
+    const maxItemLevel = maximumItemLevel ?? schema.defaultItemLevel[1];
+    if (minItemLevel > maxItemLevel) {
+      throw new Error(`装备品级范围无效：${minItemLevel}–${maxItemLevel}`);
+    }
     return {
       jobId,
-      minItemLevel: schema.defaultItemLevel[0],
-      maxItemLevel: schema.defaultItemLevel[1],
+      minItemLevel,
+      maxItemLevel,
+      ...(syncLevel === undefined ? {} : { syncLevel }),
       maximizeTenacity: false,
       excludedSources: [],
       forcedGear: {},
@@ -461,6 +487,7 @@ async function main() {
     jobs: jobConfigs.map((config) => ({
       id: config.jobId,
       itemLevelRange: [config.minItemLevel, config.maxItemLevel],
+      ...(config.syncLevel === undefined ? {} : { syncLevel: config.syncLevel }),
       constraints: Object.fromEntries(Object.entries(config).filter(([name]) => [
         "gcdTarget", "gcdChoices", "speedMin", "speedMax", "toughnessMin",
         "toughnessMinPercent", "maximizeTenacity",
@@ -469,7 +496,7 @@ async function main() {
     commonSlots,
     foodStrategy,
     objective,
-    maxSearchMs,
+    maxSearchMs: maxSearchMs === UNLIMITED_SEARCH_MS ? "unlimited" : maxSearchMs,
     gameData: {
       version: gameData.version,
       referenceCommit: gameData.provenance.commit,
@@ -498,11 +525,12 @@ async function main() {
   }
 
   const output = summarizeJointResult(result, jobs);
+  if (maxSearchMs === UNLIMITED_SEARCH_MS) output.statistics.timeLimitMs = "unlimited";
   output.runtime = {
     elapsedMs: Math.round(elapsedMs),
     peakRssBytes,
     rssLimitBytes: MAX_RSS_BYTES,
-    timeoutMs: maxSearchMs,
+    timeoutMs: maxSearchMs === UNLIMITED_SEARCH_MS ? "unlimited" : maxSearchMs,
   };
   const digest = createHash("sha256").update(JSON.stringify(output)).digest("hex");
   console.log(`联合搜索完成（${elapsedMs.toFixed(0)}ms）。`);

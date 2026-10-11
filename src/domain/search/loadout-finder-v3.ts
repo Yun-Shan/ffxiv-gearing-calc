@@ -8,10 +8,29 @@ import {
   type ExactMipOptions,
   type ExactMipResult,
 } from "./loadout-finder-exact-mip.ts";
+import {
+  hasCanonicalEvaluatorCandidateUpperBound,
+  inheritCanonicalEvaluatorCandidateUpperBound,
+} from "./exact-mip-candidate-upper-bound.ts";
+import {
+  hasSharedAccessoryPairDominancePath,
+  markSharedAccessoryPairDominancePath,
+} from "./shared-accessory-pair-dominance-policy.ts";
+import { gameData } from "../data.ts";
 import type { EquipInfo, FoodInfo, ParamInfo, SharedSlotProjection } from "./types.ts";
+import type { Stat } from "../types.ts";
 import { getMemoryUsageSnapshot } from "./memory-usage.ts";
 import { throwIfCancelled } from "./cancellation.ts";
-import type { HighsCallbackTrace } from "./linear-mip.ts";
+import type { HighsCallbackTrace, LinearMipProgress } from "./linear-mip.ts";
+import type { BaselineExecutor } from "./parallel-baseline-executor.ts";
+import { baselineWorkerLimit } from "./baseline-worker-policy.ts";
+import {
+  candidateResourceSupportProfile as chooseCandidateResourceSupportProfile,
+  shouldUseMainStatResourceSupportForBaseline,
+  shouldUseMainStatResourceSupportForBaselineJob,
+  shouldUsePrimaryResourceSupportsForBaseline,
+  shouldUseSharedMateriaCompensation,
+} from "./candidate-resource-support-policy.ts";
 
 export type JointLoadoutJobV3 = {
   id: string;
@@ -26,6 +45,12 @@ export type JointLoadoutV3Options = {
   commonSlots: readonly string[];
   /** Projected virtual slots that remain backed by one complete solver candidate. */
   commonSlotProjections?: readonly SharedSlotProjection[];
+  /** Internal optimizer path for a full, unforced shared ring pair split into two slots. */
+  factorizedSharedRingPair?: boolean;
+  /** Internal exact-model tuning; omitting this keeps the default ratio pair cuts. */
+  ratioUpperPairPolicy?: "default" | "disabled";
+  /** Internal narrow proof-preserving pruning for strictly dominated shared accessory pairs. */
+  sharedAccessoryPairDominance?: boolean;
   foodStrategy: "shared" | "independent";
   /** Defaults to raw damage; DPS uses exact product/GCD fractions. */
   objective?: "damage" | "dps";
@@ -35,6 +60,8 @@ export type JointLoadoutV3Options = {
   cacheLimit?: number;
   onProgress?: (message: string) => void;
   onSolverCallback?: (event: HighsCallbackTrace) => void;
+  /** Optional isolated worker executor; omitted direct callers keep the local sequential path. */
+  baselineExecutor?: BaselineExecutor;
   /** Checked between solver calls and outer search nodes. */
   isCancelled?: () => boolean;
 };
@@ -52,7 +79,7 @@ export type JointLoadoutV3Result = {
     objective: "damage" | "dps";
     optimalityScope: string;
     outerBound: string;
-    innerSolverStatus: "Optimal";
+    innerSolverStatus: "Optimal" | "DualBound";
     formalCertificate: false;
     numericalLimitation: string;
     terminationReason: string;
@@ -298,9 +325,108 @@ function buildRawAttributes(context: JobContext, selection: readonly EquipInfo[]
   return attributes;
 }
 
+function attributeVectorKey(values: readonly number[]): string {
+  return values.join(",");
+}
+
+/**
+ * Rebalance up to two private, same-item materia variants after projecting shared gear.
+ * A match restores the complete solo raw-attribute vector, so it also restores every
+ * canonical factor and constraint input without inferring anything from weighted scores.
+ */
+function findSameItemAttributeCompensation(
+  context: JobContext,
+  selection: readonly EquipInfo[],
+  targetRawAttributes: readonly number[],
+  commonSlotIndexes: ReadonlySet<number>,
+  checkBudget: () => void,
+): readonly { slotIndex: number; equipment: EquipInfo }[] | undefined {
+  const currentRawAttributes = buildRawAttributes(context, selection);
+  if (currentRawAttributes.length !== targetRawAttributes.length) return undefined;
+  const needed = targetRawAttributes.map((value, index) => value - currentRawAttributes[index]!);
+  if (needed.some((value) => !Number.isSafeInteger(value))) return undefined;
+  if (needed.every((value) => value === 0)) return [];
+  const neededKey = attributeVectorKey(needed);
+  const alternativesBySlot: {
+    slotIndex: number;
+    alternatives: { equipment: EquipInfo; delta: number[]; key: string }[];
+  }[] = [];
+  const maxAlternativesPerSlot = 128;
+  let scannedCandidates = 0;
+  const maxScannedCandidates = 50_000;
+
+  for (let slotIndex = 0; slotIndex < context.solverSlots.length; slotIndex++) {
+    if (commonSlotIndexes.has(slotIndex)) continue;
+    const current = selection[slotIndex];
+    if (current === undefined || current.ringSlotIndex !== undefined ||
+      (current as EquipInfo & { ringEquips?: readonly EquipInfo[] }).ringEquips !== undefined) continue;
+    const currentIdentity = equipmentIdentity(current);
+    const sameItemCandidates: EquipInfo[] = [];
+    let exceededSlotLimit = false;
+    for (const candidate of context.solverSlots[slotIndex]!) {
+      if ((scannedCandidates++ & 255) === 0) checkBudget();
+      if (scannedCandidates > maxScannedCandidates) return undefined;
+      if (candidate.itemId !== current.itemId || candidate.ringSlotIndex !== undefined ||
+        (candidate as EquipInfo & { ringEquips?: readonly EquipInfo[] }).ringEquips !== undefined ||
+        equipmentIdentity(candidate) === currentIdentity) continue;
+      sameItemCandidates.push(candidate);
+      if (sameItemCandidates.length > maxAlternativesPerSlot) {
+        exceededSlotLimit = true;
+        break;
+      }
+    }
+    if (sameItemCandidates.length === 0 || exceededSlotLimit) continue;
+    const currentVector = buildRawAttributes(context, [current]);
+    const alternatives = sameItemCandidates.map((equipment) => {
+      const candidateVector = buildRawAttributes(context, [equipment]);
+      const delta = candidateVector.map((value, index) => value - currentVector[index]!);
+      return { equipment, delta, key: attributeVectorKey(delta) };
+    });
+    alternativesBySlot.push({ slotIndex, alternatives });
+  }
+
+  for (const group of alternativesBySlot) {
+    const match = group.alternatives.find(({ key }) => key === neededKey);
+    if (match !== undefined) return [{ slotIndex: group.slotIndex, equipment: match.equipment }];
+  }
+
+  let checkedPairs = 0;
+  const maxPairChecks = 100_000;
+  for (let leftIndex = 0; leftIndex < alternativesBySlot.length; leftIndex++) {
+    const left = alternativesBySlot[leftIndex]!;
+    const byDelta = new Map<string, EquipInfo>();
+    for (const candidate of left.alternatives) {
+      if (!byDelta.has(candidate.key)) byDelta.set(candidate.key, candidate.equipment);
+    }
+    for (let rightIndex = leftIndex + 1; rightIndex < alternativesBySlot.length; rightIndex++) {
+      const right = alternativesBySlot[rightIndex]!;
+      for (const candidate of right.alternatives) {
+        if ((checkedPairs++ & 255) === 0) checkBudget();
+        if (checkedPairs > maxPairChecks) return undefined;
+        const complement = needed.map((value, index) => value - candidate.delta[index]!);
+        if (complement.some((value) => !Number.isSafeInteger(value))) return undefined;
+        const equipment = byDelta.get(attributeVectorKey(complement));
+        if (equipment !== undefined) {
+          return [
+            { slotIndex: left.slotIndex, equipment },
+            { slotIndex: right.slotIndex, equipment: candidate.equipment },
+          ];
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
 function pruneInnerSlots(
   context: JobContext,
   preserveSlotIndexes: ReadonlySet<number> = new Set(),
+  sourceSlots: readonly (readonly EquipInfo[])[] = context.job.options.slots,
+  workBudget?: {
+    maxDominanceChecks: number;
+    maxDurationMs: number;
+    dominanceAttributeIndexes?: ReadonlySet<number>;
+  },
 ): readonly (readonly EquipInfo[])[] {
   const constraints = context.constraints ?? {};
   const mustKeepSpeedEqual = constraints.gcd !== undefined ||
@@ -308,8 +434,49 @@ function pruneInnerSlots(
   const speedIndex = context.job.options.speedAttributeId === undefined
     ? undefined
     : context.attributeIndexes.get(context.job.options.speedAttributeId);
+  const ringSlotIndexes = new Map<0 | 1, number>();
+  const uniqueByItemId = new Map<number, boolean>();
+  let completeRingMetadata = true;
+  sourceSlots.forEach((slot, slotIndex) => {
+    const marked = slot.filter((equipment) => equipment.ringSlotIndex !== undefined);
+    if (marked.length === 0) return;
+    const ringSlotIndex = marked[0]!.ringSlotIndex;
+    if ((ringSlotIndex !== 0 && ringSlotIndex !== 1) || marked.length !== slot.length ||
+      marked.some((equipment) => equipment.ringSlotIndex !== ringSlotIndex) ||
+      ringSlotIndexes.has(ringSlotIndex)) {
+      completeRingMetadata = false;
+      return;
+    }
+    ringSlotIndexes.set(ringSlotIndex, slotIndex);
+    for (const equipment of marked) {
+      if (!Number.isSafeInteger(equipment.itemId) || typeof equipment.isUnique !== "boolean") {
+        completeRingMetadata = false;
+        continue;
+      }
+      const known = uniqueByItemId.get(equipment.itemId);
+      if (known !== undefined && known !== equipment.isUnique) completeRingMetadata = false;
+      uniqueByItemId.set(equipment.itemId, equipment.isUnique);
+    }
+  });
+  if (ringSlotIndexes.size !== 2) completeRingMetadata = false;
 
-  return context.job.options.slots.map((slot, slotIndex) => {
+  const conflictGroupByItemId = new Map<number, string>();
+  if (completeRingMetadata) {
+    for (const ringSlotIndex of [0, 1] as const) {
+      const slotIndex = ringSlotIndexes.get(ringSlotIndex)!;
+      const oppositeSlot = sourceSlots[ringSlotIndexes.get(ringSlotIndex === 0 ? 1 : 0)!]!;
+      const oppositeUniqueIds = new Set(oppositeSlot
+        .filter((equipment) => equipment.isUnique === true)
+        .map((equipment) => equipment.itemId));
+      for (const equipment of sourceSlots[slotIndex]!) {
+        if (equipment.isUnique === true && oppositeUniqueIds.has(equipment.itemId)) {
+          conflictGroupByItemId.set(equipment.itemId, `conflict:${equipment.itemId}`);
+        }
+      }
+    }
+  }
+
+  return sourceSlots.map((slot, slotIndex) => {
     if (preserveSlotIndexes.has(slotIndex)) return slot;
     if (slot.length < 2) return slot;
     const candidates = slot.map((equipment, inputOrder) => ({
@@ -317,30 +484,158 @@ function pruneInnerSlots(
       inputOrder,
       attributes: buildRawAttributes(context, [equipment]),
     }));
-    candidates.sort((left, right) => {
-      const leftSum = left.attributes.reduce((total, value) => total + value, 0);
-      const rightSum = right.attributes.reduce((total, value) => total + value, 0);
-      return rightSum - leftSum || left.inputOrder - right.inputOrder;
-    });
-    const frontier: typeof candidates = [];
     const dominates = (left: readonly number[], right: readonly number[]) => {
       let strict = false;
       for (let index = 0; index < left.length; index++) {
+        if (workBudget?.dominanceAttributeIndexes !== undefined &&
+          !workBudget.dominanceAttributeIndexes.has(index)) continue;
         if (mustKeepSpeedEqual && index === speedIndex && left[index] !== right[index]) return false;
         if (left[index]! < right[index]!) return false;
         if (left[index]! > right[index]!) strict = true;
       }
-      return strict || left.every((value, index) => value === right[index]);
+      return strict || workBudget?.dominanceAttributeIndexes !== undefined ||
+        left.every((value, index) => value === right[index]);
     };
-    for (const candidate of candidates) {
-      if (frontier.some((kept) => dominates(kept.attributes, candidate.attributes))) continue;
-      for (let index = frontier.length - 1; index >= 0; index--) {
-        if (dominates(candidate.attributes, frontier[index]!.attributes)) frontier.splice(index, 1);
+    const budgetExceeded = Symbol("baseline Pareto budget exceeded");
+    const startedAt = performance.now();
+    let dominanceChecks = 0;
+    const checkBudget = () => {
+      if (workBudget === undefined) return;
+      dominanceChecks++;
+      if (dominanceChecks > workBudget.maxDominanceChecks ||
+        ((dominanceChecks & 0x3ff) === 0 && performance.now() - startedAt > workBudget.maxDurationMs)) {
+        throw budgetExceeded;
       }
-      frontier.push(candidate);
+    };
+    const paretoFrontier = (domain: typeof candidates) => {
+      const frontier: typeof candidates = [];
+      const ordered = [...domain].sort((left, right) => {
+        const leftSum = left.attributes.reduce((total, value) => total + value, 0);
+        const rightSum = right.attributes.reduce((total, value) => total + value, 0);
+        return rightSum - leftSum || left.inputOrder - right.inputOrder;
+      });
+      if (workBudget !== undefined && performance.now() - startedAt > workBudget.maxDurationMs) {
+        throw budgetExceeded;
+      }
+      for (const candidate of ordered) {
+        let isDominated = false;
+        for (const kept of frontier) {
+          checkBudget();
+          if (dominates(kept.attributes, candidate.attributes)) {
+            isDominated = true;
+            break;
+          }
+        }
+        if (isDominated) continue;
+        for (let index = frontier.length - 1; index >= 0; index--) {
+          checkBudget();
+          if (dominates(candidate.attributes, frontier[index]!.attributes)) frontier.splice(index, 1);
+        }
+        frontier.push(candidate);
+      }
+      return frontier;
+    };
+    if (candidates.some(({ equipment }) => equipment.ringSlotIndex !== undefined)) {
+      // A candidate's cross-slot legality depends only on its unique-ID
+      // conflict partners. Candidates with no conflict partners share one
+      // frontier; conflicting IDs keep separate frontiers. Missing or
+      // contradictory metadata falls back to the older per-item partition.
+      const groups = new Map<string, typeof candidates>();
+      for (const candidate of candidates) {
+        const groupKey = completeRingMetadata
+          ? conflictGroupByItemId.get(candidate.equipment.itemId) ?? "no-conflicts"
+          : `item:${candidate.equipment.itemId}`;
+        const domain = groups.get(groupKey) ?? [];
+        domain.push(candidate);
+        groups.set(groupKey, domain);
+      }
+      try {
+        return [...groups.values()]
+          .flatMap(paretoFrontier)
+          .sort((left, right) => left.inputOrder - right.inputOrder)
+          .map(({ equipment }) => equipment);
+      } catch (error) {
+        if (error === budgetExceeded) return slot;
+        throw error;
+      }
     }
-    return frontier.map(({ equipment }) => equipment);
+    try {
+      return paretoFrontier(candidates).map(({ equipment }) => equipment);
+    } catch (error) {
+      if (error === budgetExceeded) return slot;
+      throw error;
+    }
   });
+}
+
+function canonicalBaselineDamageAttributes(context: JobContext): ReadonlySet<number> | undefined {
+  if (!hasCanonicalEvaluatorCandidateUpperBound(context.job.options) ||
+    context.job.options.equipmentAttributeExtractor !== undefined) return undefined;
+  const schema = gameData.jobSchemas[context.job.options.job];
+  if (schema?.mainStat === undefined) return undefined;
+  const attackStat: Stat = schema.mainStat === "VIT" ? "STR" : schema.mainStat;
+  const weaponStat: Stat = schema.mainStat === "INT" || schema.mainStat === "MND" ? "MDMG" : "PDMG";
+  const speedStat: Stat = schema.stats.includes("SKS") ? "SKS" : "SPS";
+  const relevantStats: readonly Stat[] = [attackStat, weaponStat, "DET", "TEN", "CRT", "DHT", speedStat];
+  const result = new Set<number>();
+  for (const stat of relevantStats) {
+    const vectorIndex = context.job.options.statIndexes.get(stat);
+    const attributeId = vectorIndex === undefined ? undefined : context.job.options.attributeIds[vectorIndex];
+    const attributeIndex = attributeId === undefined ? undefined : context.attributeIndexes.get(attributeId);
+    if (attributeIndex === undefined) return undefined;
+    result.add(attributeIndex);
+  }
+  for (const attributeId of [
+    context.job.options.speedAttributeId,
+    context.job.options.toughnessAttributeId,
+  ]) {
+    if (attributeId === undefined) continue;
+    const attributeIndex = context.attributeIndexes.get(attributeId);
+    if (attributeIndex === undefined) return undefined;
+    result.add(attributeIndex);
+  }
+  return result;
+}
+
+function dedupeEquivalentBaselineRingCandidates(
+  context: JobContext,
+  sourceSlots: readonly (readonly EquipInfo[])[],
+): readonly (readonly EquipInfo[])[] {
+  if (context.job.options.equipmentAttributeExtractor !== undefined ||
+    !hasCanonicalEvaluatorCandidateUpperBound(context.job.options)) return sourceSlots;
+  const ringSlotIndexes = new Map<0 | 1, number>();
+  for (let slotIndex = 0; slotIndex < sourceSlots.length; slotIndex++) {
+    const slot = sourceSlots[slotIndex]!;
+    const marked = slot.filter((equipment) => equipment.ringSlotIndex !== undefined);
+    if (marked.length === 0) continue;
+    const ringSlotIndex = marked[0]!.ringSlotIndex;
+    if ((ringSlotIndex !== 0 && ringSlotIndex !== 1) || marked.length !== slot.length ||
+      marked.some((equipment) => equipment.ringSlotIndex !== ringSlotIndex) ||
+      ringSlotIndexes.has(ringSlotIndex) || marked.some((equipment) =>
+        !Number.isSafeInteger(equipment.itemId) || typeof equipment.isUnique !== "boolean")) return sourceSlots;
+    ringSlotIndexes.set(ringSlotIndex, slotIndex);
+  }
+  if (ringSlotIndexes.size !== 2) return sourceSlots;
+
+  const reduced = [...sourceSlots];
+  for (const ringSlotIndex of [0, 1] as const) {
+    const slotIndex = ringSlotIndexes.get(ringSlotIndex)!;
+    const firstByEquivalentValue = new Map<string, EquipInfo>();
+    for (const equipment of sourceSlots[slotIndex]!) {
+      const attributes = buildRawAttributes(context, [equipment]);
+      const conflictClass = equipment.isUnique === true ? `unique:${equipment.itemId}` : "repeatable";
+      const key = JSON.stringify([
+        conflictClass,
+        attributes,
+        equipment.PDMG,
+        equipment.MDMG,
+        equipment.DLY,
+      ]);
+      if (!firstByEquivalentValue.has(key)) firstByEquivalentValue.set(key, equipment);
+    }
+    reduced[slotIndex] = [...firstByEquivalentValue.values()];
+  }
+  return reduced;
 }
 
 function speedMustRemainEqual(context: JobContext): boolean {
@@ -571,7 +866,7 @@ function makeJobOptions(
     };
   }
 
-  return {
+  return inheritCanonicalEvaluatorCandidateUpperBound(context.job.options, {
     ...context.job.options,
     slots,
     foods,
@@ -579,7 +874,7 @@ function makeJobOptions(
     objective,
     maxSearchMs: Math.min(maxSearchMs, context.job.options.maxSearchMs ?? MAX_SEARCH_MS),
     ...(isCancelled === undefined ? {} : { isCancelled }),
-  };
+  });
 }
 
 function statisticsSnapshot(
@@ -603,17 +898,59 @@ function statisticsSnapshot(
 export async function findBestJointLoadoutV3(
   options: JointLoadoutV3Options,
 ): Promise<JointLoadoutV3Result | undefined> {
+  const inputCandidateCount = options.jobs.reduce((total, job) => total +
+    job.options.slots.reduce((slotTotal, slot) => slotTotal + slot.length, 0), 0);
+  const candidateSupportProfile = chooseCandidateResourceSupportProfile(options.jobs.length, inputCandidateCount);
+  const sharedAccessoryPairDominanceTrusted = hasSharedAccessoryPairDominancePath(options);
+  // The V3 domain owns its job wrappers so exact pruning can release the full
+  // candidate arrays without mutating objects supplied by callers.
+  const ownedOptions: JointLoadoutV3Options = {
+    ...options,
+    jobs: options.jobs.map((job) => ({
+      ...job,
+      options: inheritCanonicalEvaluatorCandidateUpperBound(job.options, {
+        ...job.options,
+        candidateResourceSupportProfile: job.options.candidateResourceSupportProfile ?? candidateSupportProfile,
+      }),
+    })),
+  };
+  options = sharedAccessoryPairDominanceTrusted
+    ? markSharedAccessoryPairDominancePath(ownedOptions)
+    : ownedOptions;
   const startedAt = performance.now();
   const requestedMs = options.maxSearchMs ?? MAX_SEARCH_MS;
   if (!Number.isFinite(requestedMs) || requestedMs <= 0) {
     throw new RangeError("V3 maxSearchMs 必须是正有限数");
   }
-  const timeLimitMs = Math.min(requestedMs, MAX_SEARCH_MS);
+  // The Node acceptance harness uses this explicit sentinel for untimed diagnostics.
+  const timeLimitMs = requestedMs === Number.MAX_SAFE_INTEGER
+    ? requestedMs
+    : Math.min(requestedMs, MAX_SEARCH_MS);
   const deadline = startedAt + timeLimitMs;
   const objective = options.objective ?? "damage";
   if (objective !== "damage" && objective !== "dps") {
     throw new RangeError("V3 objective 必须是 damage 或 dps");
   }
+  const usePrimaryResourceSupportBaselinePolicy = shouldUsePrimaryResourceSupportsForBaseline(
+    options.jobs.map(({ id }) => id),
+    options.commonSlots,
+    objective,
+    options.foodStrategy,
+  );
+  const addMainStatResourceSupportToBaselines = shouldUseMainStatResourceSupportForBaseline(
+    options.jobs.map(({ id }) => id),
+    options.commonSlots,
+    objective,
+    options.foodStrategy,
+    options.factorizedSharedRingPair,
+  ) && !usePrimaryResourceSupportBaselinePolicy;
+  const enableSharedMateriaCompensation = shouldUseSharedMateriaCompensation(
+    options.jobs.map(({ id }) => id),
+    options.commonSlots,
+    objective,
+    options.foodStrategy,
+    options.factorizedSharedRingPair,
+  );
   if (options.foodStrategy !== "shared" && options.foodStrategy !== "independent") {
     throw new RangeError("V3 foodStrategy 必须是 shared 或 independent");
   }
@@ -622,6 +959,7 @@ export async function findBestJointLoadoutV3(
     throw new RangeError("V3 cacheLimit 必须是 0 到 50000 之间的整数");
   }
   if (options.jobs.length === 0) throw new RangeError("V3 至少需要一个职业");
+  const baselineConcurrency = baselineWorkerLimit(options.jobs.length, inputCandidateCount);
   const cancellationRequested = () => options.isCancelled?.() === true ||
     options.jobs.some((job) => job.options.isCancelled?.() === true);
 
@@ -694,6 +1032,7 @@ export async function findBestJointLoadoutV3(
   for (const context of contexts) {
     assertWithinBudget("单职业候选等价剪枝");
     context.solverSlots = pruneInnerSlots(context, preserveCommonSlotIndexes.get(context));
+    context.job.options.slots = context.solverSlots;
   }
   if (new Set(options.commonSlots).size !== options.commonSlots.length) {
     throw new RangeError("V3 commonSlots 包含重复槽位名");
@@ -764,19 +1103,71 @@ export async function findBestJointLoadoutV3(
   }
 
   assertWithinBudget("单职业最优基线");
-  for (const context of contexts) {
-    const remainingMs = Math.floor(deadline - performance.now());
-    if (remainingMs <= 0) {
-      throw new Error(`V3 搜索超过 ${timeLimitMs}ms，未完成最优性证明（单职业最优基线）；未返回近似结果`);
+  const baselineTasks: ExactMipOptions[] = [];
+  const canParallelizeBaselines = options.baselineExecutor !== undefined &&
+    contexts.every((context) => context.job.options.equipmentAttributeExtractor === undefined);
+  const assignBaseline = (context: JobContext, optimum: ExactMipResult | undefined): boolean => {
+    assertWithinBudget("单职业最优基线");
+    if (optimum === undefined) return false;
+    context.optimum = optimum;
+    const optimumFactors = factorsForResult(context, optimum);
+    context.optimumProduct = integerDamageProduct(optimumFactors);
+    context.optimumGcd = optimumFactors.gcdCentiseconds;
+    context.active = optimum.damage > 0;
+    if (context.optimumProduct <= 0n || context.optimumGcd <= 0) {
+      throw new Error(`职业 ${context.job.id} 的伤害基线无效`);
     }
+    return true;
+  };
+  for (const context of contexts) {
     mutable.innerSolves++;
     mutable.cacheMisses++;
     options.onProgress?.(`V3：正在计算 ${context.job.id} 的单职业最优伤害基线`);
     const onSolverCallback = options.onSolverCallback ?? context.job.options.onSolverCallback;
-    const optimum = await findBestLoadoutExactMip({
+    // Non-shared slots already have this exact Pareto frontier in solverSlots.
+    // Reuse it and prune only shared slots, whose identities were preserved for
+    // the joint intersection but may be discarded by a solo baseline.
+    const commonIndexes = preserveCommonSlotIndexes.get(context)!;
+    const preserveBaselineIndexes = new Set(context.solverSlots.flatMap((_, index) =>
+      !commonIndexes.has(index) ? [index] : []));
+    let baselineSlots = context.solverSlots;
+    if (options.factorizedSharedRingPair) {
+      baselineSlots = dedupeEquivalentBaselineRingCandidates(context, baselineSlots);
+    }
+    if (commonIndexes.size > 0) {
+      baselineSlots = pruneInnerSlots(context, preserveBaselineIndexes, baselineSlots,
+        options.factorizedSharedRingPair
+          ? {
+              maxDominanceChecks: 2_000_000,
+              maxDurationMs: 500,
+              ...(canonicalBaselineDamageAttributes(context) === undefined ? {} : {
+                dominanceAttributeIndexes: canonicalBaselineDamageAttributes(context)!,
+              }),
+            }
+          : undefined);
+    }
+    assertWithinBudget("单职业基线候选剪枝");
+    const remainingMs = Math.floor(deadline - performance.now());
+    if (remainingMs <= 0) {
+      throw new Error(`V3 搜索超过 ${timeLimitMs}ms，未完成最优性证明（单职业最优基线）；未返回近似结果`);
+    }
+    const baselineOptions = inheritCanonicalEvaluatorCandidateUpperBound(context.job.options, {
       ...context.job.options,
-      slots: context.solverSlots,
+      slots: baselineSlots,
       objective,
+      // Keep the measured support rows for MCH; VPR's baseline remains lean to
+      // reduce simultaneous model work without changing the candidate set.
+      ...(context.job.id === "MCH" && usePrimaryResourceSupportBaselinePolicy
+        ? { primaryResourceSupports: true }
+        : {}),
+      ...(addMainStatResourceSupportToBaselines && shouldUseMainStatResourceSupportForBaselineJob(
+        options.jobs.map(({ id }) => id),
+        context.job.id,
+        options.commonSlots,
+        objective,
+        options.foodStrategy,
+        options.factorizedSharedRingPair,
+      ) ? { mainStatResourceSupport: true } : {}),
       maxSearchMs: Math.min(remainingMs, context.job.options.maxSearchMs ?? MAX_SEARCH_MS),
       isCancelled: cancellationRequested,
       onProgress: options.onProgress === undefined
@@ -794,20 +1185,32 @@ export async function findBestJointLoadoutV3(
           model: `${context.job.id}:${event.model}`,
         }),
       }),
+    } satisfies ExactMipOptions);
+    if (!canParallelizeBaselines) {
+      const optimum = await findBestLoadoutExactMip(baselineOptions);
+      if (!assignBaseline(context, optimum)) return undefined;
+    } else {
+      baselineTasks.push(baselineOptions);
+    }
+  }
+  if (canParallelizeBaselines) {
+    const baselineResults = await options.baselineExecutor!(baselineTasks, {
+      remainingMs: () => Math.floor(deadline - performance.now()),
+      isCancelled: cancellationRequested,
+      maxConcurrency: Math.min(baselineConcurrency, contexts.length),
     });
     assertWithinBudget("单职业最优基线");
-    if (optimum === undefined) return undefined;
-    context.optimum = optimum;
-    const optimumFactors = factorsForResult(context, optimum);
-    context.optimumProduct = integerDamageProduct(optimumFactors);
-    context.optimumGcd = optimumFactors.gcdCentiseconds;
-    context.active = optimum.damage > 0;
-    if (context.optimumProduct <= 0n || context.optimumGcd <= 0) {
-      throw new Error(`职业 ${context.job.id} 的伤害基线无效`);
+    if (baselineResults === undefined) return undefined;
+    if (baselineResults.length !== contexts.length) {
+      throw new Error("并发基线工作线程返回的职业数量不匹配");
+    }
+    for (let index = 0; index < contexts.length; index++) {
+      if (!assignBaseline(contexts[index]!, baselineResults[index])) return undefined;
     }
   }
 
   for (const [name, choices] of commonChoicesByName) {
+    if (options.factorizedSharedRingPair && (name === "ring" || name === "ring2")) continue;
     commonChoicesByName.set(name, pruneCommonChoices(
       name,
       choices,
@@ -851,18 +1254,70 @@ export async function findBestJointLoadoutV3(
   } | undefined;
   let stopAtProvenCeiling = false;
 
+  const nodeCacheKey = (
+    context: JobContext,
+    fixed: ReadonlyMap<string, CommonChoice>,
+    foodChoice: FoodChoice | undefined,
+  ) => {
+    const foodKey = foodChoice?.key ?? "independent-food";
+    const fixedKey = [...fixed]
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([name, choice]) => `${name}=${choice.key}`)
+      .join(";");
+    return `${context.job.id}|${foodKey}|${fixedKey}`;
+  };
+
+  const rememberNode = (key: string, result: ExactMipResult | null): void => {
+    if (cacheLimit === 0) return;
+    cache.set(key, result);
+    while (cache.size > cacheLimit) cache.delete(cache.keys().next().value!);
+    mutable.cacheEntries = cache.size;
+  };
+
+  const makeRestrictedMipOptions = (
+    context: JobContext,
+    fixed: ReadonlyMap<string, CommonChoice>,
+    foodChoice: FoodChoice | undefined,
+  ): ExactMipOptions => {
+    assertWithinBudget("受限单职业求解");
+    const remainingMs = Math.floor(deadline - performance.now());
+    if (remainingMs <= 0) {
+      throw new Error(`V3 搜索超过 ${timeLimitMs}ms，未完成最优性证明（受限单职业求解）；未返回近似结果`);
+    }
+    const mipOptions = makeJobOptions(
+      context, fixed, commonSlotProjections, foodChoice, remainingMs, objective, cancellationRequested,
+    );
+    if (options.jobs.length === 2) {
+      // One implied resource threshold per slot keeps restricted two-job models
+      // smaller while retaining the same candidates and exact proof obligations.
+      mipOptions.candidateResourceSupportProfile = "compact";
+    }
+    if (options.onProgress !== undefined) {
+      mipOptions.onProgress = (message) => options.onProgress?.(`${context.job.id}: ${message}`);
+    }
+    if (context.job.options.onSolverProgress !== undefined) {
+      mipOptions.onSolverProgress = (event) => context.job.options.onSolverProgress?.({
+        ...event,
+        model: `${context.job.id}:${event.model}`,
+      });
+    }
+    const onSolverCallback = options.onSolverCallback ?? context.job.options.onSolverCallback;
+    if (onSolverCallback !== undefined) {
+      mipOptions.onSolverCallback = (event) => onSolverCallback({
+        ...event,
+        model: `${context.job.id}:${event.model}`,
+      });
+    }
+    return mipOptions;
+  };
+
   const resultForNode = async (
     context: JobContext,
     fixed: ReadonlyMap<string, CommonChoice>,
     foodChoice: FoodChoice | undefined,
     parentResult: ExactMipResult | undefined,
   ): Promise<ExactMipResult | undefined> => {
-    const foodKey = foodChoice?.key ?? "independent-food";
-    const fixedKey = [...fixed]
-      .sort(([left], [right]) => left.localeCompare(right))
-      .map(([name, choice]) => `${name}=${choice.key}`)
-      .join(";");
-    const key = `${context.job.id}|${foodKey}|${fixedKey}`;
+    const key = nodeCacheKey(context, fixed, foodChoice);
     const cached = cache.get(key);
     if (cached !== undefined || cache.has(key)) {
       mutable.cacheHits++;
@@ -879,7 +1334,7 @@ export async function findBestJointLoadoutV3(
         foodIdentityForOptional(parentResult.food) === foodIdentityForOptional(chosenFood);
       if (satisfiesFixed && satisfiesFood) {
         mutable.parentResultReuses++;
-        remember(key, parentResult);
+        rememberNode(key, parentResult);
         return parentResult;
       }
     }
@@ -893,48 +1348,173 @@ export async function findBestJointLoadoutV3(
       const chosenFood = foodChoice.foods.get(context.job.id);
       if (foodIdentityForOptional(context.optimum.food) !== foodIdentityForOptional(chosenFood)) return solveAndRemember();
     }
-    remember(key, context.optimum);
+    rememberNode(key, context.optimum);
     return context.optimum;
 
     async function solveAndRemember(): Promise<ExactMipResult | undefined> {
-      assertWithinBudget("受限单职业求解");
-      const remainingMs = Math.floor(deadline - performance.now());
-      if (remainingMs <= 0) {
-        throw new Error(`V3 搜索超过 ${timeLimitMs}ms，未完成最优性证明（受限单职业求解）；未返回近似结果`);
-      }
+      const mipOptions = makeRestrictedMipOptions(context, fixed, foodChoice);
       mutable.innerSolves++;
       mutable.cacheMisses++;
-      const mipOptions = makeJobOptions(
-        context, fixed, commonSlotProjections, foodChoice, remainingMs, objective, cancellationRequested,
-      );
-      if (options.onProgress !== undefined) {
-        mipOptions.onProgress = (message) => options.onProgress?.(`${context.job.id}: ${message}`);
-      }
-      if (context.job.options.onSolverProgress !== undefined) {
-        mipOptions.onSolverProgress = (event) => context.job.options.onSolverProgress?.({
-          ...event,
-          model: `${context.job.id}:${event.model}`,
-        });
-      }
-      const onSolverCallback = options.onSolverCallback ?? context.job.options.onSolverCallback;
-      if (onSolverCallback !== undefined) {
-        mipOptions.onSolverCallback = (event) => onSolverCallback({
-          ...event,
-          model: `${context.job.id}:${event.model}`,
-        });
-      }
       const result = await findBestLoadoutExactMip(mipOptions);
       assertWithinBudget("受限单职业求解");
-      remember(key, result ?? null);
+      rememberNode(key, result ?? null);
       return result;
     }
+  };
 
-    function remember(cacheKey: string, result: ExactMipResult | null): void {
-      if (cacheLimit === 0) return;
-      cache.set(cacheKey, result);
-      while (cache.size > cacheLimit) cache.delete(cache.keys().next().value!);
-      mutable.cacheEntries = cache.size;
+  type SeedRefinementRequest = {
+    initialResults: readonly (ExactMipResult | undefined)[] | undefined;
+    fixed: ReadonlyMap<string, CommonChoice>;
+    foodChoice: FoodChoice | undefined;
+    jobIndexes: readonly number[];
+    parentResults?: readonly (ExactMipResult | undefined)[];
+  };
+  const refineSeedCandidates = async (
+    requests: readonly SeedRefinementRequest[],
+  ): Promise<(ExactMipResult | undefined)[][]> => {
+    const resultsByRequest = requests.map(({ initialResults }) => initialResults === undefined
+      ? new Array<ExactMipResult | undefined>(contexts.length).fill(undefined)
+      : [...initialResults]);
+    const pending: {
+      requestIndex: number;
+      index: number;
+      key: string;
+      task: ExactMipOptions;
+      estimateMs: number;
+    }[] = [];
+    const remainingTasksByRequest = requests.map(() => 0);
+    const completedTaskIndexes = new Set<number>();
+    const recordCompletedTask = (taskIndex: number) => {
+      if (completedTaskIndexes.has(taskIndex)) return;
+      completedTaskIndexes.add(taskIndex);
+      mutable.innerSolves++;
+      mutable.cacheMisses++;
+    };
+    for (let requestIndex = 0; requestIndex < requests.length; requestIndex++) {
+      const request = requests[requestIndex]!;
+      const results = resultsByRequest[requestIndex]!;
+      for (const index of request.jobIndexes) {
+        const context = contexts[index]!;
+        const key = nodeCacheKey(context, request.fixed, request.foodChoice);
+        const cached = cache.get(key);
+        if (cached !== undefined || cache.has(key)) {
+          mutable.cacheHits++;
+          cache.delete(key);
+          cache.set(key, cached ?? null);
+          results[index] = cached ?? undefined;
+          continue;
+        }
+        const parentResult = request.parentResults?.[index];
+        if (parentResult !== undefined) {
+          const satisfiesFixed = [...request.fixed].every(([name, choice]) =>
+            commonSlotIdentity(context, parentResult.selection, name, commonSlotProjections) === choice.key);
+          const chosenFood = request.foodChoice?.foods.get(context.job.id);
+          const satisfiesFood = request.foodChoice === undefined ||
+            foodIdentityForOptional(parentResult.food) === foodIdentityForOptional(chosenFood);
+          if (satisfiesFixed && satisfiesFood) {
+            mutable.parentResultReuses++;
+            rememberNode(key, parentResult);
+            results[index] = parentResult;
+            continue;
+          }
+        }
+        const satisfiesFixed = [...request.fixed].every(([name, choice]) =>
+          commonSlotIdentity(context, context.optimum.selection, name, commonSlotProjections) === choice.key);
+        const chosenFood = request.foodChoice?.foods.get(context.job.id);
+        const satisfiesFood = request.foodChoice === undefined ||
+          foodIdentityForOptional(context.optimum.food) === foodIdentityForOptional(chosenFood);
+        if (satisfiesFixed && satisfiesFood) {
+          rememberNode(key, context.optimum);
+          results[index] = context.optimum;
+          continue;
+        }
+        if (options.baselineExecutor === undefined) {
+          const result = await resultForNode(context, request.fixed, request.foodChoice, parentResult);
+          results[index] = result;
+          continue;
+        }
+        pending.push({
+          requestIndex,
+          index,
+          key,
+          task: makeRestrictedMipOptions(context, request.fixed, request.foodChoice),
+          estimateMs: context.optimum.statistics.elapsedMs,
+        });
+        remainingTasksByRequest[requestIndex] = remainingTasksByRequest[requestIndex]! + 1;
+      }
     }
+    if (pending.length === 0) return resultsByRequest;
+
+    const scoreCompletedRequest = (requestIndex: number) => {
+      if (remainingTasksByRequest[requestIndex] !== 0) return;
+      if (requests[requestIndex]!.fixed.size !== options.commonSlots.length) return;
+      const results = resultsByRequest[requestIndex]!;
+      if (results.every((result): result is ExactMipResult => result !== undefined)) {
+        updateBest(exactScore(results), results);
+      }
+    };
+
+    for (let requestIndex = 0; requestIndex < requests.length; requestIndex++) {
+      scoreCompletedRequest(requestIndex);
+    }
+    if (stopAtProvenCeiling) return resultsByRequest;
+
+    // Keep seeds grouped so each batch starts independent jobs for the same
+    // assignment together; within a seed, start historically slower jobs first.
+    pending.sort((left, right) => left.requestIndex - right.requestIndex ||
+      right.estimateMs - left.estimateMs || left.index - right.index);
+    const solved = await options.baselineExecutor!(pending.map((entry) => entry.task), {
+      remainingMs: () => Math.floor(deadline - performance.now()),
+      isCancelled: cancellationRequested,
+      maxConcurrency: Math.min(baselineConcurrency, contexts.length),
+      onTaskComplete: (taskIndex, result) => {
+        const entry = pending[taskIndex];
+        if (entry === undefined) throw new Error("并发受限单职业工作线程返回了未知任务索引");
+        if (completedTaskIndexes.has(taskIndex)) throw new Error("并发受限单职业工作线程重复完成任务");
+        recordCompletedTask(taskIndex);
+        rememberNode(entry.key, result ?? null);
+        resultsByRequest[entry.requestIndex]![entry.index] = result;
+        remainingTasksByRequest[entry.requestIndex] = remainingTasksByRequest[entry.requestIndex]! - 1;
+        scoreCompletedRequest(entry.requestIndex);
+        return stopAtProvenCeiling;
+      },
+    });
+    if (stopAtProvenCeiling) throwIfCancelled(cancellationRequested);
+    else assertWithinBudget("并发受限单职业求解");
+    if (solved === undefined || solved.length !== pending.length) {
+      throw new Error("并发受限单职业工作线程未返回完整结果集");
+    }
+    for (let taskIndex = 0; taskIndex < pending.length; taskIndex++) {
+      if (completedTaskIndexes.has(taskIndex)) continue;
+      if (stopAtProvenCeiling) continue;
+      const entry = pending[taskIndex]!;
+      const result = solved[taskIndex];
+      // Injected executors may not implement completion callbacks; production
+      // workers report each result as it arrives so a proven ceiling can stop
+      // other seeds without waiting for their remaining solves.
+      rememberNode(entry.key, result ?? null);
+      resultsByRequest[entry.requestIndex]![entry.index] = result;
+      remainingTasksByRequest[entry.requestIndex] = remainingTasksByRequest[entry.requestIndex]! - 1;
+      recordCompletedTask(taskIndex);
+      scoreCompletedRequest(entry.requestIndex);
+    }
+    return resultsByRequest;
+  };
+  const refineSeedJobs = async (
+    initialResults: readonly (ExactMipResult | undefined)[] | undefined,
+    fixed: ReadonlyMap<string, CommonChoice>,
+    foodChoice: FoodChoice | undefined,
+    jobIndexes: readonly number[],
+    parentResults?: readonly (ExactMipResult | undefined)[],
+  ): Promise<(ExactMipResult | undefined)[]> => {
+    const [results] = await refineSeedCandidates([{
+      initialResults,
+      fixed,
+      foodChoice,
+      jobIndexes,
+      ...(parentResults === undefined ? {} : { parentResults }),
+    }]);
+    return results!;
   };
 
   const exactScore = (results: readonly ExactMipResult[]): Rational => {
@@ -993,9 +1573,174 @@ export async function findBestJointLoadoutV3(
     if (compareRational(score, ceiling) === 0) stopAtProvenCeiling = true;
   };
 
+  const seedResultsFor = (
+    fixed: ReadonlyMap<string, CommonChoice>,
+    foodChoice: FoodChoice | undefined,
+    allowMateriaCompensation = false,
+  ): ExactMipResult[] | undefined => {
+    const patchedResults: ExactMipResult[] = [];
+    for (const context of contexts) {
+      const selection = [...context.optimum.selection];
+      const projectedRingKeys = new Map<number, Map<number, string>>();
+      for (const [name, choice] of fixed) {
+        const projection = commonSlotProjections.get(name);
+        const slotIndex = commonSlotIndex(context, name, commonSlotProjections);
+        if (projection === undefined) {
+          const candidate = context.job.options.slots[slotIndex]!.find((equipment) =>
+            equipmentIdentity(equipment) === choice.key);
+          if (candidate === undefined) return undefined;
+          selection[slotIndex] = candidate;
+          continue;
+        }
+        const ringKeys = projectedRingKeys.get(slotIndex) ?? new Map<number, string>();
+        ringKeys.set(projection.ringIndex, choice.key);
+        projectedRingKeys.set(slotIndex, ringKeys);
+      }
+      for (const [slotIndex, ringKeys] of projectedRingKeys) {
+        const currentPair = selection[slotIndex] as RingPairInfo | undefined;
+        if (currentPair?.ringEquips === undefined) return undefined;
+        const desired = [
+          ringKeys.get(0) ?? equipmentIdentity(currentPair.ringEquips[0]),
+          ringKeys.get(1) ?? equipmentIdentity(currentPair.ringEquips[1]),
+        ];
+        const pair = context.job.options.slots[slotIndex]!.find((equipment) => {
+          const children = (equipment as Partial<RingPairInfo>).ringEquips;
+          return children !== undefined &&
+            equipmentIdentity(children[0]) === desired[0] &&
+            equipmentIdentity(children[1]) === desired[1];
+        });
+        if (pair === undefined) return undefined;
+        selection[slotIndex] = pair;
+      }
+      if (options.factorizedSharedRingPair) {
+        const firstIndex = context.indexByName.get("ring");
+        const secondIndex = context.indexByName.get("ring2");
+        const first = firstIndex === undefined ? undefined : selection[firstIndex];
+        const second = secondIndex === undefined ? undefined : selection[secondIndex];
+        if (first === undefined || second === undefined ||
+          (first.itemId === second.itemId && (first.isUnique === true || second.isUnique === true))) {
+          return undefined;
+        }
+      }
+      const selectedFood = foodChoice === undefined
+        ? context.optimum.food
+        : foodChoice.foods.get(context.job.id);
+      let rawAttributes = buildRawAttributes(context, selection);
+      let attributes = applyFood(rawAttributes, selectedFood, context.attributeIndexes);
+      let factors = context.factorEvaluator(attributes);
+      if (factors !== undefined) {
+        const product = integerDamageProduct(factors);
+        const reachesSoloOptimum = objective === "dps"
+          ? product * BigInt(context.optimumGcd) ===
+            context.optimumProduct * BigInt(factors.gcdCentiseconds)
+          : product === context.optimumProduct;
+        if (allowMateriaCompensation && enableSharedMateriaCompensation && !reachesSoloOptimum &&
+          foodIdentityForOptional(selectedFood) === foodIdentityForOptional(context.optimum.food)) {
+          const targetRawAttributes = buildRawAttributes(context, context.optimum.selection);
+          const commonSlotIndexes = new Set(options.commonSlots.map((name) =>
+            commonSlotIndex(context, name, commonSlotProjections)));
+          const compensation = findSameItemAttributeCompensation(
+            context,
+            selection,
+            targetRawAttributes,
+            commonSlotIndexes,
+            () => assertWithinBudget("共享种子魔晶石属性补偿"),
+          );
+          if (compensation !== undefined) {
+            const compensatedSelection = [...selection];
+            for (const { slotIndex, equipment } of compensation) compensatedSelection[slotIndex] = equipment;
+            const compensatedRawAttributes = buildRawAttributes(context, compensatedSelection);
+            if (compensatedRawAttributes.every((value, index) => value === targetRawAttributes[index])) {
+              for (const { slotIndex, equipment } of compensation) selection[slotIndex] = equipment;
+              rawAttributes = compensatedRawAttributes;
+              attributes = applyFood(rawAttributes, selectedFood, context.attributeIndexes);
+              factors = context.factorEvaluator(attributes);
+            }
+          }
+        }
+      }
+      if (factors === undefined) return undefined;
+      const constraints = context.constraints ?? {};
+      if (constraints.gcd !== undefined &&
+        Math.round(constraints.gcd * 100) !== factors.gcdCentiseconds) return undefined;
+      if (constraints.gcdChoices !== undefined && !constraints.gcdChoices.some((gcd) =>
+        Math.round(gcd * 100) === factors.gcdCentiseconds)) return undefined;
+      if (context.job.options.speedAttributeId !== undefined) {
+        const speedIndex = context.attributeIndexes.get(context.job.options.speedAttributeId);
+        if (speedIndex === undefined) return undefined;
+        const speed = attributes[speedIndex]!;
+        if ((constraints.speedMin !== undefined && speed < constraints.speedMin) ||
+          (constraints.speedMax !== undefined && speed > constraints.speedMax)) return undefined;
+      } else if (constraints.speedMin !== undefined || constraints.speedMax !== undefined) {
+        return undefined;
+      }
+      if (constraints.toughMin !== undefined || constraints.toughnessMinPercent !== undefined ||
+        constraints.maxToughnessMode === true) {
+        const toughnessAttributeId = context.job.options.toughnessAttributeId;
+        if (toughnessAttributeId === undefined) return undefined;
+        const toughnessIndex = context.attributeIndexes.get(toughnessAttributeId);
+        if (toughnessIndex === undefined) return undefined;
+        let minimum = constraints.toughMin ?? Number.NEGATIVE_INFINITY;
+        if (constraints.toughnessMinPercent !== undefined) {
+          const convert = context.job.options.toughnessPercentToMinimum;
+          if (convert === undefined) return undefined;
+          minimum = Math.max(minimum, convert(constraints.toughnessMinPercent));
+        }
+        if (constraints.maxToughnessMode === true) {
+          if (context.optimum.maximumToughness === undefined) return undefined;
+          minimum = Math.max(minimum, context.optimum.maximumToughness);
+        }
+        if (attributes[toughnessIndex]! < minimum) return undefined;
+      }
+      const evaluation = context.job.options.evaluationFunction(attributes);
+      if (evaluation === undefined || !Number.isFinite(evaluation.damage) || !Number.isFinite(evaluation.gcd)) {
+        return undefined;
+      }
+      patchedResults.push({
+        ...context.optimum,
+        selection,
+        food: selectedFood,
+        damage: evaluation.damage,
+      });
+    }
+    return patchedResults;
+  };
+  const scoreSeed = (
+    fixed: ReadonlyMap<string, CommonChoice>,
+    foodChoice: FoodChoice | undefined,
+  ): Rational | undefined => {
+    const results = seedResultsFor(fixed, foodChoice);
+    return results === undefined ? undefined : exactScore(results);
+  };
+
   let jointFactorProof = false;
-  if (contexts.every((context) => context.active) && options.commonSlots.length > 0) {
+  let jointInnerSolverStatus: "Optimal" | "DualBound" = "Optimal";
+  let exactSharedDomainProof = false;
+  const hasOnlyOneCommonAssignment = options.commonSlots.length > 0 &&
+    options.commonSlots.every((name) => commonChoicesByName.get(name)!.length === 1);
+  if (contexts.every((context) => context.active) && options.commonSlots.length > 0 &&
+    !hasOnlyOneCommonAssignment) {
+    const seedCandidates: {
+      key: string;
+      fixed: Map<string, CommonChoice>;
+      foodChoice: FoodChoice | undefined;
+      score: Rational | undefined;
+      anchorId: string;
+    }[] = [];
+    const seedCandidateKeys = new Set<string>();
+    const addSeedCandidate = (
+      fixed: Map<string, CommonChoice>,
+      foodChoice: FoodChoice | undefined,
+      anchorId: string,
+    ) => {
+      const key = `${[...fixed].map(([name, choice]) => `${name}=${choice.key}`).join(";")}` +
+        `|food=${foodChoice?.key ?? "independent"}`;
+      if (seedCandidateKeys.has(key)) return;
+      seedCandidateKeys.add(key);
+      seedCandidates.push({ key, fixed, foodChoice, score: scoreSeed(fixed, foodChoice), anchorId });
+    };
     for (const anchor of contexts) {
+      assertWithinBudget("联合热启动评分");
       const initialFixed = new Map<string, CommonChoice>();
       for (const name of options.commonSlots) {
         const key = commonSlotIdentity(anchor, anchor.optimum.selection, name, commonSlotProjections);
@@ -1004,21 +1749,148 @@ export async function findBestJointLoadoutV3(
       }
       const initialFood = foodChoices.find((choice) =>
         choice.key === foodIdentityForOptional(anchor.optimum.food)) ?? foodChoices[0];
-      const candidateResults: ExactMipResult[] = [];
-      for (const context of contexts) {
-        const result = await resultForNode(context, initialFixed,
-          options.foodStrategy === "shared" ? initialFood : undefined, undefined);
-        if (result === undefined) break;
-        candidateResults.push(result);
+      const foodChoice = options.foodStrategy === "shared" ? initialFood : undefined;
+      addSeedCandidate(initialFixed, foodChoice, anchor.job.id);
+    }
+    const fullSeedCandidateCount = options.commonSlots.reduce((product, name) =>
+      product * BigInt(commonChoicesByName.get(name)!.length), 1n) *
+      BigInt(options.foodStrategy === "shared" ? foodChoices.length : 1);
+    const fullSeedCandidateLimit = 5_000n;
+    if (fullSeedCandidateCount <= fullSeedCandidateLimit) {
+      const current = new Map<string, CommonChoice>();
+      let visited = 0;
+      const visitSharedChoices = (slotIndex: number) => {
+        if ((visited++ & 255) === 0) assertWithinBudget("联合热启动枚举");
+        if (slotIndex === options.commonSlots.length) {
+          const foods = options.foodStrategy === "shared" ? foodChoices : [undefined];
+          for (const foodChoice of foods) addSeedCandidate(currentCopy(), foodChoice, "shared-choice-enumeration");
+          return;
+        }
+        const name = options.commonSlots[slotIndex]!;
+        for (const choice of commonChoicesByName.get(name)!) {
+          current.set(name, choice);
+          visitSharedChoices(slotIndex + 1);
+        }
+        current.delete(name);
+      };
+      const currentCopy = () => new Map(current);
+      visitSharedChoices(0);
+    }
+    seedCandidates.sort((left, right) => {
+      if (left.score !== undefined && right.score === undefined) return -1;
+      if (left.score === undefined && right.score !== undefined) return 1;
+      if (left.score !== undefined && right.score !== undefined) {
+        const comparison = compareRational(right.score, left.score);
+        if (comparison !== 0) return comparison;
       }
-      if (candidateResults.length === contexts.length) updateBest(exactScore(candidateResults), candidateResults);
-      if (stopAtProvenCeiling) break;
+      return left.anchorId.localeCompare(right.anchorId);
+    });
+    const exactSharedAssignmentLimit = 8n;
+    const canProveBySharedEnumeration = fullSeedCandidateCount <= exactSharedAssignmentLimit &&
+      BigInt(seedCandidates.length) === fullSeedCandidateCount;
+    const seedLimit = canProveBySharedEnumeration
+      ? seedCandidates.length
+      : Math.min(seedCandidates.length, 2);
+    options.onProgress?.(
+      `V3：共享候选组合估分 ${fullSeedCandidateCount.toString()} 个（枚举上限 ${fullSeedCandidateLimit}）；` +
+      `热启动候选 ${seedCandidates.length} 个，精确尝试 ${seedLimit} 个` +
+      (canProveBySharedEnumeration ? "；组合数较少，逐个精确求解并完成外层证明" : ""),
+    );
+    if (canProveBySharedEnumeration) {
+      for (const seed of seedCandidates) {
+        if (stopAtProvenCeiling) break;
+        mutable.outerNodes++;
+        const directResults = seedResultsFor(seed.fixed, seed.foodChoice, true);
+        if (directResults !== undefined) updateBest(exactScore(directResults), directResults);
+        if (!stopAtProvenCeiling) {
+          const candidateResults = await refineSeedJobs(
+            directResults,
+            seed.fixed,
+            seed.foodChoice,
+            contexts.map((_, index) => index),
+          );
+          if (directResults !== undefined && candidateResults.some((result) => result === undefined)) {
+            throw new Error("共享热启动与受限精确子问题的可行性不一致");
+          }
+          mutable.completeNodes++;
+          if (candidateResults.every((result): result is ExactMipResult => result !== undefined)) {
+            updateBest(exactScore(candidateResults), candidateResults);
+          }
+        }
+      }
+      exactSharedDomainProof = true;
+    } else {
+      const useDirectJointWarmStart = contexts.length >= 4;
+      if (useDirectJointWarmStart) {
+        for (const seed of seedCandidates.slice(0, seedLimit)) {
+          const directResults = seedResultsFor(seed.fixed, seed.foodChoice, true);
+          if (directResults !== undefined) {
+            updateBest(exactScore(directResults), directResults);
+            const weakestJobs = contexts.map((context, index) => {
+              const factors = factorsForResult(context, directResults[index]!);
+              const product = integerDamageProduct(factors);
+              const ratio = objective === "dps"
+                ? rational(product * BigInt(context.optimumGcd),
+                    BigInt(factors.gcdCentiseconds) * context.optimumProduct)
+                : rational(product, context.optimumProduct);
+              return { context, index, ratio };
+            }).sort((left, right) => compareRational(left.ratio, right.ratio));
+            const refineCount = Math.min(4, contexts.length);
+            if (!stopAtProvenCeiling) {
+              const refinedResults = await refineSeedJobs(
+                directResults,
+                seed.fixed,
+                seed.foodChoice,
+                weakestJobs.slice(0, refineCount).map(({ index }) => index),
+              );
+              if (refinedResults.every((result): result is ExactMipResult => result !== undefined)) {
+                updateBest(exactScore(refinedResults), refinedResults);
+              }
+            }
+            continue;
+          }
+          const candidateResults = await refineSeedJobs(
+            undefined,
+            seed.fixed,
+            seed.foodChoice,
+            contexts.map((_, index) => index),
+          );
+          if (candidateResults.every((result): result is ExactMipResult => result !== undefined)) {
+            updateBest(exactScore(candidateResults), candidateResults);
+          }
+          if (stopAtProvenCeiling) break;
+        }
+      } else {
+        const seedsToRefine: {
+          seed: (typeof seedCandidates)[number];
+          directResults: ExactMipResult[] | undefined;
+        }[] = [];
+        for (const seed of seedCandidates.slice(0, seedLimit)) {
+          const directResults = seedResultsFor(seed.fixed, seed.foodChoice, true);
+          if (directResults !== undefined) updateBest(exactScore(directResults), directResults);
+          seedsToRefine.push({ seed, directResults });
+          if (stopAtProvenCeiling) break;
+        }
+        if (!stopAtProvenCeiling && seedsToRefine.length > 0) {
+          const refinedBySeed = await refineSeedCandidates(seedsToRefine.map(({ seed, directResults }) => ({
+            initialResults: directResults,
+            fixed: seed.fixed,
+            foodChoice: seed.foodChoice,
+            jobIndexes: contexts.map((_, index) => index),
+          })));
+          for (const refinedResults of refinedBySeed) {
+            if (refinedResults.every((result): result is ExactMipResult => result !== undefined)) {
+              updateBest(exactScore(refinedResults), refinedResults);
+            }
+          }
+        }
+      }
     }
     const initialResults = best === undefined ? [] : contexts.map((context) => best!.jobResults[context.job.id]!);
     const remainingMs = Math.floor(deadline - performance.now());
     const onSolverProgress = contexts[0]!.job.options.onSolverProgress;
     const onSolverCallback = options.onSolverCallback ?? contexts[0]!.job.options.onSolverCallback;
-    const joint = stopAtProvenCeiling ? undefined : await findBestJointFactorMip({
+    const jointOptions = {
       jobs: contexts.map((context) => {
         const jobOptions = makeJobOptions(
           context, new Map(), commonSlotProjections, undefined, remainingMs, objective, cancellationRequested,
@@ -1039,13 +1911,18 @@ export async function findBestJointLoadoutV3(
           slots[slotIndex] = slotCandidates.filter((equipment) =>
             allowedKeys.has(equipmentIdentity(projectEquipment(equipment, commonSlotProjections.get(name)))));
         }
+        const jointJobOptions = inheritCanonicalEvaluatorCandidateUpperBound(jobOptions, {
+          ...jobOptions,
+          slots,
+          foods: options.foodStrategy === "shared"
+            ? foodChoices.map((choice) => choice.foods.get(context.job.id)).filter((food): food is FoodInfo => food !== undefined)
+            : jobOptions.foods,
+        });
         return {
           id: context.job.id,
           slotNames: context.job.slotNames,
           baseline: factorsForResult(context, context.optimum),
-          options: { ...jobOptions, slots, foods: options.foodStrategy === "shared"
-            ? foodChoices.map((choice) => choice.foods.get(context.job.id)).filter((food): food is FoodInfo => food !== undefined)
-            : jobOptions.foods },
+          options: jointJobOptions,
         };
       }),
       commonSlots: options.commonSlots,
@@ -1056,19 +1933,34 @@ export async function findBestJointLoadoutV3(
       equipmentIdentity,
       foodIdentity,
       objective,
+      ...(options.factorizedSharedRingPair ? { canonicalSharedRingPair: true } : {}),
+      ...(options.ratioUpperPairPolicy === undefined
+        ? {}
+        : { ratioUpperPairPolicy: options.ratioUpperPairPolicy }),
+      ...(options.sharedAccessoryPairDominance === true
+        ? { sharedAccessoryPairDominance: true }
+        : {}),
       ...(initialResults.length === contexts.length ? { initialResults } : {}),
       maxSearchMs: remainingMs,
       ...(onSolverProgress === undefined ? {} : {
-        onSolverProgress: (event) => onSolverProgress({ ...event, model: `joint:${event.model}` }),
+        onSolverProgress: (event: LinearMipProgress) => onSolverProgress({ ...event, model: `joint:${event.model}` }),
       }),
       ...(onSolverCallback === undefined ? {} : {
-        onSolverCallback: (event) => onSolverCallback({ ...event, model: `joint:${event.model}` }),
+        onSolverCallback: (event: HighsCallbackTrace) => onSolverCallback({ ...event, model: `joint:${event.model}` }),
       }),
       ...(options.onProgress === undefined ? {} : { onProgress: options.onProgress }),
       isCancelled: cancellationRequested,
-    });
+    };
+    if (options.sharedAccessoryPairDominance === true &&
+      hasSharedAccessoryPairDominancePath(options)) {
+      markSharedAccessoryPairDominancePath(jointOptions);
+    }
+    const joint = stopAtProvenCeiling || exactSharedDomainProof
+      ? undefined
+      : await findBestJointFactorMip(jointOptions);
     assertWithinBudget("联合因子模型复核");
     if (joint !== undefined) {
+      jointInnerSolverStatus = joint.innerSolverStatus;
       mutable.innerSolves += joint.solverRuns;
       mutable.completeNodes++;
       const results = joint.results.map((result, index) => ({ ...result,
@@ -1078,11 +1970,13 @@ export async function findBestJointLoadoutV3(
       }));
       updateBest(exactScore(results), results);
     }
-    jointFactorProof = true;
+    jointFactorProof = !exactSharedDomainProof;
   } else {
     for (const foodChoice of foodChoices) {
       if (stopAtProvenCeiling) break;
-      const fixed = new Map<string, CommonChoice>();
+      const fixed = hasOnlyOneCommonAssignment
+        ? new Map(options.commonSlots.map((name) => [name, commonChoicesByName.get(name)![0]!]))
+        : new Map<string, CommonChoice>();
       await visit(fixed, foodChoice);
     }
   }
@@ -1121,13 +2015,17 @@ export async function findBestJointLoadoutV3(
         : objective === "dps"
         ? "每个外层节点以各职业在已固定通用装备下独立重优化的 DPS 上界求和；product/GCD 归一化分数用 BigInt 有理数比较"
         : "每个外层节点以各职业在已固定通用装备下独立重优化的伤害上界求和；归一化分数用 BigInt 有理数比较",
-      innerSolverStatus: "Optimal",
+      innerSolverStatus: jointInnerSolverStatus,
       formalCertificate: false,
-      numericalLimitation: "HiGHS 报告 Optimal，且整数模型行、属性重建和约束范围均已复核；求解器状态不是可独立验证的形式化证书",
+      numericalLimitation: "HiGHS 报告 Optimal，或经保守取整的 MIP 对偶上界已不高于精确 BigInt incumbent；模型行与属性重建均已复核，但这些求解器结果不是独立形式化证书",
       terminationReason: stopAtProvenCeiling
         ? "已达到各职业单独最优基线之和这一全局上界"
+        : jointFactorProof && jointInnerSolverStatus === "DualBound"
+        ? "HiGHS MIP 对偶上界不高于当前精确 BigInt incumbent，已证明不存在严格改进解"
         : jointFactorProof
         ? "完整共享模型已穷尽归一化总和可能改进的因子签名；乘积仅用于必要条件筛选，最终比较精确有理数总和"
+        : exactSharedDomainProof
+        ? "已穷尽全部共享装备/食物组合，并对每个组合精确求得各职业条件最优；结果以 BigInt 有理数比较"
         : "所有未剪枝通用装备分支均已完成，剩余分支由精确有理数上界剪除",
     },
   };
@@ -1158,19 +2056,16 @@ export async function findBestJointLoadoutV3(
       }
     }
 
-    const results: ExactMipResult[] = [];
-    for (let contextIndex = 0; contextIndex < contexts.length; contextIndex++) {
-      const context = contexts[contextIndex]!;
-      const result = await resultForNode(
-        context,
-        fixed,
-        options.foodStrategy === "shared" ? foodChoice : undefined,
-        parentResults?.[contextIndex],
-      );
-      if (result === undefined) return;
-      results.push(result);
-    }
-    const upperBound = exactScore(results);
+    const results = await refineSeedJobs(
+      undefined,
+      fixed,
+      options.foodStrategy === "shared" ? foodChoice : undefined,
+      contexts.map((_, index) => index),
+      parentResults,
+    );
+    if (results.some((result) => result === undefined)) return;
+    const completeResults = results as ExactMipResult[];
+    const upperBound = exactScore(completeResults);
     if (best !== undefined && compareRational(upperBound, best.score) <= 0) {
       mutable.upperBoundPrunes++;
       return;
@@ -1179,10 +2074,10 @@ export async function findBestJointLoadoutV3(
     let allSharedChoicesAgree = true;
     for (const name of options.commonSlots) {
       const firstContext = contexts[0]!;
-      const firstKey = commonSlotIdentity(firstContext, results[0]!.selection, name, commonSlotProjections);
+      const firstKey = commonSlotIdentity(firstContext, completeResults[0]!.selection, name, commonSlotProjections);
       for (let index = 1; index < contexts.length; index++) {
         const context = contexts[index]!;
-        if (commonSlotIdentity(context, results[index]!.selection, name, commonSlotProjections) !== firstKey) {
+        if (commonSlotIdentity(context, completeResults[index]!.selection, name, commonSlotProjections) !== firstKey) {
           allSharedChoicesAgree = false;
           break;
         }
@@ -1192,7 +2087,7 @@ export async function findBestJointLoadoutV3(
     if (allSharedChoicesAgree) {
       mutable.completeNodes++;
       mutable.relaxedOptimaAttained++;
-      updateBest(upperBound, results);
+      updateBest(upperBound, completeResults);
       return;
     }
 
@@ -1200,7 +2095,7 @@ export async function findBestJointLoadoutV3(
     for (const name of options.commonSlots) {
       if (fixed.has(name)) continue;
       relaxedKeysBySlot.set(name, contexts.map((context, index) =>
-        commonSlotIdentity(context, results[index]!.selection, name, commonSlotProjections),
+        commonSlotIdentity(context, completeResults[index]!.selection, name, commonSlotProjections),
       ));
     }
     const disagreeingSlots = [...relaxedKeysBySlot.entries()]
@@ -1222,7 +2117,7 @@ export async function findBestJointLoadoutV3(
       .sort((left, right) => right.matches - left.matches || left.index - right.index);
     for (const { choice } of branchChoices) {
       fixed.set(branchSlot, choice);
-      await visit(fixed, foodChoice, results);
+      await visit(fixed, foodChoice, completeResults);
       fixed.delete(branchSlot);
       if (stopAtProvenCeiling) return;
     }

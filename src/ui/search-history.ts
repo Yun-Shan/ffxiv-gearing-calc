@@ -330,7 +330,8 @@ function validateJointResult(value: unknown, config: JointOptimizationConfig): v
     typeof value.value.numerator === "string" && typeof value.value.denominator === "string" &&
     isFiniteNumber(value.value.approximate) && isObject(proof) && proof.complete === true &&
     proof.objective === value.objective && typeof proof.optimalityScope === "string" &&
-    typeof proof.outerBound === "string" && proof.innerSolverStatus === "Optimal" &&
+    typeof proof.outerBound === "string" &&
+    (proof.innerSolverStatus === "Optimal" || proof.innerSolverStatus === "DualBound") &&
     proof.formalCertificate === false && typeof proof.numericalLimitation === "string" &&
     typeof proof.terminationReason === "string" && isObject(statistics) &&
     JOINT_STATISTIC_FIELDS.every((field) => isFiniteNumber(statistics[field])) &&
