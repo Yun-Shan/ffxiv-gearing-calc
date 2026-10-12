@@ -1,11 +1,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import {
-  ArrowRight,
   Check,
   CircleHelp,
   Play,
-  Plus,
   X,
 } from "lucide-react";
 import {
@@ -56,6 +54,12 @@ import { ConfigSnapshot } from "./ui/ConfigSnapshot";
 import { SearchHistory } from "./ui/SearchHistory";
 import { JobSelectionSidebar } from "./ui/single-workbench/JobSelectionSidebar";
 import { SingleSearchProgress } from "./ui/SingleSearchProgress";
+import { JointSearchProgress } from "./ui/JointSearchProgress";
+import { JointConditionsScreen } from "./ui/joint-workbench/JointConditionsScreen";
+import { JointJobSelection } from "./ui/joint-workbench/JointJobSelection";
+import { JointResultsScreen } from "./ui/joint-workbench/JointResultsScreen";
+import { JointCommonGearSection } from "./ui/joint-workbench/JointCommonGearSection";
+import { JointProfessionResult } from "./ui/joint-workbench/JointProfessionResult";
 import { SingleJobResultView } from "./ui/single-result/SingleJobResultView";
 import { SingleJobGearTable } from "./ui/single-result/SingleJobGearTable";
 import { stringifyReferenceGearset } from "./ui/reference-gearset-share";
@@ -64,12 +68,19 @@ import type {
   SingleSearchProgressState,
   SingleSearchSlotCandidateCount,
 } from "./ui/SingleSearchProgress";
+import type {
+  JointSearchPhase,
+  JointSearchProgressState,
+  JointSearchStats,
+  JointSearchSummary,
+} from "./ui/JointSearchProgress";
 import { createSearchHistory, finishSearchHistory, type SearchHistoryRecord } from "./ui/search-history";
 import type { WizardStep } from "./ui/WizardNavigation";
 
 const displayedDataVersion = dataProvenance.sources?.find((source) => source.kind === "mcp" && source.gameVersion)?.gameVersion ?? dataProvenance.commit.slice(0, 12);
 
 type Page = AppPage;
+type JointView = "selection" | "conditions" | "progress" | "result";
 type SingleGcdMode = "any" | "tiers" | "speed";
 type SingleGcdFeasibility = {
   key: string;
@@ -2313,8 +2324,6 @@ function SinglePage({ onReset }: { onReset: () => void }) {
     <>
     <AppHeader
       page="single"
-      dataVersion={displayedDataVersion}
-      onReset={onReset}
     />
     <SingleWorkbenchFlow workbench={view === "workbench"}>
       {view === "choose" && <div className="single-selection-layout">
@@ -2444,12 +2453,118 @@ function jointJobSummary(config: OptimizationConfig): string {
   const tankConditions = job.role === "tank"
     ? " · 坚韧条件 " + tankConditionCount + " 项"
     : "";
-  return `${config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel} 级 · 品级 ${config.minItemLevel}–${config.maxItemLevel} · ${sync} · ${food} · ${gcd} · ${speed} · 限制 ${restrictionCount} 项${tankConditions}`;
+  return `${config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel} 级 · 品级 ${config.minItemLevel}–${config.maxItemLevel} · ${sync} · ${food} · ${gcd} · ${speed} · 装备限制 ${restrictionCount} 项${tankConditions}`;
+}
+
+function cloneJointConfig(config: JointOptimizationConfig): JointOptimizationConfig {
+  return {
+    ...config,
+    commonSlots: [...config.commonSlots],
+    jobs: config.jobs.map((job) => ({
+      ...job,
+      gcdChoices: job.gcdChoices ? [...job.gcdChoices] : undefined,
+      excludedSources: [...job.excludedSources],
+      excludedGearIds: job.excludedGearIds ? [...job.excludedGearIds] : undefined,
+      forcedGear: { ...job.forcedGear },
+      sharedSlots: job.sharedSlots ? [...job.sharedSlots] : undefined,
+    })),
+  };
+}
+
+function jointProgressSummary(config: JointOptimizationConfig): JointSearchSummary {
+  return {
+    jobs: config.jobs.map((job) => {
+      const schema = jobSchemas[job.jobId];
+      const speedLabel = schema.role === "healer" || schema.role === "int" ? "咏速" : "技速";
+      const gcd = job.gcdChoices?.length
+        ? job.gcdChoices.map((value) => value.toFixed(2)).join("、") + " 秒"
+        : job.gcdTarget === undefined
+          ? "不限"
+          : job.gcdTarget.toFixed(2) + " 秒";
+      const speed = job.speedMin === undefined && job.speedMax === undefined
+        ? "不限"
+        : `${job.speedMin ?? "不限"}–${job.speedMax ?? "不限"}`;
+      const food = job.foodId === 0
+        ? "自动食物"
+        : foods.find((item) => item.id === job.foodId)?.name ?? `食物 ${job.foodId}`;
+      const restrictionCount = job.excludedSources.length +
+        (job.excludedGearIds?.length ?? 0) +
+        Object.values(job.forcedGear).filter((id) => id !== undefined).length;
+      const details = [
+        { label: "等级", value: `${job.jobLevel ?? schema.maxJobLevel ?? defaultJobLevel} 级` },
+        { label: "品级", value: `${job.minItemLevel}–${job.maxItemLevel}` },
+        { label: "同步", value: job.syncLevel === undefined ? "未启用" : String(job.syncLevel) },
+        { label: "食物", value: food },
+        { label: "GCD", value: gcd },
+        { label: speedLabel, value: speed },
+        { label: "装备限制", value: `${restrictionCount} 项` },
+      ];
+      if (job.minTenacity !== undefined) details.push({ label: "最低坚韧", value: String(job.minTenacity) });
+      if (job.toughnessMinPercent !== undefined) details.push({ label: "坚韧比例", value: `${job.toughnessMinPercent}%` });
+      if (job.maximizeTenacity) details.push({ label: "坚韧目标", value: "尽可能提高" });
+      return { jobId: job.jobId, name: schema.name, details };
+    }),
+    objective: config.objective === "dps" ? "按 GCD 折算" : "每威力伤害期望",
+    commonSlots: config.commonSlots.map((slot) => slot === "rings" ? "两个戒指" : slotLabels[slot]),
+    foodStrategy: config.foodStrategy === "shared" ? "所有职业共用" : "各职业独立选择",
+  };
+}
+
+function parseJointProgressStats(message: string): Partial<JointSearchStats> {
+  const stats: Partial<JointSearchStats> = {};
+  const parseNumber = (pattern: RegExp): number | undefined => {
+    const value = pattern.exec(message)?.[1]?.replaceAll(",", "");
+    if (!value) return undefined;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : undefined;
+  };
+  const seedCandidates = parseNumber(/共享候选组合估分\s*([\d,]+)\s*个/);
+  const seedLimit = parseNumber(/枚举上限\s*([\d,]+)/);
+  const warmStartCandidates = parseNumber(/热启动候选\s*([\d,]+)/);
+  const exactAttempts = parseNumber(/精确尝试\s*([\d,]+)/);
+  const outerNodes = parseNumber(/外层节点[=:：]\s*([\d,]+)/);
+  const completeNodes = parseNumber(/完成[=:：]\s*([\d,]+)/);
+  const upperBoundPrunes = parseNumber(/上界剪枝[=:：]\s*([\d,]+)/);
+  const innerMipSolves = parseNumber(/内层 MIP[=:：]\s*([\d,]+)/);
+  const parentResultReuses = parseNumber(/父结果复用[=:：]\s*([\d,]+)/);
+  const objectiveLabel = /归一化目标\s*[=:：]\s*(\d+\s*\/\s*\d+|[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)(?=\s*[;；]|$)/.exec(message)?.[1];
+  const objectiveFraction = objectiveLabel && /^(\d+)\s*\/\s*(\d+)$/.exec(objectiveLabel);
+  let objectiveValue: number | undefined;
+  if (objectiveFraction) {
+    const numerator = BigInt(objectiveFraction[1]!);
+    const denominator = BigInt(objectiveFraction[2]!);
+    if (denominator > 0n) {
+      const scale = 10n ** 15n;
+      const whole = numerator / denominator;
+      const fraction = (numerator % denominator * scale) / denominator;
+      const parsed = Number(whole) + Number(fraction) / Number(scale);
+      if (Number.isFinite(parsed)) objectiveValue = parsed;
+    }
+  } else if (objectiveLabel) {
+    const parsed = Number(objectiveLabel);
+    if (Number.isFinite(parsed) && parsed >= 0) objectiveValue = parsed;
+  }
+  const incumbent = objectiveValue ?? parseNumber(/incumbent[=:：]\s*([\d,.]+)/i);
+  const elapsedMs = parseNumber(/耗时[=:：]\s*([\d,.]+)\s*ms/);
+  if (seedCandidates !== undefined) stats.seedCandidates = seedCandidates;
+  if (seedLimit !== undefined) stats.seedLimit = seedLimit;
+  if (warmStartCandidates !== undefined) stats.warmStartCandidates = warmStartCandidates;
+  if (exactAttempts !== undefined) stats.exactAttempts = exactAttempts;
+  if (outerNodes !== undefined) stats.outerNodes = outerNodes;
+  if (completeNodes !== undefined) stats.completeNodes = completeNodes;
+  if (upperBoundPrunes !== undefined) stats.upperBoundPrunes = upperBoundPrunes;
+  if (innerMipSolves !== undefined) stats.innerMipSolves = innerMipSolves;
+  if (parentResultReuses !== undefined) stats.parentResultReuses = parentResultReuses;
+  if (incumbent !== undefined) stats.incumbent = incumbent;
+  if (elapsedMs !== undefined) stats.elapsedMs = elapsedMs;
+  return stats;
 }
 
 function JointPage() {
+  const [view, setView] = useState<JointView>("selection");
   const [historyRefresh, setHistoryRefresh] = useState(0);
   const [historyError, setHistoryError] = useState<string>();
+  const [selectionMessage, setSelectionMessage] = useState<string>();
   const [jobConfigs, setJobConfigs] = useState<Record<string, OptimizationConfig>>({
     RDM: makeConfig("RDM"),
     BLM: makeConfig("BLM"),
@@ -2458,16 +2573,14 @@ function JointPage() {
   const [commonSlots, setCommonSlots] = useState<CommonSlot[]>(defaultCommonSlots);
   const [foodStrategy, setFoodStrategy] = useState<"shared" | "independent">("shared");
   const [objective, setObjective] = useState<"damage" | "dps">("damage");
-  const [addingJob, setAddingJob] = useState<JobId>("WHM");
   const [result, setResult] = useState<JointOptimizationResult>();
   const [resultConfig, setResultConfig] = useState<JointOptimizationConfig>();
   const [running, setRunning] = useState(false);
-  const [progress, setProgress] = useState("");
-  const [rawProgress, setRawProgress] = useState("");
+  const [activeProgress, setActiveProgress] = useState<JointSearchProgressState>();
+  const [activeConfigSnapshot, setActiveConfigSnapshot] = useState<JointOptimizationConfig>();
   const [error, setError] = useState<string>();
   const [statusMessage, setStatusMessage] = useState<string>();
   const [resultKey, setResultKey] = useState<string>();
-  const [hasAttempted, setHasAttempted] = useState(false);
   const abortController = useRef<AbortController | undefined>(undefined);
   const currentConfig: JointOptimizationConfig = {
     jobs: jobList.map((jobId) => ({
@@ -2491,43 +2604,35 @@ function JointPage() {
       ...supported,
     ];
   }, [jobList]);
-  const availableJobs = jobIds.filter((jobId) => !jobList.includes(jobId));
+  const canContinueToConditions = jobList.length >= 2 && jobList.every(
+    (jobId) => jobSchemas[jobId].role === jobSchemas[jobList[0]!].role,
+  );
 
   useEffect(() => () => {
     abortController.current?.abort();
   }, []);
 
-  function addJob() {
-    if (jobList.includes(addingJob)) return;
-    const nextJobs = [...jobList, addingJob];
+  function toggleSelectedJob(jobId: JobId) {
+    const nextJobs = jobList.includes(jobId)
+      ? jobList.filter((item) => item !== jobId)
+      : [...jobList, jobId];
+    const nextRole = nextJobs[0] ? jobSchemas[nextJobs[0]].role : undefined;
+    if (nextRole && nextJobs.some((item) => jobSchemas[item].role !== nextRole)) {
+      setSelectionMessage("联合搜索要求选择同一分组的职业；请先取消当前选择，再选择其他分组。");
+      return;
+    }
+    setSelectionMessage(undefined);
     setJobList(nextJobs);
-    setAddingJob(jobIds.find((jobId) => !nextJobs.includes(jobId)) ?? nextJobs[0]);
     setJobConfigs((current) => ({
       ...current,
-      [addingJob]: current[addingJob] ?? makeConfig(addingJob),
+      [jobId]: current[jobId] ?? makeConfig(jobId),
     }));
-    const supported = new Set(slotsForJob(addingJob));
-    setCommonSlots((current) =>
-      current.filter((slot) => supported.has(slot)),
-    );
-  }
-
-  function removeJob(jobId: JobId) {
-    if (jobList.length <= 2) return;
-    const nextJobs = jobList.filter((item) => item !== jobId);
-    setJobList(nextJobs);
-    const supported = new Set(slotsForJob(nextJobs[0]));
+    const supported = new Set(nextJobs.length ? slotsForJob(nextJobs[0]!) : []);
     for (const nextJob of nextJobs.slice(1)) {
       const current = new Set(slotsForJob(nextJob));
       for (const slot of supported) if (!current.has(slot)) supported.delete(slot);
     }
-    setCommonSlots((current) =>
-      current.filter((slot) => supported.has(slot)),
-    );
-  }
-
-  function updateJobConfig(jobId: JobId, next: OptimizationConfig) {
-    setJobConfigs((current) => ({ ...current, [jobId]: next }));
+    setCommonSlots((current) => current.filter((slot) => supported.has(slot)));
   }
 
   function toggleCommonSlot(slot: CommonSlot) {
@@ -2548,10 +2653,9 @@ function JointPage() {
     abortController.current = undefined;
     previous?.abort();
     setRunning(false);
-    setProgress("");
-    setRawProgress("");
+    setActiveProgress(undefined);
+    setActiveConfigSnapshot(undefined);
     setJobList(record.config.jobs.map((config) => config.jobId));
-    setAddingJob(jobIds.find((jobId) => !record.config.jobs.some((config) => config.jobId === jobId)) ?? jobIds[0]!);
     setJobConfigs(Object.fromEntries(record.config.jobs.map((config) => [config.jobId, config])));
     setCommonSlots(record.config.commonSlots.filter((slot): slot is CommonSlot => slot !== "rings"));
     setFoodStrategy(record.config.foodStrategy);
@@ -2559,7 +2663,8 @@ function JointPage() {
     setResult(undefined);
     setResultConfig(undefined);
     setResultKey(undefined);
-    setHasAttempted(false);
+    setView("conditions");
+    setSelectionMessage(undefined);
     setError(undefined);
     setStatusMessage(undefined);
     return true;
@@ -2571,8 +2676,8 @@ function JointPage() {
     setResult(record.result);
     setResultConfig(record.config);
     setResultKey(JSON.stringify(record.config));
-    setHasAttempted(true);
     setStatusMessage("已加载该次联合搜索结果。");
+    setView("result");
   }
 
   async function saveHistoryOutcome(id: string, outcome: Parameters<typeof finishSearchHistory>[1]) {
@@ -2588,54 +2693,116 @@ function JointPage() {
     }
     abortController.current?.abort();
     const controller = new AbortController();
+    const searchConfig = cloneJointConfig(currentConfig);
     abortController.current = controller;
     setRunning(true);
-    setProgress("正在准备所有职业的候选装备…");
-    setRawProgress("正在准备所有职业的候选装备…");
+    setView("progress");
+    setActiveConfigSnapshot(searchConfig);
+    setActiveProgress({
+      phase: "prepare",
+      startedAt: Date.now(),
+      jobs: searchConfig.jobs.map((job) => ({
+        jobId: job.jobId,
+        name: `${job.jobId} · ${jobSchemas[job.jobId].name}`,
+        prepared: false,
+      })),
+      jointStats: {},
+    });
     setError(undefined);
     setStatusMessage(undefined);
-    setHasAttempted(true);
     setResult(undefined);
     setResultKey(undefined);
     setHistoryError(undefined);
     let historyId: string | undefined;
     try {
-      const record = await createSearchHistory({ kind: "joint", config: currentConfig, dataVersion: displayedDataVersion });
+      const record = await createSearchHistory({ kind: "joint", config: searchConfig, dataVersion: displayedDataVersion });
       historyId = record.id;
       setHistoryRefresh((value) => value + 1);
       if (controller.signal.aborted) throw new Error("联合搜索已取消。");
-      const searchResult = await optimizeJoint(currentConfig, {
+      const searchResult = await optimizeJoint(searchConfig, {
         signal: controller.signal,
         onProgress: (message) => {
           if (controller.signal.aborted || abortController.current !== controller) return;
-          setRawProgress(message);
-          setProgress(searchProgressText(message));
+          setActiveProgress((current) => {
+            if (!current) return current;
+            const nextStats = parseJointProgressStats(message);
+            const isVerifyMessage = message.includes("还原并复核");
+            const isBaselineMessage = message.includes("单职业最优伤害基线");
+            const isJointMessage = message.includes("共享候选组合估分")
+              || message.includes("V3 搜索进度")
+              || message.includes("V3 incumbent 更新");
+            const phase: JointSearchPhase = isVerifyMessage
+              ? "verify"
+              : isJointMessage
+                ? "joint"
+                : isBaselineMessage
+                  ? "baseline"
+                  : current.phase;
+            return {
+              ...current,
+              phase,
+              verifyMessage: isVerifyMessage ? searchMessageText(message) : current.verifyMessage,
+              jointStats: { ...current.jointStats, ...nextStats },
+            };
+          });
+        },
+        onCandidateCounts: ({ jobId }) => {
+          if (controller.signal.aborted || abortController.current !== controller) return;
+          setActiveProgress((current) => current ? {
+            ...current,
+            jobs: current.jobs.map((job) => job.jobId === jobId ? { ...job, prepared: true } : job),
+          } : current);
+        },
+        onSolverProgress: (event) => {
+          if (controller.signal.aborted || abortController.current !== controller) return;
+          setActiveProgress((current) => {
+            if (!current) return current;
+            if (event.model.startsWith("joint:")) {
+              const jointSolver = current.jointSolver?.model === event.model
+                ? { ...current.jointSolver, ...event }
+                : event;
+              return { ...current, phase: "joint", jointSolver };
+            }
+            if (current.phase === "joint" || current.phase === "verify") return current;
+            const job = current.jobs.find(({ jobId }) => event.model.startsWith(`${jobId}:`));
+            if (!job) return current;
+            const solver = job.solver?.model === event.model
+              ? { ...job.solver, ...event }
+              : event;
+            return {
+              ...current,
+              phase: "baseline",
+              jobs: current.jobs.map((entry) => entry.jobId === job.jobId ? { ...entry, solver } : entry),
+            };
+          });
         },
       });
       await saveHistoryOutcome(historyId, searchResult ? { status: "completed", result: searchResult } : { status: "no-result" });
       if (controller.signal.aborted || abortController.current !== controller) return;
       setResult(searchResult);
-      if (searchResult) { setResultKey(currentKey); setResultConfig(currentConfig); }
+      if (searchResult) { setResultKey(JSON.stringify(searchConfig)); setResultConfig(searchConfig); }
       setStatusMessage(
         searchResult
           ? "联合搜索已完成。"
           : "当前约束下没有满足条件的联合配装，请调整条件后重试。",
       );
+      setView(searchResult ? "result" : "conditions");
     } catch (caught) {
       if (historyId) await saveHistoryOutcome(historyId, controller.signal.aborted ? { status: "cancelled" } : { status: "failed", error: searchMessageText(caught instanceof Error ? caught.message : String(caught)) });
       if (abortController.current !== controller) return;
       if (controller.signal.aborted) {
-        setHasAttempted(false);
         setStatusMessage("联合搜索已取消。");
+        setView("conditions");
       } else {
         setError(searchMessageText(caught instanceof Error ? caught.message : String(caught)));
+        setView("conditions");
       }
     } finally {
       if (abortController.current === controller) {
         abortController.current = undefined;
         setRunning(false);
-        setProgress("");
-        setRawProgress("");
+        setActiveProgress(undefined);
+        setActiveConfigSnapshot(undefined);
       }
     }
   }
@@ -2645,297 +2812,192 @@ function JointPage() {
   }
 
   function reset() {
-    cancelSearch();
+    const previous = abortController.current;
+    abortController.current = undefined;
+    previous?.abort();
+    setRunning(false);
+    setActiveProgress(undefined);
+    setActiveConfigSnapshot(undefined);
     setJobList(["RDM", "BLM"]);
     setJobConfigs({ RDM: makeConfig("RDM"), BLM: makeConfig("BLM") });
     setCommonSlots(defaultCommonSlots);
     setFoodStrategy("shared");
     setObjective("damage");
+    setView("selection");
+    setSelectionMessage(undefined);
     setResult(undefined);
     setError(undefined);
     setStatusMessage(undefined);
     setResultKey(undefined);
-    setHasAttempted(false);
   }
 
-  const jointCompleted = result?.proof?.complete === true;
-  const commonGear = result?.commonGear ?? {};
+  const summary = jointProgressSummary(currentConfig);
+  const history = (
+    <>
+      <SearchHistory
+        kind="joint"
+        currentDataVersion={displayedDataVersion}
+        refreshKey={historyRefresh}
+        onLoadConfig={loadJointHistoryConfig}
+        onLoadResult={loadJointHistoryResult}
+      />
+      {historyError && <p role="alert" className="history-error">{historyError}</p>}
+    </>
+  );
+  const sharedSlotControls = (
+    <>
+      {(["weapon", "offhand", "head", "earrings", "body", "necklace", "hands", "bracelet", "legs", "ring", "feet", "ring2"] as GearSlot[])
+        .filter((slot) => slotOptions.includes(slot))
+        .map((slot) => (
+          <div className="shared-slot-control" data-slot={slot} key={slot}>
+            <CheckControl
+              checked={commonSlots.includes(slot)}
+              onChange={() => toggleCommonSlot(slot)}
+            >
+              {slotLabels[slot]}
+            </CheckControl>
+          </div>
+        ))}
+    </>
+  );
+  const professionEditors = jobList.map((jobId) => {
+    const jobConfig = jobConfigs[jobId] ?? makeConfig(jobId);
+    return {
+      jobId,
+      editor: (
+        <details className="job-config-card" key={jobId} open>
+          <summary>
+            <span>
+              <strong>{jobSchemas[jobId].name}</strong>
+              <small className="job-config-summary">{jointJobSummary(jobConfig)}</small>
+            </span>
+            <span className="summary-chevron">⌄</span>
+          </summary>
+          <div className="job-config-card-body">
+            <JobConfigFields
+              config={jobConfig}
+              setConfig={(action) =>
+                setJobConfigs((current) => ({
+                  ...current,
+                  [jobId]:
+                    typeof action === "function"
+                      ? action(current[jobId] ?? makeConfig(jobId))
+                      : action,
+                }))
+              }
+              showFood
+            />
+          </div>
+        </details>
+      ),
+    };
+  });
+
+  if (view === "progress" && running && activeProgress && activeConfigSnapshot) {
+    return (
+      <JointSearchProgress
+        progress={activeProgress}
+        summary={jointProgressSummary(activeConfigSnapshot)}
+        onCancel={cancelSearch}
+        onReset={reset}
+        history={history}
+      />
+    );
+  }
+
+  if (view === "selection") {
+    return (
+      <JointJobSelection
+        selectedJobs={jobList}
+        onToggleJob={toggleSelectedJob}
+        onContinue={() => {
+          setView("conditions");
+          setSelectionMessage(undefined);
+          setError(undefined);
+          setStatusMessage(undefined);
+        }}
+        canContinue={canContinueToConditions}
+        dataVersion={displayedDataVersion}
+        onReset={reset}
+        selectionMessage={selectionMessage}
+        errorMessage={error}
+        history={history}
+      />
+    );
+  }
+
+  if (view === "result" && result && resultConfig && !stale) {
+    const resultDetails = (
+      <>
+        <JointCommonGearSection result={result} />
+        {resultConfig.jobs.map((jobConfig) => {
+          const { jobId } = jobConfig;
+          const jobResult = result.jobResults[jobId];
+          return (
+            <JointProfessionResult
+              key={jobId}
+              jobId={jobId}
+              result={jobResult}
+              baseline={result.optima[jobId]}
+              equipment={jobResult ? <GearTable result={jobResult} config={jobConfig} compact /> : undefined}
+              configSnapshot={<ConfigSnapshot config={jobConfig} />}
+              statName={statName}
+              statValue={statValue}
+            />
+          );
+        })}
+      </>
+    );
+
+    return (
+      <JointResultsScreen
+        result={result}
+        config={resultConfig}
+        details={resultDetails}
+        onAdjust={() => setView("conditions")}
+        dataVersion={displayedDataVersion}
+        history={history}
+        onReset={reset}
+      />
+    );
+  }
 
   return (
-    <main className="workspace joint-workspace">
-      <aside className="sidebar joint-sidebar">
-        <div className="section-kicker">多职业联合搜索</div>
-        <div className="sidebar-title">联合配置</div>
-        <div className="field-label">参与职业</div>
-        <div className="selected-jobs">
-          {jobList.map((jobId) => (
-            <span className="job-chip" key={jobId}>
-              {jobSchemas[jobId].name}
-              <button
-                type="button"
-                disabled={jobList.length <= 2}
-                aria-label={"移除" + jobSchemas[jobId].name}
-                onClick={() => removeJob(jobId)}
-              >
-                <X size={12} />
-              </button>
-            </span>
-          ))}
-        </div>
-        <div className="picker-row job-adder">
-          <select
-            value={addingJob}
-            onChange={(event) => setAddingJob(event.target.value as JobId)}
-            aria-label="添加职业"
-          >
-            {availableJobs.map((jobId) => (
-              <option key={jobId} value={jobId}>
-                {jobSchemas[jobId].name}
-              </option>
-            ))}
-          </select>
-          <button type="button" className="small-action" onClick={addJob} disabled={!availableJobs.length}>
-            <Plus size={14} />
-            添加职业
-          </button>
-        </div>
-
-        <div className="config-section">
-          <div className="field-label">公共共享部位</div>
-          <p className="field-hint">相同部位必须使用同一装备及属性方案。</p>
-          <div className="shared-slot-list">
-            {(["weapon", "offhand", "head", "earrings", "body", "necklace", "hands", "bracelet", "legs", "ring", "feet", "ring2"] as GearSlot[]).map((slot) => (
-              <div key={slot} aria-hidden={slotOptions.includes(slot) ? undefined : true}>
-                {slotOptions.includes(slot) && (
-                  <CheckControl
-                    checked={commonSlots.includes(slot)}
-                    onChange={() => toggleCommonSlot(slot)}
-                  >
-                    {slotLabels[slot]}
-                  </CheckControl>
-                )}
-              </div>
-            ))}
+    <JointConditionsScreen
+      summary={summary}
+      sharedSlotControls={sharedSlotControls}
+      foodStrategyControl={
+        <div className="joint-segment-field">
+          <span>食物策略</span>
+          <div className="joint-segment" role="group" aria-label="食物策略">
+            <button type="button" aria-pressed={foodStrategy === "shared"} onClick={() => setFoodStrategy("shared")}>全职业共用</button>
+            <button type="button" aria-pressed={foodStrategy === "independent"} onClick={() => setFoodStrategy("independent")}>各职业独立</button>
           </div>
         </div>
-
-        <SelectField
-          label="食物策略"
-          value={foodStrategy}
-          onChange={(value) => setFoodStrategy(value as "shared" | "independent")}
-        >
-          <option value="shared">全职业共用食物</option>
-          <option value="independent">各职业独立选择食物</option>
-        </SelectField>
-        <SelectField
-          label="联合目标"
-          value={objective}
-          onChange={(value) => setObjective(value as "damage" | "dps")}
-        >
-          <option value="damage">每威力伤害期望</option>
-          <option value="dps">按 GCD 折算</option>
-        </SelectField>
-        <SearchButton running={running} onSearch={runSearch} onCancel={cancelSearch} />
-        {historyError && <p role="alert" className="history-error">{historyError}</p>}
-        <SearchHistory kind="joint" currentDataVersion={displayedDataVersion} refreshKey={historyRefresh} onLoadConfig={loadJointHistoryConfig} onLoadResult={loadJointHistoryResult} />
-      </aside>
-
-      <section className="main-panel">
-        <div className="content-head">
-          <div>
-            <div className="section-kicker">完整候选联合搜索</div>
-            <h1>多职业联合配装</h1>
-            <p className="head-caption">
-              每个职业单独配置等级、限制和目标档位；联合搜索同时计算各职业基线。
-            </p>
+      }
+      objectiveControl={
+        <div className="joint-segment-field">
+          <span>优化目标</span>
+          <div className="joint-segment" role="group" aria-label="优化目标">
+            <button type="button" aria-pressed={objective === "damage"} onClick={() => setObjective("damage")}>每威力伤害期望</button>
+            <button type="button" aria-pressed={objective === "dps"} onClick={() => setObjective("dps")}>按 GCD 折算</button>
           </div>
-          {result && !stale && (
-            <div className="head-actions">
-              <span className={"completion-chip " + (jointCompleted ? "complete" : "incomplete")}>
-                <span className="status-dot" />
-                {jointCompleted ? "搜索已完成" : "未完成证明"}
-              </span>
-            </div>
-          )}
         </div>
-
-        <StatusPanel
-          running={running}
-          progress={progress}
-          rawProgress={rawProgress}
-          error={error}
-          message={stale ? undefined : statusMessage}
-          onCancel={cancelSearch}
-        />
-
-        <div className="job-config-list">
-          {jobList.map((jobId) => {
-            const jobConfig = jobConfigs[jobId] ?? makeConfig(jobId);
-            return (
-            <details className="job-config-card" key={jobId}>
-              <summary>
-                <span>
-                  <strong>{jobSchemas[jobId].name}</strong>
-                  <small className="job-config-summary">{jointJobSummary(jobConfig)}</small>
-                </span>
-                <span className="summary-chevron">⌄</span>
-              </summary>
-              <div className="job-config-card-body">
-                <JobConfigFields
-                  config={jobConfig}
-                  setConfig={(action) =>
-                    setJobConfigs((current) => ({
-                      ...current,
-                      [jobId]:
-                        typeof action === "function"
-                          ? action(current[jobId] ?? makeConfig(jobId))
-                          : action,
-                    }))
-                  }
-                  showFood={true}
-                />
-              </div>
-            </details>
-            );
-          })}
-        </div>
-
-        <section className="joint-condition-review" aria-label="联合搜索条件检查">
-          <h2>开始前检查</h2>
-          <p>参与职业：{jobList.map((id) => jobSchemas[id].name).join("、")}；目标：{objective === "damage" ? "每威力伤害期望" : "按 GCD 折算"}。</p>
-          <p>共享部位：{commonSlots.map((slot) => slotLabels[slot]).join("、") || "不共享"}；食物：{foodStrategy === "shared" ? "所有职业共用" : "各职业独立选择"}。各职业已启用的限制显示在上方折叠摘要中。</p>
-        </section>
-
-        {result && !stale && (
-          <>
-            <section className="result-config-snapshot" aria-label="本次联合结果的共享条件">
-              <h2>本次联合搜索条件</h2>
-              <p className="field-hint">以下记录绑定本次结果；各职业完整条件在对应结果末尾展示。</p>
-              <dl className="snapshot-rows">
-                <div><dt>参与职业</dt><dd>{(resultConfig ?? currentConfig).jobs.map((config) => jobSchemas[config.jobId].name).join("、")}</dd></div>
-                <div><dt>联合目标</dt><dd>{(resultConfig ?? currentConfig).objective === "dps" ? "按 GCD 折算" : "每威力伤害期望"}</dd></div>
-                <div><dt>共享部位</dt><dd>{(resultConfig ?? currentConfig).commonSlots.map((slot) => slot === "rings" ? "两个戒指" : slotLabels[slot]).join("、") || "不共享"}</dd></div>
-                <div><dt>食物策略</dt><dd>{(resultConfig ?? currentConfig).foodStrategy === "shared" ? "所有职业共用" : "各职业独立选择"}</dd></div>
-              </dl>
-            </section>
-            <div className="joint-score-card">
-              <div>
-                <div className="section-kicker">联合总分</div>
-                <strong>{result.value.approximate.toFixed(8)}</strong>
-                <span>
-                  有理数 {result.value.numerator} / {result.value.denominator}
-                </span>
-              </div>
-              <div className="joint-score-meta">
-                <span>{jointCompleted ? "候选空间搜索已完成" : "搜索未完成"}</span>
-                <span>
-                  {result.statistics.elapsedMs.toFixed(0)} 毫秒 ·{" "}
-                  {result.statistics.completeNodes.toLocaleString()} 个完成节点
-                </span>
-                <span>
-                  结果范围限于当前候选与约束；数值优化结果不构成形式化证明。
-                </span>
-              </div>
-            </div>
-
-            {Object.keys(commonGear).length > 0 && (
-              <section className="common-gear-section">
-                <div className="result-toolbar">
-                  <div>
-                    <h2>公共共享部位</h2>
-                    <span className="muted">所有参与职业使用相同装备和属性方案</span>
-                  </div>
-                </div>
-                <div className="common-gear-list">
-                  {Object.entries(commonGear).flatMap(([slot, items]) => {
-                    if (slot === "rings") {
-                      return (items ?? []).map((item, index) => (
-                        <div className="common-gear-row" key={`ring-${index}-${item.id}`}>
-                          <span>{`戒指${index + 1}`}</span>
-                          <div><strong>{item.name}</strong></div>
-                        </div>
-                      ));
-                    }
-                    return [(
-                      <div className="common-gear-row" key={slot}>
-                        <span>{slotLabels[slot as GearSlot]}</span>
-                        <div>
-                          {items?.map((item) => (
-                            <strong key={item.id}>{item.name}</strong>
-                          ))}
-                        </div>
-                      </div>
-                    )];
-                  })}
-                </div>
-                {result.commonFood && (
-                  <p className="common-food-note">共用食物：{result.commonFood.name}</p>
-                )}
-              </section>
-            )}
-
-            {(resultConfig?.jobs.map((job) => job.jobId) ?? jobList).map((jobId) => (
-              <section className="joint-job-result" key={jobId}>
-                <div className="joint-job-heading">
-                  <div>
-                    <div className="section-kicker">职业完整结果</div>
-                    <h2>{jobSchemas[jobId].name}</h2>
-                  </div>
-                  <div className="baseline-summary">
-                    <span>
-                      单职业基线{" "}
-                      {(result.optima[jobId]?.score ?? 0).toFixed(7)}
-                    </span>
-                    <strong>
-                      基线比例{" "}
-                      {result.optima[jobId]?.score
-                        ? (
-                            ((result.jobResults[jobId]?.score ?? 0) /
-                              result.optima[jobId]!.score) *
-                            100
-                          ).toFixed(4) + "%"
-                        : "—"}
-                    </strong>
-                  </div>
-                </div>
-                <ResultPanel
-                  result={result.jobResults[jobId]}
-                  baseline={result.optima[jobId]}
-                  config={(resultConfig ?? currentConfig).jobs.find((item) => item.jobId === jobId) ?? makeConfig(jobId)}
-                />
-              </section>
-            ))}
-          </>
-        )}
-
-        {(!result || stale) && !running && (
-          <div className="empty-state joint-empty-state">
-            <div className="empty-icon">
-              {hasAttempted && !stale ? <X size={19} /> : <ArrowRight size={20} />}
-            </div>
-            <h2>
-              {error
-                ? "搜索未完成"
-                : hasAttempted && !stale
-                  ? "没有可行联合方案"
-                  : "准备联合搜索"}
-            </h2>
-            <p>
-              {error
-                ? "请查看上方错误信息，修正条件后重新搜索。"
-                : hasAttempted && !stale
-                  ? "当前联合约束下没有可行方案，请调整职业或限制后重试。"
-                  : "配置参与职业、公共部位和各职业约束后手动开始搜索。"}
-            </p>
-          </div>
-        )}
-        <footer className="footer">
-          <span>多职业联合目标 · {objective === "damage" ? "每威力伤害期望" : "按 GCD 折算"}</span>
-          <span>纯前端计算 · 可离线运行</span>
-          <span>数据版本 {displayedDataVersion}</span>
-        </footer>
-      </section>
-    </main>
+      }
+      professionEditors={professionEditors}
+      canStartSearch={jobList.length >= 2 && canContinueToConditions}
+      feedbackMessage={error ?? statusMessage}
+      feedbackIsError={error !== undefined}
+      history={history}
+      dataVersion={displayedDataVersion}
+      onReset={reset}
+      onBackToSelection={() => {
+        setView("selection");
+        setError(undefined);
+        setStatusMessage(undefined);
+      }}
+      onStartSearch={runSearch}
+    />
   );
 }
 
@@ -2954,7 +3016,7 @@ export function App() {
     <div className="app-shell">
       {page === "joint" ? (
         <>
-          <AppHeader page={page} dataVersion={displayedDataVersion} onReset={() => setResetVersion((version) => version + 1)} />
+          <AppHeader page={page} />
           <JointPage key={"joint-" + resetVersion} />
         </>
       ) : (

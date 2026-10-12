@@ -1,16 +1,11 @@
-import { RotateCcw } from "lucide-react";
 import styles from "./AppHeader.module.css";
 
 export type AppPage = "single" | "joint";
 
 export function AppHeader({
   page,
-  dataVersion,
-  onReset,
 }: {
   page: AppPage;
-  dataVersion: string;
-  onReset: () => void;
 }) {
   return (
     <header className={styles.header}>
@@ -38,16 +33,6 @@ export function AppHeader({
           多职业联合搜索
         </a>
       </nav>
-      {page === "joint" && <div className={styles.actions}>
-        <button
-          className={styles.reset}
-          aria-label="重置当前页面配置"
-          title={`重置当前页面配置 · 数据版本 ${dataVersion}`}
-          onClick={onReset}
-        >
-          <RotateCcw size={17} />
-        </button>
-      </div>}
     </header>
   );
 }
