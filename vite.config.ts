@@ -1,6 +1,5 @@
-import { defineConfig } from "vite";
+import { configDefaults, defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 
 const projectRoot = resolve(process.cwd());
@@ -17,7 +16,13 @@ function isWithin(root: string, path: string): boolean {
 }
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react()],
+  test: {
+    exclude: [...configDefaults.exclude, "**/*.helper.test.*"],
+    setupFiles: [
+      resolve(projectRoot, "src/test-utils/test-binary-data.helper.test.ts"),
+    ],
+  },
   server: {
     watch: {
       ignored: (path) => {
@@ -29,6 +34,7 @@ export default defineConfig({
 
         const relativePath = relative(srcRoot, absolutePath);
         return (
+          relativePath.split(sep).includes("test-utils") ||
           relativePath.split(sep).includes("__tests__") ||
           /\.(?:test|spec)\.[^\\/]+$/i.test(relativePath)
         );

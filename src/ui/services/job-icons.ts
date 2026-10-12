@@ -1,0 +1,27 @@
+import type { JobId } from "../../domain/index";
+
+export const jobIcons: Record<JobId, string> = {
+  "PLD": "/assets/jobs/PLD.png",
+  "WAR": "/assets/jobs/WAR.png",
+  "DRK": "/assets/jobs/DRK.png",
+  "GNB": "/assets/jobs/GNB.png",
+  "WHM": "/assets/jobs/WHM.png",
+  "SCH": "/assets/jobs/SCH.png",
+  "AST": "/assets/jobs/AST.png",
+  "SGE": "/assets/jobs/SGE.png",
+  "MNK": "/assets/jobs/MNK.png",
+  "DRG": "/assets/jobs/DRG.png",
+  "NIN": "/assets/jobs/NIN.png",
+  "SAM": "/assets/jobs/SAM.png",
+  "RPR": "/assets/jobs/RPR.png",
+  "VPR": "/assets/jobs/VPR.png",
+  "BRD": "/assets/jobs/BRD.png",
+  "MCH": "/assets/jobs/MCH.png",
+  "DNC": "/assets/jobs/DNC.png",
+  "BLM": "/assets/jobs/BLM.png",
+  "SMN": "/assets/jobs/SMN.png",
+  "RDM": "/assets/jobs/RDM.png",
+  "PCT": "/assets/jobs/PCT.png",
+  "BLU": "/assets/jobs/BLU.png",
+  "BST": "/assets/jobs/BST.png",
+};

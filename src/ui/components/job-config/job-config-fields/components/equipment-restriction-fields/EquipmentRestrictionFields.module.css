@@ -1,0 +1,199 @@
+.restrictionDetails {
+  margin: 18px 0 0;
+  border-top: 1px solid #d2dcd7;
+}
+
+.restrictionDetails summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 18px 0;
+  color: #455851;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  list-style: none;
+}
+
+.restrictionDetails summary::-webkit-details-marker {
+  display: none;
+}
+
+.restrictionDetails summary::before {
+  content: "+";
+  width: 13px;
+  color: #087f80;
+  font: 15px "Noto Sans SC", sans-serif;
+}
+
+.restrictionDetails[open] summary::before {
+  content: "−";
+}
+
+.restrictionDetails summary span {
+  margin-left: auto;
+  color: #596d80;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.restrictionDetails > input[type="search"] {
+  margin-bottom: 10px;
+}
+
+.sourceOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 260px;
+  overflow: auto;
+  padding: 3px 0;
+}
+
+.sourceOptions > label {
+  min-height: 30px;
+  align-items: center;
+  padding: 4px 2px;
+}
+
+.sourceOptions > label > span:last-child {
+  min-width: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sourceOptions > p {
+  padding: 12px 2px;
+}
+
+.restrictionBlock {
+  margin: 2px 0 18px;
+}
+
+.restrictionBlock > strong {
+  display: block;
+  margin: 0 0 8px;
+  color: #66756f;
+  font-size: 10px;
+}
+
+.pickerRow {
+  display: flex;
+  gap: 7px;
+  min-width: 0;
+}
+
+.pickerRow input,
+.pickerRow select {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 10px;
+  color: #172b40;
+  border: 1px solid #c9d4d0;
+  border-radius: 4px;
+  background: #fff;
+  outline: none;
+  font-size: 14px;
+}
+
+.pickerRow select {
+  flex: 0 0 76px;
+  padding-left: 6px;
+}
+
+.pickerRow input {
+  flex: 1;
+}
+
+.pickerRow input:focus,
+.pickerRow select:focus {
+  border-color: #87a79c;
+  box-shadow: 0 0 0 3px #d5e4de;
+}
+
+.suggestions {
+  max-height: 230px;
+  overflow: auto;
+  margin-top: 5px;
+  background: #fbfcfb;
+  border: 1px solid #d1dbd6;
+}
+
+.suggestions button {
+  width: 100%;
+  min-height: 44px;
+  padding: 7px 9px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  color: #31443e;
+  border: 0;
+  border-bottom: 1px solid #e4eae7;
+  background: transparent;
+  text-align: left;
+}
+
+.suggestions button:hover {
+  background: #eef4e5;
+}
+
+.suggestions button span {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.suggestions button small,
+.suggestions p {
+  color: #596d80;
+  font-size: 12px;
+}
+
+.suggestions p {
+  padding: 2px 9px;
+}
+
+.restrictionTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.restrictionTag {
+  max-width: 100%;
+  min-height: 24px;
+  padding: 4px 5px 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #146769;
+  background: #edf8f7;
+  font-size: 12px;
+}
+
+.restrictionTag button {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  color: #718345;
+  border: 0;
+  background: transparent;
+}
+
+.restrictionTag button:hover {
+  color: #334c28;
+}
+
+[data-job-config-card-body] .restrictionDetails {
+  align-self: start;
+}

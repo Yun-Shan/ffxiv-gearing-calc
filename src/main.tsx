@@ -1,10 +1,8 @@
 import "./styles.css";
-import "./wizard.css";
-import "./penpot-tailwind.css";
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { App } from "./App";
+import { App } from "./ui/app/App";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -1,0 +1,131 @@
+.section {
+  display: flex;
+  flex: 0 0 auto;
+  min-width: 0;
+  flex-direction: column;
+  order: 1;
+}
+
+.title { margin: 17px 0 0; color: #354a37; font-size: 15px; line-height: 1.25; }
+
+.section :global(.single-combat-conditions) { margin: 0; padding: 0 0 6px; border: 0; }
+.section :global(.single-combat-conditions > summary) { display: none; }
+.section :global(.single-combat-conditions > .config-section) { margin: 0; padding: 0; }
+
+.section :global(.single-combat-conditions > .single-gcd-section) {
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 46px;
+  height: 46px;
+  min-height: 46px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: -1px;
+  padding: 0 12px 0 0;
+  border-bottom: 1px solid #dce3d7;
+}
+
+.section :global(.single-gcd-controls) { display: flex; position: relative; flex: 0 1 clamp(440px, calc(18.5417vw + 173px), 529px); min-width: 0; align-items: center; gap: 0; }
+.section :global(.single-gcd-label) { display: flex; flex: 0 0 clamp(116px, calc(5.8333vw + 32px), 144px); align-items: center; height: 32px; color: #354a37; font-size: clamp(12px, calc(.4167vw + 6px), 14px); font-weight: 700; white-space: nowrap; }
+.section :global(.single-gcd-mode-control) { display: flex; position: relative; flex: 0 0 clamp(118px, calc(3.75vw + 64px), 136px); width: clamp(118px, calc(3.75vw + 64px), 136px); height: clamp(28px, calc(1.6667vw + 4px), 36px); margin-left: clamp(12px, .8333vw, 16px); }
+.section :global(.single-gcd-mode-control > select) { box-sizing: border-box; width: 100%; height: 100%; appearance: none; padding: 2px 27px 2px 9px; border: 1px solid #cbd5c7; border-radius: 3px; background: #fff; color: #354a37; text-align: left; font: 500 clamp(10px, calc(.4167vw + 4px), 12px) "Noto Sans SC", sans-serif; }
+.section :global(.single-gcd-mode-caret),
+.section :global(.single-gcd-choice-caret) { display: inline-flex; align-items: center; justify-content: center; color: #687568; font-family: "Noto Sans SC", sans-serif; font-style: normal; font-weight: 500; line-height: 1; pointer-events: none; }
+.section :global(.single-gcd-mode-caret) { position: absolute; top: 0; right: 9px; bottom: 0; width: 18px; font-size: 14px; }
+.section :global(.single-gcd-choice-control) { position: relative; flex: 1 1 auto; min-width: 0; margin-left: 8px; }
+.section :global(.single-gcd-choice-trigger) { display: flex; width: 100%; min-width: 0; height: clamp(28px, calc(1.6667vw + 4px), 36px); align-items: center; justify-content: space-between; gap: 8px; padding: 2px 8px 2px 9px; border: 1px solid #cbd7c7; border-radius: 4px; background: #fff; color: #354a37; text-align: left; font-size: clamp(10px, calc(.4167vw + 4px), 12px); }
+.section :global(.single-gcd-choice-caret) { flex: 0 0 18px; height: 100%; font-size: 12px; }
+.section :global(.single-gcd-chips) { display: flex; position: relative; flex: 1 1 auto; min-width: 0; align-items: center; gap: 4px; overflow: hidden; }
+.section :global(.single-gcd-chip) { display: inline-flex; flex: 0 0 50px; height: 24px; align-items: center; justify-content: center; border: 1px solid #d6dfcd; border-radius: 4px; background: #eef3e7; color: #52604e; font: 500 10px "Noto Sans SC", sans-serif; }
+.section :global(.single-gcd-chip.is-overflow) { flex-basis: 26px; font-size: 10px; }
+.section :global(.single-gcd-chip-measure) { position: absolute; width: 50px; visibility: hidden; pointer-events: none; }
+.section :global(.single-gcd-chip-measure.is-overflow) { width: 26px; }
+.section :global(.single-gcd-choice-placeholder) { flex: 1 1 auto; min-width: 0; overflow: hidden; color: #7b8577; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.section :global(.single-gcd-choice-menu) { position: absolute; z-index: 30; top: calc(100% + 5px); left: 0; width: 100%; max-height: 270px; overflow-y: auto; border: 1px solid #cbd5c7; background: #fff; box-shadow: 0 8px 22px rgb(31 45 31 / 17%); }
+.section :global(.single-gcd-choice-option) { display: flex; min-height: 34px; align-items: center; gap: 9px; padding: 4px 10px; border-bottom: 1px solid #edf0e9; color: #43503e; font-size: 11px; cursor: pointer; }
+.section :global(.single-gcd-choice-option.is-unavailable) { background: #fff8f5; color: #994b32; }
+.section :global(.single-gcd-choice-option:hover) { background: #f5f7f1; }
+.section :global(.single-gcd-choice-option input) { width: 14px; height: 14px; margin: 0; accent-color: #758843; }
+.section :global(.single-gcd-choice-option > svg) { margin-left: auto; color: #738544; }
+.section :global(.single-gcd-choice-empty),
+.section :global(.single-gcd-choice-note) { margin: 0; padding: 8px 10px; color: #788274; font-size: 10px; line-height: 1.4; }
+.section :global(.single-gcd-choice-note) { border-top: 1px solid #e4e9df; background: #f8f9f5; }
+.section :global(.single-speed-inline) { display: flex; flex: 0 0 auto; align-items: center; height: clamp(32px, calc(2.0833vw + 2px), 42px); gap: 0; margin-left: clamp(6px, calc(1.0417vw - 9px), 11px); color: #586448; font-size: clamp(9px, calc(.4167vw + 3px), 11px); }
+.section :global(.single-speed-inline > span:first-child) { min-width: clamp(30px, calc(2.0833vw + 0px), 40px); margin-right: clamp(6px, calc(1.0417vw - 9px), 11px); color: #586448; font-weight: 500; text-align: right; white-space: nowrap; }
+.section :global(.single-speed-inline label) { display: block; width: clamp(66px, calc(1.25vw + 48px), 72px); }
+.section :global(.single-speed-inline label:first-of-type) { margin-right: clamp(2px, calc(.8333vw - 10px), 6px); }
+.section :global(.single-speed-inline input) { box-sizing: border-box; width: 100%; height: clamp(28px, calc(1.6667vw + 4px), 36px); padding: 3px 6px; border: 1px solid #cbd5c7; border-radius: 4px; background: #fff; color: #3e4b3d; font-size: clamp(10px, calc(.4167vw + 4px), 12px); }
+.section :global(.single-speed-inline input::placeholder) { color: #899187; font-size: clamp(8px, calc(.4167vw + 2px), 10px); }
+.section :global(.single-speed-separator) { display: inline-flex; width: 14px; height: clamp(26px, calc(1.6667vw + 2px), 34px); align-items: center; justify-content: center; margin-right: clamp(4px, calc(.625vw - 5px), 7px); color: #687568; font-size: 10px; }
+.section :global(.single-gcd-section .gcd-query-error) { grid-column: 1 / -1; color: #994b32; font-size: 11px; }
+.section :global(.single-gcd-query-retry) { margin-left: 8px; padding: 2px 6px; border: 1px solid #cfa58f; border-radius: 3px; background: #fff; color: #8b422f; font-size: inherit; cursor: pointer; }
+.section :global(.single-gcd-section .single-objective-display) { box-sizing: border-box; display: flex; flex: 0 0 218px; height: calc(100% + 2px); min-height: 0; align-self: stretch; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0; margin: -1px 0; padding: 0 0 0 17px; border-left: 1px solid #dce3d7; }
+.section :global(.single-objective-display > span) { color: #68764c; font-size: 10px; font-weight: 700; }
+.section :global(.single-objective-display > strong) { color: #354a37; font-size: 15px; line-height: 1.35; }
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child) { display: grid; width: min(100%, 470px); grid-template-columns: 122px minmax(0, 1fr); align-items: center; gap: 6px; margin: 8px 0 0; padding: 0 0 7px; border-bottom: 1px solid #dce3d7; }
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .field-label) { display: none; }
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field) { display: grid; grid-column: 1 / -1; grid-template-columns: 122px minmax(0, 1fr); align-items: center; gap: 6px; margin: 0; }
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field > .field-label) { margin: 0; color: #354a37; font-size: 11px; font-weight: 600; }
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field > select) { width: 100%; height: 28px; min-height: 28px; padding: 0 10px; border: 1px solid #cbd5c7; border-radius: 3px; background: #fff; color: #354a37; font-size: 11px; }
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .number-field),
+.section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .field-hint) { grid-column: 2; margin: 0; }
+
+@media (min-width: 1200px) and (max-width: 1439px) {
+  .section :global(.single-gcd-controls) { width: 440px; min-width: 440px; height: 32px; flex: 0 0 440px; align-self: flex-start; flex-wrap: nowrap; margin-top: 3px; }
+  .section :global(.single-gcd-label) { flex-basis: 116px; font-size: 12px; }
+  .section :global(.single-gcd-mode-control) { flex-basis: 118px; width: 118px; height: 28px; margin-left: 12px; }
+  .section :global(.single-gcd-mode-control > select) { padding-inline: 9px 27px; font-size: 10px; }
+  .section :global(.single-gcd-mode-caret) { font-size: 13px; }
+  .section :global(.single-gcd-choice-control) { min-width: 170px; }
+  .section :global(.single-gcd-choice-trigger) { height: 28px; font-size: 10px; }
+  .section :global(.single-speed-inline) { height: 32px; margin-left: 6px; font-size: 9px; }
+  .section :global(.single-speed-inline > span:first-child) { min-width: 30px; margin-right: 6px; }
+  .section :global(.single-speed-inline label) { width: 66px; }
+  .section :global(.single-speed-inline label:first-of-type) { margin-right: 2px; }
+  .section :global(.single-speed-inline input) { height: 28px; font-size: 10px; }
+  .section :global(.single-speed-inline input::placeholder) { font-size: 8px; }
+  .section :global(.single-objective-display > span) { font-size: 10px; }
+  .section :global(.single-objective-display > strong) { font-size: 15px; }
+}
+
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .section { box-sizing: border-box; flex: 0 0 117px; height: 117px; margin-top: 17px; }
+  .title { height: 22px; margin: 0; font-size: 16px; line-height: 1.2; }
+  .section :global(.single-combat-conditions) { padding-bottom: 0; }
+  .section :global(.single-combat-conditions > .single-gcd-section) { margin-top: -1px; }
+  .section :global(.single-gcd-controls) { margin-top: 2px; }
+}
+
+@media (min-width: 1600px) {
+  .title { height: 26px; margin: 0; font-size: 18px; line-height: 26px; }
+  .section { min-height: 171px; }
+  .section :global(.single-combat-conditions) { margin-top: 25px; }
+  .section :global(.single-combat-conditions > .single-gcd-section) { flex-basis: 55px; height: 55px; min-height: 55px; margin-top: 0; }
+  .section :global(.single-gcd-controls) { margin-top: 6px; }
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child) { box-sizing: border-box; width: 550px; grid-template-columns: 145px 390px; column-gap: 15px; margin: 25px 0 0; padding-block: 3px; }
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field) { grid-template-columns: 145px 390px; gap: 15px; }
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field > .field-label) { font-size: 13px; }
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field > select) { height: 36px; min-height: 36px; font-size: 12px; }
+}
+
+@media (max-width: 1199px) {
+  .section :global(.single-combat-conditions > .single-gcd-section) { flex: 0 0 auto; height: auto; min-height: 0; align-items: flex-start; flex-wrap: wrap; gap: 8px; padding: 8px 0; }
+  .section :global(.single-gcd-controls) { flex: 1 1 100%; width: 100%; height: auto; min-height: 32px; flex-wrap: wrap; }
+  .section :global(.single-gcd-mode-control) { flex: 1 1 145px; }
+  .section :global(.single-speed-inline) { margin-left: auto; }
+  .section :global(.single-combat-conditions > .single-gcd-section > .single-objective-display) { flex: 1 1 100%; width: 100%; height: auto; min-height: 0; align-self: auto; margin: 0; padding: 5px 0 0; border-top: 1px solid #dce3d7; border-left: 0; }
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child),
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field) { grid-template-columns: 112px minmax(0, 1fr); }
+}
+
+@media (max-width: 760px) {
+  .title { margin-top: 16px; }
+  .section :global(.single-combat-conditions > .single-gcd-section) { padding: 8px 0; }
+  .section :global(.single-gcd-controls) { min-height: 32px; }
+  .section :global(.single-gcd-mode-control) { flex: 1 1 145px; }
+  .section :global(.single-speed-inline) { margin-left: auto; }
+  .section :global(.single-objective-display) { flex-basis: 100%; }
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child),
+  .section :global(.single-combat-conditions > .config-section:not(.single-gcd-section):last-child > .config-field) { grid-template-columns: 112px minmax(0, 1fr); }
+}

@@ -1,0 +1,150 @@
+.comparison {
+  display: flex;
+  min-width: 0;
+  flex: 0 0 auto;
+  flex-direction: column;
+}
+
+.sectionHeading {
+  display: flex;
+  height: 38px;
+  flex: 0 0 38px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0;
+}
+
+.sectionHeading h2 {
+  margin: 0;
+  color: #2d3d31;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.normalizedValue {
+  flex: 0 0 auto;
+  color: #087f80;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.tableWrap {
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  flex: 0 0 auto;
+  overflow-x: auto;
+  border: 0;
+  background: #fff;
+}
+
+.comparisonTable {
+  width: 100%;
+  min-width: 900px;
+  height: auto;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  color: #2d3d31;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.comparisonTable thead {
+  height: 28px;
+  background: #f8f9f5;
+  color: #5e6d5c;
+  text-align: left;
+}
+
+.comparisonTable thead th {
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.comparisonTable thead th:first-child { width: 220px; text-align: left; }
+.comparisonTable thead th:nth-child(2) { width: 180px; text-align: right; }
+.comparisonTable thead th:nth-child(3) { width: 180px; text-align: right; }
+.comparisonTable thead th:nth-child(4) { width: 150px; text-align: right; }
+.comparisonTable thead th:last-child { text-align: right; }
+
+.comparisonTable tbody tr { height: 34px; }
+.comparisonTable tbody tr:nth-child(even) { background: #f8f9f5; }
+.comparisonTable tbody tr:hover { background: #eff4e7; }
+.comparisonTable tbody th,
+.comparisonTable tbody td {
+  padding: 2px 6px;
+  border-top: 1px solid #e2e8e1;
+  text-align: right;
+  vertical-align: middle;
+}
+
+.comparisonTable tbody th { font-weight: 600; text-align: left; }
+
+.jobName { color: #1c2e3e; }
+
+.jobCode {
+  margin-left: 8px;
+  color: #859087;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.numeric { color: #2d3d31; }
+.jointValue { color: #087f80; font-weight: 700; }
+.retentionCell { text-align: right; }
+
+.comparisonNote {
+  min-height: 20px;
+  flex: 0 0 auto;
+  margin: 0;
+  color: #708d35;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.retentionTag {
+  display: inline-flex;
+  min-width: 55px;
+  justify-content: center;
+  padding: 4px 8px;
+  border: 1px solid #dce3d7;
+  border-radius: 999px;
+  background: #eff4e7;
+  color: #087f80;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (min-width: 1600px) {
+  .comparisonTable { font-size: 14px; }
+  .comparisonTable thead { height: 42px; }
+  .comparisonTable thead th { font-size: 13px; }
+  .comparisonTable tbody tr { height: 50px; }
+}
+
+@media (max-width: 560px) {
+  .sectionHeading { align-items: flex-start; }
+  .sectionHeading h2 { font-size: 14px; }
+  .comparisonTable { min-width: 510px; font-size: 11px; }
+  .comparisonTable thead th,
+  .comparisonTable tbody th,
+  .comparisonTable tbody td { padding-inline: 10px; }
+}
