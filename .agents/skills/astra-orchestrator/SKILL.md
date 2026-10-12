@@ -1,15 +1,15 @@
 ---
 name: astra-orchestrator
-description: Orchestrate complex Codex coding work with GPT-6.1 Sol at low reasoning as planner/integrator, GPT-6.1 Sol at medium reasoning as reviewer, and GPT-6 Luna at max reasoning for exploration, implementation, testing, and research. Use for multi-file features, debugging across components, repo-wide changes, parallelizable workstreams, or when the user asks to delegate. Do not use for trivial edits or simple questions.
+description: Orchestrate complex Codex coding work with GPT-6 Luna at max reasoning as planner/integrator and for execution, with GPT-6.1 Sol at medium reasoning as reviewer. Use for multi-file features, debugging across components, repo-wide changes, parallelizable workstreams, or when the user asks to delegate. Do not use for trivial edits or simple questions.
 ---
 
-# Orchestrator — GPT-6.1 Sol Low + GPT-6 Luna Max / Sol Medium Reviewer
+# Orchestrator — GPT-6 Luna Max + GPT-6.1 Sol Medium Reviewer
 
 The user's explicit instructions take precedence over this skill.
 
 ## Topology
 
-- root: `gpt-6.1-sol` at `low` reasoning
+- root: `gpt-6-luna` at `max` reasoning
 - explorer, worker, tester, researcher: `gpt-6-luna` at `max` reasoning
 - reviewer: `gpt-6.1-sol` at `medium` reasoning, in an independent read-only context
 
