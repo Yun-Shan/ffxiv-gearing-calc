@@ -1,9 +1,38 @@
 const trustedPolicyOptions = new WeakSet<object>();
-const expectedJobGroups = [
-  ["BRD", "DNC", "MCH", "VPR"],
-  ["BRD", "DNC", "MCH", "NIN", "VPR"],
-] as const;
-const expectedSharedSlots = ["bracelet", "earrings", "necklace", "ring", "ring2"] as const;
+const requiredSharedSlots = ["bracelet", "earrings", "necklace", "ring", "ring2"] as const;
+
+export type SharedAccessoryPairDominanceLimits = {
+  maxCandidates: number;
+  maxComparisons: number;
+  maxCuts: number;
+  maxPreprocessingMs: number;
+};
+
+/** Smaller job sets use a bounded cut budget selected by shared pair-domain size. */
+export function sharedAccessoryPairDominanceLimitsFor(
+  jobCount: number,
+  candidateUpperBound: bigint,
+): SharedAccessoryPairDominanceLimits {
+  if (!Number.isSafeInteger(jobCount) || jobCount < 2 ||
+    typeof candidateUpperBound !== "bigint" || candidateUpperBound < 0n) {
+    throw new RangeError("共享饰品对 Pareto 预算输入无效");
+  }
+  if (jobCount <= 3) {
+    const largerPairDomain = candidateUpperBound > 1_500n;
+    return {
+      maxCandidates: 50_000,
+      maxComparisons: largerPairDomain ? 150_000 : 75_000,
+      maxCuts: largerPairDomain ? 128 : 64,
+      maxPreprocessingMs: 100,
+    };
+  }
+  return {
+    maxCandidates: 50_000,
+    maxComparisons: 300_000,
+    maxCuts: 512,
+    maxPreprocessingMs: 250,
+  };
+}
 
 export type SharedAccessoryPairDominanceGateJob = {
   id: string;
@@ -28,15 +57,11 @@ export type SharedAccessoryPairDominanceGateInput = {
 export function canUseSharedAccessoryPairDominance(
   input: SharedAccessoryPairDominanceGateInput,
 ): boolean {
-  const jobGroup = expectedJobGroups.find((group) => group.length === input.jobs.length &&
-    [...input.jobs.map(({ id }) => id)].sort().join("\u0000") === [...group].sort().join("\u0000"));
   if (!input.trustedPolicyPath || !input.requested ||
     input.objective !== "dps" || !input.sharedFood || !input.canonicalSharedRingPair ||
     input.hasCommonSlotProjections ||
-    jobGroup === undefined ||
-    input.commonSlots.length !== expectedSharedSlots.length ||
-    [...input.commonSlots].sort().join("\u0000") !== [...expectedSharedSlots].sort().join("\u0000") ||
-    input.jobs.length !== jobGroup.length) return false;
+    input.jobs.length < 2 ||
+    !requiredSharedSlots.every((slot) => input.commonSlots.includes(slot))) return false;
 
   return input.jobs.every(({ id, job, objective, hasCanonicalEvaluator, hasCustomAttributeExtractor, hasConstraints }) =>
     job === id &&

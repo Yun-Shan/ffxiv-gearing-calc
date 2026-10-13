@@ -195,6 +195,36 @@ export async function runJointOptimizationLocally(
     "NIN",
     "VPR",
   ]);
+  const requiredSharedAccessoryPairSlots: readonly CommonGearSlot[] = [
+    "bracelet",
+    "earrings",
+    "necklace",
+    "rings",
+  ];
+  const isSharedAccessoryPairDominanceEligible =
+    objective === "dps" &&
+    config.foodStrategy === "shared" &&
+    config.jobs.length >= 2 &&
+    factorizedSharedRingPair &&
+    requiredSharedAccessoryPairSlots.every((slot) =>
+      config.commonSlots.includes(slot),
+    ) &&
+    config.jobs.every(
+      (job) =>
+        job.jobLevel === undefined &&
+        job.gcdTarget === undefined &&
+        (job.gcdChoices?.length ?? 0) === 0 &&
+        job.speedMin === undefined &&
+        job.speedMax === undefined &&
+        job.minTenacity === undefined &&
+        job.toughnessMin === undefined &&
+        job.toughnessMinPercent === undefined &&
+        !job.maximizeTenacity &&
+        job.excludedSources.length === 0 &&
+        (job.excludedGearIds?.length ?? 0) === 0 &&
+        job.foodId === 0 &&
+        Object.keys(job.forcedGear).length === 0,
+    );
   // These proof-heavy cases regress with the optional pairwise relaxation rows.
   // Skipping them weakens only the relaxation; candidates and exact proof remain intact.
   const ratioUpperPairPolicy =
@@ -302,7 +332,7 @@ export async function runJointOptimizationLocally(
         : {}),
       ...(factorizedSharedRingPair ? { factorizedSharedRingPair: true } : {}),
       ...(ratioUpperPairPolicy === undefined ? {} : { ratioUpperPairPolicy }),
-      ...(factorizedSharedRingPair && (isFourJobSharedWideDps || isFiveJobSharedWideDps)
+      ...(isSharedAccessoryPairDominanceEligible
         ? { sharedAccessoryPairDominance: true }
         : {}),
       foodStrategy: config.foodStrategy,
@@ -323,7 +353,7 @@ export async function runJointOptimizationLocally(
       ...(baselineExecutor === undefined ? {} : { baselineExecutor }),
       isCancelled: () => options.signal?.aborted === true,
     };
-    if (factorizedSharedRingPair && (isFourJobSharedWideDps || isFiveJobSharedWideDps)) {
+    if (isSharedAccessoryPairDominanceEligible) {
       markSharedAccessoryPairDominancePath(v3Options);
     }
     const pendingResult = findBestJointLoadoutV3(v3Options);

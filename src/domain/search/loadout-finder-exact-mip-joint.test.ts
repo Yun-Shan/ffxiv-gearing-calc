@@ -813,7 +813,7 @@ test("joint candidate upper bounds fail open for duplicate food attributes", asy
     "the unaffected job should continue to receive safe candidate bounds");
 });
 
-test("ratio upper-product chain includes baseline factors when group maxima conflict", async () => {
+test("factor-class upper bounds preserve the exact joint optimum when maxima conflict", async () => {
   const rings = [
     equipment(7301, { 7: 600, 1: 600, 3: 300, 2: 100 }),
     equipment(7302, { 7: 600, 1: 600, 3: 100, 2: 1500 }),
@@ -823,6 +823,7 @@ test("ratio upper-product chain includes baseline factors when group maxima conf
     makeJob("RDM", [equipment(7304, {}, { stat: "MDMG", damage: 160 })], rings, []),
     makeJob("SAM", [equipment(7305, {}, { stat: "PDMG", damage: 160 })], rings, []),
     makeJob("RDM", [equipment(7306, {}, { stat: "MDMG", damage: 160 })], rings, []),
+    makeJob("SAM", [equipment(7307, {}, { stat: "PDMG", damage: 160 })], rings, []),
   ];
   const soloBaselines = jobs.map((job) => soloBaseline(job, "damage"));
   assert.ok(soloBaselines.every((baseline) => baseline));
@@ -856,16 +857,10 @@ test("ratio upper-product chain includes baseline factors when group maxima conf
     event.model === "joint_factor_product" && (event.message ?? "").includes("joint-model-ready"));
   assert.ok(modelReady);
   const profile = JSON.parse((modelReady.message ?? "").slice("PROFILE ".length)) as {
-    ratioUpperBoundProductChainUsed: number;
-    ratioUpperBoundChainRows: number;
-    ratioUpperBoundChainRowLimit: number;
     reachableFactorClassesRemoved: number;
   };
   assert.ok(profile.reachableFactorClassesRemoved > 0,
     "the reachable-value preprocessing must remove factor classes absent from all fixture loadouts");
-  assert.equal(profile.ratioUpperBoundProductChainUsed, 1,
-    "the small fixture must exercise the integer product upper-bound chain");
-  assert.ok(profile.ratioUpperBoundChainRows <= profile.ratioUpperBoundChainRowLimit);
 });
 
 test("direct joint factor MIP proves the exact shared-gear sum without initial results", async () => {

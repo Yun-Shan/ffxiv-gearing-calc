@@ -25,6 +25,7 @@ import {
 import {
   canUseSharedAccessoryPairDominance,
   hasSharedAccessoryPairDominancePath,
+  sharedAccessoryPairDominanceLimitsFor,
 } from "./shared-accessory-pair-dominance-policy.ts";
 import {
   prepareFactorResourceBudgetUpperBound,
@@ -2753,344 +2754,187 @@ export async function findBestJointFactorMip(options: {
     }
     return groups;
   });
-  // Chain fixed-point factor products with upward integer rounding. The
-  // maximizing objective only needs upper rows: every stage is bounded above
-  // by ceil(previous * factor ratio), and positive ratios make the canonical
-  // rounded chain dominate any relaxed intermediate values.
-  const ratioUpperBoundScaleCandidates = [1_000_000_000n, 100_000_000n, 10_000_000n, 1_000_000n] as const;
-  const maximumRatioChainCoefficient = 100_000_000_000_000n;
-  type RatioUpperBoundChainStep = {
-    previousVariable: string | undefined;
-    previousMaximum: bigint;
-    variable: string;
-    maximum: bigint;
-    group: FactorGroup;
-    classRatios: readonly {
-      variable: string;
-      numerator: bigint;
-      denominator: bigint;
-      bigM: bigint;
-      upperBound: bigint;
-    }[];
-  };
-  type RatioUpperBoundChainPlan = {
-    steps: readonly RatioUpperBoundChainStep[];
-    finalVariable: string;
-  };
-  const buildRatioUpperBoundChainPlan = (
-    jobIndex: number,
-    job: JointPreparedJob,
-    scale: bigint,
-  ): RatioUpperBoundChainPlan | undefined => {
-    const reduceRatio = (numerator: bigint, denominator: bigint) => {
-      let left = numerator;
-      let right = denominator;
-      while (right !== 0n) [left, right] = [right, left % right];
-      return [numerator / left, denominator / left] as const;
-    };
-    const allGroups = job.prepared.groups.filter((group) =>
-      group.name !== "gcd" || options.objective === "dps");
-    const groups = allGroups;
-    const baselineFactors: Readonly<Record<string, number>> = {
-      weapon: job.job.baseline.weaponDamage,
-      main: job.job.baseline.mainStat,
-      det: job.job.baseline.determination,
-      ten: job.job.baseline.tenacity,
-      crt: job.job.baseline.critical,
-      dht: job.job.baseline.directHit,
-      gcd: job.job.baseline.gcdCentiseconds,
-    };
-    const initialMaximum = scale;
-    let previousVariable: string | undefined;
-    let previousMaximum = initialMaximum;
-    const steps: RatioUpperBoundChainStep[] = [];
-    for (let groupIndex = 0; groupIndex < groups.length; groupIndex++) {
-      const group = groups[groupIndex]!;
-      const baseline = baselineFactors[group.name];
-      if (!Number.isSafeInteger(baseline) || baseline! <= 0 || group.classes.length === 0 ||
-        group.classes.some((entry) => !Number.isSafeInteger(entry.value) || entry.value <= 0)) return undefined;
-      const values = group.classes.map((entry) => BigInt(entry.value));
-      const maximumValue = group.name === "gcd"
-        ? values.reduce((minimum, value) => value < minimum ? value : minimum, values[0]!)
-        : values.reduce((maximum, value) => value > maximum ? value : maximum, 0n);
-      const rawMaximumRatio: ExactRatio = group.name === "gcd"
-        ? { numerator: BigInt(baseline!), denominator: maximumValue }
-        : { numerator: maximumValue, denominator: BigInt(baseline!) };
-      const [maximumNumerator, maximumDenominator] = reduceRatio(
-        rawMaximumRatio.numerator,
-        rawMaximumRatio.denominator,
-      );
-      const maximumRatio = { numerator: maximumNumerator, denominator: maximumDenominator };
-      const nextMaximum = (previousMaximum * maximumRatio.numerator + maximumRatio.denominator - 1n) /
-        maximumRatio.denominator;
-      if (nextMaximum <= 0n || nextMaximum > maximumRatioChainCoefficient) return undefined;
-      const variable = `joint_ratio_upper_${jobIndex}_${groupIndex}`;
-      const classRatios = group.classes.map((entry) => {
-        const rawNumerator = group.name === "gcd" ? BigInt(baseline!) : BigInt(entry.value);
-        const rawDenominator = group.name === "gcd" ? BigInt(entry.value) : BigInt(baseline!);
-        const [numerator, denominator] = reduceRatio(rawNumerator, rawDenominator);
-        const bigM = [numerator * previousMaximum, denominator * nextMaximum]
-          .reduce((maximum, value) => value > maximum ? value : maximum, 0n);
-        const upperBound = previousVariable === undefined
-          ? numerator * previousMaximum + denominator - 1n + bigM
-          : denominator - 1n + bigM;
-        return { variable: entry.variable, numerator, denominator, bigM, upperBound };
-      });
-      if (classRatios.some((entry) => entry.numerator > maximumRatioChainCoefficient ||
-        entry.denominator > maximumRatioChainCoefficient || entry.bigM > maximumRatioChainCoefficient ||
-        entry.upperBound > maximumRatioChainCoefficient)) {
-        return undefined;
-      }
-      steps.push({
-        previousVariable,
-        previousMaximum,
-        variable,
-        // Each factor chain bounds a normalized job score. The exact solo
-        // baseline proves every legal completion is at most one, so cap the
-        // final scaled upper variable at the scale even when repeated ceil
-        // rounding makes its algebraic maximum slightly larger.
-        maximum: groupIndex === groups.length - 1 && nextMaximum > scale ? scale : nextMaximum,
-        group,
-        classRatios,
-      });
-      previousVariable = variable;
-      previousMaximum = nextMaximum;
-    }
-    if (steps.length === 0) return undefined;
-    return { steps, finalVariable: steps[steps.length - 1]!.variable };
-  };
-  // For the strictly gated wide shared-accessory path, exact pair-dominance
-  // cuts outperform adding thousands of optional product-chain rows. Keep the
-  // factor grouping, but let the smaller exact model prove the joint bound.
-  const ratioUpperBoundChainRowLimit = sharedAccessoryPairDominanceEnabled || preparedJobs.length === 2
-    ? 0
-    : Math.min(6_000, Math.max(3_500, preparedJobs.length * 1_500));
-  const ratioUpperBoundChainGroupNames = new Set(preparedJobs.flatMap(({ prepared }) => prepared.groups
-    .filter((group) => group.name !== "gcd" || options.objective === "dps")
-    .map((group) => group.name)));
-  let ratioUpperBoundScale = ratioUpperBoundScaleCandidates[ratioUpperBoundScaleCandidates.length - 1]!;
-  let ratioUpperBoundChainPlans: (RatioUpperBoundChainPlan | undefined)[] = preparedJobs.map(() => undefined);
-  for (const scale of ratioUpperBoundScaleCandidates) {
-    const plans = preparedJobs.map((job, jobIndex) =>
-      buildRatioUpperBoundChainPlan(jobIndex, job, scale));
-    if (plans.every((plan) => plan !== undefined)) {
-      ratioUpperBoundScale = scale;
-      ratioUpperBoundChainPlans = plans;
-      break;
-    }
-  }
-  const ratioUpperBoundChainRows = ratioUpperBoundChainPlans.reduce((sum, plan) =>
-    sum + (plan?.steps.reduce((stepSum, step) => stepSum + step.classRatios.length, 0) ?? 0), 0);
-  const ratioUpperBoundProductChainUsed = ratioUpperBoundChainPlans.every((plan) => plan !== undefined) &&
-    ratioUpperBoundChainRows <= ratioUpperBoundChainRowLimit;
-  if (!ratioUpperBoundProductChainUsed) {
-    ratioUpperBoundScale = ratioUpperBoundScaleCandidates[0];
-  }
-  const ratioUpperBoundVariables = ratioUpperBoundProductChainUsed
-    ? ratioUpperBoundChainPlans.map((plan) => plan!.finalVariable)
-    : preparedJobs.map((_, jobIndex) => `joint_ratio_upper_${jobIndex}`);
+  const ratioUpperBoundScale = 1_000_000_000n;
+  const ratioUpperBoundVariables = preparedJobs.map((_, jobIndex) => "joint_ratio_upper_" + jobIndex);
   const ratioUpperBoundObjectiveEnabled = true;
   const ratioUpperBoundObjective = new Map<string, number>();
   let ratioUpperBoundPairCutCount = 0;
   let ratioUpperBoundPairPreprocessingWork = 0;
-  if (ratioUpperBoundProductChainUsed) {
-    for (let jobIndex = 0; jobIndex < ratioUpperBoundChainPlans.length; jobIndex++) {
-      const plan = ratioUpperBoundChainPlans[jobIndex]!;
-      for (const step of plan.steps) {
-        bounds.push({ name: step.variable, min: 0, max: Number(step.maximum) });
-        generals.push(step.variable);
-        for (let classIndex = 0; classIndex < step.classRatios.length; classIndex++) {
-          const classRatio = step.classRatios[classIndex]!;
-          const factorVariable = prefix(jobIndex, classRatio.variable);
-          const upperTerms = new Map<string, number>([
-            [step.variable, Number(classRatio.denominator)],
-            [factorVariable, Number(classRatio.bigM)],
-          ]);
-          if (step.previousVariable !== undefined) {
-            upperTerms.set(step.previousVariable, -Number(classRatio.numerator));
-          }
-          addRows(rows, `joint_ratio_product_upper_${factorVariable}_${classIndex}_${step.variable}`,
-            upperTerms, "<=", Number(classRatio.upperBound));
-        }
+  const ratioUpperCoefficientExact = (ratio: ExactRatio): bigint => {
+    const scaled = (ratio.numerator * ratioUpperBoundScale + ratio.denominator - 1n) / ratio.denominator;
+    return scaled >= ratioUpperBoundScale ? ratioUpperBoundScale : scaled;
+  };
+  const ratioUpperCoefficient = (ratio: ExactRatio): number =>
+    Number(ratioUpperCoefficientExact(ratio));
+  for (let jobIndex = 0; jobIndex < ratioUpperBoundVariables.length; jobIndex++) {
+    const name = ratioUpperBoundVariables[jobIndex]!;
+    bounds.push({ name, min: 0, max: Number(ratioUpperBoundScale) });
+    generals.push(name);
+    const groups = preparedJobs[jobIndex]!.prepared.groups.filter((group) =>
+      group.name !== "gcd" || options.objective === "dps");
+    for (const group of groups) {
+      const classBounds = factorClassUpperBounds.filter((bound) =>
+        bound.jobIndex === jobIndex && bound.groupName === group.name);
+      if (classBounds.length !== group.classes.length) {
+        throw new Error(`联合因子上界缺少完整类别：${jobIndex}/${group.name}`);
       }
-    }
-  } else {
-    const ratioUpperCoefficientExact = (ratio: ExactRatio): bigint => {
-      const scaled = (ratio.numerator * ratioUpperBoundScale + ratio.denominator - 1n) / ratio.denominator;
-      return scaled >= ratioUpperBoundScale ? ratioUpperBoundScale : scaled;
-    };
-    const ratioUpperCoefficient = (ratio: ExactRatio): number =>
-      Number(ratioUpperCoefficientExact(ratio));
-    for (let jobIndex = 0; jobIndex < ratioUpperBoundVariables.length; jobIndex++) {
-      const name = ratioUpperBoundVariables[jobIndex]!;
-      bounds.push({ name, min: 0, max: Number(ratioUpperBoundScale) });
-      generals.push(name);
-      const groups = preparedJobs[jobIndex]!.prepared.groups.filter((group) =>
-        group.name !== "gcd" || options.objective === "dps");
-      for (const group of groups) {
-        const classBounds = factorClassUpperBounds.filter((bound) =>
-          bound.jobIndex === jobIndex && bound.groupName === group.name);
-        if (classBounds.length !== group.classes.length) {
-          throw new Error(`联合因子上界缺少完整类别：${jobIndex}/${group.name}`);
-        }
-        const terms = new Map<string, number>([[name, 1]]);
-        for (const bound of classBounds) {
-          terms.set(prefix(jobIndex, bound.variable), -ratioUpperCoefficient(bound.ratio));
-        }
-        addRows(rows, `joint_ratio_upper_${jobIndex}_${group.name}`, terms, "<=", 0);
+      const terms = new Map<string, number>([[name, 1]]);
+      for (const bound of classBounds) {
+        terms.set(prefix(jobIndex, bound.variable), -ratioUpperCoefficient(bound.ratio));
       }
+      addRows(rows, `joint_ratio_upper_${jobIndex}_${group.name}`, terms, "<=", 0);
     }
+  }
 
-    // A one-factor upper bound can combine mutually incompatible maxima from
-    // the other groups. Condition two distinct groups together to tighten q.
-    // The raw one-group maxima share one exact envelope U*: U_ab = U_a*U_b/U*.
-    const pairCutCandidates: {
-      jobIndex: number;
-      rowName: string;
-      anchorVariable: string;
-      anchorCoefficient: number;
-      otherVariables: readonly string[];
-      otherCoefficients: readonly number[];
-      rhs: number;
-      tightening: number;
+  // A one-factor upper bound can combine mutually incompatible maxima from
+  // the other groups. Condition two distinct groups together to tighten q.
+  // The raw one-group maxima share one exact envelope U*: U_ab = U_a*U_b/U*.
+  const pairCutCandidates: {
+    jobIndex: number;
+    rowName: string;
+    anchorVariable: string;
+    anchorCoefficient: number;
+    otherVariables: readonly string[];
+    otherCoefficients: readonly number[];
+    rhs: number;
+    tightening: number;
+  }[] = [];
+  const pairCutRowLimit = preparedJobs.length === 2 ? 512 : 256;
+  const pairCutNonzeroLimit = preparedJobs.length === 2 ? 150_000 : 50_000;
+  const pairPreprocessingWorkLimit = preparedJobs.length === 2 ? 300_000 : 50_000;
+  const pairWorkLimitPerJob = Math.floor(pairPreprocessingWorkLimit / ratioUpperBoundVariables.length);
+  const preferredPairRanks = new Map([
+    ["crt|dht", 0],
+    ["det|gcd", 1],
+    ["crt|gcd", 2],
+  ]);
+  for (let jobIndex = 0; jobIndex < ratioUpperBoundVariables.length; jobIndex++) {
+    if (options.ratioUpperPairPolicy === "disabled") continue;
+    const groups = preparedJobs[jobIndex]!.prepared.groups.filter((group) =>
+      group.name !== "gcd" || options.objective === "dps");
+    const upperBoundsByGroup = groups.map((group) => ({
+      group,
+      bounds: group.classes.map((factorClass) => factorClassUpperBounds.find((entry) =>
+        entry.jobIndex === jobIndex && entry.groupName === group.name &&
+        entry.variable === factorClass.variable)),
+    }));
+    const groupMaxima: FactorClassUpperBound[] = [];
+    let completePairDomain = true;
+    for (const { bounds: classBounds, group } of upperBoundsByGroup) {
+      const validBounds = classBounds.filter((entry): entry is FactorClassUpperBound => entry !== undefined);
+      if (validBounds.length !== group.classes.length || validBounds.length === 0) {
+        completePairDomain = false;
+        break;
+      }
+      groupMaxima.push(validBounds.reduce((maximum, entry) =>
+        compareExactRatios(entry.ratio, maximum.ratio) > 0 ? entry : maximum));
+    }
+    if (!completePairDomain) continue;
+    const commonEnvelope = groupMaxima[0]?.ratio;
+    if (commonEnvelope === undefined || groupMaxima.some((maximum) =>
+      compareExactRatios(maximum.ratio, commonEnvelope) !== 0)) continue;
+
+    const groupPairs: {
+      left: typeof upperBoundsByGroup[number];
+      right: typeof upperBoundsByGroup[number];
+      combinations: number;
+      priority: number;
     }[] = [];
-    const pairCutRowLimit = preparedJobs.length === 2 ? 512 : 256;
-    const pairCutNonzeroLimit = preparedJobs.length === 2 ? 150_000 : 50_000;
-    const pairPreprocessingWorkLimit = preparedJobs.length === 2 ? 300_000 : 50_000;
-    const pairWorkLimitPerJob = Math.floor(pairPreprocessingWorkLimit / ratioUpperBoundVariables.length);
-    const preferredPairRanks = new Map([
-      ["crt|dht", 0],
-      ["det|gcd", 1],
-      ["crt|gcd", 2],
-    ]);
-    for (let jobIndex = 0; jobIndex < ratioUpperBoundVariables.length; jobIndex++) {
-      if (options.ratioUpperPairPolicy === "disabled") continue;
-      const groups = preparedJobs[jobIndex]!.prepared.groups.filter((group) =>
-        group.name !== "gcd" || options.objective === "dps");
-      const upperBoundsByGroup = groups.map((group) => ({
-        group,
-        bounds: group.classes.map((factorClass) => factorClassUpperBounds.find((entry) =>
-          entry.jobIndex === jobIndex && entry.groupName === group.name &&
-          entry.variable === factorClass.variable)),
-      }));
-      const groupMaxima: FactorClassUpperBound[] = [];
-      let completePairDomain = true;
-      for (const { bounds: classBounds, group } of upperBoundsByGroup) {
-        const validBounds = classBounds.filter((entry): entry is FactorClassUpperBound => entry !== undefined);
-        if (validBounds.length !== group.classes.length || validBounds.length === 0) {
-          completePairDomain = false;
-          break;
-        }
-        groupMaxima.push(validBounds.reduce((maximum, entry) =>
-          compareExactRatios(entry.ratio, maximum.ratio) > 0 ? entry : maximum));
+    for (let leftIndex = 0; leftIndex < upperBoundsByGroup.length; leftIndex++) {
+      const left = upperBoundsByGroup[leftIndex]!;
+      if (left.bounds.length < 2) continue;
+      for (let rightIndex = leftIndex + 1; rightIndex < upperBoundsByGroup.length; rightIndex++) {
+        const right = upperBoundsByGroup[rightIndex]!;
+        if (right.bounds.length < 2) continue;
+        const combinations = left.bounds.length * right.bounds.length;
+        const key = [left.group.name, right.group.name].sort().join("|");
+        groupPairs.push({
+          left,
+          right,
+          combinations,
+          priority: preferredPairRanks.get(key) ?? Number.MAX_SAFE_INTEGER,
+        });
       }
-      if (!completePairDomain) continue;
-      const commonEnvelope = groupMaxima[0]?.ratio;
-      if (commonEnvelope === undefined || groupMaxima.some((maximum) =>
-        compareExactRatios(maximum.ratio, commonEnvelope) !== 0)) continue;
+    }
+    groupPairs.sort((left, right) => left.priority - right.priority ||
+      left.combinations - right.combinations ||
+      `${left.left.group.name}|${left.right.group.name}`.localeCompare(
+        `${right.left.group.name}|${right.right.group.name}`));
 
-      const groupPairs: {
-        left: typeof upperBoundsByGroup[number];
-        right: typeof upperBoundsByGroup[number];
-        combinations: number;
-        priority: number;
-      }[] = [];
-      for (let leftIndex = 0; leftIndex < upperBoundsByGroup.length; leftIndex++) {
-        const left = upperBoundsByGroup[leftIndex]!;
-        if (left.bounds.length < 2) continue;
-        for (let rightIndex = leftIndex + 1; rightIndex < upperBoundsByGroup.length; rightIndex++) {
-          const right = upperBoundsByGroup[rightIndex]!;
-          if (right.bounds.length < 2) continue;
-          const combinations = left.bounds.length * right.bounds.length;
-          const key = [left.group.name, right.group.name].sort().join("|");
-          groupPairs.push({
-            left,
-            right,
-            combinations,
-            priority: preferredPairRanks.get(key) ?? Number.MAX_SAFE_INTEGER,
+    let jobPairWork = 0;
+    for (const pair of groupPairs) {
+      if (pairWorkLimitPerJob <= 0 || pair.combinations > pairWorkLimitPerJob - jobPairWork) continue;
+      jobPairWork += pair.combinations;
+      ratioUpperBoundPairPreprocessingWork += pair.combinations;
+      const pairCoefficients: number[][] = [];
+      for (const leftBound of pair.left.bounds) {
+        const row: number[] = [];
+        for (const rightBound of pair.right.bounds) {
+          const numerator = leftBound!.ratio.numerator * rightBound!.ratio.numerator * commonEnvelope.denominator;
+          const denominator = leftBound!.ratio.denominator * rightBound!.ratio.denominator * commonEnvelope.numerator;
+          if (denominator <= 0n) {
+            row.push(Number(ratioUpperBoundScale));
+            continue;
+          }
+          let coefficient = ratioUpperCoefficientExact({ numerator, denominator });
+          coefficient = coefficient < ratioUpperCoefficientExact(leftBound!.ratio)
+            ? coefficient
+            : ratioUpperCoefficientExact(leftBound!.ratio);
+          const rightSingleCoefficient = ratioUpperCoefficientExact(rightBound!.ratio);
+          if (coefficient > rightSingleCoefficient) coefficient = rightSingleCoefficient;
+          row.push(Number(coefficient));
+        }
+        pairCoefficients.push(row);
+      }
+
+      const addAnchoredRows = (
+        anchor: typeof pair.left,
+        other: typeof pair.right,
+        coefficients: readonly (readonly number[])[],
+        reverse: boolean,
+      ) => {
+        for (let anchorIndex = 0; anchorIndex < anchor.bounds.length; anchorIndex++) {
+          const anchorBound = anchor.bounds[anchorIndex]!;
+          const classCoefficients = other.bounds.map((_, otherIndex) =>
+            reverse ? coefficients[otherIndex]![anchorIndex]! : coefficients[anchorIndex]![otherIndex]!);
+          const minimumPairCoefficient = classCoefficients.reduce((minimum, coefficient) =>
+            Math.min(minimum, coefficient), Number.MAX_SAFE_INTEGER);
+          const anchorSingleCoefficient = Number(ratioUpperCoefficientExact(anchorBound!.ratio));
+          if (minimumPairCoefficient >= anchorSingleCoefficient) continue;
+          const activation = Number(ratioUpperBoundScale) - minimumPairCoefficient;
+          if (activation <= 0) continue;
+          const rowName = `joint_ratio_pair_upper_${jobIndex}_${anchor.group.name}_${anchorIndex}_${other.group.name}`;
+          pairCutCandidates.push({
+            jobIndex,
+            rowName,
+            anchorVariable: prefix(jobIndex, anchorBound!.variable),
+            anchorCoefficient: activation,
+            otherVariables: other.bounds.map((entry) => prefix(jobIndex, entry!.variable)),
+            otherCoefficients: classCoefficients,
+            rhs: activation,
+            tightening: activation,
           });
         }
-      }
-      groupPairs.sort((left, right) => left.priority - right.priority ||
-        left.combinations - right.combinations ||
-        `${left.left.group.name}|${left.right.group.name}`.localeCompare(
-          `${right.left.group.name}|${right.right.group.name}`));
-
-      let jobPairWork = 0;
-      for (const pair of groupPairs) {
-        if (pairWorkLimitPerJob <= 0 || pair.combinations > pairWorkLimitPerJob - jobPairWork) continue;
-        jobPairWork += pair.combinations;
-        ratioUpperBoundPairPreprocessingWork += pair.combinations;
-        const pairCoefficients: number[][] = [];
-        for (const leftBound of pair.left.bounds) {
-          const row: number[] = [];
-          for (const rightBound of pair.right.bounds) {
-            const numerator = leftBound!.ratio.numerator * rightBound!.ratio.numerator * commonEnvelope.denominator;
-            const denominator = leftBound!.ratio.denominator * rightBound!.ratio.denominator * commonEnvelope.numerator;
-            if (denominator <= 0n) {
-              row.push(Number(ratioUpperBoundScale));
-              continue;
-            }
-            let coefficient = ratioUpperCoefficientExact({ numerator, denominator });
-            coefficient = coefficient < ratioUpperCoefficientExact(leftBound!.ratio)
-              ? coefficient
-              : ratioUpperCoefficientExact(leftBound!.ratio);
-            const rightSingleCoefficient = ratioUpperCoefficientExact(rightBound!.ratio);
-            if (coefficient > rightSingleCoefficient) coefficient = rightSingleCoefficient;
-            row.push(Number(coefficient));
-          }
-          pairCoefficients.push(row);
-        }
-
-        const addAnchoredRows = (
-          anchor: typeof pair.left,
-          other: typeof pair.right,
-          coefficients: readonly (readonly number[])[],
-          reverse: boolean,
-        ) => {
-          for (let anchorIndex = 0; anchorIndex < anchor.bounds.length; anchorIndex++) {
-            const anchorBound = anchor.bounds[anchorIndex]!;
-            const classCoefficients = other.bounds.map((_, otherIndex) =>
-              reverse ? coefficients[otherIndex]![anchorIndex]! : coefficients[anchorIndex]![otherIndex]!);
-            const minimumPairCoefficient = classCoefficients.reduce((minimum, coefficient) =>
-              Math.min(minimum, coefficient), Number.MAX_SAFE_INTEGER);
-            const anchorSingleCoefficient = Number(ratioUpperCoefficientExact(anchorBound!.ratio));
-            if (minimumPairCoefficient >= anchorSingleCoefficient) continue;
-            const activation = Number(ratioUpperBoundScale) - minimumPairCoefficient;
-            if (activation <= 0) continue;
-            const rowName = `joint_ratio_pair_upper_${jobIndex}_${anchor.group.name}_${anchorIndex}_${other.group.name}`;
-            pairCutCandidates.push({
-              jobIndex,
-              rowName,
-              anchorVariable: prefix(jobIndex, anchorBound!.variable),
-              anchorCoefficient: activation,
-              otherVariables: other.bounds.map((entry) => prefix(jobIndex, entry!.variable)),
-              otherCoefficients: classCoefficients,
-              rhs: activation,
-              tightening: activation,
-            });
-          }
-        };
-        addAnchoredRows(pair.left, pair.right, pairCoefficients, false);
-        addAnchoredRows(pair.right, pair.left, pairCoefficients, true);
-      }
+      };
+      addAnchoredRows(pair.left, pair.right, pairCoefficients, false);
+      addAnchoredRows(pair.right, pair.left, pairCoefficients, true);
     }
-    pairCutCandidates.sort((left, right) => right.tightening - left.tightening ||
-      left.otherVariables.length - right.otherVariables.length ||
-      left.rowName.localeCompare(right.rowName));
-    let selectedPairCutNonzeros = 0;
-    for (const cut of pairCutCandidates) {
-      const nonzeros = cut.otherVariables.length + 2;
-      if (ratioUpperBoundPairCutCount >= pairCutRowLimit ||
-        selectedPairCutNonzeros + nonzeros > pairCutNonzeroLimit) continue;
-      addRows(rows, cut.rowName, [
-        [ratioUpperBoundVariables[cut.jobIndex]!, 1],
-        [cut.anchorVariable, cut.anchorCoefficient],
-        ...cut.otherVariables.map((variable, index) => [variable, -cut.otherCoefficients[index]!] as const),
-      ], "<=", cut.rhs);
-      ratioUpperBoundPairCutCount++;
-      selectedPairCutNonzeros += nonzeros;
-    }
+  }
+  pairCutCandidates.sort((left, right) => right.tightening - left.tightening ||
+    left.otherVariables.length - right.otherVariables.length ||
+    left.rowName.localeCompare(right.rowName));
+  let selectedPairCutNonzeros = 0;
+  for (const cut of pairCutCandidates) {
+    const nonzeros = cut.otherVariables.length + 2;
+    if (ratioUpperBoundPairCutCount >= pairCutRowLimit ||
+      selectedPairCutNonzeros + nonzeros > pairCutNonzeroLimit) continue;
+    addRows(rows, cut.rowName, [
+      [ratioUpperBoundVariables[cut.jobIndex]!, 1],
+      [cut.anchorVariable, cut.anchorCoefficient],
+      ...cut.otherVariables.map((variable, index) => [variable, -cut.otherCoefficients[index]!] as const),
+    ], "<=", cut.rhs);
+    ratioUpperBoundPairCutCount++;
+    selectedPairCutNonzeros += nonzeros;
   }
   ratioUpperBoundVariables.forEach((name) => ratioUpperBoundObjective.set(name, 1));
   const sharedEquipmentUpperBounds = sharedEquipmentDomains.flatMap((domain, domainIndex) => {
@@ -3170,6 +3014,9 @@ export async function findBestJointFactorMip(options: {
   let sharedAccessoryPairDominanceComparisons = 0;
   let sharedAccessoryPairDominanceCuts = 0;
   let sharedAccessoryPairDominancePreprocessingMs = 0;
+  let sharedAccessoryPairDominanceMaximumCuts = 0;
+  let sharedAccessoryPairDominanceMaximumComparisons = 0;
+  let sharedAccessoryPairDominancePreprocessingBudgetMs = 0;
   let sharedAccessoryPairDominanceLimitReached = false;
   let sharedAccessoryPairDominanceCandidateUpperBound = 0n;
   const sharedAssignmentCutPrefixDepthCounts: Record<string, number> = {};
@@ -3184,13 +3031,6 @@ export async function findBestJointFactorMip(options: {
   );
   if (sharedAccessoryPairDominanceEnabled) {
     const preprocessingStartedAt = performance.now();
-    const maximumCandidates = 50_000;
-    const maximumComparisons = 300_000;
-    const maximumCuts = 512;
-    const preprocessingBudgetMs = Math.max(0, Math.min(250, jointPreprocessingBudgetBaseMs * 0.02));
-    const preprocessingDeadline = preprocessingStartedAt + preprocessingBudgetMs;
-    const shouldStopPreprocessing = () =>
-      performance.now() >= preprocessingDeadline || isCancelled();
     const accessoryDomains = ["earrings", "necklace", "bracelet"]
       .map((slot) => sharedEquipmentDomains.find((domain) => domain.slot === slot && !domain.splitPair))
       .filter((domain): domain is SharedEquipmentDomain => domain !== undefined && !projections.has(domain.slot));
@@ -3204,6 +3044,23 @@ export async function findBestJointFactorMip(options: {
       (total, pair) => total + pair.count,
       0n,
     );
+    const dominanceLimits = sharedAccessoryPairDominanceLimitsFor(
+      preparedJobs.length,
+      sharedAccessoryPairDominanceCandidateUpperBound,
+    );
+    const maximumCandidates = dominanceLimits.maxCandidates;
+    const maximumComparisons = dominanceLimits.maxComparisons;
+    const maximumCuts = dominanceLimits.maxCuts;
+    const preprocessingBudgetMs = Math.max(
+      0,
+      Math.min(dominanceLimits.maxPreprocessingMs, jointPreprocessingBudgetBaseMs * 0.02),
+    );
+    sharedAccessoryPairDominanceMaximumCuts = maximumCuts;
+    sharedAccessoryPairDominanceMaximumComparisons = maximumComparisons;
+    sharedAccessoryPairDominancePreprocessingBudgetMs = preprocessingBudgetMs;
+    const preprocessingDeadline = preprocessingStartedAt + preprocessingBudgetMs;
+    const shouldStopPreprocessing = () =>
+      performance.now() >= preprocessingDeadline || isCancelled();
     domainPairs.sort((left, right) => left.count < right.count ? -1 : left.count > right.count ? 1 : 0);
     const slotItemIds = (equipment: EquipInfo): number[] => {
       const ids = [equipment.itemId];
@@ -4390,9 +4247,6 @@ export async function findBestJointFactorMip(options: {
           };
         }),
       }))),
-      ratioUpperBoundProductChainUsed: Number(ratioUpperBoundProductChainUsed),
-      ratioUpperBoundChainRows,
-      ratioUpperBoundChainRowLimit,
       ratioUpperBoundPairCuts: ratioUpperBoundPairCutCount,
       ratioUpperBoundPairPreprocessingWork,
       ratioUpperBoundPairPolicy: options.ratioUpperPairPolicy ?? "default",
@@ -4403,7 +4257,10 @@ export async function findBestJointFactorMip(options: {
       sharedAccessoryPairDominanceCandidates: sharedAccessoryPairDominanceCandidateCount,
       sharedAccessoryPairDominanceComparisons,
       sharedAccessoryPairDominanceCuts,
+      sharedAccessoryPairDominanceMaximumCuts,
+      sharedAccessoryPairDominanceMaximumComparisons,
       sharedAccessoryPairDominancePreprocessingMs,
+      sharedAccessoryPairDominancePreprocessingBudgetMs,
       sharedAccessoryPairDominanceLimitReached: Number(sharedAccessoryPairDominanceLimitReached),
       sharedPairCandidateUpperBound: sharedPairCandidateUpperBound.toString(),
       sharedPairCandidateCount,
@@ -4576,8 +4433,6 @@ export async function findBestJointFactorMip(options: {
         variables: bounds.length,
         constraints: solveRows.length,
         nonzeros: solveRows.reduce((sum, row) => sum + row.terms.size, 0),
-        ratioUpperBoundChainGroups: [...ratioUpperBoundChainGroupNames].sort().join(","),
-        ratioUpperBoundChainRows,
         sharedPairConflictCuts: sharedPairConflictRows.size,
         sharedAssignmentConflictCuts: sharedAssignmentConflictRows.size,
         sharedAssignmentResourceScoreCuts: sharedAssignmentResourceScoreConflictRows.size,
@@ -4750,9 +4605,6 @@ export async function findBestJointFactorMip(options: {
     resourceBudgetCandidateUpperBoundPreparationMs,
     resourceBudgetCandidateUpperBoundSkippedJobs,
     resourceBudgetCandidateUpperBoundCutRows: resourceBudgetCandidateUpperBoundProofRows.size,
-    ratioUpperBoundProductChainUsed: Number(ratioUpperBoundProductChainUsed),
-    ratioUpperBoundChainRows,
-    ratioUpperBoundChainRowLimit,
     ratioUpperBoundPairCuts: ratioUpperBoundPairCutCount,
     ratioUpperBoundPairPreprocessingWork,
     ratioUpperBoundPairPolicy: options.ratioUpperPairPolicy ?? "default",
@@ -4763,7 +4615,10 @@ export async function findBestJointFactorMip(options: {
     sharedAccessoryPairDominanceCandidates: sharedAccessoryPairDominanceCandidateCount,
     sharedAccessoryPairDominanceComparisons,
     sharedAccessoryPairDominanceCuts,
+    sharedAccessoryPairDominanceMaximumCuts,
+    sharedAccessoryPairDominanceMaximumComparisons,
     sharedAccessoryPairDominancePreprocessingMs,
+    sharedAccessoryPairDominancePreprocessingBudgetMs,
     sharedAccessoryPairDominanceLimitReached: Number(sharedAccessoryPairDominanceLimitReached),
     sharedAssignmentPrefixSearchUsed: Number(sharedAssignmentPrefixSearchUsed),
     sharedAssignmentPrefixesEvaluated,
