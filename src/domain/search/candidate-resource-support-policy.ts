@@ -82,17 +82,30 @@ export function resourceBudgetCandidateProfileForSearch(input: {
   return "default";
 }
 
-/** Detect the VPR+MCH proof case; its caller selectively enables support rows for MCH. */
+/** Detect the measured wide VPR+MCH proof case; its caller enables support rows for MCH. */
 export function shouldUsePrimaryResourceSupportsForBaseline(
-  jobIds: readonly string[],
+  jobs: readonly {
+    jobId: string;
+    candidateItemLevelRanges?: readonly { min: number; max: number }[];
+  }[],
   commonSlots: readonly string[],
   objective: "damage" | "dps" | undefined,
   foodStrategy: "shared" | "independent",
 ): boolean {
+  const jobIds = jobs.map(({ jobId }) => jobId);
   const hasBothSharedRings = commonSlots.includes("rings") ||
     (commonSlots.includes("ring") && commonSlots.includes("ring2"));
   const isMeasuredVprMchCase = jobIds.length === 2 && jobIds.includes("VPR") && jobIds.includes("MCH");
+  const candidateRanges = jobs[0]?.candidateItemLevelRanges;
+  const usesMeasuredWideDomain = candidateRanges?.length === 2 &&
+    candidateRanges[0]?.min === 715 && candidateRanges[0]?.max === 735 &&
+    candidateRanges[1]?.min === 775 && candidateRanges[1]?.max === 795 &&
+    jobs.every(({ candidateItemLevelRanges: ranges }) =>
+      ranges?.length === candidateRanges.length &&
+      ranges.every((range, index) =>
+        range.min === candidateRanges[index]?.min && range.max === candidateRanges[index]?.max));
   return isMeasuredVprMchCase &&
+    usesMeasuredWideDomain &&
     objective === "dps" &&
     foodStrategy === "shared" &&
     ["earrings", "necklace", "bracelet"].every((slot) => commonSlots.includes(slot)) &&

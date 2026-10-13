@@ -14,17 +14,24 @@ export type RingParetoCandidate<T> = ParetoCandidate<T> & {
   isUnique: boolean;
 };
 
+type EqualCoordinate = number | readonly number[];
+
+function equalCoordinateSet(coordinates: EqualCoordinate | undefined): ReadonlySet<number> {
+  if (coordinates === undefined) return new Set();
+  return new Set(typeof coordinates === "number" ? [coordinates] : coordinates);
+}
+
 function dominates(
   left: readonly number[],
   right: readonly number[],
-  equalCoordinate?: number,
+  equalCoordinates: ReadonlySet<number>,
 ): boolean {
   if (left.length !== right.length) {
     throw new RangeError("Pareto 候选属性向量长度不一致");
   }
   let strictlyBetter = false;
   for (let index = 0; index < left.length; index++) {
-    if (index === equalCoordinate && left[index] !== right[index]) return false;
+    if (equalCoordinates.has(index) && left[index] !== right[index]) return false;
     if (left[index]! < right[index]!) return false;
     if (left[index]! > right[index]!) strictlyBetter = true;
   }
@@ -39,10 +46,22 @@ function dominates(
 export function insertParetoCandidate<T>(
   frontier: ParetoCandidate<T>[],
   candidate: ParetoCandidate<T>,
-  equalCoordinate?: number,
+  equalCoordinate?: EqualCoordinate,
+): ParetoInsertion<T> {
+  return insertParetoCandidateWithEqualCoordinates(
+    frontier,
+    candidate,
+    equalCoordinateSet(equalCoordinate),
+  );
+}
+
+function insertParetoCandidateWithEqualCoordinates<T>(
+  frontier: ParetoCandidate<T>[],
+  candidate: ParetoCandidate<T>,
+  equalCoordinates: ReadonlySet<number>,
 ): ParetoInsertion<T> {
   for (const kept of frontier) {
-    if (dominates(kept.attributes, candidate.attributes, equalCoordinate)) {
+    if (dominates(kept.attributes, candidate.attributes, equalCoordinates)) {
       return { accepted: false, removed: [] };
     }
   }
@@ -50,7 +69,7 @@ export function insertParetoCandidate<T>(
   const removed: ParetoCandidate<T>[] = [];
   for (let index = frontier.length - 1; index >= 0; index--) {
     const kept = frontier[index]!;
-    if (dominates(candidate.attributes, kept.attributes, equalCoordinate)) {
+    if (dominates(candidate.attributes, kept.attributes, equalCoordinates)) {
       removed.push(...frontier.splice(index, 1));
     }
   }
@@ -68,8 +87,9 @@ export function insertParetoCandidate<T>(
 export function paretoRingCandidates<T>(
   candidates: readonly RingParetoCandidate<T>[],
   oppositeCandidates: readonly Pick<RingParetoCandidate<T>, "itemId" | "isUnique">[],
-  equalCoordinate?: number,
+  equalCoordinate?: EqualCoordinate,
 ): RingParetoCandidate<T>[] {
+  const equalCoordinates = equalCoordinateSet(equalCoordinate);
   const oppositeUniqueIds = new Set(
     oppositeCandidates.filter(({ isUnique }) => isUnique).map(({ itemId }) => itemId),
   );
@@ -78,7 +98,11 @@ export function paretoRingCandidates<T>(
   for (const candidate of candidates) {
     const hasOppositeConflict = candidate.isUnique && oppositeUniqueIds.has(candidate.itemId);
     if (!hasOppositeConflict) {
-      const insertion = insertParetoCandidate(allCompatibleFrontier, candidate, equalCoordinate);
+      const insertion = insertParetoCandidateWithEqualCoordinates(
+        allCompatibleFrontier,
+        candidate,
+        equalCoordinates,
+      );
       if (!insertion.accepted) continue;
 
       // An all-compatible candidate can replace a conflicting unique item
@@ -86,7 +110,7 @@ export function paretoRingCandidates<T>(
       // opposite ring carrying that unique item ID.
       for (const frontier of uniqueConflictFrontiers.values()) {
         for (let index = frontier.length - 1; index >= 0; index--) {
-          if (dominates(candidate.attributes, frontier[index]!.attributes, equalCoordinate)) {
+          if (dominates(candidate.attributes, frontier[index]!.attributes, equalCoordinates)) {
             frontier.splice(index, 1);
           }
         }
@@ -95,13 +119,13 @@ export function paretoRingCandidates<T>(
     }
 
     if (allCompatibleFrontier.some(({ attributes }) =>
-      dominates(attributes, candidate.attributes, equalCoordinate))) continue;
+      dominates(attributes, candidate.attributes, equalCoordinates))) continue;
 
     const frontier = uniqueConflictFrontiers.get(candidate.itemId) ?? [];
     if (!uniqueConflictFrontiers.has(candidate.itemId)) {
       uniqueConflictFrontiers.set(candidate.itemId, frontier);
     }
-    insertParetoCandidate(frontier, candidate, equalCoordinate);
+    insertParetoCandidateWithEqualCoordinates(frontier, candidate, equalCoordinates);
   }
   return [...allCompatibleFrontier, ...uniqueConflictFrontiers.values()].flat()
     .sort((left, right) => left.order - right.order);

@@ -1,5 +1,6 @@
 const trustedPolicyOptions = new WeakSet<object>();
 const expectedJobGroups = [
+  ["BRD", "DNC", "MCH", "VPR"],
   ["BRD", "DNC", "MCH", "NIN", "VPR"],
 ] as const;
 const expectedSharedSlots = ["bracelet", "earrings", "necklace", "ring", "ring2"] as const;

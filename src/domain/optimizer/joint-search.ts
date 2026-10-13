@@ -302,7 +302,7 @@ export async function runJointOptimizationLocally(
         : {}),
       ...(factorizedSharedRingPair ? { factorizedSharedRingPair: true } : {}),
       ...(ratioUpperPairPolicy === undefined ? {} : { ratioUpperPairPolicy }),
-      ...(factorizedSharedRingPair && isFiveJobSharedWideDps
+      ...(factorizedSharedRingPair && (isFourJobSharedWideDps || isFiveJobSharedWideDps)
         ? { sharedAccessoryPairDominance: true }
         : {}),
       foodStrategy: config.foodStrategy,
@@ -323,7 +323,7 @@ export async function runJointOptimizationLocally(
       ...(baselineExecutor === undefined ? {} : { baselineExecutor }),
       isCancelled: () => options.signal?.aborted === true,
     };
-    if (factorizedSharedRingPair && isFiveJobSharedWideDps) {
+    if (factorizedSharedRingPair && (isFourJobSharedWideDps || isFiveJobSharedWideDps)) {
       markSharedAccessoryPairDominancePath(v3Options);
     }
     const pendingResult = findBestJointLoadoutV3(v3Options);

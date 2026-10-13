@@ -19,6 +19,7 @@ import {
 import { gameData } from "../data.ts";
 import type { EquipInfo, FoodInfo, SharedSlotProjection } from "./types.ts";
 import { equipmentIdentity } from "./equipment-identity.ts";
+import { paretoRingCandidates } from "./candidate-pareto.ts";
 import type { Stat } from "../types.ts";
 import { getMemoryUsageSnapshot } from "./memory-usage.ts";
 import { throwIfCancelled } from "./cancellation.ts";
@@ -704,6 +705,79 @@ function pruneCommonChoices(
   return choices.filter((_, index) => keep[index]);
 }
 
+function pruneCommonRingChoices(
+  choices: readonly CommonChoice[],
+  oppositeChoices: readonly CommonChoice[],
+  contexts: readonly JobContext[],
+  checkBudget: () => void,
+): CommonChoice[] {
+  if (choices.length < 2 || oppositeChoices.length === 0) return [...choices];
+  const metadataFor = (choice: CommonChoice) => {
+    let itemId: number | undefined;
+    let isUnique: boolean | undefined;
+    for (const context of contexts) {
+      const equipment = choice.equipments.get(context.job.id);
+      if (equipment === undefined || !Number.isSafeInteger(equipment.itemId) ||
+        typeof equipment.isUnique !== "boolean") return undefined;
+      if (itemId !== undefined && itemId !== equipment.itemId) return undefined;
+      if (isUnique !== undefined && isUnique !== equipment.isUnique) return undefined;
+      itemId = equipment.itemId;
+      isUnique = equipment.isUnique;
+    }
+    return itemId === undefined || isUnique === undefined
+      ? undefined
+      : { itemId, isUnique };
+  };
+  const choiceMetadata = choices.map(metadataFor);
+  const oppositeMetadata = oppositeChoices.map(metadataFor);
+  if (choiceMetadata.some((metadata) => metadata === undefined) ||
+    oppositeMetadata.some((metadata) => metadata === undefined)) return [...choices];
+
+  const uniqueByItemId = new Map<number, boolean>();
+  for (const metadata of [...choiceMetadata, ...oppositeMetadata]) {
+    if (metadata === undefined) return [...choices];
+    const previous = uniqueByItemId.get(metadata.itemId);
+    if (previous !== undefined && previous !== metadata.isUnique) return [...choices];
+    uniqueByItemId.set(metadata.itemId, metadata.isUnique);
+  }
+
+  const equalCoordinates: number[] = [];
+  let coordinateOffset = 0;
+  for (const context of contexts) {
+    const width = context.attributeIndexes.size + 2;
+    if (speedMustRemainEqual(context)) {
+      const speedCoordinate = context.attributeIndexes.get(context.job.options.speedAttributeId!);
+      if (speedCoordinate === undefined || speedCoordinate >= context.attributeIndexes.size) {
+        return [...choices];
+      }
+      equalCoordinates.push(coordinateOffset + speedCoordinate);
+    }
+    coordinateOffset += width;
+  }
+
+  const toParetoCandidates = (values: readonly CommonChoice[], metadata: readonly ({
+    itemId: number;
+    isUnique: boolean;
+  } | undefined)[]) => values.map((choice, order) => {
+    if ((order & 15) === 0) checkBudget();
+    const attributes = commonChoiceMetrics(choice, contexts).flat();
+    return {
+      value: choice,
+      itemId: metadata[order]!.itemId,
+      isUnique: metadata[order]!.isUnique,
+      attributes,
+      order,
+    };
+  });
+
+  const candidates = toParetoCandidates(choices, choiceMetadata);
+  const oppositeCandidates = toParetoCandidates(oppositeChoices, oppositeMetadata);
+  if ([...candidates, ...oppositeCandidates].some(({ attributes }) =>
+    attributes.some((value) => !Number.isSafeInteger(value) || value < 0))) return [...choices];
+  return paretoRingCandidates(candidates, oppositeCandidates, equalCoordinates)
+    .map(({ value }) => value);
+}
+
 function rawAttributeUpperBound(context: JobContext, equipment: EquipInfo): number[] {
   const attributes = buildRawAttributes(context, [equipment]);
   const adjustment = equipment.resistanceWeaponAdjust;
@@ -955,7 +1029,10 @@ export async function findBestJointLoadoutV3(
     throw new RangeError("V3 objective 必须是 damage 或 dps");
   }
   const usePrimaryResourceSupportBaselinePolicy = shouldUsePrimaryResourceSupportsForBaseline(
-    options.jobs.map(({ id }) => id),
+    options.jobs.map(({ id, options: jobOptions }) => ({
+      jobId: id,
+      candidateItemLevelRanges: jobOptions.candidateItemLevelRanges,
+    })),
     options.commonSlots,
     objective,
     options.foodStrategy,
@@ -1239,6 +1316,33 @@ export async function findBestJointLoadoutV3(
     }
   }
 
+  if (options.factorizedSharedRingPair) {
+    const ringChoices = commonChoicesByName.get("ring");
+    const ring2Choices = commonChoicesByName.get("ring2");
+    if (ringChoices !== undefined && ring2Choices !== undefined) {
+      const prunedRingChoices = pruneCommonRingChoices(
+        ringChoices,
+        ring2Choices,
+        contexts,
+        () => assertWithinBudget("共享戒指 Pareto 剪枝"),
+      );
+      const prunedRing2Choices = pruneCommonRingChoices(
+        ring2Choices,
+        ringChoices,
+        contexts,
+        () => assertWithinBudget("共享戒指 Pareto 剪枝"),
+      );
+      commonChoicesByName.set("ring", prunedRingChoices);
+      commonChoicesByName.set("ring2", prunedRing2Choices);
+      const candidateCountBefore = ringChoices.length + ring2Choices.length;
+      const candidateCountAfter = prunedRingChoices.length + prunedRing2Choices.length;
+      if (candidateCountAfter < candidateCountBefore) {
+        options.onProgress?.(
+          `V3：共享戒指 Pareto 剪枝 ${candidateCountBefore}→${candidateCountAfter} 个槽位候选`,
+        );
+      }
+    }
+  }
   for (const [name, choices] of commonChoicesByName) {
     if (options.factorizedSharedRingPair && (name === "ring" || name === "ring2")) continue;
     commonChoicesByName.set(name, pruneCommonChoices(

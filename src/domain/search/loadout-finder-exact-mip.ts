@@ -2859,7 +2859,10 @@ export async function findBestJointFactorMip(options: {
     if (steps.length === 0) return undefined;
     return { steps, finalVariable: steps[steps.length - 1]!.variable };
   };
-  const ratioUpperBoundChainRowLimit = preparedJobs.length === 2
+  // For the strictly gated wide shared-accessory path, exact pair-dominance
+  // cuts outperform adding thousands of optional product-chain rows. Keep the
+  // factor grouping, but let the smaller exact model prove the joint bound.
+  const ratioUpperBoundChainRowLimit = sharedAccessoryPairDominanceEnabled || preparedJobs.length === 2
     ? 0
     : Math.min(6_000, Math.max(3_500, preparedJobs.length * 1_500));
   const ratioUpperBoundChainGroupNames = new Set(preparedJobs.flatMap(({ prepared }) => prepared.groups
@@ -3182,7 +3185,7 @@ export async function findBestJointFactorMip(options: {
   if (sharedAccessoryPairDominanceEnabled) {
     const preprocessingStartedAt = performance.now();
     const maximumCandidates = 50_000;
-    const maximumComparisons = 150_000;
+    const maximumComparisons = 300_000;
     const maximumCuts = 512;
     const preprocessingBudgetMs = Math.max(0, Math.min(250, jointPreprocessingBudgetBaseMs * 0.02));
     const preprocessingDeadline = preprocessingStartedAt + preprocessingBudgetMs;
