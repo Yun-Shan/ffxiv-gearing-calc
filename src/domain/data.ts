@@ -3,6 +3,7 @@ import type {
   DataProvenance,
   Food,
   Gear,
+  GearStat,
   JobId,
   JobSchema,
   LevelModifier,
@@ -29,12 +30,14 @@ interface GeneratedGameData {
   clanStats: Partial<Record<Stat, number[]>>;
   jobSchemas: Record<JobId, JobSchema>;
   jobLevelModifiers: Record<number, LevelModifier>;
+  syncLevels: Record<number, number[]>;
+  syncLevelOfJobLevels: Record<number, number>;
   gearIndexesByMainStat: Record<"VIT" | "STR" | "DEX" | "MND" | "INT", Uint32Array>;
   gearLevelByRecordIndex: Uint16Array;
   gearPhysicalGroupRanges: Record<GearPhysicalGroup, { start: number; count: number }>;
   gearMinLevel: number;
   gearMaxLevel: number;
-  gearStatNames: Stat[];
+  gearStatNames: GearStat[];
   getGearAtRecordIndex(index: number): Gear;
   getGearById(id: number): Gear | undefined;
 }
@@ -52,7 +55,20 @@ async function loadGeneratedGameData(): Promise<GeneratedGameData> {
     bytes = new Uint8Array(await response.arrayBuffer());
   }
   try {
-    return await decodeGeneratedData(bytes);
+    const data = await decodeGeneratedData(bytes) as GeneratedGameData;
+    const isRecord = (value: unknown): value is Record<number, unknown> =>
+      value !== null && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length > 0;
+    if (!isRecord(data.syncLevels) ||
+        Object.values(data.syncLevels).some((levels) =>
+          !Array.isArray(levels) || !levels.length ||
+          levels.some((level) => !Number.isSafeInteger(level) || level < 1),
+        ) ||
+        !isRecord(data.syncLevelOfJobLevels) ||
+        Object.values(data.syncLevelOfJobLevels).some((level) =>
+          !Number.isSafeInteger(level) || level < 1,
+        ))
+      throw new Error("二进制游戏数据缺少有效的同步品级映射，请运行 npm run data:update 重新生成");
+    return data;
   } catch (error) {
     throw new Error("二进制游戏数据载入失败，请运行 npm run data:update 重新生成", {
       cause: error,

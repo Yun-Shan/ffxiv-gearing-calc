@@ -91,7 +91,7 @@ function referenceGearsetUrl(result: OptimizationResult, config: OptimizationCon
   const share = stringifyReferenceGearset({
     job: config.jobId,
     role: job.role,
-    jobLevel: config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel,
+    jobLevel: result.calculationLevel ?? config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel,
     ...(config.syncLevel === undefined ? {} : { syncLevel: config.syncLevel }),
     gears,
   });

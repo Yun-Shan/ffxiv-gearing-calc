@@ -29,6 +29,10 @@ npm run test:data
 
 搜索记录保存在当前浏览器的本地数据库，记录时间、配置、状态及成功结果。载入成功结果不启动新搜索，数据版本不同的结果不能作为当前数据的推荐。
 
+基础属性、伤害和 GCD 按实际计算等级选取参数：未启用同步时使用筛选后候选装备中最高品级装备的穿戴等级，向下取整为十的倍数（例如 99 级使用 90 级基准）；启用同步时使用参考项目中同步品级所属等级。单职业、联合搜索及 GCD 档位查询遵循同一规则；装备穿戴限制与同步计算等级分别处理。
+
+可变等级装备保留为候选，并按职业映射 `main` / `secondary` 属性；需要按角色等级同步时套用对应品级上限并使普通魔晶石失效。穿戴等级为 1 的装备仍可参与配装，但不用于决定非同步计算等级基准。
+
 普通装备必须填满全部可用镶嵌孔，可禁忌镶嵌装备必须填满五孔；共享戒指和整套配装均遵守装备唯一性。对应的前端视觉呈现以 Penpot 设计为准。
 
 当前支持 23 个战斗职业，包括青魔法师和驯兽师。职业等级上限和默认品级范围随职业数据导入；青魔法师上限为 80 级，驯兽师上限为 50 级且具有独立盾牌槽。`ClassJob` 提供职业名称与原生属性修正，GCD、特性及队伍加成公式由参考项目补齐。MCP 没有青魔法师按 INT 索引的魔法武器伤害加值表或字段，因此该映射使用参考项目原始导出，并逐值核验原始测量输入。
@@ -52,6 +56,10 @@ npm run test:data
 npm run data:mcp
 npm run data:update
 ```
+
+同步等级导入还会查询完整的 `ContentFinderCondition` 行与相关 Schema，按参考项目转换规则生成品级所属等级，并与参考分组逐项核对；`ParamGrow.ItemLevelSync` 仅用于来源核验，不替代该分组。
+
+已有同一游戏版本快照时，可运行 `node scripts/query-mcp-lumina.mjs --level-basis-data-only` 补充同步等级与 `Item.SubStatCategory` 查询产物，再运行 `node scripts/update-data.mjs --offline` 重新生成运行时数据。该增量命令保留其他已有查询输入，版本不一致时明确失败。
 
 `data:mcp` 默认查询参考项目中的全部装备（含唯一性）、战斗食物、职业分类、23 个受支持职业的 `ClassJob` 行、食物效果、属性上限、魔晶石和当前已确认的自定义参数武器表（`MandervilleWeaponEnhance`），并写入 `src/data/mcp-lumina.snapshot.json`。职业行通过 `ClassJob.Abbreviation` 搜索发现，再批量读取，不依赖记忆中的行 ID。它也会保存 `list_sheets` 与 `ClassJob` 字段描述，核对青魔法师武器伤害映射是否存在于 MCP。它要求本机配置的游戏目录、EXDSchema 和 Lumina MCP 可执行文件；可用 `FFXIV_MCP_LUMINA_COMMAND`、`McpLumina__GamePath`、`McpLumina__SchemaPath` 和 `FFXIV_MCP_LUMINA_CONCURRENCY` 覆盖默认值。仅在 MCP 明确声明通用查询不受版本警告影响时接受验证版本滞后，并保存警告；其他降级或任一批次重试失败会终止。
 

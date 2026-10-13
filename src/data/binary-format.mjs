@@ -1,5 +1,5 @@
 const MAGIC = new TextEncoder().encode("FFXIVGDB");
-const FORMAT_VERSION = 2;
+const FORMAT_VERSION = 4;
 const SECTION_IDS = [1, 2];
 const DIRECTORY_ENTRY_BYTES = 12;
 const HEADER_BYTES = 16 + SECTION_IDS.length * DIRECTORY_ENTRY_BYTES;
@@ -15,7 +15,7 @@ const SLOT_NAMES = [
 const SLOT_CODES = new Map(SLOT_NAMES.map((slot, index) => [slot, index]));
 const STAT_NAMES = [
   "STR", "DEX", "INT", "MND", "VIT", "CRT", "DET", "DHT", "SKS",
-  "SPS", "TEN", "PIE", "PDMG", "MDMG", "DLY",
+  "SPS", "TEN", "PIE", "PDMG", "MDMG", "DLY", "main", "secondary",
 ];
 const STAT_CODES = new Map(STAT_NAMES.map((stat, index) => [stat, index]));
 const CUSTOM_STAT_NAMES = ["CRT", "DET", "DHT", "SKS", "SPS", "TEN", "PIE"];
@@ -361,6 +361,8 @@ function validateGearForWrite(gear, jobIndexes, seenIds) {
     fail('装备 ' + gear.id + ' 的 unique 不是布尔值');
   if (Object.hasOwn(gear, 'materiaAdvanced') && typeof gear.materiaAdvanced !== 'boolean')
     fail('装备 ' + gear.id + ' 的 materiaAdvanced 不是布尔值');
+  if (Object.hasOwn(gear, 'equipLevelVariable') && typeof gear.equipLevelVariable !== 'boolean')
+    fail('装备 ' + gear.id + ' 的 equipLevelVariable 不是布尔值');
   if (Object.hasOwn(gear, 'customParameters') && !Array.isArray(gear.customParameters))
     fail('装备 ' + gear.id + ' 的 customParameters 不是数组');
   if (gear.customParameters?.length > 255)
@@ -445,6 +447,7 @@ function encodeGearRecordBody(gear, row, jobIndexes, stringIndexes) {
   let flags = 0;
   if (gear.materiaAdvanced === true) flags |= 1;
   if (gear.unique === true) flags |= 2;
+  if (gear.equipLevelVariable === true) flags |= 4;
   const customParameters = gear.customParameters ?? [];
   let statMask = 0;
   for (const stat of STAT_NAMES)
@@ -459,7 +462,7 @@ function encodeGearRecordBody(gear, row, jobIndexes, stringIndexes) {
   writer.u8(flags, '装备标志');
   writer.u8(gear.jobs.length, '装备适用职业数');
   for (const jobId of gear.jobs) writer.u8(jobIndexes.get(jobId), '装备职业序号');
-  writer.u16(statMask, '装备属性掩码');
+  writer.u32(statMask, '装备属性掩码');
   for (const stat of STAT_NAMES)
     if (statMask & (1 << STAT_CODES.get(stat))) writer.i16(gear.stats[stat], '装备属性 ' + stat);
 
@@ -575,7 +578,7 @@ function encodeGearCatalog(gearsInput, jobSchemas) {
   }
 
   const writer = new ByteWriter();
-  writer.u16(statUnionMask, '装备属性并集掩码');
+  writer.u32(statUnionMask, '装备属性并集掩码');
   writer.u16(sortedInput[0]?.level ?? 0, '装备最低品级');
   writer.u16(sortedInput.at(-1)?.level ?? 0, '装备最高品级');
   encodeGearStringTable(writer, strings, stringIndexes);
@@ -861,7 +864,7 @@ function decodeGearRecord(recordIndex, entry, endOffset, section, strings, templ
   const flags = reader.u8();
   const jobCount = reader.u8();
   if (slotCode >= SLOT_NAMES.length) fail('装备槽位代码无效');
-  if (flags & ~3) fail('装备标志含保留位');
+  if (flags & ~7) fail('装备标志含保留位');
   if (jobCount > reader.bytes.byteLength - reader.offset)
     fail('装备职业数量超出记录长度');
   const jobs = new Array(jobCount);
@@ -871,7 +874,7 @@ function decodeGearRecord(recordIndex, entry, endOffset, section, strings, templ
     jobs[index] = jobIds[jobIndex];
   }
 
-  const statMask = reader.u16();
+  const statMask = reader.u32();
   if (statMask & ~((1 << STAT_NAMES.length) - 1)) fail('装备属性掩码含未知属性');
   const stats = {};
   for (let statCode = 0; statCode < STAT_NAMES.length; statCode++)
@@ -944,6 +947,7 @@ function decodeGearRecord(recordIndex, entry, endOffset, section, strings, templ
   };
   if (flags & 1) gear.materiaAdvanced = true;
   gear.unique = Boolean(flags & 2);
+  if (flags & 4) gear.equipLevelVariable = true;
   if (customParameterCount) gear.customParameters = customParameters;
   if (sourcePresent) gear.source = source;
   const weaponDamage = stats.PDMG ?? stats.MDMG;
@@ -961,7 +965,7 @@ function decodeGearRecord(recordIndex, entry, endOffset, section, strings, templ
 function decodeGearCatalog(bytes, jobIds, onTiming) {
   const reader = new BinaryValueReader(bytes, 'GEAR_CATALOG_BINARY');
   let phaseStartedAt = timingStart(onTiming);
-  const statUnionMask = reader.u16();
+  const statUnionMask = reader.u32();
   if (statUnionMask & ~((1 << STAT_NAMES.length) - 1)) fail('装备属性并集掩码含未知属性');
   const gearMinLevel = reader.u16();
   const gearMaxLevel = reader.u16();

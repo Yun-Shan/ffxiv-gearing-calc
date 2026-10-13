@@ -16,6 +16,8 @@ export type Stat =
   | "PDMG"
   | "MDMG"
   | "DLY";
+/** Raw Item BaseParam placeholders resolved through the selected job schema. */
+export type GearStat = Stat | "main" | "secondary";
 export type JobId =
   | "PLD"
   | "WAR"
@@ -55,6 +57,7 @@ export type GearSlot =
   | "ring2";
 
 export type Stats = Partial<Record<Stat, number>>;
+export type GearStats = Partial<Record<GearStat, number>>;
 
 export interface Gear {
   id: number;
@@ -63,9 +66,10 @@ export interface Gear {
   rawSlot: number;
   level: number;
   equipLevel: number;
+  equipLevelVariable?: true;
   roleId: number;
   jobCategory: number;
-  stats: Stats;
+  stats: GearStats;
   materiaSlots: number;
   materiaAdvanced?: true;
   /** Item-level unique restriction; runtime data treats an absent source value as false. */
@@ -184,6 +188,8 @@ export interface Effects {
 }
 
 export interface MeldedGear extends Gear {
+  /** Job-specific concrete stats; generic main/secondary placeholders are resolved. */
+  stats: Stats;
   melds: Materia[];
   finalStats: Stats;
 }
@@ -244,6 +250,8 @@ export interface SearchCandidateCounts {
 }
 
 export interface OptimizationResult {
+  /** Job level used for base attributes, food, damage, and GCD calculations. */
+  calculationLevel?: number;
   gear: MeldedGear[];
   food: Food;
   stats: Stats;

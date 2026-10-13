@@ -78,7 +78,8 @@ const combatStatSet = new Set<Stat>([
 export const attributeStats: Stat[] = (() => {
   const stats = new Set<Stat>(["PDMG", "MDMG", "DLY"]);
   for (const stat of gameData.gearStatNames) {
-    if (combatStatSet.has(stat)) stats.add(stat);
+    if (stat !== "main" && stat !== "secondary" && combatStatSet.has(stat))
+      stats.add(stat);
   }
   for (const food of gameData.foods) {
     for (const stat of Object.keys(food.stats) as Stat[]) {

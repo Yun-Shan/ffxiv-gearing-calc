@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { foods } from "./data";
+import { foods, gameData } from "./data";
 import {
   findFeasibleGcdsLocally,
   gearOptionsFor,
@@ -13,6 +13,7 @@ function lowLevelForcedConfig(jobId: JobId, foodId: number): OptimizationConfig 
   const config: OptimizationConfig = {
     jobId,
     jobLevel: 50,
+    syncLevel: gameData.syncLevelOfJobLevels[50],
     minItemLevel: 15,
     maxItemLevel: 20,
     maximizeTenacity: false,

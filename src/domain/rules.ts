@@ -5,6 +5,8 @@ import type {
   CalculationInput,
   Effects,
   Gear,
+  GearStat,
+  GearStats,
   JobSchema,
   Stat,
   Stats,
@@ -55,6 +57,45 @@ export function calculateBaseStats(job: JobSchema, level: number, clanIndex = 0)
         (gameData.clanStats[stat]?.[clanIndex] ?? 0);
   }
   return stats;
+}
+
+/** Resolve the upstream main/secondary Item tokens for one selected job. */
+export function concretizeGearStats(stats: GearStats, job: JobSchema): Stats {
+  const result: Stats = {};
+  for (const [rawStat, value] of Object.entries(stats)) {
+    const stat: GearStat = rawStat as GearStat;
+    const concreteStat = stat === "main"
+      ? job.mainStat
+      : stat === "secondary"
+        ? job.secondaryStat
+        : stat;
+    result[concreteStat] = value;
+  }
+  return result;
+}
+
+/** Mirrors the reference Gear.syncedLevel rules for ordinary and variable-level gear. */
+export function effectiveGearSyncLevel(
+  gear: Gear,
+  jobLevel: number,
+  explicitSyncLevel?: number,
+): number | undefined {
+  const jobLevelSync = gameData.syncLevelOfJobLevels[jobLevel];
+  let targetSyncLevel = explicitSyncLevel ?? Number.POSITIVE_INFINITY;
+  if (gear.equipLevelVariable === true) {
+    if (jobLevelSync === undefined) {
+      throw new RangeError(`可变等级装备 ${gear.id} 缺少职业等级 ${jobLevel} 的同步品级映射`);
+    }
+    targetSyncLevel = Math.min(targetSyncLevel, jobLevelSync);
+  }
+  if (targetSyncLevel < gear.level) return targetSyncLevel;
+  if (jobLevel < gear.equipLevel) {
+    if (jobLevelSync === undefined) {
+      throw new RangeError(`装备 ${gear.id} 缺少职业等级 ${jobLevel} 的同步品级映射`);
+    }
+    return Math.min(gear.level, jobLevelSync);
+  }
+  return undefined;
 }
 
 export function calculateEffects({
@@ -160,8 +201,8 @@ export function gcdThresholds(
   return [...seen].sort((a, b) => b - a);
 }
 
-export function mergeGearStats(gear: Gear, melds: Stats[]): Stats {
-  const result = { ...gear.stats };
+export function mergeGearStats(gear: Gear, melds: Stats[]): GearStats {
+  const result: GearStats = { ...gear.stats };
   const levelIndex = gameData.levelCaps.level.indexOf(gear.level);
   if (levelIndex < 0) throw new Error(`装备品级 ${gear.level} 缺少属性上限`);
   for (const meld of melds)
@@ -172,15 +213,34 @@ export function mergeGearStats(gear: Gear, melds: Stats[]): Stats {
   return result;
 }
 
-export function getGearStatCap(gear: Gear, stat: Stat): number {
-  const levelIndex = gameData.levelCaps.level.indexOf(gear.level);
-  if (levelIndex < 0) throw new Error(`装备品级 ${gear.level} 缺少属性上限`);
+export function getGearStatCap(
+  gear: Gear,
+  stat: Stat,
+  level = gear.level,
+): number {
+  const levelIndex = gameData.levelCaps.level.indexOf(level);
+  if (levelIndex < 0) throw new Error(`装备同步品级 ${level} 缺少属性上限`);
   const levelCap = gameData.levelCaps[stat]?.[levelIndex];
   const slotCap = gameData.slotCaps[stat]?.[gear.rawSlot];
   const roleCap = gameData.roleCaps[stat]?.[gear.roleId];
   if (levelCap === undefined || slotCap === undefined || roleCap === undefined)
     throw new Error(`装备 ${gear.id} 的 ${stat} 属性上限数据不完整`);
   return Math.round((levelCap * slotCap * roleCap) / 100_000);
+}
+
+/** Applies the reference project's level/slot/role caps to resolved item stats. */
+export function capGearStatsAtLevel(
+  gear: Gear,
+  stats: Stats,
+  level: number,
+): Stats {
+  const result = { ...stats };
+  for (const [rawStat, value] of Object.entries(stats)) {
+    if (value === undefined || rawStat === "DLY") continue;
+    const stat = rawStat as Stat;
+    result[stat] = Math.min(value, getGearStatCap(gear, stat, level));
+  }
+  return result;
 }
 
 // The reference UI highlights a secondary stat when the unmelded gear value

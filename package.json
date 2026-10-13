@@ -12,7 +12,7 @@
     "data:mcp": "node scripts/query-mcp-lumina.mjs",
     "data:update": "node scripts/update-data.mjs",
     "data:benchmark": "node --expose-gc scripts/benchmark-data-binary.mjs",
-    "test:data": "node --test scripts/node-tests/mcp-query-validation.test.mjs scripts/node-tests/mcp-weapon-damage.test.mjs",
+    "test:data": "node --test --test-concurrency=2 scripts/node-tests/mcp-query-validation.test.mjs scripts/node-tests/mcp-weapon-damage.test.mjs scripts/node-tests/data-binary-flags.test.mjs",
     "data:test:v3": "node --max-old-space-size=2560 --experimental-strip-types scripts/node-tests/run-v3.mjs"
   },
   "dependencies": {

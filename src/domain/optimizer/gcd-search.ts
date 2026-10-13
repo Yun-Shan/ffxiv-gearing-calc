@@ -1,7 +1,7 @@
 import { calculateFeasibleGcdTiers } from "../gcd-tier-calculator.ts";
 import {
+  calculationJobLevelFor,
   gearOptionsFor,
-  jobLevelFor,
   slotsForJob,
 } from "../gear-options.ts";
 import type { OptimizationConfig, SearchOptions } from "../types.ts";
@@ -11,7 +11,7 @@ export function findFeasibleGcdsLocally(
   options: SearchOptions = {},
 ): number[] {
   return calculateFeasibleGcdTiers(config, options, {
-    getJobLevel: jobLevelFor,
+    getJobLevel: calculationJobLevelFor,
     gearOptionsFor,
     slotsForJob,
   });

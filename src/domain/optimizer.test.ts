@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from "vitest";
-import { foods, gears } from "./data";
+import { foods, gameData, gears } from "./data";
 import { findFeasibleGcds, gearOptionsFor, optimize, optimizeJoint } from "./optimizer";
 import { mergeGearStats } from "./rules";
 import type { OptimizationConfig } from "./types";
@@ -193,7 +193,7 @@ describe("optimizer with imported game data", () => {
 
 
 describe("formal search adapter", () => {
-  const mage = { ...base, jobId: "RDM" as const, syncLevel: 650, foodId: 49240 };
+  const mage = { ...base, jobId: "RDM" as const, syncLevel: gameData.syncLevelOfJobLevels[80]!, foodId: 49240 };
   const mage2 = { ...mage, jobId: "BLM" as const };
   it("assembles shared equipment, shared food and independent baselines", async () => {
     const forced = (config: OptimizationConfig): OptimizationConfig => {
@@ -207,10 +207,15 @@ describe("formal search adapter", () => {
     const jobs = [forced(mage), forced(mage2)];
     const result = await optimizeJoint({ jobs, commonSlots: ["head", "rings"], foodStrategy: "shared", objective: "damage" });
     expect(result).toBeDefined();
+    const expectedCalculationLevel = Number(
+      Object.entries(gameData.syncLevels).find(([, levels]) => levels.includes(mage.syncLevel!))?.[0] ??
+      Object.entries(gameData.syncLevelOfJobLevels).find(([, level]) => level === mage.syncLevel)?.[0],
+    );
     expect(result!.commonFood?.id).toBe(mage.foodId);
     expect(result!.commonGear.rings).toHaveLength(2);
     for (const job of jobs) {
       const loadout = result!.jobResults[job.jobId]!;
+      expect(loadout.calculationLevel).toBe(expectedCalculationLevel);
       expect(loadout.gear).toHaveLength(11);
       expect(loadout.effects.damage).toBe(result!.optima[job.jobId]!.effects.damage);
       expect(loadout.gear.every(item => item.melds.length === 0)).toBe(true);

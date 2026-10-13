@@ -4,9 +4,21 @@ import {
   getGearById,
   materiaGradeRequiredLevels,
 } from "../data.ts";
-import { gearOptionsFor } from "../gear-options.ts";
+import {
+  gearOptionsFor,
+  jobLevelFor,
+  preferCandidateGearLevel,
+  type HighestCandidateGearLevel,
+} from "../gear-options.ts";
 import { jobSchemas } from "../jobs.ts";
-import { calculateBaseStats, getSpeedStat } from "../rules.ts";
+import {
+  calculateBaseStats,
+  capGearStatsAtLevel,
+  concretizeGearStats,
+  effectiveGearSyncLevel,
+  getGearStatCap,
+  getSpeedStat,
+} from "../rules.ts";
 import {
   insertParetoCandidate,
   paretoRingCandidates,
@@ -28,7 +40,6 @@ import type {
 import {
   attributeIndex,
   attributeStats,
-  jobLevelFor,
   jobSlots,
   type GearCandidate,
   type SearchSlot,
@@ -94,44 +105,24 @@ function* countCombinations(
 }
 
 function statCapAtLevel(gear: Gear, stat: Stat, level: number): number {
-  const levels = gameData.levelCaps.level;
-  const levelIndex = levels.indexOf(level);
-  if (levelIndex < 0) {
-    throw new Error(`装备同步品级 ${level} 缺少属性上限数据`);
-  }
-  const levelCap = gameData.levelCaps[stat]?.[levelIndex];
-  const slotCap = gameData.slotCaps[stat]?.[gear.rawSlot];
-  const roleCap = gameData.roleCaps[stat]?.[gear.roleId];
-  if (
-    levelCap === undefined ||
-    slotCap === undefined ||
-    roleCap === undefined
-  ) {
-    throw new Error(`装备 ${gear.id} 的 ${stat} 属性上限数据不完整`);
-  }
-  return Math.round((levelCap * slotCap * roleCap) / 100_000);
+  return getGearStatCap(gear, stat, level);
 }
 
-function capLevelFor(gear: Gear, syncLevel?: number): number {
-  return syncLevel !== undefined && gear.level > syncLevel
-    ? syncLevel
-    : gear.level;
+function capLevelFor(gear: Gear, jobLevel: number, syncLevel?: number): number {
+  return effectiveGearSyncLevel(gear, jobLevel, syncLevel) ?? gear.level;
 }
 
 function mergeCandidateStats(
   gear: Gear,
   melds: readonly Materia[],
+  jobLevel: number,
   syncLevel?: number,
 ): Stats {
-  const level = capLevelFor(gear, syncLevel);
-  const finalStats: Stats = {};
-  for (const [key, value] of Object.entries(gear.stats)) {
-    const stat = key as Stat;
-    finalStats[stat] =
-      stat === "DLY" || level === gear.level
-        ? (value ?? 0)
-        : Math.min(value ?? 0, statCapAtLevel(gear, stat, level));
-  }
+  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, syncLevel);
+  const level = synchronizedLevel ?? gear.level;
+  const finalStats: Stats = synchronizedLevel === undefined
+    ? { ...gear.stats }
+    : capGearStatsAtLevel(gear, gear.stats, level);
   for (const meld of melds) {
     const cap = statCapAtLevel(gear, meld.stat, level);
     finalStats[meld.stat] = Math.min(
@@ -175,9 +166,10 @@ function regularMateriaMelds(
   gear: Gear,
   jobId: JobId,
   config: OptimizationConfig,
+  jobLevel: number,
 ): Materia[][] {
   const syncApplies =
-    config.syncLevel !== undefined && gear.level > config.syncLevel;
+    effectiveGearSyncLevel(gear, jobLevel, config.syncLevel) !== undefined;
   // Standard materia is disabled by item-level sync. The custom-parameter
   // weapon path is handled separately because the source algorithm keeps its
   // twelve parameter variants and caps their values after syncing.
@@ -211,7 +203,7 @@ function regularMateriaMelds(
         const totalValue =
           highCount * highMateria[index]!.value +
           lowCount * (lowMateria[index]?.value ?? 0);
-        const level = capLevelFor(gear, config.syncLevel);
+        const level = capLevelFor(gear, jobLevel, config.syncLevel);
         const available =
           statCapAtLevel(gear, stat, level) - (gear.stats[stat] ?? 0);
         const finalMeldValue =
@@ -315,9 +307,10 @@ export function foodStatsForJob(
 export function createFoodInfo(
   food: Food,
   config: OptimizationConfig,
+  jobLevel: number,
 ): SolverFood {
   const schema = jobSchemas[config.jobId];
-  const baseStats = calculateBaseStats(schema, jobLevelFor(config));
+  const baseStats = calculateBaseStats(schema, jobLevel);
   const applicableFood = foodStatsForJob(food, config.jobId);
   const baseParams = Object.entries(applicableFood.stats)
     .flatMap(([key, maxValue]) => {
@@ -351,19 +344,29 @@ function makeGearCandidates(
   config: OptimizationConfig,
   gearsByIdentity: Map<string, MeldedGear>,
 ): GearCandidate[] {
-  const options = gear.customParameters?.length
-    ? customParameterMelds(gear)
-    : regularMateriaMelds(gear, config.jobId, config);
+  const job = jobSchemas[config.jobId];
+  const jobLevel = jobLevelFor(config);
+  const resolvedGear: Gear = {
+    ...gear,
+    stats: concretizeGearStats(gear.stats, job),
+  };
+  const options = resolvedGear.customParameters?.length
+    ? customParameterMelds(resolvedGear)
+    : regularMateriaMelds(resolvedGear, config.jobId, config, jobLevel);
   const candidates = new Map<string, GearCandidate>();
   for (const melds of options) {
-    const finalStats = mergeCandidateStats(gear, melds, config.syncLevel);
+    const finalStats = mergeCandidateStats(
+      resolvedGear,
+      melds,
+      jobLevel,
+      config.syncLevel,
+    );
     const damageStat =
-      jobSchemas[config.jobId].mainStat === "INT" ||
-      jobSchemas[config.jobId].mainStat === "MND"
+      job.mainStat === "INT" || job.mainStat === "MND"
         ? "MDMG"
         : "PDMG";
     const meldedGear: MeldedGear = {
-      ...gear,
+      ...resolvedGear,
       slot,
       weaponDamage: finalStats[damageStat] ?? gear.weaponDamage,
       melds: melds.map((meld) => ({ ...meld })),
@@ -411,11 +414,12 @@ export function candidatePools(
   independentRingSlots: boolean,
   paretoSlots?: ReadonlySet<string>,
   paretoIndependentRings = false,
-): SearchSlot[] {
+): { slots: SearchSlot[]; highestCandidateGearLevel?: HighestCandidateGearLevel } {
   const jobId = config.jobId;
   const slots = jobSlots(jobId);
   const results: SearchSlot[] = [];
   const slotCandidates = new Map<string, GearCandidate[]>();
+  let highestCandidateGearLevel: HighestCandidateGearLevel | undefined;
   const speedStat = getSpeedStat(jobSchemas[jobId]);
   const paretoStats = paretoAttributeStats(jobId);
   const preserveSpeed =
@@ -448,6 +452,10 @@ export function candidatePools(
     const frontier: ParetoCandidate<GearCandidate>[] = [];
     let candidateOrder = 0;
     for (const gear of gearsForSlot) {
+      highestCandidateGearLevel = preferCandidateGearLevel(
+        highestCandidateGearLevel,
+        gear,
+      );
       for (const candidate of makeGearCandidates(
         gear,
         slot,
@@ -494,6 +502,18 @@ export function candidatePools(
     forcedRing2 === undefined
       ? ringPool
       : ringPool.filter((gear) => gear.id === forcedRing2);
+  for (const gear of firstPool) {
+    highestCandidateGearLevel = preferCandidateGearLevel(
+      highestCandidateGearLevel,
+      gear,
+    );
+  }
+  for (const gear of secondPool) {
+    highestCandidateGearLevel = preferCandidateGearLevel(
+      highestCandidateGearLevel,
+      gear,
+    );
+  }
   const firstCandidates = firstPool.flatMap((gear) =>
     makeGearCandidates(gear, "ring", config, gearsByIdentity),
   );
@@ -590,9 +610,12 @@ export function candidatePools(
       candidates:
         slotCandidates.get(name)?.map(({ equipment }) => equipment) ?? [],
     }));
-    return results.sort(
-      (left, right) => left.candidates.length - right.candidates.length,
-    );
+    return {
+      slots: results.sort(
+        (left, right) => left.candidates.length - right.candidates.length,
+      ),
+      highestCandidateGearLevel,
+    };
   }
   const firstCandidateIdentities = new Set(
     firstCandidates.map((candidate) => equipmentIdentity(candidate.equipment)),
@@ -678,7 +701,10 @@ export function candidatePools(
       slotCandidates.get(name)?.map(({ equipment }) => equipment) ?? [];
     results.push({ name, candidates });
   }
-  return results.sort(
-    (left, right) => left.candidates.length - right.candidates.length,
-  );
+  return {
+    slots: results.sort(
+      (left, right) => left.candidates.length - right.candidates.length,
+    ),
+    highestCandidateGearLevel,
+  };
 }

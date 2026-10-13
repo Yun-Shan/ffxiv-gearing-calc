@@ -103,6 +103,25 @@ describe("搜索历史记录结构校验", () => {
     expect(validateSearchHistoryRecord(completedSingleRecord()).kind).toBe("single");
   });
 
+  it("接受新计算等级并拒绝不受支持的历史计算等级，同时兼容旧记录", () => {
+    const current = completedSingleRecord();
+    current.result = { ...result(), calculationLevel: 80 };
+    expect(validateSearchHistoryRecord(current).kind).toBe("single");
+
+    const unsupported = completedSingleRecord();
+    unsupported.result = { ...result(), calculationLevel: 77 };
+    expect(() => validateSearchHistoryRecord(unsupported)).toThrow(/职业等级不受当前数据支持/);
+
+    const exceedsJobCap = completedSingleRecord();
+    exceedsJobCap.config = config("BLU");
+    exceedsJobCap.result = { ...result(), calculationLevel: 100 };
+    expect(() => validateSearchHistoryRecord(exceedsJobCap)).toThrow(/职业等级不受当前数据支持/);
+
+    const malformed = completedSingleRecord();
+    malformed.result = { ...result(), calculationLevel: "80" } as unknown as OptimizationResult;
+    expect(() => validateSearchHistoryRecord(malformed)).toThrow(/结果缺少必要字段/);
+  });
+
   it("拒绝未知职业与会让结果面板读取失败的嵌套结果", () => {
     const unknownJob = completedSingleRecord();
     unknownJob.config = { ...config("SAM"), jobId: "NOT_A_JOB" } as unknown as OptimizationConfig;

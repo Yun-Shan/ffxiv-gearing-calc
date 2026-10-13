@@ -20,10 +20,10 @@ import type {
   Stat,
   Stats,
 } from "../types.ts";
+import { calculationJobLevelFor } from "../gear-options.ts";
 import {
   attributeIds,
   attributeIndex,
-  jobLevelFor,
   jobSlots,
   statIndexes,
   throwIfAborted,
@@ -40,12 +40,12 @@ import {
 
 function makeExactOptions(
   config: OptimizationConfig,
+  jobLevel: number,
   slots: SearchSlot[],
   solverFoods: SolverFood[],
   options: SearchOptions,
 ): ExactMipOptions {
   const jobId = config.jobId;
-  const jobLevel = jobLevelFor(config);
   const schema = jobSchemas[jobId];
   const speedStat = getSpeedStat(schema);
   const toughnessAttributeId = schema.stats.includes("TEN")
@@ -181,9 +181,8 @@ export function prepareSearch(
   ) {
     throw new RangeError("等级同步品级必须是正整数");
   }
-  const jobLevel = jobLevelFor(config);
   const gearsByIdentity = new Map<string, MeldedGear>();
-  const slots = candidatePools(
+  const candidatePoolsResult = candidatePools(
     config,
     gearsByIdentity,
     preserveRingOrder,
@@ -191,13 +190,18 @@ export function prepareSearch(
     paretoSlots,
     paretoIndependentRings,
   );
+  const slots = candidatePoolsResult.slots;
+  const jobLevel = calculationJobLevelFor(
+    config,
+    candidatePoolsResult.highestCandidateGearLevel,
+  );
   if (slots.some((slot) => slot.candidates.length === 0)) {
     throwIfAborted(options.signal);
   }
   const selectedFoods = foodsFor(config);
   const foodsByIdentity = new Map<string, Food>();
   const solverFoods = selectedFoods.map((food) => {
-    const info = createFoodInfo(food, config);
+    const info = createFoodInfo(food, config, jobLevel);
     foodsByIdentity.set(foodIdentity(info), food);
     return info;
   });
@@ -205,7 +209,13 @@ export function prepareSearch(
     (sum, slot) => sum + slot.candidates.length,
     0,
   );
-  const exactOptions = makeExactOptions(config, slots, solverFoods, options);
+  const exactOptions = makeExactOptions(
+    config,
+    jobLevel,
+    slots,
+    solverFoods,
+    options,
+  );
   options.onCandidateCounts?.({
     jobId: config.jobId,
     slots: slots.map((slot) => ({

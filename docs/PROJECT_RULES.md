@@ -17,6 +17,8 @@
 - `Item.Name` 为空或仅含空白的物品视为游戏中已移除，导入时排除，不进入装备、食物候选及任何后续计算；不得使用参考项目旧名称恢复该物品。名称字段缺失或格式错误属于数据错误，必须明确失败。
 - `scripts/query-mcp-lumina.mjs` 负责启动环境提供的 Lumina MCP stdio 服务器并生成 `src/data/mcp-lumina.snapshot.json`；查询结果不得由聊天文本或手工复制构造。默认查询参考项目中的全部可用装备、战斗食物、职业分类、23 个受支持职业的 `ClassJob` 行、食物效果、`ItemLevel`、`BaseParam`、`Materia` 和 `MandervilleWeaponEnhance` 行（当前已知的一类自定义参数武器表）。职业行须先用 `ClassJob.Abbreviation` 通过 `search_rows` 发现，再以 `get_rows` 批量读取；不得写死或凭记忆录入 row ID。
 - 职业原生等级属性修正和职业名称使用 `ClassJob` 的 MCP 字段；职业角色、主副属性、GCD/特性/队伍公式、等级上限及默认品级范围使用参考项目 `src/game.ts` 中对应职业 schema，并按职业记录各字段来源。青魔法师 `BLU` 与驯兽师 `BST` 属于受支持限职，MCP 行用于名称、原生 modifiers、限职和盾牌能力核验，等级上限及默认品级范围来自参考 schema。
+- 同步品级所属等级从 MCP `ContentFinderCondition` 的 `ClassJobLevelRequired`、`ItemLevelRequired`、`ItemLevelSync` 生成，转换顺序遵循参考项目 `data/convert.ts`，并与 `data/out/syncLevels.js` 逐项核对。全量行、Schema、版本与查询时间保存在 MCP 快照；同品级多行归属按参考转换的行 ID 顺序覆盖。参考 `src/game.ts` 的 `syncLevelOfJobLevels` 仅提供未列品级的精确等级对应；`ParamGrow.ItemLevelSync` 与该参考映射语义不同，不混用为分组来源。
+- 可变等级装备进入候选。MCP `Item.SubStatCategory === 2` 映射为 `equipLevelVariable`；`BaseParam` 55/56 保留为 `main` / `secondary`，在按职业生成候选时分别解析为该职业的主、副属性。等级同步按参考项目 `Gear.syncedLevel`：可变等级装备的目标品级为显式同步品级与 `syncLevelOfJobLevels[配置职业等级]` 的较小值；目标低于装备原品级时按目标品级属性上限封顶并禁用普通魔晶石。单职业、联合搜索和可行 GCD 查询必须采用一致处理。
 - 青魔法师每点 INT 对应的魔法武器伤害加值表在 Lumina MCP 的 Sheet 清单和 `ClassJob` 字段中均不存在。只有在当前 MCP 快照保存了 `list_sheets` 与 `ClassJob` 的 `describe_sheet` 结果并确认没有对应表/字段时，才允许从参考项目读取映射；来源文件为 `data/out/bluMdmgAdditions.js`、`data/in/bluMdmgAdditions.txt` 与 `data/convert.ts`。更新器必须逐项校验导出与原始测量文本一致，且所有数值均为非负安全整数，禁止缺失兜底、截短或近似。
 - `scripts/update-data.mjs` 读取 MCP 快照并优先覆盖参考项目中的同 ID 数据；MCP 未返回的字段或行才保留参考项目值，并在 `dataSources` 中记录缺失范围和回退位置。当前统一更新器仍解析参考仓库的以下原始导出作为补缺和领域常量来源：
   - `data/out/gears-*.js`
@@ -49,7 +51,7 @@ node scripts/update-data.mjs --offline
 
 最终属性不是装备属性的简单总和。计算顺序为：
 
-1. 根据 `jobLevelModifiers` 取得等级基础参数。
+1. 先确定计算等级：非同步取当前筛选条件下候选装备中最高品级装备的穿戴等级，并向下取整为十的倍数；同步取参考项目中同步品级所属的等级。再根据 `jobLevelModifiers` 取得等级基础参数。
 2. 使用职业 `statModifiers` 计算主属性和耐力等基础值。
 3. 加入族群属性。当前默认使用上游索引 0，即“人族 - 中原之民”。
 4. 累加装备及实际生效的魔晶石属性。
@@ -167,7 +169,7 @@ effective = min(cap, current + materiaValue)
 
 - 数据更新器已接入脚本化 `ffxiv-mcp-lumina` 查询产物；当前快照覆盖全部 22023 件可用战斗装备、420 种战斗食物和 23 个职业（包括 80 级上限的青魔法师，以及 50 级上限、独立盾牌槽的驯兽师）。`ClassJob` 原生职业属性修正来自 MCP；参考项目继续提供 GCD/特性/队伍公式、等级与默认品级 schema、族群常量及其余领域边界数据。仅青魔法师 INT 对应的魔法武器伤害加值表在 MCP 中缺失，使用已逐项核对的参考项目原始测量导出。
 - 支持可选装备品级同步；空值表示不启用。前端只列出参考仓库 `reference/ffxiv-gearing/src/game.ts` 中 `syncLevelIsPopular` 标记为 `true` 的 11 档（`300, 345, 375, 475, 605, 635, 665, 695, 700, 735, 795`），并与运行时属性上限表求交。该清单对应参考仓库 commit `048376fb6c6c6538a482eba5f76128d985958fa0`；其界面加粗规则见 `src/views/LevelSyncPanel.scss` 的 `.-popular` 样式。同步普通装备按同步品级属性上限压缩且魔晶石失效；自定义参数武器保留参数分配并封顶。
-- 领域公式仍按职业等级修正计算。单职业新搜索及载入后的搜索条件归一到当前职业数据定义的最高等级；历史结果保留原计算值。联合搜索可按职业设置等级。
+- 单职业、联合搜索及可行 GCD 档位查询使用相同的计算等级：非同步取经过职业、品级、来源、排除及锁定条件筛选的候选装备中最高品级装备的穿戴等级，但等级为 1 的装备不参与基准选择；同品级取较高穿戴等级，然后向下取整为十的倍数（例如 99 级使用 90 级基准）。等级为 1 的装备仍保留为真实候选。同步按参考项目 `syncLevels` 的品级所属等级选取，未列品级仅接受 `syncLevelOfJobLevels` 的精确对应。等级或映射缺失时明确失败，不以其他受支持等级替代、不固定使用 100 级。装备穿戴限制仍按配置职业等级（未指定时为职业上限）筛选，与公式计算等级分开，允许高等级装备参与低等级同步。无候选时保持无可行配装；历史结果保留原计算值。
 - 支持合法禁断属性组合与等级限制，不计算成功率或镶嵌成本。
 - 单职业与多职业联合优化使用独立流程；联合搜索支持共享完整装备与镶嵌，以及共享或独立食物。
 - 强制装备当前锁定装备 ID，并不支持逐孔强制魔晶石；锁定装备仍会参与普通孔魔晶石优化。

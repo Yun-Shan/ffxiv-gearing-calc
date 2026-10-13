@@ -23,7 +23,7 @@ function appliedFoodStats(
   config: OptimizationConfig,
 ): Partial<Record<Stat, number>> {
   const job = jobSchemas[config.jobId];
-  const level = config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel;
+  const level = result.calculationLevel ?? config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel;
   const allowed = new Set(job.stats);
   const foodStats = Object.fromEntries(
     Object.entries(result.food.stats).filter(([stat, value]) =>

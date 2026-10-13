@@ -47,6 +47,7 @@ export const itemReturnFields = [
   "MateriaSlotCount",
   "IsAdvancedMeldingPermitted",
   "IsUnique",
+  "SubStatCategory",
   "LevelItem",
   "EquipSlotCategory",
   "CanBeHq",
@@ -158,6 +159,8 @@ const statByBaseParam = new Map([
   [44, "DET"],
   [45, "SKS"],
   [46, "SPS"],
+  [55, "main"],
+  [56, "secondary"],
 ]);
 
 function numberOrUndefined(value) {
@@ -282,6 +285,8 @@ export function normalizeMcpGearRow(row, fallback, categoryRow, options = {}) {
   const name = normalizeMcpItemName(row);
   if (name === undefined) return undefined;
   const categoryFields = fieldsOf(categoryRow);
+  if (!Number.isSafeInteger(itemFields.SubStatCategory) || itemFields.SubStatCategory < 0)
+    throw new Error(`MCP Item 行 ${row.rowId} 缺少有效 SubStatCategory`);
   const required = ["LevelItem", "LevelEquip", "ClassJobCategory", "EquipSlotCategory"];
   if (required.some((name) => itemFields[name] === undefined)) return undefined;
   const jobs = categoryFields
@@ -301,8 +306,10 @@ export function normalizeMcpGearRow(row, fallback, categoryRow, options = {}) {
       : undefined;
   const isWeapon = options.isWeapon ?? fallback?.slot === "weapon";
   const stats = readStats(row, { hq, damageStat, isWeapon });
+  const fallbackGear = fallback ? { ...fallback } : {};
+  delete fallbackGear.equipLevelVariable;
   return {
-    ...fallback,
+    ...fallbackGear,
     name,
     rawSlot,
     level,
@@ -310,6 +317,7 @@ export function normalizeMcpGearRow(row, fallback, categoryRow, options = {}) {
     jobCategory: numberOrUndefined(itemFields.ClassJobCategory) ?? fallback?.jobCategory,
     stats,
     materiaSlots,
+    ...(itemFields.SubStatCategory === 2 ? { equipLevelVariable: true } : {}),
     ...(typeof itemFields.IsUnique === "boolean" ? { unique: itemFields.IsUnique } : {}),
     ...(itemFields.IsAdvancedMeldingPermitted === true ? { materiaAdvanced: true } : {}),
     ...(itemFields.Rarity !== undefined ? { rarity: Number(itemFields.Rarity) } : {}),

@@ -36,6 +36,7 @@ const mcpSnapshotPath = resolve(
 const offline = process.argv.includes("--offline");
 const supportedJobs = supportedJobIds;
 const limitedJobIds = new Set(["BLU", "BST"]);
+const itemCoreReturnFields = itemReturnFields.filter((field) => field !== "SubStatCategory");
 const importStartedAt = new Date().toISOString();
 let currentCommit = "unknown";
 const combatMateriaStats = ["CRT", "DET", "DHT", "SKS", "SPS", "TEN", "PIE"];
@@ -205,7 +206,199 @@ function parseGameConstants(sourceText) {
     ),
     baseStats: evaluateIdentifier("baseStats"),
     clanStats: evaluateIdentifier("clanStats"),
+    syncLevelOfJobLevels: evaluateIdentifier("syncLevelOfJobLevels"),
   };
+}
+
+function buildMcpSyncLevels(snapshot) {
+  const rows = snapshotRows(snapshot, "ContentFinderCondition");
+  const ownerByItemLevel = new Map();
+  const usedRowIds = [];
+  for (const row of Object.values(rows).sort((left, right) => left.rowId - right.rowId)) {
+    const fields = row?.fields;
+    if (!fields || !Number.isSafeInteger(row.rowId))
+      throw new Error("MCP ContentFinderCondition 行缺少有效 rowId 或 fields");
+    const jobLevel = fields.ClassJobLevelRequired;
+    if (!Number.isSafeInteger(jobLevel) || jobLevel < 0)
+      throw new Error(`MCP ContentFinderCondition 行 ${row.rowId} 的 ClassJobLevelRequired 无效`);
+    if (jobLevel < 50 || jobLevel % 10 !== 0) continue;
+
+    let used = false;
+    for (const field of ["ItemLevelRequired", "ItemLevelSync"]) {
+      const itemLevel = fields[field];
+      if (!Number.isSafeInteger(itemLevel) || itemLevel < 0)
+        throw new Error(`MCP ContentFinderCondition 行 ${row.rowId} 的 ${field} 无效`);
+      if (itemLevel === 0) continue;
+      // The reference converter iterates rows by ID and overwrites an earlier
+      // owner when multiple duties use the same sync item level.
+      ownerByItemLevel.set(itemLevel, jobLevel);
+      used = true;
+    }
+    if (used) usedRowIds.push(row.rowId);
+  }
+
+  const result = {};
+  for (const [itemLevel, jobLevel] of [...ownerByItemLevel].sort((a, b) => a[0] - b[0]))
+    (result[jobLevel] ??= []).push(itemLevel);
+  return { value: result, usedRowIds };
+}
+
+function validateSyncLevelMappings(syncLevels, syncLevelOfJobLevels, levelCaps, jobLevelModifiers) {
+  const legalJobLevels = new Set(Object.keys(jobLevelModifiers).map(Number));
+  const legalItemLevels = new Set(levelCaps.level);
+  const ownerByItemLevel = new Map();
+  const addMapping = (jobLevelKey, itemLevel, label) => {
+    const jobLevel = Number(jobLevelKey);
+    if (!Number.isSafeInteger(jobLevel) || String(jobLevel) !== String(jobLevelKey) ||
+        !legalJobLevels.has(jobLevel))
+      throw new Error(`${label} 包含无效或不支持的职业等级 ${jobLevelKey}`);
+    if (!Number.isSafeInteger(itemLevel) || itemLevel < 1 || !legalItemLevels.has(itemLevel))
+      throw new Error(`${label} 的职业等级 ${jobLevel} 指向无效或无属性上限的品级 ${itemLevel}`);
+    const previous = ownerByItemLevel.get(itemLevel);
+    if (previous !== undefined && previous !== jobLevel)
+      throw new Error(`同步品级 ${itemLevel} 同时映射到职业等级 ${previous} 和 ${jobLevel}`);
+    ownerByItemLevel.set(itemLevel, jobLevel);
+  };
+
+  if (!syncLevels || typeof syncLevels !== "object" || Array.isArray(syncLevels) ||
+      !Object.keys(syncLevels).length)
+    throw new Error("同步品级所属等级列表为空或格式错误");
+  for (const [jobLevel, itemLevels] of Object.entries(syncLevels)) {
+    if (!Array.isArray(itemLevels) || itemLevels.length === 0)
+      throw new Error(`同步等级 ${jobLevel} 缺少品级列表`);
+    const seen = new Set();
+    let previousItemLevel = 0;
+    for (const itemLevel of itemLevels) {
+      if (seen.has(itemLevel)) throw new Error(`同步等级 ${jobLevel} 重复包含品级 ${itemLevel}`);
+      if (itemLevel <= previousItemLevel)
+        throw new Error(`同步等级 ${jobLevel} 的品级必须严格升序`);
+      seen.add(itemLevel);
+      previousItemLevel = itemLevel;
+      addMapping(jobLevel, itemLevel, "syncLevels");
+    }
+  }
+  if (!syncLevelOfJobLevels || typeof syncLevelOfJobLevels !== "object" ||
+      Array.isArray(syncLevelOfJobLevels) || !Object.keys(syncLevelOfJobLevels).length)
+    throw new Error("职业等级同步品级表为空或格式错误");
+  for (const [jobLevel, itemLevel] of Object.entries(syncLevelOfJobLevels))
+    addMapping(jobLevel, itemLevel, "syncLevelOfJobLevels");
+}
+
+function validateMcpSyncLevelInput(snapshot) {
+  const check = snapshot.sourceCapabilityChecks?.syncLevels;
+  const requiredFields = ["ClassJobLevelRequired", "ItemLevelRequired", "ItemLevelSync"];
+  const contentDescription = check?.contentFinderCondition;
+  const itemLevelDescription = check?.itemLevel;
+  const paramGrowDescription = check?.paramGrow;
+  const contentQuery = snapshot.queries?.find((query) =>
+    query.method === "list_rows" && query.sheet === "ContentFinderCondition",
+  );
+  const paramGrowQuery = snapshot.queries?.find((query) =>
+    query.method === "get_rows" && query.sheet === "ParamGrow",
+  );
+  const contentRows = snapshot.rows?.ContentFinderCondition;
+  const paramGrowRows = snapshot.rows?.ParamGrow;
+  const supportedJobLevels = [50, 60, 70, 80, 90, 100];
+  if (
+    check?.status !== "available-via-content-finder-condition" ||
+    check.gameVersion !== snapshot.gameVersion ||
+    !Array.isArray(check.listSheets?.syncRelatedSheets) ||
+    check.listSheets.gameVersion !== snapshot.gameVersion ||
+    !check.listSheets.queriedAt ||
+    !requiredFields.every((field) => contentDescription?.fields?.includes(field)) ||
+    contentDescription.gameVersion !== snapshot.gameVersion ||
+    !contentDescription.queriedAt ||
+    !itemLevelDescription?.fields?.includes("Strength") ||
+    itemLevelDescription.gameVersion !== snapshot.gameVersion ||
+    !paramGrowDescription?.fields?.includes("ItemLevelSync") ||
+    paramGrowDescription.gameVersion !== snapshot.gameVersion ||
+    !Array.isArray(contentRows) || contentRows.length !== contentDescription.rowCount ||
+    !Number.isSafeInteger(contentDescription.rowCount) || contentDescription.rowCount < 1 ||
+    !contentQuery || contentQuery.gameVersion !== snapshot.gameVersion ||
+    contentQuery.returnedRows !== contentRows.length ||
+    contentQuery.rowIds?.length !== contentRows.length || !contentQuery.queriedAt ||
+    !Array.isArray(paramGrowRows) ||
+    paramGrowRows.length !== supportedJobLevels.length ||
+    !paramGrowQuery || paramGrowQuery.gameVersion !== snapshot.gameVersion ||
+    !paramGrowQuery.queriedAt ||
+    paramGrowQuery.returnedRows !== supportedJobLevels.length ||
+    check.paramGrow.usedForSyncLevelGrouping !== false
+  )
+    throw new Error("MCP 快照缺少可复现的 ContentFinderCondition 同步品级查询产物");
+
+  const contentRowIds = new Set(contentRows.map((row) => row?.rowId));
+  if (contentRowIds.size !== contentRows.length ||
+      contentQuery.rowIds.some((rowId) => !contentRowIds.has(rowId)) ||
+      contentRows.some((row) => row?.gameVersion !== snapshot.gameVersion || !row.timestamp))
+    throw new Error("MCP ContentFinderCondition 查询行目录与保存的数据不一致");
+  const paramGrowById = new Map();
+  for (const row of paramGrowRows) {
+    if (!Number.isSafeInteger(row?.rowId) || !Number.isSafeInteger(row?.fields?.ItemLevelSync) ||
+        row.fields.ItemLevelSync < 0 || row.gameVersion !== snapshot.gameVersion ||
+        !row.timestamp || paramGrowById.has(row.rowId))
+      throw new Error("MCP ParamGrow 同步等级审计行格式错误");
+    paramGrowById.set(row.rowId, row);
+  }
+  if (supportedJobLevels.some((level) => !paramGrowById.has(level)) ||
+      paramGrowQuery.rowIds?.length !== supportedJobLevels.length ||
+      supportedJobLevels.some((level) => !paramGrowQuery.rowIds.includes(level)))
+    throw new Error("MCP ParamGrow 同步等级审计行集合不完整");
+}
+
+function validateMcpVariableEquipLevelInput(snapshot) {
+  const check = snapshot.sourceCapabilityChecks?.equipLevelVariable;
+  const itemSchema = check?.item;
+  const itemRows = snapshot.rows?.Item;
+  const expectedItemIds = [...new Set([
+    ...(snapshot.queryPlan?.gearItemIds ?? []),
+    ...(snapshot.queryPlan?.foodItemIds ?? []),
+  ])];
+  const fieldQueries = snapshot.queries?.filter((query) =>
+    query.sheet === "Item" &&
+    ["get_rows", "list_rows"].includes(query.method) &&
+    query.fields?.includes("SubStatCategory"),
+  ) ?? [];
+  const queriedItemIds = new Set(fieldQueries.flatMap((query) => query.rowIds ?? []));
+  const itemById = new Map((Array.isArray(itemRows) ? itemRows : []).map((row) => [row?.rowId, row]));
+  if (
+    check?.status !== "available-via-item-sub-stat-category" ||
+    check.gameVersion !== snapshot.gameVersion ||
+    !Array.isArray(itemSchema?.fields) || !itemSchema.fields.includes("SubStatCategory") ||
+    !Number.isSafeInteger(itemSchema.rowCount) || itemSchema.rowCount < 1 ||
+    itemSchema.gameVersion !== snapshot.gameVersion || !itemSchema.queriedAt ||
+    !itemRows?.length || itemById.size !== itemRows.length ||
+    expectedItemIds.length !== itemRows.length ||
+    check.item.persistedItemRows !== expectedItemIds.length ||
+    expectedItemIds.some((id) => !queriedItemIds.has(id) || !itemById.has(id)) ||
+    fieldQueries.some((query) =>
+      query.gameVersion !== snapshot.gameVersion || !query.queriedAt ||
+      !Array.isArray(query.rowIds) ||
+      query.rowIds.some((id) => !Number.isSafeInteger(id) || id < 0) ||
+      new Set(query.rowIds).size !== query.rowIds.length ||
+      query.returnedRows !== query.rowIds.length ||
+      (query.method === "list_rows" && query.limit !== -1),
+    ) ||
+    !Array.isArray(snapshot.missing?.ItemSubStatCategory) ||
+    snapshot.missing.ItemSubStatCategory.length > 0
+  )
+    throw new Error("MCP 快照缺少可复现的 Item.SubStatCategory 装备等级标志数据");
+  for (const itemId of expectedItemIds) {
+    const row = itemById.get(itemId);
+    if (!Number.isSafeInteger(row?.fields?.SubStatCategory) || row.fields.SubStatCategory < 0)
+      throw new Error(`MCP Item 行 ${itemId} 缺少有效 SubStatCategory`);
+  }
+}
+
+function compareSyncLevelsWithReference(actual, reference) {
+  const normalize = (value) => Object.fromEntries(
+    Object.keys(value).map(Number).sort((left, right) => left - right).map((jobLevel) => {
+      const itemLevels = value[jobLevel];
+      if (!Array.isArray(itemLevels)) throw new Error(`同步等级 ${jobLevel} 缺少品级数组`);
+      return [jobLevel, [...itemLevels].sort((left, right) => left - right)];
+    }),
+  );
+  if (JSON.stringify(normalize(actual)) !== JSON.stringify(normalize(reference)))
+    throw new Error("MCP ContentFinderCondition 按参考转换流程生成的 syncLevels 与参考导出不一致");
 }
 
 function normalizeJobSchemas(rawSchemas, snapshot) {
@@ -373,6 +566,8 @@ async function loadMcpSnapshot() {
     throw new Error("MCP 快照 ClassJob 行集合与当前支持职业不一致，请重新运行 npm run data:mcp");
   validateBluMcpAbsence(snapshot);
   validateMcpItemRows(snapshot);
+  validateMcpSyncLevelInput(snapshot);
+  validateMcpVariableEquipLevelInput(snapshot);
   return snapshot;
 }
 
@@ -415,6 +610,84 @@ function snapshotSource(snapshot, sheet, fields, rowIds, note) {
     queriedAt: snapshot.queriedAt,
     note,
   });
+}
+
+function itemFieldQuery(snapshot, itemId, field) {
+  return (snapshot.queries ?? [])
+    .filter((query) =>
+      query.sheet === "Item" &&
+      ["get_rows", "list_rows"].includes(query.method) &&
+      query.fields?.includes(field) &&
+      query.rowIds?.includes(itemId) &&
+      query.gameVersion === snapshot.gameVersion &&
+      query.queriedAt,
+    )
+    .sort((left, right) => String(left.queriedAt).localeCompare(String(right.queriedAt)))
+    .at(-1);
+}
+
+function itemFieldQuerySourceId(query, field) {
+  const rowIds = query.rowIds ?? [];
+  return `mcp:Item:${field}:${query.method}:${query.queriedAt}:${rowIds.length}:${rowIds[0] ?? ""}-${rowIds.at(-1) ?? ""}`;
+}
+
+function itemFieldSource(snapshot, itemId, field) {
+  const query = itemFieldQuery(snapshot, itemId, field);
+  if (!query) throw new Error(`MCP Item 行 ${itemId} 的 ${field} 缺少精确来源查询`);
+  const sourceId = itemFieldQuerySourceId(query, field);
+  const fullSheet = query.method === "list_rows";
+  return {
+    ...mcpSource({
+      sheet: "Item",
+      fields: [field],
+      rowIds: [itemId],
+      gameVersion: snapshot.gameVersion,
+      validatedVersion: snapshot.validatedVersion,
+      queriedAt: query.queriedAt,
+      note: `${field} 原值来自 ${query.method} Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=${sourceId} 的来源记录。`,
+    }),
+    sourceId,
+    queryMethod: query.method,
+    queryScope: fullSheet
+      ? { kind: "all-rows", returnedRows: query.returnedRows }
+      : { kind: "row-ids", returnedRows: query.returnedRows },
+  };
+}
+
+function itemFieldQuerySources(snapshot, field, rowIds) {
+  const wanted = new Set(rowIds);
+  const seen = new Set();
+  return (snapshot.queries ?? [])
+    .filter((query) =>
+      query.sheet === "Item" &&
+      ["get_rows", "list_rows"].includes(query.method) &&
+      query.fields?.includes(field) &&
+      query.gameVersion === snapshot.gameVersion &&
+      query.queriedAt &&
+      query.rowIds?.some((id) => wanted.has(id)),
+    )
+    .map((query) => {
+      const sourceId = itemFieldQuerySourceId(query, field);
+      if (seen.has(sourceId)) return undefined;
+      seen.add(sourceId);
+      return {
+        ...mcpSource({
+          sheet: "Item",
+          fields: [field],
+          rowIds: query.rowIds,
+          gameVersion: snapshot.gameVersion,
+          validatedVersion: snapshot.validatedVersion,
+          queriedAt: query.queriedAt,
+          note: `${field} 来源的完整 MCP 查询批次；值 2 的语义映射遵循参考项目 data/convert.ts:140；原始方法、字段集合和范围保存在 snapshot.queries。`,
+        }),
+        sourceId,
+        queryMethod: query.method,
+        ...(query.method === "list_rows"
+          ? { queryScope: { kind: "all-rows", returnedRows: query.returnedRows } }
+          : { queryScope: { kind: "row-ids", returnedRows: query.returnedRows } }),
+      };
+    })
+    .filter(Boolean);
 }
 
 function validateBluMcpAbsence(snapshot) {
@@ -486,7 +759,8 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
     if (typeof merged.unique !== "boolean")
       throw new Error(`MCP Item 行 ${gear.id} 缺少 IsUnique，请重新生成完整快照`);
     usedIds.push(gear.id);
-    const source = snapshotSource(snapshot, "Item", itemReturnFields, [gear.id]);
+    const source = snapshotSource(snapshot, "Item", itemCoreReturnFields, [gear.id]);
+    const variableLevelSource = itemFieldSource(snapshot, gear.id, "SubStatCategory");
     const categorySource = snapshotSource(
       snapshot,
       "ClassJobCategory",
@@ -502,7 +776,7 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
     return {
       ...merged,
       ...(customRow ? { customizable: true, customParameters } : {}),
-      dataSources: [source, categorySource, ...(customRow ? [
+      dataSources: [source, variableLevelSource, categorySource, ...(customRow ? [
         snapshotSource(snapshot, "MandervilleWeaponEnhance", mandervilleReturnFields, [gear.id]),
         snapshotSource(snapshot, "Materia", undefined, customParameters.map((parameter) => parameter.materiaId)),
       ] : []), ...(gear.dataSources ?? []).filter((item) => item.kind === "reference")],
@@ -528,7 +802,8 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
     if (!customParameters)
       throw new Error(`MandervilleWeaponEnhance 行 ${mcpId} 的自定义参数字段不完整`);
     usedIds.push(mcpId);
-    const source = snapshotSource(snapshot, "Item", itemReturnFields, [mcpId]);
+    const source = snapshotSource(snapshot, "Item", itemCoreReturnFields, [mcpId]);
+    const variableLevelSource = itemFieldSource(snapshot, mcpId, "SubStatCategory");
     const categorySource = snapshotSource(snapshot, "ClassJobCategory", categoryFieldList, [Number(itemRow.fields.ClassJobCategory)]);
     result.push({
       ...merged,
@@ -536,6 +811,7 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
       customParameters,
       dataSources: [
         source,
+        variableLevelSource,
         categorySource,
         snapshotSource(snapshot, "MandervilleWeaponEnhance", mandervilleReturnFields, [mcpId]),
         snapshotSource(snapshot, "Materia", undefined, customParameters.map((parameter) => parameter.materiaId)),
@@ -661,6 +937,20 @@ function mergeMcpMaterias(materias, snapshot) {
 function validate(payload) {
   if (!payload.provenance?.commit)
     throw new Error("生成快照缺少上游 commit 信息");
+  validateSyncLevelMappings(
+    payload.syncLevels,
+    payload.syncLevelOfJobLevels,
+    payload.levelCaps,
+    payload.jobLevelModifiers,
+  );
+  if (!payload.provenance.sources?.some((source) =>
+    source.kind === "mcp" && source.sheet === "ContentFinderCondition" &&
+    source.fields?.includes("ClassJobLevelRequired") && source.rowIds?.length,
+  ) || !payload.provenance.sources?.some((source) =>
+    source.kind === "reference" && source.sourceFiles?.includes("src/game.ts") &&
+    source.note?.includes("syncLevelOfJobLevels"),
+  ))
+    throw new Error("同步品级映射缺少 MCP CFC 或参考 fallback 来源记录");
   if (payload.gears.length < 1000) throw new Error(`装备数量异常：${payload.gears.length}`);
   if (payload.foods.length < 100) throw new Error(`食物数量异常：${payload.foods.length}`);
   if (Object.keys(payload.jobSchemas).length !== supportedJobs.length)
@@ -772,6 +1062,7 @@ const [levelCaps, slotCaps, roleCaps] = await Promise.all([
   importDefault(resolve(outDir, "slotCaps.js")),
   importDefault(resolve(outDir, "roleCaps.js")),
 ]);
+const referenceSyncLevels = await importDefault(resolve(outDir, "syncLevels.js"));
 const constants = parseGameConstants(gameSource);
 const gearGroups = await Promise.all(
   gearFiles.map(async (file) => ({ file, items: await importDefault(resolve(outDir, file)) })),
@@ -786,6 +1077,7 @@ const referenceSourceFiles = [
   "data/out/slotCaps.js",
   "data/out/roleCaps.js",
   "src/game.ts",
+  "data/out/syncLevels.js",
   "data/out/bluMdmgAdditions.js",
   "data/in/bluMdmgAdditions.txt",
   "data/convert.ts",
@@ -800,6 +1092,7 @@ const referenceSource = {
 let foods = rawFoods.filter((food) => food.slot === -1).map(normalizeFood);
 let effectiveLevelCaps = levelCaps;
 let effectiveSlotCaps = slotCaps;
+let effectiveSyncLevels;
 let materias = Object.fromEntries(
   combatMateriaStats.map((stat) => [stat, constants.materias[stat]]),
 );
@@ -809,6 +1102,7 @@ if (!mcpSnapshot)
   throw new Error("BLU 正式职业数据需要 MCP ClassJob 快照和武器伤害映射缺失核验；请先运行 npm run data:mcp");
 let mcpSummary = "MCP 查询产物未找到，使用参考项目数据";
 if (mcpSnapshot) {
+  const syncLevelMerge = buildMcpSyncLevels(mcpSnapshot);
   const gearMerge = mergeMcpGearData(gears, mcpSnapshot, referenceSource);
   gears.splice(0, gears.length, ...gearMerge.result);
   const foodMerge = mergeMcpFoodData(foods, mcpSnapshot);
@@ -819,7 +1113,21 @@ if (mcpSnapshot) {
   effectiveSlotCaps = slotMerge.value;
   const materiaMerge = mergeMcpMaterias(materias, mcpSnapshot);
   materias = materiaMerge.value;
+  effectiveSyncLevels = syncLevelMerge.value;
+  validateSyncLevelMappings(
+    effectiveSyncLevels,
+    constants.syncLevelOfJobLevels,
+    effectiveLevelCaps,
+    constants.jobLevelModifiers,
+  );
+  compareSyncLevelsWithReference(effectiveSyncLevels, referenceSyncLevels);
   const classJobRowIds = Object.values(mcpSnapshot.queryPlan.classJobIds).map(Number);
+  const syncLevelQuery = mcpSnapshot.queries.find((query) =>
+    query.method === "list_rows" && query.sheet === "ContentFinderCondition",
+  );
+  const paramGrowQuery = mcpSnapshot.queries.find((query) =>
+    query.method === "get_rows" && query.sheet === "ParamGrow",
+  );
   const bluDamageReferenceSource = {
     kind: "reference",
     repository,
@@ -832,8 +1140,42 @@ if (mcpSnapshot) {
     ],
     note: `MCP ${mcpSnapshot.gameVersion} 的 list_sheets 与 ClassJob describe_sheet 均未提供青魔法师按 INT 索引的魔法武器伤害加值表或字段；使用参考项目原始测量映射，并与输入文本逐值校验。`,
   };
+  const syncLevelReferenceSource = {
+    kind: "reference",
+    repository,
+    commit,
+    importedAt: importStartedAt,
+    sourceFiles: ["data/convert.ts", "data/out/syncLevels.js"],
+    note: "syncLevels 按参考项目 data/convert.ts 转换规则从 MCP CFC 行生成，并逐值核对 data/out/syncLevels.js；按 rowId 升序处理，相同品级由后行覆盖。",
+  };
+  const syncLevelFallbackSource = {
+    kind: "reference",
+    repository,
+    commit,
+    importedAt: importStartedAt,
+    sourceFiles: ["src/game.ts"],
+    note: "syncLevelOfJobLevels 按职业等级到品级方向导入参考项目的精确表，作为 CFC 同步组未精确命中时的 fallback。",
+  };
+  const variableItemLevelReferenceSource = {
+    kind: "reference",
+    repository,
+    commit,
+    importedAt: importStartedAt,
+    sourceFiles: ["data/convert.ts"],
+    note: "参考项目 data/convert.ts:140 将 Item.SubStatCategory 为 2 的装备映射为 equipLevelVariable；当前装备标志原值由同版本 MCP Item.SubStatCategory 查询提供。",
+  };
+  const paramGrowAuditSource = mcpSource({
+    sheet: "ParamGrow",
+    fields: ["ItemLevelSync"],
+    rowIds: [50, 60, 70, 80, 90, 100],
+    gameVersion: mcpSnapshot.gameVersion,
+    validatedVersion: mcpSnapshot.validatedVersion,
+    queriedAt: paramGrowQuery.queriedAt,
+    note: `仅作语义审计，不用于同步品级分组；MCP ParamGrow 100 级 ItemLevelSync=${snapshotRows(mcpSnapshot, "ParamGrow")[100]?.fields?.ItemLevelSync}，参考职业等级 fallback 为 ${constants.syncLevelOfJobLevels[100]}。`,
+  });
   sourceRecords.push(
-    snapshotSource(mcpSnapshot, "Item", itemReturnFields, gearMerge.usedIds),
+    snapshotSource(mcpSnapshot, "Item", itemCoreReturnFields, gearMerge.usedIds),
+    ...itemFieldQuerySources(mcpSnapshot, "SubStatCategory", gearMerge.usedIds),
     snapshotSource(mcpSnapshot, "ItemAction", itemActionReturnFields, foodMerge.usedActionIds),
     snapshotSource(mcpSnapshot, "ItemFood", itemFoodReturnFields, undefined, mcpSnapshot.missing?.ItemFood?.length
       ? `MCP 缺少 ItemFood 行：${mcpSnapshot.missing.ItemFood.join(",")}`
@@ -842,6 +1184,19 @@ if (mcpSnapshot) {
     snapshotSource(mcpSnapshot, "BaseParam", undefined, slotMerge.usedIds),
     snapshotSource(mcpSnapshot, "Materia", undefined, Object.keys(snapshotRows(mcpSnapshot, "Materia")).map(Number)),
     snapshotSource(mcpSnapshot, "ClassJob", classJobReturnFields, classJobRowIds),
+    mcpSource({
+      sheet: "ContentFinderCondition",
+      fields: ["ClassJobLevelRequired", "ItemLevelRequired", "ItemLevelSync"],
+      rowIds: syncLevelMerge.usedRowIds,
+      gameVersion: mcpSnapshot.gameVersion,
+      validatedVersion: mcpSnapshot.validatedVersion,
+      queriedAt: syncLevelQuery.queriedAt,
+      note: "按完整 CFC 行构建同步品级分组；仅采用职业等级不低于 50 的整十等级，按 rowId 升序覆盖重复品级。",
+    }),
+    paramGrowAuditSource,
+    syncLevelReferenceSource,
+    syncLevelFallbackSource,
+    variableItemLevelReferenceSource,
     bluDamageReferenceSource,
   );
   const fallbackCount = gearMerge.missing.length + foodMerge.missing.length;
@@ -852,8 +1207,8 @@ if (mcpSnapshot) {
 }
 const payload = {
   version: mcpSnapshot
-    ? `mcp-${mcpSnapshot.gameVersion}-upstream-${commit.slice(0, 12)}`
-    : `upstream-${commit.slice(0, 12)}`,
+    ? `mcp-${mcpSnapshot.gameVersion}-upstream-${commit.slice(0, 12)}-level-basis-v2`
+    : `upstream-${commit.slice(0, 12)}-level-basis-v2`,
   provenance: {
     repository,
     commit,
@@ -874,6 +1229,8 @@ const payload = {
   clanStats: constants.clanStats,
   jobSchemas: normalizeJobSchemas(constants.jobSchemas, mcpSnapshot),
   jobLevelModifiers: constants.jobLevelModifiers,
+  syncLevels: effectiveSyncLevels,
+  syncLevelOfJobLevels: constants.syncLevelOfJobLevels,
 };
 validate(payload);
 await mkdir(resolve(outputPath, ".."), { recursive: true });

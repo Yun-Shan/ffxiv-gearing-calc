@@ -13,7 +13,7 @@ workerScope.addEventListener("message", async (event) => {
   }
   try {
     workerScope.postMessage({ kind: "progress", message: "正在启动 GCD 快速计算" });
-    const [{ calculateFeasibleGcdTiers }, { gearOptionsFor, jobLevelFor, slotsForJob }] = await Promise.all([
+    const [{ calculateFeasibleGcdTiers }, { calculationJobLevelFor, gearOptionsFor, slotsForJob }] = await Promise.all([
       import("./gcd-tier-calculator.ts"),
       import("./gear-options.ts"),
     ]);
@@ -21,7 +21,7 @@ workerScope.addEventListener("message", async (event) => {
     const value = calculateFeasibleGcdTiers(request.config, {
       onProgress: (message) => workerScope.postMessage({ kind: "progress", message }),
     }, {
-      getJobLevel: jobLevelFor,
+      getJobLevel: calculationJobLevelFor,
       gearOptionsFor,
       slotsForJob,
     });

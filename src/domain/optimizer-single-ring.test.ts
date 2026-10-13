@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { foods, gears } from "./data";
+import { foods, gameData, gears } from "./data";
 import {
   findFeasibleGcds,
   findFeasibleGcdsLocally,
@@ -257,13 +257,14 @@ describe("full materia placement", () => {
     const targetRing = gears.find((gear) => gear.id === 34153)!;
     expect(targetRing.materiaAdvanced).toBe(true);
     expect(targetRing.materiaSlots).toBe(1);
-    const config = { ...configFor("WHM"), minItemLevel: 510, syncLevel: 515 };
+    const syncLevel = gameData.syncLevels[80]!.find((level) => level >= targetRing.level)!;
+    const config = { ...configFor("WHM"), minItemLevel: 510, maxItemLevel: syncLevel + 5, syncLevel };
     const forcedGear: OptimizationConfig["forcedGear"] = { ring: targetRing.id };
     for (const slot of [
       "weapon", "head", "body", "hands", "legs", "feet", "earrings", "necklace", "bracelet", "ring2",
     ] as const) {
       const candidate = gearOptionsFor(config, slot).find((gear) =>
-        gear.level > 515 && gear.customParameters === undefined && gear.id !== targetRing.id);
+        gear.level > syncLevel && gear.customParameters === undefined && gear.id !== targetRing.id);
       if (candidate === undefined) throw new Error(`缺少 ${slot} 五孔验收测试装备`);
       forcedGear[slot] = candidate.id;
     }

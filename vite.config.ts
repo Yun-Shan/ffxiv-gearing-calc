@@ -18,7 +18,14 @@ function isWithin(root: string, path: string): boolean {
 export default defineConfig({
   plugins: [react()],
   test: {
-    exclude: [...configDefaults.exclude, "**/*.helper.test.*"],
+    exclude: [
+      ...configDefaults.exclude,
+      "**/*.helper.test.*",
+      "scripts/archive/**",
+      "scripts/cpsat-unique-research/**",
+      "scripts/node-tests/**",
+      "reference/**",
+    ],
     setupFiles: [
       resolve(projectRoot, "src/test-utils/test-binary-data.helper.test.ts"),
     ],

@@ -1,8 +1,17 @@
 import { foods, gameData, materiaGradeRequiredLevels } from "./data.ts";
+import {
+  jobLevelFor,
+  preferCandidateGearLevel,
+  type HighestCandidateGearLevel,
+} from "./gear-options.ts";
 import { jobSchemas } from "./jobs.ts";
 import {
   applyFood,
+  capGearStatsAtLevel,
   calculateBaseStats,
+  concretizeGearStats,
+  effectiveGearSyncLevel,
+  getGearStatCap,
   getSpeedStat,
 } from "./rules.ts";
 import {
@@ -21,7 +30,10 @@ import type {
 } from "./types.ts";
 
 interface GcdTierCalculatorDependencies {
-  getJobLevel(config: OptimizationConfig): number;
+  getJobLevel(
+    config: OptimizationConfig,
+    highestCandidate?: HighestCandidateGearLevel,
+  ): number;
   gearOptionsFor(config: OptimizationConfig, slot: GearSlot): Gear[];
   slotsForJob(jobId: JobId): GearSlot[];
 }
@@ -66,28 +78,22 @@ function validateConfig(config: OptimizationConfig): void {
 }
 
 function statCapAtLevel(gear: Gear, stat: Stat, level: number): number {
-  const levels = gameData.levelCaps.level;
-  const levelIndex = levels.indexOf(level);
-  if (levelIndex < 0) {
-    throw new Error("装备同步品级 " + level + " 缺少属性上限数据");
-  }
-  const levelCap = gameData.levelCaps[stat]?.[levelIndex];
-  const slotCap = gameData.slotCaps[stat]?.[gear.rawSlot];
-  const roleCap = gameData.roleCaps[stat]?.[gear.roleId];
-  if (levelCap === undefined || slotCap === undefined || roleCap === undefined) {
-    throw new Error("装备 " + gear.id + " 的 " + stat + " 属性上限数据不完整");
-  }
-  return Math.round((levelCap * slotCap * roleCap) / 100_000);
+  return getGearStatCap(gear, stat, level);
 }
 
-function capLevelFor(gear: Gear, syncLevel?: number): number {
-  return syncLevel !== undefined && gear.level > syncLevel ? syncLevel : gear.level;
+function capLevelFor(gear: Gear, jobLevel: number, syncLevel?: number): number {
+  return effectiveGearSyncLevel(gear, jobLevel, syncLevel) ?? gear.level;
 }
 
-function baseStatFor(gear: Gear, stat: Stat, level: number): number {
+function baseStatFor(
+  gear: Gear,
+  stat: Stat,
+  level: number,
+  isSynchronized = false,
+): number {
   const value = gear.stats[stat];
   if (value === undefined) return 0;
-  return level === gear.level
+  return !isSynchronized
     ? value
     : Math.min(value, statCapAtLevel(gear, stat, level));
 }
@@ -164,11 +170,13 @@ function addProfile(
 function profilesForCustomParameters(
   gear: Gear,
   speedStat: "SKS" | "SPS",
+  jobLevel: number,
   syncLevel?: number,
 ): Map<number, number> {
-  const level = capLevelFor(gear, syncLevel);
-  const baseSpeed = baseStatFor(gear, speedStat, level);
-  const baseTenacity = baseStatFor(gear, "TEN", level);
+  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, syncLevel);
+  const level = synchronizedLevel ?? gear.level;
+  const baseSpeed = baseStatFor(gear, speedStat, level, synchronizedLevel !== undefined);
+  const baseTenacity = baseStatFor(gear, "TEN", level, synchronizedLevel !== undefined);
   const profiles = new Map<number, number>();
   for (const melds of customParameterMelds(gear)) {
     let speed = baseSpeed;
@@ -305,26 +313,39 @@ function gearProfiles(
   jobId: JobId,
   speedStat: "SKS" | "SPS",
 ): Map<number, number> {
-  if (gear.customParameters?.length) {
-    return profilesForCustomParameters(gear, speedStat, config.syncLevel);
+  const resolvedGear: Gear = {
+    ...gear,
+    stats: concretizeGearStats(gear.stats, jobSchemas[jobId]),
+  };
+  const jobLevel = jobLevelFor(config);
+  if (resolvedGear.customParameters?.length) {
+    return profilesForCustomParameters(
+      resolvedGear,
+      speedStat,
+      jobLevel,
+      config.syncLevel,
+    );
   }
-  const syncApplies = config.syncLevel !== undefined && gear.level > config.syncLevel;
-  if (syncApplies || (gear.materiaSlots === 0 && gear.materiaAdvanced !== true)) {
-    const level = capLevelFor(gear, config.syncLevel);
+  const syncApplies =
+    effectiveGearSyncLevel(resolvedGear, jobLevel, config.syncLevel) !== undefined;
+  if (syncApplies || (resolvedGear.materiaSlots === 0 && resolvedGear.materiaAdvanced !== true)) {
+    const level = capLevelFor(resolvedGear, jobLevel, config.syncLevel);
+    const stats = syncApplies
+      ? capGearStatsAtLevel(resolvedGear, resolvedGear.stats, level)
+      : resolvedGear.stats;
     const profiles = new Map<number, number>();
     addProfile(
       profiles,
-      baseStatFor(gear, speedStat, level),
-      baseStatFor(gear, "TEN", level),
+      stats[speedStat] ?? 0,
+      stats.TEN ?? 0,
     );
     return profiles;
   }
-  return profilesForRegularMateria(gear, jobId, speedStat);
+  return profilesForRegularMateria(resolvedGear, jobId, speedStat);
 }
 
 function slotProfiles(
   gears: readonly Gear[],
-  forcedId: number | undefined,
   profilesForGear: (gear: Gear) => Map<number, number>,
   signal?: AbortSignal,
 ): Map<number, number> {
@@ -332,7 +353,6 @@ function slotProfiles(
   for (let index = 0; index < gears.length; index++) {
     abortIfNeeded(signal);
     const gear = gears[index]!;
-    if (forcedId !== undefined && gear.id !== forcedId) continue;
     for (const [speed, tenacity] of profilesForGear(gear)) {
       addProfile(profiles, speed, tenacity);
     }
@@ -360,17 +380,11 @@ function updateBestRingProfiles(
 }
 
 function ringPairProfiles(
-  ringPool: readonly Gear[],
-  config: OptimizationConfig,
+  firstCandidates: readonly Gear[],
+  secondCandidates: readonly Gear[],
   profilesForGear: (gear: Gear) => Map<number, number>,
   signal?: AbortSignal,
 ): Map<number, number> {
-  const firstCandidates = ringPool.filter(
-    (gear) => config.forcedGear.ring === undefined || gear.id === config.forcedGear.ring,
-  );
-  const secondCandidates = ringPool.filter(
-    (gear) => config.forcedGear.ring2 === undefined || gear.id === config.forcedGear.ring2,
-  );
   if (firstCandidates.length === 0 || secondCandidates.length === 0) return new Map();
 
   const secondBySpeed = new Map<number, BestRingProfiles[]>();
@@ -430,8 +444,33 @@ export function calculateFeasibleGcdTiers(
   abortIfNeeded(options.signal);
   validateConfig(config);
   const job = jobSchemas[config.jobId];
-  const jobLevel = dependencies.getJobLevel(config);
   const speedStat = getSpeedStat(job);
+  const allSlots = dependencies.slotsForJob(config.jobId);
+  const nonRingSlots = allSlots.filter((slot) => slot !== "ring" && slot !== "ring2");
+  const candidatePools = new Map<GearSlot, Gear[]>();
+  let highestCandidateGearLevel: HighestCandidateGearLevel | undefined;
+  const eligiblePoolForSlot = (slot: GearSlot, pool: Gear[]): Gear[] => {
+    const forcedId = config.forcedGear[slot];
+    const eligible = forcedId === undefined
+      ? pool
+      : pool.filter((gear) => gear.id === forcedId);
+    for (const gear of eligible) {
+      highestCandidateGearLevel = preferCandidateGearLevel(
+        highestCandidateGearLevel,
+        gear,
+      );
+    }
+    candidatePools.set(slot, eligible);
+    return eligible;
+  };
+  for (const slot of nonRingSlots) {
+    abortIfNeeded(options.signal);
+    eligiblePoolForSlot(slot, dependencies.gearOptionsFor(config, slot));
+  }
+  const ringPool = dependencies.gearOptionsFor(config, "ring");
+  const firstRingCandidates = eligiblePoolForSlot("ring", ringPool);
+  const secondRingCandidates = eligiblePoolForSlot("ring2", ringPool);
+  const jobLevel = dependencies.getJobLevel(config, highestCandidateGearLevel);
   const usesTenacity =
     config.minTenacity !== undefined ||
     config.toughnessMin !== undefined ||
@@ -469,29 +508,24 @@ export function calculateFeasibleGcdTiers(
     return profiles;
   };
 
-  const allSlots = dependencies.slotsForJob(config.jobId);
-  const nonRingSlots = allSlots.filter((slot) => slot !== "ring" && slot !== "ring2");
   const candidates: { name: string; profiles: Map<number, number> }[] = [];
   for (const slot of nonRingSlots) {
     abortIfNeeded(options.signal);
-    const gearPool = dependencies.gearOptionsFor(config, slot);
     candidates.push({
       name: slot,
       profiles: slotProfiles(
-        gearPool,
-        config.forcedGear[slot],
+        candidatePools.get(slot) ?? [],
         profilesForGear,
         options.signal,
       ),
     });
   }
 
-  const ringPool = dependencies.gearOptionsFor(config, "ring");
   candidates.push({
     name: "rings",
     profiles: ringPairProfiles(
-      ringPool,
-      config,
+      firstRingCandidates,
+      secondRingCandidates,
       profilesForGear,
       options.signal,
     ),

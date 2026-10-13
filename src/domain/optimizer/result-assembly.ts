@@ -102,6 +102,7 @@ export function assembleResult(
   });
   const damagePerSecond = effects.damage / effects.gcd;
   return {
+    calculationLevel: prepared.jobLevel,
     gear: selectedGear,
     food,
     stats,

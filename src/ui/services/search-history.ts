@@ -258,13 +258,24 @@ function validateOptimizationConfig(value: unknown): value is OptimizationConfig
   );
 }
 
-function supportsResultLevel(config: OptimizationConfig): boolean {
+function supportsResultLevel(
+  config: OptimizationConfig,
+  calculationLevel?: number,
+): boolean {
   const job = jobSchemas[config.jobId];
-  const level = config.jobLevel ?? job.maxJobLevel ?? 100;
+  const maxJobLevel = job.maxJobLevel ?? 100;
+  const configuredLevel = config.jobLevel ?? job.maxJobLevel ?? 100;
+  if (
+    calculationLevel !== undefined &&
+    (!isSafeInteger(calculationLevel) || calculationLevel > maxJobLevel)
+  ) return false;
+  const levels = calculationLevel === undefined
+    ? [configuredLevel]
+    : [configuredLevel, calculationLevel];
   try {
     // ResultPanel reapplies food using these base stats. Use the domain's own
-    // supported-level check so a stale or damaged level cannot throw at render time.
-    calculateBaseStats(job, level);
+    // supported-level check so stale or damaged levels cannot throw at render time.
+    for (const level of levels) calculateBaseStats(job, level);
     return true;
   } catch {
     return false;
@@ -288,6 +299,7 @@ function validateSingleResult(value: unknown): value is OptimizationResult {
   if (!isObject(value)) return false;
   const effects = value.effects;
   return (
+    (value.calculationLevel === undefined || isSafeInteger(value.calculationLevel)) &&
     Array.isArray(value.gear) && value.gear.every(isMeldedGear) && isFood(value.food) && isStats(value.stats) && isObject(effects) &&
     EFFECT_FIELDS.every((field) => isFiniteNumber(effects[field])) &&
     isFiniteNumber(value.score) && (value.objective === "damage" || value.objective === "dps") &&
@@ -363,14 +375,24 @@ function validateRecord(value: unknown): SearchHistoryRecord {
     );
     assert(validateOptimizationConfig(value.config), "单职业配置缺少必要字段或类型错误。");
     if (value.status === "completed") {
-      assert(supportsResultLevel(value.config), "成功记录的职业等级不受当前数据支持。");
       assert(validateSingleResult(value.result), "单职业成功结果缺少必要字段或类型错误。");
+      assert(
+        supportsResultLevel(value.config, value.result.calculationLevel),
+        "成功记录的职业等级不受当前数据支持。",
+      );
     }
   } else {
     assert(validateJointConfig(value.config), "联合配置缺少必要字段或类型错误。");
     if (value.status === "completed") {
-      assert(value.config.jobs.every(supportsResultLevel), "成功记录中有职业等级不受当前数据支持。");
       assert(validateJointResult(value.result, value.config), "联合成功结果缺少必要字段或类型错误。");
+      const result = value.result as JointOptimizationResult;
+      assert(
+        value.config.jobs.every((job) =>
+          supportsResultLevel(job, result.jobResults[job.jobId]?.calculationLevel) &&
+          supportsResultLevel(job, result.optima[job.jobId]?.calculationLevel),
+        ),
+        "成功记录中有职业等级不受当前数据支持。",
+      );
     }
   }
   if (value.status === "failed") assert(typeof value.error === "string" && value.error.length > 0, "失败记录缺少错误信息。");
