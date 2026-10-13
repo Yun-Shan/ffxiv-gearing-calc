@@ -33,6 +33,11 @@ test("完整且受信的五职业共享 DPS 场景可启用严格支配", () => 
   assert.equal(canUseSharedAccessoryPairDominance(gateInput()), true);
 });
 
+test("完整且受信的四职业共享 DPS 场景可启用严格支配", () => {
+  assert.equal(canUseSharedAccessoryPairDominance(gateInput(["BRD", "DNC", "MCH", "VPR"])), true);
+  assert.equal(canUseSharedAccessoryPairDominance(gateInput(["VPR", "MCH", "DNC", "BRD"])), true);
+});
+
 test("直接调用设置布尔选项不足以启用严格支配", () => {
   assert.equal(canUseSharedAccessoryPairDominance({
     ...gateInput(),
@@ -43,7 +48,7 @@ test("直接调用设置布尔选项不足以启用严格支配", () => {
 test("不支持的职业组、目标、槽位投影或属性提取器都会关闭严格支配", () => {
   assert.equal(canUseSharedAccessoryPairDominance(gateInput(["MCH", "RDM"])), false);
   assert.equal(canUseSharedAccessoryPairDominance(gateInput(["VPR", "MCH"])), false);
-  assert.equal(canUseSharedAccessoryPairDominance(gateInput(["BRD", "DNC", "MCH", "VPR"])), false);
+  assert.equal(canUseSharedAccessoryPairDominance(gateInput(["BRD", "DNC", "MCH", "NIN"])), false);
   assert.equal(canUseSharedAccessoryPairDominance({ ...gateInput(), objective: "damage" }), false);
   assert.equal(canUseSharedAccessoryPairDominance({ ...gateInput(), hasCommonSlotProjections: true }), false);
   assert.equal(canUseSharedAccessoryPairDominance({

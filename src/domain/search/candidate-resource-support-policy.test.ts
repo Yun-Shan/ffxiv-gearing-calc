@@ -25,17 +25,32 @@ test("disables conditional rows for memory-heavy four-or-more job inputs", () =>
   assert.equal(candidateResourceSupportProfile(0, 1), "disabled");
 });
 
-test("adds primary resource supports only for the historical VPR+MCH shared DPS baseline", () => {
+test("adds primary resource supports only for the measured wide VPR+MCH shared DPS domain", () => {
+  const ranges = [{ min: 715, max: 735 }, { min: 775, max: 795 }];
+  const jobs = (jobIds: readonly string[], candidateRanges = ranges) => jobIds.map((jobId) => ({
+    jobId,
+    candidateItemLevelRanges: candidateRanges,
+  }));
   const slots = ["earrings", "necklace", "bracelet", "rings"];
-  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(["VPR", "MCH"], slots, "dps", "shared"), true);
-  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(["MCH", "VPR"], slots, "dps", "shared"), true);
+
+  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(jobs(["VPR", "MCH"]), slots, "dps", "shared"), true);
+  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(jobs(["MCH", "VPR"]), slots, "dps", "shared"), true);
   assert.equal(shouldUsePrimaryResourceSupportsForBaseline(
-    ["VPR", "MCH"], ["earrings", "necklace", "bracelet", "ring", "ring2"], "dps", "shared"), true);
-  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(["RPR", "SAM"], slots, "dps", "shared"), false);
-  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(["VPR", "MCH", "DNC"], slots, "dps", "shared"), false);
-  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(["VPR", "MCH"], slots, "damage", "shared"), false);
-  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(["VPR", "MCH"], slots, "dps", "independent"), false);
-  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(["VPR", "MCH"], ["head", "body"], "dps", "shared"), false);
+    jobs(["VPR", "MCH"]), ["earrings", "necklace", "bracelet", "ring", "ring2"], "dps", "shared"), true);
+
+  const narrowRanges = [{ min: 730, max: 795 }];
+  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(
+    jobs(["VPR", "MCH"], narrowRanges), slots, "dps", "shared"), false);
+  const mismatchedJobs = jobs(["VPR", "MCH"]);
+  mismatchedJobs[1] = { ...mismatchedJobs[1]!, candidateItemLevelRanges: narrowRanges };
+  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(mismatchedJobs, slots, "dps", "shared"), false);
+
+  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(jobs(["RPR", "SAM"]), slots, "dps", "shared"), false);
+  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(jobs(["VPR", "MCH", "DNC"]), slots, "dps", "shared"), false);
+  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(jobs(["VPR", "MCH"]), slots, "damage", "shared"), false);
+  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(jobs(["VPR", "MCH"]), slots, "dps", "independent"), false);
+  assert.equal(shouldUsePrimaryResourceSupportsForBaseline(
+    jobs(["VPR", "MCH"]), ["head", "body"], "dps", "shared"), false);
 });
 
 test("adds the single main-stat support for measured shared DPS baselines", () => {

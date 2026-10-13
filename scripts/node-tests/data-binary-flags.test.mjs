@@ -22,7 +22,7 @@ test("variable gear flags and raw main/secondary attributes survive the binary c
     { unique: true, materiaAdvanced: true },
   ]) {
     const { bytes } = await encodeGeneratedData(payloadFor(flags));
-    assert.equal(new DataView(bytes.buffer, bytes.byteOffset).getUint16(8, true), 4);
+    assert.equal(new DataView(bytes.buffer, bytes.byteOffset).getUint16(8, true), 5);
     const decoded = await decodeGeneratedData(bytes);
     const actual = decoded.getGearById(1);
     assert.equal(actual.equipLevelVariable === true, flags.equipLevelVariable === true);
