@@ -298,6 +298,10 @@ function buildRawAttributes(context: JobContext, selection: readonly EquipInfo[]
         const index = context.attributeIndexes.get(param.baseParamId);
         if (index !== undefined) next[index] += param.value;
       }
+      for (const allocation of equipment.resistanceAllocation ?? []) {
+        const index = context.attributeIndexes.get(allocation.baseParamId);
+        if (index !== undefined) next[index] += allocation.value;
+      }
       if (next.some((value) => !Number.isSafeInteger(value))) {
         throw new RangeError(`装备 ${equipment.itemId} 的属性不是安全整数`);
       }
@@ -343,6 +347,7 @@ function findSameItemAttributeCompensation(
     if (commonSlotIndexes.has(slotIndex)) continue;
     const current = selection[slotIndex];
     if (current === undefined || current.ringSlotIndex !== undefined ||
+      current.resistanceWeaponAdjust !== undefined ||
       (current as EquipInfo & { ringEquips?: readonly EquipInfo[] }).ringEquips !== undefined) continue;
     const currentIdentity = equipmentIdentity(current);
     const sameItemCandidates: EquipInfo[] = [];
@@ -351,6 +356,7 @@ function findSameItemAttributeCompensation(
       if ((scannedCandidates++ & 255) === 0) checkBudget();
       if (scannedCandidates > maxScannedCandidates) return undefined;
       if (candidate.itemId !== current.itemId || candidate.ringSlotIndex !== undefined ||
+        candidate.resistanceWeaponAdjust !== undefined ||
         (candidate as EquipInfo & { ringEquips?: readonly EquipInfo[] }).ringEquips !== undefined ||
         equipmentIdentity(candidate) === currentIdentity) continue;
       sameItemCandidates.push(candidate);
@@ -462,6 +468,9 @@ function pruneInnerSlots(
 
   return sourceSlots.map((slot, slotIndex) => {
     if (preserveSlotIndexes.has(slotIndex)) return slot;
+    // A zero-allocation base vector cannot dominate an adjustable candidate.
+    // Keep the complete slot domain when it contains any such candidate.
+    if (slot.some((equipment) => equipment.resistanceWeaponAdjust !== undefined)) return slot;
     if (slot.length < 2) return slot;
     const candidates = slot.map((equipment, inputOrder) => ({
       equipment,
@@ -649,7 +658,9 @@ function pruneCommonChoices(
   // A projected ring's legal partners depend on its physical identity and on
   // the opposite half of the complete pair. Attribute-only dominance or
   // equivalence can therefore remove the only jointly legal unique pair.
-  if (projections.has(slotName) || choices.length < 2) return [...choices];
+  if (projections.has(slotName) || choices.length < 2 ||
+    choices.some((choice) => [...choice.equipments.values()].some((equipment) =>
+      equipment.resistanceWeaponAdjust !== undefined))) return [...choices];
   const metrics = choices.map((choice) => commonChoiceMetrics(choice, contexts));
   const baselineMatches = choices.map((choice) => contexts.reduce((count, context) => {
     return count + Number(choice.key === commonSlotIdentity(
@@ -693,13 +704,36 @@ function pruneCommonChoices(
   return choices.filter((_, index) => keep[index]);
 }
 
+function rawAttributeUpperBound(context: JobContext, equipment: EquipInfo): number[] {
+  const attributes = buildRawAttributes(context, [equipment]);
+  const adjustment = equipment.resistanceWeaponAdjust;
+  if (adjustment === undefined) return attributes;
+  for (const stat of adjustment.stats) {
+    const vectorIndex = context.job.options.statIndexes.get(stat);
+    const attributeId = vectorIndex === undefined
+      ? undefined
+      : context.job.options.attributeIds[vectorIndex];
+    const attribute = attributeId === undefined
+      ? undefined
+      : context.attributeIndexes.get(attributeId);
+    if (attribute === undefined) continue;
+    const maxValue = Math.min(
+      adjustment.maxTotalStats,
+      adjustment.maxEachStat,
+      adjustment.statMaximums?.[stat] ?? adjustment.maxEachStat,
+    );
+    attributes[attribute] += maxValue;
+  }
+  return attributes;
+}
+
 function rawAttributeMaximums(context: JobContext, checkBudget: () => void): number[] {
   const maximums = new Array<number>(context.job.options.attributeIds.length).fill(0);
   for (const slot of context.job.options.slots) {
     checkBudget();
     for (let attribute = 0; attribute < maximums.length; attribute++) {
       const maximum = Math.max(0, ...slot.map((equipment) =>
-        buildRawAttributes(context, [equipment])[attribute]!));
+        rawAttributeUpperBound(context, equipment)[attribute]!));
       maximums[attribute] += maximum;
     }
   }

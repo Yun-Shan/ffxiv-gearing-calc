@@ -58,6 +58,16 @@ export type GearSlot =
 
 export type Stats = Partial<Record<Stat, number>>;
 export type GearStats = Partial<Record<GearStat, number>>;
+export type CustomizableStat = Exclude<
+  Stat,
+  "STR" | "DEX" | "INT" | "MND" | "VIT" | "PDMG" | "MDMG" | "DLY"
+>;
+
+export interface ResistanceWeaponAdjust {
+  maxTotalStats: number;
+  maxEachStat: number;
+  stats: CustomizableStat[];
+}
 
 export interface Gear {
   id: number;
@@ -75,6 +85,7 @@ export interface Gear {
   /** Item-level unique restriction; runtime data treats an absent source value as false. */
   unique?: boolean;
   customParameters?: CustomWeaponParameter[];
+  resistanceWeaponAdjust?: ResistanceWeaponAdjust;
   source?: string;
   jobs: JobId[];
   weaponDamage?: number;
@@ -84,7 +95,7 @@ export interface Gear {
 
 export interface CustomWeaponParameter {
   materiaId: number;
-  stat: Exclude<Stat, "STR" | "DEX" | "INT" | "MND" | "VIT" | "PDMG" | "MDMG" | "DLY">;
+  stat: CustomizableStat;
   bigValueIndex: number;
   smallValueIndex: number;
   bigValue: number;

@@ -199,6 +199,47 @@ function profilesForCustomParameters(
   return profiles;
 }
 
+function profilesForResistanceWeapon(
+  gear: Gear,
+  speedStat: "SKS" | "SPS",
+  jobLevel: number,
+  syncLevel?: number,
+): Map<number, number> {
+  const adjustment = gear.resistanceWeaponAdjust!;
+  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, syncLevel);
+  const level = synchronizedLevel ?? gear.level;
+  const baseSpeed = baseStatFor(gear, speedStat, level, synchronizedLevel !== undefined);
+  const baseTenacity = baseStatFor(gear, "TEN", level, synchronizedLevel !== undefined);
+  const eligibleSpeed = adjustment.stats.includes(speedStat);
+  const eligibleTenacity = adjustment.stats.includes("TEN");
+  const speedMaximum = eligibleSpeed
+    ? Math.min(
+      adjustment.maxEachStat,
+      adjustment.maxTotalStats,
+      synchronizedLevel === undefined
+        ? adjustment.maxEachStat
+        : Math.max(0, statCapAtLevel(gear, speedStat, level) - baseSpeed),
+    )
+    : 0;
+  const tenacityMaximum = eligibleTenacity
+    ? Math.min(
+      adjustment.maxEachStat,
+      synchronizedLevel === undefined
+        ? adjustment.maxEachStat
+        : Math.max(0, statCapAtLevel(gear, "TEN", level) - baseTenacity),
+    )
+    : 0;
+  const profiles = new Map<number, number>();
+  for (let speedAllocation = 0; speedAllocation <= speedMaximum; speedAllocation++) {
+    const tenacityAllocation = Math.min(
+      tenacityMaximum,
+      adjustment.maxTotalStats - speedAllocation,
+    );
+    addProfile(profiles, baseSpeed + speedAllocation, baseTenacity + tenacityAllocation);
+  }
+  return profiles;
+}
+
 function countOptionsForStat(
   gear: Gear,
   stat: Materia["stat"],
@@ -318,6 +359,14 @@ function gearProfiles(
     stats: concretizeGearStats(gear.stats, jobSchemas[jobId]),
   };
   const jobLevel = jobLevelFor(config);
+  if (resolvedGear.resistanceWeaponAdjust !== undefined) {
+    return profilesForResistanceWeapon(
+      resolvedGear,
+      speedStat,
+      jobLevel,
+      config.syncLevel,
+    );
+  }
   if (resolvedGear.customParameters?.length) {
     return profilesForCustomParameters(
       resolvedGear,

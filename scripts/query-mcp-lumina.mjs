@@ -33,6 +33,16 @@ const itemActionFields = fields(itemActionReturnFields);
 const itemLevelFields = fields(itemLevelReturnFields);
 const itemFields = fields(itemReturnFields);
 const mandervilleFields = fields(mandervilleReturnFields);
+const resistanceWeaponAdjustReturnFields = [
+  "Image",
+  "MaxTotalStats",
+  "MaxEachStat",
+  "BaseParam[0]",
+  "BaseParam[1]",
+  "BaseParam[2]",
+  "BaseParam[3]",
+  "Unknown0",
+];
 const classJobFields = fields(classJobReturnFields);
 
 async function load(path) {
@@ -242,6 +252,37 @@ async function queryAllRows(client, sheet, returnFields, queries) {
     queriedAt: value.timestamp,
   });
   return { rows: value.rows, missingRowIds: value.missingRowIds ?? [] };
+}
+
+function validateResistanceWeaponAdjustRows(rows, missingRowIds, description, gameVersion, queriedRowIds) {
+  if (!Array.isArray(rows) || rows.length !== description.rowCount || missingRowIds.length)
+    throw new Error(`MCP ResistanceWeaponAdjust 全量查询不完整：${rows?.length ?? 0}/${description.rowCount}`);
+  if (!Array.isArray(queriedRowIds) || queriedRowIds.length !== rows.length)
+    throw new Error("MCP ResistanceWeaponAdjust 全量查询范围不完整");
+  const seenIds = new Set();
+  const nonzeroItemIds = [];
+  for (const row of rows) {
+    if (!row || !Number.isSafeInteger(row.rowId) || row.rowId < 0 || seenIds.has(row.rowId))
+      throw new Error("MCP ResistanceWeaponAdjust 返回了无效或重复 rowId");
+    seenIds.add(row.rowId);
+    if (row.gameVersion !== gameVersion || !row.timestamp ||
+        !row.fields || typeof row.fields !== "object" || Array.isArray(row.fields))
+      throw new Error(`MCP ResistanceWeaponAdjust 行 ${row.rowId} 缺少同版本字段或查询时间`);
+    for (const fieldName of resistanceWeaponAdjustReturnFields) {
+      const value = row.fields[fieldName];
+      if (!Number.isSafeInteger(value) || value < 0 || value > 0xffffffff)
+        throw new Error(`MCP ResistanceWeaponAdjust 行 ${row.rowId} 的 ${fieldName} 不是有效 uint`);
+    }
+    if (row.rowId === 0 && resistanceWeaponAdjustReturnFields.some((fieldName) => row.fields[fieldName] !== 0))
+      throw new Error("MCP ResistanceWeaponAdjust 行 0 应全部为零");
+    if (row.rowId > 0 && ![0, 1, 2, 3].some((index) => row.fields[`BaseParam[${index}]`] > 0))
+      throw new Error(`MCP ResistanceWeaponAdjust 行 ${row.rowId} 没有可调整属性`);
+    if (row.rowId > 0) nonzeroItemIds.push(row.rowId);
+  }
+  if (!seenIds.has(0) || queriedRowIds.some((id) => !seenIds.has(id)) ||
+      rows.some((row) => !queriedRowIds.includes(row.rowId)))
+    throw new Error("MCP ResistanceWeaponAdjust 全量查询缺少空行 0 或行目录与查询范围不一致");
+  return nonzeroItemIds.sort((left, right) => left - right);
 }
 
 function describeQuery(sheet, description) {
@@ -509,6 +550,7 @@ try {
     contentFinderConditionDescriptionResult,
     itemLevelDescriptionResult,
     paramGrowDescriptionResult,
+    resistanceWeaponAdjustDescriptionResult,
   ] = await Promise.all([
     client.callTool("list_sheets", {}),
     client.callTool("describe_sheet", { sheet: "ClassJob" }),
@@ -516,6 +558,7 @@ try {
     client.callTool("describe_sheet", { sheet: "ContentFinderCondition" }),
     client.callTool("describe_sheet", { sheet: "ItemLevel" }),
     client.callTool("describe_sheet", { sheet: "ParamGrow" }),
+    client.callTool("describe_sheet", { sheet: "ResistanceWeaponAdjust" }),
   ]);
   const sheetInventory = sheetInventoryResult.value;
   const classJobDescription = classJobDescriptionResult.value;
@@ -523,13 +566,17 @@ try {
   const contentFinderConditionDescription = contentFinderConditionDescriptionResult.value;
   const itemLevelDescription = itemLevelDescriptionResult.value;
   const paramGrowDescription = paramGrowDescriptionResult.value;
+  const resistanceWeaponAdjustDescription = resistanceWeaponAdjustDescriptionResult.value;
   if (!Array.isArray(sheetInventory.sheets) || !Array.isArray(classJobDescription.columns))
     throw new Error("Lumina MCP 未能提供 Sheet 清单或 ClassJob 字段描述，无法核对青魔法师伤害数据来源");
+  if (!sheetInventory.sheets.includes("ResistanceWeaponAdjust"))
+    throw new Error("Lumina MCP Sheet 清单缺少 ResistanceWeaponAdjust");
   for (const [sheet, description] of [
     ["ContentFinderCondition", contentFinderConditionDescription],
     ["ItemLevel", itemLevelDescription],
     ["ParamGrow", paramGrowDescription],
     ["Item", itemDescription],
+    ["ResistanceWeaponAdjust", resistanceWeaponAdjustDescription],
   ]) {
     if (!Array.isArray(description.columns) || description.gameVersion !== health.gameVersion)
       throw new Error(`MCP ${sheet} Schema 缺失或游戏版本与 health 不一致`);
@@ -540,6 +587,11 @@ try {
   validateSyncLevelSchema("ItemLevel", itemLevelDescription, ["Strength", "CriticalHit"]);
   validateSyncLevelSchema("ParamGrow", paramGrowDescription, ["ItemLevelSync"]);
   validateSyncLevelSchema("Item", itemDescription, ["SubStatCategory"]);
+  const resistanceFields = new Set(resistanceWeaponAdjustDescription.columns.map((column) => column.name));
+  const missingResistanceFields = resistanceWeaponAdjustReturnFields.filter((field) => !resistanceFields.has(field));
+  if (!Number.isSafeInteger(resistanceWeaponAdjustDescription.rowCount) ||
+      resistanceWeaponAdjustDescription.rowCount < 1 || missingResistanceFields.length)
+    throw new Error(`MCP ResistanceWeaponAdjust Schema 缺少字段或有效行数：${missingResistanceFields.join(", ")}`);
   const bluDamageSheetCandidates = sheetInventory.sheets.filter((sheet) =>
     /blu.*(?:mdmg|magic.*damage)|(?:mdmg|magic.*damage).*blu/i.test(String(sheet)),
   );
@@ -567,6 +619,7 @@ try {
     describeQuery("ItemLevel", itemLevelDescription),
     describeQuery("ParamGrow", paramGrowDescription),
     describeQuery("Item", itemDescription),
+    describeQuery("ResistanceWeaponAdjust", resistanceWeaponAdjustDescription),
   ];
   const syncLevelCapabilityCheck = {
     status: "available-via-content-finder-condition",
@@ -616,6 +669,23 @@ try {
   const gearFiles = (await (await import("node:fs/promises")).readdir(outDir)).filter((file) => file.startsWith("gears-") && file.endsWith(".js"));
   const gearGroups = await Promise.all(gearFiles.map(async (file) => ({ file, items: await load(resolve(outDir, file)) })));
   const allGears = gearGroups.flatMap(({ items }) => items);
+  const resistanceQueries = [];
+  const resistanceRowsResult = await queryAllRows(
+    client,
+    "ResistanceWeaponAdjust",
+    fields(resistanceWeaponAdjustReturnFields),
+    resistanceQueries,
+  );
+  const resistanceListQuery = resistanceQueries.find((query) =>
+    query.method === "list_rows" && query.sheet === "ResistanceWeaponAdjust",
+  );
+  const resistanceWeaponAdjustItemIds = validateResistanceWeaponAdjustRows(
+    resistanceRowsResult.rows,
+    resistanceRowsResult.missingRowIds,
+    resistanceWeaponAdjustDescription,
+    health.gameVersion,
+    resistanceListQuery?.rowIds,
+  );
   const rawFoods = await load(resolve(outDir, "foods.js"));
   const foods = rawFoods.filter((food) => food.slot === -1);
   const levelCaps = await load(resolve(outDir, "levelCaps.js"));
@@ -626,11 +696,22 @@ try {
   const selectedGearIds = allGears
     .filter((gear) => scope === "all" || (slotIds.has(gear.slot) && gear.level >= 780))
     .map((gear) => gear.id);
-  const gearIds = [...new Set(selectedGearIds)];
+  const gearIds = [...new Set([...selectedGearIds, ...resistanceWeaponAdjustItemIds])]
+    .sort((left, right) => left - right);
   const foodIds = foods.map((food) => food.id);
   const itemQueries = [];
   const itemRowsResult = await queryRows(client, "Item", [...gearIds, ...foodIds], itemFields, itemQueries);
   const itemRows = itemRowsResult.rows;
+  const queriedItemIds = new Set(itemRows.map((row) => row.rowId));
+  const missingResistanceItems = resistanceWeaponAdjustItemIds.filter((id) => !queriedItemIds.has(id));
+  if (missingResistanceItems.length)
+    throw new Error(`ResistanceWeaponAdjust 行缺少对应 MCP Item 行：${missingResistanceItems.join(",")}`);
+  const itemById = new Map(itemRows.map((row) => [row.rowId, row]));
+  for (const id of resistanceWeaponAdjustItemIds) {
+    const row = itemById.get(id);
+    if (row.gameVersion !== health.gameVersion || !row.timestamp || typeof row.fields?.Name !== "string")
+      throw new Error(`ResistanceWeaponAdjust 行 ${id} 对应 MCP Item 行缺少字段、游戏版本或查询时间`);
+  }
   variableEquipLevelCapabilityCheck.item.persistedItemRows = itemRows.length;
   const categoryIds = [...new Set(itemRows.map((row) => Number(row.fields?.ClassJobCategory)).filter((id) => Number.isInteger(id) && id > 0))];
   const categoryQueries = [];
@@ -689,7 +770,7 @@ try {
   if (paramGrowRowsResult.missingRowIds.length)
     throw new Error(`MCP ParamGrow 缺少行：${paramGrowRowsResult.missingRowIds.join(", ")}`);
   const queriedAt = new Date().toISOString();
-  const allQueries = [...capabilityQueries, ...classJobSearchQueries, ...classJobQueries, ...itemQueries, ...categoryQueries, ...actionQueries, ...foodQueries, ...levelQueries, ...baseQueries, ...mandQueries, ...materiaQueries, ...syncLevelQueries];
+  const allQueries = [...capabilityQueries, ...resistanceQueries, ...classJobSearchQueries, ...classJobQueries, ...itemQueries, ...categoryQueries, ...actionQueries, ...foodQueries, ...levelQueries, ...baseQueries, ...mandQueries, ...materiaQueries, ...syncLevelQueries];
   if (allQueries.some((query) => query.gameVersion !== health.gameVersion))
     throw new Error("MCP 查询批次游戏版本不一致，拒绝生成混合快照");
   const snapshot = {
@@ -705,6 +786,7 @@ try {
     queryPlan: {
       gearItemIds: gearIds,
       foodItemIds: foodIds,
+      resistanceWeaponAdjustItemIds,
       itemLevelIds: levelCaps.level,
       customWeaponIds: customIds,
       classJobIds: Object.fromEntries(discoveredClassJobs.map((entry) => [entry.job, entry.rowId])),
@@ -713,6 +795,14 @@ try {
     sourceCapabilityChecks: {
       syncLevels: syncLevelCapabilityCheck,
       equipLevelVariable: variableEquipLevelCapabilityCheck,
+      resistanceWeaponAdjust: {
+        status: "available",
+        checkedAt: new Date().toISOString(),
+        gameVersion: health.gameVersion,
+        rowCount: resistanceWeaponAdjustDescription.rowCount,
+        fields: resistanceWeaponAdjustDescription.columns.map((column) => column.name),
+        schemaQueriedAt: resistanceWeaponAdjustDescription.timestamp,
+      },
       bluMdmgAdditions: {
         status: "missing-from-mcp",
         checkedAt: queriedAt,
@@ -733,6 +823,7 @@ try {
     },
     rows: {
       Item: itemRows,
+      ResistanceWeaponAdjust: resistanceRowsResult.rows,
       ClassJobCategory: categoryRowsResult.rows,
       ClassJob: classJobRowsResult.rows,
       ItemAction: actionRowsResult.rows,
@@ -747,12 +838,13 @@ try {
     queries: [
       { method: "health", gameVersion: health.gameVersion, validatedVersion: health.validatedVersion, queriedAt: health.timestamp },
       ...itemQueries,
-      ...capabilityQueries, ...classJobSearchQueries, ...classJobQueries,
+      ...capabilityQueries, ...resistanceQueries, ...classJobSearchQueries, ...classJobQueries,
       ...categoryQueries, ...actionQueries, ...foodQueries, ...levelQueries, ...baseQueries, ...mandQueries, ...materiaQueries,
       ...syncLevelQueries,
     ],
     missing: {
       Item: itemRowsResult.missingRowIds,
+      ResistanceWeaponAdjust: resistanceRowsResult.missingRowIds,
       ItemSubStatCategory: itemRowsResult.missingRowIds,
       ClassJobCategory: categoryRowsResult.missingRowIds,
       ClassJob: classJobRowsResult.missingRowIds,
@@ -769,7 +861,7 @@ try {
   };
   await mkdir(resolve(outputPath, ".."), { recursive: true });
   await writeFile(outputPath, `${JSON.stringify(snapshot)}\n`, "utf8");
-  console.log(JSON.stringify({ outputPath, scope, itemRows: itemRows.length, categoryRows: categoryRowsResult.rows.length, classJobRows: classJobRowsResult.rows.length, actionRows: actionRowsResult.rows.length, foodRows: foodRowsResult.rows.length, itemLevelRows: levelRowsResult.rows.length, baseParamRows: baseRowsResult.rows.length, mandervilleRows: mandRowsResult.rows.length, materiaRows: materiaRowsResult.rows.length, missing: snapshot.missing }));
+  console.log(JSON.stringify({ outputPath, scope, itemRows: itemRows.length, resistanceWeaponAdjustRows: resistanceRowsResult.rows.length, categoryRows: categoryRowsResult.rows.length, classJobRows: classJobRowsResult.rows.length, actionRows: actionRowsResult.rows.length, foodRows: foodRowsResult.rows.length, itemLevelRows: levelRowsResult.rows.length, baseParamRows: baseRowsResult.rows.length, mandervilleRows: mandRowsResult.rows.length, materiaRows: materiaRowsResult.rows.length, missing: snapshot.missing }));
   }
 } finally {
   client.close();

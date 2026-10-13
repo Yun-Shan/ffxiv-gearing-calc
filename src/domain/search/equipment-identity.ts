@@ -6,6 +6,7 @@ type EquipmentIdentityInput = {
   PDMG: number;
   MDMG: number;
   DLY: number;
+  resistanceAllocation?: readonly { stat: string; value: number }[];
   ringEquips?: readonly EquipmentIdentityInput[];
 };
 
@@ -25,6 +26,22 @@ export function equipmentIdentity(equipment: EquipmentIdentityInput): string {
     PDMG: equipment.PDMG,
     MDMG: equipment.MDMG,
     DLY: equipment.DLY,
+    ...(equipment.resistanceAllocation === undefined
+      ? {}
+      : {
+          resistanceAllocation: [...equipment.resistanceAllocation]
+            .map(({ stat, value }) => [stat, value] as const)
+            .sort(([leftStat, leftValue], [rightStat, rightValue]) =>
+              leftStat.localeCompare(rightStat) || leftValue - rightValue),
+        }),
     ...(ringKeys === undefined ? {} : { ringEquips: ringKeys }),
   });
+}
+
+/** Identity of the generated input candidate, before an integer allocation is solved. */
+export function equipmentCandidateIdentity(
+  equipment: EquipmentIdentityInput,
+): string {
+  if (equipment.resistanceAllocation === undefined) return equipmentIdentity(equipment);
+  return equipmentIdentity({ ...equipment, resistanceAllocation: undefined });
 }

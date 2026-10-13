@@ -37,7 +37,7 @@ npm run test:data
 
 当前支持 23 个战斗职业，包括青魔法师和驯兽师。职业等级上限和默认品级范围随职业数据导入；青魔法师上限为 80 级，驯兽师上限为 50 级且具有独立盾牌槽。`ClassJob` 提供职业名称与原生属性修正，GCD、特性及队伍加成公式由参考项目补齐。MCP 没有青魔法师按 INT 索引的魔法武器伤害加值表或字段，因此该映射使用参考项目原始导出，并逐值核验原始测量输入。
 
-正式 TypeScript 求解器位于 `src/domain/search`，以 HiGHS 混合整数模型联合选择装备、食物和属性阶梯，用整数因子及 BigInt 有理数复核目标。可选择最大化“每威力伤害期望”或按 GCD 折算的目标；联合搜索最大化各职业目标与各自单独最优基线的比例之和。基线与联合结果采用相同目标及各职业约束。Node 验收与正式 UI 均使用 HiGHS；历史算法包对比记录在 [搜索基准记录](docs/搜索基准记录.md)。算法说明见 [最优装备算法](docs/最优装备算法.md) 和 [正确性与验收](docs/V3正确性与验收.md)。
+正式 TypeScript 求解器位于 `src/domain/search`，以 HiGHS 混合整数模型联合选择装备、食物和属性阶梯，用整数因子及 BigInt 有理数复核目标。80 级义军武器按 `ResistanceWeaponAdjust` 的总量、单项上限和 1 点步进直接建立整数分配变量，不会预先展开所有分配组合。可选择最大化“每威力伤害期望”或按 GCD 折算的目标；联合搜索最大化各职业目标与各自单独最优基线的比例之和。基线与联合结果采用相同目标及各职业约束。Node 验收与正式 UI 均使用 HiGHS；历史算法包对比记录在 [搜索基准记录](docs/搜索基准记录.md)。算法说明见 [最优装备算法](docs/最优装备算法.md) 和 [正确性与验收](docs/V3正确性与验收.md)。
 
 搜索在浏览器工作线程中执行，支持进度和取消；前端不设置搜索时限。Node 测试与验收入口单独施加时限保护，正式搜索只有完成最优性复核后才返回结果，不返回近似结果。最优性限定于输入的真实候选及约束；HiGHS 的浮点数值最优状态不是独立形式化有理数证书。浏览器无法取得进程 RSS，因此不将浏览器统计描述为进程峰值内存。
 单职业搜索在浏览器工作线程中执行，支持真实进度信息和取消；只有搜索与最优性复核完成才返回结果。进度与结果页面的具体内容和状态以 Penpot 设计为准，伤害指标复用领域层计算。
@@ -61,7 +61,7 @@ npm run data:update
 
 已有同一游戏版本快照时，可运行 `node scripts/query-mcp-lumina.mjs --level-basis-data-only` 补充同步等级与 `Item.SubStatCategory` 查询产物，再运行 `node scripts/update-data.mjs --offline` 重新生成运行时数据。该增量命令保留其他已有查询输入，版本不一致时明确失败。
 
-`data:mcp` 默认查询参考项目中的全部装备（含唯一性）、战斗食物、职业分类、23 个受支持职业的 `ClassJob` 行、食物效果、属性上限、魔晶石和当前已确认的自定义参数武器表（`MandervilleWeaponEnhance`），并写入 `src/data/mcp-lumina.snapshot.json`。职业行通过 `ClassJob.Abbreviation` 搜索发现，再批量读取，不依赖记忆中的行 ID。它也会保存 `list_sheets` 与 `ClassJob` 字段描述，核对青魔法师武器伤害映射是否存在于 MCP。它要求本机配置的游戏目录、EXDSchema 和 Lumina MCP 可执行文件；可用 `FFXIV_MCP_LUMINA_COMMAND`、`McpLumina__GamePath`、`McpLumina__SchemaPath` 和 `FFXIV_MCP_LUMINA_CONCURRENCY` 覆盖默认值。仅在 MCP 明确声明通用查询不受版本警告影响时接受验证版本滞后，并保存警告；其他降级或任一批次重试失败会终止。
+`data:mcp` 默认查询参考项目中的全部装备（含唯一性）、战斗食物、职业分类、23 个受支持职业的 `ClassJob` 行、食物效果、属性上限、魔晶石、`MandervilleWeaponEnhance` 和 `ResistanceWeaponAdjust`，并额外查询全部非空 Resistance 武器行对应的 `Item` 行；结果写入 `src/data/mcp-lumina.snapshot.json`。职业行通过 `ClassJob.Abbreviation` 搜索发现，再批量读取，不依赖记忆中的行 ID。它也会保存 `list_sheets` 与 `ClassJob` 字段描述，核对青魔法师武器伤害映射是否存在于 MCP。它要求本机配置的游戏目录、EXDSchema 和 Lumina MCP 可执行文件；可用 `FFXIV_MCP_LUMINA_COMMAND`、`McpLumina__GamePath`、`McpLumina__SchemaPath` 和 `FFXIV_MCP_LUMINA_CONCURRENCY` 覆盖默认值。仅在 MCP 明确声明通用查询不受版本警告影响时接受验证版本滞后，并保存警告；其他降级或任一批次重试失败会终止。
 
 参考仓库默认位于 `reference/ffxiv-gearing`，可用 `FFXIV_GEARING_ROOT` 指向另一份本地检出。已有快照和本地参考数据时可运行 `node scripts/update-data.mjs --offline`，该模式不会访问网络，也不会直接启动 MCP。
 

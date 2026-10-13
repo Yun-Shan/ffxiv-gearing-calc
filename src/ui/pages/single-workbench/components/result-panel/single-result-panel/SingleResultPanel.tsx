@@ -77,11 +77,19 @@ function referenceGearsetUrl(result: OptimizationResult, config: OptimizationCon
   const job = jobSchemas[config.jobId];
   const gears = result.gear.map((gear) => {
     const synced = config.syncLevel !== undefined && gear.level > config.syncLevel;
+    const resistanceStats = gear.resistanceWeaponAdjust?.stats ?? [];
+    const resistanceValues = [...new Set(resistanceStats)]
+      .map((stat) => [stat, gear.melds
+        .filter((meld) => meld.stat === stat && meld.grade === 0)
+        .reduce((total, meld) => total + meld.value, 0)] as const)
+      .filter(([, value]) => value > 0);
     const customStats: Partial<Record<Stat, number>> | undefined = gear.customParameters?.length
       ? Object.fromEntries([...new Set(gear.customParameters.map(({ stat }) => stat))]
           .map((stat) => [stat, Math.max(0, (gear.finalStats[stat] ?? 0) - (gear.stats[stat] ?? 0))] as const)
           .filter(([, value]) => value > 0))
-      : undefined;
+      : resistanceValues.length > 0
+        ? Object.fromEntries(resistanceValues)
+        : undefined;
     return {
       id: gear.id,
       materias: customStats || synced ? [] : gear.melds.map(({ stat, grade }) => [stat, grade] as const),

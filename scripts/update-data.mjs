@@ -21,6 +21,7 @@ import {
   normalizeMcpItemLevel,
   normalizeMcpMateriaRows,
   rowMap,
+  statByBaseParam,
   supportedJobIds,
 } from "./mcp-lumina-import.mjs";
 
@@ -40,6 +41,11 @@ const itemCoreReturnFields = itemReturnFields.filter((field) => field !== "SubSt
 const importStartedAt = new Date().toISOString();
 let currentCommit = "unknown";
 const combatMateriaStats = ["CRT", "DET", "DHT", "SKS", "SPS", "TEN", "PIE"];
+const resistanceWeaponAdjustFields = [
+  "Image", "MaxTotalStats", "MaxEachStat", "BaseParam[0]", "BaseParam[1]",
+  "BaseParam[2]", "BaseParam[3]", "Unknown0",
+];
+const resistanceWeaponAdjustStats = new Set(["CRT", "DET", "DHT", "SKS", "SPS", "TEN", "PIE"]);
 const slotMap = new Map([
   [1, "weapon"], [2, "offhand"], [3, "head"], [4, "body"], [5, "hands"],
   [7, "legs"], [8, "feet"], [9, "earrings"], [10, "necklace"],
@@ -568,7 +574,96 @@ async function loadMcpSnapshot() {
   validateMcpItemRows(snapshot);
   validateMcpSyncLevelInput(snapshot);
   validateMcpVariableEquipLevelInput(snapshot);
+  validateMcpResistanceWeaponAdjustInput(snapshot);
   return snapshot;
+}
+
+function validateMcpResistanceWeaponAdjustInput(snapshot) {
+  const check = snapshot.sourceCapabilityChecks?.resistanceWeaponAdjust;
+  const rows = snapshot.rows?.ResistanceWeaponAdjust;
+  const descriptionQuery = snapshot.queries?.find((query) =>
+    query.method === "describe_sheet" && query.sheet === "ResistanceWeaponAdjust",
+  );
+  const rowQuery = snapshot.queries?.find((query) =>
+    query.method === "list_rows" && query.sheet === "ResistanceWeaponAdjust",
+  );
+  const expectedFields = resistanceWeaponAdjustFields;
+  if (check?.status !== "available" || check.gameVersion !== snapshot.gameVersion ||
+      !Number.isSafeInteger(check.rowCount) || check.rowCount < 1 ||
+      !Array.isArray(check.fields) || expectedFields.some((field) => !check.fields.includes(field)) ||
+      !check.schemaQueriedAt ||
+      !descriptionQuery || descriptionQuery.gameVersion !== snapshot.gameVersion ||
+      descriptionQuery.queriedAt !== check.schemaQueriedAt ||
+      !expectedFields.every((field) => descriptionQuery.fields?.includes(field)) ||
+      descriptionQuery.returnedRows !== check.rowCount)
+    throw new Error("MCP 快照缺少 ResistanceWeaponAdjust Schema 与版本来源核验");
+  if (!Array.isArray(rows) || rows.length !== check.rowCount ||
+      !Array.isArray(snapshot.missing?.ResistanceWeaponAdjust) || snapshot.missing.ResistanceWeaponAdjust.length ||
+      !rowQuery || rowQuery.gameVersion !== snapshot.gameVersion || !rowQuery.queriedAt ||
+      rowQuery.returnedRows !== check.rowCount || !Array.isArray(rowQuery.rowIds) ||
+      rowQuery.rowIds.length !== check.rowCount ||
+      !expectedFields.every((field) => rowQuery.fields?.includes(field)))
+    throw new Error("MCP ResistanceWeaponAdjust 全量行查询缺失、截断或来源不完整");
+
+  const rowIds = new Set();
+  const baseParamIds = new Set();
+  for (const row of rows) {
+    if (!row || !Number.isSafeInteger(row.rowId) || row.rowId < 0 || rowIds.has(row.rowId) ||
+        row.gameVersion !== snapshot.gameVersion || !row.timestamp ||
+        !row.fields || typeof row.fields !== "object" || Array.isArray(row.fields))
+      throw new Error("MCP ResistanceWeaponAdjust 行包含无效 ID、字段或版本来源");
+    rowIds.add(row.rowId);
+    for (const field of expectedFields) {
+      const value = row.fields[field];
+      if (!Number.isSafeInteger(value) || value < 0 || value > 0xffffffff)
+        throw new Error(`MCP ResistanceWeaponAdjust 行 ${row.rowId} 的 ${field} 不是有效 uint`);
+    }
+    if (row.rowId === 0 && expectedFields.some((field) => row.fields[field] !== 0))
+      throw new Error("MCP ResistanceWeaponAdjust 行 0 应全部为零");
+    if (row.rowId > 0 && ![0, 1, 2, 3].some((index) => row.fields[`BaseParam[${index}]`] > 0))
+      throw new Error(`MCP ResistanceWeaponAdjust 行 ${row.rowId} 没有可调整属性`);
+    for (let index = 0; index < 4; index++) {
+      const baseParam = row.fields[`BaseParam[${index}]`];
+      if (baseParam !== 0) baseParamIds.add(baseParam);
+    }
+  }
+  if (!rowIds.has(0) || rowQuery.rowIds.some((id) => !rowIds.has(id)) ||
+      rows.some((row) => !rowQuery.rowIds.includes(row.rowId)))
+    throw new Error("MCP ResistanceWeaponAdjust 行目录与全量查询范围不一致");
+
+  const expectedItemIds = [...rowIds].filter((id) => id > 0).sort((left, right) => left - right);
+  const plannedIds = snapshot.queryPlan?.resistanceWeaponAdjustItemIds;
+  const gearQueryIds = snapshot.queryPlan?.gearItemIds;
+  if (!Array.isArray(plannedIds) || JSON.stringify(plannedIds) !== JSON.stringify(expectedItemIds) ||
+      !Array.isArray(gearQueryIds) || expectedItemIds.some((id) => !gearQueryIds.includes(id)))
+    throw new Error("MCP 快照 Item 查询范围未覆盖所有 ResistanceWeaponAdjust 主键");
+  const itemRows = snapshotRows(snapshot, "Item");
+  const missingItems = snapshot.missing?.Item;
+  for (const id of expectedItemIds) {
+    const row = itemRows[id];
+    if (!row || missingItems?.includes(id) || row.gameVersion !== snapshot.gameVersion || !row.timestamp ||
+        typeof row.fields?.Name !== "string")
+      throw new Error(`ResistanceWeaponAdjust 行 ${id} 缺少同版本 MCP Item 行或有效 Name`);
+    const hasItemQuery = snapshot.queries.some((query) =>
+      ["get_rows", "list_rows"].includes(query.method) && query.sheet === "Item" &&
+      query.fields?.includes("Name") && query.rowIds?.includes(id) &&
+      query.gameVersion === snapshot.gameVersion && query.queriedAt,
+    );
+    if (!hasItemQuery)
+      throw new Error(`ResistanceWeaponAdjust 行 ${id} 缺少 MCP Item.Name 查询范围`);
+  }
+  const baseParamRows = snapshotRows(snapshot, "BaseParam");
+  for (const id of baseParamIds) {
+    const stat = statByBaseParam.get(id);
+    const queryCoversId = snapshot.queries.some((query) =>
+      ["get_rows", "list_rows"].includes(query.method) && query.sheet === "BaseParam" &&
+      query.rowIds?.includes(id) && query.gameVersion === snapshot.gameVersion && query.queriedAt,
+    );
+    if (!resistanceWeaponAdjustStats.has(stat) || !baseParamRows[id] ||
+        baseParamRows[id].gameVersion !== snapshot.gameVersion || !baseParamRows[id].timestamp ||
+        !queryCoversId)
+      throw new Error(`ResistanceWeaponAdjust 引用了缺少 MCP BaseParam 来源或不支持的属性 ID ${id}`);
+  }
 }
 
 function validateMcpItemRows(snapshot) {
@@ -610,6 +705,68 @@ function snapshotSource(snapshot, sheet, fields, rowIds, note) {
     queriedAt: snapshot.queriedAt,
     note,
   });
+}
+
+function resistanceWeaponAdjustSource(snapshot, rowIds) {
+  const query = snapshot.queries.find((entry) =>
+    entry.method === "list_rows" && entry.sheet === "ResistanceWeaponAdjust",
+  );
+  if (!query) throw new Error("MCP ResistanceWeaponAdjust 缺少全量查询来源记录");
+  return {
+    ...mcpSource({
+      sheet: "ResistanceWeaponAdjust",
+      fields: resistanceWeaponAdjustFields,
+      rowIds,
+      gameVersion: snapshot.gameVersion,
+      validatedVersion: snapshot.validatedVersion,
+      queriedAt: query.queriedAt,
+      note: "BaseParam[0..3] 中的非零 ID 表示该武器可调整的副属性；MaxTotalStats 为属性总和上限，MaxEachStat 为单属性上限。完整全表查询范围保留在 provenance.sources 与 MCP 快照。",
+    }),
+    queryMethod: query.method,
+    queryScope: { kind: "all-rows", rowIds: query.rowIds, returnedRows: query.returnedRows },
+  };
+}
+
+function resistanceBaseParamSource(snapshot, rowIds) {
+  const query = snapshot.queries.find((entry) =>
+    ["get_rows", "list_rows"].includes(entry.method) && entry.sheet === "BaseParam" &&
+    rowIds.every((id) => entry.rowIds?.includes(id)),
+  );
+  if (!query) throw new Error("MCP BaseParam 缺少 ResistanceWeaponAdjust 属性来源行");
+  return {
+    ...mcpSource({
+      sheet: "BaseParam",
+      rowIds,
+      gameVersion: snapshot.gameVersion,
+      validatedVersion: snapshot.validatedVersion,
+      queriedAt: query.queriedAt,
+      note: "对应 ResistanceWeaponAdjust.BaseParam[0..3] 的 MCP BaseParam 行；用于审计所引用的属性 ID。",
+    }),
+    queryMethod: query.method,
+    queryScope: { kind: "row-ids", rowIds: query.rowIds, returnedRows: query.returnedRows },
+  };
+}
+
+function normalizeMcpResistanceWeaponAdjust(row) {
+  const stats = [];
+  const seen = new Set();
+  for (let index = 0; index < 4; index++) {
+    const baseParam = row.fields[`BaseParam[${index}]`];
+    if (baseParam === 0) continue;
+    const stat = statByBaseParam.get(baseParam);
+    if (!resistanceWeaponAdjustStats.has(stat))
+      throw new Error(`ResistanceWeaponAdjust 行 ${row.rowId} 含不支持的 BaseParam ${baseParam}`);
+    if (seen.has(stat)) throw new Error(`ResistanceWeaponAdjust 行 ${row.rowId} 重复包含属性 ${stat}`);
+    seen.add(stat);
+    stats.push(stat);
+  }
+  if (!stats.length)
+    throw new Error(`ResistanceWeaponAdjust 行 ${row.rowId} 没有可调整的副属性`);
+  return {
+    maxTotalStats: row.fields.MaxTotalStats,
+    maxEachStat: row.fields.MaxEachStat,
+    stats,
+  };
 }
 
 function itemFieldQuery(snapshot, itemId, field) {
@@ -734,6 +891,7 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
   const itemRows = snapshotRows(snapshot, "Item");
   const categoryRows = snapshotRows(snapshot, "ClassJobCategory");
   const mandervilleRows = snapshotRows(snapshot, "MandervilleWeaponEnhance");
+  const resistanceRows = snapshotRows(snapshot, "ResistanceWeaponAdjust");
   const materiaRows = snapshotRows(snapshot, "Materia");
   const referenceMandervilleAliases = gears
     .filter((gear) => gear.customizable)
@@ -768,17 +926,33 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
       [Number(itemRow.fields.ClassJobCategory)],
     );
     const customRow = mandervilleRows[gear.id];
+    const resistanceRow = resistanceRows[gear.id];
+    if (customRow && resistanceRow)
+      throw new Error(`装备 ${gear.id} 同时命中 MandervilleWeaponEnhance 与 ResistanceWeaponAdjust，不能在未确认语义时合并参数表`);
     const customParameters = customRow
       ? normalizeMcpCustomParameters(customRow, materiaRows)
       : undefined;
     if (customRow && !customParameters)
       throw new Error(`MandervilleWeaponEnhance 行 ${gear.id} 的自定义参数字段不完整`);
+    const resistanceWeaponAdjust = resistanceRow
+      ? normalizeMcpResistanceWeaponAdjust(resistanceRow)
+      : undefined;
+    if (resistanceWeaponAdjust && merged.slot !== "weapon" && merged.slot !== "offhand")
+      throw new Error(`ResistanceWeaponAdjust 行 ${gear.id} 对应 Item 不是武器或盾牌槽装备`);
     return {
       ...merged,
       ...(customRow ? { customizable: true, customParameters } : {}),
+      ...(resistanceWeaponAdjust ? { resistanceWeaponAdjust } : {}),
       dataSources: [source, variableLevelSource, categorySource, ...(customRow ? [
         snapshotSource(snapshot, "MandervilleWeaponEnhance", mandervilleReturnFields, [gear.id]),
         snapshotSource(snapshot, "Materia", undefined, customParameters.map((parameter) => parameter.materiaId)),
+      ] : []), ...(resistanceWeaponAdjust ? [
+        resistanceWeaponAdjustSource(snapshot, [gear.id]),
+        resistanceBaseParamSource(
+          snapshot,
+          [...new Set(Array.from({ length: 4 }, (_, index) => resistanceRow.fields[`BaseParam[${index}]`]))]
+            .filter((id) => id > 0),
+        ),
       ] : []), ...(gear.dataSources ?? []).filter((item) => item.kind === "reference")],
     };
   })
@@ -818,6 +992,13 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
       ],
     });
   }
+  const adjustmentIds = Object.keys(resistanceRows).map(Number)
+    .filter((id) => id > 0).sort((left, right) => left - right);
+  const mergedIds = new Set(result.filter((gear) => gear.jobs.length > 0).map((gear) => gear.id));
+  const removedIds = new Set(removed);
+  const missingAdjustmentGearIds = adjustmentIds.filter((id) => !mergedIds.has(id) && !removedIds.has(id));
+  if (missingAdjustmentGearIds.length)
+    throw new Error(`ResistanceWeaponAdjust 行未能合并到有效装备：${missingAdjustmentGearIds.join(",")}`);
   return { result: result.filter((gear) => gear.jobs.length > 0), usedIds, missing, removed };
 }
 
@@ -1184,6 +1365,12 @@ if (mcpSnapshot) {
     snapshotSource(mcpSnapshot, "BaseParam", undefined, slotMerge.usedIds),
     snapshotSource(mcpSnapshot, "Materia", undefined, Object.keys(snapshotRows(mcpSnapshot, "Materia")).map(Number)),
     snapshotSource(mcpSnapshot, "ClassJob", classJobReturnFields, classJobRowIds),
+    resistanceWeaponAdjustSource(
+      mcpSnapshot,
+      mcpSnapshot.queries.find((query) =>
+        query.method === "list_rows" && query.sheet === "ResistanceWeaponAdjust",
+      ).rowIds,
+    ),
     mcpSource({
       sheet: "ContentFinderCondition",
       fields: ["ClassJobLevelRequired", "ItemLevelRequired", "ItemLevelSync"],
@@ -1201,7 +1388,7 @@ if (mcpSnapshot) {
   );
   const fallbackCount = gearMerge.missing.length + foodMerge.missing.length;
   const removedNameCount = gearMerge.removed.length + foodMerge.removed.length;
-  mcpSummary = `MCP 优先：覆盖 ${gearMerge.usedIds.length}/${gears.length} 件装备、${foodMerge.usedIds.length}/${foods.length} 种食物，${fallbackCount} 项回退参考项目；剔除 ${removedNameCount} 项空名称物品`;
+  mcpSummary = `MCP 优先：覆盖 ${gearMerge.usedIds.length}/${gears.length} 件装备（含 ${gearMerge.result.filter((gear) => gear.resistanceWeaponAdjust).length} 件 ResistanceWeaponAdjust 武器）、${foodMerge.usedIds.length}/${foods.length} 种食物，${fallbackCount} 项回退参考项目；剔除 ${removedNameCount} 项空名称物品`;
 } else if (!offline) {
   console.warn(`未找到 MCP 查询产物：${mcpSnapshotPath}。请先使用环境 MCP 工具生成该文件；本次仅使用参考项目。`);
 }

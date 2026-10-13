@@ -5,13 +5,16 @@ import {
   calculateEffects,
 } from "../rules.ts";
 import { isRingPairEquipInfo } from "../search/ring-pairs.ts";
-import { equipmentIdentity } from "../search/equipment-identity.ts";
+import {
+  equipmentCandidateIdentity,
+} from "../search/equipment-identity.ts";
 import {
   findBestLoadoutExactMip,
   type ExactMipResult,
 } from "../search/loadout-finder-exact-mip.ts";
 import type {
   Effects,
+  CustomizableStat,
   Food,
   GearSlot,
   MeldedGear,
@@ -20,18 +23,45 @@ import type {
   Stats,
 } from "../types.ts";
 import { foodIdentity, foodStatsForJob } from "./equipment-candidates.ts";
-import type { PreparedSearch, SolverGear, SolverFood } from "./context.ts";
+import type { PreparedSearch, SolverFood } from "./context.ts";
+import type { EquipInfo } from "../search/types.ts";
 
 export function candidateGearFromInfo(
-  equipment: SolverGear,
+  equipment: EquipInfo,
   slot: GearSlot,
   prepared: PreparedSearch,
 ): MeldedGear {
-  const canonical = prepared.gearsByIdentity.get(equipmentIdentity(equipment));
+  const canonical = prepared.gearsByIdentity.get(equipmentCandidateIdentity(equipment));
   if (!canonical) {
     throw new Error(`精确搜索返回了未生成的装备候选：${equipment.itemId}`);
   }
-  return { ...canonical, slot };
+  if (equipment.resistanceAllocation === undefined) return { ...canonical, slot };
+  const adjustment = canonical.resistanceWeaponAdjust;
+  if (adjustment === undefined) {
+    throw new Error(`装备 ${equipment.itemId} 返回了不支持的义军武器属性分配`);
+  }
+  const seen = new Set<CustomizableStat>();
+  let allocatedTotal = 0;
+  const finalStats = { ...canonical.finalStats };
+  const allocations = equipment.resistanceAllocation.map(({ stat, value }) => {
+    if (!adjustment.stats.includes(stat) || seen.has(stat) ||
+      !Number.isSafeInteger(value) || value <= 0 || value > adjustment.maxEachStat) {
+      throw new Error(`义军武器 ${equipment.itemId} 返回了无效的 ${stat} 属性分配`);
+    }
+    seen.add(stat);
+    allocatedTotal += value;
+    finalStats[stat] = (finalStats[stat] ?? 0) + value;
+    return { stat, value, grade: 0 as const };
+  });
+  if (!Number.isSafeInteger(allocatedTotal) || allocatedTotal > adjustment.maxTotalStats) {
+    throw new Error(`义军武器 ${equipment.itemId} 的总分配属性超过 ResistanceWeaponAdjust 上限`);
+  }
+  return {
+    ...canonical,
+    slot,
+    finalStats,
+    melds: [...canonical.melds, ...allocations],
+  };
 }
 
 function resultGear(

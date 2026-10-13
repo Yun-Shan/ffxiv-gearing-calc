@@ -1,5 +1,5 @@
 const MAGIC = new TextEncoder().encode("FFXIVGDB");
-const FORMAT_VERSION = 4;
+const FORMAT_VERSION = 5;
 const SECTION_IDS = [1, 2];
 const DIRECTORY_ENTRY_BYTES = 12;
 const HEADER_BYTES = 16 + SECTION_IDS.length * DIRECTORY_ENTRY_BYTES;
@@ -20,6 +20,10 @@ const STAT_NAMES = [
 const STAT_CODES = new Map(STAT_NAMES.map((stat, index) => [stat, index]));
 const CUSTOM_STAT_NAMES = ["CRT", "DET", "DHT", "SKS", "SPS", "TEN", "PIE"];
 const CUSTOM_STAT_CODES = new Map(CUSTOM_STAT_NAMES.map((stat, index) => [stat, index]));
+const RESISTANCE_WEAPON_STAT_NAMES = ["CRT", "DET", "DHT", "SKS", "SPS", "TEN", "PIE"];
+const RESISTANCE_WEAPON_STAT_CODES = new Map(
+  RESISTANCE_WEAPON_STAT_NAMES.map((stat, index) => [stat, index]),
+);
 const MAIN_STATS = ["VIT", "STR", "DEX", "MND", "INT"];
 const MAIN_STAT_CODES = new Map(MAIN_STATS.map((stat, index) => [stat, index]));
 
@@ -365,6 +369,21 @@ function validateGearForWrite(gear, jobIndexes, seenIds) {
     fail('装备 ' + gear.id + ' 的 equipLevelVariable 不是布尔值');
   if (Object.hasOwn(gear, 'customParameters') && !Array.isArray(gear.customParameters))
     fail('装备 ' + gear.id + ' 的 customParameters 不是数组');
+  if (Object.hasOwn(gear, 'resistanceWeaponAdjust')) {
+    const adjustment = gear.resistanceWeaponAdjust;
+    if ((gear.slot !== 'weapon' && gear.slot !== 'offhand') || !adjustment || typeof adjustment !== 'object' || Array.isArray(adjustment) ||
+        !Array.isArray(adjustment.stats) || adjustment.stats.length < 1 ||
+        adjustment.stats.length > RESISTANCE_WEAPON_STAT_NAMES.length)
+      fail('装备 ' + gear.id + ' 的 resistanceWeaponAdjust 结构无效');
+    assertUInt(adjustment.maxTotalStats, 32, '装备 ' + gear.id + ' resistance MaxTotalStats');
+    assertUInt(adjustment.maxEachStat, 32, '装备 ' + gear.id + ' resistance MaxEachStat');
+    const seenAdjustmentStats = new Set();
+    for (const stat of adjustment.stats) {
+      if (!RESISTANCE_WEAPON_STAT_CODES.has(stat) || seenAdjustmentStats.has(stat))
+        fail('装备 ' + gear.id + ' 含无效或重复的 resistance 调整属性 ' + stat);
+      seenAdjustmentStats.add(stat);
+    }
+  }
   if (gear.customParameters?.length > 255)
     fail('装备 ' + gear.id + ' 的 customParameters 数量超出 u8');
   for (const parameter of gear.customParameters ?? []) {
@@ -448,6 +467,7 @@ function encodeGearRecordBody(gear, row, jobIndexes, stringIndexes) {
   if (gear.materiaAdvanced === true) flags |= 1;
   if (gear.unique === true) flags |= 2;
   if (gear.equipLevelVariable === true) flags |= 4;
+  if (gear.resistanceWeaponAdjust) flags |= 8;
   const customParameters = gear.customParameters ?? [];
   let statMask = 0;
   for (const stat of STAT_NAMES)
@@ -475,6 +495,15 @@ function encodeGearRecordBody(gear, row, jobIndexes, stringIndexes) {
     writer.u8(parameter.smallValueIndex, '装备 smallValueIndex');
     writer.u16(parameter.bigValue, '装备 bigValue');
     writer.u16(parameter.smallValue, '装备 smallValue');
+  }
+
+  if (gear.resistanceWeaponAdjust) {
+    const adjustment = gear.resistanceWeaponAdjust;
+    writer.u32(adjustment.maxTotalStats, 'ResistanceWeaponAdjust MaxTotalStats');
+    writer.u32(adjustment.maxEachStat, 'ResistanceWeaponAdjust MaxEachStat');
+    writer.u8(adjustment.stats.length, 'ResistanceWeaponAdjust 属性数量');
+    for (const stat of adjustment.stats)
+      writer.u8(RESISTANCE_WEAPON_STAT_CODES.get(stat), 'ResistanceWeaponAdjust 属性代码');
   }
 
   writer.varUint(stringIndexes.get(row.name), '装备名称字符串序号');
@@ -864,7 +893,7 @@ function decodeGearRecord(recordIndex, entry, endOffset, section, strings, templ
   const flags = reader.u8();
   const jobCount = reader.u8();
   if (slotCode >= SLOT_NAMES.length) fail('装备槽位代码无效');
-  if (flags & ~7) fail('装备标志含保留位');
+  if (flags & ~15) fail('装备标志含保留位');
   if (jobCount > reader.bytes.byteLength - reader.offset)
     fail('装备职业数量超出记录长度');
   const jobs = new Array(jobCount);
@@ -900,6 +929,27 @@ function decodeGearRecord(recordIndex, entry, endOffset, section, strings, templ
       bigValue,
       smallValue,
     };
+  }
+
+  let resistanceWeaponAdjust;
+  if (flags & 8) {
+    const maxTotalStats = reader.u32();
+    const maxEachStat = reader.u32();
+    const statCount = reader.u8();
+    if (statCount < 1 || statCount > RESISTANCE_WEAPON_STAT_NAMES.length)
+      fail('ResistanceWeaponAdjust 属性数量无效');
+    const stats = new Array(statCount);
+    const seen = new Set();
+    for (let index = 0; index < statCount; index++) {
+      const statCode = reader.u8();
+      if (statCode >= RESISTANCE_WEAPON_STAT_NAMES.length)
+        fail('ResistanceWeaponAdjust 属性代码无效');
+      const stat = RESISTANCE_WEAPON_STAT_NAMES[statCode];
+      if (seen.has(stat)) fail('ResistanceWeaponAdjust 属性重复');
+      seen.add(stat);
+      stats[index] = stat;
+    }
+    resistanceWeaponAdjust = { maxTotalStats, maxEachStat, stats };
   }
 
   const nameIndex = reader.varUint();
@@ -949,6 +999,7 @@ function decodeGearRecord(recordIndex, entry, endOffset, section, strings, templ
   gear.unique = Boolean(flags & 2);
   if (flags & 4) gear.equipLevelVariable = true;
   if (customParameterCount) gear.customParameters = customParameters;
+  if (resistanceWeaponAdjust) gear.resistanceWeaponAdjust = resistanceWeaponAdjust;
   if (sourcePresent) gear.source = source;
   const weaponDamage = stats.PDMG ?? stats.MDMG;
   if (weaponDamage !== undefined) gear.weaponDamage = weaponDamage;

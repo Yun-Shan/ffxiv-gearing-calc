@@ -6,6 +6,8 @@ import type {
   Food,
   JobId,
   MeldedGear,
+  CustomizableStat,
+  ResistanceWeaponAdjust,
   Stat,
 } from "../types.ts";
 
@@ -35,6 +37,10 @@ export type SolverGear = {
   PDMG: number;
   MDMG: number;
   DLY: number;
+  resistanceWeaponAdjust?: ResistanceWeaponAdjust & {
+    /** Per-stat reduction caused by the active item-level sync cap. */
+    statMaximums?: Partial<Record<CustomizableStat, number>>;
+  };
   ringEquips?: readonly [SolverGear, SolverGear];
 };
 export type GearCandidate = { equipment: SolverGear; gear: MeldedGear };

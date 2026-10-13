@@ -15,7 +15,7 @@
 - 运行时文件遵循[运行时数据二进制格式](运行时数据二进制格式.md)，使用无压缩二进制编码，不在容器中保留 JSON 文本。装备实体按唯一适用主属性物理分组；无法唯一确定的实体进入独立共享组。实体只存一份，物理组内按品级、ID 升序；五组主属性索引合并引用对应组和共享组中适用该主属性的实体，并在初始化时快速解码。装备对象按主属性与品级范围惰性解码，`weaponDamage` 由武器伤害属性恢复。
 - 浏览器、优化 Worker 与 Node 数据工具共用解码逻辑。装备字段、逐件来源、主属性索引及其排序在 `scripts/update-data.mjs` 生成阶段校验；运行时检查文件 CRC、容器结构和段边界，并拒绝损坏或不支持的文件，不读取旧 JSON 或内置数据。
 - `Item.Name` 为空或仅含空白的物品视为游戏中已移除，导入时排除，不进入装备、食物候选及任何后续计算；不得使用参考项目旧名称恢复该物品。名称字段缺失或格式错误属于数据错误，必须明确失败。
-- `scripts/query-mcp-lumina.mjs` 负责启动环境提供的 Lumina MCP stdio 服务器并生成 `src/data/mcp-lumina.snapshot.json`；查询结果不得由聊天文本或手工复制构造。默认查询参考项目中的全部可用装备、战斗食物、职业分类、23 个受支持职业的 `ClassJob` 行、食物效果、`ItemLevel`、`BaseParam`、`Materia` 和 `MandervilleWeaponEnhance` 行（当前已知的一类自定义参数武器表）。职业行须先用 `ClassJob.Abbreviation` 通过 `search_rows` 发现，再以 `get_rows` 批量读取；不得写死或凭记忆录入 row ID。
+- `scripts/query-mcp-lumina.mjs` 负责启动环境提供的 Lumina MCP stdio 服务器并生成 `src/data/mcp-lumina.snapshot.json`；查询结果不得由聊天文本或手工复制构造。默认查询参考项目中的全部可用装备、战斗食物、职业分类、23 个受支持职业的 `ClassJob` 行、食物效果、`ItemLevel`、`BaseParam`、`Materia`、`MandervilleWeaponEnhance` 和 `ResistanceWeaponAdjust` 行。Resistance 武器行对应的同 ID `Item` 行也必须纳入查询范围。职业行须先用 `ClassJob.Abbreviation` 通过 `search_rows` 发现，再以 `get_rows` 批量读取；不得写死或凭记忆录入 row ID。
 - 职业原生等级属性修正和职业名称使用 `ClassJob` 的 MCP 字段；职业角色、主副属性、GCD/特性/队伍公式、等级上限及默认品级范围使用参考项目 `src/game.ts` 中对应职业 schema，并按职业记录各字段来源。青魔法师 `BLU` 与驯兽师 `BST` 属于受支持限职，MCP 行用于名称、原生 modifiers、限职和盾牌能力核验，等级上限及默认品级范围来自参考 schema。
 - 同步品级所属等级从 MCP `ContentFinderCondition` 的 `ClassJobLevelRequired`、`ItemLevelRequired`、`ItemLevelSync` 生成，转换顺序遵循参考项目 `data/convert.ts`，并与 `data/out/syncLevels.js` 逐项核对。全量行、Schema、版本与查询时间保存在 MCP 快照；同品级多行归属按参考转换的行 ID 顺序覆盖。参考 `src/game.ts` 的 `syncLevelOfJobLevels` 仅提供未列品级的精确等级对应；`ParamGrow.ItemLevelSync` 与该参考映射语义不同，不混用为分组来源。
 - 可变等级装备进入候选。MCP `Item.SubStatCategory === 2` 映射为 `equipLevelVariable`；`BaseParam` 55/56 保留为 `main` / `secondary`，在按职业生成候选时分别解析为该职业的主、副属性。等级同步按参考项目 `Gear.syncedLevel`：可变等级装备的目标品级为显式同步品级与 `syncLevelOfJobLevels[配置职业等级]` 的较小值；目标低于装备原品级时按目标品级属性上限封顶并禁用普通魔晶石。单职业、联合搜索和可行 GCD 查询必须采用一致处理。
@@ -28,7 +28,7 @@
   - `data/out/slotCaps.js`
   - `data/out/roleCaps.js`
   - `src/game.ts`
-- 当前快照游戏版本为 `2026.09.15.0000.0000`，服务器验证版本为 `2026.08.05.0000.0000`，版本警告及通用查询可用性声明保存在快照中，覆盖 22023 件可用战斗装备、420 种战斗食物、23 个职业、230 个 `ItemLevel` 行、12 个 `BaseParam` 行、1417 个 `Materia` 行及 62 个 `MandervilleWeaponEnhance` 自定义参数武器行。刷新 `ClassJobCategory` Schema 后，行 30 的 `BST` 字段确认可用且为 `true`；查询、生成和分类解析统一使用同一受支持职业清单，确保该字段进入装备适用集合。`ItemFood` 行 1800 在该版本动作表中被引用但不存在；参考项目没有把 1800 用作该类食物效果参数，因此它不是必需的食物效果行。导入器只记录该查询缺口，并继续使用同一食物动作中其余 MCP 效果字段，不虚构缺失行。
+- 当前快照游戏版本为 `2026.09.15.0000.0000`，服务器验证版本为 `2026.08.05.0000.0000`，版本警告及通用查询可用性声明保存在快照中，覆盖 22023 件可用战斗装备、420 种战斗食物、23 个职业、230 个 `ItemLevel` 行、12 个 `BaseParam` 行、1417 个 `Materia` 行、62 个 `MandervilleWeaponEnhance` 行，以及 `ResistanceWeaponAdjust` 的 37 行（含空行 0，其中 36 行对应武器）。刷新 `ClassJobCategory` Schema 后，行 30 的 `BST` 字段确认可用且为 `true`；查询、生成和分类解析统一使用同一受支持职业清单，确保该字段进入装备适用集合。`ItemFood` 行 1800 在该版本动作表中被引用但不存在；参考项目没有把 1800 用作该类食物效果参数，因此它不是必需的食物效果行。导入器只记录该查询缺口，并继续使用同一食物动作中其余 MCP 效果字段，不虚构缺失行。
 - MCP 与参考项目均缺少装备、食物、职业、魔晶石或属性上限表时必须直接失败，不能用虚构、近似或内置兜底数据继续运行。
 - `ClassJobCategory` 只负责判断装备是否适用于目标职业，必须以实时 `ffxiv-mcp-lumina` 的 `Item.ClassJobCategory` 和对应 `ClassJobCategory` 行作为生产依据；参考项目中的分类映射不再作为该用途的事实来源，也不再要求两边分类 ID、显示文字或职业集合逐项一致。
 - 分析 `ClassJobCategory`、`ClassJob` 等 MCP 数据时，必须实时调用 `ffxiv-mcp-lumina` 的 `describe_sheet`、`search_rows`、`get_row` 或 `get_rows`；不得把本地 `mcp-lumina.snapshot.json` 当作 MCP 实时查询结果。实时结果必须记录服务器、Sheet、字段、行 ID、查询范围、游戏版本和查询时间。
@@ -199,3 +199,6 @@ npm run test:coverage
 - 候选生成实现：领域候选构造器 按"先选 1 small、再从剩余 3 槽选 2 big、1 槽留空"生成 meld；若 `customParameters.length !== 4` 显式抛出异常，禁止静默兜底。
 - 当前快照（MCP 2026.09.15）记录 `MandervilleWeaponEnhance` 的 62 个有效参数行，所有 Item 主键与查询范围保存在快照。参考项目的别名只作溯源，不代替 MCP 主键；其他自定义参数武器仍须分别确认参数表。
 - 当前已确认参数表缺失或与参考项目别名完全无交集时，导入器必须显式失败；不允许把参考项目 `customizable: true` 装备作为未确认参数表的生产信源。
+- 80 级义军武器由 Lumina `ResistanceWeaponAdjust` 中与装备 Item ID 同号的行定义。`BaseParam[0..3]` 的非零属性是可分配属性；每项可分配整数范围为 `0..MaxEachStat`，所有分配之和不得超过 `MaxTotalStats`，步进为 1。
+- 义军武器不得枚举每一种合法分配作为静态候选。候选池中每件武器只保留一个基础候选，精确 MIP 为每个可分配属性建立整数变量，并以 `MaxTotalStats` 约束其总和；同步时还要按同步品级的单件属性上限缩小相应变量上限。求解结果中的实际分配必须还原到最终装备属性、镶嵌展示和分享数据。
+- 可行 GCD 档位查询须按相同分配范围投影速度及坚韧：遍历每个可达速度分配，并为该速度保留可达的最大坚韧值；不得漏掉步进为 1 的速度档位。

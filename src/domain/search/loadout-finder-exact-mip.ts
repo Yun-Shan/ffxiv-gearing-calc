@@ -53,7 +53,7 @@ import type {
   ParamInfo,
   SharedSlotProjection,
 } from "./types.ts";
-import type { JobId, Stat } from "../types.ts";
+import type { CustomizableStat, JobId, Stat } from "../types.ts";
 import type {
   CandidateResourceSupportProfile,
   ResourceBudgetCandidateProfile,
@@ -722,6 +722,7 @@ function getAttributeVector(
   food: FoodInfo | undefined,
   attributeIds: readonly number[],
   equipmentAttributeExtractor: EquipmentAttributeExtractor | undefined,
+  statIndexes: ReadonlyMap<Stat, number>,
 ): number[] {
   const indexes = new Map(attributeIds.map((id, index) => [id, index]));
   const result = new Array<number>(attributeIds.length).fill(0);
@@ -730,6 +731,34 @@ function getAttributeVector(
     for (const param of params) {
       const index = indexes.get(param.baseParamId);
       if (index !== undefined) result[index] += param.value;
+    }
+    const allocations = equipment.resistanceAllocation ?? [];
+    if (allocations.length > 0) {
+      const adjustment = equipment.resistanceWeaponAdjust;
+      if (adjustment === undefined) {
+        throw new Error(`装备 ${equipment.itemId} 的属性分配缺少 ResistanceWeaponAdjust 参数`);
+      }
+      const seen = new Set<CustomizableStat>();
+      let total = 0;
+      for (const allocation of allocations) {
+        const maximum = adjustment.statMaximums?.[allocation.stat] ?? adjustment.maxEachStat;
+        const statIndex = statIndexes.get(allocation.stat);
+        const expectedAttributeId = statIndex === undefined ? undefined : attributeIds[statIndex];
+        const index = indexes.get(allocation.baseParamId);
+        if (!adjustment.stats.includes(allocation.stat) || seen.has(allocation.stat) ||
+          !Number.isSafeInteger(maximum) || maximum < 0 ||
+          !Number.isSafeInteger(allocation.value) || allocation.value <= 0 ||
+          allocation.value > maximum || expectedAttributeId !== allocation.baseParamId ||
+          index === undefined) {
+          throw new Error(`装备 ${equipment.itemId} 的 ${allocation.stat} 属性分配无效`);
+        }
+        seen.add(allocation.stat);
+        total += allocation.value;
+        result[index] += allocation.value;
+      }
+      if (!Number.isSafeInteger(total) || total > adjustment.maxTotalStats) {
+        throw new Error(`装备 ${equipment.itemId} 的总分配属性超过 ResistanceWeaponAdjust 上限`);
+      }
     }
   }
   if (food !== undefined) {
@@ -828,7 +857,7 @@ function greedyMipStart(options: ExactMipOptions,
     if (ringSlotIndex === 0 || ringSlotIndex === 1) ringSlotIndexes.set(ringSlotIndex, index);
   });
   const evaluate = () => {
-    const attributes = getAttributeVector(selection, chosenFood, options.attributeIds, options.equipmentAttributeExtractor);
+    const attributes = getAttributeVector(selection, chosenFood, options.attributeIds, options.equipmentAttributeExtractor, options.statIndexes);
     const evaluation = options.evaluationFunction(attributes);
     if (evaluation === undefined || !Number.isFinite(evaluation.damage) || !Number.isFinite(evaluation.gcd) || evaluation.gcd <= 0) return undefined;
     let violation = 0;
@@ -1075,6 +1104,7 @@ function pruneCandidatesByIncumbentUpperBound(
     incumbent.food,
     options.attributeIds,
     options.equipmentAttributeExtractor,
+    options.statIndexes,
   );
   const incumbentFactors = factorEvaluator(incumbentAttributes);
   if (!safeDamageFactors(incumbentFactors)) return undefined;
@@ -4264,7 +4294,11 @@ export async function findBestJointFactorMip(options: {
           jointJob.ringSplit !== undefined &&
           (slot === jointJob.ringSplit.firstSlotIndex || slot === jointJob.ringSplit.secondSlotIndex)
             ? ringChildStructuralKey(candidate) === ringChildStructuralKey(equipment)
-            : options.equipmentIdentity(candidate) === options.equipmentIdentity(equipment)))) {
+            : options.equipmentIdentity(candidate) === options.equipmentIdentity(
+              equipment.resistanceAllocation === undefined
+                ? equipment
+                : { ...equipment, resistanceAllocation: undefined },
+            )))) {
         throw new Error("联合初始方案装备不属于模型候选");
       }
       if (hasUniqueRingConflict(modelSelection)) {
@@ -4274,7 +4308,7 @@ export async function findBestJointFactorMip(options: {
         !job.options.foods.some((food) => options.foodIdentity(food) === options.foodIdentity(result.food!))) {
         throw new Error("联合初始方案食物不属于模型候选");
       }
-      const attributes = getAttributeVector(modelSelection, result.food, job.options.attributeIds, job.options.equipmentAttributeExtractor);
+      const attributes = getAttributeVector(modelSelection, result.food, job.options.attributeIds, job.options.equipmentAttributeExtractor, job.options.statIndexes);
       for (const [attribute, range] of prepared.model.ranges) {
         if ((range.min !== undefined && attributes[attribute]! < range.min) ||
           (range.max !== undefined && attributes[attribute]! > range.max)) throw new Error("联合初始方案不满足属性约束");
@@ -4499,7 +4533,11 @@ export async function findBestJointFactorMip(options: {
             (slotIndex === jointJob.ringSplit.firstSlotIndex || slotIndex === jointJob.ringSplit.secondSlotIndex);
           const candidate = job.options.slots[slotIndex]!.findIndex((entry) => isSplitRingSlot
             ? ringChildStructuralKey(entry) === ringChildStructuralKey(equipment)
-            : options.equipmentIdentity(entry) === options.equipmentIdentity(equipment));
+            : options.equipmentIdentity(entry) === options.equipmentIdentity(
+              equipment.resistanceAllocation === undefined
+                ? equipment
+                : { ...equipment, resistanceAllocation: undefined },
+            ));
           if (candidate < 0) throw new Error(`联合解提示装备不属于模型候选：${job.id}/${slotIndex}`);
           solutionHint.set(prefix(jobIndex, prepared.model.slotVariables[slotIndex]![candidate]!), 1);
         });
@@ -4605,10 +4643,15 @@ export async function findBestJointFactorMip(options: {
       const { job, prepared } = jointJob;
       const columns = Object.fromEntries(prepared.model.bounds.map(({ name }) =>
         [name, output.Columns[prefix(index, name)] ?? { Primal: 0 }]));
-      const modelSelection = slotsForResult(job.options.slots, prepared.model.slotVariables, columns);
+      const modelSelection = slotsForResultWithResistanceAllocations(
+        job.options.slots,
+        prepared.model.slotVariables,
+        prepared.model.resistanceAllocationVariables,
+        columns,
+      );
       const selection = originalRingSelection(jointJob, modelSelection);
       const food = foodForResult(job.options.foods, prepared.model.foodVariables, columns);
-      const attributes = getAttributeVector(modelSelection, food, job.options.attributeIds, job.options.equipmentAttributeExtractor);
+      const attributes = getAttributeVector(modelSelection, food, job.options.attributeIds, job.options.equipmentAttributeExtractor, job.options.statIndexes);
       const factors = prepared.factorEvaluator(attributes);
       const evaluation = job.options.evaluationFunction(attributes);
       if (factors === undefined || evaluation === undefined || !Number.isFinite(evaluation.damage)) {
@@ -5267,6 +5310,17 @@ function symmetricRingSlotOrder(
   };
 }
 
+type ResistanceAllocationVariable = {
+  slotIndex: number;
+  candidateIndex: number;
+  stat: CustomizableStat;
+  baseParamId: number;
+  attributeIndex: number;
+  maxValue: number;
+  variable: string;
+  maxTotalStats: number;
+};
+
 function buildLinearAttributeModel(options: ExactMipOptions) {
   const { slots, foods, attributeIds } = options;
   if (slots.some((slot) => slot.length === 0)) return undefined;
@@ -5279,7 +5333,7 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
   const foodVariables: string[] = [];
   const gcdChoiceVariables: string[] = [];
   const gcdChoiceRanges: GcdSpeedRange[] = [];
-  const equipmentAttributes = slots.map((slot) => slot.map((equipment) => {
+  const fixedEquipmentAttributes = slots.map((slot) => slot.map((equipment) => {
     const result = new Array<number>(attributeIds.length).fill(0);
     const params = options.equipmentAttributeExtractor?.(equipment) ?? equipment.baseParams;
     for (const param of params) {
@@ -5288,11 +5342,57 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
     }
     return result;
   }));
+  const resistanceAllocationVariables: ResistanceAllocationVariable[] = slots.flatMap((slot, slotIndex) =>
+    slot.flatMap((equipment, candidateIndex) => {
+      const adjustment = equipment.resistanceWeaponAdjust;
+      if (adjustment === undefined) return [];
+      if (!Number.isSafeInteger(adjustment.maxTotalStats) || adjustment.maxTotalStats < 0 ||
+        !Number.isSafeInteger(adjustment.maxEachStat) || adjustment.maxEachStat < 0 ||
+        !Array.isArray(adjustment.stats) || adjustment.stats.length === 0 ||
+        new Set(adjustment.stats).size !== adjustment.stats.length) {
+        throw new RangeError(`义军武器 ${equipment.itemId} 的 ResistanceWeaponAdjust 参数无效`);
+      }
+      return adjustment.stats.flatMap((stat) => {
+        const vectorIndex = options.statIndexes.get(stat);
+        const attributeId = vectorIndex === undefined ? undefined : attributeIds[vectorIndex];
+        const attributeIndex = attributeId === undefined ? undefined : idToIndex.get(attributeId);
+        if (attributeId === undefined || attributeIndex === undefined) {
+          throw new RangeError(`义军武器 ${equipment.itemId} 的属性 ${stat} 不在搜索属性向量中`);
+        }
+        const statMaximum = adjustment.statMaximums?.[stat] ?? adjustment.maxEachStat;
+        if (!Number.isSafeInteger(statMaximum) || statMaximum < 0) {
+          throw new RangeError(`义军武器 ${equipment.itemId} 的属性 ${stat} 分配上限无效`);
+        }
+        const maxValue = Math.min(adjustment.maxTotalStats, adjustment.maxEachStat, statMaximum);
+        return maxValue === 0 ? [] : [{
+          slotIndex,
+          candidateIndex,
+          stat,
+          baseParamId: attributeId,
+          attributeIndex,
+          maxValue,
+          variable: `rw_${slotIndex}_${candidateIndex}_${stat}`,
+          maxTotalStats: adjustment.maxTotalStats,
+        }];
+      });
+    }),
+  );
+  const equipmentAttributes = fixedEquipmentAttributes.map((slot, slotIndex) =>
+    slot.map((fixed, candidateIndex) => {
+      const maximum = [...fixed];
+      for (const allocation of resistanceAllocationVariables) {
+        if (allocation.slotIndex === slotIndex && allocation.candidateIndex === candidateIndex) {
+          maximum[allocation.attributeIndex] += allocation.maxValue;
+        }
+      }
+      return maximum;
+    }),
+  );
   const rawMaximums = attributeIds.map((_, attribute) =>
     equipmentAttributes.reduce((total, slot) =>
       total + Math.max(0, ...slot.map((values) => values[attribute]!)), 0));
   const rawMinimums = attributeIds.map((_, attribute) =>
-    equipmentAttributes.reduce((total, slot) =>
+    fixedEquipmentAttributes.reduce((total, slot) =>
       total + Math.min(...slot.map((values) => values[attribute]!)), 0));
   for (const maximum of rawMaximums) {
     if (!Number.isSafeInteger(maximum) || maximum < 0) {
@@ -5324,6 +5424,33 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
     });
     addRows(rows, `slot_${slotIndex}`, variables.map((variable) => [variable, 1] as const), "=", 1);
   });
+  const allocationVariablesByCandidate = new Map<string, typeof resistanceAllocationVariables>();
+  for (const allocation of resistanceAllocationVariables) {
+    const key = `${allocation.slotIndex}:${allocation.candidateIndex}`;
+    const candidateAllocations = allocationVariablesByCandidate.get(key) ?? [];
+    candidateAllocations.push(allocation);
+    allocationVariablesByCandidate.set(key, candidateAllocations);
+    bounds.push({ name: allocation.variable, min: 0, max: allocation.maxValue });
+    generalVars.push(allocation.variable);
+    const selected = slotVariables[allocation.slotIndex]![allocation.candidateIndex]!;
+    addRows(rows, `${allocation.variable}_selected`, [
+      [allocation.variable, 1],
+      [selected, -allocation.maxValue],
+    ], "<=", 0);
+  }
+  for (const [candidateKey, allocations] of allocationVariablesByCandidate) {
+    const [slotIndexText, candidateIndexText] = candidateKey.split(":");
+    const slotIndex = Number(slotIndexText);
+    const candidateIndex = Number(candidateIndexText);
+    if (!Number.isSafeInteger(slotIndex) || !Number.isSafeInteger(candidateIndex)) {
+      throw new Error("义军武器 MIP 候选索引无效");
+    }
+    const adjustment = slots[slotIndex]![candidateIndex]!.resistanceWeaponAdjust!;
+    const terms = new Map<string, number>();
+    for (const allocation of allocations) addTerm(terms, allocation.variable, 1);
+    addTerm(terms, slotVariables[slotIndex]![candidateIndex]!, -adjustment.maxTotalStats);
+    addRows(rows, `rw_total_${slotIndex}_${candidateIndex}`, terms, "<=", 0);
+  }
   const ringSlots = new Map<0 | 1, number>();
   slots.forEach((slot, slotIndex) => {
     const marked = slot.filter((equipment) => equipment.ringSlotIndex !== undefined);
@@ -5410,9 +5537,12 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
     const rawTerms = new Map<string, number>([[rawVariable, 1]]);
     slots.forEach((slot, slotIndex) => {
       slot.forEach((_, candidateIndex) => {
-        addTerm(rawTerms, slotVariables[slotIndex]![candidateIndex]!, -equipmentAttributes[slotIndex]![candidateIndex]![attribute]!);
+        addTerm(rawTerms, slotVariables[slotIndex]![candidateIndex]!, -fixedEquipmentAttributes[slotIndex]![candidateIndex]![attribute]!);
       });
     });
+    for (const allocation of resistanceAllocationVariables) {
+      if (allocation.attributeIndex === attribute) addTerm(rawTerms, allocation.variable, -1);
+    }
     addRows(rows, `raw_sum_${attribute}`, rawTerms, "=", 0);
 
   });
@@ -5563,6 +5693,8 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
     rawMinimums,
     finalMinimums,
     equipmentAttributes,
+    fixedEquipmentAttributes,
+    resistanceAllocationVariables,
     foodBonuses,
     idToIndex,
     ranges,
@@ -5580,8 +5712,24 @@ function reachableFinalAttributeValues(
 ): number[] | undefined {
   const maximumTransitionWork = 1_000_000;
   const maximumFoodEvaluations = 1_000_000;
-  const slotValues = model.equipmentAttributes.map((slot) =>
-    [...new Set(slot.map((candidate) => candidate[attribute]!))]);
+  const slotValues: number[][] = [];
+  for (let slotIndex = 0; slotIndex < model.fixedEquipmentAttributes.length; slotIndex++) {
+    const slot = model.fixedEquipmentAttributes[slotIndex]!;
+    const values = new Set<number>();
+    for (let candidateIndex = 0; candidateIndex < slot.length; candidateIndex++) {
+      const candidate = slot[candidateIndex]!;
+      const maximumAllocation = model.resistanceAllocationVariables
+        .filter((allocation) => allocation.slotIndex === slotIndex &&
+          allocation.candidateIndex === candidateIndex && allocation.attributeIndex === attribute)
+        .reduce((total, allocation) => total + allocation.maxValue, 0);
+      if (!Number.isSafeInteger(maximumAllocation) || maximumAllocation < 0 ||
+        maximumAllocation + 1 > maximumTransitionWork) return undefined;
+      for (let increment = 0; increment <= maximumAllocation; increment++) {
+        values.add(candidate[attribute]! + increment);
+      }
+    }
+    slotValues.push([...values]);
+  }
   if (slotValues.some((values) => values.length === 0 || values.some((value) => !Number.isSafeInteger(value)))) {
     return undefined;
   }
@@ -5964,7 +6112,7 @@ function completeFeasibleMipStart(
         return reject();
       }
       values.set(model.slotVariables[slotIndex]![candidateIndex]!, 1);
-      const equipmentAttributes = model.equipmentAttributes[slotIndex]?.[candidateIndex];
+      const equipmentAttributes = model.fixedEquipmentAttributes[slotIndex]?.[candidateIndex];
       if (equipmentAttributes === undefined || equipmentAttributes.length !== rawAttributes.length) {
         return reject();
       }
@@ -6652,9 +6800,14 @@ export async function findBestLoadoutExactMip(
       if (group.name === "gcd") selectedFactors.gcdCentiseconds = chosen.value;
       surrogate += chosen.q;
     }
-    const selection = slotsForResult(modelOptions.slots, model.slotVariables, output.Columns);
+    const selection = slotsForResultWithResistanceAllocations(
+      modelOptions.slots,
+      model.slotVariables,
+      model.resistanceAllocationVariables,
+      output.Columns,
+    );
     const food = foodForResult(options.foods, model.foodVariables, output.Columns);
-    const attributes = getAttributeVector(selection, food, options.attributeIds, options.equipmentAttributeExtractor);
+    const attributes = getAttributeVector(selection, food, options.attributeIds, options.equipmentAttributeExtractor, options.statIndexes);
     const rawAttributes = new Array<number>(options.attributeIds.length).fill(0);
     const attributeIndexes = new Map(options.attributeIds.map((id, index) => [id, index]));
     for (const equipment of selection) {
@@ -6662,6 +6815,10 @@ export async function findBestLoadoutExactMip(
       for (const param of params) {
         const index = attributeIndexes.get(param.baseParamId);
         if (index !== undefined) rawAttributes[index] += param.value;
+      }
+      for (const allocation of equipment.resistanceAllocation ?? []) {
+        const index = attributeIndexes.get(allocation.baseParamId);
+        if (index !== undefined) rawAttributes[index] += allocation.value;
       }
     }
     for (let index = 0; index < options.attributeIds.length; index++) {
@@ -6788,6 +6945,39 @@ function slotsForResult(
       (columns[variable]?.Primal ?? 0) > 0.5);
     if (selected < 0) throw new Error(`MIP 没有为槽位 ${slotIndex} 选择装备`);
     return slot[selected]!;
+  });
+}
+
+function slotsForResultWithResistanceAllocations(
+  slots: readonly (readonly EquipInfo[])[],
+  slotVariables: readonly (readonly string[])[],
+  allocations: readonly ResistanceAllocationVariable[],
+  columns: Record<string, { Primal: number }>,
+): EquipInfo[] {
+  const selection = slotsForResult(slots, slotVariables, columns);
+  return selection.map((equipment, slotIndex) => {
+    const candidateIndex = slotVariables[slotIndex]!.findIndex((variable) =>
+      (columns[variable]?.Primal ?? 0) > 0.5);
+    const resistanceAllocation = allocations
+      .filter((allocation) => allocation.slotIndex === slotIndex &&
+        allocation.candidateIndex === candidateIndex)
+      .map((allocation) => {
+        const raw = columns[allocation.variable]?.Primal ?? 0;
+        const value = Math.round(raw);
+        if (!Number.isSafeInteger(value) || Math.abs(value - raw) > 1e-6 ||
+          value < 0 || value > allocation.maxValue) {
+          throw new Error(`义军武器 ${equipment.itemId} 的 ${allocation.stat} 分配不是有效整数`);
+        }
+        return { stat: allocation.stat, baseParamId: allocation.baseParamId, value };
+      })
+      .filter(({ value }) => value > 0);
+    if (resistanceAllocation.length === 0) return equipment;
+    const allocatedTotal = resistanceAllocation.reduce((total, { value }) => total + value, 0);
+    const maximum = equipment.resistanceWeaponAdjust?.maxTotalStats;
+    if (maximum === undefined || !Number.isSafeInteger(allocatedTotal) || allocatedTotal > maximum) {
+      throw new Error(`义军武器 ${equipment.itemId} 的总分配属性超过 ResistanceWeaponAdjust 上限`);
+    }
+    return { ...equipment, resistanceAllocation };
   });
 }
 

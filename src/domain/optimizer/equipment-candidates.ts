@@ -232,7 +232,10 @@ function regularMateriaMelds(
   return [...unique.values()];
 }
 
-function toSolverEquipment(gear: MeldedGear): SolverGear {
+function toSolverEquipment(
+  gear: MeldedGear,
+  resistanceWeaponAdjust = gear.resistanceWeaponAdjust,
+): SolverGear {
   const baseParams = Object.entries(gear.finalStats)
     .flatMap(([key, value]) => {
       const index = attributeIndex.get(key as Stat);
@@ -259,7 +262,28 @@ function toSolverEquipment(gear: MeldedGear): SolverGear {
     PDMG: gear.finalStats.PDMG ?? 0,
     MDMG: gear.finalStats.MDMG ?? 0,
     DLY: gear.finalStats.DLY ?? 0,
+    ...(resistanceWeaponAdjust === undefined ? {} : { resistanceWeaponAdjust }),
   };
+}
+
+function resistanceAdjustmentForSearch(
+  gear: Gear,
+  finalStats: Stats,
+  jobLevel: number,
+  syncLevel?: number,
+) {
+  const adjustment = gear.resistanceWeaponAdjust;
+  if (adjustment === undefined) return undefined;
+  const effectiveLevel = effectiveGearSyncLevel(gear, jobLevel, syncLevel);
+  if (effectiveLevel === undefined) return adjustment;
+  const statMaximums = Object.fromEntries(adjustment.stats.map((stat) => [
+    stat,
+    Math.min(
+      adjustment.maxEachStat,
+      Math.max(0, statCapAtLevel(gear, stat, effectiveLevel) - (finalStats[stat] ?? 0)),
+    ),
+  ])) as Partial<Record<(typeof adjustment.stats)[number], number>>;
+  return { ...adjustment, statMaximums };
 }
 
 export function foodIdentity(food: SolverFood): string {
@@ -350,7 +374,9 @@ function makeGearCandidates(
     ...gear,
     stats: concretizeGearStats(gear.stats, job),
   };
-  const options = resolvedGear.customParameters?.length
+  const options = resolvedGear.resistanceWeaponAdjust !== undefined
+    ? [[]]
+    : resolvedGear.customParameters?.length
     ? customParameterMelds(resolvedGear)
     : regularMateriaMelds(resolvedGear, config.jobId, config, jobLevel);
   const candidates = new Map<string, GearCandidate>();
@@ -372,7 +398,15 @@ function makeGearCandidates(
       melds: melds.map((meld) => ({ ...meld })),
       finalStats,
     };
-    const equipment = toSolverEquipment(meldedGear);
+    const equipment = toSolverEquipment(
+      meldedGear,
+      resistanceAdjustmentForSearch(
+        resolvedGear,
+        finalStats,
+        jobLevel,
+        config.syncLevel,
+      ),
+    );
     const identity = equipmentIdentity(equipment);
     if (candidates.has(identity)) continue;
     candidates.set(identity, { equipment, gear: meldedGear });
@@ -462,6 +496,12 @@ export function candidatePools(
         config,
         gearsByIdentity,
       )) {
+        // The solver allocates these stats with bounded integer variables;
+        // comparing their zero-allocation base candidate would prune it away.
+        if (usePareto && candidate.gear.resistanceWeaponAdjust !== undefined) {
+          candidates.push(candidate);
+          continue;
+        }
         if (!usePareto) {
           candidates.push(candidate);
           continue;

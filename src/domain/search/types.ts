@@ -2,6 +2,11 @@
  * Solver-side equipment shape. `baseParamId` is an index in the attribute
  * vector supplied by the caller, not a Lumina BaseParam row ID.
  */
+import type {
+  CustomizableStat,
+  ResistanceWeaponAdjust,
+} from "../types.ts";
+
 export type ParamInfo = {
   baseParamId: number;
   value: number;
@@ -45,6 +50,16 @@ export type EquipInfo = {
   PDMG: number;
   MDMG: number;
   DLY: number;
+  resistanceWeaponAdjust?: ResistanceWeaponAdjust & {
+    /** Per-stat reduction caused by the active item-level sync cap. */
+    statMaximums?: Partial<Record<CustomizableStat, number>>;
+  };
+  /** Selected positive allocation values, attached only to a solved result. */
+  resistanceAllocation?: readonly {
+    stat: CustomizableStat;
+    baseParamId: number;
+    value: number;
+  }[];
 };
 
 /** A shared virtual slot projected from a full equipment candidate. */
