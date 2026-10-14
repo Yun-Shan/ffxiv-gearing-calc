@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import type { LinearMipProgress } from "../../../../../../../domain/search/linear-mip";
-import progressStyles from "../../../../../../components/search-progress/SearchWorkflowProgress.module.css";
+import progressStyles from "../../../../../../components/search-progress/SearchWorkflowProgress.module.scss";
 import type {
   JointSearchProgressJob,
   JointSearchProgressState,
   JointSearchStats,
 } from "../../JointSearchProgress";
-import styles from "./JointProgressPhaseDetail.module.css";
+import styles from "./JointProgressPhaseDetail.module.scss";
 
 type Metric = { label: string; value: string };
 

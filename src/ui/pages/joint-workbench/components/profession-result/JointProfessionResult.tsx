@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { jobSchemas, type JobId, type OptimizationResult } from "../../../../../domain/index";
-import styles from "./JointProfessionResult.module.css";
+import styles from "./JointProfessionResult.module.scss";
 
 export interface JointProfessionResultProps {
   jobId: JobId;

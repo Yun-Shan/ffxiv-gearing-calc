@@ -15,7 +15,7 @@ import { EquipmentRestrictionFields } from "./components/equipment-restriction-f
 import { CheckControl, NumberField, SelectField, SyncLevelField } from "../fields/fields";
 import type { SingleGcdFeasibility, WizardStep } from "../types";
 import type { SingleGcdMode } from "../../../services/types";
-import styles from "./JobConfigFields.module.css";
+import styles from "./JobConfigFields.module.scss";
 
 function setConfigPatch(
   setConfig: Dispatch<SetStateAction<OptimizationConfig>>,

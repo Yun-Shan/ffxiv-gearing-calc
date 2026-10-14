@@ -13,7 +13,7 @@ import { SingleConditionSummary } from "../../summary/single-condition-summary/S
 import { stringifyReferenceGearset } from "../../../../../services/reference-gearset-share";
 import { SingleJobResultView } from "../single-job-result-view/SingleJobResultView";
 import { GearTable } from "../../../../../components/results/gear-table/GearTable";
-import styles from "./SingleResultPanel.module.css";
+import styles from "./SingleResultPanel.module.scss";
 
 export function StatusPanel({
   running,

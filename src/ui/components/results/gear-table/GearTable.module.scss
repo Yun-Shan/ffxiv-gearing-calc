@@ -1,0 +1,155 @@
+@use "../../../../styles/tokens" as tokens;
+
+.tableWrapper,
+.table {
+  overflow-x: auto;
+}
+
+.table {
+  border-top: 2px solid #344842;
+}
+
+.header,
+.row,
+.foodRow {
+  display: grid;
+  grid-template-columns:
+    72px minmax(190px, 1.3fr) minmax(220px, 1.5fr) minmax(170px, 1fr)
+    minmax(160px, 1fr) 56px;
+  min-width: 970px;
+  gap: 16px;
+  align-items: center;
+}
+
+.header {
+  height: 36px;
+  padding: 0 15px;
+  color: var(--muted);
+  font:
+    #{tokens.$font-size-body} "Noto Sans SC",
+    sans-serif;
+  text-transform: uppercase;
+}
+
+.row,
+.foodRow {
+  min-height: 64px;
+  padding: 8px 15px;
+  border-top: 1px solid #e0e7e4;
+  font-size: tokens.$font-size-label;
+}
+
+.row:hover {
+  background: #edf3ed;
+}
+
+.foodRow {
+  border-top-color: #cbd8bc;
+  background: #f1f8f7;
+}
+
+.slotCell {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #566660;
+}
+
+.slotIcon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid #cad5d0;
+  background: #e5ebe8;
+  color: #657871;
+  font:
+    #{tokens.$font-size-compact} "Noto Sans SC",
+    sans-serif;
+  font-variant-numeric: normal;
+}
+
+.foodSlotIcon {
+  border-color: #c7d99a;
+  background: #e2efb7;
+  color: #6d8533;
+}
+
+.row > strong,
+.foodRow > strong {
+  overflow: visible;
+  color: #273a37;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.gearStats {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 4px 9px;
+}
+
+.gearStat {
+  color: #526861;
+  font-family: inherit;
+  font-size: tokens.$font-size-body;
+  font-variant-numeric: normal;
+  font-weight: 400;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.atCap {
+  color: #263e31;
+  font-weight: 800;
+}
+
+.melds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.meld {
+  padding: 4px 6px;
+  background: var(--accent-soft);
+  color: #176f70;
+  font:
+    #{tokens.$font-size-compact} "Noto Sans SC",
+    sans-serif;
+}
+
+.locked {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #a4ada8;
+  font-size: tokens.$font-size-11px;
+}
+
+.sourceText {
+  display: block;
+  overflow: visible;
+  color: var(--muted);
+  font:
+    #{tokens.$font-size-body} "Noto Sans SC",
+    sans-serif;
+  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.levelTag,
+.foodBonus {
+  color: var(--muted);
+  font:
+    #{tokens.$font-size-body} "Noto Sans SC",
+    sans-serif;
+}
+
+.header > span:nth-child(5) {
+  display: block;
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { SinglePageSidePanel } from "../../../../components/side-panel/SinglePageSidePanel";
-import styles from "../../../../components/search-progress/SearchWorkflowProgress.module.css";
+import styles from "../../../../components/search-progress/SearchWorkflowProgress.module.scss";
 
 export type SingleSearchPhase = "prepare" | "solve" | "verify";
 

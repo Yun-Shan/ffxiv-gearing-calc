@@ -1,0 +1,143 @@
+@use "../../../styles/tokens" as tokens;
+
+.root {
+  margin-top: 10px;
+  border-top: 1px solid var(--border, #dce4e8);
+  font-size: tokens.$font-size-body;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 0;
+  cursor: pointer;
+  color: #34515d;
+  font-weight: 600;
+}
+
+.summary::after {
+  content: "展开";
+  margin-left: auto;
+  font-size: tokens.$font-size-11px;
+  font-weight: 400;
+}
+
+.root[open] > .summary::after {
+  content: "收起";
+}
+.selectionHistory > .summary {
+  display: none;
+}
+.selectionHistory .content {
+  padding-top: 5px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.record {
+  position: relative;
+  padding: 8px 10px;
+  border: 1px solid #dce4e8;
+  border-radius: 6px;
+  background: #f8fafb;
+}
+
+.recordHeading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.recordHeading strong {
+  font-size: tokens.$font-size-body;
+  line-height: 1.5;
+}
+.status {
+  white-space: nowrap;
+  font-size: tokens.$font-size-11px;
+  color: #526a75;
+}
+
+.recordMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-size: tokens.$font-size-compact;
+  color: #637985;
+  margin: 3px 0;
+}
+
+.recordActions,
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.root button {
+  min-height: 26px;
+  padding: 3px 9px;
+  border: 1px solid #cbd9df;
+  border-radius: 4px;
+  color: #24665f;
+  background: white;
+  font-size: tokens.$font-size-11px;
+  cursor: pointer;
+}
+
+.root button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.recordNote,
+.recordError,
+.message,
+.error p {
+  margin: 5px 0;
+  font-size: tokens.$font-size-11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.recordError,
+.error {
+  color: #a83b3b;
+}
+
+.pagination {
+  margin-top: 7px;
+  justify-content: space-between;
+  font-size: tokens.$font-size-11px;
+}
+
+.retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+@media (max-width: 760px) {
+  .selectionHistory {
+    margin-top: 15px;
+  }
+}

@@ -1,6 +1,6 @@
 import { RotateCcw } from "lucide-react";
 import { SinglePageSidePanel } from "../../../../../components/side-panel/SinglePageSidePanel";
-import styles from "./JobSelectionSidebar.module.css";
+import styles from "./JobSelectionSidebar.module.scss";
 
 export function JobSelectionSidebar({
   dataVersion,

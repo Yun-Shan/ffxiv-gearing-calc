@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import styles from "./SinglePageSidePanel.module.css";
+import styles from "./SinglePageSidePanel.module.scss";
 
 export function SinglePageSidePanel({
   ariaLabel,

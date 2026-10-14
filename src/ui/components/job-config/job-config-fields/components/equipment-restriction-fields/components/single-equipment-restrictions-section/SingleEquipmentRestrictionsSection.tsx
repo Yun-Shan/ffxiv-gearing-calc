@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import styles from "./SingleEquipmentRestrictionsSection.module.css";
+import styles from "./SingleEquipmentRestrictionsSection.module.scss";
 
 export function SingleEquipmentRestrictionsSection({
   left,

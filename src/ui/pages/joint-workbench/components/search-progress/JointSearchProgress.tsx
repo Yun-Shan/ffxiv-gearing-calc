@@ -3,8 +3,8 @@ import type { JobId } from "../../../../../domain/types";
 import type { LinearMipProgress } from "../../../../../domain/search/linear-mip";
 import { SinglePageSidePanel } from "../../../../components/side-panel/SinglePageSidePanel";
 import { JointProgressPhaseDetail } from "./components/joint-progress-phase-detail/JointProgressPhaseDetail";
-import progressStyles from "../../../../components/search-progress/SearchWorkflowProgress.module.css";
-import styles from "./JointSearchProgress.module.css";
+import progressStyles from "../../../../components/search-progress/SearchWorkflowProgress.module.scss";
+import styles from "./JointSearchProgress.module.scss";
 
 export type JointSearchPhase = "prepare" | "baseline" | "joint" | "verify";
 

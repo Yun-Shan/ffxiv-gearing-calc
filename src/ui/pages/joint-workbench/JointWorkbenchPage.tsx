@@ -27,7 +27,7 @@ import { JobConfigFields } from "../../components/job-config/job-config-fields/J
 import { CheckControl } from "../../components/job-config/fields/fields";
 import { GearTable } from "../../components/results/gear-table/GearTable";
 import { gearSlotLabels, statName, statValue } from "../../services/labels";
-import styles from "./JointWorkbenchPage.module.css";
+import styles from "./JointWorkbenchPage.module.scss";
 import { displayedDataVersion, defaultCommonSlots, defaultJobLevel, makeConfig, type CommonSlot } from "../../services/app-config";
 import { searchMessageText } from "../../services/search-message";
 import { SearchHistory } from "../../components/search-history/SearchHistory";

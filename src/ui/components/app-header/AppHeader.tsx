@@ -1,4 +1,4 @@
-import styles from "./AppHeader.module.css";
+import styles from "./AppHeader.module.scss";
 
 export type AppPage = "single" | "joint";
 

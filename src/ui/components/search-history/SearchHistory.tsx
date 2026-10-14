@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Clock3, History, RefreshCw } from "lucide-react";
 import { jobSchemas } from "../../../domain/index";
-import styles from "./SearchHistory.module.css";
+import styles from "./SearchHistory.module.scss";
 import {
   listSearchHistory,
   type SearchHistoryKind,

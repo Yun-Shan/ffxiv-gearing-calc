@@ -14,7 +14,7 @@ import {
 import { defaultJobLevel } from "../../../services/app-config";
 import { gearSlotLabels, statName, statValue } from "../../../services/labels";
 import { SingleJobGearTable } from "./components/single-job-gear-table/SingleJobGearTable";
-import styles from "./GearTable.module.css";
+import styles from "./GearTable.module.scss";
 
 const slotLabels = gearSlotLabels;
 

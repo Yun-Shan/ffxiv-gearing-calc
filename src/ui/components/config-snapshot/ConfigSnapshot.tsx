@@ -1,5 +1,5 @@
 import { foods, getGearById, jobSchemas, type OptimizationConfig } from "../../../domain/index";
-import styles from "./ConfigSnapshot.module.css";
+import styles from "./ConfigSnapshot.module.scss";
 
 export function ConfigSnapshot({ config, onEdit }: {
   config: OptimizationConfig;

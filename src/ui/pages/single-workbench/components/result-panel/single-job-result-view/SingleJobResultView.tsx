@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Share2 } from "lucide-react";
 import type { OptimizationResult } from "../../../../../../domain/index";
 import { SinglePageSidePanel } from "../../../../../components/side-panel/SinglePageSidePanel";
-import styles from "./SingleJobResultView.module.css";
+import styles from "./SingleJobResultView.module.scss";
 
 export function SingleJobResultView({
   result,

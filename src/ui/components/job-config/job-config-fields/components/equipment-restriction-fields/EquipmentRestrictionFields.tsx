@@ -7,7 +7,7 @@ import { SingleEquipmentRestrictionsSection } from "./components/single-equipmen
 import { SearchableGearDropdown as SearchableDropdown, VirtualGearOptions } from "./components/searchable-gear-dropdown/SearchableGearDropdown";
 import { GearMark } from "./components/gear-mark/GearMark";
 import { CheckControl } from "../../../fields/fields";
-import styles from "./EquipmentRestrictionFields.module.css";
+import styles from "./EquipmentRestrictionFields.module.scss";
 
 export interface EquipmentRestrictionFieldsProps {
   config: OptimizationConfig;

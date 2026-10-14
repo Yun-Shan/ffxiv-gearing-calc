@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Play, RotateCcw } from "lucide-react";
 import { SinglePageSidePanel } from "../../../../../components/side-panel/SinglePageSidePanel";
-import styles from "./SingleWorkbenchSidebar.module.css";
+import styles from "./SingleWorkbenchSidebar.module.scss";
 
 export function SingleWorkbenchSidebar({
   summary,

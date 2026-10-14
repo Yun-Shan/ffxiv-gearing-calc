@@ -1,0 +1,45 @@
+// Compile-time counterparts of the existing CSS custom properties. Keeping
+// these values here lets SCSS share tokens while emitting the same CSS values.
+$color-text-primary: #2d3d31;
+$color-text-secondary: #5e6d5c;
+$color-text-subtle: #899187;
+$color-neutral-white: #fff;
+$color-surface-canvas: #f8f9f5;
+$color-surface-subtle: #eef2ea;
+$color-border-default: #dce3d7;
+$color-border-strong: #cbd5c7;
+$color-border-emphasis: #9eac98;
+$color-accent-teal: #087f80;
+$color-accent-teal-soft: #51c4bd;
+$color-accent-olive: #708e3c;
+$color-status-ready: #405540;
+$color-status-error: #a94350;
+
+$font-size-caption: 8px;
+$font-size-compact: 10px;
+$font-size-body: 12px;
+$font-size-label: 14px;
+$font-size-control: 16px;
+$font-size-heading: 18px;
+$font-size-display: 24px;
+
+// Exact sizes outside the shared scale, kept for existing UI details.
+$font-size-7px: 7px;
+$font-size-9px: 9px;
+$font-size-11px: 11px;
+$font-size-13px: 13px;
+$font-size-15px: 15px;
+$font-size-17px: 17px;
+$font-size-20px: 20px;
+$font-size-21px: 21px;
+$font-size-23px: 23px;
+$font-size-28px: 28px;
+$font-size-fluid-8-to-10: clamp(8px, calc(0.4167vw + 2px), 10px);
+$font-size-fluid-9-to-11: clamp(9px, calc(0.4167vw + 3px), 11px);
+$font-size-fluid-10-to-12: clamp(10px, calc(0.4167vw + 4px), 12px);
+$font-size-fluid-12-to-14: clamp(12px, calc(0.4167vw + 6px), 14px);
+
+$color-ink: #172b40;
+$color-muted: #596d80;
+$color-accent-soft: #edf8f7;
+$color-line: #dde5eb;

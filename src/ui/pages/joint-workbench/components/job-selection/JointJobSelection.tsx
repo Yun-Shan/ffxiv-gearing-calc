@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
 import { jobIds, jobSchemas } from "../../../../../domain/jobs";
 import type { JobId } from "../../../../../domain/types";
-import styles from "./JointJobSelection.module.css";
+import styles from "./JointJobSelection.module.scss";
 
 type JobGroupTone = "tank" | "healer" | "str" | "dex" | "int";
 

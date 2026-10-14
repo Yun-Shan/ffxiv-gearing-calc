@@ -1,5 +1,5 @@
 import { jobSchemas, type JobId, type JointOptimizationConfig, type JointOptimizationResult } from "../../../../../../../domain/index";
-import styles from "./JointResultsComparison.module.css";
+import styles from "./JointResultsComparison.module.scss";
 
 function formatScore(value: number | undefined): string {
   return value !== undefined && Number.isFinite(value) ? value.toFixed(7) : "—";

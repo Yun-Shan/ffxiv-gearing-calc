@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import styles from "./SingleWorkbenchMain.module.css";
+import styles from "./SingleWorkbenchMain.module.scss";
 
 export function SingleWorkbenchMain({
   roleLabel,

@@ -13,7 +13,7 @@ import type { LinearMipProgress } from "../../../domain/search/linear-mip";
 import { AppHeader } from "../../components/app-header/AppHeader";
 import { JobPicker } from "./components/job-selection/wizard-navigation/WizardNavigation";
 import { SingleWorkbenchLayout, SingleWorkbenchFlow } from "./components/layout/single-workbench-layout/SingleWorkbenchLayout";
-import styles from "./SingleWorkbenchPage.module.css";
+import styles from "./SingleWorkbenchPage.module.scss";
 import { SingleWorkbenchMain } from "./components/main/single-workbench-main/SingleWorkbenchMain";
 import { SingleWorkbenchSidebar } from "./components/sidebar/single-workbench-sidebar/SingleWorkbenchSidebar";
 import { SingleConditionSummary } from "./components/summary/single-condition-summary/SingleConditionSummary";

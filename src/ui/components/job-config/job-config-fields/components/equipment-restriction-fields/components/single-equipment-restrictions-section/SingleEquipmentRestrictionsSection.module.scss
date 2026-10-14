@@ -1,0 +1,298 @@
+@use "../../../../../../../../styles/tokens" as tokens;
+.section {
+  min-width: 0;
+  margin: 7px 0 0;
+  order: 4;
+}
+.title {
+  margin: 0 0 4px;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-label);
+  line-height: 1.25;
+}
+.columns {
+  display: grid;
+  height: 247px;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1.158fr) minmax(0, 1fr);
+  gap: 17px;
+  margin: 0;
+}
+.section :global(.single-restriction-column) {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+}
+.section :global(.single-restriction-editor-heading) {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+  padding-right: 8px;
+}
+.section :global(.single-restriction-column h3),
+.section :global(.single-restriction-editor h3) {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: tokens.$font-size-body;
+}
+.section :global(.single-restriction-editor-heading > span) {
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-compact);
+}
+.section :global(.single-restriction-editor + .single-restriction-editor) {
+  margin-top: 13px;
+  padding-top: 0;
+  border-top: 0;
+}
+.section :global(.single-restriction-column select) {
+  box-sizing: border-box;
+  min-width: 0;
+  height: 28px;
+  padding: 4px 9px;
+  border: 1px solid tokens.$color-border-strong;
+  border-radius: 3px;
+  background: tokens.$color-neutral-white;
+  color: #354a37;
+  font-size: tokens.$font-size-compact;
+}
+.section :global(.single-restriction-selected-list) {
+  height: 60px;
+  min-height: 60px;
+  max-height: 60px;
+  margin-top: 5px;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.section :global(.single-restriction-row) {
+  box-sizing: border-box;
+  display: grid;
+  align-items: center;
+  min-height: 20px;
+  height: 20px;
+  padding: 0 3px;
+  border-bottom: 1px solid var(--color-border-default);
+  background: var(--color-neutral-white);
+}
+.section :global(.single-restriction-row--source) {
+  grid-template-columns: minmax(0, 1fr) 24px;
+}
+.section :global(.single-restriction-row-main) {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+}
+.section :global(.single-restriction-row-name) {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-compact);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.section :global(.single-restriction-row-slot) {
+  overflow: hidden;
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-caption);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.section :global(.single-restriction-row-source) {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text-subtle);
+  font-size: var(--font-size-caption);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.section :global(.single-restriction-count) {
+  display: inline-flex;
+  flex: 0 0 34px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #eaf1ec;
+  color: var(--color-accent-olive);
+  font-size: var(--font-size-caption);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.section :global(.single-restriction-row--excluded) {
+  grid-template-columns: 54px 18px minmax(0, 196px) minmax(0, 1fr) 24px;
+  column-gap: 4px;
+}
+.section :global(.single-restriction-row--forced) {
+  display: flex;
+  padding-left: 8px;
+}
+.section :global(.single-restriction-row--forced .single-restriction-row-slot) {
+  flex: 0 0 90px;
+}
+.section :global(.single-restriction-row--forced > svg) {
+  flex: 0 0 18px;
+  margin-left: 24px;
+}
+.section :global(.single-restriction-row--forced .single-restriction-row-name) {
+  flex: 0 1 240px;
+  margin-left: 4px;
+}
+.section :global(.single-restriction-row--forced button) {
+  flex: 0 0 24px;
+  margin-left: 35px;
+}
+.section :global(.single-restriction-row > svg) {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+.section :global(.single-restriction-row button) {
+  display: grid;
+  width: 24px;
+  height: 20px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+.section :global(.single-restriction-row button:hover) {
+  background: #eef1e7;
+  color: #596735;
+}
+.section :global(.single-restriction-add) {
+  flex: 0 0 44px;
+  height: 28px;
+  padding: 0 5px;
+  border: 1px solid #85965d;
+  background: #edf1e5;
+  color: #53663a;
+  font-size: tokens.$font-size-compact;
+  font-weight: 700;
+}
+.section :global(.single-restriction-add:disabled) {
+  border-color: #d9dfd4;
+  background: #f3f5f0;
+  color: #a0a79a;
+  cursor: not-allowed;
+}
+.section :global(.single-forced-gear) {
+  padding: 0 0 0 17px;
+  border-left: 1px solid var(--color-border-default);
+}
+.section :global(.single-forced-gear .picker-row) {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 5px;
+}
+.section :global(.single-forced-gear-search) {
+  flex: 1 1 0;
+  width: 0;
+}
+.section :global(.single-forced-gear .picker-row select) {
+  flex: 0 0 106px;
+  height: 28px;
+  min-height: 28px;
+  padding: 3px 10px;
+}
+.section :global(.single-forced-gear .picker-row .single-restriction-add) {
+  flex: 0 0 62px;
+  height: 28px;
+  min-height: 28px;
+  padding: 0 5px;
+  font-size: tokens.$font-size-compact;
+}
+.section :global(.single-forced-gear .single-restriction-suggestions) {
+  max-height: 140px;
+}
+.section :global(.single-forced-gear .single-restriction-option-list),
+.section :global(.single-forced-gear .single-restriction-selected-list) {
+  max-height: 116px;
+}
+
+@media (min-width: 1600px) {
+  .section {
+    margin-top: 17px;
+  }
+  .title {
+    margin-bottom: 16px;
+    font-size: tokens.$font-size-17px;
+    line-height: 26px;
+  }
+  .columns {
+    height: 375px;
+    grid-template-columns: minmax(0, 1.158fr) minmax(0, 1fr);
+    gap: 22px;
+  }
+  .section :global(.single-restriction-editor-heading) {
+    min-height: 23px;
+    margin-bottom: 7px;
+  }
+  .section :global(.single-restriction-selected-list) {
+    height: 90px;
+    min-height: 90px;
+    max-height: 90px;
+    margin-top: 10px;
+  }
+  .section :global(.single-restriction-row) {
+    height: 30px;
+    min-height: 30px;
+  }
+  .section :global(.single-restriction-row button) {
+    height: 30px;
+  }
+  .section :global(.single-restriction-editor + .single-restriction-editor) {
+    margin-top: 41px;
+  }
+  .section
+    :global(
+      .single-restriction-editor
+        + .single-restriction-editor
+        .single-restriction-selected-list
+    ) {
+    margin-top: 10px;
+  }
+  .section :global(.single-forced-gear) {
+    padding-left: 23px;
+  }
+  .section :global(.single-forced-gear .picker-row) {
+    gap: 6px;
+  }
+  .section :global(.single-forced-gear .picker-row select) {
+    flex-basis: 78px;
+    height: 36px;
+    min-height: 36px;
+  }
+  .section :global(.single-forced-gear .picker-row .single-restriction-add) {
+    flex-basis: 58px;
+    height: 36px;
+    min-height: 36px;
+  }
+}
+
+@media (max-width: 1199px) {
+  .columns {
+    height: auto;
+    min-height: 247px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 760px) {
+  .section :global(.single-forced-gear) {
+    padding: 12px 0 0;
+    border-top: 1px solid tokens.$color-border-default;
+    border-left: 0;
+  }
+  .section :global(.single-forced-gear .picker-row select) {
+    flex-basis: 82px;
+  }
+  .section :global(.single-forced-gear .picker-row .single-restriction-add) {
+    flex-basis: 58px;
+  }
+}

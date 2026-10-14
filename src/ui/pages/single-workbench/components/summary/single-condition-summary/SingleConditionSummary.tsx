@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { foods, getGearById, jobSchemas, type Gear, type GearSlot, type OptimizationConfig, type OptimizationResult } from "../../../../../../domain/index";
 import type { SingleGcdMode } from "../../../../../services/types";
 import { gearSlotLabels } from "../../../../../services/labels";
-import styles from "./SingleConditionSummary.module.css";
+import styles from "./SingleConditionSummary.module.scss";
 
 type SingleSummaryView = "workbench" | "progress" | "result";
 

@@ -1,0 +1,343 @@
+@use "../../../../../../styles/tokens" as tokens;
+
+.progress {
+  display: flex;
+  gap: 0;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.progressSegment {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.progressItem {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 60px;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: #617083;
+  font-size: tokens.$font-size-body;
+}
+
+.progressNode {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8edf2;
+  font-size: tokens.$font-size-13px;
+  font-weight: 700;
+}
+
+.progressLabel {
+  line-height: normal;
+}
+
+.progressConnector {
+  position: absolute;
+  top: 13px;
+  left: calc(50% + 24px);
+  width: calc(100% - 48px);
+  height: 1px;
+  background: #cddfe6;
+}
+
+.current {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.current .progressNode {
+  background: #2bb8b2;
+  color: tokens.$color-neutral-white;
+}
+
+.complete .progressNode {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.progressConnector.complete {
+  background: #75bdbc;
+}
+
+.locked:disabled {
+  cursor: default;
+}
+
+.wizardAside {
+  min-width: 0;
+  border-left: 1px solid var(--line);
+  padding: 24px 22px;
+  background: #f9fcfd url("/assets/wizard-atmosphere.png") right bottom / 100%
+    auto no-repeat;
+}
+
+.wizardAside h2 {
+  margin: 0 0 8px;
+  font-size: tokens.$font-size-heading;
+}
+
+.instructionRail {
+  display: grid;
+  gap: 0;
+  margin-top: 0;
+}
+
+.instructionRail > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: tokens.$font-size-label;
+  line-height: 1.8;
+}
+
+.instructionSteps {
+  display: grid;
+  gap: 18px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.instructionStep {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 10px;
+}
+
+.instructionStepNumber {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e4eaf0;
+  font-weight: 700;
+}
+
+.instructionStep strong {
+  display: block;
+  margin: 1px 0 4px;
+  font-size: tokens.$font-size-label;
+}
+
+.instructionStep p {
+  margin: 0;
+  color: var(--muted);
+  font-size: tokens.$font-size-body;
+  line-height: 1.55;
+}
+
+.instructionStep.current .instructionStepNumber {
+  background: var(--accent);
+  color: tokens.$color-neutral-white;
+}
+
+.instructionStep.current strong {
+  color: var(--accent);
+}
+
+.jobGroups {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+}
+
+.jobGroup {
+  box-sizing: border-box;
+  display: grid;
+  height: 52px;
+  min-width: 0;
+  grid-template-columns: 144px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  margin: 0;
+  padding: 0 24px 0 8px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--job-tint, #f3f7f6);
+}
+
+.jobGroup[data-role="tank"] {
+  --job-tint: #e8f0f7;
+  --job-color: #637d69;
+}
+.jobGroup[data-role="healer"] {
+  --job-tint: #eaf2e6;
+  --job-color: #758a59;
+}
+.jobGroup[data-role="str"] {
+  --job-tint: #f5eae5;
+  --job-color: #997354;
+}
+.jobGroup[data-role="dex"] {
+  --job-tint: #f6f0e4;
+  --job-color: #8a7951;
+}
+.jobGroup[data-role="int"] {
+  --job-tint: #f0ecf5;
+  --job-color: #7b6d92;
+}
+.jobGroup[data-role="limited"] {
+  --job-tint: #e7f1ef;
+  --job-color: #638781;
+}
+
+.jobGroupTitle {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: #354a37;
+  font-size: tokens.$font-size-13px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.jobCards {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.jobCard {
+  box-sizing: border-box;
+  display: inline-flex;
+  width: 114px;
+  min-width: 0;
+  min-height: 36px;
+  flex: 0 0 114px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 3px 7px;
+  border: 1px solid #b7aa8a;
+  border-radius: 9px;
+  background: rgb(255 255 255 / 62%);
+  color: #354a37;
+  font-size: tokens.$font-size-13px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.jobCard:hover {
+  border-color: var(--job-color, tokens.$color-accent-olive);
+  background: tokens.$color-neutral-white;
+}
+
+.jobCard.selected {
+  border-color: var(--job-color, #518e89);
+  background: tokens.$color-neutral-white;
+  box-shadow: 0 0 0 1px var(--job-color, #518e89);
+  color: #245e5b;
+}
+
+.jobCardBadge {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border-radius: 7px;
+  background: #eef2e8;
+  color: var(--job-color, #4f8d87);
+  font-size: tokens.$font-size-7px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.jobCardName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (min-width: 1600px) {
+  .jobGroup {
+    grid-template-columns: 164px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 900px) and (min-width: 761px) {
+  .jobGroup {
+    grid-template-columns: 78px minmax(0, 1fr);
+    gap: 6px;
+  }
+  .jobGroupTitle {
+    padding-left: 6px;
+    font-size: tokens.$font-size-11px;
+  }
+  .jobCard {
+    padding-right: 7px;
+    font-size: tokens.$font-size-11px;
+  }
+}
+
+@media (max-width: 760px) {
+  .progress {
+    margin-bottom: 22px;
+  }
+  .progressItem {
+    gap: 8px;
+    font-size: tokens.$font-size-11px;
+    line-height: 1.6;
+  }
+  .progressNode {
+    width: 28px;
+    height: 28px;
+  }
+  .progressConnector {
+    top: 14px;
+  }
+  .wizardAside {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+    padding: 26px 20px;
+    background-size: 300px auto;
+  }
+  .wizardAside h2 {
+    font-size: tokens.$font-size-20px;
+  }
+  .jobGroup {
+    grid-template-columns: 84px minmax(0, 1fr);
+  }
+  .jobGroupTitle {
+    font-size: tokens.$font-size-11px;
+  }
+  .jobCard {
+    min-height: 34px;
+    padding-right: 8px;
+    font-size: tokens.$font-size-11px;
+  }
+}
+
+@media (min-width: 761px) {
+  .progressItem {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 1439px) {
+  .jobGroup {
+    height: auto;
+    min-height: 52px;
+    padding-block: 8px;
+  }
+}

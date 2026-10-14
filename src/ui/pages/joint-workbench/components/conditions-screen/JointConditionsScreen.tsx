@@ -3,7 +3,7 @@ import { ArrowLeft, Play } from "lucide-react";
 import type { JointSearchSummary } from "../search-progress/JointSearchProgress";
 import { jobSchemas } from "../../../../../domain/index";
 import type { JobId } from "../../../../../domain/types";
-import styles from "./JointConditionsScreen.module.css";
+import styles from "./JointConditionsScreen.module.scss";
 
 interface ProfessionEditor {
   jobId: JobId;

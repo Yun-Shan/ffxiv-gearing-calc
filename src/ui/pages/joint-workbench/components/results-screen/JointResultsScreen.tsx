@@ -6,7 +6,7 @@ import {
 } from "../../../../../domain/index";
 import { JointResultsComparison } from "./components/results-comparison/JointResultsComparison";
 import { commonSlotLabels } from "../common-gear-section/JointCommonGearSection";
-import styles from "./JointResultsScreen.module.css";
+import styles from "./JointResultsScreen.module.scss";
 
 export interface JointResultsScreenProps {
   result: JointOptimizationResult;

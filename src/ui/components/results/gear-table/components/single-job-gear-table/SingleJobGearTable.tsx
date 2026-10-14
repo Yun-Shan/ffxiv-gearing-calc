@@ -1,5 +1,5 @@
 import type { Gear, GearSlot, OptimizationResult, Stat } from "../../../../../../domain/index";
-import styles from "./SingleJobGearTable.module.css";
+import styles from "./SingleJobGearTable.module.scss";
 
 const displaySlots: GearSlot[] = [
   "weapon", "offhand", "head", "body", "hands", "legs", "feet",

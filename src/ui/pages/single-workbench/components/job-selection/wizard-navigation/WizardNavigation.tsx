@@ -2,7 +2,7 @@ import { Check } from "lucide-react";
 import { jobIds, jobSchemas } from "../../../../../../domain/index";
 import type { JobId } from "../../../../../../domain/index";
 import type { WizardStep } from "../../../../../components/job-config/types";
-import styles from "./WizardNavigation.module.css";
+import styles from "./WizardNavigation.module.scss";
 
 export type { WizardStep } from "../../../../../components/job-config/types";
 

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import styles from "./SingleWorkbenchLayout.module.css";
+import styles from "./SingleWorkbenchLayout.module.scss";
 
 export function SingleWorkbenchLayout({
   main,

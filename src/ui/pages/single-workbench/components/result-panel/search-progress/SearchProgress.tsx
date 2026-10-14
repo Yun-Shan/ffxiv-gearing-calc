@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "./SearchProgress.module.css";
+import styles from "./SearchProgress.module.scss";
 
 /** Phase and elapsed-time estimates never assert a known total search space. */
 export function SearchProgress({ message }: { message: string }) {

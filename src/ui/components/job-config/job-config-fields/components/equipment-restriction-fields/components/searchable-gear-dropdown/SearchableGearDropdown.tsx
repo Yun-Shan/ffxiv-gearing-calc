@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import type { CSSProperties, ReactNode } from "react";
 import type { Gear, GearSlot } from "../../../../../../../../domain/index";
 import { GearMark } from "../gear-mark/GearMark";
-import styles from "./SearchableGearDropdown.module.css";
+import styles from "./SearchableGearDropdown.module.scss";
 
 export function SearchableGearDropdown({
   label,

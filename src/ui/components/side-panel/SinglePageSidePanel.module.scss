@@ -1,0 +1,14 @@
+@use "../../../styles/tokens" as tokens;
+.root {
+  box-sizing: border-box;
+  border-top: 3px solid var(--color-illustration-sage, #81914b);
+  background-color: tokens.$color-surface-canvas;
+  background-image:
+    linear-gradient(rgb(248 249 245 / 75%), rgb(248 249 245 / 75%)),
+    url("/assets/wizard-atmosphere.png");
+  background-position:
+    center,
+    right bottom;
+  background-size: cover, cover;
+  background-repeat: no-repeat;
+}

@@ -4,9 +4,13 @@
 
 ## 项目定位
 
-本项目是一个使用 React、Radix UI 和 TypeScript 开发的纯前端 FFXIV 自动配装优化器，编译目标为 ESNext。业务规则集中在 `src/domain`，以便后续将其独立导出为通用逻辑库。
+本项目是一个使用 React、Base UI 和 TypeScript 开发的纯前端 FFXIV 自动配装优化器，编译目标为 ESNext。业务规则集中在 `src/domain`，以便后续将其独立导出为通用逻辑库。
 
-修改项目行为前必须阅读：
+## Base UI 文档参考
+
+- 代理新增或修改 Base UI 用法前，先参考官方面向 AI 的文档索引 [`https://base-ui.com/llms.txt`](https://base-ui.com/llms.txt)，并按需打开其中对应的组件文档核对 API。
+
+## 修改项目行为前必须阅读：
 
 1. `自动配装优化项目设计方案.md`：项目的目标设计。
 2. `docs/PROJECT_RULES.md`：已实现规则、已知问题和当前边界。
@@ -62,7 +66,7 @@
 
 ## 架构要求
 
-- 禁止将 React 或 Radix UI 相关代码放入 `src/domain`。
+- 禁止将 React 或 Base UI 相关代码放入 `src/domain`。
 - 除模块加载时的严格数据校验外，领域函数应保持确定性、无副作用。
 - 优先扩展现有领域类型和纯函数，禁止在 UI 组件中重复实现游戏公式。
 - 上游数据解析必须放在 `scripts/update-data.mjs`。生成的 JSON 是运行时产物，不是人工维护的数据源。

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AppHeader, type AppPage } from "../components/app-header/AppHeader";
 import { JointWorkbenchPage } from "../pages/joint-workbench/JointWorkbenchPage";
 import { SingleWorkbenchPage } from "../pages/single-workbench/SingleWorkbenchPage";
-import styles from "./App.module.css";
+import styles from "./App.module.scss";
 
 function currentPage(): AppPage {
   return window.location.hash === "#/joint" ? "joint" : "single";
