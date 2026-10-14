@@ -2,7 +2,7 @@ import type { EquipInfo, ParamInfo } from "./types.ts";
 
 export type RingPairEquipInfo = EquipInfo & {
   ringEquips: readonly [EquipInfo, EquipInfo];
-  /** Complete itemId-to-uniqueness metadata for the ring candidate pool. */
+  /** 戒指候选池中完整的物品 ID 到唯一性元数据映射。 */
   ringUniqueByItemId?: readonly (readonly [number, boolean])[];
 };
 

@@ -1,4 +1,4 @@
-import { jobIds, jobSchemas } from "../../domain/index";
+import { jobIds, jobSchemas } from "@/domain";
 import { statNames } from "./labels";
 
 export function searchMessageText(message: string): string {

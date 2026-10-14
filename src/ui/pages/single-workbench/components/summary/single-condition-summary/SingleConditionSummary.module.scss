@@ -1,4 +1,4 @@
-@use "../../../../../../styles/tokens" as tokens;
+@use "@/styles/tokens" as tokens;
 .root {
   min-width: 0;
   color: var(--color-text-primary);
@@ -319,7 +319,6 @@
 .progress .popoverTrigger strong,
 .result .popoverTrigger strong {
   justify-self: start;
-  margin: 0;
   color: #64734c;
   font-size: tokens.$font-size-9px;
   text-align: left;

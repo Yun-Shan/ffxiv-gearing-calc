@@ -30,8 +30,8 @@ describe("optimizer with imported game data", () => {
   });
 
   it("honors a real forced gear id", async () => {
-    // 排除自定义参数武器以保持 melds 数量断言的稳定性；
-    // 自定义参数武器单独由 "generates 12 combinations for custom parameter weapons" 用例覆盖。
+    // 排除自定义参数武器，避免影响镶嵌列表数量断言；
+    // 自定义参数武器的 12 种组合由单独用例覆盖。
     const weapon = gearOptionsFor(base, "weapon")
       .find((gear) => gear.materiaSlots > 0 && !gear.customParameters)!;
     const result = (await optimize({ ...base, forcedGear: { weapon: weapon.id } }));
@@ -46,7 +46,7 @@ describe("optimizer with imported game data", () => {
   });
 
   it("generates 12 combinations for custom parameter weapons", async () => {
-    // 上游游戏机制：4 槽中选 1 small + 2 big + 1 空槽，每个槽至多被选一次。
+    // 上游游戏机制：4 个槽中选 1 个小值、2 个大值和 1 个空槽，每个槽至多选一次。
     // 候选数 C(4,1) × C(3,2) = 4 × 3 = 12。
     const weapons = gearOptionsFor(base, "weapon")
       .filter((gear) => gear.customParameters && gear.customParameters.length === 4);
@@ -56,7 +56,7 @@ describe("optimizer with imported game data", () => {
     expect(result).toBeDefined();
     expect(result!.gear[0].id).toBe(custom.id);
     expect(result!.gear[0].melds).toHaveLength(3);
-    // 每个槽至多出现一次：bigValue 出现 2 次，smallValue 出现 1 次。
+    // 每个槽至多出现一次：大值出现 2 次，小值出现 1 次。
     const slots = custom.customParameters!;
     let bigCount = 0;
     let smallCount = 0;
@@ -136,9 +136,9 @@ describe("optimizer with imported game data", () => {
 
   // 用户参考配装（黑魔法士 7.55）：总冠军咒杖 + 改良型王国黄铜咏咒系列 + 焦糖爆米花☆，
   // 每威力伤害期望 = 131.75160。
-  // 自定义参数武器上游规则改为「2 big + 1 small + 1 空槽」(2026-09 用户确认)后，
-  // 优化器仍然走幻境咒杖·秘影(custom)路径，得分上移到 132.4391；总分仍高于参考配装。
-  // 这里断言 score > 132 来锁住新规则下可达的最高 2.45 GCD 期望。
+  // 自定义参数武器上游规则改为「2 个大值、1 个小值和 1 个空槽」（2026-09 用户确认）后，
+  // 优化器仍使用幻境咒杖·秘影的自定义参数路径，得分上升至 132.4391；总分仍高于参考配装。
+  // 这里断言 score > 132，以锁定新规则下可达的最高 2.45 GCD 期望。
   it("keeps the known BLM 2.45 reference damage reachable under the 2+1+empty custom-weapon rule", async () => {
     const result = (await optimize({
       ...base,
@@ -173,7 +173,7 @@ describe("optimizer with imported game data", () => {
     if (!weapon.customParameters) {
       expect(gcdResult?.gear[0].melds).toHaveLength(weapon.materiaAdvanced ? 5 : weapon.materiaSlots);
     } else {
-      // 自定义参数武器按上游 2 big + 1 small + 1 空槽生成候选，melds 长度为 3。
+      // 自定义参数武器按上游规则以 2 个大值、1 个小值和 1 个空槽生成候选，魔晶石列表长度为 3。
       expect(gcdResult?.gear[0].melds).toHaveLength(3);
     }
     expect((await findFeasibleGcds({ ...base, foodId: -1 }))).toEqual([]);

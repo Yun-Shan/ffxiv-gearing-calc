@@ -1,125 +1,83 @@
-@use "../../../styles/tokens" as tokens;
+@use "@/styles/tokens" as tokens;
 
-.selectionLayout {
+.layout {
   box-sizing: border-box;
-  display: grid;
+  display: flex;
   width: 100%;
   max-width: 1920px;
-  height: 100%;
+  height: calc(100vh - 72px);
   min-height: 0;
-  grid-template-columns: minmax(0, 1fr) clamp(308px, 18.75vw, 360px);
-  gap: 24px;
+  align-items: stretch;
+  gap: clamp(41px, calc(29.8vw - 388px), 184px);
   margin: 0 auto;
+  padding: 0 0 0 clamp(41px, calc(29.8vw - 388px), 184px);
   overflow: hidden;
-}
-
-.jobSelection {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 960px;
-  min-width: 0;
-  margin: 0 auto;
-  padding: 8px 0 18px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-
-.jobSelection::-webkit-scrollbar {
-  display: none;
-}
-
-.selectionHeading {
-  margin-bottom: 13px;
-}
-
-.selectionHeading h1 {
-  margin: 0;
-  color: #354a37;
-  font-size: tokens.$font-size-display;
-  font-weight: 700;
-  line-height: 31px;
-}
-
-.sectionKicker {
-  margin: 0 0 2px;
-  color: tokens.$color-accent-olive;
-  font-size: tokens.$font-size-11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 15px;
-}
-
-.configWarning {
-  margin: 12px 0;
-  padding: 13px;
-  border: 1px solid #c99752;
-  background: #fff8e9;
-  color: #674b22;
-}
-
-.configWarning strong {
-  font-size: tokens.$font-size-13px;
-}
-
-.configWarning p {
-  margin: 5px 0 10px;
-  font-size: tokens.$font-size-body;
-}
-
-.configWarning > div {
-  display: flex;
-  gap: 8px;
-}
-
-.configWarning button {
-  min-height: 34px;
-  padding: 6px 12px;
-  border: 1px solid #c8b185;
   background: tokens.$color-neutral-white;
-  color: #5f4a2b;
 }
 
-.gcdError {
-  color: #994b32;
-  font-size: tokens.$font-size-body;
-}
-
-@media (min-width: 1600px) {
-  .selectionHeading {
-    margin-bottom: 25.5px;
+@media (max-width: 1439px) {
+  .layout {
+    display: grid;
+    height: calc(100vh - 72px);
+    max-width: 1520px;
+    grid-template-columns: minmax(0, 1fr) 306px;
+    gap: 17px;
+    padding: 0 22px;
   }
 }
 
-@media (max-width: 900px) and (min-width: 761px) {
-  .selectionLayout {
-    grid-template-columns: minmax(0, 1fr) 280px;
-    gap: 16px;
-  }
-  .jobSelection {
-    padding-inline: 14px;
+@media (max-width: 1199px) {
+  .layout {
+    display: flex;
+    height: auto;
+    min-height: calc(100vh - 60px);
+    flex-direction: column;
+    gap: 18px;
+    padding: 18px 22px 24px;
+    overflow: visible;
   }
 }
 
 @media (max-width: 760px) {
-  .selectionLayout {
-    display: flex;
-    height: auto;
-    min-height: calc(100svh - 104px);
-    flex-direction: column;
-    gap: 20px;
-    overflow: visible;
+  .layout {
+    min-height: calc(100vh - 104px);
+    gap: 16px;
+    padding: 18px 16px 20px;
   }
+}
 
-  .jobSelection {
+@media (min-width: 1440px) {
+  .layout[data-result-view="true"],
+  .layout[data-progress-view="true"] {
     max-width: none;
-    padding: 24px 16px 0;
-    overflow: visible;
   }
-  .selectionHeading {
-    margin-bottom: 18px;
+  .layout[data-result-view="true"] {
+    gap: clamp(46px, calc(9.5833vw - 92px), 92px);
+    padding: 0;
+    background: #f4f6f3;
   }
-  .selectionHeading h1 {
-    font-size: tokens.$font-size-23px;
+  .layout[data-progress-view="true"] > :first-child {
+    flex: 0 1 clamp(1052px, calc(29.1667vw + 632px), 1192px);
+    width: clamp(1052px, calc(29.1667vw + 632px), 1192px);
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1439px) {
+  .layout[data-result-view="true"] {
+    gap: 24px;
+    padding: 0;
+  }
+}
+
+@media (max-width: 1439px) {
+  .layout[data-progress-view="true"] > :first-child {
+    flex: 1 1 auto;
+    width: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .layout[data-progress-view="true"] > :first-child {
+    padding-top: 0;
   }
 }

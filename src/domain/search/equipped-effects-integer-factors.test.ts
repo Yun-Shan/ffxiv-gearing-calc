@@ -43,7 +43,7 @@ for (const job of ["RDM", "BLU"] as Job[]) {
       TEN: 190,
       SPS: 210,
     });
-    // Simulate food already applied by the caller (the evaluator's contract).
+    // 模拟调用方已应用食物属性的情况（这是求值器的约定）。
     contributions[indexes.get("CRT")!] += 125;
     contributions[indexes.get("INT")!] += 80;
     const factors = createIntegerDamageFactorEvaluator(job, 100, indexes)(contributions);

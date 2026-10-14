@@ -9,7 +9,7 @@ import {
   type JointOptimizationConfig,
   type JointOptimizationResult,
   type OptimizationConfig,
-} from "../../../domain/index";
+} from "@/domain";
 import type {
   JointSearchPhase,
   JointSearchProgressState,
@@ -22,17 +22,17 @@ import { JointJobSelection } from "./components/job-selection/JointJobSelection"
 import { JointResultsScreen } from "./components/results-screen/JointResultsScreen";
 import { JointCommonGearSection, commonSlotLabels } from "./components/common-gear-section/JointCommonGearSection";
 import { JointProfessionResult } from "./components/profession-result/JointProfessionResult";
-import { ConfigSnapshot } from "../../components/config-snapshot/ConfigSnapshot";
-import { JobConfigFields } from "../../components/job-config/job-config-fields/JobConfigFields";
-import { CheckControl } from "../../components/job-config/fields/fields";
-import { GearTable } from "../../components/results/gear-table/GearTable";
-import { gearSlotLabels, statName, statValue } from "../../services/labels";
+import { ConfigSnapshot } from "@/ui/components/config-snapshot/ConfigSnapshot";
+import { JobConfigFields } from "@/ui/components/job-config/job-config-fields/JobConfigFields";
+import { CheckControl } from "@/ui/components/job-config/fields/fields";
+import { GearTable } from "@/ui/components/results/gear-table/GearTable";
+import { gearSlotLabels, statName, statValue } from "@/ui/services/labels";
 import styles from "./JointWorkbenchPage.module.scss";
-import { displayedDataVersion, defaultCommonSlots, defaultJobLevel, makeConfig, type CommonSlot } from "../../services/app-config";
-import { searchMessageText } from "../../services/search-message";
-import { SearchHistory } from "../../components/search-history/SearchHistory";
-import { createSearchHistory, finishSearchHistory } from "../../services/search-history";
-import type { SearchHistoryRecord } from "../../services/search-history";
+import { displayedDataVersion, defaultCommonSlots, defaultJobLevel, makeConfig, type CommonSlot } from "@/ui/services/app-config";
+import { searchMessageText } from "@/ui/services/search-message";
+import { SearchHistory } from "@/ui/components/search-history/SearchHistory";
+import { createSearchHistory, finishSearchHistory } from "@/ui/services/search-history";
+import type { SearchHistoryRecord } from "@/ui/services/search-history";
 
 type JointView = "selection" | "conditions" | "progress" | "result";
 const slotLabels = gearSlotLabels;
@@ -114,12 +114,13 @@ function jointProgressSummary(config: JointOptimizationConfig): JointSearchSumma
       if (job.maximizeTenacity) details.push({ label: "坚韧目标", value: "尽可能提高" });
       return { jobId: job.jobId, name: schema.name, details };
     }),
-    objective: config.objective === "dps" ? "按 GCD 折算" : "每威力伤害期望",
+    objective: ({ damage: "每威力伤害期望", dps: "按 GCD 折算" } as const)[config.objective!],
     commonSlots: config.commonSlots.map((slot) => slot === "rings" ? "两个戒指" : slotLabels[slot]),
     foodStrategy: config.foodStrategy === "shared" ? "所有职业共用" : "各职业独立选择",
   };
 }
 function parseJointProgressStats(message: string): Partial<JointSearchStats> {
+  // 求解器进度目前以文本回调传递；只提取已知字段，未出现的指标保持未设置。
   const stats: Partial<JointSearchStats> = {};
   const parseNumber = (pattern: RegExp): number | undefined => {
     const value = pattern.exec(message)?.[1]?.replaceAll(",", "");
@@ -203,6 +204,7 @@ export function JointWorkbenchPage() {
   const stale = result !== undefined && resultKey !== currentKey;
   const slotOptions = useMemo(() => {
     if (!jobList.length) return [];
+    // 共享部位必须是所选每个职业都能装备的部位，因此逐个求交集。
     const supported = new Set(slotsForJob(jobList[0]));
     for (const jobId of jobList.slice(1)) {
       const current = new Set(slotsForJob(jobId));
@@ -225,6 +227,7 @@ export function JointWorkbenchPage() {
       ? jobList.filter((item) => item !== jobId)
       : [...jobList, jobId];
     const nextRole = nextJobs[0] ? jobSchemas[nextJobs[0]].role : undefined;
+    // 联合搜索只允许同一职业分组，避免组合不同角色的职业配置。
     if (nextRole && nextJobs.some((item) => jobSchemas[item].role !== nextRole)) {
       setSelectionMessage("联合搜索要求选择同一分组的职业；请先取消当前选择，再选择其他分组。");
       return;
@@ -253,10 +256,6 @@ export function JointWorkbenchPage() {
 
   function loadJointHistoryConfig(record: SearchHistoryRecord) {
     if (record.kind !== "joint") return false;
-    if (record.config.commonSlots.includes("rings")) {
-      setError("该记录使用当前界面不支持的合并戒指共享方式，无法载入。");
-      return false;
-    }
     const previous = abortController.current;
     abortController.current = undefined;
     previous?.abort();
@@ -265,9 +264,9 @@ export function JointWorkbenchPage() {
     setActiveConfigSnapshot(undefined);
     setJobList(record.config.jobs.map((config) => config.jobId));
     setJobConfigs(Object.fromEntries(record.config.jobs.map((config) => [config.jobId, config])));
-    setCommonSlots(record.config.commonSlots.filter((slot): slot is CommonSlot => slot !== "rings"));
+    setCommonSlots(record.config.commonSlots as CommonSlot[]);
     setFoodStrategy(record.config.foodStrategy);
-    setObjective(record.config.objective ?? "damage");
+    setObjective(record.config.objective!);
     setResult(undefined);
     setResultConfig(undefined);
     setResultKey(undefined);
@@ -301,6 +300,7 @@ export function JointWorkbenchPage() {
     }
     abortController.current?.abort();
     const controller = new AbortController();
+    // 搜索使用独立配置快照，后续编辑页面条件不会改变正在运行的任务。
     const searchConfig = cloneJointConfig(currentConfig);
     abortController.current = controller;
     setRunning(true);
@@ -327,6 +327,7 @@ export function JointWorkbenchPage() {
       historyId = record.id;
       setHistoryRefresh((value) => value + 1);
       if (controller.signal.aborted) throw new Error("联合搜索已取消。");
+      // 身份检查会忽略被取消或被后续搜索取代的旧任务回调。
       const searchResult = await optimizeJoint(searchConfig, {
         signal: controller.signal,
         onProgress: (message) => {
@@ -371,6 +372,7 @@ export function JointWorkbenchPage() {
                 : event;
               return { ...current, phase: "joint", jointSolver };
             }
+            // 联合搜索或核验阶段已开始时，忽略迟到的单职业基线事件。
             if (current.phase === "joint" || current.phase === "verify") return current;
             const job = current.jobs.find(({ jobId }) => event.model.startsWith(`${jobId}:`));
             if (!job) return current;

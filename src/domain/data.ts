@@ -1,4 +1,4 @@
-import { decodeGeneratedData } from "../data/binary-format.mjs";
+import { decodeGeneratedData } from "@/data/binary-format.mjs";
 import type {
   DataProvenance,
   Food,
@@ -89,7 +89,7 @@ export const materiaStats = Object.keys(
 ) as Materia["stat"][];
 export const materiaGradeRequiredLevels = gameData.materiaGradeRequiredLevels;
 
-// The value comes directly from the strongest grade in the upstream materia table.
+// 数值直接取自上游魔晶石表中等级最高的一档。
 export const materiaValues = Object.fromEntries(
   materiaStats.map((stat) => {
     const values = gameData.materias[stat];

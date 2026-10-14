@@ -1,7 +1,7 @@
 export interface ResourceBudgetFactorClass {
-  /** Minimum gear-plus-food attribute contribution represented by this class. */
+  /** 此档位代表的最低装备与食物属性贡献。 */
   min: number;
-  /** Integer log-score contribution; DPS GCD classes use the negative log score. */
+  /** 整数对数得分贡献；DPS 的 GCD 档位使用对数得分的相反数。 */
   score: number;
 }
 
@@ -10,7 +10,7 @@ export interface ResourceBudgetFactorGroup {
 }
 
 export interface FactorResourceBudgetUpperBoundOptions {
-  /** Maximum support-line preprocessing work; invalid or excessive inputs fail open. */
+  /** 支撑线预处理的最大工作量；输入无效或工作量过大时不启用该上界。 */
   maxWork?: number;
 }
 
@@ -81,11 +81,9 @@ function ceilDiv(numerator: bigint, denominator: bigint): bigint {
 }
 
 /**
- * Builds a rigorous Lagrangian upper bound for the best additive log score
- * under a single raw-resource budget. It does not approximate damage with a
- * weighted stat sum: callers supply each exact factor class's integer log
- * score and minimum resource cost. Every nonnegative price gives a safe bound;
- * the upper-hull segment prices provide the exact LP-relaxation envelope.
+ * 为单一原始资源预算下的最高可加对数得分构造严格的拉格朗日上界。
+ * 此方法不会用加权属性和近似伤害；调用方须提供每个精确因子档位的整数对数得分和最低资源成本。
+ * 任意非负价格都能给出安全上界；上凸包各线段的斜率则给出精确的线性规划松弛包络。
  */
 export function prepareFactorResourceBudgetUpperBound(
   groups: readonly ResourceBudgetFactorGroup[],

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import styles from "./SingleEquipmentRestrictionsSection.module.scss";
+import styles from "@/ui/components/job-config/job-config-fields/components/equipment-restriction-fields/components/single-equipment-restrictions-section/SingleEquipmentRestrictionsSection.module.scss";
 
 export function SingleEquipmentRestrictionsSection({
   left,

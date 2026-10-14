@@ -1,4 +1,4 @@
-@use "./styles/tokens" as tokens;
+@use "@/styles/tokens" as tokens;
 
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap");
 
@@ -25,7 +25,7 @@
   --font-size-heading: #{tokens.$font-size-heading};
   --font-size-display: #{tokens.$font-size-display};
 
-  /* Shared aliases used by the current UI components. */
+  /* 供当前界面组件共用的别名。 */
   --ink: #{tokens.$color-ink};
   --muted: #{tokens.$color-muted};
   --accent: var(--color-accent-teal);
@@ -126,7 +126,6 @@ button {
   height: 44px;
   align-items: center;
   border: 0;
-  background: transparent;
 }
 
 .number-input-wrap em {

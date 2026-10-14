@@ -41,8 +41,7 @@ export async function runOptimizationLocally(
     Object.keys(config.forcedGear).length === 0 &&
     config.foodId === 0
   ) {
-    // The exact BRD benchmark had 29 conditional support rows; compact keeps
-    // the one-per-axis subset while preserving candidates and exact proof.
+    // BRD 的精确基准场景包含 29 条条件支撑约束；紧凑配置每个属性轴最多保留一条，且不改变候选或精确证明。
     prepared.options.candidateResourceSupportProfile = "compact";
     prepared.options.mainStatResourceSupport = true;
   } else if (
@@ -65,8 +64,7 @@ export async function runOptimizationLocally(
     Object.keys(config.forcedGear).length === 0 &&
     config.foodId === 0
   ) {
-    // The exact BLM benchmark had 43 conditional support rows; compact keeps
-    // at most one row per axis while preserving candidates and exact proof.
+    // BLM 的精确基准场景包含 43 条条件支撑约束；紧凑配置每个属性轴最多保留一条，且不改变候选或精确证明。
     prepared.options.candidateResourceSupportProfile = "compact";
   }
   options.onProgress?.(

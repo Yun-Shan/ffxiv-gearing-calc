@@ -1,7 +1,7 @@
 export interface SubstatFactorClass {
-  /** Minimum gear-plus-food contribution represented by this factor class. */
+  /** 此因子档位代表的最低装备与食物属性贡献。 */
   min: number;
-  /** Exact integer factor represented by this class. */
+  /** 此档位对应的精确整数因子。 */
   value: number;
 }
 
@@ -14,10 +14,9 @@ export interface SubstatFactorBudgetMaximum {
 
 export interface SubstatFactorBudgetOptions {
   /**
-   * Conservative work estimate limit, applied independently to preparation and
-   * each query. Preparation includes pair generation and an n log2(n) sort
-   * bound; a query includes scanning DHT classes and their pair-cost searches.
-   * Defaults to 2,000,000; invalid limits fail open.
+   * 保守的工作量估算上限，分别应用于预处理和每次查询。
+   * 预处理计入配对生成和 n log2(n) 排序估算；查询计入扫描 DHT 档位及对应的配对成本查找。
+   * 默认值为 2,000,000；限制无效时不启用此界。
    */
   maxWork?: number;
 }
@@ -65,10 +64,9 @@ function estimatedPreparationWork(pairCount: number, classCount: number): number
 }
 
 /**
- * Prepares a reusable exact CRT × DET × DHT factor-budget query. Pair products
- * and prefix maxima are built once; each returned query only scans DHT classes
- * and binary-searches the sorted pair costs. Invalid input or excessive work
- * returns undefined so callers can fail open.
+ * 预先构造可复用的精确 CRT × DET × DHT 因子预算查询。
+ * 配对乘积和前缀最大值只构造一次；返回的每次查询只需扫描 DHT 档位，并对已排序的配对成本执行二分查找。
+ * 输入无效或工作量过大时返回 undefined，让调用方跳过此优化界。
  */
 export function prepareSubstatFactorBudgetQuery(
   crtClasses: readonly SubstatFactorClass[],
@@ -160,7 +158,7 @@ export function prepareSubstatFactorBudgetQuery(
   };
 }
 
-/** Convenience wrapper for callers that only need to answer one budget. */
+/** 供只需查询单个预算的调用方使用的便捷封装。 */
 export function maxSubstatFactorProductWithinBudget(
   crtClasses: readonly SubstatFactorClass[],
   detClasses: readonly SubstatFactorClass[],

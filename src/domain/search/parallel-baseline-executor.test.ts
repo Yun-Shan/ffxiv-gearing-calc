@@ -176,7 +176,7 @@ test("executor retains and reuses a worker across batches until search disposal"
   assert.ok(executor);
   try {
     assert.deepEqual(await executor([task], control), [undefined]);
-    // A search can spend more than one second doing exact main-thread work between batches.
+    // 两个批次之间，搜索可能会在主线程上执行超过一秒的精确计算。
     await new Promise((resolve) => setTimeout(resolve, 1_100));
     assert.deepEqual(await executor([task], control), [undefined]);
     assert.equal(created, 1, "the second batch should reuse the first worker");

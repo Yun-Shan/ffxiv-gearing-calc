@@ -3,7 +3,7 @@ export type MemoryUsageSnapshot = {
   heapUsedBytes?: number;
 };
 
-/** Returns only measurements the current runtime actually exposes. */
+/** 仅返回当前运行时实际提供的内存测量值。 */
 export function getMemoryUsageSnapshot(): MemoryUsageSnapshot {
   const runtimeProcess = (
     globalThis as typeof globalThis & {

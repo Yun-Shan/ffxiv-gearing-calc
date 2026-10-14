@@ -33,5 +33,5 @@ workerScope.addEventListener("message", async (event) => {
     });
   }
 });
-// Module initialization awaits the binary asset before requests can be handled.
+// 模块初始化会先等待二进制资源加载完成，再处理请求。
 self.postMessage({ type: "ready" });

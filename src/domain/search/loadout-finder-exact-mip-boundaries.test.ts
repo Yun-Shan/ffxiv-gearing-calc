@@ -14,7 +14,7 @@ import {
 import type { ExactMipOptions, ExactMipResult } from "./loadout-finder-exact-mip.ts";
 import type { EquipInfo, FoodInfo, ParamInfo, SharedSlotProjection } from "./types.ts";
 
-// Vector IDs are local coordinates for the test fixtures, not game-data IDs.
+// 向量 ID 是测试夹具中的局部坐标，不是游戏数据 ID。
 const attributeIds = [-1, 1, 2, 3, 4, 5, 6];
 const statIndexes = new Map<Stat, number>([
   ["MDMG", 0],

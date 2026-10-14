@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react";
 import { Clock3, History, RefreshCw } from "lucide-react";
-import { jobSchemas } from "../../../domain/index";
-import styles from "./SearchHistory.module.scss";
+import { jobSchemas } from "@/domain";
+import styles from "@/ui/components/search-history/SearchHistory.module.scss";
 import {
   listSearchHistory,
   type SearchHistoryKind,
   type SearchHistoryRecord,
   type SearchHistoryStatus,
-} from "../../services/search-history";
+} from "@/ui/services/search-history";
 
 const PAGE_SIZE = 5;
 
 export interface SearchHistoryProps {
   kind: SearchHistoryKind;
   currentDataVersion: string;
-  /** Increment after App finishes creating/updating a search record. */
+  /** App 创建或更新搜索记录后递增此值，以刷新列表。 */
   refreshKey?: number;
-  /** Whether the history list should start expanded on the profession selection page. */
+  /** 是否在职业选择页默认展开历史记录列表。 */
   defaultOpen?: boolean;
-  /** Hide the disclosure row when the selection page presents the list as its primary content. */
+  /** 历史记录作为职业选择页主体内容时，隐藏折叠摘要行。 */
   hideSummary?: boolean;
   onLoadConfig: (record: SearchHistoryRecord) => void;
   onLoadResult: (record: SearchHistoryRecord) => void;
@@ -44,14 +44,14 @@ function formatStartedAt(value: string): string {
   });
 }
 
-function objectiveLabel(objective: "damage" | "dps" | undefined): string {
-  return objective === "dps" ? "按 GCD 折算" : "每威力伤害期望";
+function objectiveLabel(objective: "damage" | "dps"): string {
+  return ({ damage: "每威力伤害期望", dps: "按 GCD 折算" } as const)[objective];
 }
 
 function singleSummary(record: Extract<SearchHistoryRecord, { kind: "single" }>): string {
   const config = record.config;
   const job = jobSchemas[config.jobId];
-  const target = config.objective === "dps" ? "每秒每威力伤害期望" : "每威力伤害期望";
+  const target = ({ damage: "每威力伤害期望", dps: "每秒每威力伤害期望" } as const)[config.objective!];
   return `${job.name} · ${target} · 品级 ${config.minItemLevel}–${config.maxItemLevel}`;
 }
 
@@ -62,7 +62,7 @@ function jointSummary(record: Extract<SearchHistoryRecord, { kind: "joint" }>): 
     return `${job.name} ${jobConfig.jobLevel ?? job.maxJobLevel} 级`;
   }).join("、");
   const itemLevels = [...new Set(config.jobs.map(({ minItemLevel, maxItemLevel }) => `${minItemLevel}–${maxItemLevel}`))].join("、");
-  return `${jobs} · ${objectiveLabel(config.objective)} · 品级 ${itemLevels}`;
+  return `${jobs} · ${objectiveLabel(config.objective!)} · 品级 ${itemLevels}`;
 }
 
 function recordSummary(record: SearchHistoryRecord): string {

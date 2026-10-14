@@ -225,8 +225,8 @@ export async function runJointOptimizationLocally(
         job.foodId === 0 &&
         Object.keys(job.forcedGear).length === 0,
     );
-  // These proof-heavy cases regress with the optional pairwise relaxation rows.
-  // Skipping them weakens only the relaxation; candidates and exact proof remain intact.
+  // 这些证明开销较大的场景添加可选的成对松弛约束后性能会退化。
+  // 跳过这些约束只会减弱松弛，不会改变候选集合或精确证明。
   const ratioUpperPairPolicy =
     factorizedSharedRingPair &&
     (isFiveJobSharedWideDps ||
@@ -249,7 +249,7 @@ export async function runJointOptimizationLocally(
           ...(syncLevel === undefined ? {} : { syncLevel }),
         }),
       ),
-      // Preserve the caller's ring-pair versus ring-slot topology for policy selection.
+      // 保留调用方指定的戒指对或独立戒指槽结构，以便选择对应策略。
       commonSlots: config.commonSlots,
       objective,
       foodStrategy: config.foodStrategy,
@@ -357,9 +357,8 @@ export async function runJointOptimizationLocally(
       markSharedAccessoryPairDominancePath(v3Options);
     }
     const pendingResult = findBestJointLoadoutV3(v3Options);
-    // V3 snapshots its job wrappers synchronously and replaces each input slot
-    // with the exact pruned domain before its first await. Keep only the slot
-    // names and identity maps needed to reconstruct the final UI result here.
+    // V3 会同步复制职业包装对象，并在首次 await 前用精确剪枝后的候选域替换各输入槽。
+    // 此处只保留重建最终界面结果所需的槽名和身份映射。
     jobs.length = 0;
     for (const prepared of preparedByJob.values()) {
       prepared.options.slots = [];

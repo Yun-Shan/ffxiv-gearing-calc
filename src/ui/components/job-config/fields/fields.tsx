@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { selectableSyncLevels } from "../../../services/app-config";
+import { selectableSyncLevels } from "@/ui/services/app-config";
 
 export function NumberField({
   label,

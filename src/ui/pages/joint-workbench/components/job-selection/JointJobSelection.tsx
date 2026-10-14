@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
-import { jobIds, jobSchemas } from "../../../../../domain/jobs";
-import type { JobId } from "../../../../../domain/types";
+import { jobIds, jobSchemas } from "@/domain/jobs";
+import type { JobId } from "@/domain/types";
 import styles from "./JointJobSelection.module.scss";
+import { JobButton } from '@/ui/components/job-button/JobButton.tsx';
 
 type JobGroupTone = "tank" | "healer" | "str" | "dex" | "int";
 
@@ -77,27 +78,13 @@ export function JointJobSelection({
   errorMessage,
   history,
 }: JointJobSelectionProps) {
-  const selectedJobSet = new Set(selectedJobs);
   const statusMessage = selectionMessage ?? errorMessage ?? (
     canContinue
       ? `已选择 ${selectedJobs.length} 个职业，可以继续设置条件。`
       : "请选择同一分组内的至少两个职业。"
   );
   const renderJobCard = (jobId: JobId) => {
-    const selected = selectedJobSet.has(jobId);
-    return (
-      <button
-        className={styles.jobCard}
-        type="button"
-        key={jobId}
-        aria-label={`${jobSchemas[jobId].name}（${jobId}）`}
-        aria-pressed={selected}
-        onClick={() => onToggleJob(jobId)}
-      >
-        <span className={styles.jobBadge} aria-hidden="true">{jobId}</span>
-        <span className={styles.jobName}>{jobSchemas[jobId].name}</span>
-      </button>
-    );
+    return (<JobButton jobId={jobId} onClick={() => onToggleJob(jobId)} selectable/>);
   };
 
   return (

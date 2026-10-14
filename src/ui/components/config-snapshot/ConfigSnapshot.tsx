@@ -1,5 +1,5 @@
-import { foods, getGearById, jobSchemas, type OptimizationConfig } from "../../../domain/index";
-import styles from "./ConfigSnapshot.module.scss";
+import { foods, getGearById, jobSchemas, type OptimizationConfig } from "@/domain";
+import styles from "@/ui/components/config-snapshot/ConfigSnapshot.module.scss";
 
 export function ConfigSnapshot({ config, onEdit }: {
   config: OptimizationConfig;
@@ -9,7 +9,7 @@ export function ConfigSnapshot({ config, onEdit }: {
   const equipmentName = (id: number) => getGearById(id)?.name ?? `装备编号 ${id}`;
   const rows: [string, string][] = [
     ["职业与等级", `${jobSchemas[config.jobId].name} · ${config.jobLevel ?? jobSchemas[config.jobId].maxJobLevel} 级`],
-    ["优化目标", config.objective === "dps" ? "按 GCD 折算" : "每威力伤害期望"],
+    ["优化目标", ({ damage: "每威力伤害期望", dps: "按 GCD 折算" } as const)[config.objective!]],
     ["装备品级", `${config.minItemLevel}–${config.maxItemLevel}`],
     ["同步品级", config.syncLevel === undefined ? "未启用" : String(config.syncLevel)],
     ["GCD", config.gcdChoices !== undefined

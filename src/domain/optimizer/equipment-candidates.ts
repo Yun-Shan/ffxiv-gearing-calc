@@ -170,9 +170,8 @@ function regularMateriaMelds(
 ): Materia[][] {
   const syncApplies =
     effectiveGearSyncLevel(gear, jobLevel, config.syncLevel) !== undefined;
-  // Standard materia is disabled by item-level sync. The custom-parameter
-  // weapon path is handled separately because the source algorithm keeps its
-  // twelve parameter variants and caps their values after syncing.
+  // 品级同步时普通装备的魔晶石失效。自定义参数武器按独立路径处理：
+  // 上游算法保留其十二种参数组合，并在同步后封顶属性。
   if (syncApplies) return [[]];
   if (gear.materiaSlots === 0 && gear.materiaAdvanced !== true) return [[]];
 
@@ -208,8 +207,8 @@ function regularMateriaMelds(
           statCapAtLevel(gear, stat, level) - (gear.stats[stat] ?? 0);
         const finalMeldValue =
           lowCount > 0 ? lowMateria[index]!.value : highMateria[index]!.value;
-        // A final materia may be clipped; never fill a hole with an orb that
-        // adds no attributes at all. High-grade orbs precede advanced low-grade orbs.
+        // 最后一颗魔晶石的属性可能被封顶削减；不要用完全不增加属性的魔晶石填孔。
+        // 先尝试高等级魔晶石，再尝试可禁断的低等级魔晶石。
         if (
           totalValue > 0 &&
           (available <= 0 || totalValue - finalMeldValue >= available)
@@ -496,8 +495,7 @@ export function candidatePools(
         config,
         gearsByIdentity,
       )) {
-        // The solver allocates these stats with bounded integer variables;
-        // comparing their zero-allocation base candidate would prune it away.
+        // 求解器用有界整数变量分配这些属性；若拿零分配的基础候选比较，会错误地将它剪枝。
         if (usePareto && candidate.gear.resistanceWeaponAdjust !== undefined) {
           candidates.push(candidate);
           continue;
@@ -714,8 +712,7 @@ export function candidatePools(
   const pairedCandidates = ringPairInfos.map(
     (equipment) => equipment as SolverGear,
   );
-  // Keep a stable local lookup for ring identities after structured cloning by
-  // deriving the inner candidates from each pair's full nested identity.
+  // 从戒指对的完整嵌套身份派生其中的候选，以便结构化克隆后仍能稳定查找戒指身份。
   for (const pair of pairedCandidates) {
     const ringPair = pair.ringEquips;
     if (!ringPair) continue;

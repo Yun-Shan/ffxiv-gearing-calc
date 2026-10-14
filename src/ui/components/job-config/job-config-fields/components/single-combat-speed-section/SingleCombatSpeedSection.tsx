@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import styles from "./SingleCombatSpeedSection.module.scss";
+import styles from "@/ui/components/job-config/job-config-fields/components/single-combat-speed-section/SingleCombatSpeedSection.module.scss";
 
 export function SingleCombatSpeedSection({
   enabled,

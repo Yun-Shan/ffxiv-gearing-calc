@@ -24,8 +24,7 @@ import type {
   SharedSlotProjection,
 } from "./types.ts";
 
-// These IDs are test-vector coordinates only. The fixtures below are synthetic
-// objects used to compare V3 against exhaustive enumeration.
+// 这些 ID 仅作为测试向量坐标。以下夹具是用于将 V3 与穷举枚举进行比较的合成对象。
 const attributeIds = [-2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const attributeIdByStat: Partial<Record<Stat, number>> = {
   PDMG: -2,
@@ -1296,9 +1295,8 @@ test("V3 stops a seed batch as soon as a completed seed proves the global ceilin
           const tiedSelection = [...result.selection];
           tiedSelection[ringIndex] = personalRing;
           tiedSelection[headIndex] = lowHead;
-          // Both candidates have the same CRT, speed, and weapon factors as the
-          // worker's optimum; select the tied personal-ring optimum so the
-          // first shared seed requires exact refinement.
+          // 两个候选的 CRT、速度和武器因子均与工作线程的最优解相同；
+          // 选择并列的个人戒指最优解，使第一个共享种子需要精确细化。
           result = { ...result, selection: tiedSelection };
           baselineSelections.push(result.selection.map((item) => String(item.itemId)));
         }

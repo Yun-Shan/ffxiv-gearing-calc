@@ -1,3 +1,4 @@
+// 快照容器带格式版本与循环冗余校验码；装备目录单独存放，以便按需解码单件装备。
 const MAGIC = new TextEncoder().encode("FFXIVGDB");
 const FORMAT_VERSION = 5;
 const SECTION_IDS = [1, 2];
@@ -539,6 +540,7 @@ function encodeGearCatalog(gearsInput, jobSchemas) {
   const seenIds = new Set();
   for (const gear of sortedInput) validateGearForWrite(gear, jobIndexes, seenIds);
 
+  // 多主属性装备只写入共享物理组，再由各主属性索引引用，避免重复存储。
   const physicalMembers = new Map(PHYSICAL_GROUPS.map((group) => [group, []]));
   for (const gear of sortedInput) {
     const applicableMainStats = new Set(gear.jobs.map((jobId) => jobSchemas[jobId].mainStat));
@@ -1108,6 +1110,7 @@ function decodeGearCatalog(bytes, jobIds, onTiming) {
   reportTiming(onTiming, 'equipmentRecordRangesMs', phaseStartedAt);
 
   const gearCache = new Array(recordCount);
+  // 保留数组访问方式，同时将单件装备的解码延迟到首次读取并缓存结果。
   const getGearAtRecordIndex = (index) => {
     if (!Number.isInteger(index) || index < 0 || index >= recordCount)
       fail('装备记录序号越界：' + index);

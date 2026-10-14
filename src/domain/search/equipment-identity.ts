@@ -10,7 +10,7 @@ type EquipmentIdentityInput = {
   ringEquips?: readonly EquipmentIdentityInput[];
 };
 
-/** Encodes full equipment and materia identity, including unordered ring pairs. */
+/** 编码完整装备与魔晶石身份，并将无序的戒指对视为相同身份。 */
 export function equipmentIdentity(equipment: EquipmentIdentityInput): string {
   const ringKeys = equipment.ringEquips?.map(equipmentIdentity).sort();
   const baseParams = equipment.baseParams
@@ -38,7 +38,7 @@ export function equipmentIdentity(equipment: EquipmentIdentityInput): string {
   });
 }
 
-/** Identity of the generated input candidate, before an integer allocation is solved. */
+/** 整数分配求解前生成的输入候选身份。 */
 export function equipmentCandidateIdentity(
   equipment: EquipmentIdentityInput,
 ): string {

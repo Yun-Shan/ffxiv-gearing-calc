@@ -30,7 +30,7 @@ export type SolverFood = {
 export type SolverGear = {
   itemId: number;
   itemLevel: number;
-  /** Distinguishes the concrete materia assignment even when caps clip totals to the same stats. */
+  /** 区分具体的魔晶石分配，即使属性封顶后总属性相同也能保留不同方案。 */
   variantKey?: string;
   key: string;
   baseParams: SolverParam[];
@@ -38,7 +38,7 @@ export type SolverGear = {
   MDMG: number;
   DLY: number;
   resistanceWeaponAdjust?: ResistanceWeaponAdjust & {
-    /** Per-stat reduction caused by the active item-level sync cap. */
+    /** 当前品级同步上限对各项属性造成的削减值。 */
     statMaximums?: Partial<Record<CustomizableStat, number>>;
   };
   ringEquips?: readonly [SolverGear, SolverGear];
@@ -79,8 +79,7 @@ const combatStatSet = new Set<Stat>([
   "DLY",
 ]);
 
-// These are vector coordinates internal to the optimizer. They are derived from
-// the generated data's Stat names and are never Lumina BaseParam row IDs.
+// 这些是优化器内部的向量坐标，由生成数据中的 Stat 名称派生，绝不是 Lumina BaseParam 行 ID。
 export const attributeStats: Stat[] = (() => {
   const stats = new Set<Stat>(["PDMG", "MDMG", "DLY"]);
   for (const stat of gameData.gearStatNames) {

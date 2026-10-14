@@ -1,6 +1,6 @@
 export type CandidateResourceSupportProfile = "disabled" | "compact" | "compact-weighted" | "balanced";
 
-/** Internal profile for the exact, optional candidate resource upper bounds. */
+/** 精确搜索中可选候选资源上界的内部策略档位。 */
 export type ResourceBudgetCandidateProfile = "default" | "uniform-only" | "weighted" | "disabled";
 
 export type MeasuredSearchDomain = {
@@ -10,7 +10,7 @@ export type MeasuredSearchDomain = {
   syncLevel?: number;
 };
 
-/** Undo the optimizer's internal ring-pair factorization for caller-topology policies. */
+/** 对照调用方的共享槽位策略时，还原优化器内部对戒指对的拆分。 */
 function policyCommonSlots(
   commonSlots: readonly string[],
   factorizedSharedRingPair: boolean,
@@ -21,9 +21,8 @@ function policyCommonSlots(
 }
 
 /**
- * Selects only previously measured proof-preserving candidate-bound paths.
- * Domain width and sync distinguish the broad and narrow snapshots; sharing
- * topology and job set disambiguate cases with otherwise identical domains.
+ * 仅选择经过测量且不削弱证明能力的候选上界路径。
+ * 领域宽度和同步等级用于区分不同快照；共享槽位拓扑和职业集合则用于区分其他条件相同的情况。
  */
 export function resourceBudgetCandidateProfileForSearch(input: {
   jobs: readonly MeasuredSearchDomain[];
@@ -46,33 +45,31 @@ export function resourceBudgetCandidateProfileForSearch(input: {
   const hasRingPair = slots.has("rings") || (slots.has("ring") && slots.has("ring2"));
   const splitRingSlots = !slots.has("rings") && slots.has("ring") && slots.has("ring2");
 
-  // The ring-split RPR+SAM snapshot predates the resource-budget candidate
-  // bound. Its exact candidate and proof model remain complete without it.
+  // 戒指槽拆分的 RPR+SAM 快照早于候选资源预算上界功能。
+  // 不启用该上界时，候选集合和精确证明模型仍然完整。
   if (ids === "RPR+SAM" && jobs.length === 2 && objective === "dps" && foodStrategy === "shared" &&
     first.minItemLevel === 730 && first.maxItemLevel === 795 && first.syncLevel === 735 && splitRingSlots &&
     slots.size === 5 && ["earrings", "necklace", "bracelet"].every((slot) => slots.has(slot))) {
     return "disabled";
   }
 
-  // The four-job unsynced 770–795 record used the earlier exact proof path
-  // without resource-budget candidate cuts.
+  // 四职业、未同步、品级 770–795 的记录使用较早的精确证明路径，未添加候选资源预算约束。
   if (ids === "BRD+DNC+MCH+VPR" && jobs.length === 4 && objective === "dps" &&
     foodStrategy === "independent" && commonSlots.length === 0 &&
     first.minItemLevel === 770 && first.maxItemLevel === 795 && first.syncLevel === undefined) {
     return "disabled";
   }
 
-  // The VPR+MCH 715–795 synced record used the weighted resource-support
-  // family. Its weighted bounds are valid upper bounds and remain optional.
+  // VPR+MCH 的同步品级 715–795 记录使用加权资源支撑约束族。
+  // 这些加权界是有效上界，但仍属于可选约束。
   if (ids === "MCH+VPR" && jobs.length === 2 && objective === "dps" && foodStrategy === "shared" &&
     first.minItemLevel === 715 && first.maxItemLevel === 795 && first.syncLevel === 735 && hasRingPair &&
     ["earrings", "necklace", "bracelet"].every((slot) => slots.has(slot))) {
     return "weighted";
   }
 
-  // The five-job independent synced case was fastest with only the uniform
-  // (all-resource) candidate budget; the extra weighted profiles cost more
-  // preprocessing without improving its proof time.
+  // 五职业、独立食物、同步搜索仅使用均匀（覆盖所有资源）候选预算时耗时最短。
+  // 额外的加权档位会增加预处理开销，却不会缩短证明时间。
   if (ids === "BRD+DNC+MCH+NIN+VPR" && jobs.length === 5 && objective === "dps" &&
     foodStrategy === "independent" && commonSlots.length === 0 &&
     first.minItemLevel === 715 && first.maxItemLevel === 795 && first.syncLevel === 735) {
@@ -82,7 +79,7 @@ export function resourceBudgetCandidateProfileForSearch(input: {
   return "default";
 }
 
-/** Detect the measured wide VPR+MCH proof case; its caller enables support rows for MCH. */
+/** 识别经过测量的宽域 VPR+MCH 证明场景；调用方会为 MCH 启用支撑约束行。 */
 export function shouldUsePrimaryResourceSupportsForBaseline(
   jobs: readonly {
     jobId: string;
@@ -112,7 +109,7 @@ export function shouldUsePrimaryResourceSupportsForBaseline(
     hasBothSharedRings;
 }
 
-/** Retain one main-stat support row for measured shared DPS baselines. */
+/** 为经过测量的共享 DPS 基线保留一条主属性支撑约束行。 */
 export function shouldUseMainStatResourceSupportForBaseline(
   jobIds: readonly string[],
   commonSlots: readonly string[],
@@ -141,7 +138,7 @@ export function shouldUseMainStatResourceSupportForBaseline(
     [...sharedSlots].every((slot) => commonSlots.includes(slot)) && sharedRingPair);
 }
 
-/** Restrict the RDM+PCT single-row trial to the slower PCT baseline. */
+/** 在 RDM+PCT 的单行试验中，仅对较慢的 PCT 基线启用该约束。 */
 export function shouldUseMainStatResourceSupportForBaselineJob(
   jobIds: readonly string[],
   jobId: string,
@@ -164,7 +161,7 @@ export function shouldUseMainStatResourceSupportForBaselineJob(
   );
 }
 
-/** Limit exact materia repair seeds to the measured two-job shared-accessory case. */
+/** 仅在经过测量的双职业共享首饰场景中使用精确魔晶石修复种子。 */
 export function shouldUseSharedMateriaCompensation(
   jobIds: readonly string[],
   commonSlots: readonly string[],
@@ -180,7 +177,7 @@ export function shouldUseSharedMateriaCompensation(
     ["earrings", "necklace", "bracelet"].every((slot) => commonSlots.includes(slot));
 }
 
-/** Keeps small joint baselines lean and caps model rows for wide batches. */
+/** 精简小型联合基线，并限制宽批次的模型约束行数量。 */
 export function candidateResourceSupportProfile(
   jobCount: number,
   candidateCount: number,
@@ -192,7 +189,7 @@ export function candidateResourceSupportProfile(
   return "compact";
 }
 
-/** Restores the weighted compact support rows used by the measured four-job unsynced snapshot. */
+/** 为经过测量的四职业未同步快照恢复加权精简支撑约束行。 */
 export function candidateResourceSupportProfileForSearch(input: {
   jobs: readonly MeasuredSearchDomain[];
   candidateCount: number;

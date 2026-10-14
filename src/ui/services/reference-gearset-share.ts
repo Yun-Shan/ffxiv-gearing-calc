@@ -1,10 +1,10 @@
-import type { JobId, JobSchema, Stat, Stats } from "../../domain/types";
+import type { JobId, JobSchema, Stat, Stats } from "@/domain/types";
 
 const JOB_INDEX: Partial<Record<JobId, number>> = {
   PLD: 0, WAR: 1, DRK: 2, GNB: 3, WHM: 4, SCH: 5, AST: 6, SGE: 7,
   MNK: 8, DRG: 9, NIN: 10, SAM: 11, RPR: 12, VPR: 13, BRD: 14,
   MCH: 15, DNC: 16, BLM: 17, SMN: 18, RDM: 19, PCT: 20, BLU: 21,
-  // Asvel share v6 places BST after the omitted crafting and gathering job codes.
+  // Asvel 分享格式第 6 版将 BST 排在省略的生产与采集职业代码之后。
   BST: 33,
 };
 
@@ -42,7 +42,7 @@ function base62Encode(value: bigint): string {
   return encoded;
 }
 
-/** Encodes the compatible Asvel gearset share format while preserving job and sync levels. */
+/** 按 Asvel 配装分享格式编码，并保留职业等级与同步品级。 */
 export function stringifyReferenceGearset(gearset: ReferenceGearset): string | undefined {
   const jobIndex = JOB_INDEX[gearset.job] ?? -1;
   const shareVersion = gearset.job === "BST" ? 6 : 5;

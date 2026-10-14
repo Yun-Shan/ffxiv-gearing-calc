@@ -21,8 +21,7 @@ import type {
 import type { LinearMipProgress } from "./linear-mip.ts";
 import type { EquipInfo, FoodInfo, ParamInfo } from "./types.ts";
 
-// These are isolated vector coordinates for synthetic test objects. Damage
-// factors and job-specific base stats still come from the generated game data.
+// 这些是合成测试对象使用的独立向量坐标。伤害因子和职业基础属性仍取自生成的游戏数据。
 const attributeIds = [-2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const attributeIdByStat: Partial<Record<Stat, number>> = {
   PDMG: -2,
@@ -193,8 +192,7 @@ function makeJob(
       evaluationFunction: evaluate,
       objective: "damage",
       maxSearchMs: 20_000,
-      // Deliberately omit equipmentAttributeExtractor: production defaults to
-      // EquipInfo.baseParams, including the weapon-attribute coordinates.
+      // 有意省略 equipmentAttributeExtractor：生产环境默认使用 EquipInfo.baseParams，包含武器属性坐标。
     },
   };
 }
@@ -868,8 +866,8 @@ test("direct joint factor MIP proves the exact shared-gear sum without initial r
   const expected = jointOracle(jobs, false, "damage");
   assert.ok(expected);
 
-  // This fixture separates the geometric/product filter's best ring from the
-  // exact arithmetic sum, so the joint solver must rank by normalized sum.
+  // 此夹具让几何乘积筛选出的最佳戒指不同于精确算术总和对应的最佳戒指，
+  // 因此联合求解器必须按归一化总和排序。
   const soloBaselines = jobs.map((job) => soloBaseline(job, "damage"));
   const productWinner = tradeoffRings.reduce((best, ring) => {
     const candidateProduct = jobs.reduce((product, job, index) => {

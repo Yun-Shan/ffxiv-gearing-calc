@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { X } from "lucide-react";
-import { getGearById, gearOptionsFor, slotsForJob, type Gear, type GearSlot, type OptimizationConfig } from "../../../../../../domain/index";
-import { gearSlotLabels } from "../../../../../services/labels";
-import { SingleEquipmentRestrictionsSection } from "./components/single-equipment-restrictions-section/SingleEquipmentRestrictionsSection";
-import { SearchableGearDropdown as SearchableDropdown, VirtualGearOptions } from "./components/searchable-gear-dropdown/SearchableGearDropdown";
-import { GearMark } from "./components/gear-mark/GearMark";
-import { CheckControl } from "../../../fields/fields";
-import styles from "./EquipmentRestrictionFields.module.scss";
+import { getGearById, gearOptionsFor, slotsForJob, type Gear, type GearSlot, type OptimizationConfig } from "@/domain";
+import { gearSlotLabels } from "@/ui/services/labels";
+import { SingleEquipmentRestrictionsSection } from "@/ui/components/job-config/job-config-fields/components/equipment-restriction-fields/components/single-equipment-restrictions-section/SingleEquipmentRestrictionsSection";
+import { SearchableGearDropdown as SearchableDropdown, VirtualGearOptions } from "@/ui/components/job-config/job-config-fields/components/equipment-restriction-fields/components/searchable-gear-dropdown/SearchableGearDropdown";
+import { GearMark } from "@/ui/components/job-config/job-config-fields/components/equipment-restriction-fields/components/gear-mark/GearMark";
+import { CheckControl } from "@/ui/components/job-config/fields/fields";
+import styles from "@/ui/components/job-config/job-config-fields/components/equipment-restriction-fields/EquipmentRestrictionFields.module.scss";
 
 export interface EquipmentRestrictionFieldsProps {
   config: OptimizationConfig;

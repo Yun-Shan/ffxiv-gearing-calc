@@ -1,5 +1,5 @@
-import { type CommonGearSlot, type JointOptimizationResult } from "../../../../../domain/index";
-import { commonGearSlotLabels } from "../../../../services/labels";
+import { type CommonGearSlot, type JointOptimizationResult } from "@/domain";
+import { commonGearSlotLabels } from "@/ui/services/labels";
 import styles from "./JointCommonGearSection.module.scss";
 
 export const commonSlotLabels = commonGearSlotLabels;

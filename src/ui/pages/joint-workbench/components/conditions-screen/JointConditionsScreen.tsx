@@ -1,8 +1,8 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { ArrowLeft, Play } from "lucide-react";
 import type { JointSearchSummary } from "../search-progress/JointSearchProgress";
-import { jobSchemas } from "../../../../../domain/index";
-import type { JobId } from "../../../../../domain/types";
+import { jobSchemas } from "@/domain";
+import type { JobId } from "@/domain/types";
 import styles from "./JointConditionsScreen.module.scss";
 
 interface ProfessionEditor {

@@ -1,0 +1,64 @@
+@use "@/styles/tokens" as tokens;
+
+.container {
+  box-sizing: border-box;
+  display: inline-flex;
+  width: 114px;
+  min-width: 0;
+  min-height: 36px;
+  flex: 0 0 114px;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 3px 7px;
+  border: 1px solid #b7aa8a;
+  border-radius: 9px;
+  background: rgb(255 255 255 / 62%);
+  color: #354a37;
+  font-size: tokens.$font-size-13px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: left;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--job-color, tokens.$color-accent-olive);
+    background: tokens.$color-neutral-white;
+  }
+
+  &.selected {
+    border-color: var(--job-color, #518e89);
+    background: tokens.$color-neutral-white;
+    box-shadow: 0 0 0 1px var(--job-color, #518e89);
+    color: #245e5b;
+  }
+}
+
+@media (max-width: 900px) and (min-width: 761px) {
+  .jobCard {
+    padding-right: 7px;
+    font-size: tokens.$font-size-11px;
+  }
+}
+
+
+@media (max-width: 760px) {
+  .jobCard {
+    min-height: 34px;
+    padding-right: 8px;
+    font-size: tokens.$font-size-11px;
+  }
+}
+
+
+.icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+}
+
+.job-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

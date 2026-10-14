@@ -4,15 +4,13 @@ import {
   type OptimizationConfig,
   type OptimizationResult,
   type Stat,
-} from "../../../../../../domain/index";
-import { defaultJobLevel } from "../../../../../services/app-config";
-import { statName, statValue } from "../../../../../services/labels";
+} from "@/domain";
+import { statName, statValue } from "@/ui/services/labels";
 import { SearchProgress } from "../search-progress/SearchProgress";
-import { ConfigSnapshot } from "../../../../../components/config-snapshot/ConfigSnapshot";
-import { SingleConditionSummary } from "../../summary/single-condition-summary/SingleConditionSummary";
-import { stringifyReferenceGearset } from "../../../../../services/reference-gearset-share";
+import { ConfigSnapshot } from "@/ui/components/config-snapshot/ConfigSnapshot";
+import { stringifyReferenceGearset } from "@/ui/services/reference-gearset-share";
 import { SingleJobResultView } from "../single-job-result-view/SingleJobResultView";
-import { GearTable } from "../../../../../components/results/gear-table/GearTable";
+import { GearTable } from "@/ui/components/results/gear-table/GearTable";
 import styles from "./SingleResultPanel.module.scss";
 
 export function StatusPanel({
@@ -99,7 +97,7 @@ function referenceGearsetUrl(result: OptimizationResult, config: OptimizationCon
   const share = stringifyReferenceGearset({
     job: config.jobId,
     role: job.role,
-    jobLevel: result.calculationLevel ?? config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel,
+    jobLevel: result.calculationLevel!,
     ...(config.syncLevel === undefined ? {} : { syncLevel: config.syncLevel }),
     gears,
   });
@@ -115,8 +113,6 @@ export function ResultPanel({
   stale = false,
   onEditConfig,
   compact = false,
-  searchStartedAt,
-  resultDataVersion,
 }: {
   result?: OptimizationResult;
   config: OptimizationConfig;
@@ -127,8 +123,6 @@ export function ResultPanel({
   stale?: boolean;
   onEditConfig?: () => void;
   compact?: boolean;
-  searchStartedAt?: string;
-  resultDataVersion?: string;
 }) {
   if (!result) {
     const cancelled = statusMessage?.includes("取消") ?? false;
@@ -159,14 +153,6 @@ export function ResultPanel({
       result={result}
       referenceUrl={referenceGearsetUrl(result, config)}
       table={<GearTable result={result} config={config} compact />}
-      summary={<SingleConditionSummary
-        config={config}
-        view="result"
-        result={result}
-        startedAtISO={searchStartedAt}
-        dataVersion={resultDataVersion}
-      />}
-      onEditConfig={onEditConfig}
     />;
   }
   return (

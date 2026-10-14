@@ -97,8 +97,7 @@ function makeJob(
       evaluationFunction: evaluate,
       objective: "damage",
       maxSearchMs: 15_000,
-      // These fixtures keep weapon damage in baseParams, as the production
-      // optimizer does when no custom equipment extractor is configured.
+      // 这些夹具将武器伤害保存在 baseParams 中，与生产优化器未配置自定义装备属性提取器时一致。
     },
   };
 }

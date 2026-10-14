@@ -157,17 +157,17 @@ export type ExactMipOptions = {
   evaluationFunction: (
     attributes: readonly number[],
   ) => { damage: number; gcd: number } | undefined;
-  /** Defaults to DPS without a fixed GCD, preserving the original search behavior. */
+  /** 默认按不固定 GCD 的 DPS 搜索，以保持原有搜索行为。 */
   objective?: "damage" | "dps";
-  /** Internal ranges used only to strengthen the exact MIP resource relaxation. */
+  /** 仅用于强化精确 MIP 资源松弛的内部区间。 */
   candidateItemLevelRanges?: readonly { min: number; max: number }[];
-  /** Internal V3 policy for the number of conditional rows built from the item-level prior. */
+  /** V3 内部策略：根据品级先验构造条件约束行的数量。 */
   candidateResourceSupportProfile?: CandidateResourceSupportProfile;
-  /** Internal selection among previously measured exact candidate-bound profiles. */
+  /** 在此前测量过的精确候选上界档位中进行内部选择。 */
   resourceBudgetCandidateProfile?: ResourceBudgetCandidateProfile;
-  /** Internal V3 baseline policy; adds implied main-stat/weighted resource inequalities. */
+  /** V3 基线内部策略；添加隐含的主属性或加权资源不等式。 */
   primaryResourceSupports?: boolean;
-  /** Internal V3 policy; adds only the main-stat resource inequality. */
+  /** V3 内部策略；仅添加主属性资源不等式。 */
   mainStatResourceSupport?: boolean;
   maxSearchMs?: number;
   onProgress?: (message: string) => void;
@@ -245,7 +245,7 @@ function atanhLogFixedBounds(num: bigint, den: bigint): readonly [bigint, bigint
   return [lower, lower + omittedTerms + remainderUpper];
 }
 
-/** Fixed-point bounds for ln(numerator / denominator), scaled by FIXED_SCALE. */
+/** ln(numerator / denominator) 的定点上下界，按 FIXED_SCALE 缩放。 */
 function logRatioFixedBounds(numerator: bigint, denominator: bigint): readonly [bigint, bigint] {
   if (numerator <= 0n || denominator <= 0n) {
     throw new RangeError("对数有理数的分子和分母必须为正整数");
@@ -279,15 +279,14 @@ function strictLogThresholdLoss(thresholdNumerator: bigint, denominator: bigint)
     throw new RangeError("联合搜索阈值必须属于 (0, 1]");
   }
   const [lower] = logRatioFixedBounds(thresholdNumerator, denominator);
-  // Strict improvement gives integer Qdiff >= floor(L*ln(t))-K+1. The row uses
-  // baseline-loss-K, so loss=-ell-1 encodes that strict integer bound.
+  // 严格改进要求整数 Qdiff >= floor(L*ln(t))-K+1。约束行使用 baseline-loss-K，
+  // 因此令 loss=-ell-1 即可编码该严格整数下界。
   const ell = floorDiv(LOG_SCALE * lower, FIXED_SCALE);
   return -ell - 1n;
 }
 
 /**
- * Returns round(LOG_SCALE * ln(value)), after proving that the lower and upper
- * fixed-point series bounds round to the same integer.
+ * 返回 round(LOG_SCALE * ln(value))；只有证明定点级数的上下界取整后相同才返回结果。
  */
 function roundedLog(value: number): number {
   if (!Number.isSafeInteger(value) || value < 1) {
@@ -926,8 +925,8 @@ function greedyMipStart(options: ExactMipOptions,
   };
   rememberFeasible(current);
   let checks = 0;
-  // This bounded coordinate search supplies ONLY a MIP hint. It never serves
-  // as an answer or a bound, and every final result retains the complete proof.
+  // 这段有界坐标搜索只为 MIP 提供提示，绝不作为答案或上界；
+  // 每个最终结果仍须经过完整证明。
   for (let pass = 0; pass < 6; pass++) {
     if (isCancelled()) return undefined;
     if (performance.now() >= deadline) return createStart();
@@ -1260,8 +1259,8 @@ function prepareResourceBudgetCandidateBounds(
       min: group.name === "weapon"
         ? Math.max(0, factorClass.min - bluAdditionMaximum)
         : factorClass.min,
-      // `prepareExactMipModel` has already converted GCD q to its signed DPS
-      // contribution (or zero for damage), so preserve the exact objective q.
+      // `prepareExactMipModel` 已将 GCD 的 q 转换为有符号 DPS 贡献（伤害模式下为零），
+      // 因此这里保留精确的目标 q 值。
       score: factorClass.q,
     })),
   }));
@@ -1505,7 +1504,7 @@ type JointRingSplit = {
 };
 
 type JointPreparedJob = {
-  /** Joint-only slot layout; public results are reconstructed from originalJob. */
+  /** 仅供联合求解使用的槽位布局；公开结果会根据 originalJob 重建。 */
   job: JointMipJob;
   originalJob: JointMipJob;
   ringSplit?: JointRingSplit;
@@ -1751,7 +1750,7 @@ function originalRingSelection(
   return result;
 }
 
-/** The product is only a necessary upper-bound filter; candidates are ranked by the exact SUM. */
+/** 乘积仅用于必要的上界筛选；候选排序使用精确总和。 */
 export async function findBestJointFactorMip(options: {
   jobs: readonly JointMipJob[];
   commonSlots: readonly string[];
@@ -1760,11 +1759,11 @@ export async function findBestJointFactorMip(options: {
   equipmentIdentity: (equipment: EquipInfo) => string;
   foodIdentity: (food: FoodInfo) => string;
   objective: "damage" | "dps";
-  /** Internal symmetry break for a fully shared, unforced ring pair. */
+  /** 完全共享且未强制指定的戒指对所用的内部对称性破除策略。 */
   canonicalSharedRingPair?: boolean;
-  /** Defaults to the current exact relaxation; disabling skips optional pair upper-bound rows. */
+  /** 默认为当前精确松弛；禁用时跳过可选的配对上界约束行。 */
   ratioUpperPairPolicy?: "default" | "disabled";
-  /** Internal exact optimizer path; adds only strict, replacement-safe accessory-pair dominance rows. */
+  /** 精确优化器内部路径；仅添加严格且替换安全的首饰对支配约束行。 */
   sharedAccessoryPairDominance?: boolean;
   initialResults?: readonly ExactMipResult[];
   maxSearchMs?: number;
@@ -2005,9 +2004,8 @@ export async function findBestJointFactorMip(options: {
     if (options.objective === "dps") individualBaselineQ -= roundedLog(factors.gcdCentiseconds);
     baselineQ += individualBaselineQ;
     jobSurrogates.push({ terms, offset, baseline: individualBaselineQ, error: groups.length });
-    // Every joint-feasible job is bounded by its independently proved optimum.
-    // Explicit bounds also prevent an LP relaxation from trading an impossible
-    // super-optimal job against a suboptimal one.
+    // 每个联合可行职业的结果都受其独立证明的最优值约束。
+    // 显式添加上界还能防止 LP 松弛用不可能的超最优职业结果，抵消其他职业的次优结果。
     addRows(rows, `solo_bound_${index}`, terms, "<=", individualBaselineQ + groups.length - offset);
   }
   if (options.canonicalSharedRingPair) {
@@ -2045,7 +2043,7 @@ export async function findBestJointFactorMip(options: {
       }
     }
     addRows(rows, `shared_one_${name}`, [...selectors.values()].map((selector) => [selector, 1] as const), "=", 1);
-    // Choices absent from the intersection must be disabled explicitly.
+    // 必须显式禁用不属于交集的选择。
     const allowed = new Set(keys);
     choices.forEach((choice, jobIndex) => {
       for (const [key, variables] of choice) if (!allowed.has(key)) {
@@ -2181,10 +2179,8 @@ export async function findBestJointFactorMip(options: {
     if (selectors === undefined) return undefined;
     sharedEquipmentSelectors.set(domain.slot, selectors);
   }
-  // Keep a universal attribute profile: it includes EVERY job's extractor and
-  // attribute coordinates. A single projected ring is shared by its full
-  // physical identity while the other ring remains free inside each complete,
-  // unique-legal pair candidate.
+  // 保留通用属性档案：其中包含每个职业的提取器和属性坐标。
+  // 单个投影戒指按其完整实体身份共享，另一枚戒指则可在每个完整且满足唯一性规则的戒指对候选中自由选择。
   const profileRows = new Set<string>();
   for (let targetJob = 0; targetJob < preparedJobs.length; targetJob++) {
     const target = preparedJobs[targetJob]!.job.options;
@@ -2355,8 +2351,8 @@ export async function findBestJointFactorMip(options: {
         for (let attribute = 0; attribute < rawUpper.length; attribute++) rawUpper[attribute] += maximums[attribute]!;
         continue;
       }
-      // Two projections can refer to the same complete Finger pair. Intersect
-      // both identities against legal pair candidates before taking pair sums.
+      // 两个投影可能指向同一完整的戒指对。计算配对属性和前，
+      // 先将两个身份都与合法戒指对候选求交集。
       const coordinateMaximums = new Array<number>(rawUpper.length).fill(0);
       let foundCandidate = false;
       for (let candidateIndex = 0; candidateIndex < candidates.length; candidateIndex++) {
@@ -2373,8 +2369,8 @@ export async function findBestJointFactorMip(options: {
       for (let attribute = 0; attribute < rawUpper.length; attribute++) rawUpper[attribute] += coordinateMaximums[attribute]!;
     }
 
-    // A single food is chosen. For each coordinate independently, retain the
-    // largest exact, capped bonus among foods allowed by the fixed food key.
+    // 只能选择一种食物。对每个坐标分别保留固定食物键允许的食物中，
+    // 经精确封顶后的最大加成。
     const foodBonuses = new Array<number>(rawUpper.length).fill(0);
     for (const bonus of prepared.model.foodBonuses) {
       const food = job.options.foods[bonus.foodIndex];
@@ -2409,8 +2405,8 @@ export async function findBestJointFactorMip(options: {
         }
         totalResource += contribution;
       }
-      // `coordinateUpperAttributes` maximizes each resource axis independently,
-      // so each weighted sum bounds every completion of this shared prefix.
+      // `coordinateUpperAttributes` 分别最大化各资源轴，
+      // 因而每个加权和都能约束此共享前缀的所有补全方案。
       const upper = weighted.budget.query(totalResource);
       if (upper !== undefined && (bestUpper === undefined || upper < bestUpper)) bestUpper = upper;
     }
@@ -2503,9 +2499,8 @@ export async function findBestJointFactorMip(options: {
       const byAttribute = foodBonusBoundsByFood.get(bonus.foodIndex) ?? new Map<number, FoodBonusBound[]>();
       const boundsForAttribute = byAttribute.get(bonus.attribute) ?? [];
       if (boundsForAttribute.length > 0) {
-        // Repeated food rows are accumulated against successively updated
-        // attributes by the canonical evaluator. Skip this optional bound
-        // instead of risking an underestimate from one raw coordinate.
+        // 规范求值器会针对逐步更新后的属性累加重复食物约束行。
+        // 跳过这个可选上界，避免根据单个原始坐标计算出过低的估计值。
         validFoodBounds = false;
         break;
       }
@@ -2545,8 +2540,8 @@ export async function findBestJointFactorMip(options: {
         }
         if (rawUpper.some((value) => !Number.isSafeInteger(value))) continue;
 
-        // A food is chosen as a whole. Take coordinate maxima across foods;
-        // this relaxes food coupling while preserving each exact floor/cap.
+        // 食物必须整体选择。对不同食物分别取各坐标最大值，
+        // 这样会放宽食物间的耦合，同时保留每项精确的向下取整和上限规则。
         const foodBonusUpper = new Array<number>(rawUpper.length).fill(0);
         let validCandidateFoodUpper = true;
         for (const byAttribute of foodBonusBoundsByFood.values()) {
@@ -2593,8 +2588,8 @@ export async function findBestJointFactorMip(options: {
   const resourceBudgetCandidateUpperBoundPreparationStartedAt = performance.now();
   const resourceBudgetCandidateUpperBoundProofRows = new Map<string, ModelRow>();
   for (let jobIndex = 0; jobIndex < preparedJobs.length; jobIndex++) {
-    // The per-candidate resource query produced no cuts on four/five-job
-    // profiles and made their shared-prefix preprocessing much less productive.
+    // 在四职业和五职业档位中，逐候选资源查询没有产生剪枝，
+    // 反而显著降低了共享前缀预处理的效率。
     if (preparedJobs.length >= 4) {
       resourceBudgetCandidateUpperBoundSkippedJobs++;
       continue;
@@ -2786,9 +2781,8 @@ export async function findBestJointFactorMip(options: {
     }
   }
 
-  // A one-factor upper bound can combine mutually incompatible maxima from
-  // the other groups. Condition two distinct groups together to tighten q.
-  // The raw one-group maxima share one exact envelope U*: U_ab = U_a*U_b/U*.
+  // 单因子上界可能会把其他组中彼此不兼容的最大值组合起来。
+  // 同时约束两个不同组，可以收紧 q。单组原始最大值共用精确包络 U*：U_ab = U_a*U_b/U*。
   const pairCutCandidates: {
     jobIndex: number;
     rowName: string;
@@ -3023,8 +3017,8 @@ export async function findBestJointFactorMip(options: {
   const sharedAssignmentUpperBoundKeys = new Set<string>();
   let sharedAssignmentCompleteEnumerationDone = false;
   let sharedAssignmentProcessedIncumbentKey: string | undefined;
-  // Large shared domains need enough wall budget to build the same safe-prefix
-  // cuts under lower per-process throughput; this remains capped at 2% of search.
+  // 大型共享域的单进程吞吐较低，需要足够的墙钟预算来构造同样的安全前缀剪枝；
+  // 该预算仍限制在搜索总时间的 2% 以内。
   const sharedAssignmentPreprocessingBudgetMs = Math.min(
     useLargeJointSharedAssignmentPolicy ? 1_500 : 250,
     jointPreprocessingBudgetBaseMs * 0.02,
@@ -3232,9 +3226,8 @@ export async function findBestJointFactorMip(options: {
       const scoreUpper = scoreUppers[jobIndex];
       if (scoreUpper === undefined) continue;
       const roundingSlack = BigInt(preparedJobs[jobIndex]!.prepared.groups.length);
-      // A ratio strictly above the threshold requires this integer log score;
-      // each factor's nearest-integer log contributes at most one unit of
-      // candidate-vs-baseline slack per factor group.
+      // 比值严格高于阈值时，整数对数得分必须达到此值；
+      // 每组因子的对数取最近整数后，候选与基线之间最多产生一个单位的松弛。
       const requiredScore = baselineFactorScores[jobIndex]! - roundingSlack - loss;
       if (scoreUpper < requiredScore) return true;
     }
@@ -3356,8 +3349,8 @@ export async function findBestJointFactorMip(options: {
     const pairThreshold = incumbentNumerator - BigInt(jobCount - 2) * incumbentDenominator;
     if (pairThreshold <= 0n) return;
 
-    // If the joint sum improves, any two job ratios must exceed B-(n-2),
-    // since each of the remaining n-2 ratios is at most one.
+    // 若联合总和有所提升，任意两个职业的比值都必须超过 B-(n-2)，
+    // 因为其余 n-2 个比值都至多为 1。
     const compareRatios = (left: ExactRatio, right: ExactRatio) => {
       const comparison = left.numerator * right.denominator - right.numerator * left.denominator;
       return comparison < 0n ? -1 : comparison > 0n ? 1 : 0;
@@ -3811,8 +3804,8 @@ export async function findBestJointFactorMip(options: {
             let prefixBLength = 0;
             for (let candidateA = 1; candidateA <= groupA.length; candidateA++) {
               if (!consumeWork(1)) break tripleCandidates;
-              // A previous candidateA may have narrowed C for its last B; start
-              // this outer prefix traversal from the full C range again.
+              // 上一个 candidateA 可能为最后一个 B 缩小了 C 的范围；
+              // 开始当前外层前缀遍历时，需重新使用完整的 C 范围。
               let prefixCLength = groupC.length;
               for (let candidateB = 1; candidateB <= groupB.length; candidateB++) {
                 if (!consumeWork(1)) break tripleCandidates;
@@ -3870,8 +3863,8 @@ export async function findBestJointFactorMip(options: {
   const prepareSharedPairUpperBounds = (incumbentNumerator: bigint, incumbentDenominator: bigint) => {
     if (sharedPairUpperBounds !== undefined || incumbentNumerator <= 0n) return;
     const preprocessingStartedAt = performance.now();
-    // Shared-pair candidates are compared with the full incumbent sum. Its
-    // individual-job threshold may be non-positive while pair cuts still help.
+    // 共享配对候选与完整的当前最优总和比较。即使单职业阈值不为正，
+    // 配对剪枝仍可能有效。
     const individualThresholdNumerator = incumbentNumerator -
       BigInt(options.jobs.length - 1) * incumbentDenominator;
     const singleKeyBoundsBySelector = new Map(
@@ -3929,9 +3922,8 @@ export async function findBestJointFactorMip(options: {
     if (best === undefined) return;
     const incumbentKey = `${best.numerator}/${best.denominator}`;
     const isCompleteDomain = sharedAssignmentCandidateUpperBound <= sharedAssignmentCompleteEnumerationCandidateLimit;
-    // On very large two-job domains, 20k shallow prefix cuts have repeatedly
-    // made the strict infeasibility proof much slower than solving the smaller
-    // uncropped model. Keep prefix cuts for smaller domains and larger job groups.
+    // 对特别大的双职业候选域，反复测量发现两万条浅层前缀剪枝会让严格不可行性证明
+    // 比求解未裁剪的小模型慢得多。因此仅在较小的候选域或更大的职业组中保留前缀剪枝。
     if (preparedJobs.length === 2 &&
       sharedAssignmentCandidateUpperBound > sharedAssignmentTwoJobPrefixCutSkipThreshold) {
       sharedAssignmentPreprocessingSkipped = true;
@@ -4068,9 +4060,8 @@ export async function findBestJointFactorMip(options: {
                   : undefined);
               }
             }
-            // Independent per-attribute maxima overestimate every completion
-            // below this prefix, so a non-improving prefix can be excluded in
-            // one row without visiting its remaining shared choices.
+            // 每项属性分别取最大值会高估此此前缀下的所有补全方案，
+            // 因此可用一条约束排除不可能改进的前缀，而不必遍历其余共享选择。
             if (!stoppedEarly && !hasUnknownBound && (
               (jobScoreUppers !== undefined && factorScoreUpperCannotBeatThreshold(
                 jobScoreUppers,
@@ -4106,10 +4097,8 @@ export async function findBestJointFactorMip(options: {
     const addSubsetCut = (jobIndexes: readonly number[]) => {
       const thresholdNumerator = incumbentNumerator - BigInt(jobCount - jobIndexes.length) * incumbentDenominator;
       if (thresholdNumerator <= 0n) return;
-      // An improving sum requires the selected subset to exceed this bound,
-      // because every omitted normalized job ratio is at most one. The
-      // integer upper-ratio variables round each exact ratio upward, so this
-      // strict scaled lower bound is necessary and safe.
+      // 要使总和有所提升，所选子集必须超过此界，因为所有未选职业的归一化比值都至多为 1。
+      // 整数比值上界变量会向上取整每个精确比值，因此这个严格缩放下界既必要又安全。
       const minimumScaledSum = thresholdNumerator * ratioUpperBoundScale / incumbentDenominator + 1n;
       if (minimumScaledSum > BigInt(Number.MAX_SAFE_INTEGER)) return;
       const rowName = `joint_necessary_ratio_sum_${jobIndexes.join("_")}`;
@@ -4318,7 +4307,7 @@ export async function findBestJointFactorMip(options: {
         }
         for (let index = 0; index < jobSurrogates.length; index++) {
           const surrogate = jobSurrogates[index]!;
-          // sum > incumbent and all other ratios <= 1 also require EACH ratio > t.
+          // 要使总和超过当前最优值且其他比值均不超过 1，还要求每个比值都大于 t。
           const individualRhs = BigInt(surrogate.baseline - surrogate.offset - surrogate.error) - loss;
           if (individualRhs >= BigInt(Number.MIN_SAFE_INTEGER) && individualRhs <= BigInt(Number.MAX_SAFE_INTEGER)) {
             addRows(solveRows, `joint_necessary_job_${index}`, surrogate.terms, ">=", Number(individualRhs));
@@ -4379,8 +4368,8 @@ export async function findBestJointFactorMip(options: {
       signature.map((name) => [name, 1] as const), "<=", signature.length - 1));
     throwIfCancelled(isCancelled);
     const solutionHint = new Map<string, number>();
-    // In proof-heavy two-job reruns, the partial incumbent hint has not helped
-    // HiGHS repair a feasible solution; omit it without changing the model.
+    // 在证明工作量较大的双职业重跑中，部分当前最优解提示并未帮助 HiGHS 修复出可行解；
+    // 省略该提示不会改变模型。
     if (best !== undefined && !(preparedJobs.length === 2 && solverRuns > 0)) {
       for (let jobIndex = 0; jobIndex < preparedJobs.length; jobIndex++) {
         const jointJob = preparedJobs[jobIndex]!;
@@ -4814,9 +4803,8 @@ function addCandidateLevelConditionalResourceSupports(
   if (options.slots.some((slot) => slot.some(hasRingPairProperty))) {
     return { candidateBands: 0, rowsAdded: 0, nonzerosAdded: 0, skipReason: "ring-pair-candidates" };
   }
-  // Budget the full damage-relevant attribute pool. In particular, a lower
-  // item-level candidate with more main stat or weapon damage must retain that
-  // contribution when it trades against CRT/DET/DHT.
+  // 对所有与伤害相关的属性资源进行预算。尤其是品级较低但主属性或武器伤害更高的候选，
+  // 在与暴击、信念或直击属性权衡时仍须保留这部分贡献。
   const resourceAxes = (["main", "weapon", "det", "ten", "crt", "dht", "gcd"] as const).flatMap((name) => {
     const attribute = resourceAttributeIndexes.get(name);
     const group = groups.find((candidate) => candidate.name === name);
@@ -4900,9 +4888,8 @@ function addCandidateLevelConditionalResourceSupports(
   for (const [name, , group] of resourceAxes) {
     for (const factorClass of group.classes) {
       if (!Number.isSafeInteger(factorClass.min) || factorClass.min < 0) return undefined;
-      // BLU's weapon factor includes an INT-dependent addition. Subtracting its
-      // maximum keeps the row implied by raw equipment attributes for every
-      // main-stat/weapon combination while retaining a useful lower bound.
+      // 青魔法师的武器因子包含依赖 INT 的加成。减去该加成的最大值后，
+      // 对所有主属性与武器伤害组合，此约束行仍由装备原始属性蕴含，同时保留有用的下界。
       const minimum = name === "weapon"
         ? Math.max(0, factorClass.min - maximumBluWeaponAddition)
         : factorClass.min;
@@ -4961,9 +4948,8 @@ function addCandidateLevelConditionalResourceSupports(
     }
   }
 
-  // Historical four-job unsynced proof snapshots paired the uniform support
-  // row with one nonnegative factor-slope direction. The weighted row is still
-  // implied by the exact equipment resource budget; it only strengthens HiGHS' relaxation.
+  // 早期四职业未同步证明快照会将均匀支撑行与一个非负因子斜率方向配合使用。
+  // 加权行仍由精确装备资源预算蕴含，只用于强化 HiGHS 的松弛模型。
   let weightedRowsAdded = 0;
   let selectedWeightedResourceWeights: Readonly<Record<string, number>> | undefined;
   if (profile === "compact-weighted") {
@@ -5072,7 +5058,7 @@ function addCandidateLevelConditionalResourceSupports(
   }
 
   for (const row of pendingRows) {
-    // Selecting an out-of-window candidate below this resource threshold tightens the global budget.
+    // 选择窗口外且低于此资源阈值的候选，会收紧全局预算。
     addRows(model.rows, row.name, row.terms, row.sense, row.rhs);
   }
   return {
@@ -5349,7 +5335,7 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
           if (equipment.itemId === itemId) addTerm(terms, slotVariables[slotIndex]![candidateIndex]!, 1);
         });
       }
-      // One row covers every meld variant of this physical item in both slots.
+      // 一条约束行覆盖该实体物品在两个槽位中的所有镶嵌变体。
       if (terms.size > 1) addRows(rows, `unique_ring_item_${itemId}`, terms, "<=", 1);
     }
   }
@@ -5454,7 +5440,7 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
       addRows(rows, `food_cap_threshold_${foodIndex}_${attribute}`, capThreshold, ">=", denominator * cap - bigM - offset);
     }
   }
-  // Rebuild final totals after each food's conditional bonus variables exist.
+  // 各食物的条件加成变量创建后，重新构造最终属性总和。
   attributeIds.forEach((_, attribute) => {
     const finalTerms = new Map<string, number>([[finalVariables[attribute]!, 1], [rawVariables[attribute]!, -1]]);
     for (const bonus of foodBonuses) {
@@ -5560,9 +5546,8 @@ function buildLinearAttributeModel(options: ExactMipOptions) {
   };
 }
 
-// An exact marginal reachable set is an over-approximation once shared and
-// cross-attribute constraints are omitted. If any work guard fails, abandon
-// the whole attribute axis so no partial frontier can exclude a legal value.
+// 忽略共享约束和跨属性约束后，精确的边际可达集合会成为原集合的超集。
+// 任一工作量保护条件失败时，都放弃整个属性轴，避免不完整的前沿排除合法取值。
 function reachableFinalAttributeValues(
   options: ExactMipOptions,
   model: NonNullable<ReturnType<typeof buildLinearAttributeModel>>,
@@ -5876,8 +5861,8 @@ async function prepareExactMipModel(
     const uncapped = BigInt(bonus.maximumRaw) * BigInt(bonus.numerator) / BigInt(bonus.denominator);
     foodMaximumBonuses[bonus.foodIndex]![bonus.attribute] += uncapped >= BigInt(bonus.cap) ? bonus.cap : Number(uncapped);
   }
-  // These support inequalities are implied by real gear/food resources. Put
-  // them directly on factor selectors to strengthen the integer relaxation.
+  // 这些支撑不等式由实际装备和食物资源蕴含。将它们直接施加到因子选择变量上，
+  // 以强化整数松弛。
   for (let mask = 1; mask < 1 << resourceAxes.length; mask++) {
     const axes = resourceAxes.filter((_, index) => (mask & (1 << index)) !== 0);
     const gearMaximum = model.equipmentAttributes.reduce((total, slot) => total + Math.max(...slot.map((candidate) =>
@@ -6159,7 +6144,7 @@ export async function findBestLoadoutExactMip(
           () => options.isCancelled?.() === true,
         );
       } catch {
-        // An uncertain bound is an optimization miss; the original model still proves the result.
+        // 上界不确定只会错过一次优化；原始模型仍会证明结果。
       }
       candidateBoundMs = performance.now() - candidateBoundStartedAt;
       if (pruning !== undefined) {
@@ -6178,7 +6163,7 @@ export async function findBestLoadoutExactMip(
     const fullPreparationStartedAt = performance.now();
     prepared = await prepareExactMipModel(
       modelOptions,
-      // Keep the stronger main-stat and weighted resource supports on broad canonical baselines.
+      // 在较宽的规范基线中保留更强的主属性和加权资源支撑约束。
       primaryResourceSupportsEnabled,
       modelOptions === options ? initialModel : undefined,
       mainStatResourceSupportEnabled,
@@ -6344,8 +6329,8 @@ export async function findBestLoadoutExactMip(
         factorClass.value === choice.centiseconds &&
         intersectsRange(factorClass.min, factorClass.max, choice.range)));
     }
-    // An empty filtered group cannot occur after a feasible initial MIP solve;
-    // keep the unfiltered superset if numeric edge cases make it appear empty.
+    // 初始 MIP 已有可行解时，筛选后的组不应为空；若数值边界情况导致其为空，
+    // 则保留未筛选的超集。
     if (classes.length === 0) classes = group.classes;
     return {
       name: group.name,
@@ -6445,7 +6430,7 @@ export async function findBestLoadoutExactMip(
         const attributeMinimum = q === undefined
           ? undefined
           : minimumAttributeByGroupAndQ.get(name)?.get(q);
-        // Unknown mappings must retain the tuple; only a complete lower bound can reject it.
+        // 映射未知时必须保留该元组；只有完整的下界才能将其排除。
         if (attributeMinimum === undefined) {
           minimum = Number.NEGATIVE_INFINITY;
           break;
@@ -6575,8 +6560,8 @@ export async function findBestLoadoutExactMip(
   }
 
   const objective = new Map<string, number>();
-  // q is integral; this binary scale keeps coefficients exact and leaves a
-  // 1/65,536 objective step, over 15x HiGHS' default 1e-6 MIP tolerance.
+  // q 是整数；采用二进制缩放可保持系数精确，并使目标步长为 1/65,536，
+  // 其精度超过 HiGHS 默认 1e-6 MIP 容差的 15 倍。
   for (const [variable, coefficient] of qByVariable) {
     addTerm(objective, variable, coefficient / SURROGATE_OBJECTIVE_SCALE);
   }
@@ -6586,9 +6571,8 @@ export async function findBestLoadoutExactMip(
   let signatureBandProof = false;
   let lastSignatureBandIncumbent: string | undefined;
   let lastSignatureBandMayContainBetter = true;
-  // The score sums seven rounded log factors. Its rounding error is bounded
-  // by the factor count, so signatures below the surrogate optimum by more
-  // than this band cannot beat that optimum under exact factor comparison.
+  // 得分是七个取整对数因子的总和，取整误差不超过因子数量。
+  // 因此，签名得分若低于代理最优值超过此误差带，就不可能在精确因子比较中胜出。
   const errorBand = groups.length;
   while (true) {
     throwIfCancelled(options.isCancelled);

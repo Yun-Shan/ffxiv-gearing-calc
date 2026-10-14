@@ -10,11 +10,10 @@ import {
   type OptimizationConfig,
   type OptimizationResult,
   type Stat,
-} from "../../../../domain/index";
-import { defaultJobLevel } from "../../../services/app-config";
-import { gearSlotLabels, statName, statValue } from "../../../services/labels";
-import { SingleJobGearTable } from "./components/single-job-gear-table/SingleJobGearTable";
-import styles from "./GearTable.module.scss";
+} from "@/domain";
+import { gearSlotLabels, statName, statValue } from "@/ui/services/labels";
+import { SingleJobGearTable } from "@/ui/components/results/gear-table/components/single-job-gear-table/SingleJobGearTable";
+import styles from "@/ui/components/results/gear-table/GearTable.module.scss";
 
 const slotLabels = gearSlotLabels;
 
@@ -23,7 +22,7 @@ function appliedFoodStats(
   config: OptimizationConfig,
 ): Partial<Record<Stat, number>> {
   const job = jobSchemas[config.jobId];
-  const level = result.calculationLevel ?? config.jobLevel ?? job.maxJobLevel ?? defaultJobLevel;
+  const level = result.calculationLevel!;
   const allowed = new Set(job.stats);
   const foodStats = Object.fromEntries(
     Object.entries(result.food.stats).filter(([stat, value]) =>

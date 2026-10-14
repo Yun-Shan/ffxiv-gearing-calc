@@ -1,6 +1,5 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { SinglePageSidePanel } from "../../../../components/side-panel/SinglePageSidePanel";
-import styles from "../../../../components/search-progress/SearchWorkflowProgress.module.scss";
+import { useEffect, useState } from "react";
+import styles from "@/ui/components/search-progress/SearchWorkflowProgress.module.scss";
 
 export type SingleSearchPhase = "prepare" | "solve" | "verify";
 
@@ -10,14 +9,14 @@ export interface SingleSearchSlotCandidateCount {
 }
 
 export interface SingleSearchCurrentModelMetrics {
-  /** Internal model identifier; used only to associate these metrics with the current model. */
+  /** 内部模型标识，仅用于将指标关联到当前模型。 */
   model?: string;
-  /** Solver status, such as HiGHS' Optimal status. */
+  /** 求解器状态，例如 HiGHS 报告的最优状态。 */
   status?: string;
   completed?: boolean;
   primalBound?: number;
   dualBound?: number;
-  /** Actual solver-reported relative gap, expressed as a fraction. */
+  /** 求解器报告的实际相对间隙，以小数表示。 */
   gap?: number;
   nodes?: number;
   lpIterations?: number;
@@ -27,7 +26,7 @@ export interface SingleSearchCurrentModelMetrics {
 
 export interface SingleSearchProgressState {
   phase: SingleSearchPhase;
-  /** Unix timestamp in milliseconds. */
+  /** 起始时间戳，单位为毫秒。 */
   startedAt: number;
   hasFeasibleCandidate: boolean;
   slotCandidateCounts?: readonly SingleSearchSlotCandidateCount[];
@@ -38,10 +37,6 @@ export interface SingleSearchProgressState {
 export interface SingleSearchProgressProps {
   jobName: string;
   progress: SingleSearchProgressState;
-  rightSummary: ReactNode;
-  onCancel: () => void;
-  onReset: () => void;
-  history: ReactNode;
 }
 
 const SEARCH_STAGES: ReadonlyArray<{ phase: SingleSearchPhase; label: string }> = [
@@ -108,10 +103,6 @@ function getValidSlotCounts(
 export function SingleSearchProgress({
   jobName,
   progress,
-  rightSummary,
-  onCancel,
-  onReset,
-  history,
 }: SingleSearchProgressProps) {
   const [now, setNow] = useState(() => Date.now());
 
@@ -151,8 +142,6 @@ export function SingleSearchProgress({
         : "正在寻找符合条件的最优配装";
 
   return (
-    <div className={styles.page}>
-      <div className={styles.layout}>
         <section className={styles.main} aria-labelledby="single-search-progress-title">
           <header className={styles.header}>
             <div>
@@ -235,24 +224,5 @@ export function SingleSearchProgress({
           )}
         </section>
 
-        <SinglePageSidePanel className={styles.rail} ariaLabel="搜索条件摘要">
-          <div className={styles.summary}>{rightSummary}</div>
-          <p className={styles.assurance}>搜索中 · 搜索结果将严格满足以上条件</p>
-          <button className={styles.cancelButton} type="button" onClick={onCancel}>
-            取消搜索
-          </button>
-          <footer className={styles.railFooter}>
-            <span>纯前端计算 · 可离线运行</span>
-            <details className={styles.advanced}>
-              <summary>高级设置</summary>
-              <div className={styles.advancedMenu}>
-                <button type="button" className={styles.resetButton} onClick={onReset}>重置当前页面配置</button>
-                <div className={styles.history}>{history}</div>
-              </div>
-            </details>
-          </footer>
-        </SinglePageSidePanel>
-      </div>
-    </div>
   );
 }

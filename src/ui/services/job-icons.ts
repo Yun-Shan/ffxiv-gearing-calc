@@ -1,4 +1,4 @@
-import type { JobId } from "../../domain/index";
+import type { JobId } from "@/domain";
 
 export const jobIcons: Record<JobId, string> = {
   "PLD": "/assets/jobs/PLD.png",

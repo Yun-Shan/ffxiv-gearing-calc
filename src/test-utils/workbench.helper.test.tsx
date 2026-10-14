@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-// Shared fixture for page and component UI tests; Vitest excludes .helper.test files.
+// 页面和组件界面测试共用的夹具；Vitest 会排除 .helper.test 文件。
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, vi } from "vitest";
@@ -32,14 +32,14 @@ export const optimizeJointMock = testMocks.optimizeJointMock;
 export const findFeasibleGcdsMock = testMocks.findFeasibleGcdsMock;
 export const historyStore = testMocks.historyStore;
 
-vi.mock("../domain/index", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("../domain/index")>()),
+vi.mock("@/domain", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/domain")>()),
   optimize: testMocks.optimizeMock,
   optimizeJoint: testMocks.optimizeJointMock,
   findFeasibleGcds: testMocks.findFeasibleGcdsMock,
 }));
 
-vi.mock("../ui/services/search-history", () => ({
+vi.mock("@/ui/services/search-history", () => ({
   createSearchHistory: vi.fn(async (input: { kind: "single" | "joint"; config: unknown; dataVersion: string }) => {
     historyStore.nextId += 1;
     const startedAtISO = new Date(Date.UTC(2026, 9, 3, 0, 0, historyStore.nextId)).toISOString();
@@ -83,7 +83,7 @@ import {
   type JointOptimizationResult,
   type OptimizationConfig,
   type OptimizationResult,
-} from "../domain/index";
+} from "@/domain";
 
 export let host: HTMLDivElement;
 let root: Root;
@@ -250,6 +250,7 @@ export function sampleResult(): OptimizationResult {
   const sampleWeapon = gears.find((gear) => gear.slot === "weapon" && gear.jobs.includes("SAM"));
   if (!sampleWeapon) throw new Error("测试需要一件有效的武士武器");
   return {
+    calculationLevel: 100,
     gear: [{ ...sampleWeapon, melds: [], finalStats: {} }],
     food: foods[0],
     stats: {},

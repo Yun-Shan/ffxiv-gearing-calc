@@ -12,7 +12,7 @@ export type LoadoutSearchResult = {
 
 export type LoadoutConstraints = {
   gcd?: number;
-  /** Accept any listed exact GCD threshold while optimizing one common result. */
+  /** 优化同一结果时，接受列表中的任一精确 GCD 阈值。 */
   gcdChoices?: readonly number[];
   speedMin?: number;
   speedMax?: number;

@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
-import type { JobId } from "../../../../../domain/types";
-import type { LinearMipProgress } from "../../../../../domain/search/linear-mip";
-import { SinglePageSidePanel } from "../../../../components/side-panel/SinglePageSidePanel";
+import type { JobId } from "@/domain/types";
+import type { LinearMipProgress } from "@/domain/search/linear-mip";
+import { SinglePageSidePanel } from "@/ui/components/side-panel/SinglePageSidePanel";
 import { JointProgressPhaseDetail } from "./components/joint-progress-phase-detail/JointProgressPhaseDetail";
-import progressStyles from "../../../../components/search-progress/SearchWorkflowProgress.module.scss";
+import progressStyles from "@/ui/components/search-progress/SearchWorkflowProgress.module.scss";
 import styles from "./JointSearchProgress.module.scss";
 
 export type JointSearchPhase = "prepare" | "baseline" | "joint" | "verify";
@@ -27,19 +27,19 @@ export interface JointSearchProgressJob {
   name: string;
   prepared: boolean;
   preparationFailed?: boolean;
-  /** The latest baseline solver event selected by the caller. */
+  /** 调用方选取的最新单职业基线求解器事件。 */
   solver?: LinearMipProgress;
 }
 
 export interface JointSearchProgressState {
   phase: JointSearchPhase;
-  /** Unix timestamp in milliseconds. */
+  /** 起始时间戳，单位为毫秒。 */
   startedAt: number;
   jobs: readonly JointSearchProgressJob[];
-  /** The latest joint-model solver event, when available. */
+  /** 若已收到联合模型事件，则保存其最新一条。 */
   jointSolver?: LinearMipProgress;
   jointStats: JointSearchStats;
-  /** The current verification callback text, passed through without interpretation. */
+  /** 当前核验回调文本，原样传入且不在此处解析。 */
   verifyMessage?: string;
 }
 

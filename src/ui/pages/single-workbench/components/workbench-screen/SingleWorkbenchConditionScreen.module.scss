@@ -1,0 +1,6 @@
+@use "@/styles/tokens" as tokens;
+
+.gcdError {
+  color: #994b32;
+  font-size: tokens.$font-size-body;
+}

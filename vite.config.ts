@@ -17,6 +17,11 @@ function isWithin(root: string, path: string): boolean {
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      "@": srcRoot,
+    },
+  },
   test: {
     exclude: [
       ...configDefaults.exclude,

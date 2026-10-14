@@ -35,13 +35,13 @@ function dominates(
     if (left[index]! < right[index]!) return false;
     if (left[index]! > right[index]!) strictlyBetter = true;
   }
-  // Keep the first candidate when full attribute vectors are equivalent.
+  // 完整属性向量相同时保留先出现的候选。
   return strictlyBetter || left.every((value, index) => value === right[index]);
 }
 
 /**
- * Insert a candidate into an incremental maximization frontier. The caller
- * must only use this for slots without cross-slot identity constraints.
+ * 将候选插入增量最大化前沿。
+ * 调用方只能将此函数用于不存在跨槽位身份约束的装备槽。
  */
 export function insertParetoCandidate<T>(
   frontier: ParetoCandidate<T>[],
@@ -78,11 +78,10 @@ function insertParetoCandidateWithEqualCoordinates<T>(
 }
 
 /**
- * Pareto-prune one ring slot without changing which candidates it can pair
- * with in the opposite slot. Non-unique candidates and unique candidates
- * without an opposite-slot conflict can pair with every opposite candidate,
- * so they share a frontier and may also dominate a conflicting unique item.
- * Unique candidates that conflict across slots get a frontier per item ID.
+ * 对单侧戒指槽执行帕累托剪枝，同时保持其可与另一侧配对的候选集合不变。
+ * 非唯一装备以及在另一侧没有冲突的唯一装备都能与任意另一侧候选配对，
+ * 因此它们共用一个前沿，也可以支配存在唯一装备冲突的候选。
+ * 会与另一侧冲突的唯一装备则按物品 ID 分别维护前沿。
  */
 export function paretoRingCandidates<T>(
   candidates: readonly RingParetoCandidate<T>[],
@@ -105,9 +104,8 @@ export function paretoRingCandidates<T>(
       );
       if (!insertion.accepted) continue;
 
-      // An all-compatible candidate can replace a conflicting unique item
-      // with no worse attributes. The reverse replacement could lose the
-      // opposite ring carrying that unique item ID.
+      // 可与所有候选配对的候选若属性不差，就能替换存在冲突的唯一装备。
+      // 反向替换则可能丢失另一侧携带相同唯一物品 ID 的戒指。
       for (const frontier of uniqueConflictFrontiers.values()) {
         for (let index = frontier.length - 1; index >= 0; index--) {
           if (dominates(candidate.attributes, frontier[index]!.attributes, equalCoordinates)) {

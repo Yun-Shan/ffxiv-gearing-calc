@@ -12,7 +12,7 @@ import type {
   Stats,
 } from "./types.ts";
 
-// Match the source formula at floating-point integer boundaries.
+// 在浮点数接近整数的边界处与上游公式保持一致。
 const floor = (value: number) => Math.trunc(value + 1e-7);
 
 function levelModifierFor(level: number) {
@@ -59,7 +59,7 @@ export function calculateBaseStats(job: JobSchema, level: number, clanIndex = 0)
   return stats;
 }
 
-/** Resolve the upstream main/secondary Item tokens for one selected job. */
+/** 根据选定职业解析上游 Item 数据中的主属性和副属性占位符。 */
 export function concretizeGearStats(stats: GearStats, job: JobSchema): Stats {
   const result: Stats = {};
   for (const [rawStat, value] of Object.entries(stats)) {
@@ -74,7 +74,7 @@ export function concretizeGearStats(stats: GearStats, job: JobSchema): Stats {
   return result;
 }
 
-/** Mirrors the reference Gear.syncedLevel rules for ordinary and variable-level gear. */
+/** 按参考实现的 Gear.syncedLevel 规则处理普通装备和可变等级装备。 */
 export function effectiveGearSyncLevel(
   gear: Gear,
   jobLevel: number,
@@ -228,7 +228,7 @@ export function getGearStatCap(
   return Math.round((levelCap * slotCap * roleCap) / 100_000);
 }
 
-/** Applies the reference project's level/slot/role caps to resolved item stats. */
+/** 对已解析的装备属性应用参考项目中的等级、槽位和职责上限。 */
 export function capGearStatsAtLevel(
   gear: Gear,
   stats: Stats,
@@ -243,8 +243,7 @@ export function capGearStatsAtLevel(
   return result;
 }
 
-// The reference UI highlights a secondary stat when the unmelded gear value
-// already reaches that item's cap; melding it to the cap does not change this highlight.
+// 参考界面会在未镶嵌装备的副属性已达到该装备上限时高亮显示；镶嵌到上限不会改变高亮状态。
 export function isGearBaseStatAtCap(gear: Gear, stat: Stat): boolean {
   return (gear.stats[stat] ?? 0) >= getGearStatCap(gear, stat);
 }

@@ -1,4 +1,4 @@
-@use "../../../styles/tokens" as tokens;
+@use "@/styles/tokens" as tokens;
 
 .header {
   box-sizing: border-box;
@@ -70,7 +70,6 @@
   border-bottom: 4px solid transparent;
   color: #c7d5df;
   font-size: tokens.$font-size-label;
-  font-weight: 400;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -86,7 +85,6 @@
 }
 .active {
   border-color: tokens.$color-accent-teal-soft;
-  background: transparent;
   color: tokens.$color-neutral-white;
   font-weight: 600;
 }

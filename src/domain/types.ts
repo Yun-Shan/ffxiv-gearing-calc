@@ -16,7 +16,7 @@ export type Stat =
   | "PDMG"
   | "MDMG"
   | "DLY";
-/** Raw Item BaseParam placeholders resolved through the selected job schema. */
+/** 原始 Item BaseParam 中的主属性和副属性占位符，需结合选定职业结构解析。 */
 export type GearStat = Stat | "main" | "secondary";
 export type JobId =
   | "PLD"
@@ -82,7 +82,7 @@ export interface Gear {
   stats: GearStats;
   materiaSlots: number;
   materiaAdvanced?: true;
-  /** Item-level unique restriction; runtime data treats an absent source value as false. */
+  /** 装备的唯一属性限制；源数据缺少此字段时，运行时按 false 处理。 */
   unique?: boolean;
   customParameters?: CustomWeaponParameter[];
   resistanceWeaponAdjust?: ResistanceWeaponAdjust;
@@ -132,11 +132,11 @@ export interface JobSchema {
   partyBonus?: number;
   gcdModifier: number;
   traitDamageMultiplier: number;
-  /** Maximum character level supported by this job. */
+  /** 该职业支持的最高角色等级。 */
   maxJobLevel?: number;
-  /** The source gives limited-job weapons zero item-level weight. */
+  /** 上游将限制职业武器的品级权重设为零。 */
   ignoreWeaponItemLevel?: boolean;
-  /** Initial item-level range selected for this job in the optimizer. */
+  /** 优化器为该职业选择的初始品级范围。 */
   defaultItemLevel?: readonly [number, number];
   dataSources?: DataSourceRef[];
 }
@@ -199,7 +199,7 @@ export interface Effects {
 }
 
 export interface MeldedGear extends Gear {
-  /** Job-specific concrete stats; generic main/secondary placeholders are resolved. */
+  /** 已将通用占位符解析为职业专属属性的装备数据。 */
   stats: Stats;
   melds: Materia[];
   finalStats: Stats;
@@ -209,16 +209,16 @@ export interface OptimizationConfig {
   jobId: JobId;
   minItemLevel: number;
   maxItemLevel: number;
-  /** Character level used for base stats and damage formulas. Defaults to currentLevel. */
+  /** 用于基础属性和伤害公式的角色等级；默认使用 currentLevel。 */
   jobLevel?: number;
-  /** Sync item attributes and weapon damage to this item level. */
+  /** 将装备属性和武器伤害同步到此品级。 */
   syncLevel?: number;
   gcdTarget?: number;
   gcdChoices?: number[];
   speedMin?: number;
   speedMax?: number;
   minTenacity?: number;
-  /** Minimum final Tenacity after base attributes, equipment, and food. */
+  /** 基础属性、装备和食物合并后的最低坚韧值。 */
   toughnessMin?: number;
   toughnessMinPercent?: number;
   maximizeTenacity: boolean;
@@ -228,7 +228,7 @@ export interface OptimizationConfig {
   forcedGear: Partial<Record<GearSlot, number>>;
   sharedSlots?: GearSlot[];
   foodId: number;
-  /** Test/acceptance-only execution budget; frontend worker requests ignore this field. */
+  /** 仅供测试和验收设置的执行时限；前端工作线程请求会忽略此字段。 */
   maxSearchMs?: number;
 }
 
@@ -239,7 +239,7 @@ export interface JointOptimizationConfig {
   commonSlots: CommonGearSlot[];
   foodStrategy: "shared" | "independent";
   objective?: "damage" | "dps";
-  /** Test/acceptance-only execution budget; frontend worker requests ignore this field. */
+  /** 仅供测试和验收设置的执行时限；前端工作线程请求会忽略此字段。 */
   maxSearchMs?: number;
   cacheLimit?: number;
 }
@@ -249,19 +249,19 @@ export interface SearchOptions {
   onProgress?: (message: string) => void;
   onCandidateCounts?: (counts: SearchCandidateCounts) => void;
   onSolverProgress?: (event: LinearMipProgress) => void;
-  /** Opt-in full solver callback snapshots for diagnostics. */
+  /** 显式启用后提供完整求解器回调快照，用于诊断。 */
   onSolverCallback?: (event: HighsCallbackTrace) => void;
 }
 
 export interface SearchCandidateCounts {
   jobId: JobId;
-  /** Candidate counts from the exact slot pools prepared for the solver. */
+  /** 为求解器准备的精确槽位候选池中的候选数量。 */
   slots: { slot: string; count: number }[];
   foodCount: number;
 }
 
 export interface OptimizationResult {
-  /** Job level used for base attributes, food, damage, and GCD calculations. */
+  /** 用于基础属性、食物、伤害和 GCD 计算的职业等级。 */
   calculationLevel?: number;
   gear: MeldedGear[];
   food: Food;

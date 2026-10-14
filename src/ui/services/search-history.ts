@@ -1,4 +1,4 @@
-import { calculateBaseStats, combatStats, getGearStatCap, jobSchemas } from "../../domain/index";
+import { calculateBaseStats, combatStats, getGearStatCap, jobSchemas } from "@/domain";
 import type {
   CommonGearSlot,
   Effects,
@@ -14,10 +14,7 @@ import type {
   OptimizationResult,
   Stat,
   Stats,
-} from "../../domain/index";
-import type { SingleGcdMode } from "./types";
-
-export type { SingleGcdMode } from "./types";
+} from "@/domain";
 
 const DATABASE_NAME = "ffxiv-gearing-calc";
 const DATABASE_VERSION = 1;
@@ -56,7 +53,6 @@ export type SearchHistoryRecord =
   | (SearchHistoryBase & {
       kind: "single";
       config: OptimizationConfig;
-      gcdMode?: SingleGcdMode;
       result?: OptimizationResult;
     })
   | (SearchHistoryBase & {
@@ -66,7 +62,7 @@ export type SearchHistoryRecord =
     });
 
 export type CreateSearchHistoryInput =
-  | { kind: "single"; config: OptimizationConfig; gcdMode?: SingleGcdMode; dataVersion: string }
+  | { kind: "single"; config: OptimizationConfig; dataVersion: string }
   | { kind: "joint"; config: JointOptimizationConfig; dataVersion: string };
 
 export type FinishSearchHistoryInput =
@@ -91,7 +87,6 @@ function storageError(operation: string, cause: unknown): SearchHistoryStorageEr
           QuotaExceededError: "浏览器本地存储空间不足。",
           SecurityError: "浏览器阻止访问本地搜索记录。",
           NotAllowedError: "浏览器拒绝访问本地搜索记录。",
-          VersionError: "本地搜索记录版本不兼容。",
         } as Record<string, string>)[cause.name] ?? "浏览器本地数据库操作失败。"
       : cause instanceof Error
         ? cause.message
@@ -100,6 +95,7 @@ function storageError(operation: string, cause: unknown): SearchHistoryStorageEr
 }
 
 function openDatabase(): Promise<IDBDatabase> {
+  // 复用并发的打开请求；失败或数据库版本变化时会清除缓存，后续操作即可重试。
   if (databasePromise) return databasePromise;
   if (typeof window === "undefined" || !window.indexedDB) {
     return Promise.reject(
@@ -223,8 +219,8 @@ function isMeldedGear(value: unknown): value is MeldedGear {
   for (const stat of Object.keys(value.finalStats)) {
     if (!combatStats.includes(stat as (typeof combatStats)[number])) continue;
     try {
-      // ResultPanel calls isGearBaseStatAtCap for these values. Validate the
-      // same domain lookup now so malformed historical gear cannot throw at render time.
+      // 结果面板会对这些属性调用 isGearBaseStatAtCap；提前执行相同的领域查询，
+      // 避免无效装备数据在渲染时触发异常。
       getGearStatCap(value, stat as Stat);
     } catch {
       return false;
@@ -251,31 +247,31 @@ function validateOptimizationConfig(value: unknown): value is OptimizationConfig
     (value.minTenacity === undefined || isFiniteNumber(value.minTenacity)) &&
     (value.toughnessMin === undefined || isFiniteNumber(value.toughnessMin)) &&
     (value.toughnessMinPercent === undefined || isFiniteNumber(value.toughnessMinPercent)) &&
-    (value.objective === undefined || value.objective === "damage" || value.objective === "dps") &&
+    (value.objective === "damage" || value.objective === "dps") &&
     (value.excludedGearIds === undefined || (Array.isArray(value.excludedGearIds) && value.excludedGearIds.every(isSafeInteger))) &&
     (value.sharedSlots === undefined || (Array.isArray(value.sharedSlots) && value.sharedSlots.every((slot) => typeof slot === "string" && GEAR_SLOT_IDS.has(slot as GearSlot)))) &&
     (value.maxSearchMs === undefined || isFiniteNumber(value.maxSearchMs))
   );
 }
 
+function validateSingleConfig(value: unknown): value is OptimizationConfig {
+  return validateOptimizationConfig(value) && value.gcdTarget === undefined &&
+    !(value.gcdChoices !== undefined && (value.speedMin !== undefined || value.speedMax !== undefined));
+}
+
 function supportsResultLevel(
   config: OptimizationConfig,
-  calculationLevel?: number,
+  calculationLevel: number,
 ): boolean {
   const job = jobSchemas[config.jobId];
   const maxJobLevel = job.maxJobLevel ?? 100;
   const configuredLevel = config.jobLevel ?? job.maxJobLevel ?? 100;
-  if (
-    calculationLevel !== undefined &&
-    (!isSafeInteger(calculationLevel) || calculationLevel > maxJobLevel)
-  ) return false;
-  const levels = calculationLevel === undefined
-    ? [configuredLevel]
-    : [configuredLevel, calculationLevel];
+  if (!isSafeInteger(calculationLevel) || calculationLevel > maxJobLevel) return false;
   try {
-    // ResultPanel reapplies food using these base stats. Use the domain's own
-    // supported-level check so stale or damaged levels cannot throw at render time.
-    for (const level of levels) calculateBaseStats(job, level);
+    // 结果面板会基于这些基础属性重新应用食物；使用领域层的等级校验，
+    // 避免无效等级在渲染时触发异常。
+    calculateBaseStats(job, configuredLevel);
+    calculateBaseStats(job, calculationLevel);
     return true;
   } catch {
     return false;
@@ -287,9 +283,9 @@ function validateJointConfig(value: unknown): value is JointOptimizationConfig {
   return (
     Array.isArray(value.jobs) && value.jobs.length >= 2 && value.jobs.every(validateOptimizationConfig) &&
     new Set(value.jobs.map((job) => (job as OptimizationConfig).jobId)).size === value.jobs.length &&
-    Array.isArray(value.commonSlots) && value.commonSlots.every((item) => typeof item === "string" && COMMON_SLOT_IDS.has(item as CommonGearSlot)) &&
+    Array.isArray(value.commonSlots) && value.commonSlots.every((item) => typeof item === "string" && GEAR_SLOT_IDS.has(item as GearSlot)) &&
     (value.foodStrategy === "shared" || value.foodStrategy === "independent") &&
-    (value.objective === undefined || value.objective === "damage" || value.objective === "dps") &&
+    (value.objective === "damage" || value.objective === "dps") &&
     (value.maxSearchMs === undefined || isFiniteNumber(value.maxSearchMs)) &&
     (value.cacheLimit === undefined || isFiniteNumber(value.cacheLimit))
   );
@@ -299,7 +295,7 @@ function validateSingleResult(value: unknown): value is OptimizationResult {
   if (!isObject(value)) return false;
   const effects = value.effects;
   return (
-    (value.calculationLevel === undefined || isSafeInteger(value.calculationLevel)) &&
+    isSafeInteger(value.calculationLevel) &&
     Array.isArray(value.gear) && value.gear.every(isMeldedGear) && isFood(value.food) && isStats(value.stats) && isObject(effects) &&
     EFFECT_FIELDS.every((field) => isFiniteNumber(effects[field])) &&
     isFiniteNumber(value.score) && (value.objective === "damage" || value.objective === "dps") &&
@@ -369,15 +365,11 @@ function validateRecord(value: unknown): SearchHistoryRecord {
   assert(value.error === undefined || typeof value.error === "string", "错误信息格式无效。");
 
   if (value.kind === "single") {
-    assert(
-      value.gcdMode === undefined || value.gcdMode === "any" || value.gcdMode === "tiers" || value.gcdMode === "speed",
-      "GCD 约束模式无效。",
-    );
-    assert(validateOptimizationConfig(value.config), "单职业配置缺少必要字段或类型错误。");
+    assert(validateSingleConfig(value.config), "单职业配置缺少必要字段或类型错误。");
     if (value.status === "completed") {
       assert(validateSingleResult(value.result), "单职业成功结果缺少必要字段或类型错误。");
       assert(
-        supportsResultLevel(value.config, value.result.calculationLevel),
+        supportsResultLevel(value.config, value.result.calculationLevel!),
         "成功记录的职业等级不受当前数据支持。",
       );
     }
@@ -388,8 +380,8 @@ function validateRecord(value: unknown): SearchHistoryRecord {
       const result = value.result as JointOptimizationResult;
       assert(
         value.config.jobs.every((job) =>
-          supportsResultLevel(job, result.jobResults[job.jobId]?.calculationLevel) &&
-          supportsResultLevel(job, result.optima[job.jobId]?.calculationLevel),
+          supportsResultLevel(job, result.jobResults[job.jobId]!.calculationLevel!) &&
+          supportsResultLevel(job, result.optima[job.jobId]!.calculationLevel!),
         ),
         "成功记录中有职业等级不受当前数据支持。",
       );
@@ -400,8 +392,9 @@ function validateRecord(value: unknown): SearchHistoryRecord {
   return value as unknown as SearchHistoryRecord;
 }
 
-/** Validates an IndexedDB record before exposing it to history consumers. */
+/** 将 IndexedDB 记录交给历史记录使用方前，先校验其结构与字段。 */
 export function validateSearchHistoryRecord(value: unknown): SearchHistoryRecord {
+  // 存储边界统一核对记录结构，避免不完整数据进入页面逻辑。
   return validateRecord(value);
 }
 
@@ -429,6 +422,7 @@ function requestTransaction<T>(
       fail(error);
       return;
     }
+    // 请求成功只表示请求已返回；等待事务完成后再返回结果，确保写入已提交。
     request.onsuccess = () => {
       result = request.result;
       hasResult = true;
@@ -454,7 +448,7 @@ function makeId(): string {
 }
 
 export async function createSearchHistory(input: CreateSearchHistoryInput): Promise<SearchHistoryRecord> {
-  if (input.kind === "single") assert(validateOptimizationConfig(input.config), "单职业配置缺少必要字段或类型错误。");
+  if (input.kind === "single") assert(validateSingleConfig(input.config), "单职业配置缺少必要字段或类型错误。");
   else assert(validateJointConfig(input.config), "联合配置缺少必要字段或类型错误。");
   assert(typeof input.dataVersion === "string" && input.dataVersion.length > 0, "缺少数据版本。");
 
@@ -464,7 +458,6 @@ export async function createSearchHistory(input: CreateSearchHistoryInput): Prom
     startedAtISO: new Date().toISOString(),
     dataVersion: input.dataVersion,
     config: input.config,
-    ...(input.kind === "single" && input.gcdMode ? { gcdMode: input.gcdMode } : {}),
     status: "running",
   });
   await requestTransaction<IDBValidKey>(
@@ -514,7 +507,7 @@ export async function updateSearchHistory(
       try {
         transaction?.abort();
       } catch {
-        // The transaction may already be complete or aborted.
+        // 此时事务可能已经完成或中止。
       }
     };
 

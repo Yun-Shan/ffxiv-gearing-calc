@@ -1,4 +1,4 @@
-import { jobSchemas, type JobId, type JointOptimizationConfig, type JointOptimizationResult } from "../../../../../../../domain/index";
+import { jobSchemas, type JobId, type JointOptimizationConfig, type JointOptimizationResult } from "@/domain";
 import styles from "./JointResultsComparison.module.scss";
 
 function formatScore(value: number | undefined): string {

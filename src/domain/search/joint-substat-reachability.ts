@@ -62,7 +62,7 @@ export type JointSubstatReachabilityResult = {
 };
 
 export type JointSubstatReachabilityInput = {
-  /** One candidate-attribute vector per candidate in each slot. */
+  /** 每个装备槽中的每个候选各对应一个属性向量。 */
   equipmentAttributes: readonly (readonly (readonly number[])[])[];
   attributeIds: readonly number[];
   crtAttribute: number;
@@ -80,12 +80,12 @@ export type JointSubstatReachabilityInput = {
   dhtGlobalMaximum: number;
 };
 
-/** Lower test-only limits are accepted; callers can never raise the production caps. */
+/** 仅接受低于生产上限的测试用限制；调用方不能提高生产上限。 */
 export type JointSubstatReachabilityLimits = {
   maxTransitionsPerDirection?: number;
   maxIndexedWidth?: number;
   maxFoodEvaluations?: number;
-  /** Optional sparse MIP policy; omitted means retain every conditional class. */
+  /** 可选的稀疏 MIP 策略；省略时保留所有条件档位。 */
   maxConditionalClassesPerDirection?: number;
 };
 
@@ -133,6 +133,7 @@ function sameRational(
 function prepareFoodBonuses(
   input: JointSubstatReachabilityInput,
 ): { byAxis: AxisFoodBonus[][]; foodCount: number } | undefined {
+  // 将 MIP 中的食物加成元数据与食物属性逐项核对；信息缺失或不一致时放弃整个支撑界。
   const foodCount = Math.max(1, input.foods.length);
   const axes = [input.crtAttribute, input.dhtAttribute] as const;
   const ids = [input.attributeIds[input.crtAttribute], input.attributeIds[input.dhtAttribute]] as const;
@@ -218,6 +219,7 @@ function buildIndexedExtrema(
   maxTransitions: number,
   maxWidth: number,
 ): DpResult {
+  // 按一个属性轴累计可达总值，并为每个总值保留另一轴的最小值和最大值。
   const indexAttribute = indexAxis === 0 ? input.crtAttribute : input.dhtAttribute;
   const otherAttribute = indexAxis === 0 ? input.dhtAttribute : input.crtAttribute;
   if (input.equipmentAttributes.length === 0 ||
@@ -405,6 +407,8 @@ export function buildJointSubstatReachabilitySupports(
   input: JointSubstatReachabilityInput,
   limits: JointSubstatReachabilityLimits = {},
 ): JointSubstatReachabilityResult {
+  // 两个方向分别建立可达域，再结合食物效果生成条件支撑行。这里忽略共享和跨属性约束，
+  // 因此所得界只用于强化精确模型；任何输入或工作量保护失败都会返回空约束集。
   const startedAt = performance.now();
   const empty = (skippedReason: JointSubstatReachabilityDiagnostics["skippedReason"]): JointSubstatReachabilityResult => ({
     rows: [],

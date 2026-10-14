@@ -4,9 +4,8 @@ export type JointExactRatio = {
 };
 
 /**
- * An improving joint sum requires every job ratio to exceed
- * incumbent - (jobCount - 1), because every other job is bounded by its
- * independently proved baseline ratio of one.
+ * 要让联合总和有所提升，每个职业的比值都必须超过“当前最优联合比值 - (职业数量 - 1)”。
+ * 这是因为其余每个职业的比值都受各自已证明的基线比值 1 限制。
  */
 export function candidateUpperBoundCannotImproveJointIncumbent(
   candidateUpperBound: JointExactRatio,

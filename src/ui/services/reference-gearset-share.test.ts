@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { stringifyReferenceGearset } from "./reference-gearset-share";
 
 describe("reference gearset share compatibility", () => {
-  // Golden strings were compared byte-for-byte with Asvel/ffxiv-gearing commit
-  // 048376fb6c6c6538a482eba5f76128d985958fa0; keep tests independent of the ignored local clone.
+  // 基准字符串已与 Asvel/ffxiv-gearing 的提交逐字节比对：
+  // 048376fb6c6c6538a482eba5f76128d985958fa0；测试不依赖被忽略的本地副本。
   it.each([
     [660, "2OOvPWohS7itc5QuD"],
     [130, "2OOvPWohS7itb02ld"],

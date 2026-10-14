@@ -1,4 +1,4 @@
-@use "../../../../../../styles/tokens" as tokens;
+@use "@/styles/tokens" as tokens;
 
 .section {
   display: flex;
@@ -90,7 +90,6 @@
   justify-content: center;
   color: #687568;
   font-family: "Noto Sans SC", sans-serif;
-  font-style: normal;
   font-weight: 500;
   line-height: 1;
   pointer-events: none;
@@ -404,7 +403,6 @@
     height: 32px;
     flex: 0 0 440px;
     align-self: flex-start;
-    flex-wrap: nowrap;
     margin-top: 3px;
   }
   .section :global(.single-gcd-label) {
@@ -563,7 +561,6 @@
   .section :global(.single-gcd-controls) {
     flex: 1 1 100%;
     width: 100%;
-    height: auto;
     min-height: 32px;
     flex-wrap: wrap;
   }

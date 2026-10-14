@@ -1,5 +1,4 @@
-// Compile-time counterparts of the existing CSS custom properties. Keeping
-// these values here lets SCSS share tokens while emitting the same CSS values.
+// 与现有样式自定义属性对应的编译期变量，便于样式表复用并保持输出值一致。
 $color-text-primary: #2d3d31;
 $color-text-secondary: #5e6d5c;
 $color-text-subtle: #899187;
@@ -23,7 +22,7 @@ $font-size-control: 16px;
 $font-size-heading: 18px;
 $font-size-display: 24px;
 
-// Exact sizes outside the shared scale, kept for existing UI details.
+// 共享尺寸刻度之外的精确尺寸，用于保留现有界面细节。
 $font-size-7px: 7px;
 $font-size-9px: 9px;
 $font-size-11px: 11px;

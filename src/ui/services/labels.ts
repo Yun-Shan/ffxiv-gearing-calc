@@ -1,4 +1,4 @@
-import type { CommonGearSlot, GearSlot, Stat } from "../../domain/index";
+import type { CommonGearSlot, GearSlot, Stat } from "@/domain";
 
 export const gearSlotLabels: Record<GearSlot, string> = {
   weapon: "武器",

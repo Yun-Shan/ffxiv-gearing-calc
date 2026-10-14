@@ -66,7 +66,7 @@ test("signature band compares exact DPS fractions, including strict ties", () =>
     ...damageNames.slice(1).map((name) => ({ name, classes: [{ q: 0, value: 1 }] })),
     { name: "gcd", classes: [{ q: 0, value: 2 }] },
   ];
-  // The q=0 product-3 / GCD-2 candidate is strictly above 2 / 2.
+  // q=0 时，乘积 3、GCD 为 2 的候选严格优于乘积 2、GCD 为 2 的基线。
   assert.equal(hasStrictlyBetterFactorCombination({
     groups,
     objective: "dps",
@@ -80,7 +80,7 @@ test("signature band compares exact DPS fractions, including strict ties", () =>
     ...damageNames.slice(1).map((name) => ({ name, classes: [{ q: 0, value: 1 }] })),
     { name: "gcd", classes: [{ q: 0, value: 3 }] },
   ];
-  // Product 3 / GCD 3 ties the incumbent's 2 / GCD 2 and is not better.
+  // 乘积 3、GCD 为 3 的候选与乘积 2、GCD 为 2 的当前最优解相等，并不更优。
   assert.equal(hasStrictlyBetterFactorCombination({
     groups: tied,
     objective: "dps",

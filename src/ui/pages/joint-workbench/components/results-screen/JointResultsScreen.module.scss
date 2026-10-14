@@ -1,4 +1,4 @@
-@use "../../../../../styles/tokens" as tokens;
+@use "@/styles/tokens" as tokens;
 
 .page {
   box-sizing: border-box;
@@ -277,7 +277,6 @@
 
 .versionRow {
   margin: 14px 0 0;
-  padding: 0;
 }
 
 .offlineNote {

@@ -8,7 +8,7 @@ export type SharedAccessoryPairDominanceLimits = {
   maxPreprocessingMs: number;
 };
 
-/** Smaller job sets use a bounded cut budget selected by shared pair-domain size. */
+/** 职业数量较少时，根据共享装备对的候选域大小选择有上限的剪枝预算。 */
 export function sharedAccessoryPairDominanceLimitsFor(
   jobCount: number,
   candidateUpperBound: bigint,
@@ -71,7 +71,7 @@ export function canUseSharedAccessoryPairDominance(
     !hasConstraints);
 }
 
-/** Internal capability marker; only the narrowly gated optimizer path may issue this policy. */
+/** 内部能力标记；仅受严格条件限制的优化器路径可以签发此策略。 */
 export function markSharedAccessoryPairDominancePath<T extends object>(options: T): T {
   trustedPolicyOptions.add(options);
   return options;

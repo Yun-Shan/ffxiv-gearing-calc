@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { foods, jobSchemas, type JobId, type JointOptimizationConfig, type OptimizationConfig, type OptimizationResult } from "../../domain/index";
+import { foods, jobSchemas, type JobId, type JointOptimizationConfig, type OptimizationConfig, type OptimizationResult } from "@/domain";
 import { validateSearchHistoryRecord } from "./search-history";
 
 function config(jobId: JobId): OptimizationConfig {
@@ -11,11 +11,13 @@ function config(jobId: JobId): OptimizationConfig {
     excludedSources: [],
     forcedGear: {},
     foodId: 0,
+    objective: "damage",
   };
 }
 
 function result(): OptimizationResult {
   return {
+    calculationLevel: 100,
     gear: [],
     food: foods[0]!,
     stats: { CRT: 1200 },
@@ -103,10 +105,14 @@ describe("搜索历史记录结构校验", () => {
     expect(validateSearchHistoryRecord(completedSingleRecord()).kind).toBe("single");
   });
 
-  it("接受新计算等级并拒绝不受支持的历史计算等级，同时兼容旧记录", () => {
+  it("要求完成结果包含受支持的计算等级", () => {
     const current = completedSingleRecord();
     current.result = { ...result(), calculationLevel: 80 };
     expect(validateSearchHistoryRecord(current).kind).toBe("single");
+
+    const missingCalculationLevel = completedSingleRecord();
+    missingCalculationLevel.result = { ...result(), calculationLevel: undefined };
+    expect(() => validateSearchHistoryRecord(missingCalculationLevel)).toThrow(/结果缺少必要字段/);
 
     const unsupported = completedSingleRecord();
     unsupported.result = { ...result(), calculationLevel: 77 };

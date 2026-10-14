@@ -2,7 +2,7 @@
 import { describe, expect, it } from "vitest";
 import * as testSupport from "../../../test-utils/workbench.helper.test";
 import { normalizedText } from "../../../test-utils/workbench.helper.test";
-import { jobSchemas, type JobId } from "../../../domain/index";
+import { jobSchemas, type JobId } from "@/domain";
 
 function professionSummaryCard(jobId: JobId): HTMLButtonElement {
   const card = [...testSupport.host.querySelectorAll<HTMLButtonElement>(
@@ -56,7 +56,7 @@ describe("多职业联合搜索工作台", () => {
     expect((testSupport.textField("最低咏速") as HTMLInputElement).value).toBe("1234");
 
     selectSharedConditions();
-    const objectiveGroup = testSupport.host.querySelector('[role="group"][aria-label="优化目标"]');
+    const objectiveGroup = testSupport.host.querySelector('[key="group"][aria-label="优化目标"]');
     const gcdObjective = [...(objectiveGroup?.querySelectorAll<HTMLButtonElement>("button") ?? [])]
       .find((button) => normalizedText(button) === "按 GCD 折算");
     expect(gcdObjective).toBeDefined();
@@ -146,7 +146,7 @@ describe("多职业联合搜索工作台", () => {
 
     testSupport.click(testSupport.buttonNamed("调整条件"));
     await testSupport.settleApp();
-    const foodStrategy = testSupport.host.querySelector('[role="group"][aria-label="食物策略"]');
+    const foodStrategy = testSupport.host.querySelector('[key="group"][aria-label="食物策略"]');
     const independentFoodButton = [...(foodStrategy?.querySelectorAll<HTMLButtonElement>("button") ?? [])]
       .find((button) => normalizedText(button) === "各职业独立");
     expect(independentFoodButton).toBeDefined();

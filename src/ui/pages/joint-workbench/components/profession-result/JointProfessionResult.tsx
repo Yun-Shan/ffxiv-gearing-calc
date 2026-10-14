@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { jobSchemas, type JobId, type OptimizationResult } from "../../../../../domain/index";
+import { jobSchemas, type JobId, type OptimizationResult } from "@/domain";
 import styles from "./JointProfessionResult.module.scss";
 
 export interface JointProfessionResultProps {

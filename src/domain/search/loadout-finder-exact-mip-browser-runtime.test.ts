@@ -13,8 +13,7 @@ test("exact MIP dispatches to the browser HiGHS loader when the Node runtime mar
   vi.doMock("./highs-browser.js", () => ({
     loadBrowserHighs: async () => {
       browserLoaderCalls++;
-      // The test host has no browser WebAssembly runtime. Reuse the installed
-      // HiGHS adapter after exercising the browser dispatch branch.
+      // 测试环境没有浏览器 WebAssembly 运行时。先覆盖浏览器分派分支，再复用已安装的 HiGHS 适配器。
       Object.defineProperty(process.versions, "node", nodeVersion);
       return loadHighs();
     },

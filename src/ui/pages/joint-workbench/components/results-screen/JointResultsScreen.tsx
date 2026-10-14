@@ -3,7 +3,7 @@ import {
   jobSchemas,
   type JointOptimizationConfig,
   type JointOptimizationResult,
-} from "../../../../../domain/index";
+} from "@/domain";
 import { JointResultsComparison } from "./components/results-comparison/JointResultsComparison";
 import { commonSlotLabels } from "../common-gear-section/JointCommonGearSection";
 import styles from "./JointResultsScreen.module.scss";
@@ -18,8 +18,8 @@ export interface JointResultsScreenProps {
   onReset?: () => void;
 }
 
-function getObjectiveLabel(objective: JointOptimizationConfig["objective"]): string {
-  return objective === "dps" ? "按 GCD 折算" : "每威力伤害期望";
+function getObjectiveLabel(objective: "damage" | "dps"): string {
+  return ({ damage: "每威力伤害期望", dps: "按 GCD 折算" } as const)[objective];
 }
 
 export function JointResultsScreen({
@@ -77,7 +77,7 @@ export function JointResultsScreen({
           <dl className={styles.snapshot}>
             <div>
               <dt>联合目标</dt>
-              <dd>{getObjectiveLabel(config.objective)}</dd>
+              <dd>{getObjectiveLabel(config.objective!)}</dd>
             </div>
             <div>
               <dt>共享部位</dt>

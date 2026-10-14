@@ -1,9 +1,9 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
-import { foods, getGearById, jobSchemas, type Gear, type GearSlot, type OptimizationConfig, type OptimizationResult } from "../../../../../../domain/index";
-import type { SingleGcdMode } from "../../../../../services/types";
-import { gearSlotLabels } from "../../../../../services/labels";
+import { foods, getGearById, jobSchemas, type Gear, type GearSlot, type OptimizationConfig, type OptimizationResult } from "@/domain";
+import type { SingleGcdMode } from "@/ui/services/types";
+import { gearSlotLabels } from "@/ui/services/labels";
 import styles from "./SingleConditionSummary.module.scss";
 
 type SingleSummaryView = "workbench" | "progress" | "result";
@@ -169,7 +169,7 @@ export function SingleConditionSummary({
       : "不限"
     : config.gcdChoices !== undefined
       ? config.gcdChoices.length ? config.gcdChoices.map((value) => `${value.toFixed(2)} 秒`).join("、") : "未选择档位"
-      : config.gcdTarget === undefined ? "不限" : `${config.gcdTarget.toFixed(2)} 秒`;
+      : "不限";
   const speedName = job.role === "healer" || job.role === "int" ? "咏速" : "技速";
   const speed = config.speedMin === undefined && config.speedMax === undefined
     ? "不限"
@@ -183,7 +183,7 @@ export function SingleConditionSummary({
   const excluded = (config.excludedGearIds ?? [])
     .map((id) => getGearById(id))
     .filter((gear): gear is Gear => gear !== undefined);
-  const target = config.objective === "dps" ? "每秒每威力伤害期望" : "每威力伤害期望";
+  const target = ({ damage: "每威力伤害期望", dps: "每秒每威力伤害期望" } as const)[config.objective!];
 
   return (
       <div className={`${styles.root} ${view === "workbench" ? styles.workbench : view === "progress" ? styles.progress : styles.result}`}>

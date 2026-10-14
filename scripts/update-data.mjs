@@ -441,7 +441,7 @@ function normalizeJobSchemas(rawSchemas, snapshot) {
         commit: currentCommit,
         importedAt: importStartedAt,
         sourceFiles: ["src/game.ts"],
-        note: "提供 role、mainStat、secondaryStat、stats、partyBonus、GCD/trait 公式修正、defaultItemLevel、maxJobLevel 与 slots.weapon.levelWeight；ClassJob 不提供这些领域公式字段。",
+        note: "提供 key、mainStat、secondaryStat、stats、partyBonus、GCD/trait 公式修正、defaultItemLevel、maxJobLevel 与 slots.weapon.levelWeight；ClassJob 不提供这些领域公式字段。",
       };
       return [id, {
         id,

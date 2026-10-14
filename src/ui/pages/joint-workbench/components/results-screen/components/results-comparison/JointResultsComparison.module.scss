@@ -1,4 +1,4 @@
-@use "../../../../../../../styles/tokens" as tokens;
+@use "@/styles/tokens" as tokens;
 
 .comparison {
   display: flex;
@@ -14,7 +14,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin: 0;
 }
 
 .sectionHeading h2 {
@@ -37,7 +36,6 @@
 .tableWrap {
   width: 100%;
   min-width: 0;
-  height: auto;
   flex: 0 0 auto;
   overflow-x: auto;
   border: 0;
@@ -47,9 +45,7 @@
 .comparisonTable {
   width: 100%;
   min-width: 900px;
-  height: auto;
   table-layout: fixed;
-  border-collapse: separate;
   border-spacing: 0;
   color: tokens.$color-text-primary;
   font-size: tokens.$font-size-label;

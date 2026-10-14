@@ -1,7 +1,6 @@
-@use "../../../../../styles/tokens" as tokens;
+@use "@/styles/tokens" as tokens;
 
 .section {
-  margin: 0;
   border: 1px solid tokens.$color-border-default;
   border-radius: 4px;
   background: tokens.$color-surface-canvas;

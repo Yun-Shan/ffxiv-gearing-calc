@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from "vitest";
 import * as testSupport from "../../../../../test-utils/workbench.helper.test";
-import { jobSchemas } from "../../../../../domain/index";
+import { jobSchemas } from "@/domain";
 
 describe("JointProfessionResult damage metrics", () => {
   it("联合结果继续使用 GCD 折算指标名称", async () => {

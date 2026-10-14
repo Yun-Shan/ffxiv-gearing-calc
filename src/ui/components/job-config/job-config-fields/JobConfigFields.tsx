@@ -6,16 +6,16 @@ import {
   gameData,
   jobSchemas,
   type OptimizationConfig,
-} from "../../../../domain/index";
-import { bounds, defaultJobLevel, availableFoods } from "../../../services/app-config";
-import { searchMessageText, searchProgressText } from "../../../services/search-message";
-import { SingleCombatSpeedSection } from "./components/single-combat-speed-section/SingleCombatSpeedSection";
-import { SingleEquipmentRangeSection } from "./components/single-equipment-range-section/SingleEquipmentRangeSection";
-import { EquipmentRestrictionFields } from "./components/equipment-restriction-fields/EquipmentRestrictionFields";
-import { CheckControl, NumberField, SelectField, SyncLevelField } from "../fields/fields";
-import type { SingleGcdFeasibility, WizardStep } from "../types";
-import type { SingleGcdMode } from "../../../services/types";
-import styles from "./JobConfigFields.module.scss";
+} from "@/domain";
+import { bounds, defaultJobLevel, availableFoods } from "@/ui/services/app-config";
+import { searchMessageText, searchProgressText } from "@/ui/services/search-message";
+import { SingleCombatSpeedSection } from "@/ui/components/job-config/job-config-fields/components/single-combat-speed-section/SingleCombatSpeedSection";
+import { SingleEquipmentRangeSection } from "@/ui/components/job-config/job-config-fields/components/single-equipment-range-section/SingleEquipmentRangeSection";
+import { EquipmentRestrictionFields } from "@/ui/components/job-config/job-config-fields/components/equipment-restriction-fields/EquipmentRestrictionFields";
+import { CheckControl, NumberField, SelectField, SyncLevelField } from "@/ui/components/job-config/fields/fields";
+import type { SingleGcdFeasibility, WizardStep } from "@/ui/components/job-config/types";
+import type { SingleGcdMode } from "@/ui/services/types";
+import styles from "@/ui/components/job-config/job-config-fields/JobConfigFields.module.scss";
 
 function setConfigPatch(
   setConfig: Dispatch<SetStateAction<OptimizationConfig>>,
@@ -68,7 +68,9 @@ export function JobConfigFields({
     gcdAbortController.current?.abort();
   }, []);
 
-  const selectedGcds = config.gcdChoices ?? (config.gcdTarget === undefined ? [] : [config.gcdTarget]);
+  const selectedGcds = singleWorkbench
+    ? config.gcdChoices ?? []
+    : config.gcdChoices ?? (config.gcdTarget === undefined ? [] : [config.gcdTarget]);
   const selectedGcdKey = selectedGcds.join(",");
   const gcdMode = singleWorkbench
     ? singleGcdMode === "speed" ? "speed" : singleGcdMode === "tiers" ? "multiple" : "any"
@@ -271,7 +273,7 @@ export function JobConfigFields({
         return { ...current, gcdTarget: undefined, gcdChoices: undefined, speedMin: undefined, speedMax: undefined, objective: "dps" };
       }
       if (mode === "tiers") {
-        const choices = current.gcdChoices ?? (current.gcdTarget === undefined ? [] : [current.gcdTarget]);
+        const choices = current.gcdChoices ?? [];
         return {
           ...current,
           gcdTarget: undefined,
@@ -330,11 +332,8 @@ export function JobConfigFields({
   }
 
   function selectSingleFeasibleGcd(gcd: number) {
-    if (singleWorkbench) update("gcdTarget", gcd);
-    else {
-      onEdited?.();
-      setConfigPatch(setConfig, { gcdTarget: gcd, gcdChoices: undefined });
-    }
+    onEdited?.();
+    setConfigPatch(setConfig, { gcdTarget: gcd, gcdChoices: undefined });
     setGcdChoicesText("");
     setGcdChoicesDirty(false);
   }

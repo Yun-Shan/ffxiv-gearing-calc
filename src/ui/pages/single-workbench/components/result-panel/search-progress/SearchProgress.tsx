@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./SearchProgress.module.scss";
 
-/** Phase and elapsed-time estimates never assert a known total search space. */
+/** 阶段与耗时只用于估算，不表示已知的搜索空间总量。 */
 export function SearchProgress({ message }: { message: string }) {
   const [startedAt] = useState(() => Date.now());
   const [elapsed, setElapsed] = useState(0);
@@ -33,8 +33,8 @@ export function SearchProgress({ message }: { message: string }) {
     if (poolCounts) setCandidateCounts({ equipment: Number(poolCounts[1]), food: Number(poolCounts[2]), joint: message.startsWith("联合") });
   }, [message]);
 
-  // The solver discovers work while searching. Smooth the phase estimate with
-  // elapsed time and reserve completion for the caller's verified result.
+  // 求解器会在搜索过程中逐步发现工作量，因此结合阶段和耗时平滑估算；
+  // 只有调用方确认结果后才表示完成。
   const estimate = Math.min(95, Math.floor(milestone + (95 - milestone) * (1 - Math.exp(-elapsed / 90))));
   const stage = /基线/.test(message)
     ? "计算各职业基线"

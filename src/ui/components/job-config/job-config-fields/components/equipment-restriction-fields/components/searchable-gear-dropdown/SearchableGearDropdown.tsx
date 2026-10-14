@@ -1,9 +1,9 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CSSProperties, ReactNode } from "react";
-import type { Gear, GearSlot } from "../../../../../../../../domain/index";
-import { GearMark } from "../gear-mark/GearMark";
-import styles from "./SearchableGearDropdown.module.scss";
+import type { Gear, GearSlot } from "@/domain";
+import { GearMark } from "@/ui/components/job-config/job-config-fields/components/equipment-restriction-fields/components/gear-mark/GearMark";
+import styles from "@/ui/components/job-config/job-config-fields/components/equipment-restriction-fields/components/searchable-gear-dropdown/SearchableGearDropdown.module.scss";
 
 export function SearchableGearDropdown({
   label,
@@ -127,7 +127,7 @@ export function SearchableGearDropdown({
           onChange={(event) => onQueryChange(event.target.value)}
           onKeyDown={(event) => {
             if (event.key !== "ArrowDown" && event.key !== "Enter") return;
-            const firstOption = panelRef.current?.querySelector<HTMLButtonElement>('[role="option"]');
+            const firstOption = panelRef.current?.querySelector<HTMLButtonElement>('[key="option"]');
             if (!firstOption) return;
             event.preventDefault();
             firstOption.focus();

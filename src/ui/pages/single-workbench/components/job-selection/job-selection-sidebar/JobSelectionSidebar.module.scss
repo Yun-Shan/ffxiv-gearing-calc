@@ -1,28 +1,7 @@
-@use "../../../../../../styles/tokens" as tokens;
-
-.aside {
-  box-sizing: border-box;
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  padding: 8px 16px 14px;
-}
-
-.panelHeader {
-  padding-bottom: 4px;
-  border-bottom: 1px solid tokens.$color-border-emphasis;
-}
-
-.panelHeader h2 {
-  margin: 0;
-  color: #354a37;
-  font-size: tokens.$font-size-heading;
-  font-weight: 700;
-  line-height: 1.35;
-}
+@use "@/styles/tokens" as tokens;
 
 .announcement {
-  margin-top: 22px;
+  margin-top: 12px;
 }
 
 .announcement h3 {
@@ -59,14 +38,6 @@
   line-height: 1.5;
 }
 
-.footer {
-  display: grid;
-  gap: 22px;
-  margin-top: auto;
-  color: #75836b;
-  font-size: tokens.$font-size-9px;
-}
-
 .version {
   display: flex;
   align-items: center;
@@ -84,63 +55,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.footerMeta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  line-height: 1.4;
-}
-
-.advancedSettings {
-  position: relative;
-  color: tokens.$color-accent-teal;
-  white-space: nowrap;
-}
-
-.advancedSettings summary {
-  cursor: pointer;
-  list-style: none;
-  font-size: tokens.$font-size-compact;
-  font-weight: 600;
-}
-
-.advancedSettings summary::-webkit-details-marker {
-  display: none;
-}
-
-.advancedSettings button {
-  position: absolute;
-  z-index: 2;
-  right: 0;
-  bottom: calc(100% + 8px);
-  display: flex;
-  min-width: 168px;
-  min-height: 36px;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 10px;
-  border: 1px solid #dce7e5;
-  border-radius: 4px;
-  background: tokens.$color-neutral-white;
-  box-shadow: 0 5px 14px rgb(28 46 62 / 10%);
-  color: #3d5a62;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.advancedSettings button:hover {
-  border-color: #a9cfcb;
-  background: #f8fcfb;
-}
-
 @media (max-width: 760px) {
-  .aside {
-    min-height: 200px;
-    padding: 18px 18px 16px;
-  }
-
   .emptyState {
     min-height: 96px;
   }

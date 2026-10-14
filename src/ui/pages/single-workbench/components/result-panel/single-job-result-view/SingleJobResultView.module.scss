@@ -1,16 +1,4 @@
-@use "../../../../../../styles/tokens" as tokens;
-
-.workspace {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-  align-items: stretch;
-  gap: clamp(46px, calc(9.5833vw - 92px), 92px);
-  overflow: hidden;
-  background: var(--color-neutral-white);
-}
+@use "@/styles/tokens" as tokens;
 
 .main {
   display: flex;
@@ -21,6 +9,7 @@
   overflow-x: hidden;
   overflow-y: auto;
   padding: 18px 0 8px clamp(24px, calc(8.3333vw - 96px), 64px);
+  background: var(--color-neutral-white);
   scrollbar-width: none;
 }
 
@@ -59,7 +48,6 @@
   grid-template-columns: repeat(5, minmax(0, 1fr));
   grid-template-rows: 64px;
   gap: 9px;
-  margin: 0;
   position: relative;
 }
 
@@ -170,41 +158,6 @@
   outline-offset: 2px;
 }
 
-.aside {
-  box-sizing: border-box;
-  flex: 0 0 clamp(308px, calc(10.8333vw + 152px), 360px);
-  width: clamp(308px, calc(10.8333vw + 152px), 360px);
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 8px 16px 18px;
-}
-
-.editConditions {
-  display: flex;
-  width: 100%;
-  min-height: 34px;
-  align-items: center;
-  justify-content: center;
-  margin-top: 14px;
-  border: 1px solid #bfcfc8;
-  border-radius: 6px;
-  background: var(--color-neutral-white);
-  color: var(--color-accent-teal);
-  font-size: tokens.$font-size-body;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.editConditions:hover {
-  border-color: var(--color-accent-olive);
-  background: var(--color-surface-subtle);
-}
-.editConditions:focus-visible {
-  outline: 2px solid var(--color-accent-olive);
-  outline-offset: 2px;
-}
-
 .tableScope {
   flex: 0 0 auto;
   min-width: 0;
@@ -252,51 +205,23 @@
   .openLink {
     font-size: tokens.$font-size-label;
   }
-  .aside {
-    padding: 8px 24px 18px;
-  }
 }
 
 @media (max-width: 1439px) {
-  .workspace {
-    gap: 24px;
-  }
-  .aside {
-    flex-basis: 306px;
-    width: 306px;
-  }
   .main {
     padding-left: 24px;
   }
 }
 
 @media (max-width: 1199px) {
-  .workspace {
-    height: auto;
-    min-height: calc(100vh - 72px);
-    flex-direction: column;
-    gap: 16px;
-    overflow: visible;
-    padding: 0 22px 24px;
-  }
   .main {
     min-height: 0;
     overflow: visible;
     padding: 20px 0 0;
   }
-  .aside {
-    width: 100%;
-    min-height: 280px;
-    flex-basis: auto;
-  }
 }
 
 @media (max-width: 760px) {
-  .workspace {
-    min-height: calc(100vh - 60px);
-    gap: 16px;
-    padding-inline: 16px;
-  }
   .main {
     padding-top: 16px;
   }
@@ -317,8 +242,5 @@
   }
   .tableHeading {
     align-items: center;
-  }
-  .aside {
-    flex-basis: auto;
   }
 }

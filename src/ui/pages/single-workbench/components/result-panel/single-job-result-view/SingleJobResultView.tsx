@@ -1,31 +1,25 @@
 import type { ReactNode } from "react";
 import { Share2 } from "lucide-react";
-import type { OptimizationResult } from "../../../../../../domain/index";
-import { SinglePageSidePanel } from "../../../../../components/side-panel/SinglePageSidePanel";
+import type { OptimizationResult } from "@/domain";
 import styles from "./SingleJobResultView.module.scss";
 
 export function SingleJobResultView({
   result,
   table,
-  summary,
   referenceUrl,
-  onEditConfig,
 }: {
   result: OptimizationResult;
   table: ReactNode;
-  summary: ReactNode;
   referenceUrl: string;
-  onEditConfig?: () => void;
 }) {
   return (
-    <div className={`${styles.workspace} single-result-workspace`}>
-      <section className={styles.main} aria-labelledby="single-result-title">
+      <section className={`${styles.main} single-result-workspace`} aria-labelledby="single-result-title">
         <header className={styles.titlebar}>
           <div>
             <h1 id="single-result-title">配装结果</h1>
             <p>
               目标值 {result.score.toFixed(7)}（
-              {result.objective === "dps" ? "每秒每威力伤害期望" : "每威力伤害期望"}
+              {({ damage: "每威力伤害期望", dps: "每秒每威力伤害期望" } as const)[result.objective]}
               ） · 用时 {(result.durationMs / 1000).toFixed(1)} 秒
             </p>
           </div>
@@ -50,14 +44,6 @@ export function SingleJobResultView({
         </div>
         <div className={styles.tableScope}>{table}</div>
       </section>
-
-      <SinglePageSidePanel className={styles.aside} ariaLabel="配装条件摘要">
-        {summary}
-        {onEditConfig && <button className={styles.editConditions} type="button" onClick={onEditConfig}>
-          编辑当前条件
-        </button>}
-      </SinglePageSidePanel>
-    </div>
   );
 }
 

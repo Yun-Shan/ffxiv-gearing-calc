@@ -8,9 +8,9 @@ import { createBrowserBaselineWorker } from "./parallel-baseline-browser-adapter
 export type BaselineExecutionControl = {
   remainingMs: () => number;
   isCancelled: () => boolean;
-  /** Defaults to two workers; small exact shared-domain batches may request up to four. */
+  /** 默认使用两个工作线程；小型精确共享域批次最多可请求四个。 */
   maxConcurrency?: number;
-  /** Return true to stop the batch after this result and terminate other active tasks. */
+  /** 返回 true 时，在收到此结果后停止批次并终止其他活动任务。 */
   onTaskComplete?: (taskIndex: number, result: ExactMipResult | undefined) => boolean;
 };
 
@@ -21,7 +21,7 @@ export type BaselineExecutor = ((
   dispose?: () => Promise<void>;
 };
 
-/** Columnar, worker-only candidate input. Candidate objects are reconstructed inside the worker. */
+/** 仅供工作线程使用的列式候选输入；候选对象会在线程内部重建。 */
 export type SerializedEquipmentColumns = {
   slotOffsets: Uint32Array;
   itemIds: Float64Array;
@@ -100,8 +100,8 @@ type PooledWorker = {
   removal?: Promise<void>;
 };
 
-// The executor is owned by one joint search; retain idle workers for later V3
-// batches, then release all of them when that search disposes the executor.
+// 执行器由一次联合搜索持有；空闲线程留给后续 V3 批次复用，
+// 搜索释放执行器时再统一终止所有线程。
 class BaselineWorkerPool {
   private readonly workers = new Set<PooledWorker>();
   private disposed = false;
@@ -151,7 +151,7 @@ class BaselineWorkerPool {
       try {
         await worker.handle.terminate();
       } catch {
-        // Worker cleanup must not turn an already-proved search into a failure.
+        // 清理工作线程不能让已经证明完成的搜索变成失败。
       } finally {
         this.workers.delete(worker);
       }
@@ -220,7 +220,7 @@ function serializedOptions(
       else if (equipment.isUnique === false) uniqueKinds[candidateIndex] = 1;
       else if (equipment.isUnique === true) uniqueKinds[candidateIndex] = 2;
       else uniqueKinds[candidateIndex] = 3;
-      // Extract attributes before crossing the worker boundary; the extractor itself may be a closure.
+      // 在跨越工作线程边界前提取属性，因为提取器本身可能是闭包。
       for (const parameter of candidateParameters[candidateIndex]!) {
         if (!relevantAttributes.has(parameter.baseParamId)) continue;
         parameterIds[parameterIndex] = parameter.baseParamId;
@@ -386,8 +386,7 @@ async function runWithWorkers(
       for (const { worker, detach } of active.values()) {
         detach();
         worker.failureHandler = undefined;
-        // Mark the worker unavailable synchronously, but don't make the completed
-        // task wait for another worker's MIP or asynchronous termination.
+        // 立即将此线程标记为不可用，但不要让已完成任务等待其他线程的 MIP 或异步终止过程。
         void pool.remove(worker);
       }
       active.clear();

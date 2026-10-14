@@ -1,4 +1,4 @@
-@use "../../../../styles/tokens" as tokens;
+@use "@/styles/tokens" as tokens;
 
 .tableWrapper,
 .table {
@@ -77,11 +77,9 @@
 
 .row > strong,
 .foodRow > strong {
-  overflow: visible;
   color: #273a37;
   font-weight: 700;
   text-overflow: ellipsis;
-  white-space: normal;
   overflow-wrap: anywhere;
 }
 
@@ -97,8 +95,6 @@
   font-family: inherit;
   font-size: tokens.$font-size-body;
   font-variant-numeric: normal;
-  font-weight: 400;
-  line-height: normal;
   white-space: nowrap;
 }
 
@@ -132,13 +128,11 @@
 
 .sourceText {
   display: block;
-  overflow: visible;
   color: var(--muted);
   font:
     #{tokens.$font-size-body} "Noto Sans SC",
     sans-serif;
   text-overflow: ellipsis;
-  white-space: normal;
   overflow-wrap: anywhere;
 }
 

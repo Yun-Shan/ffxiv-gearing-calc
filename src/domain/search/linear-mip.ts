@@ -1,6 +1,6 @@
 import type { CallbackType } from "highs";
 
-/** A finite-domain integer linear model used by the exact loadout search. */
+/** 精确配装搜索使用的有限域整数线性模型。 */
 export type LinearMipRow = {
   name: string;
   terms: ReadonlyMap<string, number>;
@@ -19,7 +19,7 @@ export type LinearMipProgress = {
   model: string;
   kind: "incumbent" | "bound" | "log";
   elapsedMs?: number;
-  /** Incumbent objective value, taken from HiGHS' primal bound when present. */
+  /** 当前最优解的目标值；若存在，则取自 HiGHS 的原始界。 */
   objectiveValue?: number;
   bestBound?: number;
   gap?: number;
@@ -43,7 +43,7 @@ export type HighsCallbackName =
   | "mipCutPool"
   | "mipUserSolution";
 
-/** Detached, serializable context for a full HiGHS callback observation. */
+/** 用于完整记录 HiGHS 回调观测结果的独立可序列化上下文。 */
 export type HighsCallbackTrace = {
   model: string;
   callbackType: CallbackType;
@@ -70,7 +70,7 @@ export type LinearMipRequest = {
   integerVariables: readonly string[];
   timeLimitMs?: number;
   solutionHint?: ReadonlyMap<string, number>;
-  /** Interrupt a maximization after its proven dual bound cannot beat an exact incumbent. */
+  /** 当已证明的对偶界无法超过精确当前最优解时，中断最大化求解。 */
   stopWhenDualBoundProvesOptimal?: (dualBound: number) => boolean;
   onProgress?: (event: LinearMipProgress) => void;
   onCallback?: (event: HighsCallbackTrace) => void;

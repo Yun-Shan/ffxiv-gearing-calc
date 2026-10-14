@@ -36,43 +36,43 @@ import {
 
 export type JointLoadoutJobV3 = {
   id: string;
-  /** Slot names align with options.slots and allow jobs with different slot indexes. */
+  /** 槽位名称与 options.slots 对齐，从而允许不同职业使用不同槽位索引。 */
   slotNames: readonly string[];
   options: ExactMipOptions;
 };
 
 export type JointLoadoutV3Options = {
   jobs: readonly JointLoadoutJobV3[];
-  /** Names of the slots or projected equipment identities shared across jobs. */
+  /** 各职业之间共享的槽位名称或投影装备身份。 */
   commonSlots: readonly string[];
-  /** Projected virtual slots that remain backed by one complete solver candidate. */
+  /** 仍由单个完整求解候选提供支持的投影虚拟槽位。 */
   commonSlotProjections?: readonly SharedSlotProjection[];
-  /** Internal optimizer path for a full, unforced shared ring pair split into two slots. */
+  /** 优化器内部路径：将完整且未强制指定的共享戒指对拆分为两个槽位。 */
   factorizedSharedRingPair?: boolean;
-  /** Internal exact-model tuning; omitting this keeps the default ratio pair cuts. */
+  /** 精确模型的内部调优选项；省略时沿用默认的比值配对剪枝。 */
   ratioUpperPairPolicy?: "default" | "disabled";
-  /** Internal narrow proof-preserving pruning for strictly dominated shared accessory pairs. */
+  /** 对严格劣于其他共享首饰对的候选执行范围有限且不损害证明能力的内部剪枝。 */
   sharedAccessoryPairDominance?: boolean;
   foodStrategy: "shared" | "independent";
-  /** Defaults to raw damage; DPS uses exact product/GCD fractions. */
+  /** 默认为原始伤害；DPS 使用精确的乘积与 GCD 分数。 */
   objective?: "damage" | "dps";
-  /** Optional wall-clock budget reserved for tests and acceptance runs; capped at 235 seconds. */
+  /** 可选的墙钟时间预算，供测试和验收运行使用，最多为 235 秒。 */
   maxSearchMs?: number;
-  /** FIFO-bounded cache for restricted inner MIP results. Defaults to 2048 entries. */
+  /** 为受限内部 MIP 结果提供先进先出缓存，默认最多 2048 项。 */
   cacheLimit?: number;
   onProgress?: (message: string) => void;
   onSolverCallback?: (event: HighsCallbackTrace) => void;
-  /** Optional isolated worker executor; omitted direct callers keep the local sequential path. */
+  /** 可选的隔离工作线程执行器；直接调用方省略时沿用本地顺序执行路径。 */
   baselineExecutor?: BaselineExecutor;
-  /** Checked between solver calls and outer search nodes. */
+  /** 在求解器调用之间及外层搜索节点处检查取消状态。 */
   isCancelled?: () => boolean;
 };
 
 export type JointLoadoutV3Result = {
-  /** Exact sum of per-job damage divided by that job's unconstrained optimum. */
+  /** 各职业伤害除以该职业无共享约束最优值后的精确总和。 */
   value: { numerator: string; denominator: string; approximate: number };
   commonEquipments: Record<string, EquipInfo>;
-  /** Each selection is aligned to the corresponding job's original options.slots. */
+  /** 每份选择都与对应职业原始 options.slots 中的槽位顺序一致。 */
   jobResults: Record<string, JointLoadoutJobResultV3>;
   optima: Record<string, JointLoadoutJobResultV3>;
   statistics: JointLoadoutV3Statistics;
@@ -319,9 +319,9 @@ function attributeVectorKey(values: readonly number[]): string {
 }
 
 /**
- * Rebalance up to two private, same-item materia variants after projecting shared gear.
- * A match restores the complete solo raw-attribute vector, so it also restores every
- * canonical factor and constraint input without inferring anything from weighted scores.
+ * 投影共享装备后，重新平衡至多两个私有的同物品魔晶石变体。
+ * 匹配成功会恢复完整的单职业原始属性向量，因此也会恢复所有规范因子和约束输入，
+ * 不需要根据加权得分推断属性。
  */
 function findSameItemAttributeCompensation(
   context: JobContext,
@@ -469,8 +469,8 @@ function pruneInnerSlots(
 
   return sourceSlots.map((slot, slotIndex) => {
     if (preserveSlotIndexes.has(slotIndex)) return slot;
-    // A zero-allocation base vector cannot dominate an adjustable candidate.
-    // Keep the complete slot domain when it contains any such candidate.
+    // 零分配基础向量不能支配可调属性候选。
+    // 若槽位中存在这类候选，则保留完整候选域。
     if (slot.some((equipment) => equipment.resistanceWeaponAdjust !== undefined)) return slot;
     if (slot.length < 2) return slot;
     const candidates = slot.map((equipment, inputOrder) => ({
@@ -530,10 +530,9 @@ function pruneInnerSlots(
       return frontier;
     };
     if (candidates.some(({ equipment }) => equipment.ringSlotIndex !== undefined)) {
-      // A candidate's cross-slot legality depends only on its unique-ID
-      // conflict partners. Candidates with no conflict partners share one
-      // frontier; conflicting IDs keep separate frontiers. Missing or
-      // contradictory metadata falls back to the older per-item partition.
+      // 候选能否与另一槽位配对，只取决于与其唯一物品 ID 冲突的候选。
+      // 没有冲突对象的候选共用一个前沿；存在冲突的 ID 则分别维护前沿。
+      // 元数据缺失或相互矛盾时，退回按物品分别划分的方式。
       const groups = new Map<string, typeof candidates>();
       for (const candidate of candidates) {
         const groupKey = completeRingMetadata
@@ -656,9 +655,8 @@ function pruneCommonChoices(
   projections: ReadonlyMap<string, SharedSlotProjection>,
   checkBudget: () => void,
 ): CommonChoice[] {
-  // A projected ring's legal partners depend on its physical identity and on
-  // the opposite half of the complete pair. Attribute-only dominance or
-  // equivalence can therefore remove the only jointly legal unique pair.
+  // 投影戒指的合法配对取决于其实体身份和完整戒指对的另一半。
+  // 因此，仅按属性判断支配或等价可能会删掉唯一合法的联合唯一装备配对。
   if (projections.has(slotName) || choices.length < 2 ||
     choices.some((choice) => [...choice.equipments.values()].some((equipment) =>
       equipment.resistanceWeaponAdjust !== undefined))) return [...choices];
@@ -987,7 +985,7 @@ function statisticsSnapshot(
   };
 }
 
-/** Exact joint search over the supplied per-job candidates. It throws instead of returning an unproven partial result on timeout. */
+/** 对给定的各职业候选执行精确联合搜索；超时时抛出错误，不返回未经证明的部分结果。 */
 export async function findBestJointLoadoutV3(
   options: JointLoadoutV3Options,
 ): Promise<JointLoadoutV3Result | undefined> {
@@ -995,8 +993,8 @@ export async function findBestJointLoadoutV3(
     job.options.slots.reduce((slotTotal, slot) => slotTotal + slot.length, 0), 0);
   const candidateSupportProfile = chooseCandidateResourceSupportProfile(options.jobs.length, inputCandidateCount);
   const sharedAccessoryPairDominanceTrusted = hasSharedAccessoryPairDominancePath(options);
-  // The V3 domain owns its job wrappers so exact pruning can release the full
-  // candidate arrays without mutating objects supplied by callers.
+  // V3 领域自行持有职业包装对象，以便精确剪枝能释放完整候选数组，
+  // 同时不修改调用方提供的对象。
   const ownedOptions: JointLoadoutV3Options = {
     ...options,
     jobs: options.jobs.map((job) => ({
@@ -1228,9 +1226,9 @@ export async function findBestJointLoadoutV3(
     mutable.cacheMisses++;
     options.onProgress?.(`V3：正在计算 ${context.job.id} 的单职业最优伤害基线`);
     const onSolverCallback = options.onSolverCallback ?? context.job.options.onSolverCallback;
-    // Non-shared slots already have this exact Pareto frontier in solverSlots.
-    // Reuse it and prune only shared slots, whose identities were preserved for
-    // the joint intersection but may be discarded by a solo baseline.
+    // solverSlots 中的非共享槽位已经具有精确的帕累托前沿。
+    // 直接复用它，只剪枝共享槽位；这些槽位的身份为联合交集而保留，
+    // 但可能已被单职业基线剪掉。
     const commonIndexes = preserveCommonSlotIndexes.get(context)!;
     const preserveBaselineIndexes = new Set(context.solverSlots.flatMap((_, index) =>
       !commonIndexes.has(index) ? [index] : []));
@@ -1262,8 +1260,8 @@ export async function findBestJointLoadoutV3(
       ...context.job.options,
       slots: baselineSlots,
       objective,
-      // Keep the measured support rows for MCH; VPR's baseline remains lean to
-      // reduce simultaneous model work without changing the candidate set.
+      // 为 MCH 保留经测量的支撑约束行；VPR 的基线保持精简，
+      // 以减少并行模型的工作量，同时不改变候选集合。
       ...(context.job.id === "MCH" && usePrimaryResourceSupportBaselinePolicy
         ? { primaryResourceSupports: true }
         : {}),
@@ -1428,8 +1426,8 @@ export async function findBestJointLoadoutV3(
       cancellationRequested,
     );
     if (options.jobs.length === 2) {
-      // One implied resource threshold per slot keeps restricted two-job models
-      // smaller while retaining the same candidates and exact proof obligations.
+      // 每个槽位只加一条隐含的资源阈值约束，可缩小受限双职业模型，
+      // 同时保留相同的候选集合和精确证明义务。
       mipOptions.candidateResourceSupportProfile = "compact";
     }
     if (options.onProgress !== undefined) {
@@ -1599,8 +1597,8 @@ export async function findBestJointLoadoutV3(
     }
     if (stopAtProvenCeiling) return resultsByRequest;
 
-    // Keep seeds grouped so each batch starts independent jobs for the same
-    // assignment together; within a seed, start historically slower jobs first.
+    // 将种子分组，使每批先同时启动同一装备分配下的独立职业任务；
+    // 每个种子内部则优先启动历史上耗时较长的职业。
     pending.sort((left, right) => left.requestIndex - right.requestIndex ||
       right.estimateMs - left.estimateMs || left.index - right.index);
     const solved = await options.baselineExecutor!(pending.map((entry) => entry.task), {
@@ -1629,9 +1627,8 @@ export async function findBestJointLoadoutV3(
       if (stopAtProvenCeiling) continue;
       const entry = pending[taskIndex]!;
       const result = solved[taskIndex];
-      // Injected executors may not implement completion callbacks; production
-      // workers report each result as it arrives so a proven ceiling can stop
-      // other seeds without waiting for their remaining solves.
+      // 注入的执行器可能不实现完成回调；生产工作线程会在结果到达时立即上报，
+      // 这样一旦证明达到上限，就能停止其他种子，而不必等待其余求解结束。
       rememberNode(entry.key, result ?? null);
       resultsByRequest[entry.requestIndex]![entry.index] = result;
       remainingTasksByRequest[entry.requestIndex] = remainingTasksByRequest[entry.requestIndex]! - 1;
@@ -2043,9 +2040,8 @@ export async function findBestJointLoadoutV3(
             slotCandidates.length > 0 &&
             slotCandidates.every((equipment) =>
               Array.isArray((equipment as EquipInfo & { ringEquips?: readonly EquipInfo[] }).ringEquips));
-          // The joint MIP can split a complete ring-pair Cartesian domain into
-          // two one-hot slots. Keep its full input domain so validation can
-          // establish that completeness before applying unique-item rows.
+          // 联合 MIP 可以将完整戒指对笛卡尔候选域拆分为两个单选槽位。
+          // 保留完整输入域，使验证能先确认候选完整，再添加唯一物品约束行。
           if (completeRingPairSlot) continue;
           const allowedKeys = new Set(commonChoicesByName.get(name)!.map((choice) => choice.key));
           slots[slotIndex] = slotCandidates.filter((equipment) =>

@@ -4,7 +4,7 @@ import type { FoodParam } from "./types.ts";
 const canonicalEvaluatorOptions = new WeakSet<object>();
 const MIN_CANDIDATES_FOR_UPPER_BOUND = 2_000;
 
-/** Internal trust marker; deliberately omitted from ExactMipOptions and the public search barrel. */
+/** 内部可信标记；有意不加入 ExactMipOptions 和公开搜索导出入口。 */
 export function markCanonicalEvaluatorCandidateUpperBound<T extends object>(options: T): T {
   canonicalEvaluatorOptions.add(options);
   return options;
@@ -110,7 +110,7 @@ function exactProduct(factors: IntegerDamageFactors): bigint {
     BigInt(factors.tenacity) * BigInt(factors.critical) * BigInt(factors.directHit);
 }
 
-/** Exact comparison for the candidate bound; equality is deliberately retained. */
+/** 对候选上界执行精确比较；相等时有意保留候选。 */
 export function candidateUpperBoundIsStrictlyWorse(
   incumbent: IntegerDamageFactors,
   upperBound: IntegerDamageFactors,
@@ -124,7 +124,7 @@ export function candidateUpperBoundIsStrictlyWorse(
     : incumbentProduct > upperProduct;
 }
 
-/** Exact incumbent bound for proof models that only search for strict improvement. */
+/** 为仅搜索严格改进解的证明模型计算精确的当前最优界。 */
 export function candidateUpperBoundCannotImproveIncumbent(
   incumbent: IntegerDamageFactors,
   upperBound: IntegerDamageFactors,

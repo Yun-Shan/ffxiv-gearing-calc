@@ -26,13 +26,12 @@ export interface HighestCandidateGearLevel {
   equipLevel: number;
 }
 
-/** Keeps the highest item-level candidate, using equip level as a stable tie-breaker. */
+/** 保留品级最高的候选装备；品级相同时保留装备等级较高者。 */
 export function preferCandidateGearLevel(
   current: HighestCandidateGearLevel | undefined,
   candidate: CandidateGearLevel,
 ): HighestCandidateGearLevel | undefined {
-  // Items whose game-data equip level is 1 are treated as available at every
-  // level and must not lower or raise the formula baseline.
+  // 游戏数据中装备等级为 1 的物品视为所有等级均可穿戴，不参与公式基准等级的比较。
   if (candidate.equipLevel === 1) return current;
   return current === undefined ||
     candidate.level > current.itemLevel ||
@@ -42,8 +41,7 @@ export function preferCandidateGearLevel(
 }
 
 /**
- * Resolves the formula level independently from the configured level used to
- * decide whether equipment can be worn.
+ * 单独确定公式使用的等级；配置等级仍用于判断装备是否可穿戴。
  */
 export function calculationJobLevelFor(
   config: OptimizationConfig,
@@ -65,12 +63,10 @@ export function calculationJobLevelFor(
     }
     level = Number(mappedLevel);
   } else if (highestCandidate !== undefined) {
-    // Game data has formula modifiers by ten-level breakpoints. Lower to the
-    // containing breakpoint; values below the lowest supported breakpoint fail below.
+    // 游戏数据按每十级一个档位提供公式修正，因此向下取整到所属档位；低于最低支持档位的值会在下方校验中报错。
     level = Math.floor(highestCandidate.equipLevel / 10) * 10;
   } else {
-    // With no eligible gear the optimizer will return no result; this keeps that
-    // path non-throwing while avoiding a fabricated level for any computed result.
+    // 没有符合条件的装备时优化器不会返回结果；此处保持流程不抛错，同时避免为任何计算结果捏造等级。
     return wearableLevel;
   }
 

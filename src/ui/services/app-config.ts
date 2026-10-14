@@ -6,7 +6,7 @@ import {
   type GearSlot,
   type JobId,
   type OptimizationConfig,
-} from "../../domain/index";
+} from "@/domain";
 import type { SingleGcdMode } from "./types";
 
 export type CommonSlot = GearSlot;
@@ -19,7 +19,7 @@ export const bounds = [gameData.gearMinLevel, gameData.gearMaxLevel] as const;
 export const availableFoods = foods.filter((food) => food.best && food.stats.VIT);
 export const defaultJobLevel = 100;
 
-// Mirrors the entries marked popular in Asvel's sync-level selector.
+// 与 Asvel 同步品级选择器中标记为常用的选项保持一致。
 const popularSyncLevels = [795, 735, 700, 695, 665, 635, 605, 475, 375, 345, 300] as const;
 export const selectableSyncLevels = popularSyncLevels.filter((level) =>
   gameData.levelCaps.level.includes(level),
@@ -61,17 +61,8 @@ export function makeConfig(jobId: JobId): OptimizationConfig {
   };
 }
 
-export function normalizeSingleWorkbenchConfig(config: OptimizationConfig): OptimizationConfig {
-  if (config.gcdChoices !== undefined || config.gcdTarget === undefined) return { ...config };
-  return {
-    ...config,
-    gcdTarget: undefined,
-    gcdChoices: [config.gcdTarget],
-    objective: "damage",
-  };
-}
-
 export function singleGcdModeForConfig(config: OptimizationConfig): SingleGcdMode {
   if (config.speedMin !== undefined || config.speedMax !== undefined) return "speed";
-  return config.gcdTarget !== undefined || config.gcdChoices !== undefined ? "tiers" : "speed";
+  if (config.gcdChoices !== undefined) return "tiers";
+  return "any";
 }

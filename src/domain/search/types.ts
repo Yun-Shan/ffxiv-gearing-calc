@@ -1,6 +1,6 @@
 /**
- * Solver-side equipment shape. `baseParamId` is an index in the attribute
- * vector supplied by the caller, not a Lumina BaseParam row ID.
+ * 求解器使用的装备结构。`baseParamId` 是调用方提供的属性向量中的索引，
+ * 并非 Lumina BaseParam 行 ID。
  */
 import type {
   CustomizableStat,
@@ -13,7 +13,7 @@ export type ParamInfo = {
 };
 
 export type FoodParam = {
-  /** Base attributes included before applying the food percentage. */
+  /** 应用食物百分比加成前包含的基础属性。 */
   baseValue?: number;
   baseParamId: number;
   multiplier: number;
@@ -31,7 +31,7 @@ export type FoodInfo = {
   itemId: number;
   itemLevel: number;
   key: string;
-  /** Identity of the physical food, independent of job-specific usable stats. */
+  /** 食物实体身份，与职业可用属性无关。 */
   physicalKey?: string;
   baseParams: FoodParam[];
 };
@@ -39,11 +39,11 @@ export type FoodInfo = {
 export type EquipInfo = {
   itemId: number;
   itemLevel: number;
-  /** Identifies an independent first/second ring slot for exact unique-item constraints. */
+  /** 标识独立的第一或第二戒指槽，供精确唯一装备约束使用。 */
   ringSlotIndex?: 0 | 1;
-  /** Physical item uniqueness metadata, retained when ring candidates cross a worker boundary. */
+  /** 物品实体的唯一性元数据；戒指候选跨越工作线程边界时仍会保留。 */
   isUnique?: boolean;
-  /** Stable encoding of custom parameters and actual materia assignment. */
+  /** 自定义参数和实际魔晶石分配的稳定编码。 */
   variantKey?: string;
   key: string;
   baseParams: ParamInfo[];
@@ -51,10 +51,10 @@ export type EquipInfo = {
   MDMG: number;
   DLY: number;
   resistanceWeaponAdjust?: ResistanceWeaponAdjust & {
-    /** Per-stat reduction caused by the active item-level sync cap. */
+    /** 当前品级同步上限导致的各属性降低值。 */
     statMaximums?: Partial<Record<CustomizableStat, number>>;
   };
-  /** Selected positive allocation values, attached only to a solved result. */
+  /** 选中的正数分配值，仅附加到已求解结果中。 */
   resistanceAllocation?: readonly {
     stat: CustomizableStat;
     baseParamId: number;
@@ -62,12 +62,12 @@ export type EquipInfo = {
   }[];
 };
 
-/** A shared virtual slot projected from a full equipment candidate. */
+/** 从完整装备候选中投影出的共享虚拟槽位。 */
 export type SharedSlotProjection = {
-  /** User-facing/common-slot key, for example "ring" or "ring2". */
+  /** 面向用户的共享槽位键，例如 "ring" 或 "ring2"。 */
   commonSlot: string;
-  /** Real solver slot which contains the complete candidate. */
+  /** 包含完整候选的实际求解器槽位。 */
   slotName: string;
-  /** Index within a legal ordered ring pair. */
+  /** 在合法有序戒指对中的索引。 */
   ringIndex: 0 | 1;
 };

@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
-import { AppHeader, type AppPage } from "../components/app-header/AppHeader";
-import { JointWorkbenchPage } from "../pages/joint-workbench/JointWorkbenchPage";
-import { SingleWorkbenchPage } from "../pages/single-workbench/SingleWorkbenchPage";
+import { AppHeader, type AppPage } from "@/ui/components/app-header/AppHeader";
+import { JointWorkbenchPage } from "@/ui/pages/joint-workbench/JointWorkbenchPage";
+import { SingleWorkbenchPage } from "@/ui/pages/single-workbench/SingleWorkbenchPage";
 import styles from "./App.module.scss";
 
 function currentPage(): AppPage {
   return window.location.hash === "#/joint" ? "joint" : "single";
 }
 
+function route(page: "single" | "joint") {
+  switch (page) {
+    case "single": return (<SingleWorkbenchPage />);
+    case "joint": return (<JointWorkbenchPage />);
+  }
+}
+
 export function App() {
   const [page, setPage] = useState<AppPage>(() => currentPage());
-  const [resetVersion, setResetVersion] = useState(0);
 
   useEffect(() => {
     if (!window.location.hash) window.history.replaceState(null, "", "#/single");
@@ -21,17 +27,8 @@ export function App() {
 
   return (
     <div className={styles.root}>
-      {page === "joint" ? (
-        <>
-          <AppHeader page={page} />
-          <JointWorkbenchPage key={"joint-" + resetVersion} />
-        </>
-      ) : (
-        <SingleWorkbenchPage
-          key={"single-" + resetVersion}
-          onReset={() => setResetVersion((version) => version + 1)}
-        />
-      )}
+      <AppHeader page={page} />
+      {route(page)}
     </div>
   );
 }

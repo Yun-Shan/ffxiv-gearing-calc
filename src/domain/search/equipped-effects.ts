@@ -28,23 +28,23 @@ export interface EquippedSpeedRange {
 export type DamageGcdVectorEvaluator = (
   attributes: readonly number[],
 ) => { damage: number; gcd: number } | undefined;
-/** Integer damage factors for exact comparison without floating point. */
+/** 用于无浮点误差精确比较的整数伤害因子。 */
 export interface IntegerDamageFactors {
-  /** Weapon damage, including the base job-specific weapon modifier. */
+  /** 武器伤害，包含职业对应的基础武器修正。 */
   weaponDamage: number;
-  /** Main-stat factor numerator, denominator 100. */
+  /** 主属性因子分子，分母为 100。 */
   mainStat: number;
-  /** Determination numerator, denominator 1000. */
+  /** 信念因子，分母为 1000。 */
   determination: number;
-  /** Tenacity numerator, denominator 1000. */
+  /** 坚韧因子，分母为 1000。 */
   tenacity: number;
-  /** Critical expectation numerator, denominator 1,000,000. */
+  /** 暴击期望因子，分母为 1,000,000。 */
   critical: number;
-  /** Direct-hit expectation numerator, denominator 4000. */
+  /** 直击期望因子，分母为 4000。 */
   directHit: number;
-  /** Job trait multiplier, constant for every vector of this evaluator. */
+  /** 职业特性倍率；对该求值器的所有属性向量都相同。 */
   traitMultiplier: number;
-  /** Exact GCD rounded to centiseconds, matching equippedEffects. */
+  /** 精确 GCD 的百分秒整数值，与 equippedEffects 一致。 */
   gcdCentiseconds: number;
 }
 
@@ -53,9 +53,8 @@ export type IntegerDamageFactorEvaluator = (
 ) => IntegerDamageFactors | undefined;
 
 /**
- * Builds exact integer factors from the same gear+food contribution vector as
- * the damage evaluators. Their product has a job/level-constant denominator
- * and trait multiplier, so it preserves exact damage ordering.
+ * 根据伤害求值器使用的同一装备与食物贡献向量，构造精确整数因子。
+ * 因子乘积的分母和职业特性倍率对同一职业及等级保持不变，因此能保留精确伤害排序。
  */
 export function createIntegerDamageFactorEvaluator(
   job: Job,
@@ -105,8 +104,8 @@ export function createIntegerDamageFactorEvaluator(
 }
 
 /**
- * Returns the exact integer tier used by the equipped-effects formula for one
- * damage-related attribute. The input is the gear + food contribution only.
+ * 返回 equippedEffects 公式中某项伤害相关属性使用的精确整数档位。
+ * 输入仅包含装备与食物带来的属性贡献。
  */
 export function equippedAttributeTier(
   job: Job,
@@ -161,7 +160,7 @@ const game = {
   clanStats: gameData.clanStats,
 };
 
-// Preserve the upstream game's epsilon-aware truncation at formula boundaries.
+// 在公式边界保留上游游戏对浮点误差的容忍截断方式。
 function floor(value: number): number {
   return Math.trunc(value + 1e-7);
 }
@@ -182,8 +181,8 @@ function getBaseStats(job: Job, levelMod: LevelModifier): EquippedStats {
     return {};
   }
 
-  // TEN is absent from non-tank schemas; the total-stat formula defaults it
-  // to the level substat. Keep the same neutral baseline in vector evaluators.
+  // 非坦克职业的属性结构不含 TEN；总属性公式会将其默认设为等级副属性。
+  // 向量求值器也使用相同的中性基准值。
   const stats: EquippedStats = { PDMG: 0, MDMG: 0, DLY: 0, TEN: levelMod.sub };
   for (const stat of schema.stats) {
     const baseStat = game.baseStats[stat] ?? 0;
@@ -293,7 +292,7 @@ function calculateFromTotalStats(
 }
 
 /**
- * Calculates effects while accepting only gear and food stat sums.
+ * 仅接收装备与食物属性总和，并据此计算属性效果。
  */
 export function equippedEffects(
   job: Job,
@@ -311,10 +310,9 @@ export function equippedEffects(
 }
 
 /**
- * Creates the allocation-free evaluator used by the V2 search hot path.
- * `attributes` contains gear and food contributions in the caller's vector
- * order. The returned function is synchronous, so its fixed-shape stats object
- * can be safely reused between evaluations.
+ * 创建 V2 搜索热路径使用的无额外分配求值器。
+ * `attributes` 按调用方的向量顺序保存装备与食物贡献。
+ * 返回的函数同步执行，因此可以在多次求值之间安全复用固定结构的属性对象。
  */
 export function createEquippedEffectsVectorEvaluator(
   job: Job,
@@ -342,7 +340,7 @@ export function createEquippedEffectsVectorEvaluator(
   };
 }
 
-/** Builds a synchronous damage and GCD evaluator for one job and level. */
+/** 为指定职业和等级创建同步的伤害与 GCD 求值器。 */
 export function createDamageGcdVectorEvaluator(
   job: Job,
   jobLevel: JobLevel,
@@ -394,7 +392,7 @@ export function equippedSpeedRangeForGcd(
   return { min: minimum, max: nextTier - 1 };
 }
 
-/** Converts a mitigation percentage such as 5 into a minimum TEN contribution. */
+/** 将减伤百分比（例如 5）换算为所需的最低坚韧贡献值。 */
 export function equippedToughnessForMitigationPercent(
   job: Job,
   jobLevel: JobLevel,
@@ -443,7 +441,7 @@ function firstNonnegativeInteger(
 }
 
 
-/** Exact measured lookup imported by the reproducible data updater. */
+/** 由可复现的数据更新程序导入的精确实测查表数据。 */
 export function blueMageWeaponDamageAddition(intelligenceContribution: number): number {
   if (!Number.isSafeInteger(intelligenceContribution) || intelligenceContribution < 0) {
     throw new RangeError("青魔法师智力装备贡献必须为非负安全整数");

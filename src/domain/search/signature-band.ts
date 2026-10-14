@@ -25,11 +25,11 @@ export type SignatureBandOptions = {
   qMinimum: number;
   qMaximum: number;
   maxHalfCombinations?: number;
-  /** Return true when the caller's search deadline has expired. */
+  /** 调用方的搜索时限已到时返回 true。 */
   deadline?: () => boolean;
   /**
-   * Optional conservative filter for exact better factor tuples. Returning
-   * false must prove that the tuple cannot correspond to a feasible loadout.
+   * 对更优精确因子元组进行可选的保守筛选。
+   * 返回 false 必须能够证明该元组不可能对应合法配装。
    */
   isPossiblyFeasible?: (
     signature: readonly { name: string; q: number; value: number }[],
@@ -53,13 +53,11 @@ const REQUIRED_DAMAGE_GROUPS = ["weapon", "main", "det", "ten", "crt", "dht"] as
 const REQUIRED_DPS_GROUPS = [...REQUIRED_DAMAGE_GROUPS, "gcd"] as const;
 
 /**
- * Conservatively checks whether a factor signature in the requested rounded-log
- * band can strictly beat the incumbent. A false result is an exhaustive proof;
- * true also means the configured work limit prevented that proof.
+ * 保守检查指定取整对数区间内的因子签名能否严格超过当前最优解。
+ * 返回 false 表示已穷尽搜索并完成证明；返回 true 也可能表示工作量上限阻止了证明。
  *
- * The MIP ties factor classes to actual loadouts. This check deliberately
- * relaxes those ties into a Cartesian product, so it can prove impossibility
- * without rejecting a feasible MIP signature.
+ * MIP 会将因子档位与实际配装关联起来。此检查有意将这些关联放宽为笛卡尔积，
+ * 因此可以证明某种情况不可能发生，但不会排除 MIP 可行的签名。
  */
 export function hasStrictlyBetterFactorCombination(
   options: SignatureBandOptions,
@@ -67,8 +65,7 @@ export function hasStrictlyBetterFactorCombination(
   try {
     return checkFactorBand(options);
   } catch {
-    // This helper is an optional proof shortcut. Any unexpected numeric,
-    // allocation, or deadline error must send the caller back to exact MIP.
+    // 此辅助函数只是可选的证明捷径。遇到意外的数值、内存分配或时限错误时，必须交回精确 MIP 处理。
     return true;
   }
 }
@@ -93,15 +90,14 @@ function checkFactorBand(options: SignatureBandOptions): boolean {
 
   for (const inputGroup of options.groups) {
     if (!inputGroup || typeof inputGroup.name !== "string") return true;
-    // Speed is immaterial to both the damage product and the damage-mode q
-    // sum. Dropping it also avoids multiplying equivalent zero-q classes.
+    // 速度对伤害乘积和伤害模式的 q 总和都无影响。
+    // 忽略它还能避免枚举多个等价的零 q 档位。
     if (!isDps && inputGroup.name === "gcd") continue;
     if (!requiredSet.has(inputGroup.name) || seen.has(inputGroup.name)) return true;
     seen.add(inputGroup.name);
     if (!Array.isArray(inputGroup.classes) || inputGroup.classes.length === 0) return false;
 
-    // For a fixed q, retain only the best exact factor. Any discarded class has
-    // the same band coordinate and can only make the product worse.
+    // q 固定时只保留最优的精确因子。其他档位的区间坐标相同，且只会使乘积更差。
     const bestByQ = new Map<number, number>();
     for (const factorClass of inputGroup.classes) {
       if (!factorClass || !Number.isSafeInteger(factorClass.q) ||

@@ -1,7 +1,6 @@
-@use "../../../../../styles/tokens" as tokens;
+@use "@/styles/tokens" as tokens;
 
 .result {
-  margin: 0;
   padding: 19px 0 6px;
   border-top: 1px solid tokens.$color-border-default;
 }
@@ -48,7 +47,6 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin: 0 0 12px;
-  padding: 0;
 }
 
 .metrics > div {

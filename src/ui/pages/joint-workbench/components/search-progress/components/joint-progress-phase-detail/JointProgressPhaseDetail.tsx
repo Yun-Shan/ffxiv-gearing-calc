@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { LinearMipProgress } from "../../../../../../../domain/search/linear-mip";
-import progressStyles from "../../../../../../components/search-progress/SearchWorkflowProgress.module.scss";
+import type { LinearMipProgress } from "@/domain/search/linear-mip";
+import progressStyles from "@/ui/components/search-progress/SearchWorkflowProgress.module.scss";
 import type {
   JointSearchProgressJob,
   JointSearchProgressState,

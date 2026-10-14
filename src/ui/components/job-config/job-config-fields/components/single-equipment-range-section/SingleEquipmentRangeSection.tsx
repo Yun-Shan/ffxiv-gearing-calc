@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import styles from "./SingleEquipmentRangeSection.module.scss";
+import styles from "@/ui/components/job-config/job-config-fields/components/single-equipment-range-section/SingleEquipmentRangeSection.module.scss";
 
 export function SingleEquipmentRangeSection({
   children,
