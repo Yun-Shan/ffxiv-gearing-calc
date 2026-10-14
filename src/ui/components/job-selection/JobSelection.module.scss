@@ -1,0 +1,47 @@
+@use "@/styles/tokens" as tokens;
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  row-gap: 6px;
+}
+
+.group {
+  display: flex;
+  height: fit-content;
+  column-gap: 24px;
+  padding: 12px;
+  border-radius: 8px;
+  align-items: center;
+
+  .title {
+    flex: 0 0 (115px + 8px); // 115是按钮宽度，8是gap，目前暂时是硬编码magic value，主要是改成变量找不到好的方式总感觉过度设计
+    color: #354a37;
+    font-size: tokens.$font-size-13px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  &.sub {
+    padding: 0;
+    gap: 0;
+
+    .title {
+      color: #808080;
+    }
+  }
+}
+
+.cards {
+  display: flex;
+  width: fit-content;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.subGroups {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  row-gap: 8px;
+}

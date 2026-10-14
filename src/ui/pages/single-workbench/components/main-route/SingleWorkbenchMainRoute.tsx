@@ -41,7 +41,7 @@ export function SingleWorkbenchMainRoute({
 
   switch (view) {
     case "choose":
-      return <SingleWorkbenchSelectionScreen selectedJob={selectedJob} onChooseJob={onChooseJob} />;
+      return <SingleWorkbenchSelectionScreen onChooseJob={onChooseJob} />;
     case "workbench":
       return selectedJob && job ? <SingleWorkbenchConditionScreen
         jobName={job.name}

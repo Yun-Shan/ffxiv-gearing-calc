@@ -1,63 +1,12 @@
 import type { ReactNode } from "react";
 import { ArrowRight } from "lucide-react";
-import { jobIds, jobSchemas } from "@/domain/jobs";
 import type { JobId } from "@/domain/types";
 import styles from "./JointJobSelection.module.scss";
-import { JobButton } from '@/ui/components/job-button/JobButton.tsx';
-
-type JobGroupTone = "tank" | "healer" | "str" | "dex" | "int";
-
-interface JobGroup {
-  id: string;
-  tone: JobGroupTone;
-  label: string;
-  jobs?: JobId[];
-  subgroups?: Array<{ id: string; label: string; jobs: JobId[] }>;
-}
-
-const dexMeleeJobs = new Set<JobId>(["NIN", "VPR"]);
-
-function createJobGroups(): JobGroup[] {
-  const tankJobs = jobIds.filter((jobId) => jobSchemas[jobId].role === "tank");
-  const healerJobs = jobIds.filter((jobId) => jobSchemas[jobId].role === "healer");
-  const strengthJobs = jobIds.filter((jobId) => jobSchemas[jobId].role === "str");
-  const dexterityJobs = jobIds.filter((jobId) => jobSchemas[jobId].role === "dex");
-  const intelligenceJobs = jobIds.filter((jobId) => jobSchemas[jobId].role === "int");
-
-  const groups: JobGroup[] = [
-    { id: "tank", tone: "tank", label: "防护职业", jobs: tankJobs },
-    { id: "healer", tone: "healer", label: "治疗职业", jobs: healerJobs },
-    { id: "strength", tone: "str", label: "力量 DPS", jobs: strengthJobs },
-    {
-      id: "dexterity",
-      tone: "dex",
-      label: "灵巧 DPS",
-      subgroups: [
-        {
-          id: "dexterity-melee",
-          label: "近战物理职业",
-          jobs: dexterityJobs.filter((jobId) => dexMeleeJobs.has(jobId)),
-        },
-        {
-          id: "dexterity-ranged",
-          label: "远程物理职业",
-          jobs: dexterityJobs.filter((jobId) => !dexMeleeJobs.has(jobId)),
-        },
-      ],
-    },
-    { id: "intelligence", tone: "int", label: "智力 DPS", jobs: intelligenceJobs },
-  ];
-
-  return groups.filter((group) =>
-    group.jobs ? group.jobs.length > 0 : group.subgroups?.some((subgroup) => subgroup.jobs.length > 0),
-  );
-}
-
-const jobGroups = createJobGroups();
+import { JobSelection } from '@/ui/components/job-selection/JobSelection.tsx';
 
 export interface JointJobSelectionProps {
   selectedJobs: JobId[];
-  onToggleJob: (jobId: JobId) => void;
+  onSelectJobChange: (jobIds: Set<JobId>) => void;
   onContinue: () => void;
   canContinue: boolean;
   dataVersion: string;
@@ -69,7 +18,7 @@ export interface JointJobSelectionProps {
 
 export function JointJobSelection({
   selectedJobs,
-  onToggleJob,
+  onSelectJobChange,
   onContinue,
   canContinue,
   dataVersion,
@@ -83,9 +32,6 @@ export function JointJobSelection({
       ? `已选择 ${selectedJobs.length} 个职业，可以继续设置条件。`
       : "请选择同一分组内的至少两个职业。"
   );
-  const renderJobCard = (jobId: JobId) => {
-    return (<JobButton jobId={jobId} onClick={() => onToggleJob(jobId)} selectable/>);
-  };
 
   return (
     <div className={styles.page}>
@@ -97,39 +43,7 @@ export function JointJobSelection({
             <p className={styles.description}>请选择同一分组内的至少两个职业。</p>
           </header>
 
-          <div className={styles.groups} aria-label="按职业分组选择">
-            {jobGroups.map((group) => {
-              const headingId = `joint-job-group-${group.id}`;
-              return (
-                <section
-                  className={styles.group}
-                  data-tone={group.tone}
-                  key={group.id}
-                  aria-labelledby={headingId}
-                >
-                  <div className={styles.groupLabel}>
-                    <h2 id={headingId}>{group.label}</h2>
-                  </div>
-                  {group.subgroups ? (
-                    <div className={styles.subgroups} role="group" aria-labelledby={headingId}>
-                      {group.subgroups.map((subgroup) => (
-                        <div className={styles.subgroup} key={subgroup.id}>
-                          <h3>{subgroup.label}</h3>
-                          <div className={styles.jobCards}>
-                            {subgroup.jobs.map(renderJobCard)}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className={styles.jobCards} role="group" aria-labelledby={headingId}>
-                      {group.jobs?.map(renderJobCard)}
-                    </div>
-                  )}
-                </section>
-              );
-            })}
-          </div>
+          <JobSelection groupType={'gear'} onSelectJobChange={onSelectJobChange} />
 
           <footer className={styles.actions}>
             <p className={`${styles.selectionMessage} ${errorMessage || selectionMessage ? styles.selectionError : ""}`} role={errorMessage ? "alert" : "status"}>{statusMessage}</p>

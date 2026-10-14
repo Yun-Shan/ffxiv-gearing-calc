@@ -222,10 +222,8 @@ export function JointWorkbenchPage() {
     abortController.current?.abort();
   }, []);
 
-  function toggleSelectedJob(jobId: JobId) {
-    const nextJobs = jobList.includes(jobId)
-      ? jobList.filter((item) => item !== jobId)
-      : [...jobList, jobId];
+  function toggleSelectedJob(newSelectionJobs: Set<JobId>) {
+    const nextJobs = [...newSelectionJobs];
     const nextRole = nextJobs[0] ? jobSchemas[nextJobs[0]].role : undefined;
     // 联合搜索只允许同一职业分组，避免组合不同角色的职业配置。
     if (nextRole && nextJobs.some((item) => jobSchemas[item].role !== nextRole)) {
@@ -234,10 +232,7 @@ export function JointWorkbenchPage() {
     }
     setSelectionMessage(undefined);
     setJobList(nextJobs);
-    setJobConfigs((current) => ({
-      ...current,
-      [jobId]: current[jobId] ?? makeConfig(jobId),
-    }));
+    setJobConfigs(Object.fromEntries(nextJobs.map(it => [it, makeConfig(it)])));
     const supported = new Set(nextJobs.length ? slotsForJob(nextJobs[0]!) : []);
     for (const nextJob of nextJobs.slice(1)) {
       const current = new Set(slotsForJob(nextJob));
@@ -519,7 +514,7 @@ export function JointWorkbenchPage() {
     return (
       <JointJobSelection
         selectedJobs={jobList}
-        onToggleJob={toggleSelectedJob}
+        onSelectJobChange={toggleSelectedJob}
         onContinue={() => {
           setView("conditions");
           setSelectionMessage(undefined);
