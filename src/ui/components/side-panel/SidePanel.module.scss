@@ -1,0 +1,108 @@
+@use "@/styles/tokens" as tokens;
+
+.root {
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  width: 280px;
+  padding: 8px 16px 12px;
+
+  display: flex;
+  flex-direction: column;
+
+  border-top: 3px solid #81914b;
+  background-color: tokens.$color-surface-canvas;
+  //noinspection CssUnknownTarget
+  background-image:
+    linear-gradient(rgb(248 249 245 / 75%), rgb(248 249 245 / 75%)),
+    url("/assets/wizard-atmosphere.png");
+  background-position:
+    center,
+    right bottom;
+  background-size: cover, cover;
+  background-repeat: no-repeat;
+}
+
+
+.header {
+  flex: 0 0 fit-content;
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid tokens.$color-border-emphasis;
+
+  .eyebrow {
+    margin-bottom: 4px;
+    color: tokens.$color-accent-olive;
+    font-size: tokens.$font-size-compact;
+    font-weight: bold;
+  }
+  .title {
+    color: #354a37;
+    font-size: tokens.$font-size-heading;
+    font-weight: bold;
+  }
+}
+
+.content {
+  flex: 1;
+}
+
+.status {
+  margin-top: 8px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-compact);
+
+  &::before {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    content: "";
+    margin-right: 6px;
+  }
+  &[data-status="ready"]::before {
+    background: #09a809;
+  }
+  &[data-status="pending"]::before {
+    background: #c99752;
+  }
+  &[data-status="error"]::before {
+    background: #d31a31;
+  }
+}
+
+.actionBtn {
+  width: 100%;
+  height: 40px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 4px;
+  background: var(--color-accent-teal);
+  color: var(--color-neutral-white);
+  font-size: tokens.$font-size-13px;
+  font-weight: bold;
+
+  &:hover:not(:disabled) {
+    background: #076c6d;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+  }
+}
+
+.footer {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  padding-bottom: 3px;
+  color: #75836b;
+  font-size: tokens.$font-size-caption;
+}
+

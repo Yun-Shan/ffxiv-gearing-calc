@@ -1,0 +1,21 @@
+@use "@/styles/tokens" as tokens;
+
+.root {
+  width: 100vw;
+  height: calc(100vh - tokens.$nav-bar-height);
+  overflow: hidden;
+
+  display: flex;
+}
+
+.title {
+  margin: 0;
+  color: #354a37;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 31px;
+}
+
+.main {
+  flex: 1;
+}

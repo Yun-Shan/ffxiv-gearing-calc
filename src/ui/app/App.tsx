@@ -3,6 +3,7 @@ import { AppHeader, type AppPage } from "@/ui/components/app-header/AppHeader";
 import { JointWorkbenchPage } from "@/ui/pages/joint-workbench/JointWorkbenchPage";
 import { SingleWorkbenchPage } from "@/ui/pages/single-workbench/SingleWorkbenchPage";
 import styles from "./App.module.scss";
+import { SingleWorkbenchPageNew } from '@/ui/pages/single-workbench/SingleWorkbenchPageNew.tsx';
 
 function currentPage(): AppPage {
   return window.location.hash === "#/joint" ? "joint" : "single";
@@ -10,7 +11,7 @@ function currentPage(): AppPage {
 
 function route(page: "single" | "joint") {
   switch (page) {
-    case "single": return (<SingleWorkbenchPage />);
+    case "single": return (<SingleWorkbenchPageNew />);
     case "joint": return (<JointWorkbenchPage />);
   }
 }
