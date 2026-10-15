@@ -224,12 +224,6 @@ export function JointWorkbenchPage() {
 
   function toggleSelectedJob(newSelectionJobs: Set<JobId>) {
     const nextJobs = [...newSelectionJobs];
-    const nextRole = nextJobs[0] ? jobSchemas[nextJobs[0]].role : undefined;
-    // 联合搜索只允许同一职业分组，避免组合不同角色的职业配置。
-    if (nextRole && nextJobs.some((item) => jobSchemas[item].role !== nextRole)) {
-      setSelectionMessage("联合搜索要求选择同一分组的职业；请先取消当前选择，再选择其他分组。");
-      return;
-    }
     setSelectionMessage(undefined);
     setJobList(nextJobs);
     setJobConfigs(Object.fromEntries(nextJobs.map(it => [it, makeConfig(it)])));

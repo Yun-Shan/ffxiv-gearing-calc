@@ -6,22 +6,21 @@ import { useState } from 'react';
 export function JobButton(
   {
     jobId,
-    selectable = false,
+    selected,
+    disabled,
     onClick,
   }: {
     jobId: JobId,
-    selectable?: boolean,
+    selected?: boolean,
+    disabled?: boolean,
     onClick?: () => void,
   }
 ) {
-  const [selected, setSelect] = useState(false);
   return (
     <Button
-      className={`${styles.container} ${selectable && selected ? styles.selected : ""}`}
-      onClick={() => {
-        if (selectable) setSelect(!selected);
-        if (onClick) onClick();
-      }}
+      className={`${styles.container} ${selected ? styles.selected : ""}`}
+      onClick={onClick}
+      disabled={disabled}
     >
       <img className={styles.icon} src={`/assets/jobs/${jobId}.png`} alt={jobId} />
       <span className={styles.jobName}>{jobSchemas[jobId].name}</span>

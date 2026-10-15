@@ -21,7 +21,13 @@
   text-align: left;
   white-space: nowrap;
 
-  &:hover {
+  &:disabled {
+    pointer-events: none;
+    filter: grayscale(0.5);
+    opacity: 0.6;
+  }
+
+  &:hover:not(:disabled) {
     border-color: var(--job-color, tokens.$color-accent-olive);
     background: tokens.$color-neutral-white;
   }
