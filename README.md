@@ -1,82 +1,71 @@
 # 配装工坊
 
-纯前端的 FFXIV 自动配装优化器。项目把游戏规则、属性公式和搜索算法放在 `src/domain` 中，UI 层只负责配置与结果展示，方便未来把领域层单独发布成库。
+纯前端的 FFXIV 自动配装优化器，使用 React、Base UI 和 TypeScript。单职业与同组多职业联合搜索支持装备/食物筛选、同步、装备锁定、GCD 和坚韧约束，以及共享装备与镶嵌。联合目标按各职业单独最优基线归一化；搜索完成最优性复核后返回结果，支持进度、取消及本地历史。
+
+业务行为与候选域见[领域与搜索规则](docs/rules/领域与搜索规则.md)；界面方向和 Penpot 入口见[前端设计总览](docs/前端设计总览.md)。
 
 ## 开发
 
 ```bash
 npm install
 npm run dev
+npm run build
+npm run preview
 ```
 
-## 验证
+## 验证与性能验收
+
+按[工程规则](docs/rules/工程规则.md)选择与改动相关的检查：
 
 ```bash
-npm run build
+npm test
 npm run test:coverage
 npm run test:data
+npm run data:test:v3
 ```
 
-领域纯逻辑层的语句、分支、函数和行覆盖率门槛均为 90%；精确 MIP 文件目前暂不纳入统计，但仍运行其全部测试与正式搜索验收。搜索模型通过小规模穷举、整数伤害因子、因子签名复核和联合共享身份测试验证。法系 GCD 使用咏速，坦克、力量及灵巧职业使用技速；可行档位查询从二进制主属性索引读取装备，只投影速度与坚韧组合，并遵循与正式搜索相同的装备、镶嵌、食物和约束规则。
+覆盖率门槛与正式搜索验收是不同检查，不能用测试命令成功代替覆盖率达标或完整证明。Node 测试和多职业验收的配置见[运行说明](scripts/node-tests/README.md)。
 
-数据测试校验 MCP 查询版本、空名称物品排除，以及原生零伤害与缺失字段的区分。测试文件最多同时运行两个，避免重复加载完整生产数据造成资源竞争。
+全场景性能验收：
 
-## 配装搜索
+```bash
+node docs/search-optimization/tools/run-acceptance.mjs
+```
 
-职业图标来自 XIVAPI v2 的游戏资产接口，作为本地图像随应用提供。刷新图标可运行 `node scripts/download-job-icons.mjs`；脚本使用已有 Lumina MCP 服务核对职业编号，下载并校验 PNG，来源与哈希保存在 `public/assets/jobs/source.json`，不更新装备或公式数据。
-
-单职业和多职业联合搜索采用独立流程。单职业支持职业选择、装备与食物范围、搜索限制及 GCD 目标；同步品级可以不启用，启用时只提供参考项目标粗的档位。联合搜索支持各职业约束、共享部位和共享或独立食物，并仅接受同组职业：防护、治疗各自为一组，DPS 按力量、灵巧、智力分组。整个项目的前端设计方向、跨页面原则和目标视口见[前端设计总览](docs/前端设计总览.md)，精确画板内容与状态以[Penpot 设计文件](https://design.penpot.app/#/workspace?team-id=71b39894-c9c5-81cd-8008-bc8b2a6ce976&file-id=71b39894-c9c5-81cd-8008-bc8f0497fe39&page-id=385a202b-2e30-80ff-8008-bcd1dbe5cc0b&layout=layers)为准。
-
-搜索记录保存在当前浏览器的本地数据库，记录时间、配置、状态及成功结果。载入成功结果不启动新搜索，数据版本不同的结果不能作为当前数据的推荐。
-
-基础属性、伤害和 GCD 按实际计算等级选取参数：未启用同步时使用筛选后候选装备中最高品级装备的穿戴等级，向下取整为十的倍数（例如 99 级使用 90 级基准）；启用同步时使用参考项目中同步品级所属等级。单职业、联合搜索及 GCD 档位查询遵循同一规则；装备穿戴限制与同步计算等级分别处理。
-
-可变等级装备保留为候选，并按职业映射 `main` / `secondary` 属性；需要按角色等级同步时套用对应品级上限并使普通魔晶石失效。穿戴等级为 1 的装备仍可参与配装，但不用于决定非同步计算等级基准。
-
-普通装备必须填满全部可用镶嵌孔，可禁忌镶嵌装备必须填满五孔；共享戒指和整套配装均遵守装备唯一性。对应的前端视觉呈现以 Penpot 设计为准。
-
-当前支持 23 个战斗职业，包括青魔法师和驯兽师。职业等级上限和默认品级范围随职业数据导入；青魔法师上限为 80 级，驯兽师上限为 50 级且具有独立盾牌槽。`ClassJob` 提供职业名称与原生属性修正，GCD、特性及队伍加成公式由参考项目补齐。MCP 没有青魔法师按 INT 索引的魔法武器伤害加值表或字段，因此该映射使用参考项目原始导出，并逐值核验原始测量输入。
-
-正式 TypeScript 求解器位于 `src/domain/search`，以 HiGHS 混合整数模型联合选择装备、食物和属性阶梯，用整数因子及 BigInt 有理数复核目标。80 级义军武器按 `ResistanceWeaponAdjust` 的总量、单项上限和 1 点步进直接建立整数分配变量，不会预先展开所有分配组合。可选择最大化“每威力伤害期望”或按 GCD 折算的目标；联合搜索最大化各职业目标与各自单独最优基线的比例之和。基线与联合结果采用相同目标及各职业约束。Node 验收与正式 UI 均使用 HiGHS；历史算法包对比记录在 [搜索基准记录](docs/搜索基准记录.md)。算法说明见 [最优装备算法](docs/最优装备算法.md) 和 [正确性与验收](docs/V3正确性与验收.md)。
-
-搜索在浏览器工作线程中执行，支持进度和取消；前端不设置搜索时限。Node 测试与验收入口单独施加时限保护，正式搜索只有完成最优性复核后才返回结果，不返回近似结果。最优性限定于输入的真实候选及约束；HiGHS 的浮点数值最优状态不是独立形式化有理数证书。浏览器无法取得进程 RSS，因此不将浏览器统计描述为进程峰值内存。
-单职业搜索在浏览器工作线程中执行，支持真实进度信息和取消；只有搜索与最优性复核完成才返回结果。进度与结果页面的具体内容和状态以 Penpot 设计为准，伤害指标复用领域层计算。
+场景筛选、时间保护、计时边界、历史对比和产物说明见[性能验收说明](docs/search-optimization/README.md)。浏览器正式搜索不设时限，Node 验收的保护时限不等于产品性能目标。
 
 ## 更新数据
 
-配装结果保持固定单列，按武器、盾牌、防具、饰品的顺序展示，无盾牌时省略该行。多职业搜索的共享槽位选择分两列：左列为武器、头、身、手、腿、脚，右列为盾牌、耳坠、项链、手镯、戒指1、戒指2；无法共享盾牌时保留空白占位，不添加说明。
-
-项目的数据来源是 MCP 优先、参考项目补缺：能从对应 MCP 服务器取得的目标版本游戏资料必须使用 MCP，只有确认 MCP 缺失的资料才使用 [Asvel/ffxiv-gearing](https://github.com/Asvel/ffxiv-gearing)。MCP 与参考项目的适用范围、回退条件和版本一致性要求见 [项目规则与实现记录](docs/PROJECT_RULES.md)。
-
-名称为空的物品视为已移除，导入时排除，不参与配装或食物计算，也不会用参考项目中的旧名称恢复。
-
-先由脚本启动环境提供的 `ffxiv-mcp-lumina` stdio 服务器并生成可复现快照，再由统一更新器合并参考项目中 MCP 未覆盖的领域常量：
+来源、回退条件和版本要求见[数据规则](docs/rules/数据规则.md)。先查询 MCP 保存可复现输入，再由统一更新器生成运行时二进制快照：
 
 ```bash
 npm run data:mcp
 npm run data:update
 ```
 
-同步等级导入还会查询完整的 `ContentFinderCondition` 行与相关 Schema，按参考项目转换规则生成品级所属等级，并与参考分组逐项核对；`ParamGrow.ItemLevelSync` 仅用于来源核验，不替代该分组。
+本机需配置游戏目录、EXDSchema 与 Lumina MCP 可执行文件。可用 `FFXIV_MCP_LUMINA_COMMAND`、`McpLumina__GamePath`、`McpLumina__SchemaPath` 和 `FFXIV_MCP_LUMINA_CONCURRENCY` 覆盖查询脚本默认配置。
 
-已有同一游戏版本快照时，可运行 `node scripts/query-mcp-lumina.mjs --level-basis-data-only` 补充同步等级与 `Item.SubStatCategory` 查询产物，再运行 `node scripts/update-data.mjs --offline` 重新生成运行时数据。该增量命令保留其他已有查询输入，版本不一致时明确失败。
+参考项目默认检出到 `reference/ffxiv-gearing`，可用 `FFXIV_GEARING_ROOT` 指定其他本地检出。已有 MCP 快照及参考导出时可离线生成，不启动 MCP 或访问网络：
 
-`data:mcp` 默认查询参考项目中的全部装备（含唯一性）、战斗食物、职业分类、23 个受支持职业的 `ClassJob` 行、食物效果、属性上限、魔晶石、`MandervilleWeaponEnhance` 和 `ResistanceWeaponAdjust`，并额外查询全部非空 Resistance 武器行对应的 `Item` 行；结果写入 `src/data/mcp-lumina.snapshot.json`。职业行通过 `ClassJob.Abbreviation` 搜索发现，再批量读取，不依赖记忆中的行 ID。它也会保存 `list_sheets` 与 `ClassJob` 字段描述，核对青魔法师武器伤害映射是否存在于 MCP。它要求本机配置的游戏目录、EXDSchema 和 Lumina MCP 可执行文件；可用 `FFXIV_MCP_LUMINA_COMMAND`、`McpLumina__GamePath`、`McpLumina__SchemaPath` 和 `FFXIV_MCP_LUMINA_CONCURRENCY` 覆盖默认值。仅在 MCP 明确声明通用查询不受版本警告影响时接受验证版本滞后，并保存警告；其他降级或任一批次重试失败会终止。
+```bash
+node scripts/update-data.mjs --offline
+```
 
-参考仓库默认位于 `reference/ffxiv-gearing`，可用 `FFXIV_GEARING_ROOT` 指向另一份本地检出。已有快照和本地参考数据时可运行 `node scripts/update-data.mjs --offline`，该模式不会访问网络，也不会直接启动 MCP。
+仅补充已有同版本快照的同步等级和可变等级装备查询输入时，可运行 `node scripts/query-mcp-lumina.mjs --level-basis-data-only`，再离线生成；版本不一致时失败。
 
-生成数据记录 MCP 游戏/验证版本、查询时间、Sheet、字段和行范围，以及参考仓库 URL、精确 commit、导入时间和源文件。解析器会严格校验数量、重复 ID、职业、魔晶石及必需字段；当前快照覆盖 22023 件可用战斗装备、420 种战斗食物和 23 个职业；青魔法师伤害映射必须是完整的非负安全整数数据，并与参考项目原始测量文件逐项一致。MCP 缺失情况与使用的参考文件保留在数据来源记录中。`ItemFood` 行 1800 当前未被参考项目用作食物效果参数，导入器会记录该查询缺口但不把它作为必需效果行，并使用同一动作中其余 MCP 效果字段。源数据缺失或异常时直接失败，运行时没有演示数据或合成数据回退。
+运行时产物为 `src/data/generated-data.bin`，MCP 输入保存在 `src/data/mcp-lumina.snapshot.json`。版本、数量和缺口以来源元数据为准；二进制契约见[格式规范](docs/运行时数据二进制格式.md)。`npm run data:benchmark` 用于测量数据加载与解码。
 
-更新器将完整运行时快照写入 `src/data/generated-data.bin`：所有数据段均为无压缩二进制。装备实体按唯一适用主属性物理分组；无法唯一确定主属性的装备放入独立共享组。每组内按品级和 ID 排序，五组主属性索引只引用适用于该主属性的装备，并在初始化时快速解码。运行时按当前主属性和品级范围惰性解码装备对象。来源模板和字符串表用于减少重复存储。浏览器与搜索 Worker 读取同一 asset，读取时校验文件 CRC。运行 `npm run data:benchmark` 可分项统计容器校验、非装备段、装备目录、主属性索引、逐件来源元数据及装备记录解码耗时。格式、字段、校验与迁移约定见[运行时数据二进制格式](docs/运行时数据二进制格式.md)。
+职业图标作为本地 PNG 提供，运行 `node scripts/download-job-icons.mjs` 可用 Lumina 核对职业后从 XIVAPI 刷新；来源和哈希位于 `public/assets/jobs/source.json`。
 
-## 维护文档
+## 文档入口
 
-`npm run data:test:v3` 是正式联合求解器的 Node 验收入口。性能优化工具的直接 Node 命令见[搜索耗时优化说明](docs/search-optimization/README.md)；其中全场景验收顺序复测 18 个有效性能条件，包含同步宽域共享装备压力案，并把输入、结果、证明日志、策略 profile、源码快照和生成数据快照保存在 `docs/search-optimization/acceptance-runs`。结果合法性、完整证明、每个职业 30 秒（包含首个职业）的优化目标，以及历史最优与九轮耗时分类分别报告；历史结果下限和完整证明仍是硬性要求。运行中按 Ctrl+C 会保存当前案的已收集日志和 profile，并明确标记证明未完成。性能验收工具位于 `docs/search-optimization/tools`，项目原有 Node 测试和正式联合搜索入口仍位于 `scripts/node-tests`；配置见[运行说明](scripts/node-tests/README.md)。算法、正确性说明和[搜索基准记录](docs/搜索基准记录.md)位于 `docs`，基准数据仅用于验收，不是运行时预先打表数据。
+| 目的 | 入口 |
+| --- | --- |
+| 代理任务与按需阅读 | [AGENTS.md](AGENTS.md) |
+| 当前规则分类 | [项目规则索引](docs/PROJECT_RULES.md) |
+| 稳定架构与设计取舍 | [顶层设计](自动配装优化项目设计方案.md) |
+| 当前搜索模型与边界 | [联合搜索模型](docs/V3正确性与验收.md)、[条件最优性证明](docs/当前搜索算法最优性证明.md) |
+| Penpot 与 Playwright 操作、界面交付 | [项目前端 skill](.agents/skills/penpot-frontend-delivery/SKILL.md) |
+| 性能证据 | [优化总结](docs/search-optimization/搜索耗时优化总结.md)及其引用的验收记录 |
 
-`scripts/archive` 保留旧算法探索代码、验收记录和日志，不参与构建类型检查，也不提供 npm 入口；需要手动复现时请先阅读其中的说明。项目原有 Node 测试和正式多职业搜索入口位于 `scripts/node-tests`，搜索性能总结、归档和验收工具位于 `docs/search-optimization`，算法和候选构造均由 `src/domain` 提供。
-
-- [项目规则与实现记录](docs/PROJECT_RULES.md)：游戏规则、数据约束、已修复问题、算法边界和正确演进方向。
-- [已安装算法包的搜索性能分析](docs/已安装算法包搜索性能分析.md)：已安装求解器与当前整数搜索模型的数学适配和性能边界。
-- [当前搜索算法的条件最优性证明](docs/当前搜索算法最优性证明.md)：单职业及联合搜索的证明框架、候选域范围和数值限制。
-- [分支覆盖审计](docs/分支覆盖审计.md)：未覆盖路径及调用链不变量的判定依据。
-- [AGENTS.md](AGENTS.md)：后续编码代理必须遵守的项目约束与验证流程。
+`scripts/archive` 仅保存历史探索，不作为当前入口；旧记录不定义当前规则，也不代表当前性能。

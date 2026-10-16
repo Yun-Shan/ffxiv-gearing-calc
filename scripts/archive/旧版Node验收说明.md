@@ -41,7 +41,7 @@ npm run data:test:v3
 
 ## HiGHS 进度记录
 
-Node 验收当前固定使用 HiGHS。历史算法对照、CP-SAT 运行数据与搜索结论保留在 [搜索基准记录](../../docs/搜索基准记录.md) 和 [算法包性能分析](../../docs/已安装算法包搜索性能分析.md)，但不再提供 CP-SAT 运行入口。
+Node 验收当前固定使用 HiGHS。历史算法对照与 CP-SAT 试验记录见[归档搜索基准](archived/搜索基准记录.md)；这份说明本身是旧验收流程的历史记录。
 
 可设置 `DATA_TEST_CANDIDATE_CACHE_PATH` 将候选导出到 JSON，之后重放完全相同的候选和约束；脚本会校验场景与候选 SHA-256。设置 `DATA_TEST_PROGRESS_OUTPUT_PATH` 可保存 HiGHS 的原生 incumbent、bound、gap 和节点事件。正常完成时保存完整轨迹；达到时限或出错时也会保存已收集到的部分轨迹并标记 `complete: false`。候选生成不计入搜索计时，模型构造、求解、回调和 BigInt 复核都计入。
 

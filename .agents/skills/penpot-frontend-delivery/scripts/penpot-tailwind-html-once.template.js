@@ -11,8 +11,8 @@
 //    }
 //    return { page: { id: penpot.currentPage.id, name: penpot.currentPage.name }, path };
 // 3. 将 MCP 返回的 page 填入 targetPage，将 path 填入 targetLayerPath；不要包含 Root Frame。
-// 4. 通过 Playwright MCP 的 browser_run_code_unsafe 运行本文件，例如：
-//    { filename: ".agents/penpot-tailwind-html-once.template.js" }
+// 4. 先查看当前 Playwright MCP 文档，确认执行页面代码的工具名称与参数；旧名称 browser_run_code_unsafe 不保证仍可用。确认后运行本文件，例如：
+//    { filename: ".agents/skills/penpot-frontend-delivery/scripts/penpot-tailwind-html-once.template.js" }
 //    脚本会切换到目标页面，必要时打开 Tailwind HTML 插件，逐层展开并选中图层，
 //    等待 1 秒后直接读取插件中的 HTML，不会点击复制按钮。
 (async (page) => {
