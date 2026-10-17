@@ -1,4 +1,4 @@
-import { currentLevel } from "../jobs.ts";
+import { attachEquivalentGear } from "./equivalent-gear.ts";
 import { findBestLoadoutExactMip } from "../search/loadout-finder-exact-mip.ts";
 import type {
   OptimizationConfig,
@@ -26,7 +26,6 @@ export async function runOptimizationLocally(
     config.minItemLevel === 770 &&
     config.maxItemLevel === 795 &&
     config.syncLevel === undefined &&
-    config.jobLevel === currentLevel &&
     config.objective === "dps" &&
     config.gcdTarget === undefined &&
     (config.gcdChoices?.length ?? 0) === 0 &&
@@ -49,7 +48,6 @@ export async function runOptimizationLocally(
     config.minItemLevel === 730 &&
     config.maxItemLevel === 795 &&
     config.syncLevel === 735 &&
-    config.jobLevel === currentLevel &&
     config.objective === "damage" &&
     config.gcdTarget === undefined &&
     (config.gcdChoices?.length ?? 0) === 0 &&
@@ -81,5 +79,5 @@ export async function runOptimizationLocally(
   options.onProgress?.("求解完成，正在还原并复核结果");
   return result === undefined
     ? undefined
-    : assembleResult(result, config, prepared);
+    : attachEquivalentGear(assembleResult(result, config, prepared), config, options);
 }

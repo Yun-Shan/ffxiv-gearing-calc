@@ -1,9 +1,5 @@
 import { foods, gameData, materiaGradeRequiredLevels } from "./data.ts";
-import {
-  jobLevelFor,
-  preferCandidateGearLevel,
-  type HighestCandidateGearLevel,
-} from "./gear-options.ts";
+import { jobLevelFor } from "./gear-options.ts";
 import { jobSchemas } from "./jobs.ts";
 import {
   applyFood,
@@ -30,10 +26,7 @@ import type {
 } from "./types.ts";
 
 interface GcdTierCalculatorDependencies {
-  getJobLevel(
-    config: OptimizationConfig,
-    highestCandidate?: HighestCandidateGearLevel,
-  ): number;
+  getJobLevel(config: OptimizationConfig): number;
   gearOptionsFor(config: OptimizationConfig, slot: GearSlot): Gear[];
   slotsForJob(jobId: JobId): GearSlot[];
 }
@@ -497,18 +490,11 @@ export function calculateFeasibleGcdTiers(
   const allSlots = dependencies.slotsForJob(config.jobId);
   const nonRingSlots = allSlots.filter((slot) => slot !== "ring" && slot !== "ring2");
   const candidatePools = new Map<GearSlot, Gear[]>();
-  let highestCandidateGearLevel: HighestCandidateGearLevel | undefined;
   const eligiblePoolForSlot = (slot: GearSlot, pool: Gear[]): Gear[] => {
     const forcedId = config.forcedGear[slot];
     const eligible = forcedId === undefined
       ? pool
       : pool.filter((gear) => gear.id === forcedId);
-    for (const gear of eligible) {
-      highestCandidateGearLevel = preferCandidateGearLevel(
-        highestCandidateGearLevel,
-        gear,
-      );
-    }
     candidatePools.set(slot, eligible);
     return eligible;
   };
@@ -519,7 +505,7 @@ export function calculateFeasibleGcdTiers(
   const ringPool = dependencies.gearOptionsFor(config, "ring");
   const firstRingCandidates = eligiblePoolForSlot("ring", ringPool);
   const secondRingCandidates = eligiblePoolForSlot("ring2", ringPool);
-  const jobLevel = dependencies.getJobLevel(config, highestCandidateGearLevel);
+  const jobLevel = dependencies.getJobLevel(config);
   const usesTenacity =
     config.minTenacity !== undefined ||
     config.toughnessMin !== undefined ||

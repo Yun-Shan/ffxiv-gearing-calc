@@ -46,3 +46,16 @@
   height: fit-content;
   row-gap: 8px;
 }
+
+.joint {
+  row-gap: 4px;
+}
+.joint .group {
+  padding-block: 4px;
+}
+.joint .group.sub {
+  padding: 0;
+}
+.joint .subGroups {
+  row-gap: 4px;
+}

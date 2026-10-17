@@ -1,0 +1,13 @@
+.icon {
+  display: block;
+  flex: none;
+  width: var(--equipment-icon-size, 24px);
+  height: var(--equipment-icon-size, 24px);
+  box-sizing: border-box;
+  border: 1px solid #d7e2dc;
+  border-radius: 4px;
+  object-fit: contain;
+}
+.missing {
+  background: #f4f6f4;
+}

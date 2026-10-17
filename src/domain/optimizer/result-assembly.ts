@@ -1,3 +1,4 @@
+import { describeFoodResult } from "../food-result.ts";
 import {
   addStats,
   applyFood,
@@ -29,7 +30,7 @@ import type { EquipInfo } from "../search/types.ts";
 export function candidateGearFromInfo(
   equipment: EquipInfo,
   slot: GearSlot,
-  prepared: PreparedSearch,
+  prepared: Pick<PreparedSearch, "gearsByIdentity">,
 ): MeldedGear {
   const canonical = prepared.gearsByIdentity.get(equipmentCandidateIdentity(equipment));
   if (!canonical) {
@@ -134,7 +135,7 @@ export function assembleResult(
   return {
     calculationLevel: prepared.jobLevel,
     gear: selectedGear,
-    food,
+    food: describeFoodResult(food, unbuffedStats, stats),
     stats,
     effects,
     score: prepared.objective === "dps" ? damagePerSecond : effects.damage,

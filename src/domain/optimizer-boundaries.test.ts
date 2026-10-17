@@ -9,7 +9,6 @@ import {
 import type { JobId, OptimizationConfig } from "./types";
 import {
   calculationJobLevelFor,
-  preferCandidateGearLevel,
 } from "./gear-options";
 import { jobSchemas } from "./jobs";
 import {
@@ -26,10 +25,10 @@ import { foodStatsForJob } from "./optimizer/equipment-candidates";
 
 const maxItemLevel = Math.max(...gears.map((gear) => gear.level));
 
-function configFor(jobId: JobId, jobLevel = 100): OptimizationConfig {
+function configFor(jobId: JobId, calculationLevel?: number): OptimizationConfig {
   return {
     jobId,
-    jobLevel,
+    syncLevel: calculationLevel !== undefined && calculationLevel < 100 ? gameData.syncLevelOfJobLevels[calculationLevel] : undefined,
     minItemLevel: 0,
     maxItemLevel,
     maximizeTenacity: false,
@@ -94,11 +93,11 @@ function expectResultUsesLevel(result: NonNullable<Awaited<ReturnType<typeof run
 }
 
 describe("optimizer runtime boundaries", () => {
-  it("filters real equipment by character level, item-level range, source, and id", () => {
+  it("filters real equipment by job cap, item-level range, source, and id", () => {
     const lowLevel = configFor("SAM", 70);
     const body = gearOptionsFor(lowLevel, "body");
     expect(body.length).toBeGreaterThan(0);
-    expect(body.every((item) => item.equipLevel <= 70)).toBe(true);
+    expect(body.every((item) => item.equipLevel <= 100)).toBe(true);
 
     const itemLevel = body[0]!.level;
     const exactLevel = gearOptionsFor(
@@ -121,7 +120,7 @@ describe("optimizer runtime boundaries", () => {
     ).toBe(true);
   });
 
-  it("keeps variable-level gear as a candidate while excluding equip-level 1 from the baseline", () => {
+  it("keeps variable-level gear as a candidate", () => {
     const variableGear = gears.find((gear) => gear.id === 52439);
     expect(variableGear).toBeDefined();
     expect(variableGear!.equipLevelVariable).toBe(true);
@@ -131,11 +130,7 @@ describe("optimizer runtime boundaries", () => {
       maxItemLevel: variableGear!.level,
     }, variableGear!.slot);
     expect(candidates.some((gear) => gear.id === variableGear!.id)).toBe(true);
-    expect(preferCandidateGearLevel(undefined, variableGear!)).toBeUndefined();
-    expect(preferCandidateGearLevel(
-      { itemLevel: 795, equipLevel: 99 },
-      variableGear!,
-    )).toEqual({ itemLevel: 795, equipLevel: 99 });
+
   });
 
   it("resolves variable gear main/secondary per job and applies reference sync-level selection", () => {
@@ -174,9 +169,6 @@ describe("optimizer runtime boundaries", () => {
         ...fixed,
         forcedGear: { ...fixed.forcedGear, [variableGear.slot]: variableGear.id },
       };
-      const highest = Object.values(config.forcedGear)
-        .map((id) => gears.find((gear) => gear.id === id)!)
-        .reduce(preferCandidateGearLevel, undefined);
       const result = await runOptimizationLocally(config);
       expect(result).toBeDefined();
       const selected = result!.gear.find((gear) => gear.id === variableGear.id)!;
@@ -186,9 +178,9 @@ describe("optimizer runtime boundaries", () => {
         VIT: 214,
         DET: 162,
       });
-      expect(result!.calculationLevel).toBe(calculationJobLevelFor(config, highest));
+      expect(result!.calculationLevel).toBe(calculationJobLevelFor(config));
       if (jobLevel === 90) {
-        expect(effectiveGearSyncLevel(variableGear, jobLevel)).toBe(660);
+        expect(effectiveGearSyncLevel(variableGear, 100, config.syncLevel)).toBe(660);
         expect(selected.melds).toEqual([]);
         const concreteStats = concretizeGearStats(variableGear.stats, jobSchemas.SAM);
         expect(selected.finalStats.STR).toBeLessThan(concreteStats.STR!);
@@ -198,41 +190,19 @@ describe("optimizer runtime boundaries", () => {
           );
         }
       } else {
-        expect(effectiveGearSyncLevel(variableGear, jobLevel)).toBeUndefined();
+        expect(effectiveGearSyncLevel(variableGear, 100, config.syncLevel)).toBeUndefined();
         expect(selected.finalStats).toMatchObject({ STR: 212, DHT: 162, VIT: 214, DET: 162 });
       }
       expect(findFeasibleGcdsLocally(config)).toContain(result!.effects.gcd);
     }
   }, 30_000);
 
-  it("uses the highest item-level candidate and floors its equip level to a supported decade", () => {
-    const candidates = [
-      { level: 999, equipLevel: 1 },
-      { level: 790, equipLevel: 99 },
-      { level: 795, equipLevel: 89 },
-      { level: 795, equipLevel: 99 },
-      { level: 795, equipLevel: 90 },
-    ];
-    const highest = candidates.reduce(preferCandidateGearLevel, undefined);
-
-    expect(highest).toEqual({ itemLevel: 795, equipLevel: 99 });
-    expect(calculationJobLevelFor(configFor("SAM"), highest)).toBe(90);
-    expect(() =>
-      calculationJobLevelFor(configFor("SAM"), {
-        itemLevel: 795,
-        equipLevel: 49,
-      }),
-    ).toThrow("不支持的职业等级：40");
-
-    const syncAtLevel100 = gameData.syncLevels[100]![0]!;
-    expect(() =>
-      calculationJobLevelFor(
-        { ...configFor("BLU", 80), syncLevel: syncAtLevel100 },
-      ),
-    ).toThrow("不支持的职业等级：100");
+  it("uses each job cap and clamps high sync mappings to a limited job cap", () => {
+    expect(calculationJobLevelFor(configFor("SAM"))).toBe(100);
+    expect(calculationJobLevelFor({ ...configFor("BLU"), syncLevel: gameData.syncLevels[100]![0]! })).toBe(jobSchemas.BLU.maxJobLevel);
   });
 
-  it("uses the filtered real equipment level for single-job base stats and effects", async () => {
+  it("uses explicit sync mapping for single-job base stats and effects", async () => {
     for (const level of [80, 90, 100]) {
       const config = forceOnePerSlot({
         ...configFor("SAM", level),
@@ -243,7 +213,7 @@ describe("optimizer runtime boundaries", () => {
     }
   }, 30_000);
 
-  it("floors real level-89 and level-99 candidates to their formula breakpoints", async () => {
+  it("keeps formula level at the job cap for real level-89 and level-99 candidates", async () => {
     const level89Selection = forceOnePerSlot({
       ...configFor("SAM", 100),
       minItemLevel: 0,
@@ -251,13 +221,9 @@ describe("optimizer runtime boundaries", () => {
     });
     const level89Config = { ...level89Selection, maxItemLevel: 690 };
     expect(gearOptionsFor(level89Config, "earrings").some((gear) => gear.level === 690)).toBe(true);
-    const level89Candidates = Object.values(level89Config.forcedGear)
-      .map((id) => gears.find((gear) => gear.id === id)!);
-    const highestLevel89Candidate = level89Candidates.reduce(preferCandidateGearLevel, undefined);
-    expect(highestLevel89Candidate).toEqual({ itemLevel: 548, equipLevel: 89 });
     const level89Result = await runOptimizationLocally(level89Config);
     expect(level89Result).toBeDefined();
-    expectResultUsesLevel(level89Result!, level89Config, 80);
+    expectResultUsesLevel(level89Result!, level89Config, 100);
 
     const level99Selection = forceOnePerSlot({
       ...configFor("SAM", 100),
@@ -266,13 +232,9 @@ describe("optimizer runtime boundaries", () => {
     });
     const level99Config = { ...level99Selection, maxItemLevel };
     expect(gearOptionsFor(level99Config, "body").some((gear) => gear.level > 690)).toBe(true);
-    const level99Candidates = Object.values(level99Config.forcedGear)
-      .map((id) => gears.find((gear) => gear.id === id)!);
-    const highestLevel99Candidate = level99Candidates.reduce(preferCandidateGearLevel, undefined);
-    expect(highestLevel99Candidate).toEqual({ itemLevel: 678, equipLevel: 99 });
     const level99Result = await runOptimizationLocally(level99Config);
     expect(level99Result).toBeDefined();
-    expectResultUsesLevel(level99Result!, level99Config, 90);
+    expectResultUsesLevel(level99Result!, level99Config, 100);
   }, 30_000);
 
   it("keeps high equip-level gear wearable when sync formulas use the mapped lower level", async () => {
@@ -345,8 +307,6 @@ describe("optimizer runtime boundaries", () => {
 
     expect(() => gearOptionsFor({ ...configFor("SAM"), jobId: "NOPE" as JobId }, "body"))
       .toThrow("缺少职业 NOPE");
-    expect(() => gearOptionsFor({ ...configFor("SAM"), jobLevel: 70.5 }, "body"))
-      .toThrow("不支持的职业等级");
   });
 
   it("requires a supported sync-level mapping and preserves an Error cancellation reason", () => {

@@ -1,30 +1,17 @@
-import { useEffect, useState } from "react";
+import { useElapsedTime } from "@/ui/components/search-progress/use-elapsed-time";
 import type { LinearMipProgress } from "@/domain/search/linear-mip";
 import progressStyles from "@/ui/components/search-progress/SearchWorkflowProgress.module.scss";
 import type {
   JointSearchProgressJob,
   JointSearchProgressState,
   JointSearchStats,
-} from "../../JointSearchProgress";
+} from "../../../../joint-workbench-progress-types";
 import styles from "./JointProgressPhaseDetail.module.scss";
 
 type Metric = { label: string; value: string };
 
 function formatCount(value: number): string {
   return value.toLocaleString("zh-CN");
-}
-
-function formatElapsed(startedAt: number, now: number): string {
-  const totalSeconds = Number.isFinite(startedAt)
-    ? Math.max(0, Math.floor((now - startedAt) / 1000))
-    : 0;
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  const clock = [minutes, seconds].map((part) => String(part).padStart(2, "0"));
-  return hours > 0
-    ? String(hours).padStart(2, "0") + ":" + clock[0] + ":" + clock[1]
-    : clock[0] + ":" + clock[1];
 }
 
 function formatDuration(milliseconds: number | undefined): string | undefined {
@@ -238,12 +225,7 @@ function VerificationDetail({ message }: { message?: string }) {
 }
 
 export function JointProgressPhaseDetail({ progress }: { progress: JointSearchProgressState }) {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => window.clearInterval(timer);
-  }, []);
-  const elapsed = formatElapsed(progress.startedAt, now);
+  const elapsed = useElapsedTime(progress.startedAt);
   const title = progress.phase === "prepare"
     ? "正在准备各职业的搜索模型"
     : progress.phase === "baseline"

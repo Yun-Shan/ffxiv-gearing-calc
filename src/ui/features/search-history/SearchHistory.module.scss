@@ -1,0 +1,72 @@
+.root {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  gap: 8px;
+}
+.root h2 {
+  font-size: 15px;
+  margin: 0;
+}
+.list {
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.record {
+  border: 1px solid #d8e1db;
+  background: #f8faf7;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+.record p {
+  margin: 4px 0;
+  color: #6b7c76;
+}
+.heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+.actions button {
+  border: 1px solid #b8ccc3;
+  padding: 4px 10px;
+  background: white;
+  color: #24645f;
+  border-radius: 3px;
+}
+.error {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #132f3b70;
+}
+.overlay {
+  position: fixed;
+  z-index: 61;
+  top: 10%;
+  bottom: 10%;
+  left: 20%;
+  right: 20%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #b7c9c0;
+  border-radius: 6px;
+}

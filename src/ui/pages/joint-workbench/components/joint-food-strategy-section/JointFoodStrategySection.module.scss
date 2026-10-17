@@ -1,0 +1,19 @@
+.section {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  align-content: start;
+}
+.section h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}

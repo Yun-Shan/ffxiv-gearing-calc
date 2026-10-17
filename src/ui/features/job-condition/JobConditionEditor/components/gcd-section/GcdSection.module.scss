@@ -1,0 +1,74 @@
+.section {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  align-items: center;
+  gap: 4px;
+}
+.title {
+  margin: 0;
+  font-size: 1rem;
+}
+.bounds {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.note {
+  margin: 0;
+  color: var(--text-subtle, #657083);
+  font-size: 0.8125rem;
+}
+.issue {
+  margin: 0;
+  color: var(--danger, #a63131);
+  font-size: 0.8125rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.bounds {
+  min-width: 0;
+  gap: 12px;
+}
+
+.title {
+  align-self: center;
+}
+.issue {
+  grid-column: 2;
+}
+
+.tierSelection {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.objectiveInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 40px;
+  line-height: 20px;
+  margin-left: auto;
+  align-self: center;
+  min-width: 0;
+  text-align: right;
+}
+.objective {
+  font-weight: 600;
+  color: #304c48;
+  font-size: 0.8125rem;
+}
+.objectiveNote {
+  margin: 0;
+  color: var(--text-subtle, #657083);
+  font-size: 0.8125rem;
+  line-height: 20px;
+  text-align: right;
+}

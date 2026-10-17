@@ -12,7 +12,6 @@ import type { JobId, OptimizationConfig } from "./types";
 function lowLevelForcedConfig(jobId: JobId, foodId: number): OptimizationConfig {
   const config: OptimizationConfig = {
     jobId,
-    jobLevel: 50,
     syncLevel: gameData.syncLevelOfJobLevels[50],
     minItemLevel: 15,
     maxItemLevel: 20,

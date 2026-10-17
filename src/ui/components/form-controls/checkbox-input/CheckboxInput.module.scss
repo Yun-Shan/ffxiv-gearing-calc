@@ -1,0 +1,30 @@
+.label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.control {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #9eb7ac;
+  border-radius: 3px;
+  background: white;
+  color: white;
+}
+.control[data-checked],
+.control[data-indeterminate] {
+  background: #087e80;
+  border-color: #087e80;
+}
+.control:focus-visible {
+  outline: 3px solid #49a9b4;
+  outline-offset: 2px;
+}
+.control[data-disabled] {
+  opacity: 0.6;
+}

@@ -1,149 +1,367 @@
 @use "@/styles/tokens" as tokens;
+@use "@/ui/components/form-controls/control";
 
-.tableWrapper,
-.table {
-  overflow-x: auto;
+.wrap {
+  --gear-header-height: 32px;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  outline: 1px solid #e2e8e4;
+  outline-offset: -1px;
+  border-radius: 8px;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: calc(var(--gear-row-count) * 50px + var(--gear-header-height));
+  container-type: size;
+  contain-intrinsic-block-size: 400px;
+  overflow: auto;
 }
 
 .table {
-  border-top: 2px solid #344842;
-}
-
-.header,
-.row,
-.foodRow {
   display: grid;
-  grid-template-columns:
-    72px minmax(190px, 1.3fr) minmax(220px, 1.5fr) minmax(170px, 1fr)
-    minmax(160px, 1fr) 56px;
-  min-width: 970px;
-  gap: 16px;
-  align-items: center;
+  grid-template-rows: var(--gear-header-height) minmax(min-content, 1fr);
+  grid-template-columns: var(--gear-columns);
+  column-gap: 0.35em;
+  height: 100%;
+  width: 100%;
+  table-layout: fixed;
+  border: 0;
+  border-spacing: 0;
+  color: #26323b;
+  font-family: "Noto Sans SC", sans-serif;
+  font-size: clamp(
+    12px,
+    calc(
+      0.38 * (100cqh - var(--gear-header-height)) /
+        max(1, var(--gear-row-count))
+    ),
+    16px
+  );
+  line-height: 1.25;
+}
+
+.caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
 }
 
 .header {
-  height: 36px;
-  padding: 0 15px;
-  color: var(--muted);
-  font:
-    #{tokens.$font-size-body} "Noto Sans SC",
-    sans-serif;
-  text-transform: uppercase;
+  height: 100%;
+  background: tokens.$color-surface-subtle;
+  color: tokens.$color-text-secondary;
+}
+
+.header > th,
+.row > th,
+.row > td,
+.foodRow > th,
+.foodRow > td,
+.summaryRow > th,
+.summaryRow > td {
+  box-sizing: border-box;
+  height: inherit;
+  min-width: 0;
+  padding: 0 4px;
+  border-bottom: 1px solid #edf0ed;
+  vertical-align: middle;
+}
+
+.header > th {
+  font-size: 1em;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.header > th:first-child,
+.row > th:first-child,
+.foodRow > th:first-child,
+.summaryRow > th:first-child {
+  padding-right: 1px;
+  padding-left: 10px;
+  text-align: left;
 }
 
 .row,
-.foodRow {
-  min-height: 64px;
-  padding: 8px 15px;
-  border-top: 1px solid #e0e7e4;
-  font-size: tokens.$font-size-label;
+.foodRow,
+.summaryRow {
+  color: #26323b;
+  font-size: 1em;
+}
+
+.row {
+  background: tokens.$color-neutral-white;
+}
+
+.row:nth-child(even) {
+  background: #fafbf9;
 }
 
 .row:hover {
-  background: #edf3ed;
+  background: #f7f8f3;
 }
 
 .foodRow {
-  border-top-color: #cbd8bc;
-  background: #f1f8f7;
+  background: #fbf3e5;
+}
+
+.summaryRow {
+  background: tokens.$color-surface-subtle;
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.summaryRow > th,
+.summaryRow > td {
+  border-top: 1px solid #dbe4de;
+  border-bottom: 0;
 }
 
 .slotCell {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  color: #566660;
-}
-
-.slotIcon {
-  display: grid;
-  width: 24px;
-  height: 24px;
-  place-items: center;
-  border: 1px solid #cad5d0;
-  background: #e5ebe8;
-  color: #657871;
-  font:
-    #{tokens.$font-size-compact} "Noto Sans SC",
-    sans-serif;
-  font-variant-numeric: normal;
-}
-
-.foodSlotIcon {
-  border-color: #c7d99a;
-  background: #e2efb7;
-  color: #6d8533;
-}
-
-.row > strong,
-.foodRow > strong {
-  color: #273a37;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  overflow-wrap: anywhere;
-}
-
-.gearStats {
-  display: flex;
+  display: block;
   min-width: 0;
-  flex-wrap: wrap;
-  gap: 4px 9px;
-}
-
-.gearStat {
-  color: #526861;
-  font-family: inherit;
-  font-size: tokens.$font-size-body;
-  font-variant-numeric: normal;
+  color: #26323b;
+  font-size: 1em;
+  line-height: 1.2;
   white-space: nowrap;
 }
 
-.atCap {
-  color: #263e31;
-  font-weight: 800;
+.marker {
+  display: block;
+  color: #426f55;
+  font-size: 1em;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.itemCell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.itemName,
+.foodName {
+  display: block;
+  min-width: 0;
+  color: #26323b;
+  font-size: 1em;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.foodName {
+  color: tokens.$color-text-primary;
+  font-weight: 700;
+}
+
+.foodStatsMeaning {
+  display: block;
+  line-height: 1.15;
+  flex: 0 0 auto;
+  color: tokens.$color-text-secondary;
+  font-size: 0.75em;
+  white-space: nowrap;
+}
+
+.weaponPerformance {
+  display: block;
+  color: #68767b;
+  font-size: 0.75em;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.source {
+  color: #68767b;
+  font-size: 1em;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.level {
+  display: block;
+  font-size: 1em;
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
 .melds {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  min-width: 0;
+  gap: 2px;
+  white-space: nowrap;
 }
 
 .meld {
-  padding: 4px 6px;
-  background: var(--accent-soft);
-  color: #176f70;
-  font:
-    #{tokens.$font-size-compact} "Noto Sans SC",
-    sans-serif;
+  flex: 0 1 auto;
+  min-width: 0;
+  padding: 1px 4px;
+  border: 1px solid #d8e3da;
+  border-radius: 5px;
+  background: #eaf1ec;
+  color: #40594b;
+  font-size: 0.8em;
+  font-weight: 600;
+  line-height: 1.75;
+  white-space: nowrap;
 }
 
-.locked {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  color: #a4ada8;
-  font-size: tokens.$font-size-11px;
+.statHeading {
+  font-size: 1em;
+  white-space: nowrap;
 }
 
-.sourceText {
-  display: block;
-  color: var(--muted);
-  font:
-    #{tokens.$font-size-body} "Noto Sans SC",
-    sans-serif;
-  text-overflow: ellipsis;
+.statCell {
+  color: #26323b;
+  font-size: 1em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.atCap,
+.emphasizedStat {
+  color: tokens.$color-text-primary;
+  font-weight: 700;
+}
+
+.replacementTrigger {
+  flex: 0 0 auto;
+  padding: 2px 5px;
+  border: 1px solid #cbd8cf;
+  border-radius: 4px;
+  background: #f5f8f5;
+  color: #42634d;
+  font-size: 1em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.replacementTrigger:focus-visible,
+.replacementOption:focus-visible {
+  outline: 2px solid #3a8f84;
+  outline-offset: 2px;
+}
+
+.replacementPositioner {
+  z-index: 40;
+  outline: 0;
+}
+
+.replacementPopup {
+  @include control.popup;
+  width: min(640px, calc(100vw - 24px));
+}
+
+.replacementPopup ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.replacementOption {
+  @include control.item;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+}
+
+.replacementOption:not(:disabled):hover,
+.replacementOption:not(:disabled):focus-visible {
+  background: #edf6f3;
+}
+
+.replacementOptionSelected {
+  background: #e1f1eb;
+}
+
+.replacementOption:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.conflictBadge {
+  display: inline-block;
+  margin-left: 6px;
+  border: 1px solid #d7b5ad;
+  border-radius: 3px;
+  padding: 0 4px;
+  color: #9c4a3c;
+  background: #faeeeb;
+  font-size: 10px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.itemName,
+.foodName,
+.weaponPerformance,
+.source,
+.slotCell,
+.marker {
+  white-space: normal;
   overflow-wrap: anywhere;
 }
-
-.levelTag,
-.foodBonus {
-  color: var(--muted);
-  font:
-    #{tokens.$font-size-body} "Noto Sans SC",
-    sans-serif;
+.melds {
+  flex-wrap: wrap;
+}
+.meld {
+  flex: 0 0 auto;
 }
 
-.header > span:nth-child(5) {
-  display: block;
+.table thead,
+.table tbody {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+}
+.table tbody {
+  display: grid;
+  grid-auto-rows: 1fr;
+  min-height: max-content;
+}
+.header,
+.row,
+.foodRow,
+.summaryRow {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+}
+.header > th,
+.row > th,
+.row > td,
+.foodRow > th,
+.foodRow > td,
+.summaryRow > th,
+.summaryRow > td {
+  align-content: center;
+}
+
+.itemText {
+  min-width: 0;
+}
+.equipmentIcon {
+  --equipment-icon-size: 2em;
+}
+
+.overmeld {
+  border-color: #e5b6b0;
+  background: #fbe6e4;
+  color: #9b3f38;
+}
+
+.table .statCell {
+  min-width: calc(6 * #{tokens.$digit-width} + 8px);
 }

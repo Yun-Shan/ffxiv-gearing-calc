@@ -1,0 +1,15 @@
+.root {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+}
+.main {
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 24px;
+  gap: 12px;
+}

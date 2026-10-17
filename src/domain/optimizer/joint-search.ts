@@ -128,7 +128,6 @@ export async function runJointOptimizationLocally(
     ) &&
     config.jobs.every(
       (job) =>
-        job.jobLevel === undefined &&
         job.gcdTarget === undefined &&
         (job.gcdChoices?.length ?? 0) === 0 &&
         job.speedMin === undefined &&
@@ -168,7 +167,6 @@ export async function runJointOptimizationLocally(
     ) &&
     config.jobs.every(
       (job) =>
-        job.jobLevel === undefined &&
         job.gcdTarget === undefined &&
         (job.gcdChoices?.length ?? 0) === 0 &&
         job.speedMin === undefined &&
@@ -211,7 +209,6 @@ export async function runJointOptimizationLocally(
     ) &&
     config.jobs.every(
       (job) =>
-        job.jobLevel === undefined &&
         job.gcdTarget === undefined &&
         (job.gcdChoices?.length ?? 0) === 0 &&
         job.speedMin === undefined &&

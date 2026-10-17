@@ -1,0 +1,15 @@
+.editor {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.rangeAndFood {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: start;
+}
+.rangeAndFood > * {
+  flex: 0 1 auto;
+  min-width: 0;
+}

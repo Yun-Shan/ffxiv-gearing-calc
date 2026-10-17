@@ -1,3 +1,4 @@
+import { getSpeedStat, jobSchemas, type JobId } from "@/domain";
 import type { CommonGearSlot, GearSlot, Stat } from "@/domain";
 
 export const gearSlotLabels: Record<GearSlot, string> = {
@@ -46,4 +47,8 @@ export function statName(stat: string): string {
 
 export function statValue(stat: string, value: number): string {
   return stat === "DLY" ? (value / 1000).toFixed(2) : value.toLocaleString();
+}
+
+export function speedAttributeLabel(jobId: JobId): string {
+  return getSpeedStat(jobSchemas[jobId]) === "SPS" ? "咏唱速度" : "技能速度";
 }

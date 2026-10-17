@@ -230,7 +230,6 @@ describe("formal search adapter", () => {
     const controller = new AbortController(); controller.abort();
     await expect(optimize(base, { signal: controller.signal })).rejects.toMatchObject({ name: "AbortError" });
     await expect(optimize({ ...mage, minTenacity: 500 })).rejects.toThrow("不使用坚韧");
-    await expect(optimize({ ...mage, jobLevel: 77 })).rejects.toThrow("不支持的职业等级");
     await expect(optimizeJoint({ jobs: [{ ...mage, objective: "dps" }, mage2], objective: "damage", commonSlots: [], foodStrategy: "shared" })).rejects.toThrow("相同");
     await expect(optimizeJoint({ jobs: [mage, mage2], commonSlots: ["head", "head"], foodStrategy: "shared" })).rejects.toThrow("重复");
     await expect(optimizeJoint({ jobs: [mage, mage2], commonSlots: ["ring", "rings"], foodStrategy: "shared" })).rejects.toThrow("混合");

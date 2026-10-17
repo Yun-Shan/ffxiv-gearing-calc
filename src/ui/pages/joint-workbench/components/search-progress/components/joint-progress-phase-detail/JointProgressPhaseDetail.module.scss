@@ -234,19 +234,3 @@
 .jointSolverCard + .jointMetricGrid {
   margin-top: 14px;
 }
-
-@media (max-width: 960px) {
-  .professionGrid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-@media (max-width: 760px) {
-  .phaseSectionHeading {
-    align-items: flex-start;
-  }
-  .solverMetricGrid,
-  .jointMetricGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}

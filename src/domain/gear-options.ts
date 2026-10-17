@@ -1,5 +1,6 @@
 import { gameData, getGearAtRecordIndex } from "./data.ts";
-import { currentLevel, jobSchemas } from "./jobs.ts";
+import { jobSchemas } from "./jobs.ts";
+import { jobLevelFor } from "./job-level.ts";
 import { isGearUsable } from "./rules.ts";
 import type { Gear, GearSlot, OptimizationConfig } from "./types.ts";
 
@@ -8,79 +9,7 @@ const nonRingSlotOrder: GearSlot[] = [
   "necklace", "bracelet",
 ];
 
-export function jobLevelFor(config: OptimizationConfig): number {
-  const schema = jobSchemas[config.jobId];
-  if (schema === undefined) throw new RangeError(`缺少职业 ${config.jobId} 的领域规则`);
-  const maxJobLevel = schema.maxJobLevel ?? currentLevel;
-  const level = config.jobLevel ?? Math.min(currentLevel, maxJobLevel);
-  if (!Number.isSafeInteger(level) || level > maxJobLevel || !Object.hasOwn(gameData.jobLevelModifiers, level)) {
-    throw new RangeError(`不支持的职业等级：${level}`);
-  }
-  return level;
-}
-
-export type CandidateGearLevel = Pick<Gear, "level" | "equipLevel">;
-
-export interface HighestCandidateGearLevel {
-  itemLevel: number;
-  equipLevel: number;
-}
-
-/** 保留品级最高的候选装备；品级相同时保留装备等级较高者。 */
-export function preferCandidateGearLevel(
-  current: HighestCandidateGearLevel | undefined,
-  candidate: CandidateGearLevel,
-): HighestCandidateGearLevel | undefined {
-  // 游戏数据中装备等级为 1 的物品视为所有等级均可穿戴，不参与公式基准等级的比较。
-  if (candidate.equipLevel === 1) return current;
-  return current === undefined ||
-    candidate.level > current.itemLevel ||
-    (candidate.level === current.itemLevel && candidate.equipLevel > current.equipLevel)
-    ? { itemLevel: candidate.level, equipLevel: candidate.equipLevel }
-    : current;
-}
-
-/**
- * 单独确定公式使用的等级；配置等级仍用于判断装备是否可穿戴。
- */
-export function calculationJobLevelFor(
-  config: OptimizationConfig,
-  highestCandidate?: HighestCandidateGearLevel,
-): number {
-  const wearableLevel = jobLevelFor(config);
-  let level: number;
-
-  if (config.syncLevel !== undefined) {
-    const syncGroup = Object.entries(gameData.syncLevels).find(([, levels]) =>
-      levels.includes(config.syncLevel!),
-    );
-    const exactMatch = Object.entries(gameData.syncLevelOfJobLevels).find(
-      ([, syncLevel]) => syncLevel === config.syncLevel,
-    );
-    const mappedLevel = syncGroup?.[0] ?? exactMatch?.[0];
-    if (mappedLevel === undefined) {
-      throw new RangeError(`不支持的等级同步品级：${config.syncLevel}`);
-    }
-    level = Number(mappedLevel);
-  } else if (highestCandidate !== undefined) {
-    // 游戏数据按每十级一个档位提供公式修正，因此向下取整到所属档位；低于最低支持档位的值会在下方校验中报错。
-    level = Math.floor(highestCandidate.equipLevel / 10) * 10;
-  } else {
-    // 没有符合条件的装备时优化器不会返回结果；此处保持流程不抛错，同时避免为任何计算结果捏造等级。
-    return wearableLevel;
-  }
-
-  const schema = jobSchemas[config.jobId];
-  const maxJobLevel = schema.maxJobLevel ?? currentLevel;
-  if (
-    !Number.isSafeInteger(level) ||
-    level > maxJobLevel ||
-    !Object.hasOwn(gameData.jobLevelModifiers, level)
-  ) {
-    throw new RangeError(`不支持的职业等级：${level}`);
-  }
-  return level;
-}
+export { jobLevelFor, calculationJobLevelFor } from "./job-level.ts";
 
 export function slotsForJob(jobId: OptimizationConfig["jobId"]): GearSlot[] {
   return [

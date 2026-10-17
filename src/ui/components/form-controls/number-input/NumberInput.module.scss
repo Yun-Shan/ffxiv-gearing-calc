@@ -1,0 +1,22 @@
+@use "../control";
+@use "@/styles/tokens" as tokens;
+.root {
+  width: fit-content;
+  max-width: 100%;
+}
+.group {
+  width: fit-content;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.input {
+  @include control.control;
+  width: fit-content;
+  max-width: 100%;
+  field-sizing: content;
+  min-width: calc(var(--number-min-digits, 0) * #{tokens.$digit-width} + 20px);
+  font-variant-numeric: tabular-nums;
+}

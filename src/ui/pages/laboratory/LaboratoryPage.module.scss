@@ -1,0 +1,80 @@
+@use "@/styles/tokens" as tokens;
+
+.page {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  align-content: start;
+  gap: 20px;
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: 28px 32px;
+}
+
+.header p,
+.header h1 {
+  margin: 0;
+}
+
+.header p {
+  color: tokens.$color-text-secondary;
+  font-size: tokens.$font-size-compact;
+}
+
+.header h1 {
+  margin-top: 4px;
+  color: tokens.$color-text-primary;
+  font-size: tokens.$font-size-display;
+}
+
+.header > span {
+  display: block;
+  margin-top: 6px;
+  color: tokens.$color-text-secondary;
+  font-size: tokens.$font-size-body;
+}
+
+.tools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.tool {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 132px;
+  padding: 18px;
+  border: 1px solid #dfe7e2;
+  border-radius: 10px;
+  background: #fff;
+  color: tokens.$color-text-primary;
+  text-decoration: none;
+}
+
+.tool:hover {
+  border-color: #9fc9bb;
+  background: #f8fbf9;
+}
+
+.tool:focus-visible {
+  outline: 3px solid #49a9b4;
+  outline-offset: 2px;
+}
+
+.tool > span {
+  color: #426f55;
+  font-size: tokens.$font-size-compact;
+  font-weight: 600;
+}
+
+.tool > strong {
+  font-size: tokens.$font-size-heading;
+}
+
+.tool > small {
+  color: tokens.$color-text-secondary;
+  font-size: tokens.$font-size-compact;
+}

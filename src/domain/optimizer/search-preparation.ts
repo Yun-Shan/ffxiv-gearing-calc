@@ -191,10 +191,7 @@ export function prepareSearch(
     paretoIndependentRings,
   );
   const slots = candidatePoolsResult.slots;
-  const jobLevel = calculationJobLevelFor(
-    config,
-    candidatePoolsResult.highestCandidateGearLevel,
-  );
+  const jobLevel = calculationJobLevelFor(config);
   if (slots.some((slot) => slot.candidates.length === 0)) {
     throwIfAborted(options.signal);
   }

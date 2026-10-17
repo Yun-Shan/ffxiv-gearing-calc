@@ -1,0 +1,60 @@
+@use "@/styles/tokens" as tokens;
+@use "../control";
+.trigger {
+  @include control.control;
+  min-width: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-align: left;
+}
+.multiple {
+  min-width: 200px;
+}
+.value {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.icon {
+  flex: none;
+}
+.positioner {
+  z-index: 1000;
+}
+.popup {
+  @include control.popup;
+}
+.list {
+  display: grid;
+}
+.item {
+  @include control.item;
+  justify-content: space-between;
+}
+.indicator {
+  visibility: hidden;
+}
+.item[data-selected] .indicator {
+  visibility: visible;
+}
+
+.slot {
+  width: 88px;
+  min-width: 88px;
+  max-width: 88px;
+}
+
+.fit {
+  width: max-content;
+  min-width: max-content;
+  .value {
+    white-space: nowrap;
+  }
+}
+
+.strategy {
+  width: tokens.$condition-strategy-width;
+  min-width: tokens.$condition-strategy-width;
+  max-width: tokens.$condition-strategy-width;
+}

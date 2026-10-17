@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { foods, jobSchemas, type JobId, type JointOptimizationConfig, type OptimizationConfig, type OptimizationResult } from "@/domain";
+import {
+  foods,
+  gears,
+  jobSchemas,
+  type JobId,
+  type JointOptimizationConfig,
+  type JointOptimizationResult,
+  type OptimizationConfig,
+  type OptimizationResult,
+} from "@/domain";
 import { validateSearchHistoryRecord } from "./search-history";
 
 function config(jobId: JobId): OptimizationConfig {
@@ -19,7 +28,7 @@ function result(): OptimizationResult {
   return {
     calculationLevel: 100,
     gear: [],
-    food: foods[0]!,
+    food: { ...foods[0]!, actualStats: {}, utilization: 0 },
     stats: { CRT: 1200 },
     effects: {
       crtChance: 0.1,
@@ -55,8 +64,10 @@ function completedSingleRecord() {
   };
 }
 
-function jointResult(jobIds: readonly JobId[]) {
-  const resultByJob = Object.fromEntries(jobIds.map((jobId) => [jobId, result()]));
+function jointResult(jobIds: readonly JobId[]): JointOptimizationResult {
+  const resultByJob = Object.fromEntries(
+    jobIds.map((jobId) => [jobId, result()]),
+  );
   return {
     jobResults: resultByJob,
     optima: resultByJob,
@@ -102,67 +113,141 @@ function jointConfig(): JointOptimizationConfig {
 describe("搜索历史记录结构校验", () => {
   it("接受带有实际职业ID和完整单职业结果的记录", () => {
     expect(jobSchemas.SAM).toBeDefined();
-    expect(validateSearchHistoryRecord(completedSingleRecord()).kind).toBe("single");
+    expect(validateSearchHistoryRecord(completedSingleRecord()).kind).toBe(
+      "single",
+    );
   });
 
-  it("要求完成结果包含受支持的计算等级", () => {
+  it("要求完成结果包含有效等级但不按当前数据重新解释历史", () => {
     const current = completedSingleRecord();
     current.result = { ...result(), calculationLevel: 80 };
     expect(validateSearchHistoryRecord(current).kind).toBe("single");
 
     const missingCalculationLevel = completedSingleRecord();
-    missingCalculationLevel.result = { ...result(), calculationLevel: undefined };
-    expect(() => validateSearchHistoryRecord(missingCalculationLevel)).toThrow(/结果缺少必要字段/);
+    missingCalculationLevel.result = {
+      ...result(),
+      calculationLevel: undefined,
+    };
+    expect(() => validateSearchHistoryRecord(missingCalculationLevel)).toThrow(
+      /结果缺少必要字段/,
+    );
 
     const unsupported = completedSingleRecord();
     unsupported.result = { ...result(), calculationLevel: 77 };
-    expect(() => validateSearchHistoryRecord(unsupported)).toThrow(/职业等级不受当前数据支持/);
+    expect(validateSearchHistoryRecord(unsupported).kind).toBe("single");
 
     const exceedsJobCap = completedSingleRecord();
     exceedsJobCap.config = config("BLU");
     exceedsJobCap.result = { ...result(), calculationLevel: 100 };
-    expect(() => validateSearchHistoryRecord(exceedsJobCap)).toThrow(/职业等级不受当前数据支持/);
+    expect(validateSearchHistoryRecord(exceedsJobCap).kind).toBe("single");
 
     const malformed = completedSingleRecord();
-    malformed.result = { ...result(), calculationLevel: "80" } as unknown as OptimizationResult;
-    expect(() => validateSearchHistoryRecord(malformed)).toThrow(/结果缺少必要字段/);
+    malformed.result = {
+      ...result(),
+      calculationLevel: "80",
+    } as unknown as OptimizationResult;
+    expect(() => validateSearchHistoryRecord(malformed)).toThrow(
+      /结果缺少必要字段/,
+    );
   });
 
   it("拒绝未知职业与会让结果面板读取失败的嵌套结果", () => {
     const unknownJob = completedSingleRecord();
-    unknownJob.config = { ...config("SAM"), jobId: "NOT_A_JOB" } as unknown as OptimizationConfig;
-    expect(() => validateSearchHistoryRecord(unknownJob)).toThrow(/配置缺少必要字段/);
+    unknownJob.config = {
+      ...config("SAM"),
+      jobId: "NOT_A_JOB",
+    } as unknown as OptimizationConfig;
+    expect(() => validateSearchHistoryRecord(unknownJob)).toThrow(
+      /配置缺少必要字段/,
+    );
 
     const malformedEffect = completedSingleRecord();
-    malformedEffect.result = { ...result(), effects: { ...result().effects, damage: "无效" } } as unknown as OptimizationResult;
-    expect(() => validateSearchHistoryRecord(malformedEffect)).toThrow(/结果缺少必要字段/);
+    malformedEffect.result = {
+      ...result(),
+      effects: { ...result().effects, damage: "无效" },
+    } as unknown as OptimizationResult;
+    expect(() => validateSearchHistoryRecord(malformedEffect)).toThrow(
+      /结果缺少必要字段/,
+    );
 
     const malformedGear = completedSingleRecord();
-    malformedGear.result = { ...result(), gear: [{}] } as unknown as OptimizationResult;
-    expect(() => validateSearchHistoryRecord(malformedGear)).toThrow(/结果缺少必要字段/);
+    malformedGear.result = {
+      ...result(),
+      gear: [{}],
+    } as unknown as OptimizationResult;
+    expect(() => validateSearchHistoryRecord(malformedGear)).toThrow(
+      /结果缺少必要字段/,
+    );
   });
 
-  it("仅拒绝无法安全展示的完成记录等级，仍允许保留失败尝试", () => {
-    const invalidConfig = { ...config("SAM"), jobLevel: 999 };
-    const running = {
-      ...completedSingleRecord(),
-      config: invalidConfig,
-      status: "running",
-      finishedAtISO: undefined,
-      result: undefined,
-    };
-    expect(validateSearchHistoryRecord(running).status).toBe("running");
+  it("requires the complete calculated food snapshot", () => {
+    for (const field of ["actualStats", "utilization"] as const) {
+      const record = completedSingleRecord();
+      const invalidFood = { ...record.result!.food };
+      delete (invalidFood as Partial<typeof invalidFood>)[field];
+      expect(() => validateSearchHistoryRecord({ ...record, result: { ...record.result, food: invalidFood } })).toThrow(/结果缺少必要字段/);
+    }
+  });
 
-    const failed = {
-      ...running,
-      status: "failed",
-      finishedAtISO: "2026-10-03T09:00:01.000Z",
-      error: "不支持的职业等级",
+  it("validates replacement group references and the two ring candidate groups", () => {
+    const weapon = gears.find((gear) => gear.slot === "weapon")!;
+    const selectedWeapon = {
+      ...weapon,
+      melds: [],
+      finalStats: weapon.stats,
+      replacementGroupKey: "weapon-candidates",
     };
-    expect(validateSearchHistoryRecord(failed).status).toBe("failed");
+    const validWeaponRecord = completedSingleRecord();
+    validWeaponRecord.result = {
+      ...result(),
+      gear: [selectedWeapon],
+      equivalentGear: { "weapon-candidates": [selectedWeapon] },
+    };
+    expect(validateSearchHistoryRecord(validWeaponRecord).kind).toBe("single");
 
-    const completed = { ...completedSingleRecord(), config: invalidConfig };
-    expect(() => validateSearchHistoryRecord(completed)).toThrow(/职业等级不受当前数据支持/);
+    const missingGroup = completedSingleRecord();
+    missingGroup.result = {
+      ...result(),
+      gear: [{ ...selectedWeapon, replacementGroupKey: "missing" }],
+    };
+    expect(() => validateSearchHistoryRecord(missingGroup)).toThrow(
+      /结果缺少必要字段/,
+    );
+
+    const ring = gears.find((gear) => gear.slot === "ring")!;
+    const ordinary = {
+      ...ring,
+      unique: false,
+      melds: [],
+      finalStats: ring.stats,
+      replacementGroupKey: "all-rings",
+      uniqueReplacementGroupKey: "unique-rings",
+    };
+    const anotherOrdinary = { ...ordinary, id: ordinary.id + 1 };
+    const unique = { ...ordinary, id: ordinary.id + 2, unique: true };
+    const ringGroups = {
+      "all-rings": [ordinary, anotherOrdinary, unique],
+      "unique-rings": [unique],
+    };
+    const ringRecord = completedSingleRecord();
+    ringRecord.result = {
+      ...result(),
+      gear: [ordinary, { ...anotherOrdinary, slot: "ring2" }],
+      equivalentGear: ringGroups,
+    };
+    expect(validateSearchHistoryRecord(ringRecord).kind).toBe("single");
+
+    const malformedUniqueGroup = completedSingleRecord();
+    malformedUniqueGroup.result = {
+      ...ringRecord.result!,
+      equivalentGear: {
+        ...ringGroups,
+        "unique-rings": [ordinary],
+      },
+    };
+    expect(() => validateSearchHistoryRecord(malformedUniqueGroup)).toThrow(
+      /结果缺少必要字段/,
+    );
   });
 
   it("要求联合结果映射覆盖参与职业并校验求解统计字段", () => {
@@ -180,19 +265,51 @@ describe("搜索历史记录结构校验", () => {
     expect(validateSearchHistoryRecord(validRecord).kind).toBe("joint");
 
     const missingJob = { ...validRecord, result: jointResult(["RDM"]) };
-    expect(() => validateSearchHistoryRecord(missingJob)).toThrow(/结果缺少必要字段/);
+    expect(() => validateSearchHistoryRecord(missingJob)).toThrow(
+      /结果缺少必要字段/,
+    );
 
-    const unsupportedLevelConfig: JointOptimizationConfig = {
-      ...configValue,
-      jobs: [{ ...configValue.jobs[0]!, jobLevel: 999 }, configValue.jobs[1]!],
-    };
-    expect(() => validateSearchHistoryRecord({
-      ...validRecord,
-      config: unsupportedLevelConfig,
-    })).toThrow(/职业等级不受当前数据支持/);
-
-    const invalidStatistics = jointResult(configValue.jobs.map(({ jobId }) => jobId));
+    const invalidStatistics = jointResult(
+      configValue.jobs.map(({ jobId }) => jobId),
+    );
     invalidStatistics.statistics.completeNodes = "很多" as unknown as number;
-    expect(() => validateSearchHistoryRecord({ ...validRecord, result: invalidStatistics })).toThrow(/结果缺少必要字段/);
+    expect(() =>
+      validateSearchHistoryRecord({
+        ...validRecord,
+        result: invalidStatistics,
+      }),
+    ).toThrow(/结果缺少必要字段/);
+  });
+
+  it("接受没有显式搜索时限的领域联合结果结构", () => {
+    const configValue = jointConfig();
+    const generatedResult = jointResult(configValue.jobs.map(({ jobId }) => jobId));
+    const { timeLimitMs: _timeLimitMs, ...statistics } = generatedResult.statistics;
+    const domainResult: JointOptimizationResult = {
+      ...generatedResult,
+      statistics,
+    };
+    const record = {
+      id: "history-joint-unbounded-test",
+      kind: "joint",
+      startedAtISO: "2026-10-03T09:00:00.000Z",
+      finishedAtISO: "2026-10-03T09:00:01.000Z",
+      dataVersion: "test-version",
+      config: configValue,
+      status: "completed",
+      result: domainResult,
+    };
+
+    expect(validateSearchHistoryRecord(record).kind).toBe("joint");
+
+    const invalidLimitResult: JointOptimizationResult = {
+      ...domainResult,
+      statistics: {
+        ...statistics,
+        timeLimitMs: "unbounded" as unknown as number,
+      },
+    };
+    expect(() => validateSearchHistoryRecord({ ...record, result: invalidLimitResult }))
+      .toThrow(/结果缺少必要字段/);
   });
 });

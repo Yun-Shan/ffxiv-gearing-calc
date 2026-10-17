@@ -104,7 +104,7 @@ export const statIndexes = new Map<Stat, number>(attributeIndex);
 
 function abortError(reason?: unknown): Error {
   const error = reason instanceof Error ? reason : new Error("搜索已取消");
-  error.name = "AbortError";
+  if (error.name !== "AbortError") error.name = "AbortError";
   return error;
 }
 

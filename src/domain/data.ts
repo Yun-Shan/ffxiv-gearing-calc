@@ -1,4 +1,4 @@
-import { decodeGeneratedData } from "@/data/binary-format.mjs";
+import { decodeGeneratedData } from "../data/binary-format.mjs";
 import type {
   DataProvenance,
   Food,

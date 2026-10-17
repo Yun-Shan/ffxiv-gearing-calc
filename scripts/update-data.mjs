@@ -1,3 +1,5 @@
+import { generateUiJobIcons } from "./generate-ui-job-icons.mjs";
+import { generateUiGearIcons } from "./generate-ui-gear-icons.mjs";
 import { execFileSync } from "node:child_process";
 import { access, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -1422,6 +1424,8 @@ const payload = {
 validate(payload);
 await mkdir(resolve(outputPath, ".."), { recursive: true });
 const generated = await encodeGeneratedData(payload);
+if (mcpSnapshot) await generateUiJobIcons(mcpSnapshot);
+if (mcpSnapshot) await generateUiGearIcons(mcpSnapshot, gears.map(gear => gear.id));
 await writeFile(outputPath, generated.bytes);
 console.log(
   `Imported ${generated.gearCount} gears, ${payload.foods.length} foods and ${supportedJobs.length} jobs from ${commit.slice(0, 12)}. ${mcpSummary}`,

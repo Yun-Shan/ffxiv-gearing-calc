@@ -1,0 +1,7 @@
+@use "../control";
+.input {
+  @include control.control;
+  field-sizing: content;
+  width: fit-content;
+  max-width: 100%;
+}

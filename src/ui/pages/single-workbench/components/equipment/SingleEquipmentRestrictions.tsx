@@ -1,0 +1,45 @@
+import { domainGearOptionsForConfig, equipmentGearCatalog } from "@/ui/features/equipment/catalog";
+import { useMemo } from "react";
+import {
+  slotsForJob,
+  getGearById,
+} from "@/domain";
+import { SingleEquipmentScope } from "@/ui/features/equipment/scope";
+import { EquipmentEditor } from "@/ui/features/equipment/EquipmentEditor/EquipmentEditor";
+import { applySingleEquipmentAction } from "@/ui/features/equipment/transactions";
+import type { SingleEquipmentDraft } from "@/ui/features/equipment/types";
+import type { SingleDraft } from "../../state/useSingleController";
+import { compileSingleDraft } from "../../state/useSingleController";
+export function SingleEquipmentRestrictions({
+  draft,
+  onChange,
+}: {
+  draft: SingleDraft;
+  onChange(draft: SingleDraft): void;
+}) {
+  const catalog = useMemo(() => {
+    const config = compileSingleDraft(draft);
+    const slots = slotsForJob(draft.jobId);
+    return equipmentGearCatalog(
+      domainGearOptionsForConfig(config, slots),
+      slots,
+      Object.fromEntries(slots.map((slot) => [slot, domainGearOptionsForConfig(config, [slot])])),
+    );
+  }, [draft]);
+  return (
+    <SingleEquipmentScope
+      draft={draft.equipment as SingleEquipmentDraft}
+      catalog={catalog}
+      onAction={(action) => {
+        const result = applySingleEquipmentAction(
+          draft.equipment as SingleEquipmentDraft,
+          action,
+          getGearById,
+        );
+        if (result.accepted) onChange({ ...draft, equipment: result.state });
+      }}
+    >
+      <EquipmentEditor />
+    </SingleEquipmentScope>
+  );
+}

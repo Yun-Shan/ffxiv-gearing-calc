@@ -4,6 +4,15 @@
 
 业务行为与候选域见[领域与搜索规则](docs/rules/领域与搜索规则.md)；界面方向和 Penpot 入口见[前端设计总览](docs/前端设计总览.md)。
 
+## 页面与功能
+
+- `/single`：单职业搜索；同步结果支持同属性装备替换并回写同一历史记录。
+- `/lab`：实验室入口；`/joint` 提供多职业联合搜索。
+- `/gear-comparison`：同职业最多四方案对比，可从 Single/Joint 已完成历史或完整 Asvel 分享链接添加。导入按当前数据计算固定配装，保留合法镶嵌与自定义参数，不启动搜索或新增历史；装备表区域允许滚动查看全部内容。
+- 结果食物包含各项上限、比例、实际增益和真实利用率；单职业与多职业高级设置共用同一对话框，目前无实际设置项。
+
+界面结构、滚动边界与交付证据见 [UI 重构规范](docs/ui-refactor/README.md)。M01–M04 已真实接入；四方案容量合成预览仅在开发环境 `/gear-comparison?ui-preview=comparison-capacity` 启用。
+
 ## 开发
 
 ```bash
@@ -20,6 +29,7 @@ npm run preview
 ```bash
 npm test
 npm run test:coverage
+npx vitest run src/ui
 npm run test:data
 npm run data:test:v3
 ```
@@ -55,7 +65,7 @@ node scripts/update-data.mjs --offline
 
 运行时产物为 `src/data/generated-data.bin`，MCP 输入保存在 `src/data/mcp-lumina.snapshot.json`。版本、数量和缺口以来源元数据为准；二进制契约见[格式规范](docs/运行时数据二进制格式.md)。`npm run data:benchmark` 用于测量数据加载与解码。
 
-职业图标作为本地 PNG 提供，运行 `node scripts/download-job-icons.mjs` 可用 Lumina 核对职业后从 XIVAPI 刷新；来源和哈希位于 `public/assets/jobs/source.json`。
+装备与职业图标使用统一数字 ID URL helper，从 XIVAPI CDN 加载 PNG；映射元数据位于 `src/ui/services/generated/`，不保留旧本地职业 PNG。图标映射生成入口为 `scripts/generate-ui-gear-icons.mjs` 与 `scripts/generate-ui-job-icons.mjs`。
 
 ## 文档入口
 

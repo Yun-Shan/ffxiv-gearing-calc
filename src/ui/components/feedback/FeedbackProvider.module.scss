@@ -1,0 +1,55 @@
+.toasts {
+  position: fixed;
+  z-index: 100;
+  top: 76px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 360px;
+}
+.toast {
+  background: white;
+  border: 1px solid #b6c9c4;
+  border-left: 4px solid #087e80;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 4px 20px #142e3420;
+}
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: #102e3b70;
+  z-index: 80;
+}
+.dialog {
+  position: fixed;
+  z-index: 81;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 460px;
+  padding: 24px;
+  border: 1px solid #bacbc4;
+  background: white;
+  border-radius: 6px;
+}
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+.actions button,
+.toast button {
+  border: 1px solid #b6c9c4;
+  background: #f5f8f6;
+  color: #254c51;
+  padding: 6px 14px;
+  border-radius: 4px;
+}
+
+.toastTitle { margin: 0; font-size: 13px; line-height: 1.5; font-weight: 600; }
+.dialogTitle { margin: 0 0 12px; font-size: 18px; line-height: 1.4; }

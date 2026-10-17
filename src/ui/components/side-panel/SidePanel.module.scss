@@ -1,108 +1,99 @@
-@use "@/styles/tokens" as tokens;
-
 .root {
-  height: 100%;
-  min-height: 100%;
-  max-height: 100%;
-  width: 280px;
-  padding: 8px 16px 12px;
-
+  min-height: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-
+  gap: 12px;
+  padding: 16px;
   border-top: 3px solid #81914b;
-  background-color: tokens.$color-surface-canvas;
-  //noinspection CssUnknownTarget
-  background-image:
-    linear-gradient(rgb(248 249 245 / 75%), rgb(248 249 245 / 75%)),
-    url("/assets/wizard-atmosphere.png");
-  background-position:
-    center,
-    right bottom;
-  background-size: cover, cover;
-  background-repeat: no-repeat;
+  background: #f5f7f2;
 }
-
-
 .header {
-  flex: 0 0 fit-content;
   display: flex;
   flex-direction: column;
-
-  margin-bottom: 10px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid tokens.$color-border-emphasis;
-
-  .eyebrow {
-    margin-bottom: 4px;
-    color: tokens.$color-accent-olive;
-    font-size: tokens.$font-size-compact;
-    font-weight: bold;
-  }
-  .title {
-    color: #354a37;
-    font-size: tokens.$font-size-heading;
-    font-weight: bold;
-  }
+  gap: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #d4ddd1;
 }
-
+.eyebrow {
+  color: #788848;
+  font-size: 12px;
+}
+.title {
+  font-size: 21px;
+  color: #354a37;
+}
 .content {
   flex: 1;
-}
-
-.status {
-  margin-top: 8px;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-compact);
-
-  &::before {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border-radius: 2px;
-    content: "";
-    margin-right: 6px;
-  }
-  &[data-status="ready"]::before {
-    background: #09a809;
-  }
-  &[data-status="pending"]::before {
-    background: #c99752;
-  }
-  &[data-status="error"]::before {
-    background: #d31a31;
-  }
-}
-
-.actionBtn {
-  width: 100%;
-  height: 40px;
-  margin-top: 8px;
-  border: none;
-  border-radius: 4px;
-  background: var(--color-accent-teal);
-  color: var(--color-neutral-white);
-  font-size: tokens.$font-size-13px;
-  font-weight: bold;
-
-  &:hover:not(:disabled) {
-    background: #076c6d;
-  }
-
-  &:disabled {
-    opacity: 0.55;
-  }
-}
-
-.footer {
+  min-height: 0;
   display: flex;
-  flex: 0 0 auto;
-  align-items: center;
+  flex-direction: column;
+  gap: 12px;
+}
+.section,
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.row {
+  display: flex;
   justify-content: space-between;
   gap: 8px;
-  margin-top: 8px;
-  padding-bottom: 3px;
-  color: #75836b;
-  font-size: tokens.$font-size-caption;
+  font-size: 12px;
+  line-height: 1.6;
 }
-
+.row > :last-child {
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.status {
+  font-size: 12px;
+  color: #65715e;
+  margin: 0;
+}
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.actions button {
+  width: 100%;
+  min-height: 36px;
+  border: 1px solid #b7c9be;
+  border-radius: 4px;
+  background: #087f80;
+  color: white;
+  font-weight: 600;
+}
+.actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 11px;
+  color: #75836b;
+}
+.footer > div {
+  display: flex;
+  gap: 12px;
+}
+.footer button {
+  border: none;
+  padding: 0;
+  color: #426c68;
+  background: transparent;
+}
+.section > h2 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.section > p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}

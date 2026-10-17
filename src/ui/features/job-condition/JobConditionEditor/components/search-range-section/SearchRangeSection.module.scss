@@ -1,0 +1,38 @@
+.section {
+  display: grid;
+  gap: 4px;
+}
+.title {
+  margin: 0;
+  font-size: 1rem;
+}
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.note {
+  margin: 0;
+  color: var(--text-subtle, #657083);
+  font-size: 0.8125rem;
+}
+.issue {
+  margin: 0;
+  color: var(--danger, #a63131);
+  font-size: 0.8125rem;
+}
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.itemLevelRange {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+}

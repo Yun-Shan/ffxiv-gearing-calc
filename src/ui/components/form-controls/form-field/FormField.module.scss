@@ -1,0 +1,62 @@
+@use "@/styles/tokens" as tokens;
+.field {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  font-size: 0.875rem;
+}
+.inline {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+.label {
+  white-space: nowrap;
+}
+.content {
+  min-width: 0;
+}
+
+.compact {
+  width: 100%;
+  max-width: 112px;
+}
+.regular {
+  width: 100%;
+  max-width: 200px;
+}
+.wide {
+  width: 100%;
+  max-width: 320px;
+}
+
+.slot {
+  width: 88px;
+  min-width: 88px;
+  max-width: 88px;
+}
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.fit {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.strategy {
+  width: tokens.$condition-strategy-width;
+  min-width: tokens.$condition-strategy-width;
+  max-width: tokens.$condition-strategy-width;
+}
+
+.strategyLabel {
+  width: 5em;
+}

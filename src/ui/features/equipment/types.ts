@@ -1,0 +1,66 @@
+import type { Gear, GearSlot, JobId } from "@/domain";
+
+export type EquipmentScope =
+  | { kind: "single" }
+  | { kind: "joint-shared" }
+  | { kind: "joint-job"; jobId: JobId };
+
+export type EquipmentType = Exclude<GearSlot, "ring2"> | "ring";
+export type JointCommonSlot = GearSlot | "rings";
+
+export interface SingleEquipmentDraft {
+  excludedSources: string[];
+  excludedGearIds: number[];
+  forcedGear: Partial<Record<GearSlot, number>>;
+}
+
+export interface JointSharedEquipmentDraft {
+  excludedSources: string[];
+  excludedGearIds: number[];
+  forcedGear: Partial<Record<GearSlot, number>>;
+}
+
+export interface JointJobEquipmentDraft {
+  excludedGearIds: number[];
+  forcedGear: Partial<Record<GearSlot, number>>;
+}
+
+export interface JointEquipmentDraft {
+  commonSlots: JointCommonSlot[];
+  shared: JointSharedEquipmentDraft;
+  jobs: Partial<Record<JobId, JointJobEquipmentDraft>>;
+}
+
+export type EquipmentScopeDraft =
+  SingleEquipmentDraft | JointSharedEquipmentDraft | JointJobEquipmentDraft;
+
+export type EquipmentAction =
+  | { type: "set-source-exclusions"; sources: string[] }
+  | { type: "add-source-exclusion"; source: string }
+  | { type: "remove-source-exclusion"; source: string }
+  | { type: "add-gear-exclusion"; gearId: number }
+  | { type: "remove-gear-exclusion"; gearId: number }
+  | { type: "set-force"; slot: GearSlot; gearId: number }
+  | { type: "clear-force"; slot: GearSlot };
+
+export interface EquipmentGearCatalog {
+  /** Domain-generated gear choices for the current job/range. */
+  gearOptions: readonly Gear[];
+  /** Domain-generated candidates still legal under every effective scope restriction. */
+  forceGearOptions?: Partial<Record<GearSlot, readonly Gear[]>>;
+  sourceOptions?: readonly string[];
+  allowedForcedGearSlots: readonly GearSlot[];
+}
+
+export interface EquipmentActionResult<T> {
+  state: T;
+  accepted: boolean;
+  reason?:
+    | "invalid-slot"
+    | "shared-restriction"
+    | "job-restriction"
+    | "not-private"
+    | "not-shared";
+}
+
+export type GearLookup = (gearId: number) => Gear | undefined;

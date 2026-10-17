@@ -7,7 +7,7 @@ const generatedDataBytes = new Uint8Array(await readFile(
   new URL("../../../src/data/generated-data.bin", import.meta.url),
 ));
 globalThis.__FFXIV_GENERATED_DATA_BINARY__ = generatedDataBytes;
-const [{ gameData }, { currentLevel, jobSchemas }] = await Promise.all([
+const [{ gameData }, { jobSchemas }] = await Promise.all([
   import("../../../src/domain/data.ts"),
   import("../../../src/domain/jobs.ts"),
 ]);
@@ -66,13 +66,10 @@ function makeConfig() {
     ? undefined
     : positiveInteger("DATA_TEST_SINGLE_SYNC_LEVEL", undefined);
   const maxSearchMs = parseTimeout();
-  const maxJobLevel = schema.maxJobLevel ?? currentLevel;
-  const jobLevel = Math.min(currentLevel, maxJobLevel);
 
   return {
     config: {
       jobId,
-      jobLevel,
       minItemLevel,
       maxItemLevel,
       ...(syncLevel === undefined ? {} : { syncLevel }),
@@ -179,7 +176,6 @@ function summarizeResult(config, result, solverStatuses, elapsedMs, peakRssBytes
   const output = {
     scenario: {
       jobId: config.jobId,
-      jobLevel: config.jobLevel,
       itemLevelRange: [config.minItemLevel, config.maxItemLevel],
       ...(config.syncLevel === undefined ? {} : { syncLevel: config.syncLevel }),
       objective: config.objective,

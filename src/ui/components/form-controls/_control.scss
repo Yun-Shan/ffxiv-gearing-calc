@@ -1,0 +1,50 @@
+@mixin control {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  border: 1px solid #bdcec5;
+  border-radius: 4px;
+  padding: 5px 9px;
+  background: #fff;
+  color: #304c48;
+  font: inherit;
+  font-size: 12px;
+  &:focus-visible {
+    outline: 3px solid #49a9b4;
+    outline-offset: 2px;
+  }
+  &:disabled,
+  &[data-disabled] {
+    background: #f4f6f4;
+    color: #7c8984;
+    cursor: not-allowed;
+  }
+  &[aria-invalid="true"] {
+    border-color: #a63131;
+  }
+}
+@mixin popup {
+  min-width: var(--anchor-width);
+  max-height: min(18rem, var(--available-height));
+  overflow-y: auto;
+  border: 1px solid #bdcec5;
+  border-radius: 5px;
+  padding: 4px;
+  background: #fff;
+  color: #304c48;
+  box-shadow: 0 4px 16px #18223524;
+  font-size: 12px;
+}
+@mixin item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  &[data-highlighted] {
+    background: #edf6f3;
+    outline: none;
+  }
+}

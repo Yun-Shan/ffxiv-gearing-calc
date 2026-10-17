@@ -1,0 +1,46 @@
+.row {
+  display: grid;
+  grid-template-columns: 42px 24px minmax(0, 1fr) fit-content(28%) max-content;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  color: #304c48;
+  font-size: 12px;
+}
+.slot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 4px;
+  color: #657083;
+  white-space: nowrap;
+}
+.name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}
+.level {
+  justify-self: end;
+  color: #657083;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.check {
+  color: #087e80;
+}
+.selected .slot {
+  grid-template-columns: 14px minmax(0, 1fr);
+}
+
+.source {
+  min-width: 0;
+  max-width: 12em;
+  justify-self: end;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #657083;
+}

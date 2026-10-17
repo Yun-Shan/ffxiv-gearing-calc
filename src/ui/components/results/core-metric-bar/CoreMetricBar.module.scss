@@ -1,0 +1,172 @@
+@use "@/styles/tokens" as tokens;
+
+.metrics {
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  min-width: 0;
+}
+
+.compact {
+  gap: 8px;
+}
+
+.compact .metric {
+  padding: 5px 7px;
+}
+
+.compact .metric h2 {
+  margin-bottom: 3px;
+}
+
+.metric {
+  min-width: 0;
+  padding: 7px 9px;
+  border: 1px solid #e0e7e4;
+  border-radius: 8px;
+  background: tokens.$color-neutral-white;
+}
+
+.metric h2 {
+  margin: 0 0 5px;
+  color: tokens.$color-text-secondary;
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.damageMetric + .damageMetric {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #edf0ed;
+}
+
+.damageMetric > span,
+.subMetric > span {
+  color: tokens.$color-text-secondary;
+  font-size: 0.75em;
+}
+
+.targetMetric > span {
+  color: tokens.$color-text-primary;
+  font-weight: 700;
+}
+
+.values {
+  display: grid;
+  gap: 2px;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.values li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 8px;
+  min-width: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.compact .values li {
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 2px 6px;
+}
+
+.compact .values strong {
+  grid-column: 2;
+}
+
+.compact .values small {
+  grid-column: 3;
+  justify-self: end;
+}
+
+.entryLabel {
+  color: tokens.$color-text-secondary;
+  font-size: 0.75em;
+  white-space: nowrap;
+}
+
+.values strong {
+  color: tokens.$color-text-primary;
+  font-size: 1em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.targetMetric .values strong {
+  color: #176f70;
+  font-weight: 700;
+}
+
+.values small {
+  grid-column: 2;
+  color: #426f55;
+  font-size: 0.75em;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.subMetric {
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid #edf0ed;
+}
+
+.compact .damageMetric + .damageMetric {
+  margin-top: 4px;
+  padding-top: 4px;
+}
+
+.compact .subMetric {
+  margin-top: 4px;
+  padding-top: 4px;
+}
+
+.metric {
+  font-size: clamp(12px, 1cqw, 16px);
+  line-height: 1.3;
+}
+.metric h2 {
+  line-height: 1.2;
+}
+.values {
+  line-height: 1.25;
+}
+
+.single .metric {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: start;
+  align-items: baseline;
+  gap: 6px 8px;
+}
+.single .metric h2 {
+  margin: 0;
+}
+.single .damageCard > h2,
+.single .damageMetric,
+.single .subMetric {
+  grid-column: 1 / -1;
+}
+.single .damageMetric,
+.single .subMetric {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.single .damageMetric > span,
+.single .subMetric > span {
+  font-size: 1em;
+}
+.single .values {
+  margin: 0;
+}
+.single .values li {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}

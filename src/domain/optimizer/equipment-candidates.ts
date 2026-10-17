@@ -4,12 +4,7 @@ import {
   getGearById,
   materiaGradeRequiredLevels,
 } from "../data.ts";
-import {
-  gearOptionsFor,
-  jobLevelFor,
-  preferCandidateGearLevel,
-  type HighestCandidateGearLevel,
-} from "../gear-options.ts";
+import { gearOptionsFor, jobLevelFor } from "../gear-options.ts";
 import { jobSchemas } from "../jobs.ts";
 import {
   calculateBaseStats,
@@ -49,7 +44,7 @@ import {
 
 export { gearOptionsFor };
 
-function materiaAttributeStats(jobId: JobId): Materia["stat"][] {
+export function materiaAttributeStats(jobId: JobId): Materia["stat"][] {
   const role = jobSchemas[jobId].role;
   if (role === "tank") return ["CRT", "DET", "DHT", "SKS", "TEN"];
   if (role === "healer" || role === "int") return ["CRT", "DET", "DHT", "SPS"];
@@ -112,7 +107,7 @@ function capLevelFor(gear: Gear, jobLevel: number, syncLevel?: number): number {
   return effectiveGearSyncLevel(gear, jobLevel, syncLevel) ?? gear.level;
 }
 
-function mergeCandidateStats(
+export function mergeCandidateStats(
   gear: Gear,
   melds: readonly Materia[],
   jobLevel: number,
@@ -133,7 +128,7 @@ function mergeCandidateStats(
   return finalStats;
 }
 
-function customParameterMelds(gear: Gear): Materia[][] {
+export function customParameterMelds(gear: Gear): Materia[][] {
   const slots = gear.customParameters;
   if (!slots?.length) return [];
   if (slots.length !== 4) {
@@ -361,7 +356,7 @@ export function createFoodInfo(
   };
 }
 
-function makeGearCandidates(
+export function makeGearCandidates(
   gear: Gear,
   slot: GearSlot,
   config: OptimizationConfig,
@@ -447,12 +442,11 @@ export function candidatePools(
   independentRingSlots: boolean,
   paretoSlots?: ReadonlySet<string>,
   paretoIndependentRings = false,
-): { slots: SearchSlot[]; highestCandidateGearLevel?: HighestCandidateGearLevel } {
+): { slots: SearchSlot[] } {
   const jobId = config.jobId;
   const slots = jobSlots(jobId);
   const results: SearchSlot[] = [];
   const slotCandidates = new Map<string, GearCandidate[]>();
-  let highestCandidateGearLevel: HighestCandidateGearLevel | undefined;
   const speedStat = getSpeedStat(jobSchemas[jobId]);
   const paretoStats = paretoAttributeStats(jobId);
   const preserveSpeed =
@@ -485,10 +479,6 @@ export function candidatePools(
     const frontier: ParetoCandidate<GearCandidate>[] = [];
     let candidateOrder = 0;
     for (const gear of gearsForSlot) {
-      highestCandidateGearLevel = preferCandidateGearLevel(
-        highestCandidateGearLevel,
-        gear,
-      );
       for (const candidate of makeGearCandidates(
         gear,
         slot,
@@ -540,18 +530,6 @@ export function candidatePools(
     forcedRing2 === undefined
       ? ringPool
       : ringPool.filter((gear) => gear.id === forcedRing2);
-  for (const gear of firstPool) {
-    highestCandidateGearLevel = preferCandidateGearLevel(
-      highestCandidateGearLevel,
-      gear,
-    );
-  }
-  for (const gear of secondPool) {
-    highestCandidateGearLevel = preferCandidateGearLevel(
-      highestCandidateGearLevel,
-      gear,
-    );
-  }
   const firstCandidates = firstPool.flatMap((gear) =>
     makeGearCandidates(gear, "ring", config, gearsByIdentity),
   );
@@ -652,7 +630,6 @@ export function candidatePools(
       slots: results.sort(
         (left, right) => left.candidates.length - right.candidates.length,
       ),
-      highestCandidateGearLevel,
     };
   }
   const firstCandidateIdentities = new Set(
@@ -742,6 +719,5 @@ export function candidatePools(
     slots: results.sort(
       (left, right) => left.candidates.length - right.candidates.length,
     ),
-    highestCandidateGearLevel,
   };
 }

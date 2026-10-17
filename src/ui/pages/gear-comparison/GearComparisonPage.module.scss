@@ -1,0 +1,224 @@
+@use "@/styles/tokens" as tokens;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 18px 12px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.header p,
+.header h1 {
+  margin: 0;
+}
+
+.header p {
+  color: tokens.$color-text-secondary;
+  font-size: tokens.$font-size-caption;
+}
+
+.header h1 {
+  margin-top: 2px;
+  color: tokens.$color-text-primary;
+  font-size: tokens.$font-size-heading;
+}
+
+.header a {
+  color: #426f55;
+  font-size: tokens.$font-size-compact;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) auto minmax(0, 1fr);
+  align-items: end;
+  gap: 7px 10px;
+  min-width: 0;
+  padding: 6px 9px;
+  border: 1px solid #e0e7e4;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.sourceTabs {
+  display: flex;
+  gap: 4px;
+  height: 34px;
+}
+
+.sourceTabs button {
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: tokens.$color-text-secondary;
+  font: inherit;
+  font-size: tokens.$font-size-compact;
+  white-space: nowrap;
+}
+
+.sourceTabs button[aria-pressed="true"] {
+  border-color: #cbd8cf;
+  background: #f1f6f2;
+  color: #345d45;
+  font-weight: 600;
+}
+
+.sourceForm {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 6px 8px;
+  min-width: 0;
+}
+
+.addButton,
+.plan button {
+  height: 34px;
+  padding: 0 13px;
+  border: 1px solid #aacbb7;
+  border-radius: 5px;
+  background: #eaf4ed;
+  color: #315b42;
+  font: inherit;
+  font-size: tokens.$font-size-compact;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.addButton:disabled {
+  border-color: #e1e6e2;
+  background: #f4f5f4;
+  color: #8b9690;
+}
+
+.limitMessage {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #7a6032;
+  font-size: tokens.$font-size-caption;
+}
+
+.plans {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.plan {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  padding: 5px 7px;
+  border: 1px solid #e0e7e4;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.plan > div {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 1px 6px;
+  min-width: 0;
+}
+
+.planLabel {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #eaf4ed;
+  color: #315b42;
+  font-size: tokens.$font-size-compact;
+  font-weight: 700;
+}
+
+.plan strong,
+.plan small {
+  overflow-wrap: anywhere;
+}
+
+.plan strong {
+  color: tokens.$color-text-primary;
+  font-size: tokens.$font-size-compact;
+}
+
+.plan small {
+  color: tokens.$color-text-secondary;
+  font-size: tokens.$font-size-caption;
+}
+
+.plan button {
+  height: 27px;
+  padding: 0 8px;
+  border-color: #e1e5e2;
+  background: #fff;
+  color: tokens.$color-text-secondary;
+  font-size: tokens.$font-size-caption;
+}
+
+.versionWarning {
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid #e2c27c;
+  border-radius: 5px;
+  background: #fff8e6;
+  color: #715722;
+  font-size: tokens.$font-size-compact;
+}
+
+.previewWarning {
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid #e2c27c;
+  border-radius: 5px;
+  background: #fff8e6;
+  color: #715722;
+  font-size: tokens.$font-size-compact;
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 40px 16px;
+  border: 1px dashed #cbd8cf;
+  border-radius: 8px;
+  background: #fbfcfb;
+  text-align: center;
+}
+
+.empty strong {
+  color: tokens.$color-text-primary;
+  font-size: tokens.$font-size-heading;
+}
+
+.empty span {
+  color: tokens.$color-text-secondary;
+  font-size: tokens.$font-size-compact;
+}
+
+.page > :not(:last-child) {
+  flex: 0 0 auto;
+}
+.empty {
+  flex: 1;
+  align-content: center;
+}

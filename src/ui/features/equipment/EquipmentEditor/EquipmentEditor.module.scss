@@ -1,0 +1,183 @@
+@use "@/ui/components/form-controls/control";
+.root {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 8px;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+}
+.header h2 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.editor {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  min-height: 0;
+}
+.exclusions {
+  display: grid;
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+.section > :not(.list) {
+  flex: none;
+}
+.section h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+.controls {
+  display: grid;
+  gap: 4px;
+}
+.list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 6px 8px;
+  border: 1px solid #d7e2dc;
+  border-radius: 4px;
+  background: #f8faf8;
+  list-style: none;
+}
+.list:focus-visible {
+  outline: 3px solid #49a9b4;
+  outline-offset: 2px;
+}
+.list li {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.875rem;
+}
+.list li span {
+  overflow-wrap: anywhere;
+}
+.list button {
+  flex: none;
+  border: 1px solid #bdcec5;
+  border-radius: 3px;
+  background: white;
+  color: #304c48;
+  padding: 3px 7px;
+  font: inherit;
+  font-size: 12px;
+}
+.count {
+  margin-left: 0.35rem;
+  color: #657083;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.pickerRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.slotFilter {
+  flex: 0 0 88px;
+  width: 88px;
+}
+.pickerRow > :not(.slotFilter) {
+  flex: 1;
+  min-width: 0;
+}
+
+.sourceTrigger {
+  @include control.control;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 160px;
+}
+.sourcePositioner {
+  z-index: 1000;
+}
+.sourcePopup {
+  @include control.popup;
+  min-width: max(var(--anchor-width), 300px);
+  max-width: min(520px, var(--available-width));
+  max-height: min(380px, var(--available-height));
+}
+.sourceTree,
+.sourceChildren {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sourceChildren {
+  padding-left: 22px;
+}
+.sourceTreeRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 4px;
+  line-height: 20px;
+  border-radius: 3px;
+  &:hover {
+    background: #edf6f3;
+  }
+}
+.sourceExpand {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 18px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #304c48;
+  cursor: pointer;
+}
+.sourceExpandSpacer {
+  flex: 0 0 18px;
+}
+.sourceCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-width: 22px;
+  box-sizing: border-box;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border: 1px solid #d7e2dc;
+  border-radius: 999px;
+  background: #eef2ea;
+  color: #5e6d5c;
+  font-size: 12px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.sourceListLabel {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}

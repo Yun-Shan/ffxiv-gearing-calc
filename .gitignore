@@ -1,6 +1,7 @@
 node_modules
 dist/
 coverage/
+/artifacts/
 reference/
 local.env
 

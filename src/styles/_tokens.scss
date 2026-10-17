@@ -44,3 +44,8 @@ $color-accent-soft: #edf8f7;
 $color-line: #dde5eb;
 
 $nav-bar-height: 72px;
+
+// 数字输入使用等宽数字，按位数计算内容宽度（不含边框与内边距）。
+$digit-width: 1ch;
+
+$condition-strategy-width: 128px;

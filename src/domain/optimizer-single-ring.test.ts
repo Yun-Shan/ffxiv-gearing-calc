@@ -71,7 +71,7 @@ function lowLevelForcedConfig(
 ): OptimizationConfig {
   const config: OptimizationConfig = {
     ...configFor(jobId),
-    jobLevel: 50,
+    syncLevel: gameData.syncLevelOfJobLevels[50],
     minItemLevel: 15,
     maxItemLevel: 20,
     foodId,
@@ -302,17 +302,17 @@ describe("full materia placement", () => {
 });
 
 describe("character equipment level", () => {
-  it("excludes gear requiring a higher job level even when its item level is in range", () => {
+  it("keeps high-level gear wearable while synced to a lower formula level", () => {
     const config = {
       ...configFor("RDM"),
-      jobLevel: 50,
+      syncLevel: gameData.syncLevelOfJobLevels[50],
       minItemLevel: 1,
       maxItemLevel: 999,
     };
     const eligible = gearOptionsFor(config, "ring");
     expect(eligible.length).toBeGreaterThan(0);
-    expect(eligible.every((gear) => gear.equipLevel <= 50)).toBe(true);
-    expect(gears.some((gear) => gear.slot === "ring" && gear.jobs.includes("RDM") && gear.equipLevel > 50))
+    expect(eligible.every((gear) => gear.equipLevel <= 100)).toBe(true);
+    expect(eligible.some((gear) => gear.equipLevel > 50))
       .toBe(true);
   });
 });

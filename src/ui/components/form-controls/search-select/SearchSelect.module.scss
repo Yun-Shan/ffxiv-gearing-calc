@@ -1,0 +1,99 @@
+@use "../control";
+.inputGroup {
+  @include control.control;
+  min-width: 220px;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+.inputGroup:focus-within {
+  outline: 3px solid #49a9b4;
+  outline-offset: 2px;
+}
+.input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 6px 9px;
+  outline: none;
+}
+.trigger,
+.clear {
+  flex: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+.positioner {
+  z-index: 1000;
+  width: var(--anchor-width);
+}
+.popup {
+  @include control.popup;
+}
+.list {
+  display: grid;
+}
+.item {
+  @include control.item;
+}
+.optionLabel {
+  flex: 1;
+  min-width: 0;
+}
+.description {
+  flex: none;
+  color: #657083;
+}
+.indicator {
+  flex: 0 0 14px;
+  width: 14px;
+  visibility: hidden;
+}
+.empty {
+  padding: 8px;
+  color: #657083;
+}
+
+.input:focus-visible,
+.trigger:focus-visible,
+.clear:focus-visible {
+  outline: none;
+}
+
+.item[data-selected] {
+  background: #e1f1eb;
+}
+.item[data-selected] .indicator {
+  visibility: visible;
+}
+
+.virtualPopup {
+  overflow: hidden;
+}
+.virtualScroller {
+  height: min(
+    var(--virtual-total-height),
+    calc(min(18rem, var(--available-height)) - 10px)
+  );
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  overflow-anchor: none;
+}
+.virtualCanvas {
+  position: relative;
+}
+.virtualItem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 36px;
+  box-sizing: border-box;
+}

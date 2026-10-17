@@ -113,10 +113,20 @@ export interface Food {
   dataSources?: DataSourceRef[];
 }
 
+/** A calculated food snapshot with the complete applied effect. */
+export interface FoodResult extends Food {
+  /** Per-stat applied gain, including zero for a food stat unused by this job. */
+  actualStats: Stats;
+  /** Integer percentage: floor(sum(actualStats) / sum(stats) * 100). */
+  utilization: number;
+}
+
 export interface Materia {
   stat: Exclude<Stat, "STR" | "DEX" | "INT" | "MND" | "VIT" | "PDMG" | "MDMG" | "DLY">;
   value: number;
   grade: number;
+  /** Original slot index for imported fixed gear; optimizer output may omit it. */
+  slotIndex?: number;
 }
 
 export interface JobSchema {
@@ -209,8 +219,6 @@ export interface OptimizationConfig {
   jobId: JobId;
   minItemLevel: number;
   maxItemLevel: number;
-  /** 用于基础属性和伤害公式的角色等级；默认使用 currentLevel。 */
-  jobLevel?: number;
   /** 将装备属性和武器伤害同步到此品级。 */
   syncLevel?: number;
   gcdTarget?: number;
@@ -260,11 +268,20 @@ export interface SearchCandidateCounts {
   foodCount: number;
 }
 
+/** A selected result slot references immutable complete replacement groups. */
+export interface ResultGear extends MeldedGear {
+  /** Complete alternatives, including all unique rings and the current selection. */
+  replacementGroupKey?: string;
+  /** Rings additionally reference the unique subset only for conflict checks. */
+  uniqueReplacementGroupKey?: string;
+}
+
 export interface OptimizationResult {
   /** 用于基础属性、食物、伤害和 GCD 计算的职业等级。 */
   calculationLevel?: number;
-  gear: MeldedGear[];
-  food: Food;
+  gear: ResultGear[];
+  equivalentGear?: Record<string, readonly MeldedGear[]>;
+  food: FoodResult;
   stats: Stats;
   effects: Effects;
   score: number;
