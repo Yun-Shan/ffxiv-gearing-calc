@@ -23,6 +23,10 @@ import {
   effectiveGearSyncLevel,
 } from "./rules.ts";
 import { describeFoodResult } from "./food-result.ts";
+import {
+  enabledItemSpecialBonusesForJob,
+  gearStatsWithEnabledItemSpecialBonus,
+} from "./item-special-bonus.ts";
 import type {
   CustomizableStat,
   Effects,
@@ -260,6 +264,7 @@ function assembleGear(
   characterLevel: number,
   calculationLevel: number,
   syncLevel?: number,
+  enabledItemSpecialBonuses: readonly number[] = [],
 ): MeldedGear {
   if (!Number.isSafeInteger(input.id) || input.id <= 0) {
     return fail(`装备编号无效：${input.id}`);
@@ -279,7 +284,11 @@ function assembleGear(
   }
   const resolvedGear: Gear = {
     ...gear,
-    stats: concretizeGearStats(gear.stats, jobSchemas[jobId]),
+    stats: gearStatsWithEnabledItemSpecialBonus(
+      gear,
+      jobSchemas[jobId],
+      enabledItemSpecialBonuses,
+    ),
   };
   // 穿戴资格按职业上限判定；装备同步按参考实现的 store.jobLevel
   // （同步搜索中即同步映射等级）计算。
@@ -353,6 +362,7 @@ function assembleFullGear(
   }
   const missing = requiredSlots.find((slot) => !slots.has(slot));
   if (missing !== undefined) return fail(`配装缺少 ${missing} 部位装备`);
+  const enabledItemSpecialBonuses = enabledItemSpecialBonusesForJob(input.jobId);
   return requiredSlots.map((slot) =>
     assembleGear(
       slots.get(slot)!,
@@ -361,6 +371,7 @@ function assembleFullGear(
       characterLevel,
       calculationLevel,
       input.syncLevel,
+      enabledItemSpecialBonuses,
     ),
   );
 }

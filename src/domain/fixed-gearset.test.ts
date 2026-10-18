@@ -15,6 +15,7 @@ import { slotsForJob } from "./gear-options.ts";
 import {
   customParameterMelds,
   foodStatsForJob,
+  makeGearCandidates,
 } from "./optimizer/equipment-candidates.ts";
 import {
   addStats,
@@ -127,6 +128,52 @@ describe("calculateFixedGearset", () => {
     expect(result.food.utilization).toBeLessThanOrEqual(100);
     expect(result.damagePerPotency).toBe(result.effects.damage);
     expect(result.damagePerSecond).toBe(result.effects.damage / result.effects.gcd);
+  });
+
+  it("enables ItemSpecialBonus 11 in Beastmaster fixed loadouts", () => {
+    const jobId = "BST" as const;
+    const body = gears.find((candidate) =>
+      candidate.slot === "body" &&
+      candidate.jobs.includes(jobId) &&
+      candidate.equipLevel <= jobLevelFor({ jobId }) &&
+      candidate.materiaSlots === 0 &&
+      candidate.materiaAdvanced !== true &&
+      candidate.customParameters === undefined &&
+      candidate.resistanceWeaponAdjust === undefined,
+    );
+    if (body === undefined) throw new Error("缺少驯兽师测试身体装备");
+
+    const originalBonus = body.itemSpecialBonus;
+    const originalSpecialStats = body.specialStats;
+    try {
+      body.itemSpecialBonus = 11;
+      body.specialStats = { secondary: 17 };
+      const input = inputFor(jobId, undefined, {
+        body: { id: body.id, materias: [] },
+      });
+      const result = calculateFixedGearset(input);
+      const selectedBody = result.gear.find(({ slot }) => slot === "body")!;
+      const secondaryStat = jobSchemas[jobId].secondaryStat;
+      const base = concretizeGearStats(body.stats, jobSchemas[jobId]);
+
+      expect(selectedBody.finalStats[secondaryStat]).toBe(
+        (base[secondaryStat] ?? 0) + 17,
+      );
+      const candidateBody = makeGearCandidates(body, "body", {
+        jobId,
+        minItemLevel: 0,
+        maxItemLevel: 9999,
+        maximizeTenacity: false,
+        excludedSources: [],
+        forcedGear: {},
+        foodId: input.foodId,
+        enabledItemSpecialBonuses: [11],
+      }, new Map())[0]!.gear;
+      expect(selectedBody.finalStats).toEqual(candidateBody.finalStats);
+    } finally {
+      body.itemSpecialBonus = originalBonus;
+      body.specialStats = originalSpecialStats;
+    }
   });
 
   it("uses the unified sync formula level while retaining the job cap for wearability", () => {

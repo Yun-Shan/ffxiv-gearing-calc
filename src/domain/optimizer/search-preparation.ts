@@ -21,6 +21,7 @@ import type {
   Stats,
 } from "../types.ts";
 import { calculationJobLevelFor } from "../gear-options.ts";
+import { withDomainItemSpecialBonusDefaults } from "../item-special-bonus.ts";
 import {
   attributeIds,
   attributeIndex,
@@ -169,6 +170,7 @@ export function prepareSearch(
   paretoSlots?: ReadonlySet<string>,
   paretoIndependentRings = false,
 ): PreparedSearch {
+  config = withDomainItemSpecialBonusDefaults(config);
   throwIfAborted(options.signal);
   if (
     !Number.isSafeInteger(config.minItemLevel) ||

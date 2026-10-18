@@ -69,6 +69,7 @@ export function calculateBaseStats(
 export function concretizeGearStats(stats: GearStats, job: JobSchema): Stats {
   const result: Stats = {};
   for (const [rawStat, value] of Object.entries(stats)) {
+    if (value === undefined) continue;
     const stat: GearStat = rawStat as GearStat;
     const concreteStat = stat === "main"
       ? job.mainStat
@@ -76,6 +77,26 @@ export function concretizeGearStats(stats: GearStats, job: JobSchema): Stats {
         ? job.secondaryStat
         : stat;
     result[concreteStat] = value;
+  }
+  return result;
+}
+
+/** Resolve and add separate BaseParam contributions, such as an enabled item bonus. */
+export function concretizeGearStatsWithAdditions(
+  stats: GearStats,
+  additions: GearStats,
+  job: JobSchema,
+): Stats {
+  const result = concretizeGearStats(stats, job);
+  for (const [rawStat, value] of Object.entries(additions)) {
+    if (value === undefined) continue;
+    const stat: GearStat = rawStat as GearStat;
+    const concreteStat = stat === "main"
+      ? job.mainStat
+      : stat === "secondary"
+        ? job.secondaryStat
+        : stat;
+    result[concreteStat] = (result[concreteStat] ?? 0) + value;
   }
   return result;
 }

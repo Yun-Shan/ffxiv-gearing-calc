@@ -4,6 +4,8 @@
 
 业务行为与候选域见[领域与搜索规则](docs/rules/领域与搜索规则.md)；界面方向和文字版风格参考见[前端设计总览](docs/前端设计总览.md)。
 
+领域计算支持装备特殊效果 `ItemSpecialBonus=11`：当前驯兽师固定启用，其他职业不启用；调用方传入的效果启用列表暂由该职业规则覆盖，不提供界面设置。
+
 ## 页面与功能
 
 - `/single`：单职业搜索；同步结果支持同属性装备替换并回写同一历史记录。
@@ -62,6 +64,8 @@ npm run data:update
 ```bash
 node scripts/update-data.mjs --offline
 ```
+
+仅更新领域数据、无需重生成界面图标映射时，可追加 `--skip-ui-generated-icons`。为同版本已有快照补充装备特殊效果字段，可先运行 `node scripts/query-mcp-lumina.mjs --item-special-bonus-data-only`，再离线生成；缺失字段、来源或版本不一致时失败。
 
 仅补充已有同版本快照的同步等级和可变等级装备查询输入时，可运行 `node scripts/query-mcp-lumina.mjs --level-basis-data-only`，再离线生成；版本不一致时失败。
 

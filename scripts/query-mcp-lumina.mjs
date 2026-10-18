@@ -8,6 +8,7 @@ import {
   itemFoodReturnFields,
   itemLevelReturnFields,
   itemReturnFields,
+  supportedItemSpecialBonusIds,
   mandervilleReturnFields,
   classJobReturnFields,
   supportedJobIds,
@@ -529,6 +530,148 @@ async function refreshLevelBasisData(client, health) {
   console.log(JSON.stringify({ outputPath, syncLevelRows: cfcRows.rows.length, paramGrowRows: paramGrowRows.rows.length, itemRowsWithSubStatCategory: expectedItemIds.length, gameVersion: snapshot.gameVersion }));
 }
 
+async function refreshItemSpecialBonusData(client, health) {
+  if (!(await fileExists(outputPath)))
+    throw new Error(`装备特殊效果增量查询需要已有 MCP 快照：${outputPath}`);
+  const snapshot = JSON.parse(await readFile(outputPath, "utf8"));
+  if (snapshot.server !== "ffxiv-mcp-lumina" || snapshot.gameVersion !== health.gameVersion)
+    throw new Error(`装备特殊效果查询版本 ${health.gameVersion} 与现有快照 ${snapshot.gameVersion} 不一致；拒绝混合版本`);
+
+  const [sheetInventoryResult, itemDescriptionResult, bonusDescriptionResult] = await Promise.all([
+    client.callTool("list_sheets", {}),
+    client.callTool("describe_sheet", { sheet: "Item" }),
+    client.callTool("describe_sheet", { sheet: "ItemSpecialBonus" }),
+  ]);
+  const sheetInventory = sheetInventoryResult.value;
+  const itemDescription = itemDescriptionResult.value;
+  const bonusDescription = bonusDescriptionResult.value;
+  if (!Array.isArray(sheetInventory.sheets) ||
+      !sheetInventory.sheets.includes("Item") ||
+      !sheetInventory.sheets.includes("ItemSpecialBonus"))
+    throw new Error("MCP Sheet 清单缺少 ItemSpecialBonus 查询所需表");
+  for (const [sheet, description] of [["Item", itemDescription], ["ItemSpecialBonus", bonusDescription]]) {
+    if (!Array.isArray(description.columns) || description.gameVersion !== health.gameVersion)
+      throw new Error(`MCP ${sheet} Schema 缺失或游戏版本与 health 不一致`);
+  }
+  validateSyncLevelSchema("Item", itemDescription, [
+    "ItemSpecialBonus", "ItemSpecialBonusParam",
+    ...Array.from({ length: 6 }, (_, index) => `BaseParamSpecial[${index}]`),
+    ...Array.from({ length: 6 }, (_, index) => `BaseParamValueSpecial[${index}]`),
+  ]);
+  validateSyncLevelSchema("ItemSpecialBonus", bonusDescription, ["Name", "RequirementText"]);
+
+  const queries = [
+    {
+      method: "health",
+      gameVersion: health.gameVersion,
+      validatedVersion: health.validatedVersion,
+      queriedAt: health.timestamp,
+    },
+    {
+      method: "list_sheets",
+      gameVersion: sheetInventory.gameVersion,
+      queriedAt: sheetInventory.timestamp,
+      returnedRows: sheetInventory.sheets.length,
+    },
+    describeQuery("Item", itemDescription),
+    describeQuery("ItemSpecialBonus", bonusDescription),
+  ];
+  const itemIds = [...new Set([
+    ...(snapshot.queryPlan?.gearItemIds ?? []),
+    ...(snapshot.queryPlan?.foodItemIds ?? []),
+  ])].sort((left, right) => left - right);
+  if (!itemIds.length) throw new Error("现有 MCP 快照没有 Item 查询范围");
+  const itemQueries = [];
+  const itemRowsResult = await queryRows(
+    client,
+    "Item",
+    itemIds,
+    "ItemSpecialBonus,ItemSpecialBonusParam",
+    itemQueries,
+  );
+  const existingItemRows = new Map((snapshot.rows?.Item ?? []).map((row) => [row.rowId, row]));
+  const originalMissingIds = new Set(snapshot.missing?.Item ?? []);
+  if (itemRowsResult.rows.some((row) => !existingItemRows.has(row.rowId)) ||
+      itemRowsResult.missingRowIds.some((id) => !originalMissingIds.has(id)) ||
+      itemRowsResult.rows.length !== itemIds.length - itemRowsResult.missingRowIds.length)
+    throw new Error("MCP ItemSpecialBonus 增量查询与现有 Item 查询范围不一致");
+  for (const row of itemRowsResult.rows) {
+    for (const name of ["ItemSpecialBonus", "ItemSpecialBonusParam"]) {
+      const value = row.fields?.[name];
+      if (!Number.isSafeInteger(value) || value < 0 || value > 0xffffffff ||
+          row.gameVersion !== health.gameVersion || !row.timestamp)
+        throw new Error(`MCP Item 行 ${row.rowId} 的 ${name} 缺失、越界或跨版本`);
+    }
+    const existing = existingItemRows.get(row.rowId);
+    existing.fields.ItemSpecialBonus = row.fields.ItemSpecialBonus;
+    existing.fields.ItemSpecialBonusParam = row.fields.ItemSpecialBonusParam;
+  }
+  const bonusQueries = [];
+  const bonusRowsResult = await queryRows(
+    client,
+    "ItemSpecialBonus",
+    supportedItemSpecialBonusIds,
+    "Name,RequirementText",
+    bonusQueries,
+  );
+  if (bonusRowsResult.missingRowIds.length ||
+      bonusRowsResult.rows.length !== supportedItemSpecialBonusIds.length ||
+      bonusRowsResult.rows.some((row) => typeof row.fields?.Name !== "string" ||
+        row.gameVersion !== health.gameVersion || !row.timestamp))
+    throw new Error("MCP ItemSpecialBonus 支持行查询缺失、字段无效或跨版本");
+  if ([...queries, ...itemQueries, ...bonusQueries].some((query) => query.gameVersion !== health.gameVersion))
+    throw new Error("MCP 装备特殊效果查询批次游戏版本不一致");
+
+  const checkedAt = new Date().toISOString();
+  const capabilityCheck = {
+    status: "available",
+    checkedAt,
+    gameVersion: health.gameVersion,
+    supportedIds: supportedItemSpecialBonusIds,
+    item: {
+      rowCount: itemDescription.rowCount,
+      fields: itemDescription.columns.map((column) => column.name),
+      gameVersion: itemDescription.gameVersion,
+      queriedAt: itemDescription.timestamp,
+      persistedItemRows: itemRowsResult.rows.length,
+    },
+    itemSpecialBonus: {
+      rowCount: bonusDescription.rowCount,
+      fields: bonusDescription.columns.map((column) => column.name),
+      gameVersion: bonusDescription.gameVersion,
+      queriedAt: bonusDescription.timestamp,
+      persistedRows: bonusRowsResult.rows.length,
+    },
+  };
+  snapshot.sourceCapabilityChecks ??= {};
+  snapshot.sourceCapabilityChecks.itemSpecialBonus = capabilityCheck;
+  snapshot.rows.Item.sort((left, right) => left.rowId - right.rowId);
+  snapshot.rows.ItemSpecialBonus = bonusRowsResult.rows.sort((left, right) => left.rowId - right.rowId);
+  snapshot.queries = [
+    ...(snapshot.queries ?? []).filter((query) =>
+      !(query.method === "get_rows" && query.sheet === "Item" &&
+        query.fields?.length === 2 && query.fields.includes("ItemSpecialBonus") &&
+        query.fields.includes("ItemSpecialBonusParam")) &&
+      !(query.sheet === "ItemSpecialBonus") &&
+      !(query.method === "describe_sheet" && ["Item", "ItemSpecialBonus"].includes(query.sheet)) &&
+      query.method !== "list_sheets" && query.method !== "health",
+    ),
+    ...queries,
+    ...itemQueries,
+    ...bonusQueries,
+  ];
+  snapshot.missing ??= {};
+  snapshot.missing.ItemSpecialBonus = bonusRowsResult.missingRowIds;
+  await writeFile(outputPath, `${JSON.stringify(snapshot)}\n`, "utf8");
+  console.log(JSON.stringify({
+    outputPath,
+    itemRowsWithSpecialBonus: itemRowsResult.rows.length,
+    itemSpecialBonusRows: bonusRowsResult.rows.length,
+    supportedIds: supportedItemSpecialBonusIds,
+    gameVersion: snapshot.gameVersion,
+  }));
+}
+
 const client = new McpClient();
 try {
   if (!(await fileExists(command)) && command.includes("\\"))
@@ -541,12 +684,15 @@ try {
 
   if (process.argv.includes("--level-basis-data-only")) {
     await refreshLevelBasisData(client, health);
+  } else if (process.argv.includes("--item-special-bonus-data-only")) {
+    await refreshItemSpecialBonusData(client, health);
   } else {
 
   const [
     sheetInventoryResult,
     classJobDescriptionResult,
     itemDescriptionResult,
+    itemSpecialBonusDescriptionResult,
     contentFinderConditionDescriptionResult,
     itemLevelDescriptionResult,
     paramGrowDescriptionResult,
@@ -555,6 +701,7 @@ try {
     client.callTool("list_sheets", {}),
     client.callTool("describe_sheet", { sheet: "ClassJob" }),
     client.callTool("describe_sheet", { sheet: "Item" }),
+    client.callTool("describe_sheet", { sheet: "ItemSpecialBonus" }),
     client.callTool("describe_sheet", { sheet: "ContentFinderCondition" }),
     client.callTool("describe_sheet", { sheet: "ItemLevel" }),
     client.callTool("describe_sheet", { sheet: "ParamGrow" }),
@@ -563,6 +710,7 @@ try {
   const sheetInventory = sheetInventoryResult.value;
   const classJobDescription = classJobDescriptionResult.value;
   const itemDescription = itemDescriptionResult.value;
+  const itemSpecialBonusDescription = itemSpecialBonusDescriptionResult.value;
   const contentFinderConditionDescription = contentFinderConditionDescriptionResult.value;
   const itemLevelDescription = itemLevelDescriptionResult.value;
   const paramGrowDescription = paramGrowDescriptionResult.value;
@@ -571,11 +719,14 @@ try {
     throw new Error("Lumina MCP 未能提供 Sheet 清单或 ClassJob 字段描述，无法核对青魔法师伤害数据来源");
   if (!sheetInventory.sheets.includes("ResistanceWeaponAdjust"))
     throw new Error("Lumina MCP Sheet 清单缺少 ResistanceWeaponAdjust");
+  if (!sheetInventory.sheets.includes("ItemSpecialBonus"))
+    throw new Error("Lumina MCP Sheet 清单缺少 ItemSpecialBonus");
   for (const [sheet, description] of [
     ["ContentFinderCondition", contentFinderConditionDescription],
     ["ItemLevel", itemLevelDescription],
     ["ParamGrow", paramGrowDescription],
     ["Item", itemDescription],
+    ["ItemSpecialBonus", itemSpecialBonusDescription],
     ["ResistanceWeaponAdjust", resistanceWeaponAdjustDescription],
   ]) {
     if (!Array.isArray(description.columns) || description.gameVersion !== health.gameVersion)
@@ -586,7 +737,12 @@ try {
   ]);
   validateSyncLevelSchema("ItemLevel", itemLevelDescription, ["Strength", "CriticalHit"]);
   validateSyncLevelSchema("ParamGrow", paramGrowDescription, ["ItemLevelSync"]);
-  validateSyncLevelSchema("Item", itemDescription, ["SubStatCategory"]);
+  validateSyncLevelSchema("Item", itemDescription, [
+    "SubStatCategory", "ItemSpecialBonus", "ItemSpecialBonusParam",
+    ...Array.from({ length: 6 }, (_, index) => `BaseParamSpecial[${index}]`),
+    ...Array.from({ length: 6 }, (_, index) => `BaseParamValueSpecial[${index}]`),
+  ]);
+  validateSyncLevelSchema("ItemSpecialBonus", itemSpecialBonusDescription, ["Name", "RequirementText"]);
   const resistanceFields = new Set(resistanceWeaponAdjustDescription.columns.map((column) => column.name));
   const missingResistanceFields = resistanceWeaponAdjustReturnFields.filter((field) => !resistanceFields.has(field));
   if (!Number.isSafeInteger(resistanceWeaponAdjustDescription.rowCount) ||
@@ -619,6 +775,7 @@ try {
     describeQuery("ItemLevel", itemLevelDescription),
     describeQuery("ParamGrow", paramGrowDescription),
     describeQuery("Item", itemDescription),
+    describeQuery("ItemSpecialBonus", itemSpecialBonusDescription),
     describeQuery("ResistanceWeaponAdjust", resistanceWeaponAdjustDescription),
   ];
   const syncLevelCapabilityCheck = {
@@ -702,6 +859,19 @@ try {
   const itemQueries = [];
   const itemRowsResult = await queryRows(client, "Item", [...gearIds, ...foodIds], itemFields, itemQueries);
   const itemRows = itemRowsResult.rows;
+  const itemSpecialBonusQueries = [];
+  const itemSpecialBonusRowsResult = await queryRows(
+    client,
+    "ItemSpecialBonus",
+    supportedItemSpecialBonusIds,
+    "Name,RequirementText",
+    itemSpecialBonusQueries,
+  );
+  if (itemSpecialBonusRowsResult.missingRowIds.length ||
+      itemSpecialBonusRowsResult.rows.length !== supportedItemSpecialBonusIds.length ||
+      itemSpecialBonusRowsResult.rows.some((row) => typeof row.fields?.Name !== "string" ||
+        row.gameVersion !== health.gameVersion || !row.timestamp))
+    throw new Error("MCP ItemSpecialBonus 支持行查询缺失、字段无效或跨版本");
   const queriedItemIds = new Set(itemRows.map((row) => row.rowId));
   const missingResistanceItems = resistanceWeaponAdjustItemIds.filter((id) => !queriedItemIds.has(id));
   if (missingResistanceItems.length)
@@ -770,7 +940,7 @@ try {
   if (paramGrowRowsResult.missingRowIds.length)
     throw new Error(`MCP ParamGrow 缺少行：${paramGrowRowsResult.missingRowIds.join(", ")}`);
   const queriedAt = new Date().toISOString();
-  const allQueries = [...capabilityQueries, ...resistanceQueries, ...classJobSearchQueries, ...classJobQueries, ...itemQueries, ...categoryQueries, ...actionQueries, ...foodQueries, ...levelQueries, ...baseQueries, ...mandQueries, ...materiaQueries, ...syncLevelQueries];
+  const allQueries = [...capabilityQueries, ...resistanceQueries, ...classJobSearchQueries, ...classJobQueries, ...itemQueries, ...itemSpecialBonusQueries, ...categoryQueries, ...actionQueries, ...foodQueries, ...levelQueries, ...baseQueries, ...mandQueries, ...materiaQueries, ...syncLevelQueries];
   if (allQueries.some((query) => query.gameVersion !== health.gameVersion))
     throw new Error("MCP 查询批次游戏版本不一致，拒绝生成混合快照");
   const snapshot = {
@@ -803,6 +973,26 @@ try {
         fields: resistanceWeaponAdjustDescription.columns.map((column) => column.name),
         schemaQueriedAt: resistanceWeaponAdjustDescription.timestamp,
       },
+      itemSpecialBonus: {
+        status: "available",
+        checkedAt: new Date().toISOString(),
+        gameVersion: health.gameVersion,
+        supportedIds: supportedItemSpecialBonusIds,
+        item: {
+          rowCount: itemDescription.rowCount,
+          fields: itemDescription.columns.map((column) => column.name),
+          gameVersion: itemDescription.gameVersion,
+          queriedAt: itemDescription.timestamp,
+          persistedItemRows: itemRows.length,
+        },
+        itemSpecialBonus: {
+          rowCount: itemSpecialBonusDescription.rowCount,
+          fields: itemSpecialBonusDescription.columns.map((column) => column.name),
+          gameVersion: itemSpecialBonusDescription.gameVersion,
+          queriedAt: itemSpecialBonusDescription.timestamp,
+          persistedRows: itemSpecialBonusRowsResult.rows.length,
+        },
+      },
       bluMdmgAdditions: {
         status: "missing-from-mcp",
         checkedAt: queriedAt,
@@ -823,6 +1013,7 @@ try {
     },
     rows: {
       Item: itemRows,
+      ItemSpecialBonus: itemSpecialBonusRowsResult.rows,
       ResistanceWeaponAdjust: resistanceRowsResult.rows,
       ClassJobCategory: categoryRowsResult.rows,
       ClassJob: classJobRowsResult.rows,
@@ -844,6 +1035,7 @@ try {
     ],
     missing: {
       Item: itemRowsResult.missingRowIds,
+      ItemSpecialBonus: itemSpecialBonusRowsResult.missingRowIds,
       ResistanceWeaponAdjust: resistanceRowsResult.missingRowIds,
       ItemSubStatCategory: itemRowsResult.missingRowIds,
       ClassJobCategory: categoryRowsResult.missingRowIds,

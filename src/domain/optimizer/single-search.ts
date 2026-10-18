@@ -8,11 +8,13 @@ import type {
 import { privateParetoSlots, prepareSearch } from "./search-preparation.ts";
 import { assembleResult } from "./result-assembly.ts";
 import { throwIfAborted } from "./context.ts";
+import { withDomainItemSpecialBonusDefaults } from "../item-special-bonus.ts";
 
 export async function runOptimizationLocally(
   config: OptimizationConfig,
   options: SearchOptions = {},
 ): Promise<OptimizationResult | undefined> {
+  config = withDomainItemSpecialBonusDefaults(config);
   const prepared = prepareSearch(
     config,
     options,

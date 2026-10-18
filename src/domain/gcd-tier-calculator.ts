@@ -1,11 +1,11 @@
 import { foods, gameData, materiaGradeRequiredLevels, searchFoods } from "./data.ts";
 import { assertClanIndex } from "./clans.ts";
+import { gearStatsWithEnabledItemSpecialBonus } from "./item-special-bonus.ts";
 import { jobSchemas } from "./jobs.ts";
 import {
   applyFood,
   capGearStatsAtLevel,
   calculateBaseStats,
-  concretizeGearStats,
   effectiveGearSyncLevel,
   getGearStatCap,
   getSpeedStat,
@@ -349,9 +349,14 @@ function gearProfiles(
   speedStat: "SKS" | "SPS",
   jobLevel: number,
 ): Map<number, number> {
+  const effectiveStats = gearStatsWithEnabledItemSpecialBonus(
+    gear,
+    jobSchemas[jobId],
+    config.enabledItemSpecialBonuses,
+  );
   const resolvedGear: Gear = {
     ...gear,
-    stats: concretizeGearStats(gear.stats, jobSchemas[jobId]),
+    stats: effectiveStats,
   };
   if (resolvedGear.resistanceWeaponAdjust !== undefined) {
     return profilesForResistanceWeapon(

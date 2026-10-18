@@ -10,7 +10,6 @@ import { jobSchemas } from "../jobs.ts";
 import {
   calculateBaseStats,
   capGearStatsAtLevel,
-  concretizeGearStats,
   effectiveGearSyncLevel,
   getGearStatCap,
   getSpeedStat,
@@ -22,6 +21,7 @@ import {
 } from "../search/candidate-pareto.ts";
 import { equipmentIdentity } from "../search/equipment-identity.ts";
 import { buildRingPairEquipInfos } from "../search/ring-pairs.ts";
+import { gearStatsWithEnabledItemSpecialBonus } from "../item-special-bonus.ts";
 import type {
   Food,
   Gear,
@@ -367,9 +367,14 @@ export function makeGearCandidates(
   // 参考实现的 store.jobLevel 在同步搜索中等于同步映射等级；
   // 候选穿戴资格已由 gearOptionsFor 按职业上限过滤，这里只用于 Gear.syncedLevel。
   const syncJobLevel = calculationJobLevelFor(config);
+  const effectiveStats = gearStatsWithEnabledItemSpecialBonus(
+    gear,
+    job,
+    config.enabledItemSpecialBonuses,
+  );
   const resolvedGear: Gear = {
     ...gear,
-    stats: concretizeGearStats(gear.stats, job),
+    stats: effectiveStats,
   };
   const options = resolvedGear.resistanceWeaponAdjust !== undefined
     ? [[]]

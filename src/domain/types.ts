@@ -80,6 +80,11 @@ export interface Gear {
   roleId: number;
   jobCategory: number;
   stats: GearStats;
+  /** 数据源中的特殊属性；仅匹配启用的 ItemSpecialBonus 时合并进 stats。 */
+  specialStats?: GearStats;
+  itemSpecialBonus?: number;
+  /** ItemSpecialBonus 的参数，当前仅保留原始数据，不参与属性倍率计算。 */
+  itemSpecialBonusParam?: number;
   materiaSlots: number;
   materiaAdvanced?: true;
   /** 装备的唯一属性限制；源数据缺少此字段时，运行时按 false 处理。 */
@@ -223,6 +228,8 @@ export interface OptimizationConfig {
   maxItemLevel: number;
   /** 将装备属性和武器伤害同步到此品级。 */
   syncLevel?: number;
+  /** 底层搜索允许按此列表启用装备的 ItemSpecialBonus。领域入口暂按职业覆盖此值。 */
+  enabledItemSpecialBonuses?: number[];
   /** 族群基础属性索引；未提供时使用 0（人族·中原之民）。 */
   clanIndex?: number;
   gcdTarget?: number;

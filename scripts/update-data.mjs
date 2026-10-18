@@ -12,6 +12,7 @@ import {
   itemFoodReturnFields,
   itemLevelReturnFields,
   itemReturnFields,
+  supportedItemSpecialBonusIds,
   mandervilleReturnFields,
   classJobReturnFields,
   mcpSource,
@@ -37,9 +38,12 @@ const mcpSnapshotPath = resolve(
   process.env.FFXIV_MCP_LUMINA_SNAPSHOT ?? resolve(root, "src", "data", "mcp-lumina.snapshot.json"),
 );
 const offline = process.argv.includes("--offline");
+const skipUiGeneratedIcons = process.argv.includes("--skip-ui-generated-icons");
 const supportedJobs = supportedJobIds;
 const limitedJobIds = new Set(["BLU", "BST"]);
-const itemCoreReturnFields = itemReturnFields.filter((field) => field !== "SubStatCategory");
+const itemCoreReturnFields = itemReturnFields.filter((field) =>
+  !["SubStatCategory", "ItemSpecialBonus", "ItemSpecialBonusParam"].includes(field),
+);
 const importStartedAt = new Date().toISOString();
 let currentCommit = "unknown";
 const combatMateriaStats = ["CRT", "DET", "DHT", "SKS", "SPS", "TEN", "PIE"];
@@ -600,6 +604,7 @@ async function loadMcpSnapshot() {
     throw new Error("MCP 快照 ClassJob 行集合与当前支持职业不一致，请重新运行 npm run data:mcp");
   validateBluMcpAbsence(snapshot);
   validateMcpItemRows(snapshot);
+  validateMcpItemSpecialBonusInput(snapshot);
   validateMcpSyncLevelInput(snapshot);
   validateMcpVariableEquipLevelInput(snapshot);
   validateMcpResistanceWeaponAdjustInput(snapshot);
@@ -708,6 +713,84 @@ function validateMcpItemRows(snapshot) {
     if (!row.fields || typeof row.fields !== "object" || Array.isArray(row.fields))
       throw new Error(`MCP Item 行 ${row.rowId} 缺少有效 fields，无法校验 Name`);
     normalizeMcpItemName(row);
+    for (const name of ["ItemSpecialBonus", "ItemSpecialBonusParam"]) {
+      const value = row.fields[name];
+      if (!Number.isSafeInteger(value) || value < 0 || value > 0xffffffff)
+        throw new Error(`MCP Item 行 ${row.rowId} 的 ${name} 未查询或不是有效 uint`);
+    }
+  }
+}
+
+function validateMcpItemSpecialBonusInput(snapshot) {
+  const check = snapshot.sourceCapabilityChecks?.itemSpecialBonus;
+  const description = snapshot.queries?.find((query) =>
+    query.method === "describe_sheet" && query.sheet === "ItemSpecialBonus",
+  );
+  const itemDescription = snapshot.queries?.find((query) =>
+    query.method === "describe_sheet" && query.sheet === "Item",
+  );
+  const bonusRows = snapshot.rows?.ItemSpecialBonus;
+  const bonusQuery = snapshot.queries?.find((query) =>
+    ["get_rows", "list_rows"].includes(query.method) && query.sheet === "ItemSpecialBonus" &&
+    supportedItemSpecialBonusIds.every((id) => query.rowIds?.includes(id)),
+  );
+  const requiredItemFields = ["ItemSpecialBonus", "ItemSpecialBonusParam"];
+  const requiredSpecialFields = Array.from({ length: 6 }, (_, index) => [
+    `BaseParamSpecial[${index}]`, `BaseParamValueSpecial[${index}]`,
+  ]).flat();
+  if (check?.status !== "available" || check.gameVersion !== snapshot.gameVersion ||
+      JSON.stringify(check.supportedIds) !== JSON.stringify(supportedItemSpecialBonusIds) ||
+      !Array.isArray(check.item?.fields) || !Array.isArray(check.itemSpecialBonus?.fields) ||
+      requiredItemFields.some((field) => !check.item.fields.includes(field)) ||
+      !check.itemSpecialBonus.fields.includes("Name") || !check.itemSpecialBonus.fields.includes("RequirementText") ||
+      check.item.gameVersion !== snapshot.gameVersion || check.itemSpecialBonus.gameVersion !== snapshot.gameVersion ||
+      !check.item.queriedAt || !check.itemSpecialBonus.queriedAt ||
+      !itemDescription || itemDescription.gameVersion !== snapshot.gameVersion ||
+      itemDescription.queriedAt !== check.item.queriedAt ||
+      requiredItemFields.concat(requiredSpecialFields).some((field) => !itemDescription.fields?.includes(field)) ||
+      !description || description.gameVersion !== snapshot.gameVersion ||
+      description.queriedAt !== check.itemSpecialBonus.queriedAt ||
+      !description.fields?.includes("Name") || !description.fields?.includes("RequirementText") ||
+      !Array.isArray(bonusRows) || bonusRows.length !== supportedItemSpecialBonusIds.length ||
+      !Array.isArray(snapshot.missing?.ItemSpecialBonus) || snapshot.missing.ItemSpecialBonus.length ||
+      !bonusQuery || bonusQuery.gameVersion !== snapshot.gameVersion || !bonusQuery.queriedAt ||
+      !bonusQuery.fields?.includes("Name") || !bonusQuery.fields?.includes("RequirementText") ||
+      bonusQuery.returnedRows !== supportedItemSpecialBonusIds.length)
+    throw new Error("MCP 快照缺少 ItemSpecialBonus 支持范围、Schema 或同版本行来源");
+
+  const bonusRowIds = new Set();
+  for (const row of bonusRows) {
+    if (!row || !Number.isSafeInteger(row.rowId) || !supportedItemSpecialBonusIds.includes(row.rowId) ||
+        bonusRowIds.has(row.rowId) || row.gameVersion !== snapshot.gameVersion || !row.timestamp ||
+        typeof row.fields?.Name !== "string" || typeof row.fields?.RequirementText !== "string")
+      throw new Error("MCP ItemSpecialBonus 行包含无效 ID、字段或版本来源");
+    bonusRowIds.add(row.rowId);
+  }
+  if (supportedItemSpecialBonusIds.some((id) => !bonusRowIds.has(id)) ||
+      bonusQuery.rowIds.length !== supportedItemSpecialBonusIds.length ||
+      bonusQuery.rowIds.some((id) => !bonusRowIds.has(id)))
+    throw new Error("MCP ItemSpecialBonus 支持 ID 与查询目录不一致");
+
+  const plannedIds = [...new Set([
+    ...(snapshot.queryPlan?.gearItemIds ?? []),
+    ...(snapshot.queryPlan?.foodItemIds ?? []),
+  ])];
+  const itemRows = snapshotRows(snapshot, "Item");
+  for (const itemId of plannedIds) {
+    if (snapshot.missing?.Item?.includes(itemId)) continue;
+    const row = itemRows[itemId];
+    const hasQuery = snapshot.queries.some((query) =>
+      ["get_rows", "list_rows"].includes(query.method) && query.sheet === "Item" &&
+      requiredItemFields.every((field) => query.fields?.includes(field)) &&
+      query.rowIds?.includes(itemId) && query.gameVersion === snapshot.gameVersion && query.queriedAt,
+    );
+    if (!row || !hasQuery || row.gameVersion !== snapshot.gameVersion || !row.timestamp)
+      throw new Error(`MCP Item 行 ${itemId} 的 ItemSpecialBonus 来源查询不完整`);
+    for (const field of requiredSpecialFields) {
+      const value = row.fields?.[field];
+      if (!Number.isSafeInteger(value))
+        throw new Error(`MCP Item 行 ${itemId} 的 ${field} 未查询或不是有效整数`);
+    }
   }
 }
 
@@ -821,6 +904,9 @@ function itemFieldSource(snapshot, itemId, field) {
   if (!query) throw new Error(`MCP Item 行 ${itemId} 的 ${field} 缺少精确来源查询`);
   const sourceId = itemFieldQuerySourceId(query, field);
   const fullSheet = query.method === "list_rows";
+  const note = field === "SubStatCategory"
+    ? `${field} 原值来自 ${query.method} Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=${sourceId} 的来源记录。`
+    : `${field} 原值来自同版本 ${query.method} Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=${sourceId} 的来源记录。`;
   return {
     ...mcpSource({
       sheet: "Item",
@@ -829,13 +915,34 @@ function itemFieldSource(snapshot, itemId, field) {
       gameVersion: snapshot.gameVersion,
       validatedVersion: snapshot.validatedVersion,
       queriedAt: query.queriedAt,
-      note: `${field} 原值来自 ${query.method} Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=${sourceId} 的来源记录。`,
+      note,
     }),
     sourceId,
     queryMethod: query.method,
     queryScope: fullSheet
       ? { kind: "all-rows", returnedRows: query.returnedRows }
       : { kind: "row-ids", returnedRows: query.returnedRows },
+  };
+}
+
+function itemSpecialBonusTableSource(snapshot) {
+  const query = snapshot.queries.find((entry) =>
+    ["get_rows", "list_rows"].includes(entry.method) && entry.sheet === "ItemSpecialBonus" &&
+    supportedItemSpecialBonusIds.every((id) => entry.rowIds?.includes(id)),
+  );
+  if (!query) throw new Error("MCP ItemSpecialBonus 缺少支持行来源查询");
+  return {
+    ...mcpSource({
+      sheet: "ItemSpecialBonus",
+      fields: ["Name", "RequirementText"],
+      rowIds: supportedItemSpecialBonusIds,
+      gameVersion: snapshot.gameVersion,
+      validatedVersion: snapshot.validatedVersion,
+      queriedAt: query.queriedAt,
+      note: `Item.SpecialBonus 支持行描述从 MCP ItemSpecialBonus 查询；当前实现只启用 ID ${supportedItemSpecialBonusIds.join(", ")}。`,
+    }),
+    queryMethod: query.method,
+    queryScope: { kind: "row-ids", returnedRows: query.returnedRows },
   };
 }
 
@@ -863,7 +970,9 @@ function itemFieldQuerySources(snapshot, field, rowIds) {
           gameVersion: snapshot.gameVersion,
           validatedVersion: snapshot.validatedVersion,
           queriedAt: query.queriedAt,
-          note: `${field} 来源的完整 MCP 查询批次；值 2 的语义映射遵循参考项目 data/convert.ts:140；原始方法、字段集合和范围保存在 snapshot.queries。`,
+          note: field === "SubStatCategory"
+            ? `${field} 来源的完整 MCP 查询批次；值 2 的语义映射遵循参考项目 data/convert.ts:140；原始方法、字段集合和范围保存在 snapshot.queries。`
+            : `${field} 来源的完整 MCP 查询批次；支持的 ItemSpecialBonus 行语义来自 MCP ItemSpecialBonus 查询；原始方法、字段集合和范围保存在 snapshot.queries。`,
         }),
         sourceId,
         queryMethod: query.method,
@@ -921,6 +1030,7 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
   const mandervilleRows = snapshotRows(snapshot, "MandervilleWeaponEnhance");
   const resistanceRows = snapshotRows(snapshot, "ResistanceWeaponAdjust");
   const materiaRows = snapshotRows(snapshot, "Materia");
+  const specialBonusTableSource = itemSpecialBonusTableSource(snapshot);
   const referenceMandervilleAliases = gears
     .filter((gear) => gear.customizable)
     .map((gear) => gear.id);
@@ -971,17 +1081,25 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
       ...merged,
       ...(customRow ? { customizable: true, customParameters } : {}),
       ...(resistanceWeaponAdjust ? { resistanceWeaponAdjust } : {}),
-      dataSources: [source, variableLevelSource, categorySource, ...(customRow ? [
+      dataSources: [
+        source,
+        variableLevelSource,
+        itemFieldSource(snapshot, gear.id, "ItemSpecialBonus"),
+        itemFieldSource(snapshot, gear.id, "ItemSpecialBonusParam"),
+        categorySource,
+        ...(merged.itemSpecialBonus !== undefined ? [specialBonusTableSource] : []),
+        ...(customRow ? [
         snapshotSource(snapshot, "MandervilleWeaponEnhance", mandervilleReturnFields, [gear.id]),
         snapshotSource(snapshot, "Materia", undefined, customParameters.map((parameter) => parameter.materiaId)),
-      ] : []), ...(resistanceWeaponAdjust ? [
+        ] : []), ...(resistanceWeaponAdjust ? [
         resistanceWeaponAdjustSource(snapshot, [gear.id]),
         resistanceBaseParamSource(
           snapshot,
           [...new Set(Array.from({ length: 4 }, (_, index) => resistanceRow.fields[`BaseParam[${index}]`]))]
             .filter((id) => id > 0),
         ),
-      ] : []), ...(gear.dataSources ?? []).filter((item) => item.kind === "reference")],
+        ] : []), ...(gear.dataSources ?? []).filter((item) => item.kind === "reference"),
+      ],
     };
   })
     .filter(Boolean);
@@ -1014,7 +1132,10 @@ function mergeMcpGearData(gears, snapshot, fallbackSource) {
       dataSources: [
         source,
         variableLevelSource,
+        itemFieldSource(snapshot, mcpId, "ItemSpecialBonus"),
+        itemFieldSource(snapshot, mcpId, "ItemSpecialBonusParam"),
         categorySource,
+        ...(merged.itemSpecialBonus !== undefined ? [specialBonusTableSource] : []),
         snapshotSource(snapshot, "MandervilleWeaponEnhance", mandervilleReturnFields, [mcpId]),
         snapshotSource(snapshot, "Materia", undefined, customParameters.map((parameter) => parameter.materiaId)),
       ],
@@ -1398,6 +1519,9 @@ if (mcpSnapshot) {
   sourceRecords.push(
     snapshotSource(mcpSnapshot, "Item", itemCoreReturnFields, gearMerge.usedIds),
     ...itemFieldQuerySources(mcpSnapshot, "SubStatCategory", gearMerge.usedIds),
+    ...itemFieldQuerySources(mcpSnapshot, "ItemSpecialBonus", gearMerge.usedIds),
+    ...itemFieldQuerySources(mcpSnapshot, "ItemSpecialBonusParam", gearMerge.usedIds),
+    itemSpecialBonusTableSource(mcpSnapshot),
     snapshotSource(mcpSnapshot, "ItemAction", itemActionReturnFields, foodMerge.usedActionIds),
     snapshotSource(mcpSnapshot, "ItemFood", itemFoodReturnFields, undefined, mcpSnapshot.missing?.ItemFood?.length
       ? `MCP 缺少 ItemFood 行：${mcpSnapshot.missing.ItemFood.join(",")}`
@@ -1435,8 +1559,8 @@ if (mcpSnapshot) {
 }
 const payload = {
   version: mcpSnapshot
-    ? `mcp-${mcpSnapshot.gameVersion}-upstream-${commit.slice(0, 12)}-level-basis-v3`
-    : `upstream-${commit.slice(0, 12)}-level-basis-v3`,
+    ? `mcp-${mcpSnapshot.gameVersion}-upstream-${commit.slice(0, 12)}-level-basis-v3-item-special-bonus-v1`
+    : `upstream-${commit.slice(0, 12)}-level-basis-v3-item-special-bonus-v1`,
   provenance: {
     repository,
     commit,
@@ -1463,8 +1587,8 @@ const payload = {
 validate(payload);
 await mkdir(resolve(outputPath, ".."), { recursive: true });
 const generated = await encodeGeneratedData(payload);
-if (mcpSnapshot) await generateUiJobIcons(mcpSnapshot);
-if (mcpSnapshot) await generateUiItemIcons(mcpSnapshot);
+if (mcpSnapshot && !skipUiGeneratedIcons) await generateUiJobIcons(mcpSnapshot);
+if (mcpSnapshot && !skipUiGeneratedIcons) await generateUiItemIcons(mcpSnapshot);
 await writeFile(outputPath, generated.bytes);
 console.log(
   `Imported ${generated.gearCount} gears, ${payload.foods.length} foods and ${supportedJobs.length} jobs from ${commit.slice(0, 12)}. ${mcpSummary}`,

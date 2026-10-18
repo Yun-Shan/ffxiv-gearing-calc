@@ -44,6 +44,8 @@ export const itemReturnFields = [
   "BaseParamSpecial[3]",
   "BaseParamSpecial[4]",
   "BaseParamSpecial[5]",
+  "ItemSpecialBonus",
+  "ItemSpecialBonusParam",
   "MateriaSlotCount",
   "IsAdvancedMeldingPermitted",
   "IsUnique",
@@ -163,6 +165,8 @@ const statByBaseParam = new Map([
   [56, "secondary"],
 ]);
 
+export const supportedItemSpecialBonusIds = [11];
+
 function numberOrUndefined(value) {
   return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
@@ -237,6 +241,39 @@ function requiredNonNegativeInteger(row, name) {
   return value;
 }
 
+function requiredUInt32(row, name) {
+  const value = requiredNonNegativeInteger(row, name);
+  if (value > 0xffffffff) {
+    const rowId = Number.isSafeInteger(row?.rowId) ? ` ${row.rowId}` : "";
+    throw new Error(`MCP Item 行${rowId} 的 ${name} 超出 uint32 范围`);
+  }
+  return value;
+}
+
+function readSpecialStats(row, { damageStat, requireComplete = false } = {}) {
+  const stats = {};
+  for (let index = 0; index < 6; index++) {
+    const baseParamField = `BaseParamSpecial[${index}]`;
+    const valueField = `BaseParamValueSpecial[${index}]`;
+    const baseParam = numberOrUndefined(field(row, baseParamField));
+    const value = numberOrUndefined(field(row, valueField));
+    if (requireComplete && (!Number.isSafeInteger(baseParam) || baseParam < 0 ||
+        !Number.isSafeInteger(value) || value < 0 || value > 32767)) {
+      const rowId = Number.isSafeInteger(row?.rowId) ? ` ${row.rowId}` : "";
+      throw new Error(`MCP Item 行${rowId} 的 ${baseParamField}/${valueField} 超出支持范围`);
+    }
+    const stat = statByBaseParam.get(baseParam);
+    if (requireComplete && baseParam !== 0 && !stat) {
+      const rowId = Number.isSafeInteger(row?.rowId) ? ` ${row.rowId}` : "";
+      throw new Error(`MCP Item 行${rowId} 的 ${baseParamField} 不支持 BaseParam ${baseParam}`);
+    }
+    if (stat && value !== undefined && value > 0 &&
+        (!(stat === "PDMG" || stat === "MDMG") || stat === damageStat))
+      stats[stat] = (stats[stat] ?? 0) + value;
+  }
+  return stats;
+}
+
 function readStats(row, { hq = false, damageStat, isWeapon = false } = {}) {
   const stats = {};
   for (let index = 0; index < 6; index++) {
@@ -262,14 +299,8 @@ function readStats(row, { hq = false, damageStat, isWeapon = false } = {}) {
   }
   if (delay !== undefined && delay > 0) stats.DLY = delay;
   if (hq) {
-    for (let index = 0; index < 6; index++) {
-      const baseParam = numberOrUndefined(field(row, `BaseParamSpecial[${index}]`));
-      const value = numberOrUndefined(field(row, `BaseParamValueSpecial[${index}]`));
-      const stat = statByBaseParam.get(baseParam);
-      if (stat && value !== undefined && value > 0 &&
-          (!(["PDMG", "MDMG"].includes(stat)) || stat === damageStat))
-        stats[stat] = (stats[stat] ?? 0) + value;
-    }
+    for (const [stat, value] of Object.entries(readSpecialStats(row, { damageStat })))
+      stats[stat] = (stats[stat] ?? 0) + value;
   }
   return stats;
 }
@@ -305,7 +336,17 @@ export function normalizeMcpGearRow(row, fallback, categoryRow, options = {}) {
       ? "MDMG"
       : undefined;
   const isWeapon = options.isWeapon ?? fallback?.slot === "weapon";
-  const stats = readStats(row, { hq, damageStat, isWeapon });
+  const itemSpecialBonus = requiredUInt32(row, "ItemSpecialBonus");
+  const itemSpecialBonusParam = requiredUInt32(row, "ItemSpecialBonusParam");
+  const hasSupportedSpecialBonus = supportedItemSpecialBonusIds.includes(itemSpecialBonus);
+  const stats = readStats(row, { hq: hq && !hasSupportedSpecialBonus, damageStat, isWeapon });
+  const specialBonusData = hasSupportedSpecialBonus
+    ? {
+        itemSpecialBonus,
+        itemSpecialBonusParam,
+        specialStats: readSpecialStats(row, { damageStat, requireComplete: true }),
+      }
+    : {};
   const fallbackGear = fallback ? { ...fallback } : {};
   delete fallbackGear.equipLevelVariable;
   return {
@@ -316,6 +357,7 @@ export function normalizeMcpGearRow(row, fallback, categoryRow, options = {}) {
     equipLevel,
     jobCategory: numberOrUndefined(itemFields.ClassJobCategory) ?? fallback?.jobCategory,
     stats,
+    ...specialBonusData,
     materiaSlots,
     ...(itemFields.SubStatCategory === 2 ? { equipLevelVariable: true } : {}),
     ...(typeof itemFields.IsUnique === "boolean" ? { unique: itemFields.IsUnique } : {}),

@@ -1,6 +1,6 @@
 // 快照容器带格式版本与循环冗余校验码；装备目录单独存放，以便按需解码单件装备。
 const MAGIC = new TextEncoder().encode("FFXIVGDB");
-const FORMAT_VERSION = 5;
+const FORMAT_VERSION = 6;
 const SECTION_IDS = [1, 2];
 const DIRECTORY_ENTRY_BYTES = 12;
 const HEADER_BYTES = 16 + SECTION_IDS.length * DIRECTORY_ENTRY_BYTES;
@@ -385,6 +385,20 @@ function validateGearForWrite(gear, jobIndexes, seenIds) {
       seenAdjustmentStats.add(stat);
     }
   }
+  const specialBonusFields = ['itemSpecialBonus', 'itemSpecialBonusParam', 'specialStats'];
+  const specialBonusPresence = specialBonusFields.map((field) => Object.hasOwn(gear, field));
+  if (specialBonusPresence.some(Boolean) && !specialBonusPresence.every(Boolean))
+    fail('装备 ' + gear.id + ' 的 ItemSpecialBonus 字段不完整');
+  if (specialBonusPresence.every(Boolean)) {
+    if (gear.itemSpecialBonus !== 11)
+      fail('装备 ' + gear.id + ' 的 ItemSpecialBonus 当前只支持 11');
+    assertUInt(gear.itemSpecialBonusParam, 32, '装备 ' + gear.id + ' ItemSpecialBonusParam');
+    if (!gear.specialStats || typeof gear.specialStats !== 'object' || Array.isArray(gear.specialStats))
+      fail('装备 ' + gear.id + ' 的 specialStats 无效');
+    for (const [stat, value] of Object.entries(gear.specialStats))
+      if (!STAT_CODES.has(stat) || !Number.isSafeInteger(value) || value < -32768 || value > 32767)
+        fail('装备 ' + gear.id + ' 的特殊属性 ' + stat + ' 超出二进制格式范围');
+  }
   if (gear.customParameters?.length > 255)
     fail('装备 ' + gear.id + ' 的 customParameters 数量超出 u8');
   for (const parameter of gear.customParameters ?? []) {
@@ -469,6 +483,8 @@ function encodeGearRecordBody(gear, row, jobIndexes, stringIndexes) {
   if (gear.unique === true) flags |= 2;
   if (gear.equipLevelVariable === true) flags |= 4;
   if (gear.resistanceWeaponAdjust) flags |= 8;
+  const hasSpecialBonus = Object.hasOwn(gear, 'itemSpecialBonus');
+  if (hasSpecialBonus) flags |= 16;
   const customParameters = gear.customParameters ?? [];
   let statMask = 0;
   for (const stat of STAT_NAMES)
@@ -505,6 +521,17 @@ function encodeGearRecordBody(gear, row, jobIndexes, stringIndexes) {
     writer.u8(adjustment.stats.length, 'ResistanceWeaponAdjust 属性数量');
     for (const stat of adjustment.stats)
       writer.u8(RESISTANCE_WEAPON_STAT_CODES.get(stat), 'ResistanceWeaponAdjust 属性代码');
+  }
+
+  if (hasSpecialBonus) {
+    let specialStatMask = 0;
+    for (const stat of STAT_NAMES)
+      if (Object.hasOwn(gear.specialStats, stat)) specialStatMask |= 1 << STAT_CODES.get(stat);
+    writer.u32(gear.itemSpecialBonus, '装备 ItemSpecialBonus');
+    writer.u32(gear.itemSpecialBonusParam, '装备 ItemSpecialBonusParam');
+    writer.u32(specialStatMask, '装备特殊属性掩码');
+    for (const stat of STAT_NAMES)
+      if (specialStatMask & (1 << STAT_CODES.get(stat))) writer.i16(gear.specialStats[stat], '装备特殊属性 ' + stat);
   }
 
   writer.varUint(stringIndexes.get(row.name), '装备名称字符串序号');
@@ -895,7 +922,7 @@ function decodeGearRecord(recordIndex, entry, endOffset, section, strings, templ
   const flags = reader.u8();
   const jobCount = reader.u8();
   if (slotCode >= SLOT_NAMES.length) fail('装备槽位代码无效');
-  if (flags & ~15) fail('装备标志含保留位');
+  if (flags & ~31) fail('装备标志含保留位');
   if (jobCount > reader.bytes.byteLength - reader.offset)
     fail('装备职业数量超出记录长度');
   const jobs = new Array(jobCount);
@@ -954,6 +981,20 @@ function decodeGearRecord(recordIndex, entry, endOffset, section, strings, templ
     resistanceWeaponAdjust = { maxTotalStats, maxEachStat, stats };
   }
 
+  let itemSpecialBonus;
+  let itemSpecialBonusParam;
+  let specialStats;
+  if (flags & 16) {
+    itemSpecialBonus = reader.u32();
+    if (itemSpecialBonus !== 11) fail('装备 ItemSpecialBonus 当前只支持 11');
+    itemSpecialBonusParam = reader.u32();
+    const specialStatMask = reader.u32();
+    if (specialStatMask & ~((1 << STAT_NAMES.length) - 1)) fail('装备特殊属性掩码含未知属性');
+    specialStats = {};
+    for (let statCode = 0; statCode < STAT_NAMES.length; statCode++)
+      if (specialStatMask & (1 << statCode)) specialStats[STAT_NAMES[statCode]] = reader.i16();
+  }
+
   const nameIndex = reader.varUint();
   if (nameIndex >= strings.length) fail('装备名称字符串序号越界');
   const name = readString(strings, nameIndex, '装备 name');
@@ -1002,6 +1043,11 @@ function decodeGearRecord(recordIndex, entry, endOffset, section, strings, templ
   if (flags & 4) gear.equipLevelVariable = true;
   if (customParameterCount) gear.customParameters = customParameters;
   if (resistanceWeaponAdjust) gear.resistanceWeaponAdjust = resistanceWeaponAdjust;
+  if (itemSpecialBonus !== undefined) {
+    gear.itemSpecialBonus = itemSpecialBonus;
+    gear.itemSpecialBonusParam = itemSpecialBonusParam;
+    gear.specialStats = specialStats;
+  }
   if (sourcePresent) gear.source = source;
   const weaponDamage = stats.PDMG ?? stats.MDMG;
   if (weaponDamage !== undefined) gear.weaponDamage = weaponDamage;

@@ -33,6 +33,7 @@ import {
   type PreparedSearch,
   type SolverGear,
 } from "./context.ts";
+import { withDomainItemSpecialBonusDefaults } from "../item-special-bonus.ts";
 
 function normalizedCommonSlots(commonSlots: readonly CommonGearSlot[]): {
   slots: string[];
@@ -62,6 +63,10 @@ export async function runJointOptimizationLocally(
   config: JointOptimizationConfig,
   options: SearchOptions = {},
 ): Promise<JointOptimizationResult | undefined> {
+  config = {
+    ...config,
+    jobs: config.jobs.map(withDomainItemSpecialBonusDefaults),
+  };
   throwIfAborted(options.signal);
   if (config.jobs.length < 2)
     throw new RangeError("多职业联合搜索至少需要两个职业");
