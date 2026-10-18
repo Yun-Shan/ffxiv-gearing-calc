@@ -1,4 +1,5 @@
 import { speedAttributeLabel } from "@/ui/services/labels";
+import { clanLabel } from "@/ui/services/clans";
 import {
   foods,
   jobSchemas,
@@ -56,6 +57,10 @@ export function conditionRows(
   calculationLevel?: number,
 ) {
   return [
+    {
+      label: "种族",
+      value: clanLabel(draft.range.clanIndex),
+    },
     {
       label: "装备品级",
       value: draft.range.minItemLevel + "–" + draft.range.maxItemLevel,

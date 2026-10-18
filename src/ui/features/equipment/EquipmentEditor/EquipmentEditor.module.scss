@@ -41,9 +41,19 @@
   margin: 0;
   font-size: 0.95rem;
 }
-.controls {
-  display: grid;
-  gap: 4px;
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.titleRow > h3 {
+  flex: none;
+  white-space: nowrap;
+}
+.titleRow > .pickerRow {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 .list {
   flex: 1;

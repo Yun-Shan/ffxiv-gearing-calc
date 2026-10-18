@@ -47,6 +47,7 @@ function makeExactOptions(
 ): ExactMipOptions {
   const jobId = config.jobId;
   const schema = jobSchemas[jobId];
+  const clanIndex = config.clanIndex ?? 0;
   const speedStat = getSpeedStat(schema);
   const toughnessAttributeId = schema.stats.includes("TEN")
     ? attributeIndex.get("TEN")
@@ -54,7 +55,7 @@ function makeExactOptions(
   const speedAttributeId = attributeIndex.get(speedStat);
   if (speedAttributeId === undefined)
     throw new Error(`职业 ${jobId} 缺少 ${speedStat} 搜索坐标`);
-  const baseStats = calculateBaseStats(schema, jobLevel);
+  const baseStats = calculateBaseStats(schema, jobLevel, clanIndex);
   const constraints = {
     ...(config.gcdTarget !== undefined ? { gcd: config.gcdTarget } : {}),
     ...(config.gcdChoices !== undefined
@@ -112,6 +113,7 @@ function makeExactOptions(
   return markCanonicalEvaluatorCandidateUpperBound({
     job: jobId,
     jobLevel,
+    clanIndex,
     attributeIds,
     statIndexes,
     slots: slots.map((slot) => slot.candidates),
@@ -122,18 +124,18 @@ function makeExactOptions(
     constraints,
     speedAttributeId,
     ...(toughnessAttributeId !== undefined ? { toughnessAttributeId } : {}),
-    gcdToSpeedRange: (gcd) => equippedSpeedRangeForGcd(jobId, jobLevel, gcd),
+    gcdToSpeedRange: (gcd) => equippedSpeedRangeForGcd(jobId, jobLevel, gcd, clanIndex),
     ...(toughnessAttributeId !== undefined
       ? {
           toughnessPercentToMinimum: (percent: number) =>
-            equippedToughnessForMitigationPercent(jobId, jobLevel, percent),
+            equippedToughnessForMitigationPercent(jobId, jobLevel, percent, clanIndex),
         }
       : {}),
     evaluationFunction: (attributes) => {
       const contributions: Stats = {};
       for (const [stat, index] of attributeIndex)
         contributions[stat] = attributes[index] ?? 0;
-      const effects = equippedEffects(jobId, jobLevel, contributions);
+      const effects = equippedEffects(jobId, jobLevel, contributions, clanIndex);
       return effects === undefined
         ? undefined
         : { damage: effects.damage, gcd: effects.gcd };
@@ -225,6 +227,7 @@ export function prepareSearch(
     jobId: config.jobId,
     jobLevel,
     jobSchema: jobSchemas[config.jobId],
+    clanIndex: config.clanIndex ?? 0,
     objective: config.objective ?? "damage",
     slots,
     foods: solverFoods,

@@ -33,6 +33,9 @@ export function SearchSelect<T>({
   value,
   onSelect,
   onClear,
+  onOpenChange,
+  onItemHighlighted,
+  popupRef,
   disabled = false,
   virtualized = false,
 }: {
@@ -50,6 +53,12 @@ export function SearchSelect<T>({
   value?: T;
   onSelect(gear: T): void;
   onClear?: () => void;
+  onOpenChange?(open: boolean): void;
+  onItemHighlighted?(
+    item: T | undefined,
+    details: { reason: string; index: number },
+  ): void;
+  popupRef?: Ref<HTMLDivElement>;
   disabled?: boolean;
   virtualized?: boolean;
 }) {
@@ -81,17 +90,12 @@ export function SearchSelect<T>({
     <Combobox.Root
       items={options}
       virtualized={virtualized}
-      onItemHighlighted={
-        virtualized
-          ? (_item, { reason, index }) => {
-              if (index >= 0 && reason !== "pointer") {
-                queueMicrotask(() =>
-                  virtualListRef.current?.scrollToIndex(index),
-                );
-              }
-            }
-          : undefined
-      }
+      onItemHighlighted={(item, { reason, index }) => {
+        if (virtualized && index >= 0 && reason !== "pointer") {
+          queueMicrotask(() => virtualListRef.current?.scrollToIndex(index));
+        }
+        onItemHighlighted?.(item, { reason, index });
+      }}
       value={value ?? null}
       itemToStringLabel={getLabel}
       filter={(item, query) =>
@@ -104,6 +108,7 @@ export function SearchSelect<T>({
       itemToStringValue={getKey}
       isItemEqualToValue={(item, selected) => getKey(item) === getKey(selected)}
       disabled={disabled}
+      onOpenChange={onOpenChange}
       onValueChange={(gear) => {
         if (gear) onSelect(gear);
         else onClear?.();
@@ -142,6 +147,7 @@ export function SearchSelect<T>({
       <Combobox.Portal>
         <Combobox.Positioner className={styles.positioner} sideOffset={4}>
           <Combobox.Popup
+            ref={popupRef}
             className={`${styles.popup} ${virtualized ? styles.virtualPopup : ""}`}
           >
             <Combobox.Empty>

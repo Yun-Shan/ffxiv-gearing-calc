@@ -1,6 +1,6 @@
 import { EquipmentIcon } from "@/ui/components/equipment-icon/EquipmentIcon";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
-import { equipmentIconId } from "@/ui/services/equipment-icons";
+import { itemIconId } from "@/ui/services/item-icons";
 import { useState, type CSSProperties } from "react";
 import { Popover } from "@base-ui/react/popover";
 import { statName, statValue, gearSlotLabels } from "@/ui/services/labels";
@@ -104,7 +104,7 @@ function ReplacementPopover({
                       name={replacement.name}
                       level={replacement.level}
                       source={replacement.source}
-                      iconId={equipmentIconId(replacement.itemId)}
+                      iconId={itemIconId(replacement.itemId)}
                       selected={replacement.replacementSelected}
                       nameSuffix={
                         replacement.replacementDisabled ? (
@@ -227,12 +227,10 @@ export function GearTableView({ rows }: { rows: readonly GearTableRow[] }) {
                 <td>
                   {item.kind === "summary" ? null : (
                     <div className={styles.itemCell}>
-                      {item.kind === "gear" && (
-                        <EquipmentIcon
-                          iconId={equipmentIconId(item.itemId)}
-                          className={styles.equipmentIcon}
-                        />
-                      )}
+                      <EquipmentIcon
+                        iconId={itemIconId(item.itemId)}
+                        className={styles.equipmentIcon}
+                      />
                       <div className={styles.itemText}>
                         <strong
                           className={

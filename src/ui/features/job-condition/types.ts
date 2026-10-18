@@ -7,6 +7,8 @@ export interface SearchRangeDraft {
   minItemLevel: number;
   maxItemLevel: number;
   sync: SyncItemLevelDraft;
+  /** 族群基础属性索引；默认 0（人族·中原之民）。 */
+  clanIndex: number;
 }
 
 export type GcdDraft =
@@ -52,6 +54,7 @@ export type GcdAnalysisInput = Pick<
   | "speedMin"
   | "speedMax"
   | "syncLevel"
+  | "clanIndex"
   | "minTenacity"
   | "toughnessMin"
   | "toughnessMinPercent"
@@ -75,6 +78,7 @@ export interface CompiledJobCondition {
     | "minItemLevel"
     | "maxItemLevel"
     | "syncLevel"
+    | "clanIndex"
     | "gcdTarget"
     | "gcdChoices"
     | "speedMin"

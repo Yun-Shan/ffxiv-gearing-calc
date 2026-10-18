@@ -258,6 +258,7 @@ function assembleGear(
   slot: GearSlot,
   jobId: JobId,
   characterLevel: number,
+  calculationLevel: number,
   syncLevel?: number,
 ): MeldedGear {
   if (!Number.isSafeInteger(input.id) || input.id <= 0) {
@@ -280,10 +281,18 @@ function assembleGear(
     ...gear,
     stats: concretizeGearStats(gear.stats, jobSchemas[jobId]),
   };
-  const melds = regularMelds(resolvedGear, input, jobId, characterLevel, syncLevel);
+  // 穿戴资格按职业上限判定；装备同步按参考实现的 store.jobLevel
+  // （同步搜索中即同步映射等级）计算。
+  const melds = regularMelds(
+    resolvedGear,
+    input,
+    jobId,
+    calculationLevel,
+    syncLevel,
+  );
   const finalStats = resolvedGear.customParameters !== undefined || resolvedGear.resistanceWeaponAdjust !== undefined
-    ? customFinalStats(resolvedGear, input.customStats, characterLevel, syncLevel)
-    : mergeCandidateStats(resolvedGear, melds, characterLevel, syncLevel);
+    ? customFinalStats(resolvedGear, input.customStats, calculationLevel, syncLevel)
+    : mergeCandidateStats(resolvedGear, melds, calculationLevel, syncLevel);
   const weaponStat = jobSchemas[jobId].mainStat === "INT" || jobSchemas[jobId].mainStat === "MND"
     ? "MDMG"
     : "PDMG";
@@ -315,6 +324,7 @@ function customFinalStats(
 function assembleFullGear(
   input: FixedGearsetInput,
   characterLevel: number,
+  calculationLevel: number,
 ): MeldedGear[] {
   const requiredSlots = slotsForJob(input.jobId);
   if (input.gears.length !== requiredSlots.length) {
@@ -349,6 +359,7 @@ function assembleFullGear(
       slot,
       input.jobId,
       characterLevel,
+      calculationLevel,
       input.syncLevel,
     ),
   );
@@ -389,7 +400,7 @@ export function calculateFixedGearset(input: FixedGearsetInput): FixedGearsetRes
   const { characterLevel, calculationLevel } = validateInput(input);
   const food = foods.find(({ id }) => id === input.foodId);
   if (food === undefined) return fail(`当前游戏数据中不存在食物 ${input.foodId}`);
-  const gear = assembleFullGear(input, characterLevel);
+  const gear = assembleFullGear(input, characterLevel, calculationLevel);
   const job = jobSchemas[input.jobId];
   const baseStats = calculateBaseStats(job, calculationLevel);
   const gearStats = addStats(...gear.map(({ finalStats }) => finalStats));

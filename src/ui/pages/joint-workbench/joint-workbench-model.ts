@@ -19,9 +19,11 @@ import {
   type OptimizationResult,
 } from "@/domain";
 import {
+  deriveWorkbenchValidation,
   gcdAnalysisInputFromConfig,
   gcdAnalysisKey,
   jobConditionDraftFromConfig,
+  validateSearchRangeDraft,
 } from "@/ui/features/job-condition";
 import type {
   ValidationIssue,
@@ -30,8 +32,8 @@ import type {
 import type { GearTableRow } from "@/ui/components/results/gear-table/GearTable";
 import { buildResultMetricEntry } from "@/ui/components/results/core-metric-bar/CoreMetricBar";
 import { commonGearSlotLabels } from "@/ui/services/labels";
+import { clanLabel } from "@/ui/services/clans";
 import { makeConfig } from "@/ui/services/app-config";
-import { deriveWorkbenchValidation } from "@/ui/features/job-condition";
 import type {
   JobConditionDraft,
   JointWorkbenchDraft,
@@ -61,6 +63,10 @@ export function objectiveLabel(
 }
 
 export function sharedIssues(draft: JointWorkbenchDraft): ValidationIssue[] {
+  const rangeIssues = validateSearchRangeDraft(draft.shared.range, [
+    "shared",
+    "range",
+  ]).issues;
   const validSlots =
     draft.jobs.length === 0
       ? new Set<GearSlot>()
@@ -69,18 +75,21 @@ export function sharedIssues(draft: JointWorkbenchDraft): ValidationIssue[] {
             common.add(slot);
           return common;
         }, new Set<GearSlot>());
-  return draft.shared.equipment.commonSlots
-    .filter((slot) =>
-      slot === "rings"
-        ? !(validSlots.has("ring") && validSlots.has("ring2"))
-        : !validSlots.has(slot),
-    )
-    .map((slot) => ({
-      code: "shared.slot.unsupported",
-      message:
-        commonGearSlotLabels[slot] + "不是所有已选职业都支持的共享部位。",
-      path: ["shared", "equipment", "commonSlots", slot],
-    }));
+  return [
+    ...rangeIssues,
+    ...draft.shared.equipment.commonSlots
+      .filter((slot) =>
+        slot === "rings"
+          ? !(validSlots.has("ring") && validSlots.has("ring2"))
+          : !validSlots.has(slot),
+      )
+      .map((slot) => ({
+        code: "shared.slot.unsupported",
+        message:
+          commonGearSlotLabels[slot] + "不是所有已选职业都支持的共享部位。",
+        path: ["shared", "equipment", "commonSlots", slot],
+      })),
+  ];
 }
 
 export function deriveJointValidation(
@@ -96,6 +105,7 @@ export function deriveJointValidation(
       draft: jobConditionForEffectiveFood(draft, jobId),
       runtime: runtime[jobId] ?? { gcdAnalysis: { status: "idle" as const } },
       expectedGcdKey: gcdAnalysisKey(gcdAnalysisInputFromConfig(jobConfig)),
+      skipRange: true,
     };
   });
   return deriveWorkbenchValidation({ jobs, sharedIssues: sharedIssues(draft) });
@@ -222,6 +232,19 @@ export function jointSharedSummaryRows(
     ),
   };
   return [
+    {
+      label: "种族",
+      value: clanLabel(first.clanIndex ?? 0),
+    },
+    {
+      label: "装备品级",
+      value: first.minItemLevel + "–" + first.maxItemLevel,
+    },
+    {
+      label: "同步品级",
+      value:
+        first.syncLevel === undefined ? "未启用" : String(first.syncLevel),
+    },
     {
       label: "共享部位",
       value:

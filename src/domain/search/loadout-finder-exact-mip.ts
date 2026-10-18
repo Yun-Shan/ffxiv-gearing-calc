@@ -144,6 +144,8 @@ export type ExactMipResult = LoadoutSearchResult & {
 export type ExactMipOptions = {
   job: JobId;
   jobLevel: JobLevel;
+  /** 族群基础属性索引；未提供时使用 0（人族·中原之民）。 */
+  clanIndex?: number;
   attributeIds: readonly number[];
   statIndexes: ReadonlyMap<Stat, number>;
   slots: readonly (readonly EquipInfo[])[];
@@ -5665,6 +5667,7 @@ async function prepareExactMipModel(
     options.job,
     options.jobLevel,
     options.statIndexes,
+    options.clanIndex ?? 0,
   );
   const zeroFactors = factorEvaluator(new Array<number>(options.attributeIds.length).fill(0));
   if (zeroFactors === undefined) throw new Error(`职业 ${options.job} 没有整数伤害因子公式`);
@@ -6137,7 +6140,7 @@ export async function findBestLoadoutExactMip(
         pruning = pruneCandidatesByIncumbentUpperBound(
           options,
           initialModel,
-          createIntegerDamageFactorEvaluator(options.job, options.jobLevel, options.statIndexes),
+          createIntegerDamageFactorEvaluator(options.job, options.jobLevel, options.statIndexes, options.clanIndex ?? 0),
           candidateUseDps,
           candidateGreedyStart,
           boundDeadline,

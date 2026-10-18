@@ -45,6 +45,8 @@ export type SerializedFoodColumns = {
 export type SerializedBaselineOptions = {
   job: ExactMipOptions["job"];
   jobLevel: number;
+  /** 族群基础属性索引；未提供时使用 0（人族·中原之民）。 */
+  clanIndex?: number;
   attributeIds: readonly number[];
   statIndexes: readonly (readonly [Stat, number])[];
   slots: SerializedEquipmentColumns;
@@ -266,6 +268,7 @@ function serializedOptions(
   return {
     job: options.job,
     jobLevel: options.jobLevel,
+    clanIndex: options.clanIndex ?? 0,
     attributeIds,
     statIndexes: [...options.statIndexes],
     slots: {

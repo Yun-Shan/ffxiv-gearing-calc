@@ -1,4 +1,5 @@
 export * from "./data";
+export * from "./clans";
 export * from "./jobs";
 export * from "./optimizer";
 export * from "./rules";

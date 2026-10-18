@@ -1,5 +1,5 @@
 import { generateUiJobIcons } from "./generate-ui-job-icons.mjs";
-import { generateUiGearIcons } from "./generate-ui-gear-icons.mjs";
+import { generateUiItemIcons } from "./generate-ui-item-icons.mjs";
 import { execFileSync } from "node:child_process";
 import { access, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -249,6 +249,32 @@ function buildMcpSyncLevels(snapshot) {
   for (const [itemLevel, jobLevel] of [...ownerByItemLevel].sort((a, b) => a[0] - b[0]))
     (result[jobLevel] ??= []).push(itemLevel);
   return { value: result, usedRowIds };
+}
+
+const syncLevelFallbackJobLevels = [50, 60, 70, 80, 90, 100];
+
+/**
+ * 参考实现以 store.jobLevel 对应的 ParamGrow.ItemLevelSync 作为
+ * 同步分组未精确命中时的 fallback。
+ */
+function buildMcpSyncLevelFallback(snapshot) {
+  const rows = snapshotRows(snapshot, "ParamGrow");
+  return Object.fromEntries(syncLevelFallbackJobLevels.map((jobLevel) => {
+    const itemLevel = rows[jobLevel]?.fields?.ItemLevelSync;
+    if (!Number.isSafeInteger(itemLevel) || itemLevel < 1)
+      throw new Error(`MCP ParamGrow ${jobLevel} 级的 ItemLevelSync 无效`);
+    return [jobLevel, itemLevel];
+  }));
+}
+
+function compareSyncLevelFallbackWithReference(actual, reference, maxSupportedJobLevel) {
+  for (const [jobLevel, itemLevel] of Object.entries(actual)) {
+    // 参考项目最高等级的值是为后续版本预留的预测值；当前满级不会触发同级同步，
+    // 因此参考值只用于最高等级以下的对照。
+    if (Number(jobLevel) >= maxSupportedJobLevel) continue;
+    if (reference[jobLevel] !== itemLevel)
+      throw new Error(`同步等级 fallback 与参考项目 ${jobLevel} 级不一致`);
+  }
 }
 
 function validateSyncLevelMappings(syncLevels, syncLevelOfJobLevels, levelCaps, jobLevelModifiers) {
@@ -1130,10 +1156,15 @@ function validate(payload) {
     source.kind === "mcp" && source.sheet === "ContentFinderCondition" &&
     source.fields?.includes("ClassJobLevelRequired") && source.rowIds?.length,
   ) || !payload.provenance.sources?.some((source) =>
+    source.kind === "mcp" && source.sheet === "ParamGrow" &&
+    source.fields?.includes("ItemLevelSync") &&
+    source.rowIds?.length === syncLevelFallbackJobLevels.length &&
+    source.note?.includes("syncLevelOfJobLevels"),
+  ) || !payload.provenance.sources?.some((source) =>
     source.kind === "reference" && source.sourceFiles?.includes("src/game.ts") &&
     source.note?.includes("syncLevelOfJobLevels"),
   ))
-    throw new Error("同步品级映射缺少 MCP CFC 或参考 fallback 来源记录");
+    throw new Error("同步品级映射缺少 MCP CFC 分组、MCP ParamGrow fallback 或参考对照来源记录");
   if (payload.gears.length < 1000) throw new Error(`装备数量异常：${payload.gears.length}`);
   if (payload.foods.length < 100) throw new Error(`食物数量异常：${payload.foods.length}`);
   if (Object.keys(payload.jobSchemas).length !== supportedJobs.length)
@@ -1276,6 +1307,7 @@ let foods = rawFoods.filter((food) => food.slot === -1).map(normalizeFood);
 let effectiveLevelCaps = levelCaps;
 let effectiveSlotCaps = slotCaps;
 let effectiveSyncLevels;
+let effectiveSyncLevelOfJobLevels;
 let materias = Object.fromEntries(
   combatMateriaStats.map((stat) => [stat, constants.materias[stat]]),
 );
@@ -1286,6 +1318,7 @@ if (!mcpSnapshot)
 let mcpSummary = "MCP 查询产物未找到，使用参考项目数据";
 if (mcpSnapshot) {
   const syncLevelMerge = buildMcpSyncLevels(mcpSnapshot);
+  const syncLevelFallback = buildMcpSyncLevelFallback(mcpSnapshot);
   const gearMerge = mergeMcpGearData(gears, mcpSnapshot, referenceSource);
   gears.splice(0, gears.length, ...gearMerge.result);
   const foodMerge = mergeMcpFoodData(foods, mcpSnapshot);
@@ -1297,13 +1330,19 @@ if (mcpSnapshot) {
   const materiaMerge = mergeMcpMaterias(materias, mcpSnapshot);
   materias = materiaMerge.value;
   effectiveSyncLevels = syncLevelMerge.value;
+  effectiveSyncLevelOfJobLevels = syncLevelFallback;
   validateSyncLevelMappings(
     effectiveSyncLevels,
-    constants.syncLevelOfJobLevels,
+    effectiveSyncLevelOfJobLevels,
     effectiveLevelCaps,
     constants.jobLevelModifiers,
   );
   compareSyncLevelsWithReference(effectiveSyncLevels, referenceSyncLevels);
+  compareSyncLevelFallbackWithReference(
+    effectiveSyncLevelOfJobLevels,
+    constants.syncLevelOfJobLevels,
+    Math.max(...Object.keys(constants.jobLevelModifiers).map(Number)),
+  );
   const classJobRowIds = Object.values(mcpSnapshot.queryPlan.classJobIds).map(Number);
   const syncLevelQuery = mcpSnapshot.queries.find((query) =>
     query.method === "list_rows" && query.sheet === "ContentFinderCondition",
@@ -1331,13 +1370,22 @@ if (mcpSnapshot) {
     sourceFiles: ["data/convert.ts", "data/out/syncLevels.js"],
     note: "syncLevels 按参考项目 data/convert.ts 转换规则从 MCP CFC 行生成，并逐值核对 data/out/syncLevels.js；按 rowId 升序处理，相同品级由后行覆盖。",
   };
-  const syncLevelFallbackSource = {
+  const syncLevelFallbackSource = mcpSource({
+    sheet: "ParamGrow",
+    fields: ["ItemLevelSync"],
+    rowIds: syncLevelFallbackJobLevels,
+    gameVersion: mcpSnapshot.gameVersion,
+    validatedVersion: mcpSnapshot.validatedVersion,
+    queriedAt: paramGrowQuery.queriedAt,
+    note: "syncLevelOfJobLevels 由 ParamGrow 对应职业等级行的 ItemLevelSync 提供，作为同步分组未精确命中时的 fallback。",
+  });
+  const syncLevelFallbackReferenceSource = {
     kind: "reference",
     repository,
     commit,
     importedAt: importStartedAt,
     sourceFiles: ["src/game.ts"],
-    note: "syncLevelOfJobLevels 按职业等级到品级方向导入参考项目的精确表，作为 CFC 同步组未精确命中时的 fallback。",
+    note: "参考项目 src/game.ts 的 syncLevelOfJobLevels 仅用于最高职业等级以下的 fallback 对照；最高等级的值是为后续版本预留的预测值，当前满级不会触发同级同步，因此不要求与该值一致。",
   };
   const variableItemLevelReferenceSource = {
     kind: "reference",
@@ -1347,15 +1395,6 @@ if (mcpSnapshot) {
     sourceFiles: ["data/convert.ts"],
     note: "参考项目 data/convert.ts:140 将 Item.SubStatCategory 为 2 的装备映射为 equipLevelVariable；当前装备标志原值由同版本 MCP Item.SubStatCategory 查询提供。",
   };
-  const paramGrowAuditSource = mcpSource({
-    sheet: "ParamGrow",
-    fields: ["ItemLevelSync"],
-    rowIds: [50, 60, 70, 80, 90, 100],
-    gameVersion: mcpSnapshot.gameVersion,
-    validatedVersion: mcpSnapshot.validatedVersion,
-    queriedAt: paramGrowQuery.queriedAt,
-    note: `仅作语义审计，不用于同步品级分组；MCP ParamGrow 100 级 ItemLevelSync=${snapshotRows(mcpSnapshot, "ParamGrow")[100]?.fields?.ItemLevelSync}，参考职业等级 fallback 为 ${constants.syncLevelOfJobLevels[100]}。`,
-  });
   sourceRecords.push(
     snapshotSource(mcpSnapshot, "Item", itemCoreReturnFields, gearMerge.usedIds),
     ...itemFieldQuerySources(mcpSnapshot, "SubStatCategory", gearMerge.usedIds),
@@ -1382,9 +1421,9 @@ if (mcpSnapshot) {
       queriedAt: syncLevelQuery.queriedAt,
       note: "按完整 CFC 行构建同步品级分组；仅采用职业等级不低于 50 的整十等级，按 rowId 升序覆盖重复品级。",
     }),
-    paramGrowAuditSource,
-    syncLevelReferenceSource,
     syncLevelFallbackSource,
+    syncLevelFallbackReferenceSource,
+    syncLevelReferenceSource,
     variableItemLevelReferenceSource,
     bluDamageReferenceSource,
   );
@@ -1396,8 +1435,8 @@ if (mcpSnapshot) {
 }
 const payload = {
   version: mcpSnapshot
-    ? `mcp-${mcpSnapshot.gameVersion}-upstream-${commit.slice(0, 12)}-level-basis-v2`
-    : `upstream-${commit.slice(0, 12)}-level-basis-v2`,
+    ? `mcp-${mcpSnapshot.gameVersion}-upstream-${commit.slice(0, 12)}-level-basis-v3`
+    : `upstream-${commit.slice(0, 12)}-level-basis-v3`,
   provenance: {
     repository,
     commit,
@@ -1419,13 +1458,13 @@ const payload = {
   jobSchemas: normalizeJobSchemas(constants.jobSchemas, mcpSnapshot),
   jobLevelModifiers: constants.jobLevelModifiers,
   syncLevels: effectiveSyncLevels,
-  syncLevelOfJobLevels: constants.syncLevelOfJobLevels,
+  syncLevelOfJobLevels: effectiveSyncLevelOfJobLevels,
 };
 validate(payload);
 await mkdir(resolve(outputPath, ".."), { recursive: true });
 const generated = await encodeGeneratedData(payload);
 if (mcpSnapshot) await generateUiJobIcons(mcpSnapshot);
-if (mcpSnapshot) await generateUiGearIcons(mcpSnapshot, gears.map(gear => gear.id));
+if (mcpSnapshot) await generateUiItemIcons(mcpSnapshot);
 await writeFile(outputPath, generated.bytes);
 console.log(
   `Imported ${generated.gearCount} gears, ${payload.foods.length} foods and ${supportedJobs.length} jobs from ${commit.slice(0, 12)}. ${mcpSummary}`,

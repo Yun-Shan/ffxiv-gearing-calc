@@ -216,6 +216,7 @@ export function buildResultGearTableRows(
     item: {
       kind: "food",
       key: `food-${result.food.id}`,
+      itemId: result.food.id,
       name: result.food.name,
       level: result.food.level,
       source: "上游食物数据",

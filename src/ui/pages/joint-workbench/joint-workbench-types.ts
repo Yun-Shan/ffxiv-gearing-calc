@@ -6,16 +6,40 @@ import type {
 import type { JointSearchProgressState } from "./joint-workbench-progress-types";
 import type {
   FoodDraft,
+  GcdDraft,
   JobConditionDraft,
   JobConditionRuntime,
+  SearchRangeDraft,
+  TankConditionDraft,
 } from "@/ui/features/job-condition/types";
 import type { JointEquipmentDraft } from "@/ui/features/equipment/types";
 
-export type { FoodDraft, JobConditionDraft, JobConditionRuntime };
+export type {
+  FoodDraft,
+  GcdDraft,
+  JobConditionDraft,
+  JobConditionRuntime,
+  SearchRangeDraft,
+  TankConditionDraft,
+};
 
 export type JointEditorTarget = "shared" | JobId;
 
+/**
+ * 联合条件中每个职业只保留职业级条件；搜索范围与食物策略属于共享配置。
+ * 编译时使用 JointSharedDraft.range 生成每个职业的完整 OptimizationConfig。
+ */
+export type JointJobConditionDraft = Pick<
+  JobConditionDraft,
+  "gcd" | "food" | "tank"
+>;
+
+export type JointJobConditionDraftChange =
+  | JointJobConditionDraft
+  | ((current: JointJobConditionDraft) => JointJobConditionDraft);
+
 export interface JointSharedDraft {
+  range: SearchRangeDraft;
   foodStrategy: "shared" | "independent";
   food: FoodDraft;
   equipment: JointEquipmentDraft;
@@ -23,7 +47,7 @@ export interface JointSharedDraft {
 
 export interface JointWorkbenchDraft {
   jobs: readonly JobId[];
-  conditions: Readonly<Record<JobId, JobConditionDraft>>;
+  conditions: Readonly<Record<JobId, JointJobConditionDraft>>;
   shared: JointSharedDraft;
 }
 

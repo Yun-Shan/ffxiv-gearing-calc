@@ -28,6 +28,7 @@ export interface GearTableGearItem {
 export interface GearTableFoodItem {
   kind: "food";
   key: string;
+  itemId?: number;
   name: string;
   level?: number;
   source?: string;

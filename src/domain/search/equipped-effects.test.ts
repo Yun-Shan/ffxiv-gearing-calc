@@ -68,6 +68,11 @@ test("tier formulas cover main stat, tank VIT, all damage substats, and both spe
   ] as const) {
     assert.ok(equippedAttributeTier(job, 100, speedStat, 0) >= 1000);
   }
+  const defaultClan = equippedEffects("SAM", 100, {})!;
+  const lowStrengthClan = equippedEffects("SAM", 100, {}, 4)!;
+  assert.ok(lowStrengthClan.damage < defaultClan.damage);
+  assert.deepEqual(equippedEffects("SAM", 100, {}, 0), defaultClan);
+  assert.throws(() => equippedEffects("SAM", 100, {}, 99), /族群序号无效/);
   for (const stat of ["CRT", "DET", "DHT", "TEN"] as const) {
     assert.ok(equippedAttributeTier("RDM", 100, stat, 0) >= 0);
   }

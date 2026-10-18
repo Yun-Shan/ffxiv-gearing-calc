@@ -1,4 +1,5 @@
 import { gameData } from "../data.ts";
+import { assertClanIndex, defaultClanIndex } from "../clans.ts";
 import type { JobId, LevelModifier, Stat, Stats } from "../types";
 
 export type Job = JobId;
@@ -60,14 +61,16 @@ export function createIntegerDamageFactorEvaluator(
   job: Job,
   jobLevel: JobLevel,
   statIndexes: ReadonlyMap<Stat, number>,
+  clanIndex: number = defaultClanIndex,
 ): IntegerDamageFactorEvaluator {
+  assertClanIndex(clanIndex);
   const schema = game.jobSchemas[job];
   const levelMod = game.jobLevelModifiers[jobLevel];
   if (schema === undefined) throw new Error(`未知职业: ${job}`);
   if (levelMod === undefined) throw new Error(`不支持的等级: ${jobLevel}`);
   if (schema.mainStat === undefined || schema.statModifiers === undefined ||
       schema.traitDamageMultiplier === undefined) return () => undefined;
-  const baseStats = getBaseStats(job, levelMod);
+  const baseStats = getBaseStats(job, levelMod, clanIndex);
   const mainStat = schema.mainStat;
   const statModifiers = schema.statModifiers;
   const traitMultiplier = schema.traitDamageMultiplier;
@@ -78,11 +81,11 @@ export function createIntegerDamageFactorEvaluator(
     const speedStat: Stat = schema.stats.includes("SKS")
       ? "SKS"
       : "SPS";
-    const attackTier = equippedAttributeTier(job, jobLevel, attackStat, stat(attackStat));
-    const crtTier = equippedAttributeTier(job, jobLevel, "CRT", stat("CRT"));
-    const detTier = equippedAttributeTier(job, jobLevel, "DET", stat("DET"));
-    const dhtTier = equippedAttributeTier(job, jobLevel, "DHT", stat("DHT"));
-    const tenTier = equippedAttributeTier(job, jobLevel, "TEN", stat("TEN"));
+    const attackTier = equippedAttributeTier(job, jobLevel, attackStat, stat(attackStat), clanIndex);
+    const crtTier = equippedAttributeTier(job, jobLevel, "CRT", stat("CRT"), clanIndex);
+    const detTier = equippedAttributeTier(job, jobLevel, "DET", stat("DET"), clanIndex);
+    const dhtTier = equippedAttributeTier(job, jobLevel, "DHT", stat("DHT"), clanIndex);
+    const tenTier = equippedAttributeTier(job, jobLevel, "TEN", stat("TEN"), clanIndex);
     const speedValue = (baseStats[speedStat] ?? 0) + stat(speedStat);
     const weaponBase = floor((levelMod.main * statModifiers[attackStat]!) / 1000);
     const gcdModifier = (jobLevel >= 80 && statModifiers.gcd) || 100;
@@ -112,6 +115,7 @@ export function equippedAttributeTier(
   jobLevel: JobLevel,
   stat: Stat,
   gearAndFoodValue: number,
+  clanIndex: number = defaultClanIndex,
 ): number {
   const schema = game.jobSchemas[job];
   if (schema === undefined) throw new Error(`未知职业: ${job}`);
@@ -123,7 +127,7 @@ export function equippedAttributeTier(
   }
 
   const { main, sub, div, det, detTrunc } = levelMod;
-  const baseStats = getBaseStats(job, levelMod);
+  const baseStats = getBaseStats(job, levelMod, clanIndex);
   const value = (baseStats[stat] ?? 0) + gearAndFoodValue;
   const attackMainStat = mainStat === "VIT" ? "STR" : mainStat;
 
@@ -175,7 +179,12 @@ function addStats(...items: EquippedStats[]): EquippedStats {
   return result;
 }
 
-function getBaseStats(job: Job, levelMod: LevelModifier): EquippedStats {
+function getBaseStats(
+  job: Job,
+  levelMod: LevelModifier,
+  clanIndex: number = defaultClanIndex,
+): EquippedStats {
+  assertClanIndex(clanIndex);
   const schema = game.jobSchemas[job];
   if (schema?.stats === undefined || schema.statModifiers === undefined) {
     return {};
@@ -197,7 +206,7 @@ function getBaseStats(job: Job, levelMod: LevelModifier): EquippedStats {
           ((schema.statModifiers as Partial<Record<Stat, number>>)[stat] ??
             100)) /
           100,
-      ) + (game.clanStats[stat]?.[0] ?? 0);
+      ) + (game.clanStats[stat]?.[clanIndex] ?? 0);
   }
   return stats;
 }
@@ -206,6 +215,7 @@ function calculateFromTotalStats(
   job: Job,
   jobLevel: JobLevel,
   equippedStats: EquippedStats,
+  clanIndex: number = defaultClanIndex,
 ): EquippedEffects | undefined {
   const schema = game.jobSchemas[job];
   if (schema === undefined) throw new Error(`未知职业: ${job}`);
@@ -241,7 +251,7 @@ function calculateFromTotalStats(
   const weaponDamage =
     floor((main * statModifiers[attackMainStat]!) / 1000) +
     ((mainStat === "MND" || mainStat === "INT" ? MDMG : PDMG) ?? 0) +
-    (job === "BLU" ? blueMageWeaponDamageAddition((equippedStats.INT ?? 0) - (getBaseStats(job, levelMod).INT ?? 0)) : 0);
+    (job === "BLU" ? blueMageWeaponDamageAddition((equippedStats.INT ?? 0) - (getBaseStats(job, levelMod, clanIndex).INT ?? 0)) : 0);
   const mainDamage =
     floor(
       ((mainStat === "VIT" ? levelMod.apTank : levelMod.ap) *
@@ -298,14 +308,16 @@ export function equippedEffects(
   job: Job,
   jobLevel: JobLevel,
   gearAndFoodStats: EquippedStats,
+  clanIndex: number = defaultClanIndex,
 ): EquippedEffects | undefined {
   const levelMod = game.jobLevelModifiers[jobLevel];
   if (levelMod === undefined) throw new Error(`不支持的等级: ${jobLevel}`);
-  const baseStats = getBaseStats(job, levelMod);
+  const baseStats = getBaseStats(job, levelMod, clanIndex);
   return calculateFromTotalStats(
     job,
     jobLevel,
     addStats(baseStats, gearAndFoodStats),
+    clanIndex,
   );
 }
 
@@ -318,10 +330,12 @@ export function createEquippedEffectsVectorEvaluator(
   job: Job,
   jobLevel: JobLevel,
   statIndexes: ReadonlyMap<Stat, number>,
+  clanIndex: number = defaultClanIndex,
 ): (attributes: readonly number[]) => EquippedEffects | undefined {
   const levelMod = game.jobLevelModifiers[jobLevel];
   if (levelMod === undefined) throw new Error(`不支持的等级: ${jobLevel}`);
-  const baseStats = getBaseStats(job, levelMod);
+  assertClanIndex(clanIndex);
+  const baseStats = getBaseStats(job, levelMod, clanIndex);
   const totalStats: EquippedStats = { ...baseStats };
   const mappedStats = [...statIndexes.entries()];
 
@@ -336,7 +350,7 @@ export function createEquippedEffectsVectorEvaluator(
     for (const [stat, index] of mappedStats) {
       totalStats[stat] = (baseStats[stat] ?? 0) + (attributes[index] ?? 0);
     }
-    return calculateFromTotalStats(job, jobLevel, totalStats);
+    return calculateFromTotalStats(job, jobLevel, totalStats, clanIndex);
   };
 }
 
@@ -346,8 +360,9 @@ export function createDamageGcdVectorEvaluator(
   jobLevel: JobLevel,
   statIndexes: ReadonlyMap<Stat, number>,
   _maxContributions?: readonly number[],
+  clanIndex: number = defaultClanIndex,
 ): DamageGcdVectorEvaluator {
-  const evaluate = createEquippedEffectsVectorEvaluator(job, jobLevel, statIndexes);
+  const evaluate = createEquippedEffectsVectorEvaluator(job, jobLevel, statIndexes, clanIndex);
   return (attributes) => {
     const effects = evaluate(attributes);
     return effects === undefined ? undefined : { damage: effects.damage, gcd: effects.gcd };
@@ -357,6 +372,7 @@ export function equippedSpeedRangeForGcd(
   job: Job,
   jobLevel: JobLevel,
   gcdSeconds: number,
+  clanIndex: number = defaultClanIndex,
 ): EquippedSpeedRange | undefined {
   if (!Number.isFinite(gcdSeconds) || gcdSeconds <= 0) {
     throw new RangeError("GCD 必须是正的有限秒数");
@@ -372,7 +388,7 @@ export function equippedSpeedRangeForGcd(
   const gcdAt = (speedContribution: number): number => {
     const effects = equippedEffects(job, jobLevel, {
       [speedStat]: speedContribution,
-    });
+    }, clanIndex);
     if (effects === undefined || !Number.isFinite(effects.gcd)) {
       throw new Error(`职业 ${job} 不支持 GCD 计算`);
     }
@@ -397,6 +413,7 @@ export function equippedToughnessForMitigationPercent(
   job: Job,
   jobLevel: JobLevel,
   mitigationPercent: number,
+  clanIndex: number = defaultClanIndex,
 ): number {
   if (!Number.isFinite(mitigationPercent) || mitigationPercent < 0) {
     throw new RangeError("坚韧减伤百分比必须是非负有限数字");
@@ -410,7 +427,7 @@ export function equippedToughnessForMitigationPercent(
   return firstNonnegativeInteger((toughnessContribution) => {
     const effects = equippedEffects(job, jobLevel, {
       TEN: toughnessContribution,
-    });
+    }, clanIndex);
     if (effects === undefined || !Number.isFinite(effects.tenMitigation)) {
       throw new Error(`职业 ${job} 不支持坚韧计算`);
     }

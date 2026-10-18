@@ -111,7 +111,11 @@ export function assembleResult(
 ): OptimizationResult {
   const selectedGear = resultGear(result, prepared);
   const food = resultFood(result, prepared);
-  const baseStats = calculateBaseStats(prepared.jobSchema, prepared.jobLevel);
+  const baseStats = calculateBaseStats(
+    prepared.jobSchema,
+    prepared.jobLevel,
+    prepared.clanIndex,
+  );
   const gearStats = addStats(...selectedGear.map((gear) => gear.finalStats));
   const unbuffedStats = addStats(baseStats, gearStats);
   const applicableFood = foodStatsForJob(food, config.jobId);
@@ -130,6 +134,7 @@ export function assembleResult(
     job: prepared.jobSchema,
     level: prepared.jobLevel,
     weaponDamage: stats[weaponStat] ?? 0,
+    clanIndex: prepared.clanIndex,
   });
   const damagePerSecond = effects.damage / effects.gcd;
   return {

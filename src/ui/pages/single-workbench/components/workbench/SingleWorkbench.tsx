@@ -43,6 +43,7 @@ import styles from "./SingleWorkbench.module.scss";
 function Summary({ draft }: { draft: SingleDraft }) {
   const rows = conditionRows(draft.condition, draft.jobId).filter((row) =>
     [
+      "种族",
       "装备品级",
       "同步品级",
       "GCD",

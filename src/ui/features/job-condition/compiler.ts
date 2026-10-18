@@ -27,6 +27,7 @@ export function compileJobCondition(
       draft.range.sync.mode === "enabled"
         ? draft.range.sync.itemLevel
         : undefined,
+    clanIndex: draft.range.clanIndex,
     gcdTarget: undefined,
     gcdChoices: draft.gcd.mode === "tiers" ? [...draft.gcd.tiers] : undefined,
     speedMin: draft.gcd.mode === "speed" ? draft.gcd.min : undefined,

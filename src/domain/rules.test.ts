@@ -77,7 +77,9 @@ describe("stat rules", () => {
     const base = calculateBaseStats(jobSchemas.SAM, 100);
     expect(base).toMatchObject({ STR: 494, CRT: 420, DET: 440, DHT: 420, SKS: 420 });
     expect(() => calculateBaseStats(jobSchemas.SAM, 999)).toThrow("不支持的职业等级");
-    expect(calculateBaseStats(jobSchemas.SAM, 100, 99).STR).toBe(492);
+    expect(() => calculateBaseStats(jobSchemas.SAM, 100, 99)).toThrow("族群序号无效");
+    expect(calculateBaseStats(jobSchemas.SAM, 100, 0).STR).toBe(494);
+    expect(calculateBaseStats(jobSchemas.SAM, 100, 4).STR).toBe(491);
     expect(calculateBaseStats({ ...jobSchemas.SAM, stats: ["PDMG"] }, 100).PDMG).toBe(0);
   });
   it("rejects unknown levels without substituting another level", () =>

@@ -52,6 +52,8 @@ export type PreparedSearch = {
   jobId: JobId;
   jobLevel: number;
   jobSchema: (typeof jobSchemas)[JobId];
+  /** 族群基础属性索引；结果还原与摘要使用同一值。 */
+  clanIndex: number;
   objective: "damage" | "dps";
   slots: SearchSlot[];
   foods: SolverFood[];

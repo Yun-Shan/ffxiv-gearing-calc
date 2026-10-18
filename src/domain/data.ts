@@ -1,4 +1,5 @@
 import { decodeGeneratedData } from "../data/binary-format.mjs";
+import { selectFoodCandidates } from "./food-candidates.ts";
 import type {
   DataProvenance,
   Food,
@@ -82,6 +83,8 @@ export const gears = gameData.gears;
 export const getGearAtRecordIndex = gameData.getGearAtRecordIndex;
 export const getGearById = gameData.getGearById;
 export const foods = gameData.foods;
+/** 搜索使用的食物候选；完整目录仍保留给分享导入与固定配装计算。 */
+export const searchFoods = selectFoodCandidates(foods);
 export const dataProvenance = gameData.provenance;
 export const defaultDataVersion = gameData.version;
 export const materiaStats = Object.keys(

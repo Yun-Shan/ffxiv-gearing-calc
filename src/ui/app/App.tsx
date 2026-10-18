@@ -4,20 +4,44 @@ import { JointWorkbenchPage } from "@/ui/pages/joint-workbench/JointWorkbenchPag
 import { SingleWorkbenchPage } from "@/ui/pages/single-workbench/SingleWorkbenchPage";
 import { LaboratoryPage } from "@/ui/pages/laboratory/LaboratoryPage";
 import { GearComparisonPage } from "@/ui/pages/gear-comparison/GearComparisonPage";
+import { FaqPage } from "@/ui/pages/faq/FaqPage";
+import { AboutPage } from "@/ui/pages/about/AboutPage";
 import { FeedbackProvider } from "@/ui/components/feedback/FeedbackProvider";
 import styles from "./App.module.scss";
+
+const routes: Record<string, AppPage> = {
+  "/single": "single",
+  "/lab": "lab",
+  "/joint": "joint",
+  "/gear-comparison": "gear-comparison",
+  "/faq": "faq",
+  "/about": "about",
+};
+
 function currentPage(): AppPage {
   const path = window.location.hash.startsWith("#/")
     ? window.location.hash.slice(1)
     : window.location.pathname;
-  return path === "/joint"
-    ? "joint"
-    : path === "/lab"
-      ? "lab"
-      : path === "/gear-comparison"
-        ? "gear-comparison"
-        : "single";
+  return routes[path] ?? "single";
 }
+
+function RouteView({ page }: { page: AppPage }) {
+  switch (page) {
+    case "single":
+      return <SingleWorkbenchPage />;
+    case "joint":
+      return <JointWorkbenchPage />;
+    case "lab":
+      return <LaboratoryPage />;
+    case "gear-comparison":
+      return <GearComparisonPage />;
+    case "faq":
+      return <FaqPage />;
+    case "about":
+      return <AboutPage />;
+  }
+}
+
 export function App() {
   const [page, setPage] = useState<AppPage>(currentPage);
   useEffect(() => {
@@ -37,12 +61,7 @@ export function App() {
       )
         return;
       const url = new URL(link.href);
-      if (
-        url.origin !== location.origin ||
-        !["/single", "/lab", "/joint", "/gear-comparison"].includes(
-          url.pathname,
-        )
-      )
+      if (url.origin !== location.origin || !Object.hasOwn(routes, url.pathname))
         return;
       event.preventDefault();
       history.pushState(null, "", url.pathname);
@@ -62,15 +81,7 @@ export function App() {
       <div className={styles.root}>
         <AppHeader page={page} />
         <div className={styles.route}>
-          {page === "single" ? (
-            <SingleWorkbenchPage />
-          ) : page === "joint" ? (
-            <JointWorkbenchPage />
-          ) : page === "lab" ? (
-            <LaboratoryPage />
-          ) : (
-            <GearComparisonPage />
-          )}
+          <RouteView page={page} />
         </div>
       </div>
     </FeedbackProvider>

@@ -3,8 +3,9 @@ import {
   gameData,
   getGearById,
   materiaGradeRequiredLevels,
+  searchFoods,
 } from "../data.ts";
-import { gearOptionsFor, jobLevelFor } from "../gear-options.ts";
+import { calculationJobLevelFor, gearOptionsFor } from "../gear-options.ts";
 import { jobSchemas } from "../jobs.ts";
 import {
   calculateBaseStats,
@@ -328,7 +329,7 @@ export function createFoodInfo(
   jobLevel: number,
 ): SolverFood {
   const schema = jobSchemas[config.jobId];
-  const baseStats = calculateBaseStats(schema, jobLevel);
+  const baseStats = calculateBaseStats(schema, jobLevel, config.clanIndex ?? 0);
   const applicableFood = foodStatsForJob(food, config.jobId);
   const baseParams = Object.entries(applicableFood.stats)
     .flatMap(([key, maxValue]) => {
@@ -363,7 +364,9 @@ export function makeGearCandidates(
   gearsByIdentity: Map<string, MeldedGear>,
 ): GearCandidate[] {
   const job = jobSchemas[config.jobId];
-  const jobLevel = jobLevelFor(config);
+  // 参考实现的 store.jobLevel 在同步搜索中等于同步映射等级；
+  // 候选穿戴资格已由 gearOptionsFor 按职业上限过滤，这里只用于 Gear.syncedLevel。
+  const syncJobLevel = calculationJobLevelFor(config);
   const resolvedGear: Gear = {
     ...gear,
     stats: concretizeGearStats(gear.stats, job),
@@ -372,13 +375,13 @@ export function makeGearCandidates(
     ? [[]]
     : resolvedGear.customParameters?.length
     ? customParameterMelds(resolvedGear)
-    : regularMateriaMelds(resolvedGear, config.jobId, config, jobLevel);
+    : regularMateriaMelds(resolvedGear, config.jobId, config, syncJobLevel);
   const candidates = new Map<string, GearCandidate>();
   for (const melds of options) {
     const finalStats = mergeCandidateStats(
       resolvedGear,
       melds,
-      jobLevel,
+      syncJobLevel,
       config.syncLevel,
     );
     const damageStat =
@@ -397,7 +400,7 @@ export function makeGearCandidates(
       resistanceAdjustmentForSearch(
         resolvedGear,
         finalStats,
-        jobLevel,
+        syncJobLevel,
         config.syncLevel,
       ),
     );
@@ -412,7 +415,7 @@ export function makeGearCandidates(
 export function foodsFor(config: OptimizationConfig): Food[] {
   if (config.foodId !== 0)
     return foods.filter((food) => food.id === config.foodId);
-  return foods.filter((food) => food.best && (food.stats.VIT ?? 0) > 0);
+  return searchFoods.filter((food) => food.best && (food.stats.VIT ?? 0) > 0);
 }
 
 function paretoAttributeStats(jobId: JobId): Stat[] {

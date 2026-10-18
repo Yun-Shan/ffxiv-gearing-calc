@@ -1,0 +1,72 @@
+.option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.icon {
+  --equipment-icon-size: 20px;
+  flex: none;
+}
+
+.autoIcon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.check {
+  flex: none;
+  color: #426f55;
+}
+
+.statsPositioner {
+  z-index: 1001;
+}
+
+.statsPopup {
+  min-width: 180px;
+  padding: 10px 12px;
+  border: 1px solid #c6d6d1;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgb(28 46 62 / 18%);
+  color: #26323b;
+}
+
+.statsTitle {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.statsList {
+  display: grid;
+  gap: 3px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.statsRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: #4b5a63;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.statsValue {
+  color: #087f80;
+  font-weight: 700;
+  white-space: nowrap;
+}

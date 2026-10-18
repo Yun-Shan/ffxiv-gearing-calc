@@ -1,10 +1,11 @@
 import { speedAttributeLabel } from "@/ui/services/labels";
-import type { JobId } from "@/domain";
+import { clanCount, type JobId } from "@/domain";
 import type {
   GcdAnalysisState,
   JobConditionDraft,
   JobConditionRuntime,
   JobValidation,
+  SearchRangeDraft,
   SectionValidation,
   ValidationIssue,
   ValidationStatus,
@@ -133,39 +134,64 @@ function gcdValidation(
   return section(issues);
 }
 
-export function validateJobConditionDraft(
-  draft: JobConditionDraft,
-  runtime: JobConditionRuntime,
-  options: { jobId?: JobId; expectedGcdKey?: string } = {},
-): JobValidation {
+export function validateSearchRangeDraft(
+  range: SearchRangeDraft,
+  pathPrefix: readonly (string | number)[] = ["range"],
+): SectionValidation {
   const rangeIssues: ValidationIssue[] = [];
-  if (
-    !Number.isFinite(draft.range.minItemLevel) ||
-    !Number.isFinite(draft.range.maxItemLevel)
-  ) {
+  if (!Number.isFinite(range.minItemLevel) || !Number.isFinite(range.maxItemLevel)) {
     rangeIssues.push(
-      issue("range.finite", "装备品级范围必须是有限数值。", "range"),
+      issue("range.finite", "装备品级范围必须是有限数值。", ...pathPrefix),
     );
   }
-  if (draft.range.minItemLevel > draft.range.maxItemLevel) {
+  if (range.minItemLevel > range.maxItemLevel) {
     rangeIssues.push(
-      issue("range.order", "最低装备品级不能高于最高装备品级。", "range"),
+      issue("range.order", "最低装备品级不能高于最高装备品级。", ...pathPrefix),
     );
   }
   if (
-    draft.range.sync.mode === "enabled" &&
-    (!Number.isFinite(draft.range.sync.itemLevel) ||
-      draft.range.sync.itemLevel <= 0)
+    range.sync.mode === "enabled" &&
+    (!Number.isFinite(range.sync.itemLevel) || range.sync.itemLevel <= 0)
   ) {
     rangeIssues.push(
       issue(
         "range.sync.invalid",
         "同步品级必须是大于零的有限数值。",
-        "range",
+        ...pathPrefix,
         "sync",
       ),
     );
   }
+  if (
+    !Number.isSafeInteger(range.clanIndex) ||
+    range.clanIndex < 0 ||
+    range.clanIndex >= clanCount
+  ) {
+    rangeIssues.push(
+      issue(
+        "range.clan.invalid",
+        "种族选择无效。",
+        ...pathPrefix,
+        "clanIndex",
+      ),
+    );
+  }
+  return section(rangeIssues);
+}
+
+export function validateJobConditionDraft(
+  draft: JobConditionDraft,
+  runtime: JobConditionRuntime,
+  options: {
+    jobId?: JobId;
+    expectedGcdKey?: string;
+    /** 联合模式的搜索范围属于共享条件，由调用方单独校验。 */
+    skipRange?: boolean;
+  } = {},
+): JobValidation {
+  const rangeSection = options.skipRange
+    ? section([])
+    : validateSearchRangeDraft(draft.range);
 
   const gcd = gcdValidation(
     draft.gcd,
@@ -247,7 +273,7 @@ export function validateJobConditionDraft(
   }
 
   const baseSections = {
-    range: section(rangeIssues),
+    range: rangeSection,
     gcd,
     food: section(foodIssues),
     tank: section(tankIssues),
@@ -279,16 +305,18 @@ export function deriveWorkbenchValidation({
     draft: JobConditionDraft;
     runtime: JobConditionRuntime;
     expectedGcdKey?: string;
+    skipRange?: boolean;
   }[];
   sharedIssues?: readonly ValidationIssue[];
   sharedPending?: boolean;
 }): WorkbenchValidation {
   const jobValidations: Partial<Record<JobId, JobValidation>> = {};
   const jobValues: JobValidation[] = [];
-  for (const { jobId, draft, runtime, expectedGcdKey } of jobs) {
+  for (const { jobId, draft, runtime, expectedGcdKey, skipRange } of jobs) {
     const validation = validateJobConditionDraft(draft, runtime, {
       jobId,
       expectedGcdKey,
+      skipRange,
     });
     jobValidations[jobId] = validation;
     jobValues.push(validation);

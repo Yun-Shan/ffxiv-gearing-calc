@@ -94,6 +94,7 @@ describe("Result GearTable adapter", () => {
     );
     const foodRow = rows.find((row) => row.item.kind === "food");
     expect(foodRow?.item.stats).toEqual({ DET: 20 });
+    expect(foodRow?.item.kind === "food" && foodRow.item.itemId).toBe(food.id);
     expect(foodRow?.item.kind === "food" && foodRow.item.statsMeaning).toBe(
       "actual-gain",
     );

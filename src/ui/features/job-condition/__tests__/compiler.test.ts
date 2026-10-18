@@ -38,6 +38,7 @@ const draft: JobConditionDraft = {
     minItemLevel: 735,
     maxItemLevel: 795,
     sync: { mode: "enabled", itemLevel: 735 },
+    clanIndex: 0,
   },
   gcd: { mode: "speed", min: 400, max: 500 },
   food: { mode: "specific", foodId: 123 },

@@ -30,8 +30,12 @@
 }
 .nav {
   display: flex;
+  flex: 1;
   align-self: stretch;
   gap: 12px;
+}
+.spacer {
+  flex: 1;
 }
 .navLink {
   display: flex;

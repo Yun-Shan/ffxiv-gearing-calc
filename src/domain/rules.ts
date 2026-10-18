@@ -1,4 +1,5 @@
 import { gameData } from "./data.ts";
+import { assertClanIndex, defaultClanIndex } from "./clans.ts";
 import { blueMageWeaponDamageAddition } from "./search/equipped-effects.ts";
 import { jobLevelModifiers } from "./jobs.ts";
 import type {
@@ -46,7 +47,12 @@ export function applyFood(
   return result;
 }
 
-export function calculateBaseStats(job: JobSchema, level: number, clanIndex = 0): Stats {
+export function calculateBaseStats(
+  job: JobSchema,
+  level: number,
+  clanIndex: number = defaultClanIndex,
+): Stats {
+  assertClanIndex(clanIndex);
   const modifier = levelModifierFor(level);
   const stats: Stats = { PDMG: 0, MDMG: 0 };
   for (const stat of job.stats) {
@@ -74,7 +80,11 @@ export function concretizeGearStats(stats: GearStats, job: JobSchema): Stats {
   return result;
 }
 
-/** 按参考实现的 Gear.syncedLevel 规则处理普通装备和可变等级装备。 */
+/**
+ * 按参考实现的 Gear.syncedLevel 规则处理普通装备和可变等级装备。
+ * `jobLevel` 对应参考实现的 store.jobLevel：同步搜索中应传入同步映射等级
+ * （calculationJobLevelFor），而不是职业可穿戴上限。
+ */
 export function effectiveGearSyncLevel(
   gear: Gear,
   jobLevel: number,
@@ -103,12 +113,14 @@ export function calculateEffects({
   job,
   level,
   weaponDamage,
+  clanIndex = defaultClanIndex,
 }: CalculationInput): Effects {
   const levelMod = levelModifierFor(level);
   const attackModifier = job.statModifiers[job.attackStat];
   const hpModifier = job.statModifiers.hp;
   if (attackModifier === undefined) throw new Error(`职业 ${job.id} 缺少主属性修正`);
   if (hpModifier === undefined) throw new Error(`职业 ${job.id} 缺少生命值修正`);
+  assertClanIndex(clanIndex);
   const { main, sub, div, det, detTrunc } = levelMod;
   const crt = stats.CRT ?? sub;
   const detStat = stats.DET ?? main;
@@ -134,7 +146,7 @@ export function calculateEffects({
     ) / 100;
   const adjustedWeaponDamage =
     weaponDamage + floor((main * attackModifier) / 1000) +
-    (job.id === "BLU" ? blueMageWeaponDamageAddition((stats.INT ?? 0) - (calculateBaseStats(job, level).INT ?? 0)) : 0);
+    (job.id === "BLU" ? blueMageWeaponDamageAddition((stats.INT ?? 0) - (calculateBaseStats(job, level, clanIndex).INT ?? 0)) : 0);
   const damage =
     0.01 *
     adjustedWeaponDamage *

@@ -3,17 +3,51 @@ import { createJobConditionRuntime } from "../draft";
 import {
   deriveWorkbenchValidation,
   validateJobConditionDraft,
+  validateSearchRangeDraft,
 } from "../validation";
 import type { JobConditionDraft } from "../types";
 
 const validDraft: JobConditionDraft = {
-  range: { minItemLevel: 700, maxItemLevel: 795, sync: { mode: "disabled" } },
+  range: {
+    minItemLevel: 700,
+    maxItemLevel: 795,
+    sync: { mode: "disabled" },
+    clanIndex: 0,
+  },
   gcd: { mode: "any" },
   food: { mode: "auto" },
   tank: { maximizeTenacity: false },
 };
 
 describe("job condition validation snapshot", () => {
+  it("validates a shared range once and skips the job-level range section", () => {
+    const invalidRange = {
+      minItemLevel: 800,
+      maxItemLevel: 700,
+      sync: { mode: "disabled" as const },
+      clanIndex: 0,
+    };
+    const shared = validateSearchRangeDraft(invalidRange, ["shared", "range"]);
+    expect(shared.status).toBe("invalid");
+    expect(shared.issues[0]?.path).toEqual(["shared", "range"]);
+    expect(shared.issues[0]?.code).toBe("range.order");
+
+    const job = validateJobConditionDraft(
+      { ...validDraft, range: invalidRange },
+      createJobConditionRuntime(),
+      { skipRange: true },
+    );
+    expect(job.sections.range).toEqual({ status: "valid", issues: [] });
+
+    const invalidClan = validateSearchRangeDraft(
+      { ...invalidRange, clanIndex: 99 },
+      ["shared", "range"],
+    );
+    expect(invalidClan.status).toBe("invalid");
+    expect(
+      invalidClan.issues.some((issue) => issue.code === "range.clan.invalid"),
+    ).toBe(true);
+  });
   it("ignores errors from an old analysis key and reports errors only for the current input", () => {
     const runtime = {
       gcdAnalysis: { status: "error" as const, key: "old", message: "offline" },

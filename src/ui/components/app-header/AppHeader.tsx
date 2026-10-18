@@ -1,5 +1,48 @@
 import styles from "./AppHeader.module.scss";
-export type AppPage = "single" | "lab" | "joint" | "gear-comparison";
+
+export type AppPage =
+  | "single"
+  | "lab"
+  | "joint"
+  | "gear-comparison"
+  | "faq"
+  | "about";
+
+interface NavItem {
+  page: AppPage;
+  href: string;
+  label: string;
+}
+
+const primaryNavItems: readonly NavItem[] = [
+  { page: "single", href: "/single", label: "单职业搜索" },
+  { page: "lab", href: "/lab", label: "实验室" },
+];
+
+const secondaryNavItems: readonly NavItem[] = [
+  { page: "faq", href: "/faq", label: "常见问题" },
+  { page: "about", href: "/about", label: "关于" },
+];
+
+function NavLinks({
+  items,
+  page,
+}: {
+  items: readonly NavItem[];
+  page: AppPage;
+}) {
+  return items.map((item) => (
+    <a
+      key={item.page}
+      href={item.href}
+      className={`${styles.navLink} ${page === item.page ? styles.active : ""}`}
+      aria-current={page === item.page ? "page" : undefined}
+    >
+      {item.label}
+    </a>
+  ));
+}
+
 export function AppHeader({ page }: { page: AppPage }) {
   return (
     <header className={styles.header}>
@@ -11,20 +54,9 @@ export function AppHeader({ page }: { page: AppPage }) {
         </div>
       </div>
       <nav className={styles.nav} aria-label="主导航">
-        <a
-          href="/single"
-          className={`${styles.navLink} ${page === "single" ? styles.active : ""}`}
-          aria-current={page === "single" ? "page" : undefined}
-        >
-          单职业搜索
-        </a>
-        <a
-          href="/lab"
-          className={`${styles.navLink} ${page === "lab" ? styles.active : ""}`}
-          aria-current={page === "lab" ? "page" : undefined}
-        >
-          实验室
-        </a>
+        <NavLinks items={primaryNavItems} page={page} />
+        <span className={styles.spacer} aria-hidden="true" />
+        <NavLinks items={secondaryNavItems} page={page} />
       </nav>
     </header>
   );

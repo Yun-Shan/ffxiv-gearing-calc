@@ -11,10 +11,11 @@ import {
 } from "@/ui/features/job-condition/draft";
 import { compileJobCondition, normalizeJointObjective } from "@/ui/features/job-condition/compiler";
 import type {
-  FoodDraft,
   JobConditionDraft,
+  JointJobConditionDraft,
   JointWorkbenchDraft,
   JointWorkbenchRuntime,
+  SearchRangeDraft,
 } from "./joint-workbench-types";
 import type { JointEquipmentDraft } from "@/ui/features/equipment/types";
 import { defaultCommonSlots, makeConfig } from "@/ui/services/app-config";
@@ -23,8 +24,36 @@ export function createJointWorkbenchRuntime(jobs: readonly JobId[]): JointWorkbe
   return Object.fromEntries(jobs.map((jobId) => [jobId, createJobConditionRuntime()])) as JointWorkbenchRuntime;
 }
 
+function searchRangeDraftFromConfig(config: OptimizationConfig): SearchRangeDraft {
+  return {
+    minItemLevel: config.minItemLevel,
+    maxItemLevel: config.maxItemLevel,
+    sync:
+      config.syncLevel === undefined
+        ? { mode: "disabled" }
+        : { mode: "enabled", itemLevel: config.syncLevel },
+    clanIndex: config.clanIndex ?? 0,
+  };
+}
+
+function sameSearchRange(left: OptimizationConfig, right: OptimizationConfig): boolean {
+  return (
+    left.minItemLevel === right.minItemLevel &&
+    left.maxItemLevel === right.maxItemLevel &&
+    left.syncLevel === right.syncLevel &&
+    (left.clanIndex ?? 0) === (right.clanIndex ?? 0)
+  );
+}
+
+/** 联合职业条件只保留 gcd/food/tank；搜索范围统一放在共享条件。 */
+function jointJobConditionFromConfig(config: OptimizationConfig): JointJobConditionDraft {
+  const condition = jobConditionDraftFromConfig(config);
+  return { gcd: condition.gcd, food: condition.food, tank: condition.tank };
+}
+
 export function createJointWorkbenchDraft(jobs: readonly JobId[]): JointWorkbenchDraft {
   const configs = Object.fromEntries(jobs.map((jobId) => [jobId, makeConfig(jobId)])) as Partial<Record<JobId, OptimizationConfig>>;
+  const firstConfig = configs[jobs[0]!]!;
   const supportedSlots = new Set(jobs.length > 0 ? slotsForJob(jobs[0]!) : []);
   for (const jobId of jobs.slice(1)) {
     const jobSlots = new Set(slotsForJob(jobId));
@@ -42,8 +71,9 @@ export function createJointWorkbenchDraft(jobs: readonly JobId[]): JointWorkbenc
 
   return {
     jobs: [...jobs],
-    conditions: Object.fromEntries(jobs.map((jobId) => [jobId, jobConditionDraftFromConfig(configs[jobId]!)])) as Record<JobId, JobConditionDraft>,
+    conditions: Object.fromEntries(jobs.map((jobId) => [jobId, jointJobConditionFromConfig(configs[jobId]!)])) as Record<JobId, JointJobConditionDraft>,
     shared: {
+      range: searchRangeDraftFromConfig(firstConfig),
       foodStrategy: "shared",
       food: { mode: "auto" },
       equipment,
@@ -52,7 +82,11 @@ export function createJointWorkbenchDraft(jobs: readonly JobId[]): JointWorkbenc
 }
 
 export function jointWorkbenchDraftFromConfig(config: JointOptimizationConfig): JointWorkbenchDraft {
-  const conditions = Object.fromEntries(config.jobs.map((job) => [job.jobId, jobConditionDraftFromConfig(job)])) as Record<JobId, JobConditionDraft>;
+  const firstConfig = config.jobs[0]!;
+  if (!config.jobs.every((job) => sameSearchRange(job, firstConfig))) {
+    throw new Error("历史条件中多个职业的搜索范围不同，无法恢复为共享搜索范围。");
+  }
+  const conditions = Object.fromEntries(config.jobs.map((job) => [job.jobId, jointJobConditionFromConfig(job)])) as Record<JobId, JointJobConditionDraft>;
   // The current Joint draft owns source exclusions globally. Legacy snapshots
   // stored them per job, so preserve every previously excluded source when
   // adapting a snapshot into the new, broader scope.
@@ -91,6 +125,7 @@ export function jointWorkbenchDraftFromConfig(config: JointOptimizationConfig): 
     jobs: config.jobs.map((job) => job.jobId),
     conditions,
     shared: {
+      range: searchRangeDraftFromConfig(firstConfig),
       foodStrategy: config.foodStrategy,
       food: firstFoodId === 0 ? { mode: "auto" } : { mode: "specific", foodId: firstFoodId },
       equipment,
@@ -98,13 +133,43 @@ export function jointWorkbenchDraftFromConfig(config: JointOptimizationConfig): 
   };
 }
 
+/** 把共享搜索范围与共享食物合并进职业条件，得到完整编辑器/编译输入。 */
 export function jobConditionForEffectiveFood(
   draft: JointWorkbenchDraft,
   jobId: JobId,
 ): JobConditionDraft {
-  const condition = draft.conditions[jobId];
-  if (!condition || draft.shared.foodStrategy !== "shared") return condition;
-  return { ...condition, food: draft.shared.food };
+  const condition = draft.conditions[jobId]!;
+  const effectiveFood =
+    draft.shared.foodStrategy === "shared"
+      ? { ...condition, food: draft.shared.food }
+      : condition;
+  return { ...effectiveFood, range: draft.shared.range };
+}
+
+/** 从完整职业条件中取出联合 Draft 持有的部分，避免把共享范围写回职业条件。 */
+export function jointJobConditionFromDraft(
+  condition: JobConditionDraft,
+): JointJobConditionDraft {
+  return {
+    gcd: condition.gcd,
+    food: condition.food,
+    tank: condition.tank,
+  };
+}
+
+/**
+ * 共享食物策略下编辑器展示的是共享食物；写回时保留该职业原来的独立食物，
+ * 避免只修改 GCD/坚韧时覆盖独立模式的选择。
+ */
+export function jointJobConditionFromEffectiveDraft(
+  draft: JointWorkbenchDraft,
+  jobId: JobId,
+  condition: JobConditionDraft,
+): JointJobConditionDraft {
+  const converted = jointJobConditionFromDraft(condition);
+  return draft.shared.foodStrategy === "shared"
+    ? { ...converted, food: draft.conditions[jobId]!.food }
+    : converted;
 }
 
 export function compileJointWorkbenchDraft(

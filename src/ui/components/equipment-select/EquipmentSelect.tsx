@@ -1,6 +1,6 @@
 import { SearchSelect } from "@/ui/components/form-controls/search-select/SearchSelect";
 import type { GearSlot } from "@/domain";
-import { equipmentIconId } from "@/ui/services/equipment-icons";
+import { itemIconId } from "@/ui/services/item-icons";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
 
 export interface EquipmentSelectionItem {
@@ -34,7 +34,7 @@ export function EquipmentSelect<T extends EquipmentSelectionItem>(props: {
           name={gear.name}
           level={gear.level}
           source={gear.source}
-          iconId={equipmentIconId(gear.id)}
+          iconId={itemIconId(gear.id)}
         />
       )}
       matches={(gear, query) =>

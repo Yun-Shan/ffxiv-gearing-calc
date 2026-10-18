@@ -193,6 +193,8 @@ export interface CalculationInput {
   job: JobSchema;
   level: number;
   weaponDamage: number;
+  /** 族群基础属性索引；未提供时使用人族·中原之民。 */
+  clanIndex?: number;
 }
 
 export interface Effects {
@@ -221,6 +223,8 @@ export interface OptimizationConfig {
   maxItemLevel: number;
   /** 将装备属性和武器伤害同步到此品级。 */
   syncLevel?: number;
+  /** 族群基础属性索引；未提供时使用 0（人族·中原之民）。 */
+  clanIndex?: number;
   gcdTarget?: number;
   gcdChoices?: number[];
   speedMin?: number;

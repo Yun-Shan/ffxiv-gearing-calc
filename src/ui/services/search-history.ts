@@ -1,4 +1,4 @@
-import { jobSchemas } from "@/domain";
+import { clanCount, jobSchemas } from "@/domain";
 import type {
   CommonGearSlot,
   Effects,
@@ -437,6 +437,11 @@ function validateOptimizationConfig(
     ) &&
     isFiniteNumber(value.foodId) &&
     (value.syncLevel === undefined || isFiniteNumber(value.syncLevel)) &&
+    (value.clanIndex === undefined ||
+      (isFiniteNumber(value.clanIndex) &&
+        Number.isSafeInteger(value.clanIndex) &&
+        value.clanIndex >= 0 &&
+        value.clanIndex < clanCount)) &&
     (value.gcdTarget === undefined || isFiniteNumber(value.gcdTarget)) &&
     (value.gcdChoices === undefined ||
       (Array.isArray(value.gcdChoices) &&

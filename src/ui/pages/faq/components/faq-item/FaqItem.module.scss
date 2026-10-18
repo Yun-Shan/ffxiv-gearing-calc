@@ -1,0 +1,58 @@
+@use "@/styles/tokens" as tokens;
+
+.item {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px;
+  border: 1px solid tokens.$color-border-default;
+  border-radius: 10px;
+  background: tokens.$color-neutral-white;
+}
+
+.question {
+  margin: 0;
+  color: tokens.$color-text-primary;
+  font-size: tokens.$font-size-label;
+  line-height: 1.4;
+}
+
+.answer {
+  margin: 0;
+  color: tokens.$color-text-secondary;
+  font-size: tokens.$font-size-body;
+  line-height: 1.7;
+}
+
+.answer p {
+  margin: 0;
+}
+
+.answer p + p {
+  margin-top: 8px;
+}
+
+.answer a,
+.answer button {
+  color: tokens.$color-accent-teal;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.answer button {
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.answer a:hover,
+.answer button:hover {
+  text-decoration: underline;
+}
+
+.answer a:focus-visible,
+.answer button:focus-visible {
+  outline: 3px solid #49a9b4;
+  outline-offset: 2px;
+}

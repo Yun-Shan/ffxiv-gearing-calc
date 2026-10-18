@@ -25,6 +25,7 @@ export {
 export {
   deriveWorkbenchValidation,
   validateJobConditionDraft,
+  validateSearchRangeDraft,
 } from "./validation";
 export type * from "./types";
 export type { JobConditionDraftChange, JobConditionScopeValue } from "./scope";

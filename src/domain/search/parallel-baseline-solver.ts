@@ -116,11 +116,13 @@ export async function solveSerializedBaseline(
   callbacks: BaselineWorkerCallbacks,
 ): Promise<SerializedBaselineResult | undefined> {
   const statIndexes = new Map(request.statIndexes);
+  const clanIndex = request.clanIndex ?? 0;
   const slots = decodeEquipmentColumns(request.slots);
   const foods = decodeFoodColumns(request.foods);
   const exactOptions: ExactMipOptions = {
     job: request.job,
     jobLevel: request.jobLevel,
+    clanIndex,
     attributeIds: request.attributeIds,
     statIndexes,
     slots,
@@ -128,15 +130,15 @@ export async function solveSerializedBaseline(
     ...(request.constraints === undefined ? {} : { constraints: request.constraints }),
     ...(request.speedAttributeId === undefined ? {} : { speedAttributeId: request.speedAttributeId }),
     ...(request.toughnessAttributeId === undefined ? {} : { toughnessAttributeId: request.toughnessAttributeId }),
-    gcdToSpeedRange: (gcd) => equippedSpeedRangeForGcd(request.job, request.jobLevel, gcd),
+    gcdToSpeedRange: (gcd) => equippedSpeedRangeForGcd(request.job, request.jobLevel, gcd, clanIndex),
     ...(request.toughnessAttributeId === undefined ? {} : {
       toughnessPercentToMinimum: (percent) =>
-        equippedToughnessForMitigationPercent(request.job, request.jobLevel, percent),
+        equippedToughnessForMitigationPercent(request.job, request.jobLevel, percent, clanIndex),
     }),
     evaluationFunction: (attributes) => {
       const contributions: Stats = {};
       for (const [stat, index] of statIndexes) contributions[stat] = attributes[index] ?? 0;
-      const effects = equippedEffects(request.job, request.jobLevel, contributions);
+      const effects = equippedEffects(request.job, request.jobLevel, contributions, clanIndex);
       return effects === undefined ? undefined : { damage: effects.damage, gcd: effects.gcd };
     },
     ...(request.objective === undefined ? {} : { objective: request.objective }),

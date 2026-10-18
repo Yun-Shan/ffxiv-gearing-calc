@@ -1,0 +1,49 @@
+@use "@/styles/tokens" as tokens;
+
+.page {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: 28px 32px;
+}
+
+.header {
+  flex: none;
+}
+
+.header p,
+.header h1 {
+  margin: 0;
+}
+
+.header p {
+  color: tokens.$color-text-secondary;
+  font-size: tokens.$font-size-compact;
+}
+
+.header h1 {
+  margin-top: 4px;
+  color: tokens.$color-text-primary;
+  font-size: tokens.$font-size-display;
+}
+
+.header > span {
+  display: block;
+  margin-top: 6px;
+  color: tokens.$color-text-secondary;
+  font-size: tokens.$font-size-body;
+}
+
+.list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding-right: 4px;
+}

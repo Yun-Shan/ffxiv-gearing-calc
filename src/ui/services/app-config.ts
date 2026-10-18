@@ -4,6 +4,7 @@ import {
   foods,
   gameData,
   jobSchemas,
+  searchFoods,
   type GearSlot,
   type JobId,
   type OptimizationConfig,
@@ -19,7 +20,7 @@ export const displayedDataVersion =
   dataProvenance.sources?.find(source => source.kind === "mcp" && source.gameVersion)?.gameVersion ?? dataProvenance.commit.slice(0, 12);
 
 export const bounds = [gameData.gearMinLevel, gameData.gearMaxLevel] as const;
-export const availableFoods = foods.filter(
+export const availableFoods = searchFoods.filter(
   (food) => food.best && food.stats.VIT,
 );
 /** Keep a saved, valid selection visible even when it is outside current recommendations. */

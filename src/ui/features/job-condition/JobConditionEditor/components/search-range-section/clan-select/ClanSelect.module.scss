@@ -1,0 +1,70 @@
+@use "@/ui/components/form-controls/control" as control;
+
+.trigger {
+  @include control.control;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 180px;
+  cursor: pointer;
+}
+
+.positioner {
+  z-index: 1000;
+}
+
+.popup {
+  @include control.popup;
+  min-width: max(var(--anchor-width), 320px);
+  max-width: min(420px, var(--available-width));
+  padding: 8px;
+}
+
+.table {
+  display: grid;
+  gap: 2px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 88px minmax(96px, 1fr) minmax(96px, 1fr);
+  align-items: center;
+  gap: 4px;
+}
+
+.race {
+  color: #354a37;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.clan {
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #304c48;
+  font: inherit;
+  font-size: 12px;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.clan:hover {
+  background: #edf6f3;
+}
+
+.clan[aria-pressed="true"] {
+  background: #087f80;
+  color: #fff;
+  font-weight: 700;
+}
+
+.clan:focus-visible {
+  outline: 3px solid #49a9b4;
+  outline-offset: 1px;
+}

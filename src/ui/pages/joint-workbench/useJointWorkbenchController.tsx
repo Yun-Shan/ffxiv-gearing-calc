@@ -11,14 +11,14 @@ import {
 import type { JointJobSelectionState } from "@/ui/components/job-selection/JobSelection";
 import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
 import { gcdAnalysisInputFromConfig, gcdAnalysisKey } from "@/ui/features/job-condition";
-import type { GcdAnalysisState, JobConditionDraftChange } from "@/ui/features/job-condition";
+import type { GcdAnalysisState } from "@/ui/features/job-condition";
 import { applyJointEquipmentAction, updateJointSharedSlots } from "@/ui/features/equipment";
 import type { EquipmentAction, JointEquipmentDraft } from "@/ui/features/equipment";
 import { createSearchHistory, finishSearchHistory, type SearchHistoryRecord } from "@/ui/services/search-history";
 import { currentDataVersion, makeConfig } from "@/ui/services/app-config";
 import { searchMessageText } from "@/ui/services/search-message";
 import { compileJointWorkbenchDraft, createJointWorkbenchDraft, createJointWorkbenchRuntime, jointWorkbenchDraftFromConfig } from "./joint-workbench-state";
-import type { FoodDraft, JointEditorTarget, JointWorkbenchDraft, JointWorkbenchPhase, JointWorkbenchRuntime } from "./joint-workbench-types";
+import type { FoodDraft, JointEditorTarget, JointJobConditionDraftChange, JointWorkbenchDraft, JointWorkbenchPhase, JointWorkbenchRuntime, SearchRangeDraft } from "./joint-workbench-types";
 import { deriveJointValidation, freezeJointConfig, gearById, jobSelectionSlots, parseJointProgressStats } from "./joint-workbench-model";
 import type { JointSearchPhase, JointSearchProgressJob, JointSearchProgressState } from "./joint-workbench-progress-types";
 
@@ -75,7 +75,7 @@ export function useJointWorkbenchController() {
     transition({ phase: "conditions", draft, runtime });
   }
 
-  function updateCondition(jobId: JobId, change: JobConditionDraftChange) {
+  function updateCondition(jobId: JobId, change: JointJobConditionDraftChange) {
     const current = phaseRef.current;
     if (current.phase !== "conditions") return;
     const oldDraft = current.draft.conditions[jobId];
@@ -521,6 +521,12 @@ export function useJointWorkbenchController() {
       transition({ phase: "selection" });
     },
     updateCondition,
+    updateSharedRange(range: SearchRangeDraft) {
+      updateSharedDraft((draft) => ({
+        ...draft,
+        shared: { ...draft.shared, range },
+      }));
+    },
     updateSharedFoodStrategy(foodStrategy: "shared" | "independent") {
       updateSharedDraft((draft) => ({
         ...draft,

@@ -11,6 +11,30 @@ describe("重构后的 Single 工作流", () => {
     support.inputValue("最低装备品级", "999");
     expect(support.buttonNamed("开始搜索").disabled).toBe(true);
   });
+  it("种族选择更新摘要并写入 GCD 分析输入", async () => {
+    support.chooseJob("SAM");
+    await support.settleApp(220);
+    const trigger = [...support.host.querySelectorAll("button")].find(
+      (button) => button.textContent?.includes("人族 · 中原之民"),
+    );
+    expect(trigger).toBeDefined();
+    act(() => trigger!.click());
+    await support.settleApp();
+    const northern = [...document.body.querySelectorAll("button")].find(
+      (button) => button.textContent?.trim() === "北洋之民",
+    );
+    expect(northern).toBeDefined();
+    act(() => northern!.click());
+    await support.settleApp(220);
+
+    expect(support.host.querySelector("aside")?.textContent).toContain(
+      "鲁加族 · 北洋之民",
+    );
+    const inputs = support.findFeasibleGcdsMock.mock.calls.map(
+      ([input]) => input as { clanIndex?: number },
+    );
+    expect(inputs.some((input) => input.clanIndex === 8)).toBe(true);
+  });
   it("真实搜索适配器传入不可变 Snapshot，结果不保留 solver 过程", async () => {
     support.optimizeMock.mockResolvedValue(support.sampleResult());
     support.chooseJob("SAM");

@@ -1106,7 +1106,7 @@ export async function findBestJointLoadoutV3(
       job,
       solverSlots: job.options.slots,
       indexByName,
-      factorEvaluator: createIntegerDamageFactorEvaluator(job.options.job, job.options.jobLevel, job.options.statIndexes),
+      factorEvaluator: createIntegerDamageFactorEvaluator(job.options.job, job.options.jobLevel, job.options.statIndexes, job.options.clanIndex ?? 0),
       attributeIndexes,
       equipAttributes: new WeakMap(),
       optimum: undefined as unknown as ExactMipResult,

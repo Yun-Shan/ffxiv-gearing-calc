@@ -31,6 +31,7 @@ export function jobConditionDraftFromConfig(
         config.syncLevel === undefined
           ? { mode: "disabled" }
           : { mode: "enabled", itemLevel: config.syncLevel },
+      clanIndex: config.clanIndex ?? 0,
     },
     gcd,
     food,

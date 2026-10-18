@@ -16,7 +16,6 @@ import {
 import { SidePanel } from "@/ui/components/side-panel/SidePanel";
 import {
   JointJobConditionScope,
-  JobConditionEditor,
   analyzeFeasibleGcds,
   gcdAnalysisInputFromConfig,
   gcdAnalysisKey,
@@ -25,15 +24,16 @@ import {
 import type {
   GcdAnalysisInput,
   GcdAnalysisState,
-  JobConditionDraftChange,
   WorkbenchValidation,
 } from "@/ui/features/job-condition";
+import { SearchRangeSectionFields } from "@/ui/features/job-condition/JobConditionEditor/components/search-range-section/SearchRangeSection";
 import { isSlotShared } from "@/ui/features/equipment";
 import type {
   EquipmentAction,
   JointEquipmentDraft,
 } from "@/ui/features/equipment";
 import { JointFoodStrategySection } from "../joint-food-strategy-section/JointFoodStrategySection";
+import { JointJobConditionEditor } from "../joint-job-condition-editor/JointJobConditionEditor";
 import { JointJobEquipmentRestrictions } from "../joint-job-equipment-restrictions/JointJobEquipmentRestrictions";
 import { JointSharedEquipmentRestrictions } from "../joint-shared-equipment-restrictions/JointSharedEquipmentRestrictions";
 import { SharedSlotsSection } from "../shared-slots-section/SharedSlotsSection";
@@ -58,13 +58,18 @@ import {
 import { commonGearSlotLabels } from "@/ui/services/labels";
 import { useJointWorkbench } from "../../useJointWorkbenchController";
 import { currentDataVersion, makeConfig } from "@/ui/services/app-config";
-import { jobConditionForEffectiveFood } from "../../joint-workbench-state";
+import {
+  jobConditionForEffectiveFood,
+  jointJobConditionFromEffectiveDraft,
+} from "../../joint-workbench-state";
 import type {
   FoodDraft,
   JointEditorTarget,
+  JointJobConditionDraftChange,
   JointWorkbenchDraft,
   JointWorkbenchPhase,
   JointWorkbenchRuntime,
+  SearchRangeDraft,
 } from "../../joint-workbench-types";
 import styles from "./JointWorkbench.module.scss";
 
@@ -288,10 +293,7 @@ export function SelectionMain({
         initialJobs={selectedJobs}
         onSelectionChange={onSelectionChange}
       />
-      <div className={styles.selectionHistory}>
-        <SearchHistory kind="joint" {...historyProps} />
-      </div>
-      <footer className={styles.selectionFooter}>
+      <div className={styles.selectionAction}>
         <p role={valid ? "status" : "alert"}>
           {valid
             ? "已选择 " + selectedJobs.length + " 个职业，可以继续设置条件。"
@@ -300,7 +302,10 @@ export function SelectionMain({
         <button type="button" disabled={!valid} onClick={onContinue}>
           前往条件设置
         </button>
-      </footer>
+      </div>
+      <div className={styles.selectionHistory}>
+        <SearchHistory kind="joint" {...historyProps} />
+      </div>
     </section>
   );
 }
@@ -313,6 +318,7 @@ export function ConditionsMain({
   setTarget,
   compiledConfig,
   onConditionChange,
+  onSharedRangeChange,
   onSharedFoodStrategy,
   onSharedFood,
   onSharedEquipmentChange,
@@ -326,7 +332,8 @@ export function ConditionsMain({
   target: JointEditorTarget;
   setTarget(target: JointEditorTarget): void;
   compiledConfig: JointOptimizationConfig;
-  onConditionChange(jobId: JobId, change: JobConditionDraftChange): void;
+  onConditionChange(jobId: JobId, change: JointJobConditionDraftChange): void;
+  onSharedRangeChange(range: SearchRangeDraft): void;
   onSharedFoodStrategy(strategy: "shared" | "independent"): void;
   onSharedFood(food: FoodDraft): void;
   onSharedEquipmentChange(action: EquipmentAction): void;
@@ -368,6 +375,16 @@ export function ConditionsMain({
         <Tabs.Panel value="shared" className={styles.conditionsBody}>
           <div className={styles.sharedEditor}>
             <div className={styles.sharedBasics}>
+              <SearchRangeSectionFields
+                range={draft.shared.range}
+                onChange={onSharedRangeChange}
+                issues={
+                  validation.shared?.issues.filter(
+                    (issue) =>
+                      issue.path[0] === "shared" && issue.path[1] === "range",
+                  ) ?? []
+                }
+              />
               <SharedSlotsSection
                 jobs={draft.jobs}
                 equipment={draft.shared.equipment}
@@ -398,14 +415,22 @@ export function ConditionsMain({
               <JointJobConditionScope
                 jobId={activeJob}
                 draft={jobConditionForEffectiveFood(draft, activeJob)}
-                onChange={(change) => onConditionChange(activeJob, change)}
+                onChange={(change) => {
+                  const current = jobConditionForEffectiveFood(draft, activeJob);
+                  const next =
+                    typeof change === "function" ? change(current) : change;
+                  onConditionChange(
+                    activeJob,
+                    jointJobConditionFromEffectiveDraft(draft, activeJob, next),
+                  );
+                }}
                 runtime={
                   runtime[activeJob] ?? { gcdAnalysis: { status: "idle" } }
                 }
                 validation={validation.jobs[activeJob]}
                 foodDisabled={draft.shared.foodStrategy === "shared"}
               >
-                <JobConditionEditor />
+                <JointJobConditionEditor />
               </JointJobConditionScope>
               <JointJobEquipmentRestrictions
                 jobId={activeJob}
@@ -613,6 +638,7 @@ export function JointWorkbenchMain() {
         setTarget={controller.setEditorTarget}
         compiledConfig={controller.currentConfig}
         onConditionChange={controller.updateCondition}
+        onSharedRangeChange={controller.updateSharedRange}
         onSharedFoodStrategy={controller.updateSharedFoodStrategy}
         onSharedFood={controller.updateSharedFood}
         onSharedEquipmentChange={controller.updateSharedEquipmentAction}

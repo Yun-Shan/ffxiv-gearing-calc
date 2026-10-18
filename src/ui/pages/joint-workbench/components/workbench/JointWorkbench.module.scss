@@ -9,7 +9,7 @@
 
 .selectionMain {
   display: grid;
-  grid-template-rows: auto auto minmax(90px, 1fr) auto;
+  grid-template-rows: auto auto auto minmax(90px, 1fr);
   gap: 10px;
 }
 
@@ -146,7 +146,7 @@
   min-height: 0;
 }
 
-.selectionFooter {
+.selectionAction {
   display: flex;
   min-width: 0;
   align-items: center;
@@ -156,13 +156,13 @@
   border-top: 1px solid #d8e1db;
 }
 
-.selectionFooter p {
+.selectionAction p {
   margin: 0;
   color: #63736c;
   font-size: 12px;
 }
 
-.selectionFooter button,
+.selectionAction button,
 .resultHeading button {
   min-height: 36px;
   padding: 7px 14px;
@@ -174,7 +174,7 @@
   font-weight: 700;
 }
 
-.selectionFooter button:disabled {
+.selectionAction button:disabled {
   opacity: 0.5;
 }
 

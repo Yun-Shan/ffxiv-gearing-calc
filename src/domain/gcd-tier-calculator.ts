@@ -1,5 +1,5 @@
-import { foods, gameData, materiaGradeRequiredLevels } from "./data.ts";
-import { jobLevelFor } from "./gear-options.ts";
+import { foods, gameData, materiaGradeRequiredLevels, searchFoods } from "./data.ts";
+import { assertClanIndex } from "./clans.ts";
 import { jobSchemas } from "./jobs.ts";
 import {
   applyFood,
@@ -68,6 +68,7 @@ function validateConfig(config: OptimizationConfig): void {
   ) {
     throw new RangeError("等级同步品级必须是正整数");
   }
+  if (config.clanIndex !== undefined) assertClanIndex(config.clanIndex);
 }
 
 function statCapAtLevel(gear: Gear, stat: Stat, level: number): number {
@@ -346,12 +347,12 @@ function gearProfiles(
   config: OptimizationConfig,
   jobId: JobId,
   speedStat: "SKS" | "SPS",
+  jobLevel: number,
 ): Map<number, number> {
   const resolvedGear: Gear = {
     ...gear,
     stats: concretizeGearStats(gear.stats, jobSchemas[jobId]),
   };
-  const jobLevel = jobLevelFor(config);
   if (resolvedGear.resistanceWeaponAdjust !== undefined) {
     return profilesForResistanceWeapon(
       resolvedGear,
@@ -463,7 +464,7 @@ function ringPairProfiles(
 function foodStatsForJob(foodId: number, jobId: JobId) {
   const selected = foodId !== 0
     ? foods.filter((food) => food.id === foodId)
-    : foods.filter((food) => food.best === true && (food.stats.VIT ?? 0) > 0);
+    : searchFoods.filter((food) => food.best === true && (food.stats.VIT ?? 0) > 0);
   const allowed = new Set(jobSchemas[jobId].stats);
   return selected.map((food) => {
     const filter = (stats: Stats): Stats => Object.fromEntries(
@@ -515,7 +516,8 @@ export function calculateFeasibleGcdTiers(
     throw new RangeError("职业 " + config.jobId + " 不使用坚韧属性");
   }
 
-  const baseStats = calculateBaseStats(job, jobLevel);
+  const clanIndex = config.clanIndex ?? 0;
+  const baseStats = calculateBaseStats(job, jobLevel, clanIndex);
   const baseSpeed = baseStats[speedStat] ?? 0;
   const baseTenacity = baseStats.TEN ?? 0;
   const minimumTenacity = Math.max(
@@ -526,6 +528,7 @@ export function calculateFeasibleGcdTiers(
           config.jobId,
           jobLevel,
           config.toughnessMinPercent,
+          clanIndex,
         ),
   );
   const selectedFoods = foodStatsForJob(config.foodId, config.jobId);
@@ -537,7 +540,13 @@ export function calculateFeasibleGcdTiers(
   const profilesForGear = (gear: Gear): Map<number, number> => {
     let profiles = profilesByGearId.get(gear.id);
     if (profiles === undefined) {
-      profiles = gearProfiles(gear, config, config.jobId, speedStat);
+      profiles = gearProfiles(
+        gear,
+        config,
+        config.jobId,
+        speedStat,
+        jobLevel,
+      );
       profilesByGearId.set(gear.id, profiles);
     }
     return profiles;
@@ -625,7 +634,7 @@ export function calculateFeasibleGcdTiers(
     if (maximumTenacity !== undefined && tenacity !== maximumTenacity) continue;
     const effects = equippedEffects(config.jobId, jobLevel, {
       [speedStat]: speedContribution,
-    });
+    }, clanIndex);
     if (effects !== undefined) gcds.add(effects.gcd);
   }
   return [...gcds].sort((left, right) => right - left);

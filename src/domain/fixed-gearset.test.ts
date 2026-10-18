@@ -144,28 +144,38 @@ describe("calculateFixedGearset", () => {
     );
   });
 
-  it("keeps a level-94, item-level-663 piece wearable and unsynced at sync 665", () => {
+  it("syncs a level-94, item-level-663 piece to 660 at sync 665 while keeping the job cap for wearability", () => {
     const item = getGearById(42_177);
     if (item === undefined) throw new Error("缺少 42177 回归装备");
     const jobId = "SAM" as const;
     expect(item.jobs).toContain(jobId);
     expect(item.level).toBe(663);
     expect(item.equipLevel).toBe(94);
-    const input = inputFor(jobId, 665, {
+    expect(inputFor(jobId, 665).jobLevel).toBe(90);
+    // 旧逻辑按职业上限 100 比较穿戴等级会漏掉同步；参考实现按同步映射等级 90 计算。
+    expect(effectiveGearSyncLevel(item, jobLevelFor({ jobId }), 665)).toBeUndefined();
+    expect(effectiveGearSyncLevel(item, calculationJobLevelFor({ jobId, syncLevel: 665 }), 665)).toBe(660);
+
+    // 分享写入器在同步时省略普通魔晶石；同步装备带普通魔晶石属于无效输入。
+    const withMateria = inputFor(jobId, 665, {
       [item.slot]: { id: item.id, materias: [["CRT", 1]] },
+    });
+    expect(() => calculateFixedGearset(withMateria)).toThrow(
+      "不能包含普通魔晶石",
+    );
+
+    const input = inputFor(jobId, 665, {
+      [item.slot]: { id: item.id, materias: [] },
     });
     const result = calculateFixedGearset(input);
     const selected = result.gear.find(({ id }) => id === item.id)!;
     const base = concretizeGearStats(item.stats, jobSchemas[jobId]);
-    const expectedCrit = Math.min(
-      getGearStatCap(item, "CRT", item.level),
-      (base.CRT ?? 0) + gameData.materias.CRT![0]!,
-    );
 
-    expect(effectiveGearSyncLevel(item, jobLevelFor({ jobId }), 665)).toBeUndefined();
+    expect(selected.melds).toEqual([]);
+    expect(selected.finalStats).toEqual(
+      capGearStatsAtLevel(item, base, 660),
+    );
     expect(result.calculationLevel).toBe(input.jobLevel);
-    expect(selected.melds[0]).toMatchObject({ stat: "CRT", grade: 1, slotIndex: 0 });
-    expect(selected.finalStats.CRT).toBe(expectedCrit);
   });
 
   it("evaluates variable-level item 52439 using the job cap's equipment sync mapping", () => {
@@ -178,7 +188,7 @@ describe("calculateFixedGearset", () => {
     const result = calculateFixedGearset(input);
     const selected = result.gear.find(({ id }) => id === item.id)!;
     const base = concretizeGearStats(item.stats, jobSchemas[jobId]);
-    const equipmentSync = effectiveGearSyncLevel(item, jobLevelFor({ jobId }), 665);
+    const equipmentSync = effectiveGearSyncLevel(item, input.jobLevel, 665);
     const expected = equipmentSync === undefined
       ? base
       : capGearStatsAtLevel(item, base, equipmentSync);

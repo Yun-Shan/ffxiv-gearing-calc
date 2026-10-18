@@ -15,7 +15,7 @@ import type { GearSlot } from "@/domain";
 import { LabeledSelect } from "@/ui/components/form-controls/labeled-select/LabeledSelect";
 import { EquipmentSelect } from "@/ui/components/equipment-select/EquipmentSelect";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
-import { equipmentIconId } from "@/ui/services/equipment-icons";
+import { itemIconId } from "@/ui/services/item-icons";
 import styles from "./EquipmentEditor.module.scss";
 
 const sourceOrder = (a: string, b: string) => a.localeCompare(b, "zh-CN");
@@ -170,7 +170,7 @@ function SourceTreeSelect({
     onChange([...next].sort(sourceOrder));
   }
   return (
-    <FormField id={id} label="排除来源">
+    <FormField id={id} label="排除来源" layout="inline">
       <Popover.Root>
         <Popover.Trigger
           id={id}
@@ -283,36 +283,38 @@ function ExcludedGearEditor() {
   );
   return (
     <section className={styles.section} aria-label="排除指定装备">
-      <h3>排除装备</h3>
-      <div className={styles.pickerRow}>
-        <div className={styles.slotFilter}>
-          <LabeledSelect
-            label="排除装备部位"
+      <div className={styles.titleRow}>
+        <h3>排除装备</h3>
+        <div className={styles.pickerRow}>
+          <div className={styles.slotFilter}>
+            <LabeledSelect
+              label="排除装备部位"
+              hideLabel
+              controlSize="slot"
+              value={activePart}
+              disabled={readOnly}
+              options={[
+                { value: "all", label: "全部部位" },
+                ...parts.map((slot) => ({
+                  value: slot,
+                  label:
+                    slot === "ring" || slot === "ring2"
+                      ? "戒指"
+                      : gearSlotLabels[slot],
+                })),
+              ]}
+              onChange={setPart}
+            />
+          </div>
+          <EquipmentSelect
             hideLabel
-            controlSize="slot"
-            value={activePart}
-            disabled={readOnly}
-            options={[
-              { value: "all", label: "全部部位" },
-              ...parts.map((slot) => ({
-                value: slot,
-                label:
-                  slot === "ring" || slot === "ring2"
-                    ? "戒指"
-                    : gearSlotLabels[slot],
-              })),
-            ]}
-            onChange={setPart}
+            label="排除装备"
+            placeholder="搜索装备名称或品级"
+            items={available}
+            disabled={readOnly || available.length === 0}
+            onSelect={(gear) => add(gear.id)}
           />
         </div>
-        <EquipmentSelect
-          hideLabel
-          label="排除装备"
-          placeholder="搜索装备名称或品级"
-          items={available}
-          disabled={readOnly || available.length === 0}
-          onSelect={(gear) => add(gear.id)}
-        />
       </div>
       <ul className={styles.list} tabIndex={0} aria-label="已排除装备">
         {excludedGearIds.map((id) => {
@@ -322,7 +324,7 @@ function ExcludedGearEditor() {
               {gear ? (
                 <EquipmentOptionRow
                   slot={gear.slot}
-                  iconId={equipmentIconId(gear.id)}
+                  iconId={itemIconId(gear.id)}
                   name={gear.name}
                   level={gear.level}
                   source={gear.source}
@@ -380,7 +382,7 @@ function ForcedGearEditor() {
         catalog.gearOptions.find((gear) => gear.id === selectedId));
   return (
     <section className={styles.section} aria-label="强制装备">
-      <div className={styles.controls}>
+      <div className={styles.titleRow}>
         <h3>
           强制装备{" "}
           <span className={styles.count}>
@@ -442,7 +444,7 @@ function ForcedGearEditor() {
                 {gear ? (
                   <EquipmentOptionRow
                     slot={slot as GearSlot}
-                    iconId={equipmentIconId(gear.id)}
+                    iconId={itemIconId(gear.id)}
                     name={gear.name}
                     level={gear.level}
                     source={gear.source}

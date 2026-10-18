@@ -1,12 +1,13 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest";
-import * as testSupport from "../../../test-utils/workbench.helper.test";
-import { normalizedText } from "../../../test-utils/workbench.helper.test";
+import * as testSupport from "@/test-utils/workbench.helper.test";
 import { foods, jobSchemas } from "@/domain";
 import {
   createSearchHistory,
   finishSearchHistory,
 } from "@/ui/services/search-history";
+
+const normalizedText = testSupport.normalizedText;
 
 function historyRecord(
   text: string,
@@ -60,6 +61,77 @@ async function waitForGcdValidation(): Promise<void> {
 }
 
 describe("联合工作台", () => {
+  it("共享搜索范围的种族选择会写入每个职业的搜索输入", async () => {
+    await enterConditions();
+    const clanTrigger = () =>
+      [...testSupport.host.querySelectorAll("button")].find((button) =>
+        normalizedText(button).includes("人族 · 中原之民"),
+      );
+    expect(clanTrigger()).toBeDefined();
+    testSupport.click(clanTrigger()!);
+    await testSupport.settleApp();
+    const highland = [...document.body.querySelectorAll("button")].find(
+      (button) => normalizedText(button) === "高地之民",
+    );
+    expect(highland).toBeDefined();
+    testSupport.click(highland as HTMLButtonElement);
+    await testSupport.settleApp(220);
+
+    expect(
+      [...testSupport.host.querySelectorAll("button")].some((button) =>
+        normalizedText(button).includes("人族 · 高地之民"),
+      ),
+    ).toBe(true);
+    expect(testSupport.host.querySelector("aside")?.textContent).toContain(
+      "人族 · 高地之民",
+    );
+    const inputs = testSupport.findFeasibleGcdsMock.mock.calls.map(
+      ([input]) => input as { clanIndex?: number },
+    );
+    expect(inputs.some((input) => input.clanIndex === 1)).toBe(true);
+  });
+
+  it("搜索范围只属于共享设置，职业条件不再提供", async () => {
+    await enterConditions();
+    const labelsNamed = (name: string) =>
+      [...testSupport.host.querySelectorAll("label")].filter(
+        (label) => normalizedText(label) === name,
+      );
+    expect(labelsNamed("最低装备品级")).toHaveLength(1);
+    expect(labelsNamed("最高装备品级")).toHaveLength(1);
+    expect(labelsNamed("同步品级")).toHaveLength(1);
+
+    testSupport.click(testSupport.buttonNamed(jobSchemas.RDM.name));
+    await testSupport.settleApp();
+    expect(labelsNamed("最低装备品级")).toHaveLength(0);
+    expect(labelsNamed("最高装备品级")).toHaveLength(0);
+    expect(labelsNamed("同步品级")).toHaveLength(0);
+  });
+
+  it("选择页按职业选择、前往条件设置操作行、搜索记录的顺序排列", async () => {
+    testSupport.navigateToJoint();
+    await testSupport.settleApp();
+    const jobButton = testSupport.buttonNamed(jobSchemas.RDM.name);
+    const continueButton = testSupport.buttonNamed("前往条件设置");
+    const selection = testSupport.host.querySelector(
+      'section[aria-labelledby="joint-selection-title"]',
+    )!;
+    const history = testSupport.host.querySelector(
+      'section[aria-label="搜索记录"]',
+    );
+    expect(history).not.toBeNull();
+    expect(selection.querySelectorAll("footer")).toHaveLength(0);
+    const action = continueButton.parentElement;
+    expect(action?.tagName).toBe("DIV");
+    expect(action?.className).toContain("selectionAction");
+    const follows = (left: Node, right: Node) =>
+      (left.compareDocumentPosition(right) &
+        Node.DOCUMENT_POSITION_FOLLOWING) !==
+      0;
+    expect(follows(jobButton, continueButton)).toBe(true);
+    expect(follows(continueButton, history!)).toBe(true);
+  });
+
   it("重新编辑相同历史条件后重新同步已完成的 GCD 分析", async () => {
     testSupport.seedCompletedJointHistory(testSupport.testJointConfig(["RDM", "BLM"]));
     testSupport.navigateToJoint();
