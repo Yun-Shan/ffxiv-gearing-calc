@@ -114,6 +114,11 @@ function gcdValidation(
   }
 
   if (issues.length > 0) return section(issues);
+  if (
+    expectedGcdKey !== undefined &&
+    (analysis.status === "idle" || analysis.key !== expectedGcdKey)
+  )
+    return section([], true);
   if (analysis.status === "error") {
     return section([
       issue(
@@ -124,8 +129,6 @@ function gcdValidation(
     ]);
   }
   if (analysis.status === "idle" || analysis.status === "loading")
-    return section([], true);
-  if (expectedGcdKey !== undefined && analysis.key !== expectedGcdKey)
     return section([], true);
   return section(issues);
 }

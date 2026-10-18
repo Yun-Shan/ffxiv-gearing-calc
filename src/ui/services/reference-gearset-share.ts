@@ -1,10 +1,12 @@
 import {
   foods,
   gameData,
+  getGearById,
   effectiveGearSyncLevel,
   jobLevelFor,
   jobSchemas,
   type JobId,
+  type GearSlot,
   type JobSchema,
   type OptimizationConfig,
   type OptimizationResult,
@@ -54,6 +56,7 @@ const MATERIA_STATS: Record<JobSchema["role"], readonly Stat[]> = {
 
 export interface ReferenceGearsetGear {
   id: number;
+  slot?: GearSlot;
   materias: readonly (readonly [Stat, number] | null)[];
   customStats?: Stats;
 }
@@ -127,6 +130,7 @@ export function resultReferenceUrl(
     }
     return {
       id: gear.id,
+      slot: gear.slot,
       materias,
       ...(customStats ? { customStats } : {}),
     };
@@ -440,10 +444,14 @@ export function stringifyReferenceGearset(
     customStats,
   }));
 
-  let ringIndex = gearCodes.length - 1;
-  while (gearCodes[ringIndex]?.materias.length === 0) ringIndex--;
-  const ringsInversed =
-    ringIndex > 0 && gearCodes[ringIndex - 1]!.id > gearCodes[ringIndex]!.id;
+  // Preserve the input ring positions before sorting or appending food.
+  const rings = gearset.gears.filter((gear) => {
+    const slot = gear.slot ?? getGearById(gear.id)?.slot;
+    return slot === "ring" || slot === "ring2";
+  });
+  const firstRing = rings.find((gear) => gear.slot === "ring") ?? rings[0];
+  const secondRing = rings.find((gear) => gear.slot === "ring2") ?? rings[1];
+  const ringsInversed = rings.length === 2 && firstRing!.id > secondRing!.id;
   gearCodes.sort((left, right) => left.id - right.id);
 
   let gearIdDeltaRange = 0;

@@ -32,6 +32,7 @@ const items = new Map([
   [1, gear(1, "head")],
   [2, gear(2, "head", "crafted/alpha")],
   [3, gear(3, "ring")],
+  [4, { ...gear(4, "ring"), unique: true }],
 ]);
 const lookup = (id: number) => items.get(id);
 const jobSlots: Partial<Record<JobId, readonly GearSlot[]>> = {
@@ -60,6 +61,98 @@ const txOptions = {
 };
 
 describe("equipment scope transactions", () => {
+  it.each(["ring", "ring2"] as const)(
+    "rejects duplicate unique rings in %s atomically, but allows non-unique duplicates",
+    (slot) => {
+      const other = slot === "ring" ? "ring2" : "ring";
+      for (const gearId of [3, 4]) {
+        const draft: SingleEquipmentDraft = {
+          excludedSources: ["raid/"],
+          excludedGearIds: [gearId],
+          forcedGear: { [other]: gearId },
+        };
+        const result = applySingleEquipmentAction(
+          draft,
+          { type: "set-force", slot, gearId },
+          lookup,
+        );
+        expect(result.accepted).toBe(gearId === 3);
+        if (gearId === 4) {
+          expect(result.reason).toBe("unique-ring");
+          expect(result.state).toBe(draft);
+          expect(draft.excludedGearIds).toEqual([4]);
+        }
+      }
+    },
+  );
+
+  it.each(["ring", "ring2"] as const)(
+    "checks unique rings across shared and job scopes for %s",
+    (sharedSlot) => {
+      const privateSlot = sharedSlot === "ring" ? "ring2" : "ring";
+      const state = jointState({ commonSlots: [sharedSlot] });
+      state.shared.forcedGear[sharedSlot] = 4;
+      const jobResult = applyJointEquipmentAction(
+        state,
+        { kind: "joint-job", jobId: "RDM" },
+        { type: "set-force", slot: privateSlot, gearId: 4 },
+        txOptions,
+      );
+      expect(jobResult).toEqual({
+        state,
+        accepted: false,
+        reason: "unique-ring",
+      });
+      expect(jobResult.state).toBe(state);
+
+      const reverse = jointState({ commonSlots: [sharedSlot] });
+      reverse.jobs.GNB!.forcedGear[privateSlot] = 4;
+      const sharedResult = applyJointEquipmentAction(
+        reverse,
+        { kind: "joint-shared" },
+        { type: "set-force", slot: sharedSlot, gearId: 4 },
+        txOptions,
+      );
+      expect(sharedResult).toEqual({
+        state: reverse,
+        accepted: false,
+        reason: "unique-ring",
+      });
+      expect(sharedResult.state).toBe(reverse);
+    },
+  );
+
+  it("checks both shared rings and both private rings without forbidding the same unique ring on different jobs", () => {
+    const shared = jointState({ commonSlots: ["rings"] });
+    shared.shared.forcedGear.ring = 4;
+    expect(
+      applyJointEquipmentAction(
+        shared,
+        { kind: "joint-shared" },
+        { type: "set-force", slot: "ring2", gearId: 4 },
+        txOptions,
+      ).accepted,
+    ).toBe(false);
+    const privateState = jointState({ commonSlots: [] });
+    privateState.jobs.RDM!.forcedGear.ring = 4;
+    expect(
+      applyJointEquipmentAction(
+        privateState,
+        { kind: "joint-job", jobId: "RDM" },
+        { type: "set-force", slot: "ring2", gearId: 4 },
+        txOptions,
+      ).accepted,
+    ).toBe(false);
+    expect(
+      applyJointEquipmentAction(
+        privateState,
+        { kind: "joint-job", jobId: "GNB" },
+        { type: "set-force", slot: "ring2", gearId: 4 },
+        txOptions,
+      ).accepted,
+    ).toBe(true);
+  });
+
   it("clears same-scope force when excluding an item and clears same-scope item/source exclusions when forcing it", () => {
     const original: SingleEquipmentDraft = {
       excludedSources: ["raid/"],

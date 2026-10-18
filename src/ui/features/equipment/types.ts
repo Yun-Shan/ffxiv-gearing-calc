@@ -56,6 +56,7 @@ export interface EquipmentActionResult<T> {
   state: T;
   accepted: boolean;
   reason?:
+    | "unique-ring"
     | "invalid-slot"
     | "shared-restriction"
     | "job-restriction"

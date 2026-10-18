@@ -14,6 +14,20 @@ const validDraft: JobConditionDraft = {
 };
 
 describe("job condition validation snapshot", () => {
+  it("ignores errors from an old analysis key and reports errors only for the current input", () => {
+    const runtime = {
+      gcdAnalysis: { status: "error" as const, key: "old", message: "offline" },
+    };
+    const stale = validateJobConditionDraft(validDraft, runtime, {
+      expectedGcdKey: "new",
+    });
+    expect(stale.sections.gcd).toEqual({ status: "pending", issues: [] });
+    const current = validateJobConditionDraft(validDraft, runtime, {
+      expectedGcdKey: "old",
+    });
+    expect(current.sections.gcd.status).toBe("invalid");
+    expect(current.sections.gcd.issues[0]?.code).toBe("gcd.analysis.error");
+  });
   it("treats GCD analysis idle and loading as pending for analysis-backed modes", () => {
     const idle = validateJobConditionDraft(
       { ...validDraft, gcd: { mode: "tiers", tiers: [2.5] } },

@@ -63,6 +63,18 @@ function copyForce(
   return { ...force };
 }
 
+function conflictsWithUniqueRing(
+  force: Partial<Record<GearSlot, number>>,
+  action: Extract<EquipmentAction, { type: "set-force" }>,
+  lookup: GearLookup,
+): boolean {
+  if (action.slot !== "ring" && action.slot !== "ring2") return false;
+  const otherSlot = action.slot === "ring" ? "ring2" : "ring";
+  return (
+    lookup(action.gearId)?.unique === true && force[otherSlot] === action.gearId
+  );
+}
+
 function applyLocalAction<
   T extends SingleEquipmentDraft | JointJobEquipmentDraft,
 >(draft: T, action: EquipmentAction, lookup: GearLookup): T {
@@ -121,6 +133,11 @@ export function applySingleEquipmentAction(
   action: EquipmentAction,
   lookup: GearLookup,
 ): EquipmentActionResult<SingleEquipmentDraft> {
+  if (
+    action.type === "set-force" &&
+    conflictsWithUniqueRing(draft.forcedGear, action, lookup)
+  )
+    return { state: draft, accepted: false, reason: "unique-ring" };
   if (action.type === "set-source-exclusions") {
     let state = draft;
     for (const source of draft.excludedSources.filter(
@@ -261,6 +278,14 @@ export function applyJointEquipmentAction(
       if (isExcludedByShared(state, action.gearId, options.lookup)) {
         return { state, accepted: false, reason: "shared-restriction" };
       }
+      if (
+        conflictsWithUniqueRing(
+          { ...state.shared.forcedGear, ...job.forcedGear },
+          action,
+          options.lookup,
+        )
+      )
+        return { state, accepted: false, reason: "unique-ring" };
       jobs[jobId] = applyLocalAction(job, action, options.lookup);
       return { state: { ...state, jobs }, accepted: true };
     }
@@ -360,6 +385,21 @@ export function applyJointEquipmentAction(
     if (!isSlotShared(action.slot, state.commonSlots)) {
       return { state, accepted: false, reason: "not-shared" };
     }
+    if (
+      conflictsWithUniqueRing(
+        state.shared.forcedGear,
+        action,
+        options.lookup,
+      ) ||
+      Object.values(state.jobs).some((job) =>
+        conflictsWithUniqueRing(
+          { ...state.shared.forcedGear, ...job.forcedGear },
+          action,
+          options.lookup,
+        ),
+      )
+    )
+      return { state, accepted: false, reason: "unique-ring" };
     if (
       Object.values(state.jobs).some((job) =>
         job.excludedGearIds.includes(action.gearId),

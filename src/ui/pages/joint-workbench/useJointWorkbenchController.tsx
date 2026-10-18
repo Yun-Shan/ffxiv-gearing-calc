@@ -109,7 +109,7 @@ export function useJointWorkbenchController() {
       },
     );
     if (!applied.accepted) {
-      notify(applied.reason === "job-restriction" ? "该装备被职业专属限制排除，无法设为共享强制装备。" : "当前共享部位不允许此装备操作。", "warning");
+      notify(applied.reason === "unique-ring" ? "不能同时强制装备两枚相同的唯一戒指。" : applied.reason === "job-restriction" ? "该装备被职业专属限制排除，无法设为共享强制装备。" : "当前共享部位不允许此装备操作。", "warning");
       return;
     }
     updateSharedDraft((draft) => ({
@@ -131,7 +131,9 @@ export function useJointWorkbenchController() {
       },
     );
     if (!applied.accepted) {
-      const message = applied.reason === "shared-restriction"
+      const message = applied.reason === "unique-ring"
+        ? "不能同时强制装备两枚相同的唯一戒指。"
+        : applied.reason === "shared-restriction"
         ? "该装备与共享限制冲突，未应用职业专属设置。"
         : "该装备类型目前没有可用的私有部位，未应用设置。";
       notify(message, "warning");

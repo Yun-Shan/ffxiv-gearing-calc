@@ -4,7 +4,7 @@ import type {
   OptimizationConfig,
   OptimizationResult,
 } from "@/domain";
-import { foods } from "@/domain";
+import { foods, gears } from "@/domain";
 import {
   parseReferenceGearset,
   resultReferenceUrl,
@@ -12,6 +12,70 @@ import {
 } from "./reference-gearset-share";
 
 describe("reference gearset share compatibility", () => {
+  it("exports synchronized result rings by their slots even when the result array has another order", () => {
+    const rings = gears
+      .filter(
+        (gear) =>
+          gear.slot === "ring" && gear.jobs.includes("SAM") && gear.level > 660,
+      )
+      .slice(0, 2)
+      .sort((a, b) => a.id - b.id);
+    expect(rings).toHaveLength(2);
+    const result = {
+      calculationLevel: 100,
+      food: foods[0]!,
+      gear: rings.map((gear, index) => ({
+        ...gear,
+        slot: index === 0 ? "ring2" : "ring",
+        melds: [{ stat: "CRT", grade: 12, value: 36 }],
+        finalStats: {},
+      })),
+    } as OptimizationResult;
+    const parsed = parseReferenceGearset(
+      resultReferenceUrl(result, {
+        jobId: "SAM",
+        syncLevel: 660,
+      } as OptimizationConfig)!,
+    );
+    expect(parsed.gears.map((gear) => gear.id)).toEqual([
+      rings[1]!.id,
+      rings[0]!.id,
+    ]);
+    expect(parsed.gears.every((gear) => gear.materias.length === 0)).toBe(true);
+    expect(parsed.foodId).toBe(result.food.id);
+  });
+  it.each([undefined, 660])(
+    "preserves swapped empty rings with food at sync %s",
+    (syncLevel) => {
+      const rings = gears
+        .filter((gear) => gear.slot === "ring" && gear.jobs.includes("SAM"))
+        .slice(0, 2)
+        .sort((a, b) => a.id - b.id);
+      expect(rings).toHaveLength(2);
+      const payloads = [rings, [...rings].reverse()].map((ordered) => {
+        const input = {
+          job: "SAM" as const,
+          role: "str" as const,
+          jobLevel: 100,
+          syncLevel,
+          foodId: foods[0]!.id,
+          gears: ordered.map((gear) => ({ id: gear.id, materias: [] })),
+        };
+        const payload = stringifyReferenceGearset(input)!;
+        const parsed = parseReferenceGearset(payload);
+        expect(parsed.gears.map((gear) => gear.id)).toEqual(
+          ordered.map((gear) => gear.id),
+        );
+        expect(parsed.gears.every((gear) => gear.materias.length === 0)).toBe(
+          true,
+        );
+        expect(parsed.foodId).toBe(input.foodId);
+        expect(parsed.syncLevel).toBe(syncLevel);
+        return payload;
+      });
+      expect(payloads[0]).not.toBe(payloads[1]);
+    },
+  );
   it("preserves empty sockets and the original materia positions", () => {
     const gearset = {
       job: "SAM" as const,
