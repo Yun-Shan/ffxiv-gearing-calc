@@ -55,6 +55,7 @@
 | **本轮扩展**：三属性和的最紧安全上界（服务 §三/§五 的 `R` 构造） | [theorems/substat-sum-upper-bound](theorems/substat-sum-upper-bound/README.md) | 安全性已证明；`R_gear^uniq` 精确性条件成立；义军只统计目标属性且 `R_sep` 保留固定目标贡献、增量预算 `R*=S*−Σb`；食物耦合精确值未解决 |
 | **本轮扩展**：三属性和的安全下界与剪枝族（服务 §六 frontier / 分支剪枝） | [theorems/substat-sum-lower-bound-pruning](theorems/substat-sum-lower-bound-pruning/README.md) | 下界与 PR1–PR8 安全性已证明；**PR4/5 仅在相同约束口径下**被乘积界支配；**PR6 含加权方向，不能默认排除**（逐方向评估互补或证明冗余）；PR2 限制已证明；`Ω_slab` 非上集、盒域代表元算法不继承 |
 | **用户扩展**：三属性逐坐标下界 box、乘积下界与精炼迭代 | [theorems/coordinate-lower-bound-box](theorems/coordinate-lower-bound-box/README.md) | 屏障/乘积下界已证明（`B` 须为同域下界）；`T` 幂等、阈值 `M` 精确；box 不超出 frontier 轴支撑；真实域 `l` 可达性未解决 |
+| **用户扩展**：种族/主属性变化对最优配装的不变性 | [theorems/race-main-stat-invariance](theorems/race-main-stat-invariance/README.md) | **实际候选域一般命题已否证**（页面可选 L70 BLM sync375 精确搜索反例；Human 最优换族后 < Au Ra 真实最优）；L100 的 21 职业有限验证未发现反例但**未证明**；等主属性贡献/攻击因子公共比例/档位逐点不变等充分条件已证明；食物/HP 耦合未解决 |
 
 ## 5. 已证明结果（摘要）
 
@@ -172,6 +173,22 @@
 - **超集屏障（定理 1′）**：若 `D⊂Ω`、`B<=OPT_D`（`B` 是 **小域 D** 上的下界），则对 **D 的**每个 maximizer 有 `x*_i>=l_i^Ω(B)`、`Phi(l^Ω)<=OPT_D`、`T_Ω(B)<=OPT_D`——屏障/乘积下界/迭代对真实小域也有效（`l^Ω` 不必可达，不能当 incumbent；作为 `OPT_D` 的非构造下界合法）。若只知 `B<=OPT_Ω` 而 `B>OPT_D`，全部失效（精确反例 `D2`）。
 - **价值判定**：box 剪枝恰是 [strict-improvement-frontier](theorems/strict-improvement-frontier/README.md) 的 **3 个轴方向支撑**，不增加剪枝强度；新增价值是**显式坐标屏障证书**、`Phi(l)` 的**非构造性 OPT 下界**、以及无需新真实见证的一次性精炼。**没有概率/经验依据**说"较大出现足够高的下界"；`B` 低时易停滞；不声称性能收益。真实域 `l` 的可达性、其它伤害因子耦合为未解决（§12）。
 
+**N. 种族主属性变化与最优配装的不变性（用户扩展）**（[race-main-stat-invariance](theorems/race-main-stat-invariance/README.md)）
+
+- **对象**：种族只改变攻击主属性的基础值 `B`（`value=B+a`，`a` 是装备+食物贡献）；目标 `D_B(x)=A_B(a(x))·Q(x)`；比较 damage/DPS 时问：换种族后原最优解是否仍最优、是否存在更优解。
+- **实际候选域一般命题：已否证（真实精确搜索）**。在相同配置/候选池/食物/约束下，用精确求解器分别求 Human/Au Ra 全局最优：**页面可选**的 L70 BLM（sync375，360–390，`gcdTarget=2.5`，damage）Human 最优 `score=12.385384952246342`（GCD 2.50），Au Ra 最优 `score=12.354601735047163`（GCD 2.50）；Human 最优装备换到 Au Ra 基值后评分 `12.341774441851111`，**低于** Au Ra 真实最优 `12.354601735047163`，且两族最优装备 ID 不同（bracelet `24424→21565`）。这是两个种族各自精确最优之间的对照，不是“相对更优的构造向量”。
+- **配装器分享链接**（Asvel 固定配装格式，含 BLM/L70/sync375/食物 49245）：
+  - 人族最优：<https://asvel.github.io/ffxiv-gearing/?ABoe3N5w0dSHGGo1a7OhbOLSSnA73sYbgxU6TGCt14K1iX823>
+  - 敖龙族最优：<https://asvel.github.io/ffxiv-gearing/?AFXUbFijlHBTAXIZovbcIjwezxWKeVb5Ix7ThavYCgW05wyZF>
+- **追加方向反例（均为页面可选同步等级，`gcdTarget=2.5`）**：
+  - 更高同步 BLM `sync665`（650–795，max−sync=130）：Human `56.15142038085938`/Au Ra `56.107528658166046`；Human 装备换族后 `56.08516501757813`，严格更低。链接：[Human](https://asvel.github.io/ffxiv-gearing/?hFGaRYPrf3c0qEd0KYEffbjFA9dj8n6W1iazuOQAP8oY2eUOz6YjkU9IGOYF8Zl) · [Au Ra](https://asvel.github.io/ffxiv-gearing/?abolY4EyFms1NIeK22RGSg5GV4q56CoTdxziylVvxUvPPGGsw0NnmiEGZvhpd3t)
+  - 大同步差值 BLM `sync475`（460–795，max−sync=320）：Human `20.039108423178103`/Au Ra `20.004779323047984`；Human 装备换族后 `19.98919781689372`，严格更低。链接：[Human](https://asvel.github.io/ffxiv-gearing/?6wURr5j5rpQv4zqthEenLPJUTzL7SIXoz6xRDPtGqVLMmquB2Gi8F) · [Au Ra](https://asvel.github.io/ffxiv-gearing/?ibmSG1tU3EVcJNZlfGRx9MAeVFQgzFT8h93NokjZyx5ZjoRdXSTf)
+- **等级 100 有限验证（未证明）**：21 个 100 级职业（无同步 770–795 damage）及 BLM/SAM/WHM/BRD/PLD 的 710–795、640–795 范围，Human/Au Ra 精确最优装备/食物 ID 全部相同；只有基础主属性/VIT 不同。未发现反例，但这不是一般性证明；L100 命题仍列为开放。
+- **已证明的充分条件**：所有可行解主属性贡献相同（公共正因子）；攻击因子满足 `A_{B2}=c·A_{B1}`；或两族对每个可行主属性档位逐点相同（不跨档）。
+- **有限域判据**：最优集合（按最终因子等价类）不变 ⇔ 所有两两比较符号不变。
+- **当前实现范围**：规则固定人族·中原之民、`getBaseStats` 用 `clanStats[stat][0]`、优化配置无种族输入；UI 换种族不改变优化器输入是**实现事实**，不是数学不变性。
+- **未解决**：L100 上的一般性证明/更大范围反例；约束/共享/食物百分比/HP/TEN 与种族耦合；见该目录 §7、§12。
+
 ## 6. 被否证的强猜想与精确反例
 
 反例本身即否证；每条都可用 §10 的脚本复算。
@@ -214,6 +231,7 @@
 10. 自定义武器（Manderville/义军）/BLU 的 `U_j(s)` 构造、仅“基线上界”语义、混合目标与不活跃职业。
 11. 三属性和的**带食物精确最大值**（`bonus` 依赖总贡献 `G`，逐槽不再可分离；需 DP 或更细的耦合上界，见 [substat-sum-upper-bound](theorems/substat-sum-upper-bound/README.md) §12）；以及约束（速度/TEN 带）下的精确最大值（二维背包/DP）。
 12. 真实域（候选池可达集）上的逐坐标屏障 `l^Reach`：需要真实改善集坐标投影/固定切片 2D 最大值与可达性认证；`q/g`（武器/主属性/坚韧/GCD）与三属性耦合时的乘积下界紧致化（[coordinate-lower-bound-box](theorems/coordinate-lower-bound-box/README.md) §12）。
+13. 等级 100 上“换种族/主属性基础值变化”是否普遍保持最优：已有 21 职业 + 多范围精确搜索未发现反例，但未证明；等级 90 的真实反例已确认。需要更大范围最优性复核/一般结构证明，以及约束/共享/食物百分比/HP/TEN 耦合模型（[race-main-stat-invariance](theorems/race-main-stat-invariance/README.md) §7.3–§7.4）。
 
 ## 8. 未做的性能验证（明确未评估）
 
@@ -278,7 +296,7 @@ node --experimental-strip-types docs/mathematical-analysis/theorems/<name>/verif
 - `verify-sum-bounds-independent.mjs`（Lead 侧独立交叉核验）：199 个随机小模型逐点穷举核对 `L1<=minS`、`maxS<=R_food`、`R_gear^uniq=穷举 maxGear`、`R_gear<=R_sep`、`B1-B4` 安全；600 个 Lagrangian 乘子点核对速度/TEN 弱对偶上界；81 个 `(C,H)` 格点核对 PR1 的 D_min slab 公式；K_sum 割安全性抽查。PASS。
 - `measure-sum-bounds.mjs`（**测量，不是证明**）：用生产 `prepareSearch` 只构造候选池，逐槽扫描 36 个基线 (场景, 职业) 实例，并解析 `run-acceptance.mjs` 的 18 个验收 case / 52 个职业行；含 2,000 次/实例确定性抽样断言 `L1 <= S <= R_food`、戒指配对暴力交叉核对、速度区间语义断言（`equippedSpeedRangeForGcd` 端点 GCD 必须等于目标）、GCD 约束感知的 Lagrangian 上界，以及**下界紧度** `lower_gap = minAchievable − L1`（基线 36/36、验收 52/52 行为 0：当前食物池下 `L1` 可达，是精确最小值）；生成 [measurements/substat-sum-bounds.md](measurements/substat-sum-bounds.md)。不运行搜索/MIP/benchmark。
 
-**14 个定理目录的 `verify.mjs` 全部 PASS**（2026-10-18 复核）：`raw-tier-transform`、`tier-log-curvature`、`marginal-comparison`、`raw-marginal-envelope`、`pairwise-endpoint-max`、`pairwise-slice-critical-set`、`free-budget-upper-bound`、`simplex-vertex-reduction`、`strict-improvement-frontier`、`attribute-swap-criterion`、`joint-loss-sum-bound`、`substat-sum-upper-bound`、`substat-sum-lower-bound-pruning`、`coordinate-lower-bound-box`。覆盖量与证明作用见各 README §10/§11 与脚本头部。
+**15 个定理目录的 `verify.mjs` 全部 PASS**（2026-10-18 复核）：`raw-tier-transform`、`tier-log-curvature`、`marginal-comparison`、`raw-marginal-envelope`、`pairwise-endpoint-max`、`pairwise-slice-critical-set`、`free-budget-upper-bound`、`simplex-vertex-reduction`、`strict-improvement-frontier`、`attribute-swap-criterion`、`joint-loss-sum-bound`、`substat-sum-upper-bound`、`substat-sum-lower-bound-pruning`、`coordinate-lower-bound-box`、`race-main-stat-invariance`。覆盖量与证明作用见各 README §10/§11 与脚本头部。另：`race-main-stat-invariance/real-search-verify.mjs` 与 `real-search-directions.mjs` 用生产精确求解器复核页面可选 L70/L90 的反例及 sync665/sync475 两个方向，PASS（不属于公式域证书；会运行搜索）。
 
 ### 修订后的实现前提（由安全修订归纳）
 
