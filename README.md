@@ -2,7 +2,7 @@
 
 纯前端的 FFXIV 自动配装优化器，使用 React、Base UI 和 TypeScript。单职业与同组多职业联合搜索支持装备/食物筛选、同步、装备锁定、GCD 和坚韧约束，以及共享装备与镶嵌。联合目标按各职业单独最优基线归一化；搜索完成最优性复核后返回结果，支持进度、取消及本地历史。
 
-业务行为与候选域见[领域与搜索规则](docs/rules/领域与搜索规则.md)；界面方向和 Penpot 入口见[前端设计总览](docs/前端设计总览.md)。
+业务行为与候选域见[领域与搜索规则](docs/rules/领域与搜索规则.md)；界面方向和文字版风格参考见[前端设计总览](docs/前端设计总览.md)。
 
 ## 页面与功能
 
@@ -11,7 +11,7 @@
 - `/gear-comparison`：同职业最多四方案对比，可从 Single/Joint 已完成历史或完整 Asvel 分享链接添加。导入按当前数据计算固定配装，保留合法镶嵌与自定义参数，不启动搜索或新增历史；装备表区域允许滚动查看全部内容。
 - 结果食物包含各项上限、比例、实际增益和真实利用率；单职业与多职业高级设置共用同一对话框，目前无实际设置项。
 
-界面结构、滚动边界与交付证据见 [UI 重构规范](docs/ui-refactor/README.md)。M01–M04 已真实接入；四方案容量合成预览仅在开发环境 `/gear-comparison?ui-preview=comparison-capacity` 启用。
+界面结构与滚动边界见[前端设计总览](docs/前端设计总览.md)，交付验收要求见[工程规则](docs/rules/工程规则.md)。四方案容量合成预览仅在开发环境 `/gear-comparison?ui-preview=comparison-capacity` 启用。
 
 ## 开发
 
@@ -75,7 +75,7 @@ node scripts/update-data.mjs --offline
 | 当前规则分类 | [项目规则索引](docs/PROJECT_RULES.md) |
 | 稳定架构与设计取舍 | [顶层设计](自动配装优化项目设计方案.md) |
 | 当前搜索模型与边界 | [联合搜索模型](docs/V3正确性与验收.md)、[条件最优性证明](docs/当前搜索算法最优性证明.md) |
-| Penpot 与 Playwright 操作、界面交付 | [项目前端 skill](.agents/skills/penpot-frontend-delivery/SKILL.md) |
+| 界面风格与交付验收 | [前端设计总览](docs/前端设计总览.md)、[工程规则](docs/rules/工程规则.md) |
 | 性能证据 | [优化总结](docs/search-optimization/搜索耗时优化总结.md)及其引用的验收记录 |
 
 `scripts/archive` 仅保存历史探索，不作为当前入口；旧记录不定义当前规则，也不代表当前性能。

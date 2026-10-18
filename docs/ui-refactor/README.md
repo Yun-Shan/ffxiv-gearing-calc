@@ -36,7 +36,9 @@
 
 ## 设计权威与实施边界
 
-本组文档及用户确认是本次重构的第一权威。以[最终决断](https://github.com/Yun-Shan/ffxiv-gearing-calc/issues/2#issuecomment-6218665833)为准归并 Issue 结论；被覆盖的旧建议不再作为实施选项。Penpot 仅作为颜色、字体、密度及局部视觉语言参考，不决定结构、内容、布局或流程。
+本组文档及用户确认是本次重构的第一权威。以[最终决断](https://github.com/Yun-Shan/ffxiv-gearing-calc/issues/2#issuecomment-6218665833)为准归并 Issue 结论；被覆盖的旧建议不再作为实施选项。
+
+Penpot 已弃用。本目录各文档中涉及 Penpot 的设计依据、风格参考及画板一致性验收等说明均已失效，统一改为参考[前端设计总览](../前端设计总览.md)中的文字版风格描述；结构、内容、布局与流程仍按本组文档及用户确认执行。
 
 主要修改范围为 src/ui；完成已确认 UI 重构所需的最小全局样式、App/UI entry 和直接相关测试一并纳入。src/styles.scss 的旧全局控件样式与全部现有 @media 必须清理，不保留为目录外残留。
 
