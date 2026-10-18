@@ -13,20 +13,18 @@
   gap: 12px;
 }
 .mark {
-  display: grid;
-  place-items: center;
+  display: block;
+  flex-shrink: 0;
   width: 38px;
   height: 38px;
-  border: 2px solid #a4dcd9;
-  border-radius: 50%;
-  color: #a4dcd9;
-}
-.innerMark {
-  font-size: 28px;
+  object-fit: contain;
 }
 .name {
+  display: flex;
+  flex-direction: column;
   color: #a4dcd9;
-  font-size: 22px;
+  font-size: 18px;
+  line-height: 1.25;
   font-weight: 700;
   white-space: nowrap;
 }
