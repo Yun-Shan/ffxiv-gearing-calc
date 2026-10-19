@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { Breadcrumbs } from "@/ui/components/breadcrumbs/Breadcrumbs";
 import styles from "./AboutPage.module.scss";
 
 interface ProjectLink {
@@ -20,7 +21,7 @@ const communityProjects: readonly CommunityProject[] = [
       },
     ],
     description:
-      "FFXIV 配装器，本项目的主要参考项目。MCP 缺少必需资料时以它的导出作为回退与核对来源；职业 schema、职业公式、同步品级分组与食物利用率公式也参考该项目。配装分享格式沿用其 v5/v6 编码，装备对比可直接导入其分享链接。",
+      "FFXIV 配装器，本项目的主要参考项目。MCP 缺少必需资料时以它的导出作为回退与核对来源；职业 schema、职业公式、同步品级分组与食物利用率公式也参考该项目。",
   },
   {
     links: [
@@ -38,7 +39,7 @@ const communityProjects: readonly CommunityProject[] = [
       { name: "EXDSchema", href: "https://github.com/xivdev/EXDSchema" },
     ],
     description:
-      "社区解包项目，本项目读取的 FFXIV 游戏内容数据（装备、职业、副本等 Sheet）来自 Lumina，数据表字段定义与核对使用 EXDSchema；数据经 MCP 服务查询并保存为可复现的版本快照。",
+      "社区解包项目，本项目通过 Lumina 读取 FFXIV 游戏内容数据（装备、职业、副本等 Sheet），数据表字段定义与核对使用 EXDSchema。",
   },
 ];
 
@@ -70,11 +71,8 @@ export function AboutPage() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <p>关于</p>
-        <h1>关于配装工坊</h1>
-        <span>
-          纯前端的 FFXIV 自动配装优化器，搜索、历史与固定配装导入都在浏览器本地完成。
-        </span>
+        <Breadcrumbs items={["关于"]} />
+        <h1>关于自动配装器</h1>
       </header>
 
       <section className={styles.section} aria-labelledby="about-community">

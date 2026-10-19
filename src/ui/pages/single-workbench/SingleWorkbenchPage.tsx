@@ -9,6 +9,7 @@ export function SingleWorkbenchPage() {
   return (
     <SingleWorkbenchProvider>
       <WorkbenchLayout
+        breadcrumbs={["单职业搜索"]}
         main={<SingleWorkbenchMain />}
         aside={<SingleWorkbenchAside />}
       />

@@ -7,6 +7,7 @@ import { GearComparisonPage } from "@/ui/pages/gear-comparison/GearComparisonPag
 import { FaqPage } from "@/ui/pages/faq/FaqPage";
 import { AboutPage } from "@/ui/pages/about/AboutPage";
 import { FeedbackProvider } from "@/ui/components/feedback/FeedbackProvider";
+import { navigateTo, subscribeNavigation } from "@/ui/services/navigation";
 import styles from "./App.module.scss";
 
 const routes: Record<string, AppPage> = {
@@ -52,6 +53,7 @@ export function App() {
       );
       if (
         !link ||
+        event.defaultPrevented ||
         event.button !== 0 ||
         event.ctrlKey ||
         event.metaKey ||
@@ -64,15 +66,12 @@ export function App() {
       if (url.origin !== location.origin || !Object.hasOwn(routes, url.pathname))
         return;
       event.preventDefault();
-      history.pushState(null, "", url.pathname);
-      update();
+      navigateTo(url.pathname);
     };
-    window.addEventListener("popstate", update);
-    window.addEventListener("hashchange", update);
+    const unsubscribe = subscribeNavigation(update);
     document.addEventListener("click", navigate);
     return () => {
-      window.removeEventListener("popstate", update);
-      window.removeEventListener("hashchange", update);
+      unsubscribe();
       document.removeEventListener("click", navigate);
     };
   }, []);

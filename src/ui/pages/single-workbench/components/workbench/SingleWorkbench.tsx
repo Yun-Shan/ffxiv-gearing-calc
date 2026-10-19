@@ -159,7 +159,6 @@ export function SingleWorkbenchMain() {
     <>
       <header className={styles.heading}>
         <div>
-          <span className={styles.kicker}>单职业搜索</span>
           <h1>
             {state.phase === "selection"
               ? title

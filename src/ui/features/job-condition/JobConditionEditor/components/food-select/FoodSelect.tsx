@@ -13,6 +13,7 @@ import styles from "./FoodSelect.module.scss";
 interface FoodOption {
   id: number;
   name: string;
+  level?: number;
   stats: Stats;
   statRates: Stats;
 }
@@ -44,6 +45,7 @@ export function FoodSelect({
       .map((item) => ({
         id: item.id,
         name: item.name,
+        level: item.level,
         stats: item.stats,
         statRates: item.statRates,
       })),
@@ -86,6 +88,9 @@ export function FoodSelect({
               />
             )}
             <span className={styles.name}>{item.name}</span>
+            {item.level !== undefined && (
+              <span className={styles.level}>品级 {item.level}</span>
+            )}
             {selected && (
               <Check size={14} className={styles.check} aria-hidden="true" />
             )}

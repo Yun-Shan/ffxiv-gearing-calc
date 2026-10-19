@@ -12,19 +12,27 @@
 .question {
   margin: 0;
   color: tokens.$color-text-primary;
-  font-size: tokens.$font-size-label;
+  font-size: 1.1667em;
   line-height: 1.4;
 }
 
 .answer {
   margin: 0;
   color: tokens.$color-text-secondary;
-  font-size: tokens.$font-size-body;
+  font-size: 1em;
   line-height: 1.7;
 }
 
 .answer p {
   margin: 0;
+}
+
+.answer mark {
+  padding: 0 3px;
+  border-radius: 3px;
+  background: tokens.$color-accent-soft;
+  color: tokens.$color-accent-teal;
+  font-weight: 600;
 }
 
 .answer p + p {

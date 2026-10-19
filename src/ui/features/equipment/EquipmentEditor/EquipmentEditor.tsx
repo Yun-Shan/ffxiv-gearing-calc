@@ -170,7 +170,7 @@ function SourceTreeSelect({
     onChange([...next].sort(sourceOrder));
   }
   return (
-    <FormField id={id} label="排除来源" layout="inline">
+    <FormField id={id} label="排除来源" layout="inline" hideLabel>
       <Popover.Root>
         <Popover.Trigger
           id={id}
@@ -231,13 +231,18 @@ function ExcludedSourcesEditor() {
   }, [catalog.gearOptions]);
   return (
     <section className={styles.section} aria-label="排除来源">
-      <SourceTreeSelect
-        sources={sourceOptions}
-        excludedSources={excludedSources}
-        counts={counts}
-        disabled={readOnly}
-        onChange={setSources}
-      />
+      <div className={styles.titleRow}>
+        <h3 className={styles.sectionLabel}>排除来源</h3>
+        <div className={styles.pickerRow}>
+          <SourceTreeSelect
+            sources={sourceOptions}
+            excludedSources={excludedSources}
+            counts={counts}
+            disabled={readOnly}
+            onChange={setSources}
+          />
+        </div>
+      </div>
       <ul className={styles.list} tabIndex={0} aria-label="已排除来源">
         {[...excludedSources].sort(sourceOrder).map((source) => (
           <li key={source}>
@@ -284,7 +289,7 @@ function ExcludedGearEditor() {
   return (
     <section className={styles.section} aria-label="排除指定装备">
       <div className={styles.titleRow}>
-        <h3>排除装备</h3>
+        <h3 className={styles.sectionLabel}>排除装备</h3>
         <div className={styles.pickerRow}>
           <div className={styles.slotFilter}>
             <LabeledSelect
@@ -359,7 +364,7 @@ function ForcedGearEditor() {
   if (slots.length === 0)
     return (
       <section className={styles.section} aria-label="强制装备">
-        <h3>强制装备</h3>
+        <h3 className={styles.sectionLabel}>强制装备</h3>
         <p>当前没有可强制的装备部位。</p>
         <ul className={styles.list} tabIndex={0} aria-label="已强制装备" />
       </section>
@@ -383,7 +388,7 @@ function ForcedGearEditor() {
   return (
     <section className={styles.section} aria-label="强制装备">
       <div className={styles.titleRow}>
-        <h3>
+        <h3 className={styles.sectionLabel}>
           强制装备{" "}
           <span className={styles.count}>
             {Object.values(forcedGear).filter((id) => id !== undefined).length}{" "}

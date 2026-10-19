@@ -22,6 +22,14 @@
   text-align: left;
 }
 
+.level {
+  flex: none;
+  color: #657083;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 .check {
   flex: none;
   color: #426f55;

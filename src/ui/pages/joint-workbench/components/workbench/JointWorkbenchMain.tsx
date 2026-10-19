@@ -284,9 +284,7 @@ export function SelectionMain({
       aria-labelledby="joint-selection-title"
     >
       <header className={styles.pageHeading}>
-        <p>实验室 · 多职业联合搜索</p>
         <h1 id="joint-selection-title">选择参与联合搜索的职业</h1>
-        <span>同一搜索中的职业必须属于相同装备分组。</span>
       </header>
       <JobSelection
         mode="joint"
@@ -350,9 +348,7 @@ export function ConditionsMain({
       aria-labelledby="joint-conditions-title"
     >
       <header className={styles.pageHeading}>
-        <p>实验室 · 多职业联合搜索</p>
         <h1 id="joint-conditions-title">设置联合条件</h1>
-        <span>条件快照会冻结；公式等级按职业上限与同步品级确定。</span>
       </header>
       <Tabs.Root
         className={styles.conditionsTabs}
@@ -478,7 +474,6 @@ export function ProgressMain({
       aria-labelledby="joint-progress-title"
     >
       <header className={styles.pageHeading}>
-        <p>实验室 · 多职业联合搜索</p>
         <h1 id="joint-progress-title">搜索进度</h1>
       </header>
       <ol className={styles.stageTrack} aria-label="搜索阶段">
@@ -541,7 +536,6 @@ export function ResultMain({
     <section className={styles.resultMain} aria-labelledby="joint-result-title">
       <header className={styles.resultHeading}>
         <div>
-          <p>实验室 · 多职业联合搜索</p>
           <h1 id="joint-result-title">联合配装结果</h1>
         </div>
         <div className={styles.resultMetadata}>

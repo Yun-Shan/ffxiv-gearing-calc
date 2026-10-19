@@ -39,19 +39,9 @@
   gap: 3px;
 }
 
-.pageHeading p,
 .pageHeading h1,
-.pageHeading span,
-.resultHeading p,
 .resultHeading h1 {
   margin: 0;
-}
-
-.pageHeading p,
-.resultHeading p {
-  color: #788848;
-  font-size: 11px;
-  font-weight: 700;
 }
 
 .pageHeading h1,
@@ -61,7 +51,6 @@
   line-height: 1.25;
 }
 
-.pageHeading span,
 .resultMetadata,
 .versionNotice {
   color: #63736c;

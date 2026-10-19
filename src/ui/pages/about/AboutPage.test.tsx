@@ -17,7 +17,7 @@ describe("关于页", () => {
       root = createRoot(host);
     act(() => root.render(<AboutPage />));
 
-    expect(host.querySelector("h1")?.textContent).toBe("关于配装工坊");
+    expect(host.querySelector("h1")?.textContent).toBe("关于自动配装器");
     expect(host.querySelector("h2")?.textContent).toBe("本项目依赖的社区项目");
 
     const links = [
@@ -49,7 +49,7 @@ describe("关于页", () => {
 
     const text = normalizedText(host);
     for (const keyword of [
-      "配装分享格式",
+      "通过 Lumina 读取",
       "装备与职业图标",
       "社区解包项目",
       "游戏内容数据",
@@ -57,6 +57,8 @@ describe("关于页", () => {
     ]) {
       expect(text).toContain(keyword);
     }
+    expect(text).not.toContain("配装分享格式");
+    expect(text).not.toContain("数据经 MCP 服务查询");
 
     act(() => root.unmount());
   });

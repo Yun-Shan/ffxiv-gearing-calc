@@ -7,6 +7,7 @@ export function JointWorkbenchPage() {
   return (
     <JointWorkbenchProvider>
       <WorkbenchLayout
+        breadcrumbs={["实验室", "多职业联合搜索"]}
         main={<JointWorkbenchMain />}
         aside={<JointWorkbenchAside />}
       />

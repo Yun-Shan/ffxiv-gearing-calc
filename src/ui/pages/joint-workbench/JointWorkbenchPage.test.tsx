@@ -171,7 +171,6 @@ describe("联合工作台", () => {
     expect(testSupport.host.querySelector("h1")?.textContent).toBe(
       "设置联合条件",
     );
-    expect(testSupport.host.textContent).toContain("公式等级按职业上限与同步品级确定");
     await waitForGcdValidation();
     expect(testSupport.buttonNamed("开始联合搜索").disabled).toBe(false);
   });

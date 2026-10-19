@@ -37,9 +37,13 @@
 .section > :not(.list) {
   flex: none;
 }
-.section h3 {
+.sectionLabel {
   margin: 0;
-  font-size: 0.95rem;
+  color: #304c48;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.4;
+  white-space: nowrap;
 }
 .titleRow {
   display: flex;
@@ -47,7 +51,7 @@
   gap: 8px;
   min-width: 0;
 }
-.titleRow > h3 {
+.titleRow > .sectionLabel {
   flex: none;
   white-space: nowrap;
 }

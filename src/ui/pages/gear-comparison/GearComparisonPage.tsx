@@ -11,6 +11,7 @@ import {
   type MeldedGear,
 } from "@/domain";
 import { CoreMetricBar } from "@/ui/components/results/core-metric-bar/CoreMetricBar";
+import { Breadcrumbs } from "@/ui/components/breadcrumbs/Breadcrumbs";
 import { GearTable } from "@/ui/components/results/gear-table/GearTable";
 import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
 import {
@@ -289,7 +290,7 @@ export function GearComparisonPage({
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <p>实验室 / 装备对比</p>
+          <Breadcrumbs items={["实验室", "装备对比"]} />
           <h1>同职业配装对比</h1>
         </div>
         <a href="/lab">返回实验室</a>
