@@ -37,7 +37,8 @@ function decodeEquipmentColumns(
 ): EquipInfo[][] {
   const candidateCount = columns.itemIds.length;
   const parameterCount = columns.parameterIds.length;
-  if (columns.parameterValues.length !== parameterCount ||
+  if (columns.itemLevels.length !== candidateCount ||
+    columns.parameterValues.length !== parameterCount ||
     columns.ringSlotKinds.length !== candidateCount ||
     columns.ringSlotIndexes.length !== candidateCount ||
     columns.uniqueKinds.length !== candidateCount) {
@@ -59,7 +60,7 @@ function decodeEquipmentColumns(
     }
     const equipment: EquipInfo = {
       itemId: columns.itemIds[candidateIndex]!,
-      itemLevel: 0,
+      itemLevel: columns.itemLevels[candidateIndex]!,
       key: "",
       baseParams,
       PDMG: 0,

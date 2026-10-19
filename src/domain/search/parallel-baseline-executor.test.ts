@@ -303,6 +303,9 @@ test("compact baseline columns preserve the exact optimum and restore original c
     const [actual] = results;
     assert.ok(actual);
     assert.equal(actual.damage, expected.damage);
+    assert.deepEqual(actual.statistics.conditionalResourceSupport,
+      expected.statistics.conditionalResourceSupport,
+      "worker and local models must use the same item-level resource supports");
     assert.deepEqual(actual.selection.map((equipment) => equipment.itemId),
       expected.selection.map((equipment) => equipment.itemId));
     actual.selection.forEach((equipment, index) => {
@@ -316,6 +319,9 @@ test("compact baseline columns preserve the exact optimum and restore original c
 
     assert.ok(postedRequest);
     assert.ok(postedRequest.options.slots.itemIds instanceof Float64Array);
+    assert.ok(postedRequest.options.slots.itemLevels instanceof Float64Array);
+    assert.deepEqual(Array.from(postedRequest.options.slots.itemLevels), [795, 795, 735, 795, 795],
+      "item levels on both sides of the resource prior must survive serialization");
     assert.equal(postedRequest.options.enableCanonicalEvaluatorCandidateUpperBound, true,
       "the internal canonical-evaluator optimization flag must cross the compact worker boundary");
     assert.deepEqual(postedRequest.options.candidateItemLevelRanges, [{ min: 775, max: 795 }],

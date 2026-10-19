@@ -25,6 +25,7 @@ export type BaselineExecutor = ((
 export type SerializedEquipmentColumns = {
   slotOffsets: Uint32Array;
   itemIds: Float64Array;
+  itemLevels: Float64Array;
   parameterOffsets: Uint32Array;
   parameterIds: Float64Array;
   parameterValues: Float64Array;
@@ -202,6 +203,7 @@ function serializedOptions(
   }
 
   const itemIds = new Float64Array(candidateCount);
+  const itemLevels = new Float64Array(candidateCount);
   const parameterOffsetColumns = new Uint32Array(candidateCount + 1);
   const parameterIds = new Float64Array(parameterCount);
   const parameterValues = new Float64Array(parameterCount);
@@ -213,6 +215,7 @@ function serializedOptions(
   for (const slot of options.slots) {
     for (const equipment of slot) {
       itemIds[candidateIndex] = equipment.itemId;
+      itemLevels[candidateIndex] = equipment.itemLevel;
       if (equipment.ringSlotIndex === undefined) ringSlotKinds[candidateIndex] = 0;
       else if (typeof equipment.ringSlotIndex === "number") {
         ringSlotKinds[candidateIndex] = 1;
@@ -274,6 +277,7 @@ function serializedOptions(
     slots: {
       slotOffsets,
       itemIds,
+      itemLevels,
       parameterOffsets: parameterOffsetColumns,
       parameterIds,
       parameterValues,
