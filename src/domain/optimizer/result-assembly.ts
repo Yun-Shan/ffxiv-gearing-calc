@@ -5,6 +5,7 @@ import {
   calculateBaseStats,
   calculateEffects,
 } from "../rules.ts";
+import { addStatsForJob } from "../job-stats.ts";
 import { isRingPairEquipInfo } from "../search/ring-pairs.ts";
 import {
   equipmentCandidateIdentity,
@@ -117,7 +118,8 @@ export function assembleResult(
     prepared.clanIndex,
   );
   const gearStats = addStats(...selectedGear.map((gear) => gear.finalStats));
-  const unbuffedStats = addStats(baseStats, gearStats);
+  // 与参考实现一致：不属于职业属性结构的装备属性不参与总属性。
+  const unbuffedStats = addStatsForJob(prepared.jobSchema, baseStats, gearStats);
   const applicableFood = foodStatsForJob(food, config.jobId);
   const stats = applyFood(
     unbuffedStats,

@@ -81,26 +81,6 @@ export function concretizeGearStats(stats: GearStats, job: JobSchema): Stats {
   return result;
 }
 
-/** Resolve and add separate BaseParam contributions, such as an enabled item bonus. */
-export function concretizeGearStatsWithAdditions(
-  stats: GearStats,
-  additions: GearStats,
-  job: JobSchema,
-): Stats {
-  const result = concretizeGearStats(stats, job);
-  for (const [rawStat, value] of Object.entries(additions)) {
-    if (value === undefined) continue;
-    const stat: GearStat = rawStat as GearStat;
-    const concreteStat = stat === "main"
-      ? job.mainStat
-      : stat === "secondary"
-        ? job.secondaryStat
-        : stat;
-    result[concreteStat] = (result[concreteStat] ?? 0) + value;
-  }
-  return result;
-}
-
 /**
  * 按参考实现的 Gear.syncedLevel 规则处理普通装备和可变等级装备。
  * `jobLevel` 对应参考实现的 store.jobLevel：同步搜索中应传入同步映射等级

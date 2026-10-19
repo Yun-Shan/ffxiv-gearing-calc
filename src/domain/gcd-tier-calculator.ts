@@ -1,11 +1,12 @@
 import { foods, gameData, materiaGradeRequiredLevels, searchFoods } from "./data.ts";
 import { assertClanIndex } from "./clans.ts";
-import { gearStatsWithEnabledItemSpecialBonus } from "./item-special-bonus.ts";
+import { itemSpecialBonusAdditions } from "./item-special-bonus.ts";
 import { jobSchemas } from "./jobs.ts";
 import {
   applyFood,
   capGearStatsAtLevel,
   calculateBaseStats,
+  concretizeGearStats,
   effectiveGearSyncLevel,
   getGearStatCap,
   getSpeedStat,
@@ -43,6 +44,26 @@ type MeldCountOption = AssignmentState;
 interface BestRingProfiles {
   itemId: number;
   tenacity: number;
+}
+
+/** 面向用户的槽位名称；两枚戒指共用一个候选池，错误信息中合并显示。 */
+const gcdSlotLabels: Record<GearSlot, string> = {
+  weapon: "武器",
+  offhand: "盾牌",
+  head: "头部",
+  body: "身体",
+  hands: "手部",
+  legs: "腿部",
+  feet: "脚部",
+  earrings: "耳饰",
+  necklace: "项链",
+  bracelet: "手镯",
+  ring: "戒指",
+  ring2: "戒指",
+};
+
+function gcdSlotLabel(slot: GearSlot): string {
+  return gcdSlotLabels[slot];
 }
 
 function abortIfNeeded(signal?: AbortSignal): void {
@@ -342,6 +363,26 @@ function profilesForRegularMateria(
   return profiles;
 }
 
+function addBonusToProfiles(
+  profiles: Map<number, number>,
+  additions: Stats,
+  speedStat: "SKS" | "SPS",
+): Map<number, number> {
+  const speedBonus = additions[speedStat] ?? 0;
+  const tenacityBonus = additions.TEN ?? 0;
+  if (speedBonus === 0 && tenacityBonus === 0) return profiles;
+  // 参考实现在同步封顶与镶嵌封顶之后追加特殊加成，因此这里不再封顶。
+  const result = new Map<number, number>();
+  for (const [speed, tenacity] of profiles) {
+    const nextSpeed = speed + speedBonus;
+    result.set(
+      nextSpeed,
+      Math.max(result.get(nextSpeed) ?? Number.NEGATIVE_INFINITY, tenacity + tenacityBonus),
+    );
+  }
+  return result;
+}
+
 function gearProfiles(
   gear: Gear,
   config: OptimizationConfig,
@@ -349,47 +390,53 @@ function gearProfiles(
   speedStat: "SKS" | "SPS",
   jobLevel: number,
 ): Map<number, number> {
-  const effectiveStats = gearStatsWithEnabledItemSpecialBonus(
-    gear,
-    jobSchemas[jobId],
-    config.enabledItemSpecialBonuses,
-  );
+  const job = jobSchemas[jobId];
   const resolvedGear: Gear = {
     ...gear,
-    stats: effectiveStats,
+    stats: concretizeGearStats(gear.stats, job),
   };
+  let profiles: Map<number, number>;
   if (resolvedGear.resistanceWeaponAdjust !== undefined) {
-    return profilesForResistanceWeapon(
+    profiles = profilesForResistanceWeapon(
       resolvedGear,
       speedStat,
       jobLevel,
       config.syncLevel,
     );
-  }
-  if (resolvedGear.customParameters?.length) {
-    return profilesForCustomParameters(
+  } else if (resolvedGear.customParameters?.length) {
+    profiles = profilesForCustomParameters(
       resolvedGear,
       speedStat,
       jobLevel,
       config.syncLevel,
     );
+  } else {
+    const syncApplies =
+      effectiveGearSyncLevel(resolvedGear, jobLevel, config.syncLevel) !== undefined;
+    if (syncApplies || (resolvedGear.materiaSlots === 0 && resolvedGear.materiaAdvanced !== true)) {
+      const level = capLevelFor(resolvedGear, jobLevel, config.syncLevel);
+      const stats = syncApplies
+        ? capGearStatsAtLevel(resolvedGear, resolvedGear.stats, level)
+        : resolvedGear.stats;
+      profiles = new Map<number, number>();
+      addProfile(
+        profiles,
+        stats[speedStat] ?? 0,
+        stats.TEN ?? 0,
+      );
+    } else {
+      profiles = profilesForRegularMateria(resolvedGear, jobId, speedStat);
+    }
   }
-  const syncApplies =
-    effectiveGearSyncLevel(resolvedGear, jobLevel, config.syncLevel) !== undefined;
-  if (syncApplies || (resolvedGear.materiaSlots === 0 && resolvedGear.materiaAdvanced !== true)) {
-    const level = capLevelFor(resolvedGear, jobLevel, config.syncLevel);
-    const stats = syncApplies
-      ? capGearStatsAtLevel(resolvedGear, resolvedGear.stats, level)
-      : resolvedGear.stats;
-    const profiles = new Map<number, number>();
-    addProfile(
-      profiles,
-      stats[speedStat] ?? 0,
-      stats.TEN ?? 0,
-    );
-    return profiles;
-  }
-  return profilesForRegularMateria(resolvedGear, jobId, speedStat);
+  return addBonusToProfiles(
+    profiles,
+    itemSpecialBonusAdditions(
+      resolvedGear,
+      job,
+      config.enabledItemSpecialBonuses ?? [],
+    ),
+    speedStat,
+  );
 }
 
 function slotProfiles(
@@ -496,11 +543,13 @@ export function calculateFeasibleGcdTiers(
   const allSlots = dependencies.slotsForJob(config.jobId);
   const nonRingSlots = allSlots.filter((slot) => slot !== "ring" && slot !== "ring2");
   const candidatePools = new Map<GearSlot, Gear[]>();
+  const emptySlots: GearSlot[] = [];
   const eligiblePoolForSlot = (slot: GearSlot, pool: Gear[]): Gear[] => {
     const forcedId = config.forcedGear[slot];
     const eligible = forcedId === undefined
       ? pool
       : pool.filter((gear) => gear.id === forcedId);
+    if (eligible.length === 0) emptySlots.push(slot);
     candidatePools.set(slot, eligible);
     return eligible;
   };
@@ -511,6 +560,12 @@ export function calculateFeasibleGcdTiers(
   const ringPool = dependencies.gearOptionsFor(config, "ring");
   const firstRingCandidates = eligiblePoolForSlot("ring", ringPool);
   const secondRingCandidates = eligiblePoolForSlot("ring2", ringPool);
+  if (emptySlots.length > 0) {
+    const labels = [...new Set(emptySlots.map((slot) => gcdSlotLabel(slot)))];
+    throw new RangeError(
+      `以下槽位没有可用候选装备：${labels.join("、")}。请调整装备品级范围或装备限制条件。`,
+    );
+  }
   const jobLevel = dependencies.getJobLevel(config);
   const usesTenacity =
     config.minTenacity !== undefined ||

@@ -10,6 +10,7 @@ import { jobSchemas } from "../jobs.ts";
 import {
   calculateBaseStats,
   capGearStatsAtLevel,
+  concretizeGearStats,
   effectiveGearSyncLevel,
   getGearStatCap,
   getSpeedStat,
@@ -21,12 +22,14 @@ import {
 } from "../search/candidate-pareto.ts";
 import { equipmentIdentity } from "../search/equipment-identity.ts";
 import { buildRingPairEquipInfos } from "../search/ring-pairs.ts";
-import { gearStatsWithEnabledItemSpecialBonus } from "../item-special-bonus.ts";
+import { applyItemSpecialBonus } from "../item-special-bonus.ts";
+import { filterStatsForJob } from "../job-stats.ts";
 import type {
   Food,
   Gear,
   GearSlot,
   JobId,
+  JobSchema,
   MeldedGear,
   Materia,
   OptimizationConfig,
@@ -229,9 +232,10 @@ function regularMateriaMelds(
 
 function toSolverEquipment(
   gear: MeldedGear,
+  job: JobSchema,
   resistanceWeaponAdjust = gear.resistanceWeaponAdjust,
 ): SolverGear {
-  const baseParams = Object.entries(gear.finalStats)
+  const baseParams = Object.entries(filterStatsForJob(gear.finalStats, job))
     .flatMap(([key, value]) => {
       const index = attributeIndex.get(key as Stat);
       return index === undefined || !value
@@ -367,14 +371,9 @@ export function makeGearCandidates(
   // 参考实现的 store.jobLevel 在同步搜索中等于同步映射等级；
   // 候选穿戴资格已由 gearOptionsFor 按职业上限过滤，这里只用于 Gear.syncedLevel。
   const syncJobLevel = calculationJobLevelFor(config);
-  const effectiveStats = gearStatsWithEnabledItemSpecialBonus(
-    gear,
-    job,
-    config.enabledItemSpecialBonuses,
-  );
   const resolvedGear: Gear = {
     ...gear,
-    stats: effectiveStats,
+    stats: concretizeGearStats(gear.stats, job),
   };
   const options = resolvedGear.resistanceWeaponAdjust !== undefined
     ? [[]]
@@ -382,12 +381,19 @@ export function makeGearCandidates(
     ? customParameterMelds(resolvedGear)
     : regularMateriaMelds(resolvedGear, config.jobId, config, syncJobLevel);
   const candidates = new Map<string, GearCandidate>();
+  const enabledItemSpecialBonuses = config.enabledItemSpecialBonuses ?? [];
   for (const melds of options) {
-    const finalStats = mergeCandidateStats(
+    // 参考实现先完成同步封顶与魔晶石封顶，再追加特殊加成且不再封顶。
+    const finalStats = applyItemSpecialBonus(
+      mergeCandidateStats(
+        resolvedGear,
+        melds,
+        syncJobLevel,
+        config.syncLevel,
+      ),
       resolvedGear,
-      melds,
-      syncJobLevel,
-      config.syncLevel,
+      job,
+      enabledItemSpecialBonuses,
     );
     const damageStat =
       job.mainStat === "INT" || job.mainStat === "MND"
@@ -402,6 +408,7 @@ export function makeGearCandidates(
     };
     const equipment = toSolverEquipment(
       meldedGear,
+      job,
       resistanceAdjustmentForSearch(
         resolvedGear,
         finalStats,

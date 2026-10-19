@@ -303,6 +303,7 @@ function calculateFromTotalStats(
 
 /**
  * 仅接收装备与食物属性总和，并据此计算属性效果。
+ * 调用方必须先排除不属于职业属性结构的属性（见 `job-stats.ts`）；本求值器只按公式使用传入值。
  */
 export function equippedEffects(
   job: Job,

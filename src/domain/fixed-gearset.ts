@@ -14,7 +14,6 @@ import {
   mergeCandidateStats,
 } from "./optimizer/equipment-candidates.ts";
 import {
-  addStats,
   applyFood,
   calculateBaseStats,
   calculateEffects,
@@ -25,8 +24,9 @@ import {
 import { describeFoodResult } from "./food-result.ts";
 import {
   enabledItemSpecialBonusesForJob,
-  gearStatsWithEnabledItemSpecialBonus,
+  applyItemSpecialBonus,
 } from "./item-special-bonus.ts";
+import { addStatsForJob } from "./job-stats.ts";
 import type {
   CustomizableStat,
   Effects,
@@ -284,11 +284,7 @@ function assembleGear(
   }
   const resolvedGear: Gear = {
     ...gear,
-    stats: gearStatsWithEnabledItemSpecialBonus(
-      gear,
-      jobSchemas[jobId],
-      enabledItemSpecialBonuses,
-    ),
+    stats: concretizeGearStats(gear.stats, jobSchemas[jobId]),
   };
   // 穿戴资格按职业上限判定；装备同步按参考实现的 store.jobLevel
   // （同步搜索中即同步映射等级）计算。
@@ -299,9 +295,16 @@ function assembleGear(
     calculationLevel,
     syncLevel,
   );
-  const finalStats = resolvedGear.customParameters !== undefined || resolvedGear.resistanceWeaponAdjust !== undefined
+  const mergedStats = resolvedGear.customParameters !== undefined || resolvedGear.resistanceWeaponAdjust !== undefined
     ? customFinalStats(resolvedGear, input.customStats, calculationLevel, syncLevel)
     : mergeCandidateStats(resolvedGear, melds, calculationLevel, syncLevel);
+  // 参考实现先完成同步封顶与魔晶石封顶，再追加特殊加成且不再封顶。
+  const finalStats = applyItemSpecialBonus(
+    mergedStats,
+    resolvedGear,
+    jobSchemas[jobId],
+    enabledItemSpecialBonuses,
+  );
   const weaponStat = jobSchemas[jobId].mainStat === "INT" || jobSchemas[jobId].mainStat === "MND"
     ? "MDMG"
     : "PDMG";
@@ -414,8 +417,12 @@ export function calculateFixedGearset(input: FixedGearsetInput): FixedGearsetRes
   const gear = assembleFullGear(input, characterLevel, calculationLevel);
   const job = jobSchemas[input.jobId];
   const baseStats = calculateBaseStats(job, calculationLevel);
-  const gearStats = addStats(...gear.map(({ finalStats }) => finalStats));
-  const unbuffedStats = addStats(baseStats, gearStats);
+  // 与参考实现一致：不属于职业属性结构的装备属性不参与总属性。
+  const unbuffedStats = addStatsForJob(
+    job,
+    baseStats,
+    ...gear.map(({ finalStats }) => finalStats),
+  );
   const applicableFood = foodStatsForJob(food, input.jobId);
   const stats = applyFood(unbuffedStats, applicableFood.stats, applicableFood.statRates);
   const weaponStat = job.mainStat === "INT" || job.mainStat === "MND" ? "MDMG" : "PDMG";

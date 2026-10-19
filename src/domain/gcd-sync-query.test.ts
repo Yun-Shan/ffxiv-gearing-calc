@@ -44,3 +44,46 @@ describe("sync GCD query", () => {
     }
   }, 120_000);
 });
+
+describe("GCD query without available slot candidates", () => {
+  const beastmaster: OptimizationConfig = {
+    jobId: "BST",
+    minItemLevel: 130,
+    maxItemLevel: 135,
+    maximizeTenacity: false,
+    objective: "damage",
+    excludedSources: [],
+    excludedGearIds: [],
+    forcedGear: {},
+    sharedSlots: [],
+    foodId: 0,
+    gcdChoices: [],
+  };
+
+  it("reports the slots that have no candidates when a source exclusion empties them", () => {
+    expect(() =>
+      findFeasibleGcdsLocally({
+        ...beastmaster,
+        excludedSources: ["斗兽奇弈"],
+      })
+    ).toThrow(/以下槽位没有可用候选装备：.*武器.*盾牌/s);
+  });
+
+  it("reports the slot that is emptied by a forced gear outside the item level range", () => {
+    expect(() =>
+      findFeasibleGcdsLocally({
+        ...beastmaster,
+        forcedGear: { weapon: 50_742 },
+      })
+    ).toThrow(/以下槽位没有可用候选装备：武器/);
+  });
+
+  it("still returns tiers when the exclusions leave every slot with candidates", () => {
+    const tiers = findFeasibleGcdsLocally({
+      ...beastmaster,
+      minItemLevel: 0,
+      excludedSources: ["斗兽奇弈"],
+    });
+    expect(tiers.length).toBeGreaterThan(0);
+  });
+});

@@ -1,9 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { gameData, gears } from "./data.ts";
-import { gearStatsWithEnabledItemSpecialBonus, withDomainItemSpecialBonusDefaults } from "./item-special-bonus.ts";
+import {
+  applyItemSpecialBonus,
+  itemSpecialBonusAdditions,
+  withDomainItemSpecialBonusDefaults,
+} from "./item-special-bonus.ts";
 import { jobSchemas } from "./jobs.ts";
 import { makeGearCandidates } from "./optimizer/equipment-candidates.ts";
-import { capGearStatsAtLevel, concretizeGearStats, getGearStatCap } from "./rules.ts";
+import {
+  capGearStatsAtLevel,
+  concretizeGearStats,
+  getGearStatCap,
+} from "./rules.ts";
 import type { Gear, JobId, OptimizationConfig } from "./types.ts";
 
 function bonusGear(): Gear {
@@ -41,30 +49,38 @@ function config(
 }
 
 describe("ItemSpecialBonus gear stats", () => {
-  it("adds matching bonus contributions after existing base-stat resolution", () => {
+  it("resolves matching bonus contributions per job without mutating the gear", () => {
     const gear = bonusGear();
     const originalStats = { ...gear.stats };
     const job = jobSchemas.BST;
-    const enabled = gearStatsWithEnabledItemSpecialBonus(gear, job, [11]);
-    const repeated = gearStatsWithEnabledItemSpecialBonus(gear, job, [11]);
+    const additions = itemSpecialBonusAdditions(gear, job, [11]);
+    const repeated = itemSpecialBonusAdditions(gear, job, [11]);
 
-    expect(enabled[job.mainStat]).toBe(21);
-    expect(enabled[job.secondaryStat]).toBe(35);
-    expect(repeated).toEqual(enabled);
+    // main 解析为力量 11，叠加显式力量 7；secondary 解析为直击 5。
+    expect(additions).toEqual({ STR: 18, DHT: 5 });
+    expect(repeated).toEqual(additions);
     expect(gear.stats).toEqual(originalStats);
     expect(gear.itemSpecialBonusParam).toBe(9);
-    expect(concretizeGearStats(gear.stats, job)[job.mainStat]).toBe(3);
+    expect(concretizeGearStats(gear.stats, job).STR).toBe(3);
   });
 
   it("does not append bonuses that are disabled or do not match the enabled list", () => {
     const gear = bonusGear();
 
-    const expected = concretizeGearStats(gear.stats, jobSchemas.BST);
-    expect(gearStatsWithEnabledItemSpecialBonus(gear, jobSchemas.BST)).toEqual(expected);
-    expect(gearStatsWithEnabledItemSpecialBonus(gear, jobSchemas.BST, [10])).toEqual(expected);
+    expect(itemSpecialBonusAdditions(gear, jobSchemas.BST)).toEqual({});
+    expect(itemSpecialBonusAdditions(gear, jobSchemas.BST, [10])).toEqual({});
   });
 
-  it("applies the configured list once before candidate stat processing", () => {
+  it("appends the bonus onto already-final stats without clipping it", () => {
+    const gear = bonusGear();
+    const capped = { STR: 30, DHT: 12 };
+    const final = applyItemSpecialBonus(capped, gear, jobSchemas.BST, [11]);
+
+    expect(final).toEqual({ STR: 48, DHT: 17 });
+    expect(capped).toEqual({ STR: 30, DHT: 12 });
+  });
+
+  it("applies the configured list once after sync caps and materia caps", () => {
     const gear = bonusGear();
     const enabledConfig = config([11]);
     const disabledConfig = config([]);
@@ -86,24 +102,25 @@ describe("ItemSpecialBonus gear stats", () => {
       enabledConfig,
       new Map(),
     )[0]!.gear;
+    const base = concretizeGearStats(gear.stats, jobSchemas.BST);
 
-    expect(enabled.finalStats[jobSchemas.BST.mainStat]).toBe(21);
-    expect(disabled.finalStats[jobSchemas.BST.mainStat]).toBe(3);
+    expect(enabled.finalStats.STR).toBe((base.STR ?? 0) + 18);
+    expect(enabled.finalStats.DHT).toBe((base.DHT ?? 0) + 5);
+    expect(disabled.finalStats).toEqual(base);
     expect(repeated.finalStats).toEqual(enabled.finalStats);
   });
 
-  it("applies the bonus before sync caps and before materia fills the remaining cap", () => {
+  it("applies the bonus after sync caps instead of capping the bonus itself", () => {
     const syncLevel = gameData.syncLevelOfJobLevels[80];
     if (syncLevel === undefined) throw new Error("缺少 80 级同步品级");
     const template = gears.find((gear) =>
       gear.slot === "body" &&
-      gear.materiaSlots > 0 &&
       gear.level > syncLevel &&
       gear.equipLevelVariable !== true &&
       gear.equipLevel <= 100,
     );
-    if (template === undefined) throw new Error("缺少测试用可镶嵌身体装备");
-    const baseGear: Gear = {
+    if (template === undefined) throw new Error("缺少测试用身体装备");
+    const syncedGear: Gear = {
       ...template,
       id: 999_999_992,
       jobs: ["SAM"],
@@ -116,47 +133,59 @@ describe("ItemSpecialBonus gear stats", () => {
       resistanceWeaponAdjust: undefined,
     };
     const synced = makeGearCandidates(
-      baseGear,
-      baseGear.slot,
+      syncedGear,
+      syncedGear.slot,
       { ...config([11], "SAM"), syncLevel },
       new Map(),
     )[0]!.gear;
-    const syncedCap = capGearStatsAtLevel(
-      baseGear,
-      gearStatsWithEnabledItemSpecialBonus(baseGear, jobSchemas.BST, [11]),
+    const cappedBase = capGearStatsAtLevel(
+      syncedGear,
+      concretizeGearStats(syncedGear.stats, jobSchemas.SAM),
       syncLevel,
-    )["STR"];
-    expect(synced.finalStats.STR).toBe(syncedCap);
-    expect(synced.melds).toEqual([]);
+    ).STR!;
 
+    expect(cappedBase).toBeLessThan(5_000);
+    expect(synced.finalStats.STR).toBe(cappedBase + 5_000);
+    expect(synced.melds).toEqual([]);
+  });
+
+  it("does not let the bonus reduce the materia capacity", () => {
+    const template = gears.find((gear) =>
+      gear.slot === "body" &&
+      gear.materiaSlots > 0 &&
+      gear.equipLevelVariable !== true &&
+      gear.equipLevel <= 100,
+    );
+    if (template === undefined) throw new Error("缺少测试用可镶嵌身体装备");
     const cap = getGearStatCap(template, "CRT");
     const capGear: Gear = {
-      ...baseGear,
+      ...template,
       id: 999_999_993,
-      level: template.level,
-      materiaSlots: 1,
+      jobs: ["SAM"],
       stats: { CRT: cap - 10 },
       specialStats: { CRT: 10 },
+      itemSpecialBonus: 11,
+      materiaSlots: 1,
+      materiaAdvanced: undefined,
+      customParameters: undefined,
+      resistanceWeaponAdjust: undefined,
     };
-    const enabledCandidates = makeGearCandidates(
+    const candidates = makeGearCandidates(
       capGear,
       capGear.slot,
       config([11], "SAM"),
       new Map(),
     );
-    const disabledCandidates = makeGearCandidates(
-      capGear,
-      capGear.slot,
-      config([], "SAM"),
-      new Map(),
-    );
-    expect(enabledCandidates.length).toBeGreaterThan(0);
-    expect(enabledCandidates.every((candidate) =>
-      candidate.gear.melds.every(({ stat }) => stat !== "CRT"),
-    )).toBe(true);
-    expect(disabledCandidates.some((candidate) =>
-      candidate.gear.melds.some(({ stat }) => stat === "CRT"),
-    )).toBe(true);
+    expect(candidates.length).toBeGreaterThan(0);
+    for (const candidate of candidates) {
+      const meldedCrt = candidate.gear.melds
+        .filter(({ stat }) => stat === "CRT")
+        .reduce((sum, { value }) => sum + value, 0);
+      // 镶嵌按基础属性计算可用量并封顶，随后才追加不封顶的特殊加成。
+      expect(candidate.gear.finalStats.CRT).toBe(
+        Math.min(cap, cap - 10 + meldedCrt) + 10,
+      );
+    }
   });
 
   it("overrides caller settings with the current per-job domain defaults", () => {
