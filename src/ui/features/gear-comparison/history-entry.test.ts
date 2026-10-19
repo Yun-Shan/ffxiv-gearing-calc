@@ -72,14 +72,13 @@ describe("history comparison adapter", () => {
     ).toBe(789.12);
   });
 
-  it("does not offer unfinished, wrong-job, or missing-level history records", () => {
-    const unfinished = record({ status: "running" });
+  it("does not offer wrong-job or missing-level history records", () => {
     const wrongJob = record({ config: { jobId: "WAR" } });
     const noLevel = record({
       result: { ...result, calculationLevel: undefined },
     });
     expect(
-      historyComparisonOptions([unfinished, wrongJob, noLevel], "PLD"),
+      historyComparisonOptions([wrongJob, noLevel], "PLD"),
     ).toEqual([]);
   });
 });

@@ -1,6 +1,7 @@
 @use "@/styles/tokens" as tokens;
 
 .groups {
+  font-size: clamp(#{tokens.$font-size-13px}, 1.8cqh, #{tokens.$font-size-heading});
   display: flex;
   flex-direction: column;
   row-gap: 6px;
@@ -11,14 +12,13 @@
   display: flex;
   height: fit-content;
   column-gap: 24px;
-  padding: 12px;
+  padding: 0.5em;
   border-radius: 8px;
   align-items: center;
 
   .title {
-    flex: 0 0 (115px + 8px); // 115是按钮宽度，8是gap，目前暂时是硬编码magic value，主要是改成变量找不到好的方式总感觉过度设计
+    flex: 0 0 9.462em;
     color: #354a37;
-    font-size: tokens.$font-size-13px;
     font-weight: bold;
     text-align: center;
   }
@@ -49,9 +49,6 @@
 
 .joint {
   row-gap: 4px;
-}
-.joint .group {
-  padding-block: 4px;
 }
 .joint .group.sub {
   padding: 0;

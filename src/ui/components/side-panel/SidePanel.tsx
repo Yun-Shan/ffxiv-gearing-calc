@@ -65,7 +65,7 @@ function Footer({ children }: { children?: ReactNode }) {
   return (
     <footer className={styles.footer}>
       <div>{children}</div>
-      <span>纯前端计算 · 可离线运行</span>
+      {/*<span>纯前端计算 · 可离线运行</span>*/}
     </footer>
   );
 }

@@ -3,19 +3,18 @@
 .container {
   box-sizing: border-box;
   display: inline-flex;
-  width: 115px;
+  width: 8.846em;
   min-width: 0;
-  min-height: 36px;
-  flex: 0 0 115px;
+  min-height: 2.769em;
+  flex: 0 0 8.846em;
   align-items: center;
   justify-content: flex-start;
-  gap: 8px;
-  padding: 3px 7px;
+  gap: 0.615em;
+  padding: 0.231em 0.538em;
   border: 1px solid #b7aa8a;
   border-radius: 9px;
   background: rgb(255 255 255 / 62%);
   color: #354a37;
-  font-size: tokens.$font-size-13px;
   font-weight: 700;
   line-height: 1.2;
   text-align: left;
@@ -41,8 +40,8 @@
 }
 
 .icon {
-  width: 28px;
-  height: 28px;
+  width: 2.154em;
+  height: 2.154em;
   border-radius: 7px;
 }
 

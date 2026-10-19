@@ -24,7 +24,7 @@ export function JobButton({
       <img
         className={styles.icon}
         src={jobIconUrl(jobId)}
-        alt=""
+        alt={jobId}
         aria-hidden="true"
       />
       <span className={styles.jobName}>{jobSchemas[jobId].name}</span>

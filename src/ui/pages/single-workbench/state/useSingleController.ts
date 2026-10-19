@@ -130,7 +130,7 @@ export function useSingleController() {
       }))
     )
       return false;
-    if (result && record.result && record.status === "completed")
+    if (result)
       navigate({
         phase: "result",
         snapshot: record.config,
@@ -254,14 +254,6 @@ export function useSingleController() {
           })),
       });
       const settledAt = Date.now();
-      finish(
-        controller.signal.aborted
-          ? { status: "cancelled" }
-          : result
-            ? { status: "completed", result }
-            : { status: "no-result" },
-        settledAt,
-      );
       if (!owns()) return;
       if (result && !controller.signal.aborted) {
         const next: SingleState = {
@@ -274,6 +266,7 @@ export function useSingleController() {
         };
         current.current = next;
         setState(next);
+        finish(result, settledAt);
       } else {
         const next: SingleState = {
           phase: "conditions",
@@ -289,15 +282,6 @@ export function useSingleController() {
         );
       }
     } catch (error) {
-      finish(
-        controller.signal.aborted
-          ? { status: "cancelled" }
-          : {
-              status: "failed",
-              error: error instanceof Error ? error.message : String(error),
-            },
-        Date.now(),
-      );
       if (!owns()) return;
       const next: SingleState = {
         phase: "conditions",

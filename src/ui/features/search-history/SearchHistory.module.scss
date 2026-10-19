@@ -1,13 +1,19 @@
 .root {
+  container-type: size;
   display: flex;
   flex: 1;
   flex-direction: column;
   min-height: 0;
+  min-width: 0;
   gap: 8px;
 }
+.root > .heading,
+.root > p,
+.list {
+  font-size: clamp(12px, 3.2cqh, 16px);
+}
 .root h2 {
-  font-size: 15px;
-  margin: 0;
+  font-size: 1.25em;
 }
 .list {
   min-height: 0;
@@ -16,39 +22,50 @@
   flex-direction: column;
   gap: 8px;
 }
-.record {
-  border: 1px solid #d8e1db;
-  background: #f8faf7;
-  padding: 10px 12px;
-  font-size: 12px;
-}
-.record p {
-  margin: 4px 0;
-  color: #6b7c76;
-}
 .heading {
   display: flex;
   justify-content: space-between;
   gap: 12px;
   align-items: center;
 }
-.actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 6px;
-}
-.actions button {
+.actionButton {
   border: 1px solid #b8ccc3;
   padding: 4px 10px;
   background: white;
   color: #24645f;
   border-radius: 3px;
 }
-.error {
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.actionButton:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+.confirmPositioner {
+  z-index: 1000;
+}
+.confirmPopup {
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 14px;
+  border: 1px solid #e2c27c;
+  border-radius: 6px;
+  background: #fff8e6;
+  color: #715722;
+  box-shadow: 0 4px 16px #18223524;
+  font-size: 14px;
+}
+.confirmTitle {
+  margin: 0 0 8px;
+  font-size: 1em;
+}
+.confirmDescription {
+  margin: 0;
+  line-height: 1.6;
+}
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+  button { font: inherit; }
 }
 .backdrop {
   position: fixed;
@@ -61,8 +78,10 @@
   z-index: 61;
   top: 10%;
   bottom: 10%;
-  left: 20%;
-  right: 20%;
+  left: 50%;
+  width: max(60%, 1040px);
+  max-width: calc(100% - 48px);
+  transform: translateX(-50%);
   padding: 20px;
   display: flex;
   flex-direction: column;

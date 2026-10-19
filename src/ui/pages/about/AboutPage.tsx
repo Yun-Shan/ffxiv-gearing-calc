@@ -75,6 +75,16 @@ export function AboutPage() {
         <h1>关于自动配装器</h1>
       </header>
 
+      <section className={`${styles.card} ${styles.section}`} aria-labelledby="about-project">
+        <h2 id="about-project">自动配装器</h2>
+        <p>
+          自动配装器是一款 FFXIV 自动配装优化器。选择职业并设置装备品级、同步品级、GCD 等条件后，即可搜索符合约束的装备、魔晶石与食物搭配，减少手动比较配装的时间。
+        </p>
+        <p>
+          除单职业搜索外，实验室还提供多职业联合搜索与装备对比，帮助你规划职业间的共享装备、比较不同方案。计算在本地浏览器中完成，成功结果会保存到本地历史，方便随时查看或调整条件后重新搜索。
+        </p>
+      </section>
+
       <section className={styles.section} aria-labelledby="about-community">
         <h2 id="about-community">本项目依赖的社区项目</h2>
         <ul className={styles.cards}>

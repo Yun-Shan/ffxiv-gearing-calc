@@ -10,7 +10,7 @@ $color-border-strong: #cbd5c7;
 $color-border-emphasis: #9eac98;
 $color-accent-teal: #087f80;
 $color-accent-teal-soft: #51c4bd;
-$color-accent-olive: #708e3c;
+$color-accent-olive: #a5a93e;
 $color-status-ready: #405540;
 $color-status-error: #a94350;
 
@@ -33,15 +33,34 @@ $font-size-20px: 20px;
 $font-size-21px: 21px;
 $font-size-23px: 23px;
 $font-size-28px: 28px;
-$font-size-fluid-8-to-10: clamp(8px, calc(0.4167vw + 2px), 10px);
-$font-size-fluid-9-to-11: clamp(9px, calc(0.4167vw + 3px), 11px);
-$font-size-fluid-10-to-12: clamp(10px, calc(0.4167vw + 4px), 12px);
-$font-size-fluid-12-to-14: clamp(12px, calc(0.4167vw + 6px), 14px);
+$font-size-fluid-8-to-10: clamp(8px, calc(0.417vw + 2px), 10px);
+$font-size-fluid-9-to-11: clamp(9px, calc(0.417vw + 3px), 11px);
+$font-size-fluid-10-to-12: clamp(10px, calc(0.417vw + 4px), 12px);
+$font-size-fluid-12-to-14: clamp(12px, calc(0.417vw + 6px), 14px);
 
 $color-ink: #172b40;
 $color-muted: #596d80;
 $color-accent-soft: #edf8f7;
 $color-line: #dde5eb;
+
+// 搜索历史卡片的已确认参考配色。
+$color-history-border: #d6e3dc;
+$color-history-panel: #f2f7f2;
+$color-history-panel-border: #dbe8de;
+$color-history-stripe: #77a991;
+$color-history-badge: #dcede9;
+$color-history-badge-border: #b8d6d0;
+$color-history-badge-text: #326b65;
+$color-history-job: #263c32;
+$color-history-time-label: #6b816e;
+$color-history-time: #526657;
+$color-history-label: #839187;
+$color-history-value: #2d4538;
+$color-history-result-border: #d2e8e1;
+$color-history-metric-label: #5f8179;
+$color-history-delete: #925e58;
+$color-history-delete-border: #e7d9d4;
+$color-history-delete-surface: #fffdfc;
 
 $nav-bar-height: 72px;
 

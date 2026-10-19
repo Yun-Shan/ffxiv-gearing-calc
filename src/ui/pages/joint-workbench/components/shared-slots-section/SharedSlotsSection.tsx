@@ -1,3 +1,5 @@
+import { shareableSlotsForJobs } from "../../shared-slot-options";
+import type { ValidationIssue } from "@/ui/features/job-condition/types";
 import { CheckboxGroup } from "@base-ui/react/checkbox-group";
 import { CheckboxInput } from "@/ui/components/form-controls/checkbox-input/CheckboxInput";
 import { slotsForJob, type GearSlot, type JobId } from "@/domain";
@@ -37,13 +39,16 @@ export function sharedSlotsForJobs(jobs: readonly JobId[]): GearSlot[] {
 export function SharedSlotsSection({
   jobs,
   equipment,
+  issues = [],
   onChange,
 }: {
   jobs: readonly JobId[];
   equipment: JointEquipmentDraft;
+  issues?: readonly ValidationIssue[];
   onChange(next: JointEquipmentDraft): void;
 }) {
-  const available = sharedSlotsForJobs(jobs);
+  const available = sharedSlotsForJobs(jobs).filter(slot => slot !== "weapon" && slot !== "offhand");
+  const shareable = new Set(shareableSlotsForJobs(jobs));
   return (
     <section className={styles.section} aria-label="共享部位">
       <h2>共享部位</h2>
@@ -52,18 +57,34 @@ export function SharedSlotsSection({
         aria-label="共享部位选择"
         value={available.filter(
           (slot) =>
-            equipment.commonSlots.includes(slot) ||
-            (equipment.commonSlots.includes("rings") &&
-              (slot === "ring" || slot === "ring2")),
+            shareable.has(slot) &&
+            (equipment.commonSlots.includes(slot) ||
+              (equipment.commonSlots.includes("rings") &&
+                (slot === "ring" || slot === "ring2"))),
         )}
         onValueChange={(values) =>
-          onChange({ ...equipment, commonSlots: values as JointCommonSlot[] })
+          onChange({
+            ...equipment,
+            commonSlots: values.filter((slot) =>
+              shareable.has(slot as GearSlot),
+            ) as JointCommonSlot[],
+          })
         }
       >
         {available.map((slot) => (
-          <CheckboxInput key={slot} label={gearSlotLabels[slot]} value={slot} />
+          <CheckboxInput
+            key={slot}
+            label={gearSlotLabels[slot]}
+            value={slot}
+            disabled={!shareable.has(slot)}
+          />
         ))}
       </CheckboxGroup>
+      {issues.map((issue, index) => (
+        <p key={`${issue.code}-${index}`} className={styles.issue} role="alert">
+          {issue.message}
+        </p>
+      ))}
     </section>
   );
 }

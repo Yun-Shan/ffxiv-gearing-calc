@@ -10,10 +10,6 @@
   font-size: 22px;
   color: #354a37;
 }
-.heading > span {
-  font-size: 12px;
-  color: #73817d;
-}
 .heading button {
   border: 1px solid #b6cac3;
   background: white;
@@ -41,4 +37,20 @@
   font-size: 12px;
   color: #24706a;
   padding: 6px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.durationBadge {
+  flex: none;
+  padding: 3px 8px;
+  border: 1px solid #bdcec5;
+  border-radius: 5px;
+  background: #edf6f3;
+  color: #316c67;
+  font-size: 16px;
+  white-space: nowrap;
 }

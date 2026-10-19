@@ -158,7 +158,7 @@ export function SingleWorkbenchMain() {
   return (
     <>
       <header className={styles.heading}>
-        <div>
+        <div className={styles.titleRow}>
           <h1>
             {state.phase === "selection"
               ? title
@@ -168,16 +168,14 @@ export function SingleWorkbenchMain() {
                   ? `${title} · 正在搜索`
                   : `${title} · 配装结果`}
           </h1>
+        {state.phase === "result" && (
+          <span className={styles.durationBadge}>耗时 {(state.durationMs / 1000).toFixed(1)} 秒</span>
+        )}
         </div>
-        {state.phase === "conditions" && (
+        {(state.phase === "conditions" || state.phase === "result") && (
           <button onClick={controller.selection}>重新选择职业</button>
         )}
-        {state.phase === "result" && (
-          <span>
-            总用时 {(state.durationMs / 1000).toFixed(1)} 秒 · 数据{" "}
-            {state.dataVersion}
-          </span>
-        )}
+
       </header>
       {state.phase === "selection" && (
         <>
@@ -216,7 +214,7 @@ export function SingleWorkbenchMain() {
       {state.phase === "result" && (
         <>
           <CoreMetricBar
-            entries={[buildResultMetricEntry(state.result)]}
+            entries={[{ ...buildResultMetricEntry(state.result), clanIndex: state.snapshot.clanIndex, referenceUrl: resultReferenceUrl(state.result, state.snapshot) }]}
             objective={state.snapshot.objective ?? "dps"}
             showTenacity={jobSchemas[state.snapshot.jobId].role === "tank"}
           />
@@ -249,7 +247,7 @@ export function SingleWorkbenchAside() {
     <SidePanel>
       <SidePanel.Header
         title={state.phase === "selection" ? "信息公告栏" : title}
-        subtitle={state.phase === "selection" ? "配装工坊" : "条件摘要"}
+        subtitle={state.phase === "selection" ? "自动配装器" : "条件摘要"}
       />
       <SidePanel.Content>
         {draft ? (
@@ -262,10 +260,11 @@ export function SingleWorkbenchAside() {
       </SidePanel.Content>
       {state.phase === "conditions" && (
         <SidePanel.Status status={validation?.status}>
-          {validation?.valid
-            ? "已就绪，搜索结果将满足条件"
-            : (validation?.issues[0]?.message ?? "正在分析可行档位…")}
+          {validation?.issues.length ? "存在无效的条件设置，请检查所有条件约束" : "已就绪，可以开始搜索"}
         </SidePanel.Status>
+      )}
+      {state.phase === "result" && (
+        <SidePanel.Status>数据版本 {state.dataVersion}</SidePanel.Status>
       )}
       <SidePanel.Actions>
         {state.phase === "conditions" && (
@@ -282,16 +281,7 @@ export function SingleWorkbenchAside() {
         {state.phase === "result" && (
           <>
             <button onClick={() => void controller.edit()}>调整条件</button>
-            {resultReferenceUrl(state.result, state.snapshot) && (
-              <a
-                className={styles.share}
-                href={resultReferenceUrl(state.result, state.snapshot)}
-                target="_blank"
-                rel="noreferrer"
-              >
-                在配装器打开
-              </a>
-            )}
+
           </>
         )}
       </SidePanel.Actions>

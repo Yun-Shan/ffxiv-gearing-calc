@@ -1,3 +1,4 @@
+import { resultReferenceUrl } from "@/ui/services/reference-gearset-share";
 import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
 import { jobIconUrl } from "@/ui/services/job-icons";
 import { useEffect, useRef } from "react";
@@ -55,7 +56,6 @@ import {
   SearchHistory,
   HistoryOverlay,
 } from "@/ui/features/search-history/SearchHistory";
-import { commonGearSlotLabels } from "@/ui/services/labels";
 import { useJointWorkbench } from "../../useJointWorkbenchController";
 import { currentDataVersion, makeConfig } from "@/ui/services/app-config";
 import {
@@ -67,7 +67,6 @@ import type {
   JointEditorTarget,
   JointJobConditionDraftChange,
   JointWorkbenchDraft,
-  JointWorkbenchPhase,
   JointWorkbenchRuntime,
   SearchRangeDraft,
 } from "../../joint-workbench-types";
@@ -87,6 +86,23 @@ function SharedResultContent({
 }) {
   const summaries = resultSummaryRows(config, result);
   const rows = sharedGearRows(result);
+  if (result.commonFood) {
+    rows.push({
+      key: "shared-food",
+      slotLabel: "食物",
+      marker: "共享",
+      item: {
+        kind: "food",
+        key: "shared-food",
+        itemId: result.commonFood.id,
+        name: result.commonFood.name,
+        level: result.commonFood.level,
+        actualStats: {},
+        utilization: 0,
+        stats: {},
+      },
+    });
+  }
   return (
     <div className={styles.sharedResult}>
       <section aria-label="联合结果概览" className={styles.overview}>
@@ -119,16 +135,10 @@ function SharedResultContent({
             </tbody>
           </table>
         </div>
-        {result.commonFood && (
-          <p className={styles.sharedFood}>
-            共享食物：{result.commonFood.name}
-          </p>
-        )}
       </section>
       <section aria-label="共享装备" className={styles.sharedGear}>
-        <h2>共享装备</h2>
         {rows.length ? (
-          <GearTable rows={rows} />
+          <GearTable rows={rows} jobId={config.jobs[0]!.jobId} />
         ) : (
           <p>本次结果没有共享装备部位。</p>
         )}
@@ -249,10 +259,10 @@ function JobTab({
     <div className={styles.jobResult}>
       <CoreMetricBar
         objective={config.objective}
-        entries={jobMetricEntries(jobId, result)}
+        entries={jobMetricEntries(jobId, result).map(entry => ({ ...entry, clanIndex: config.clanIndex, referenceUrl: resultReferenceUrl(jobResult, config) }))}
         showTenacity={jobSchemas[jobId].role === "tank"}
       />
-      <GearTable rows={rows} />
+      <GearTable rows={rows} jobId={jobId} />
     </div>
   );
 }
@@ -274,10 +284,6 @@ export function SelectionMain({
   };
 }) {
   const valid = selectionState?.valid ?? false;
-  const reason =
-    selectionState?.invalidReason === "mixed-gear-groups"
-      ? "所选职业来自不同装备分组，请调整选择。"
-      : "请选择同一装备分组内的至少两个职业。";
   return (
     <section
       className={styles.selectionMain}
@@ -292,11 +298,7 @@ export function SelectionMain({
         onSelectionChange={onSelectionChange}
       />
       <div className={styles.selectionAction}>
-        <p role={valid ? "status" : "alert"}>
-          {valid
-            ? "已选择 " + selectedJobs.length + " 个职业，可以继续设置条件。"
-            : reason}
-        </p>
+        <span style={{flex: 1}}></span>
         <button type="button" disabled={!valid} onClick={onContinue}>
           前往条件设置
         </button>
@@ -323,7 +325,9 @@ export function ConditionsMain({
   onJobEquipmentChange,
   onSharedSlotsChange,
   onRuntimeAnalysis,
+  onReturnSelection,
 }: {
+  onReturnSelection(): void;
   draft: JointWorkbenchDraft;
   runtime: JointWorkbenchRuntime;
   validation: WorkbenchValidation;
@@ -347,8 +351,9 @@ export function ConditionsMain({
       className={styles.conditionsMain}
       aria-labelledby="joint-conditions-title"
     >
-      <header className={styles.pageHeading}>
+      <header className={`${styles.pageHeading} ${styles.conditionsHeading}`}>
         <h1 id="joint-conditions-title">设置联合条件</h1>
+        <button className={styles.returnButton} type="button" onClick={onReturnSelection}>返回职业选择</button>
       </header>
       <Tabs.Root
         className={styles.conditionsTabs}
@@ -385,6 +390,7 @@ export function ConditionsMain({
                 jobs={draft.jobs}
                 equipment={draft.shared.equipment}
                 onChange={onSharedSlotsChange}
+                issues={validation.shared?.issues.filter(issue => issue.code === "shared.slot.unsupported") ?? []}
               />
               <JointFoodStrategySection
                 strategy={draft.shared.foodStrategy}
@@ -506,6 +512,7 @@ export function ResultMain({
   dataVersion,
   selectedTab,
   setSelectedTab,
+  onReturnSelection,
 }: {
   config: JointOptimizationConfig;
   result: JointOptimizationResult;
@@ -513,6 +520,7 @@ export function ResultMain({
   dataVersion: string;
   selectedTab: string;
   setSelectedTab(value: string): void;
+  onReturnSelection(): void;
 }) {
   const tabList = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -535,13 +543,11 @@ export function ResultMain({
   return (
     <section className={styles.resultMain} aria-labelledby="joint-result-title">
       <header className={styles.resultHeading}>
-        <div>
+        <div className={styles.titleRow}>
           <h1 id="joint-result-title">联合配装结果</h1>
+          <span className={styles.durationBadge}>耗时 {(Math.max(0, durationMs) / 1000).toFixed(1)} 秒</span>
         </div>
-        <div className={styles.resultMetadata}>
-          <span>搜索耗时 {(Math.max(0, durationMs) / 1000).toFixed(1)} 秒</span>
-          <span>数据版本 {dataVersion}</span>
-        </div>
+        <button className={styles.returnButton} type="button" onClick={onReturnSelection}>重新选择职业</button>
       </header>
       {dataVersion !== currentDataVersion && (
         <p className={styles.versionNotice}>
@@ -574,7 +580,7 @@ export function ResultMain({
             >
               <img
                 src={jobIconUrl(jobId)}
-                alt=""
+                alt={jobId}
                 aria-hidden="true"
               />
               {jobSchemas[jobId].name}
@@ -639,6 +645,7 @@ export function JointWorkbenchMain() {
         onJobEquipmentChange={controller.updateJobEquipmentAction}
         onSharedSlotsChange={controller.updateSharedSlots}
         onRuntimeAnalysis={controller.updateGcdRuntime}
+        onReturnSelection={controller.returnToSelection}
       />
     );
   }
@@ -653,6 +660,7 @@ export function JointWorkbenchMain() {
         dataVersion={phase.snapshot.dataVersion}
         selectedTab={controller.resultTab}
         setSelectedTab={controller.setResultTab}
+        onReturnSelection={controller.returnToSelection}
       />
     );
   }

@@ -59,7 +59,7 @@ export function freezeJointConfig(
 export function objectiveLabel(
   objective: "damage" | "dps" | undefined,
 ): string {
-  return objective === "damage" ? "每威力伤害期望" : "按 GCD 折算";
+  return objective === "damage" ? "每威力伤害期望" : "每秒每威力伤害期望";
 }
 
 export function sharedIssues(draft: JointWorkbenchDraft): ValidationIssue[] {

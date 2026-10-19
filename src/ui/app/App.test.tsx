@@ -39,14 +39,30 @@ function clickLink(selector: string): void {
   act(() => link.click());
 }
 
-function clickBodyButton(label: string): void {
-  const button = [...document.body.querySelectorAll<HTMLButtonElement>("button")]
-    .find((item) => normalizedText(item) === label);
-  if (!button) throw new Error(`找不到按钮「${label}」`);
-  act(() => button.click());
-}
-
 describe("应用导航", () => {
+  it("单职业导航在当前条件页也重新进入职业选择", async () => {
+    testSupport.chooseJob("SAM");
+    await testSupport.settleApp();
+    expect(testSupport.host.querySelector("h1")?.textContent).toContain("条件设置");
+    clickNav("单职业搜索");
+    await testSupport.settleApp();
+    expect(testSupport.host.querySelector("h1")?.textContent).toBe("选择职业");
+  });
+
+  it("单职业导航强制停止运行中的搜索并返回职业选择", async () => {
+    testSupport.mockAbortableSearch();
+    testSupport.chooseJob("SAM");
+    await testSupport.settleApp(220);
+    await testSupport.selectFirstGcdTierIfEmpty();
+    await testSupport.startSearchAndSettle();
+    const signal = testSupport.optimizeMock.mock.calls[0]![1].signal;
+    expect(signal.aborted).toBe(false);
+    clickNav("单职业搜索");
+    await testSupport.settleApp();
+    expect(signal.aborted).toBe(true);
+    expect(testSupport.host.querySelector("h1")?.textContent).toBe("选择职业");
+  });
+
   it("提供常见问题与关于入口，并按路由切换页面", async () => {
     expect(navLabels()).toEqual(["单职业搜索", "实验室", "常见问题", "关于"]);
     expect(currentNav()).toBe("单职业搜索");
@@ -78,14 +94,6 @@ describe("应用导航", () => {
 
     clickLink('a[href="/joint"]');
     await testSupport.settleApp();
-    expect(testSupport.host.querySelector("h1")?.textContent).toBe(
-      "选择实验性工具",
-    );
-    expect(document.body.textContent).toContain(
-      "联合搜索暂不支持职业优先级设置",
-    );
-    clickBodyButton("继续前往");
-    await testSupport.settleApp();
     expect(breadcrumbItems()).toEqual(["实验室", "多职业联合搜索"]);
 
     clickNav("实验室");
@@ -107,27 +115,4 @@ describe("应用导航", () => {
     ).toHaveLength(1);
   });
 
-  it("实验室卡片需确认警告后才进入对应页面", async () => {
-    clickNav("实验室");
-    await testSupport.settleApp();
-    expect(testSupport.host.querySelector("h1")?.textContent).toBe(
-      "选择实验性工具",
-    );
-
-    clickLink('a[href="/joint"]');
-    await testSupport.settleApp();
-    expect(testSupport.host.querySelector("h1")?.textContent).toBe(
-      "选择实验性工具",
-    );
-    expect(document.body.textContent).toContain(
-      "非共享槽位的唯一装备可能被多个职业同时选用",
-    );
-
-    clickBodyButton("取消");
-    await testSupport.settleApp();
-    expect(testSupport.host.querySelector("h1")?.textContent).toBe(
-      "选择实验性工具",
-    );
-    expect(breadcrumbItems()).toEqual(["实验室"]);
-  });
 });

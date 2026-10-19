@@ -49,9 +49,11 @@ const roleGroups: JobGroup[] = [
   { key: "limited", label: "设限特职", color: "#e7f1ef", jobs: ["BLU", "BST"] },
 ];
 
+export const tankGroup: JobGroup = roleGroups.find(it => it.key === 'tank')!;
+
 // 按装备通用性分组，其中T/H各一组，DPS按主属性分组，力量和灵巧属性下面又根据装备通用性分组
 // 目前游戏内二级分组都是二级分组内全通用(除主副手)，大分组内只有首饰通用
-const gearGroups: JobGroup[] = [
+export const gearGroups: JobGroup[] = [
   {
     key: "tank",
     label: "防护职业",

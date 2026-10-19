@@ -18,7 +18,8 @@ describe("关于页", () => {
     act(() => root.render(<AboutPage />));
 
     expect(host.querySelector("h1")?.textContent).toBe("关于自动配装器");
-    expect(host.querySelector("h2")?.textContent).toBe("本项目依赖的社区项目");
+    expect(host.querySelector("#about-project")?.textContent).toBe("自动配装器");
+    expect(host.querySelector("#about-community")?.textContent).toBe("本项目依赖的社区项目");
 
     const links = [
       ...host.querySelectorAll<HTMLAnchorElement>('a[target="_blank"]'),

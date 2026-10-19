@@ -25,6 +25,7 @@ export const clanLabels: readonly string[] = raceClans.flatMap((race) =>
 /** 默认族群：人族·中原之民。 */
 export const defaultClanIndex = 0;
 
-export function clanLabel(clanIndex: number): string {
-  return clanLabels[clanIndex] ?? "未知种族";
+export function clanLabel(clanIndex?: number): string {
+  const val = typeof clanIndex === 'number' ? clanLabels[clanIndex] : undefined;
+  return val ?? "未知种族";
 }

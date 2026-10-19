@@ -1,6 +1,6 @@
-import { useElapsedTime } from "@/ui/components/search-progress/use-elapsed-time";
+import { useElapsedTime } from "@/ui/features/search-progress/use-elapsed-time";
 import type { LinearMipProgress } from "@/domain/search/linear-mip";
-import progressStyles from "@/ui/components/search-progress/SearchWorkflowProgress.module.scss";
+import progressStyles from "@/ui/features/search-progress/SearchWorkflowProgress.module.scss";
 import type {
   JointSearchProgressJob,
   JointSearchProgressState,

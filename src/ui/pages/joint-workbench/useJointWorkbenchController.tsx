@@ -14,7 +14,7 @@ import { gcdAnalysisInputFromConfig, gcdAnalysisKey } from "@/ui/features/job-co
 import type { GcdAnalysisState } from "@/ui/features/job-condition";
 import { applyJointEquipmentAction, updateJointSharedSlots } from "@/ui/features/equipment";
 import type { EquipmentAction, JointEquipmentDraft } from "@/ui/features/equipment";
-import { createSearchHistory, finishSearchHistory, type SearchHistoryRecord } from "@/ui/services/search-history";
+import { saveCompletedSearchHistory, type SearchHistoryRecord } from "@/ui/services/search-history";
 import { currentDataVersion, makeConfig } from "@/ui/services/app-config";
 import { searchMessageText } from "@/ui/services/search-message";
 import { compileJointWorkbenchDraft, createJointWorkbenchDraft, createJointWorkbenchRuntime, jointWorkbenchDraftFromConfig } from "./joint-workbench-state";
@@ -28,7 +28,6 @@ type JointRunSnapshot = {
   startedAtISO: string;
   historyId?: string;
 };
-type JointHistoryOutcome = Parameters<typeof finishSearchHistory>[1] & { finishedAtISO: string };
 interface ActiveJointRun {
   identity: number;
   controller: AbortController;
@@ -38,9 +37,6 @@ interface ActiveJointRun {
   startedAtISO: string;
   uiOwned: boolean;
   settled: boolean;
-  historyId?: string;
-  outcome?: JointHistoryOutcome;
-  historyFinishScheduled: boolean;
 }
 export function useJointWorkbenchController() {
   const { notify, confirm } = useFeedback();
@@ -190,14 +186,6 @@ export function useJointWorkbenchController() {
     transition({ ...current, progress: update(current.progress) });
   }
 
-  function writeHistoryOutcome(run: ActiveJointRun) {
-    if (!run.historyId || !run.outcome || run.historyFinishScheduled) return;
-    run.historyFinishScheduled = true;
-    void finishSearchHistory(run.historyId, run.outcome).catch((error: unknown) => {
-      notify("联合搜索已完成，但本地记录保存失败：" + searchMessageText(error instanceof Error ? error.message : String(error)), "warning");
-    });
-  }
-
   function restoreFreshConditions(run: ActiveJointRun) {
     const draft = jointWorkbenchDraftFromConfig(run.config);
     const runtime = createJointWorkbenchRuntime(draft.jobs);
@@ -215,20 +203,28 @@ export function useJointWorkbenchController() {
     const finishedAt = Date.now();
     const finishedAtISO = new Date(finishedAt).toISOString();
     const durationMs = Math.max(0, finishedAt - run.startedAt);
-    if (outcome.status === "completed") run.outcome = { status: "completed", result: outcome.result, finishedAtISO };
-    else if (outcome.status === "failed") run.outcome = { status: "failed", error: outcome.error, finishedAtISO };
-    else run.outcome = { status: outcome.status, finishedAtISO };
-    writeHistoryOutcome(run);
-
     if (!ownsRun(run)) return;
-    const historyId = run.historyId;
     const snapshot: JointRunSnapshot = {
       ...run.snapshot,
-      historyId,
     };
     if (outcome.status === "completed" && !run.controller.signal.aborted) {
       setResultTab("shared");
       transition({ phase: "result", snapshot, result: outcome.result, durationMs });
+      void saveCompletedSearchHistory({
+        kind: "joint",
+        config: run.config,
+        result: outcome.result,
+        dataVersion: snapshot.dataVersion,
+        startedAtISO: run.startedAtISO,
+        finishedAtISO,
+      }).then((record) => {
+        const latest = phaseRef.current;
+        if (latest.phase === "result" && latest.snapshot.config === run.config) {
+          transition({ ...latest, snapshot: { ...latest.snapshot, historyId: record.id } });
+        }
+      }).catch((error: unknown) => {
+        notify("联合搜索已完成，但本地记录保存失败：" + searchMessageText(error instanceof Error ? error.message : String(error)), "warning");
+      });
     } else {
       restoreFreshConditions(run);
       if (outcome.status === "cancelled" || run.controller.signal.aborted) notify("联合搜索已取消。", "info");
@@ -283,7 +279,6 @@ export function useJointWorkbenchController() {
       startedAtISO,
       uiOwned: true,
       settled: false,
-      historyFinishScheduled: false,
     };
     runRef.current = run;
     setCancelPending(false);
@@ -345,26 +340,6 @@ export function useJointWorkbenchController() {
       searchPromise = Promise.reject(error);
     }
 
-    void createSearchHistory({
-      kind: "joint",
-      config,
-      dataVersion: snapshot.dataVersion,
-      startedAtISO,
-    }).then((record) => {
-      run.historyId = record.id;
-      const latest = phaseRef.current;
-      if (latest.phase === "progress" && latest.snapshot.config === run.config && ownsRun(run)) {
-        const nextSnapshot = { ...latest.snapshot, startedAtISO: latest.snapshot.startedAtISO ?? run.startedAtISO, historyId: record.id };
-        run.snapshot = nextSnapshot;
-        transition({ ...latest, snapshot: nextSnapshot });
-      } else if (latest.phase === "result" && latest.snapshot.config === run.config) {
-        transition({ ...latest, snapshot: { ...latest.snapshot, startedAtISO: latest.snapshot.startedAtISO ?? run.startedAtISO, historyId: record.id } });
-      }
-      writeHistoryOutcome(run);
-    }).catch((error: unknown) => {
-      notify("联合搜索已开始，但本地记录创建失败：" + searchMessageText(error instanceof Error ? error.message : String(error)), "warning");
-    });
-
     void searchPromise.then((result) => {
       if (controller.signal.aborted) settleRun(run, { status: "cancelled" });
       else if (result) settleRun(run, { status: "completed", result });
@@ -383,7 +358,6 @@ export function useJointWorkbenchController() {
   }
 
   function historyResultDuration(record: SearchHistoryRecord): number {
-    if (!record.finishedAtISO) return 0;
     const started = Date.parse(record.startedAtISO);
     const finished = Date.parse(record.finishedAtISO);
     return Number.isFinite(started) && Number.isFinite(finished) ? Math.max(0, finished - started) : 0;
@@ -391,7 +365,6 @@ export function useJointWorkbenchController() {
 
   async function navigateFromHistory(record: SearchHistoryRecord, action: "config" | "result") {
     if (record.kind !== "joint") return;
-    if (action === "result" && (record.status !== "completed" || !record.result)) return;
     const beforeConfirm = phaseRef.current;
     const activeSearch = beforeConfirm.phase === "progress";
     const oldDataVersionEdit = action === "config" && record.dataVersion !== currentDataVersion;
@@ -437,21 +410,19 @@ export function useJointWorkbenchController() {
       transition({ phase: "conditions", draft, runtime });
       return;
     }
-    if (record.result) {
-      setSelectedJobs(record.config.jobs.map((job) => job.jobId));
-      setResultTab("shared");
-      transition({
-        phase: "result",
-        snapshot: {
-          config: freezeJointConfig(record.config),
-          dataVersion: record.dataVersion,
-          startedAtISO: record.startedAtISO,
-          historyId: record.id,
-        },
-        result: record.result,
-        durationMs: historyResultDuration(record),
-      });
-    }
+    setSelectedJobs(record.config.jobs.map((job) => job.jobId));
+    setResultTab("shared");
+    transition({
+      phase: "result",
+      snapshot: {
+        config: freezeJointConfig(record.config),
+        dataVersion: record.dataVersion,
+        startedAtISO: record.startedAtISO,
+        historyId: record.id,
+      },
+      result: record.result,
+      durationMs: historyResultDuration(record),
+    });
   }
 
   async function adjustConditions() {

@@ -33,7 +33,7 @@ export function searchMessageText(message: string): string {
     .replace(/MIP|HiGHS/g, "求解器")
     .replace(/incumbent/g, "当前最优方案")
     .replace(/surrogate/g, "内部评分")
-    .replace(/DPS|dps/g, "按 GCD 折算")
+    .replace(/DPS|dps/g, "每秒每威力伤害期望")
     .replace(/damage/g, "每威力伤害期望")
     .replace(/RSS/g, "内存")
     .replace(/maxSearchMs/g, "搜索时限")

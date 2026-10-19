@@ -1,26 +1,20 @@
+import { Popover } from "@base-ui/react/popover";
 import { useEffect, useRef, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
-import { jobSchemas } from "@/domain";
-import { currentDataVersion } from "@/ui/services/app-config";
 import {
   listSearchHistory,
+  deleteSearchHistory,
+  clearSearchHistory,
   type SearchHistoryKind,
   type SearchHistoryRecord,
 } from "@/ui/services/search-history";
 import styles from "./SearchHistory.module.scss";
+import { HistoryRecord } from "./components/history-record/HistoryRecord";
 export interface SearchHistoryProps {
   kind: SearchHistoryKind;
   onLoadConfig(record: SearchHistoryRecord): void;
   onLoadResult(record: SearchHistoryRecord): void;
 }
-const labels = {
-  running: "未完成",
-  completed: "已完成",
-  cancelled: "已取消",
-  "no-result": "无可行结果",
-  failed: "搜索失败",
-  interrupted: "已中断",
-};
 export function SearchHistory({
   kind,
   onLoadConfig,
@@ -30,6 +24,21 @@ export function SearchHistory({
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState(12);
+  const [mutating, setMutating] = useState(false);
+  const [clearOpen, setClearOpen] = useState(false);
+  const [mutationError, setMutationError] = useState<string>();
+  async function remove(id?: string) {
+    setMutating(true);
+    setMutationError(undefined);
+    try {
+      if (id !== undefined) await deleteSearchHistory(id);
+      else await clearSearchHistory(kind);
+    } catch (error) {
+      setMutationError(error instanceof Error ? error.message : String(error));
+    } finally {
+      setMutating(false);
+    }
+  }
   const sentinel = useRef<HTMLDivElement>(null);
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -71,49 +80,63 @@ export function SearchHistory({
   }, [count, records.length]);
   return (
     <section className={styles.root} aria-label="搜索记录">
-      <h2>搜索记录</h2>
+      <div className={styles.heading}>
+        <h2>搜索记录</h2>
+        <Popover.Root open={clearOpen} onOpenChange={setClearOpen}>
+          <Popover.Trigger
+            className={styles.actionButton}
+            disabled={loading || mutating || records.length === 0}
+          >
+            清空
+          </Popover.Trigger>
+          <Popover.Portal>
+            <Popover.Positioner
+              sideOffset={8}
+              align="end"
+              className={styles.confirmPositioner}
+            >
+              <Popover.Popup className={styles.confirmPopup}>
+                <Popover.Title className={styles.confirmTitle}>
+                  清空历史记录？
+                </Popover.Title>
+                <Popover.Description className={styles.confirmDescription}>
+                  将删除全部{kind === "single" ? "单职业" : "多职业"}
+                  历史记录，此操作无法撤销。
+                </Popover.Description>
+                <div className={styles.confirmActions}>
+                  <Popover.Close className={styles.actionButton}>
+                    取消
+                  </Popover.Close>
+                  <button
+                    className={styles.actionButton}
+                    disabled={mutating}
+                    onClick={() => {
+                      setClearOpen(false);
+                      void remove();
+                    }}
+                  >
+                    确认清空
+                  </button>
+                </div>
+              </Popover.Popup>
+            </Popover.Positioner>
+          </Popover.Portal>
+        </Popover.Root>
+      </div>
+      {mutationError && <p role="alert">{mutationError}</p>}
       <div className={styles.list} ref={root}>
         {loading && <p role="status">正在读取搜索记录…</p>}
         {error && <p role="alert">{error}</p>}
         {!loading && !error && !records.length && <p>还没有搜索记录。</p>}
         {records.slice(0, count).map((record) => (
-          <article key={record.id} className={styles.record}>
-            <div className={styles.heading}>
-              <strong>
-                {record.kind === "single"
-                  ? jobSchemas[record.config.jobId].name
-                  : record.config.jobs
-                      .map((j) => jobSchemas[j.jobId].name)
-                      .join(" / ")}
-              </strong>
-              <span>{labels[record.status]}</span>
-            </div>
-            <p>
-              {record.kind === "single"
-                ? `品级 ${record.config.minItemLevel}–${record.config.maxItemLevel}`
-                : `${record.config.jobs.length} 职业 · ${record.config.commonSlots.length} 共享部位`}
-            </p>
-            <p>
-              {new Date(record.startedAtISO).toLocaleString("zh-CN")}{" "}
-              {record.finishedAtISO &&
-                ` · ${Math.max(0, (Date.parse(record.finishedAtISO) - Date.parse(record.startedAtISO)) / 1000).toFixed(1)} 秒`}{" "}
-              · 数据 {record.dataVersion}
-            </p>
-            {record.error && (
-              <p className={styles.error} title={record.error}>
-                {record.error}
-              </p>
-            )}
-            {record.dataVersion !== currentDataVersion && (
-              <p>历史版本结果；编辑后使用当前数据重新搜索。</p>
-            )}
-            <div className={styles.actions}>
-              <button onClick={() => onLoadConfig(record)}>编辑条件</button>
-              {record.status === "completed" && record.result && (
-                <button onClick={() => onLoadResult(record)}>查看结果</button>
-              )}
-            </div>
-          </article>
+          <HistoryRecord
+            key={record.id}
+            record={record}
+            deleting={mutating}
+            onLoadConfig={() => onLoadConfig(record)}
+            onLoadResult={() => onLoadResult(record)}
+            onDelete={() => void remove(record.id)}
+          />
         ))}
         {count < records.length && (
           <div ref={sentinel}>

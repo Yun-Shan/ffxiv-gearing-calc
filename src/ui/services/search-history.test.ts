@@ -111,6 +111,11 @@ function jointConfig(): JointOptimizationConfig {
 }
 
 describe("搜索历史记录结构校验", () => {
+  it("rejects unfinished records at the consumer validation boundary", () => {
+    const valid = completedSingleRecord();
+    expect(() => validateSearchHistoryRecord({ ...valid, status: "running", finishedAtISO: undefined, result: undefined })).toThrow("历史记录必须包含成功完成的结果");
+    expect(() => validateSearchHistoryRecord({ ...valid, result: undefined })).toThrow("结果缺少必要字段");
+  });
   it("接受带有实际职业ID和完整单职业结果的记录", () => {
     expect(jobSchemas.SAM).toBeDefined();
     expect(validateSearchHistoryRecord(completedSingleRecord()).kind).toBe(

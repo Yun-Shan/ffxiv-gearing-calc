@@ -16,6 +16,26 @@ import {
 } from "./joint-workbench-state";
 
 describe("joint search range", () => {
+  it("selects shared slots by job gear group", () => {
+    const draft = createJointWorkbenchDraft(["RDM", "BLM"]);
+    expect(draft.shared.equipment.commonSlots).not.toContain("weapon");
+    expect(draft.shared.equipment.commonSlots).toContain("body");
+    expect(draft.shared.equipment.commonSlots).toContain("ring");
+    expect(draft.shared.equipment.commonSlots).toContain("ring2");
+    const config = compileJointWorkbenchDraft(draft, createJointWorkbenchRuntime(draft.jobs));
+    config.commonSlots.push("weapon");
+    expect(jointWorkbenchDraftFromConfig(config).shared.equipment.commonSlots).not.toContain("weapon");
+  });
+
+  it("shares only accessories across armor subgroups", () => {
+    const draft = createJointWorkbenchDraft(["DRG", "SAM"]);
+    expect(draft.shared.equipment.commonSlots).toEqual(["earrings", "necklace", "bracelet", "ring", "ring2"]);
+    const sameGroup = createJointWorkbenchDraft(["DRG", "RPR"]);
+    expect(sameGroup.shared.equipment.commonSlots).toContain("body");
+    expect(sameGroup.shared.equipment.commonSlots).not.toContain("weapon");
+    expect(createJointWorkbenchDraft(["PLD", "WAR"]).shared.equipment.commonSlots).not.toContain("offhand");
+  });
+
   it("keeps the search range in shared conditions and compiles it to every job", () => {
     const draft = createJointWorkbenchDraft(["RDM", "BLM"]);
     expect(draft.conditions.RDM).not.toHaveProperty("range");

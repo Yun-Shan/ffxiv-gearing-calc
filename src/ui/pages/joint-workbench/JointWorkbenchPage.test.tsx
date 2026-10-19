@@ -3,8 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import * as testSupport from "@/test-utils/workbench.helper.test";
 import { foods, jobSchemas } from "@/domain";
 import {
-  createSearchHistory,
-  finishSearchHistory,
+  saveCompletedSearchHistory,
 } from "@/ui/services/search-history";
 
 const normalizedText = testSupport.normalizedText;
@@ -15,7 +14,7 @@ function historyRecord(
   root: ParentNode = testSupport.host,
 ): HTMLElement {
   const record = [
-    ...root.querySelectorAll<HTMLElement>('[aria-label="搜索记录"] article'),
+    ...root.querySelectorAll<HTMLElement>('[aria-label="搜索记录"] > div > div:has(> dl)'),
   ].find(
     (item) =>
       normalizedText(item).includes(text) &&
@@ -61,6 +60,33 @@ async function waitForGcdValidation(): Promise<void> {
 }
 
 describe("联合工作台", () => {
+  it("返回职业选择位于主内容页头，点击后回到职业选择", async () => {
+    await enterConditions();
+    const button = testSupport.buttonNamed("返回职业选择");
+    expect(button.closest('section[aria-labelledby="joint-conditions-title"] > header')).not.toBeNull();
+    expect(button.closest("aside")).toBeNull();
+    testSupport.click(button);
+    await testSupport.settleApp();
+    expect(testSupport.host.querySelector("h1")?.textContent).toBe("选择参与联合搜索的职业");
+  });
+  it("有可行档位时显示各职业未选择 GCD 的 issue，选择后消失", async () => {
+    testSupport.navigateToJoint();
+    await testSupport.settleApp();
+    testSupport.click(testSupport.buttonNamed(jobSchemas.RDM.name));
+    testSupport.click(testSupport.buttonNamed(jobSchemas.BLM.name));
+    testSupport.click(testSupport.buttonNamed("前往条件设置"));
+    await testSupport.settleApp(220);
+    testSupport.click(testSupport.buttonNamed(jobSchemas.RDM.name));
+    await testSupport.settleApp();
+    const gcd = () => testSupport.host.querySelector('section[aria-label="GCD"]')!.textContent;
+    expect(gcd()).toContain("请至少选择一个可行 GCD 档位。");
+    await testSupport.selectFirstGcdTierIfEmpty();
+    await testSupport.settleApp(220);
+    expect(gcd()).not.toContain("请至少选择一个可行 GCD 档位。");
+    testSupport.click(testSupport.buttonNamed(jobSchemas.BLM.name));
+    await testSupport.settleApp();
+    expect(gcd()).toContain("请至少选择一个可行 GCD 档位。");
+  });
   it("共享搜索范围的种族选择会写入每个职业的搜索输入", async () => {
     await enterConditions();
     const clanTrigger = () =>
@@ -136,13 +162,13 @@ describe("联合工作台", () => {
     testSupport.seedCompletedJointHistory(testSupport.testJointConfig(["RDM", "BLM"]));
     testSupport.navigateToJoint();
     await testSupport.settleApp();
-    testSupport.click(historyAction(historyRecord("赤魔法师 / 黑魔法师", "编辑条件"), "编辑条件"));
+    testSupport.click(historyAction(historyRecord("赤魔法师", "编辑条件"), "编辑条件"));
     await waitForGcdValidation();
     expect(testSupport.buttonNamed("开始联合搜索").disabled).toBe(false);
     const analysisCalls = testSupport.findFeasibleGcdsMock.mock.calls.length;
     testSupport.click(testSupport.buttonNamed("搜索记录"));
     await testSupport.settleApp();
-    testSupport.click(historyAction(historyRecord("赤魔法师 / 黑魔法师", "编辑条件", document.body), "编辑条件"));
+    testSupport.click(historyAction(historyRecord("赤魔法师", "编辑条件", document.body), "编辑条件"));
     await waitForGcdValidation();
     expect(testSupport.buttonNamed("开始联合搜索").disabled).toBe(false);
     expect(testSupport.findFeasibleGcdsMock).toHaveBeenCalledTimes(analysisCalls);
@@ -156,7 +182,7 @@ describe("联合工作台", () => {
     result.jobResults.RDM!.calculationLevel = 80;
     testSupport.navigateToJoint();
     await testSupport.settleApp();
-    testSupport.click(historyAction(historyRecord("赤魔法师 / 黑魔法师", "查看结果"), "查看结果"));
+    testSupport.click(historyAction(historyRecord("赤魔法师", "查看结果"), "查看结果"));
     await testSupport.settleApp();
     testSupport.click(testSupport.buttonNamed(jobSchemas.RDM.name));
     await testSupport.settleApp();
@@ -175,6 +201,7 @@ describe("联合工作台", () => {
     expect(testSupport.buttonNamed("开始联合搜索").disabled).toBe(false);
   });
 
+
   it("共享食物策略下的职业摘要与禁用编辑器显示同一食物，切回独立时保留各自选择", async () => {
     const config = testSupport.testJointConfig(["RDM", "BLM"]);
     config.jobs[0]!.foodId = foods[0]!.id;
@@ -183,9 +210,19 @@ describe("联合工作台", () => {
     testSupport.navigateToJoint();
     await testSupport.settleApp();
     const record = historyRecord(
-      jobSchemas.RDM.name + " / " + jobSchemas.BLM.name,
+      jobSchemas.RDM.name,
       "编辑条件",
     );
+    expect(record.textContent).toContain(jobSchemas.BLM.name);
+    expect(record.querySelectorAll("button")).toHaveLength(3);
+    expect(record.textContent).toContain("优化指标");
+    expect(record.textContent).toContain("共享部位");
+    expect(record.textContent).toContain("来源排除 0 项 · 装备排除 0 件 · 装备强制 0 件");
+    expect(record.textContent).not.toContain("头部、身体");
+    expect([...record.querySelectorAll("dt")].map(item => item.textContent)).not.toContain("来源排除");
+    expect(record.textContent).not.toContain("GCD约束");
+    expect(record.textContent).not.toContain("坚韧减伤");
+    expect(record.textContent).not.toContain("每秒每威力期望伤害");
     testSupport.click(historyAction(record, "编辑条件"));
     await testSupport.settleApp();
 
@@ -194,10 +231,8 @@ describe("联合工作台", () => {
       testSupport.host.querySelector('section[aria-label="食物"]');
     expect(foodSection()).not.toBeNull();
     expect(
-      foodSection()!.querySelector<HTMLInputElement>('input[role="combobox"]')
-        ?.value,
-    ).toBe(foods[0]!.name);
-    expect(normalizedText(foodSection()!)).toContain("使用共享食物");
+      foodSection()!.querySelector('button[role="combobox"]')?.textContent,
+    ).toContain(foods[0]!.name);
 
     testSupport.click(testSupport.buttonNamed("共享设置"));
     const strategyLabel = [...testSupport.host.querySelectorAll("label")].find(
@@ -213,14 +248,12 @@ describe("联合工作台", () => {
     testSupport.click(independent as HTMLButtonElement);
     await testSupport.settleApp();
     expect(
-      testSupport.host.querySelector('input[aria-label="共享食物选择"]'),
+      testSupport.host.querySelector('button[aria-label="共享食物选择"]'),
     ).toBeNull();
     testSupport.click(testSupport.buttonNamed(jobSchemas.BLM.name));
     expect(
-      foodSection()!.querySelector<HTMLInputElement>('input[role="combobox"]')
-        ?.value,
-    ).toBe(foods[1]!.name);
-    expect(normalizedText(foodSection()!)).not.toContain("使用共享食物");
+      foodSection()!.querySelector('button[role="combobox"]')?.textContent,
+    ).toContain(foods[1]!.name);
   });
 
   it("结果可查看；编辑旧数据版本结果前要求确认", async () => {
@@ -230,7 +263,7 @@ describe("联合工作台", () => {
     testSupport.navigateToJoint();
     await testSupport.settleApp();
     const record = historyRecord(
-      jobSchemas.RDM.name + " / " + jobSchemas.BLM.name,
+      jobSchemas.RDM.name,
       "查看结果",
     );
     testSupport.click(historyAction(record, "查看结果"));
@@ -264,11 +297,12 @@ describe("联合工作台", () => {
     await waitForGcdValidation();
     await testSupport.startSearchAndSettle();
     expect(testSupport.host.querySelector("h1")?.textContent).toBe("搜索进度");
+    expect(testSupport.historyStore.records).toHaveLength(1);
 
     testSupport.click(testSupport.buttonNamed("搜索记录"));
     await testSupport.settleApp();
     const record = historyRecord(
-      jobSchemas.PLD.name + " / " + jobSchemas.WAR.name,
+      jobSchemas.PLD.name,
       "编辑条件",
       document.body,
     );
@@ -282,6 +316,7 @@ describe("联合工作台", () => {
     await testSupport.settleApp();
 
     expect(testSupport.host.querySelector("h1")?.textContent).toBe("搜索进度");
+    expect(testSupport.historyStore.records).toHaveLength(1);
     expect(document.body.textContent).toContain("历史条件无法恢复");
     const options = testSupport.optimizeJointMock.mock.calls[0]?.[1] as
       { signal?: AbortSignal } | undefined;
@@ -301,7 +336,7 @@ describe("联合工作台", () => {
     testSupport.navigateToJoint();
     await testSupport.settleApp();
     const record = historyRecord(
-      jobSchemas.RDM.name + " / " + jobSchemas.BLM.name,
+      jobSchemas.RDM.name,
       "查看结果",
     );
     testSupport.click(historyAction(record, "查看结果"));
@@ -337,12 +372,12 @@ describe("联合工作台", () => {
       await testSupport.settleApp();
 
       const startedAtISO = vi
-        .mocked(createSearchHistory)
+        .mocked(saveCompletedSearchHistory)
         .mock.calls.at(-1)?.[0].startedAtISO;
       const finishedAtISO = vi
-        .mocked(finishSearchHistory)
-        .mock.calls.at(-1)?.[1].finishedAtISO;
-      const displayedDuration = /搜索耗时\s+([\d.]+)\s*秒/.exec(
+        .mocked(saveCompletedSearchHistory)
+        .mock.calls.at(-1)?.[0].finishedAtISO;
+      const displayedDuration = /耗时\s+([\d.]+)\s*秒/.exec(
         testSupport.host.textContent ?? "",
       )?.[1];
       expect(startedAtISO).toBeDefined();
@@ -364,7 +399,7 @@ describe("联合工作台", () => {
     testSupport.navigateToJoint();
     await testSupport.settleApp();
     const record = historyRecord(
-      jobSchemas.RDM.name + " / " + jobSchemas.BLM.name,
+      jobSchemas.RDM.name,
       "查看结果",
     );
     testSupport.click(historyAction(record, "查看结果"));
@@ -377,21 +412,16 @@ describe("联合工作台", () => {
     testSupport.click(rdmTab!);
     await testSupport.settleApp();
 
-    const metricLabels = [
-      ...testSupport.host.querySelectorAll(
-        'section[aria-label="核心指标"] li > span',
-      ),
-    ].map((label) => normalizedText(label));
-    expect(metricLabels).toEqual([]);
-    const lists = [
-      ...testSupport.host.querySelectorAll('section[aria-label="核心指标"] ul'),
-    ];
-    expect(lists.length).toBeGreaterThan(0);
-    expect(lists.every((list) => list.children.length === 1)).toBe(true);
+    const metrics = testSupport.host.querySelector('section[aria-label="核心指标"]')!;
+    expect(metrics.querySelectorAll("article")).toHaveLength(4);
+    expect(metrics.textContent).not.toContain("联合配装");
+    expect(metrics.querySelectorAll("strong")).toHaveLength(6);
+    expect(metrics.querySelector('article[aria-label="生命值"]')?.textContent).toContain("生命值");
+
   });
 
-  it("History 创建延迟时仍先显示求解结果，并在记录可用后补写完成状态", async () => {
-    const createMock = vi.mocked(createSearchHistory);
+  it("历史保存延迟时仍先显示结果，保存的记录直接为已完成", async () => {
+    const createMock = vi.mocked(saveCompletedSearchHistory);
     const originalCreate = createMock.getMockImplementation();
     if (!originalCreate) throw new Error("测试需要搜索记录 mock 实现");
     let releaseHistory: (() => void) | undefined;
@@ -418,14 +448,25 @@ describe("联合工作台", () => {
     releaseHistory!();
     await testSupport.settleApp();
 
-    expect(vi.mocked(finishSearchHistory)).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(saveCompletedSearchHistory)).toHaveBeenCalledTimes(1);
     expect(testSupport.historyStore.records.at(-1)?.status).toBe("completed");
     expect(
-      vi.mocked(createSearchHistory).mock.calls.at(-1)?.[0].startedAtISO,
+      vi.mocked(saveCompletedSearchHistory).mock.calls.at(-1)?.[0].startedAtISO,
     ).toBeTypeOf("string");
     expect(
-      vi.mocked(finishSearchHistory).mock.calls[0]?.[1].finishedAtISO,
+      vi.mocked(saveCompletedSearchHistory).mock.calls[0]?.[0].finishedAtISO,
     ).toBeTypeOf("string");
+  });
+
+  it.each(["no-result", "failed"])("联合搜索 %s 不新增历史", async (outcome) => {
+    if (outcome === "failed") testSupport.optimizeJointMock.mockRejectedValue(new Error("search failed"));
+    else testSupport.optimizeJointMock.mockResolvedValue(undefined);
+    await enterConditions();
+    await waitForGcdValidation();
+    await testSupport.startSearchAndSettle();
+    expect(testSupport.host.querySelector("h1")?.textContent).toBe("设置联合条件");
+    expect(testSupport.historyStore.records).toHaveLength(0);
+    expect(vi.mocked(saveCompletedSearchHistory)).not.toHaveBeenCalled();
   });
 
   it("取消搜索期间保持 progress，求解器 settle 后恢复可编辑的 conditions", async () => {
@@ -435,13 +476,14 @@ describe("联合工作台", () => {
     await waitForGcdValidation();
     await testSupport.startSearchAndSettle();
     expect(testSupport.host.querySelector("h1")?.textContent).toBe("搜索进度");
+    expect(testSupport.historyStore.records).toHaveLength(0);
     const aside = testSupport.host.querySelector("aside");
     expect(aside?.querySelector("h3")?.textContent).toBe(jobSchemas.BLM.name);
     expect(aside?.textContent).toContain("GCD");
     expect(aside?.textContent).not.toContain(jobSchemas.RDM.name);
 
     testSupport.click(testSupport.buttonNamed("取消搜索"));
-    expect(testSupport.host.textContent).toContain("正在等待搜索任务结束");
+    expect(testSupport.host.textContent).toContain("正在取消…");
     await testSupport.settleApp(40);
 
     expect(testSupport.host.querySelector("h1")?.textContent).toBe(
@@ -450,6 +492,7 @@ describe("联合工作台", () => {
     expect(
       testSupport.host.querySelector("[data-status='running']"),
     ).toBeNull();
+    expect(testSupport.historyStore.records).toHaveLength(0);
   });
 });
 

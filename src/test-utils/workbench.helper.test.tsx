@@ -22,11 +22,6 @@ type MockHistoryRecord = {
   result?: unknown;
 };
 
-type MockHistoryOutcome =
-  | { status: "completed"; result: unknown }
-  | { status: "failed"; error: string }
-  | { status: "cancelled" | "no-result" | "interrupted"; error?: string };
-
 const testMocks = vi.hoisted(() => ({
   optimizeMock: vi.fn(),
   optimizeJointMock: vi.fn(),
@@ -46,46 +41,32 @@ vi.mock("@/domain", async (importOriginal) => ({
 }));
 
 vi.mock("@/ui/services/search-history", () => ({
-  createSearchHistory: vi.fn(
+  saveCompletedSearchHistory: vi.fn(
     async (input: {
       kind: "single" | "joint";
       config: unknown;
       dataVersion: string;
+      startedAtISO: string;
+      finishedAtISO: string;
+      result: unknown;
     }) => {
       historyStore.nextId += 1;
-      const startedAtISO = new Date(
-        Date.UTC(2026, 9, 3, 0, 0, historyStore.nextId),
-      ).toISOString();
       const record: MockHistoryRecord = {
         ...structuredClone(input),
         id: `history-${historyStore.nextId}`,
-        startedAtISO,
-        status: "running",
+        status: "completed",
       };
       historyStore.records.push(record);
       return structuredClone(record);
     },
   ),
-  finishSearchHistory: vi.fn(
-    async (id: string, outcome: MockHistoryOutcome) => {
-      const record = historyStore.records.find((item) => item.id === id);
-      if (!record) throw new Error(`找不到测试搜索记录 ${id}`);
-      record.status = outcome.status;
-      record.finishedAtISO = new Date(
-        Date.parse(record.startedAtISO) + 1_000,
-      ).toISOString();
-      delete record.result;
-      delete record.error;
-      if (outcome.status === "completed")
-        record.result = structuredClone(outcome.result);
-      if (outcome.status === "failed" || outcome.status === "interrupted")
-        record.error = outcome.error;
-      return structuredClone(record);
-    },
-  ),
   listSearchHistory: vi.fn(async (kind?: "single" | "joint") =>
     historyStore.records
-      .filter((record) => kind === undefined || record.kind === kind)
+      .filter(
+        (record) =>
+          record.status === "completed" &&
+          (kind === undefined || record.kind === kind),
+      )
       .sort(
         (left, right) =>
           Date.parse(right.startedAtISO) - Date.parse(left.startedAtISO) ||

@@ -113,7 +113,6 @@ export interface JobValidation {
   sections: Readonly<{
     range: SectionValidation;
     gcd: SectionValidation;
-    food: SectionValidation;
     tank: SectionValidation;
   }>;
 }

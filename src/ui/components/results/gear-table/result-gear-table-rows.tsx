@@ -296,6 +296,7 @@ export function ResultGearTable({
 }) {
   return (
     <GearTableView
+      jobId={config.jobId}
       rows={buildResultGearTableRows(result, config, { onReplacementSelect })}
     />
   );

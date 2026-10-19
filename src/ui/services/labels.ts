@@ -23,6 +23,26 @@ export const commonGearSlotLabels: Record<CommonGearSlot, string> = {
   rings: "两个戒指",
 };
 
+const sharedSlotLabels: Record<CommonGearSlot, string> = {
+  weapon: "武",
+  offhand: "盾",
+  head: "头",
+  body: "身",
+  hands: "手",
+  legs: "腿",
+  feet: "脚",
+  earrings: "耳",
+  necklace: "颈",
+  bracelet: "腕",
+  ring: "戒",
+  ring2: "戒",
+  rings: "戒",
+};
+
+export function formatSharedSlots(slots: readonly CommonGearSlot[]): string {
+  return slots.map((slot) => sharedSlotLabels[slot]).join("/") || "未设置";
+}
+
 export const statNames: Record<Stat, string> = {
   STR: "力量",
   DEX: "灵巧",

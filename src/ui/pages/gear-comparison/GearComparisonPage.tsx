@@ -448,7 +448,7 @@ export function GearComparisonPage({
             showTenacity={showTenacity}
             compact
           />
-          <GearTable rows={gearRows} />
+          <GearTable rows={gearRows} jobId={selectedJob!} />
         </>
       ) : (
         <section className={styles.empty} aria-live="polite">

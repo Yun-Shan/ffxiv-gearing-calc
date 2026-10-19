@@ -4,6 +4,26 @@ import { act } from "react";
 import { describe, expect, it } from "vitest";
 import * as support from "@/test-utils/workbench.helper.test";
 describe("重构后的 Single 工作流", () => {
+  it("候选不足时只提示没有可行档位，不同时要求选择档位", async () => {
+    support.findFeasibleGcdsMock.mockResolvedValue([]);
+    support.chooseJob("PLD");
+    await support.settleApp(220);
+    const gcd = support.host.querySelector('section[aria-label="GCD"]')!;
+    expect(gcd.textContent).toContain("当前条件下没有可行 GCD 档位。");
+    expect(gcd.textContent).not.toContain("请至少选择一个可行 GCD 档位。");
+    expect(support.buttonNamed("开始搜索").disabled).toBe(true);
+  });
+  it("GCD 问题在控件内显示，右侧只汇总问题是否存在", async () => {
+    support.chooseJob("PLD");
+    await support.settleApp(220);
+    const gcd = support.host.querySelector('section[aria-label="GCD"]')!;
+    const status = () => support.host.querySelector('aside [role="status"]')!.textContent;
+    expect(status()).toBe("存在无效的条件设置，请检查所有条件约束");
+    await support.selectFirstGcdTierIfEmpty();
+    await support.settleApp(220);
+    expect(gcd.textContent).not.toContain("请至少选择一个可行 GCD 档位。");
+    expect(status()).toBe("已就绪，可以开始搜索");
+  });
   it("选择后进入条件，反序范围阻止搜索", async () => {
     expect(support.host.querySelector("h1")?.textContent).toBe("选择职业");
     support.chooseJob("SAM");
@@ -98,7 +118,8 @@ describe("坚韧策略与通用输入", () => {
       kind: "single",
       config: { ...makeConfig("PLD"), minTenacity: 2300 },
       dataVersion: currentDataVersion,
-      status: "running",
+      status: "completed",
+      result: support.sampleResult(),
       startedAtISO: new Date().toISOString(),
     });
     support.click(support.buttonNamed("搜索记录"));
@@ -127,7 +148,8 @@ describe("坚韧策略与通用输入", () => {
         maximizeTenacity: true,
       },
       dataVersion: currentDataVersion,
-      status: "running",
+      status: "completed",
+      result: support.sampleResult(),
       startedAtISO: new Date().toISOString(),
     });
     support.click(support.buttonNamed("搜索记录"));

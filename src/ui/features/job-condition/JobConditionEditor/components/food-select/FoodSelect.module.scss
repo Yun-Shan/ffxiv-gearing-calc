@@ -1,3 +1,32 @@
+@use "@/ui/components/form-controls/control";
+
+.trigger {
+  @include control.control;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 260px;
+}
+.value {
+  flex: 1;
+  min-width: 0;
+}
+.positioner {
+  z-index: 1000;
+  width: var(--anchor-width);
+}
+.popup {
+  @include control.popup;
+}
+.list {
+  display: grid;
+}
+.item {
+  @include control.item;
+  &[data-selected] {
+    background: #e1f1eb;
+  }
+}
 .option {
   display: flex;
   align-items: center;
@@ -76,5 +105,11 @@
 .statsValue {
   color: #087f80;
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.selected .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }

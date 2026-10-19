@@ -1,9 +1,9 @@
+import { shareableSlotsForJobs } from "./shared-slot-options";
 import {
   type GearSlot,
   type JobId,
   type JointOptimizationConfig,
   type OptimizationConfig,
-  slotsForJob,
 } from "@/domain";
 import {
   createJobConditionRuntime,
@@ -18,7 +18,7 @@ import type {
   SearchRangeDraft,
 } from "./joint-workbench-types";
 import type { JointEquipmentDraft } from "@/ui/features/equipment/types";
-import { defaultCommonSlots, makeConfig } from "@/ui/services/app-config";
+import { makeConfig } from "@/ui/services/app-config";
 
 export function createJointWorkbenchRuntime(jobs: readonly JobId[]): JointWorkbenchRuntime {
   return Object.fromEntries(jobs.map((jobId) => [jobId, createJobConditionRuntime()])) as JointWorkbenchRuntime;
@@ -54,12 +54,7 @@ function jointJobConditionFromConfig(config: OptimizationConfig): JointJobCondit
 export function createJointWorkbenchDraft(jobs: readonly JobId[]): JointWorkbenchDraft {
   const configs = Object.fromEntries(jobs.map((jobId) => [jobId, makeConfig(jobId)])) as Partial<Record<JobId, OptimizationConfig>>;
   const firstConfig = configs[jobs[0]!]!;
-  const supportedSlots = new Set(jobs.length > 0 ? slotsForJob(jobs[0]!) : []);
-  for (const jobId of jobs.slice(1)) {
-    const jobSlots = new Set(slotsForJob(jobId));
-    for (const slot of supportedSlots) if (!jobSlots.has(slot)) supportedSlots.delete(slot);
-  }
-  const commonSlots = defaultCommonSlots.filter((slot) => supportedSlots.has(slot));
+  const commonSlots = shareableSlotsForJobs(jobs);
   const equipment: JointEquipmentDraft = {
     commonSlots: [...commonSlots],
     shared: { excludedSources: [], excludedGearIds: [], forcedGear: {} },
@@ -109,7 +104,9 @@ export function jointWorkbenchDraftFromConfig(config: JointOptimizationConfig): 
     if (forcedId !== undefined) sharedForcedGear[slot] = forcedId;
   }
   const equipment: JointEquipmentDraft = {
-    commonSlots: [...config.commonSlots],
+    commonSlots: config.commonSlots.filter(slot => slot === "rings"
+      ? shareableSlotsForJobs(config.jobs.map(job => job.jobId)).includes("ring")
+      : shareableSlotsForJobs(config.jobs.map(job => job.jobId)).includes(slot)),
     shared: { excludedSources: sharedSources, excludedGearIds: sharedGearIds, forcedGear: sharedForcedGear },
     jobs: Object.fromEntries(config.jobs.map((job) => {
       const excludedGearIds = (job.excludedGearIds ?? []).filter((id) => !sharedGearIds.includes(id));

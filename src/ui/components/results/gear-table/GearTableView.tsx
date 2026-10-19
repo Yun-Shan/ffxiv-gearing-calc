@@ -1,3 +1,4 @@
+import { jobSchemas, type JobId } from "@/domain";
 import { EquipmentIcon } from "@/ui/components/equipment-icon/EquipmentIcon";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
 import { itemIconId } from "@/ui/services/item-icons";
@@ -167,8 +168,24 @@ function StatCells({
   );
 }
 
-export function GearTableView({ rows }: { rows: readonly GearTableRow[] }) {
-  const statColumns = collectGearTableStatColumns(rows);
+export function GearTableView({
+  rows,
+  jobId,
+}: {
+  rows: readonly GearTableRow[];
+  jobId: JobId;
+}) {
+  const job = jobSchemas[jobId];
+  const statColumns = [
+    job.attackStat,
+    "CRT",
+    "DET",
+    "DHT",
+    job.role === "healer" || job.role === "int" ? "SPS" : "SKS",
+    ...(job.role === "tank" ? ["TEN"] : []),
+    "VIT",
+  ];
+
   const hasReplacements = rows.some(
     (row) =>
       isGearRow(row) &&
@@ -272,7 +289,11 @@ export function GearTableView({ rows }: { rows: readonly GearTableRow[] }) {
                   </td>
                 )}
                 <td className={styles.source}>
-                  {item.kind === "summary" ? "" : (item.source ?? "上游未标注")}
+                  {item.kind === "summary"
+                    ? ""
+                    : item.kind === "food"
+                      ? "生产制造"
+                      : (item.source ?? "上游未标注")}
                 </td>
                 <td>
                   <span className={styles.level}>

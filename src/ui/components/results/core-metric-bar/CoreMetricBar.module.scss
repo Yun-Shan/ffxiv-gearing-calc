@@ -1,5 +1,4 @@
 @use "@/styles/tokens" as tokens;
-
 .metrics {
   container-type: inline-size;
   display: grid;
@@ -7,166 +6,120 @@
   gap: 12px;
   min-width: 0;
 }
-
-.compact {
-  gap: 8px;
-}
-
-.compact .metric {
-  padding: 5px 7px;
-}
-
-.compact .metric h2 {
-  margin-bottom: 3px;
-}
-
 .metric {
+  display: grid;
+  grid-template-rows: 1fr 1px 1fr;
+  gap: 6px;
   min-width: 0;
   padding: 7px 9px;
   border: 1px solid #e0e7e4;
   border-radius: 8px;
   background: tokens.$color-neutral-white;
+  font-size: clamp(12px, 1cqw, 16px);
+  line-height: 1.3;
 }
-
-.metric h2 {
-  margin: 0 0 5px;
-  color: tokens.$color-text-secondary;
-  font-size: 1em;
-  font-weight: 600;
+.divider {
+  background: #edf0ed;
 }
-
-.damageMetric + .damageMetric {
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px solid #edf0ed;
+.metricRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  > span {
+    color: tokens.$color-text-secondary;
+  }
 }
-
-.damageMetric > span,
-.subMetric > span {
-  color: tokens.$color-text-secondary;
-  font-size: 0.75em;
-}
-
-.targetMetric > span {
-  color: tokens.$color-text-primary;
-  font-weight: 700;
-}
-
 .values {
   display: grid;
   gap: 2px;
-  margin: 2px 0 0;
-  padding: 0;
-  list-style: none;
 }
-
-.values li {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+.value {
+  display: flex;
   align-items: baseline;
-  gap: 2px 8px;
-  min-width: 0;
+  justify-content: flex-end;
+  gap: 6px;
   font-variant-numeric: tabular-nums;
+  strong {
+    color: tokens.$color-text-primary;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  small {
+    color: #426f55;
+    font-size: 0.75em;
+    white-space: nowrap;
+  }
 }
-
-.compact .values li {
-  grid-template-columns: auto auto minmax(0, 1fr);
-  gap: 2px 6px;
-}
-
-.compact .values strong {
-  grid-column: 2;
-}
-
-.compact .values small {
-  grid-column: 3;
-  justify-self: end;
-}
-
 .entryLabel {
   color: tokens.$color-text-secondary;
   font-size: 0.75em;
   white-space: nowrap;
 }
-
-.values strong {
-  color: tokens.$color-text-primary;
-  font-size: 1em;
-  font-weight: 600;
-  white-space: nowrap;
+.targetMetric {
+  > span {
+    color: tokens.$color-text-primary;
+    font-weight: 700;
+  }
+  strong {
+    color: #176f70;
+    font-weight: 700;
+  }
 }
-
-.targetMetric .values strong {
-  color: #176f70;
-  font-weight: 700;
-}
-
-.values small {
-  grid-column: 2;
-  color: #426f55;
-  font-size: 0.75em;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.subMetric {
-  margin-top: 6px;
-  padding-top: 5px;
-  border-top: 1px solid #edf0ed;
-}
-
-.compact .damageMetric + .damageMetric {
-  margin-top: 4px;
-  padding-top: 4px;
-}
-
-.compact .subMetric {
-  margin-top: 4px;
-  padding-top: 4px;
-}
-
-.metric {
-  font-size: clamp(12px, 1cqw, 16px);
-  line-height: 1.3;
-}
-.metric h2 {
-  line-height: 1.2;
-}
-.values {
-  line-height: 1.25;
-}
-
-.single .metric {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-content: start;
-  align-items: baseline;
-  gap: 6px 8px;
-}
-.single .metric h2 {
-  margin: 0;
-}
-.single .damageCard > h2,
-.single .damageMetric,
-.single .subMetric {
-  grid-column: 1 / -1;
-}
-.single .damageMetric,
-.single .subMetric {
+.openActions {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
 }
-.single .damageMetric > span,
-.single .subMetric > span {
+.compact {
+  gap: 8px;
+  .metric {
+    padding: 5px 7px;
+  }
+  .metricRow {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+.openLink {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border: 1px solid #bdcec5;
+  border-radius: 4px;
+  background: #f5f8f6;
+  color: #254c51;
+  font: inherit;
+  text-decoration: none;
+}
+.sharePositioner {
+  z-index: 1000;
+}
+.sharePopup {
+  max-width: min(340px, calc(100vw - 24px));
+  padding: 14px;
+  border: 1px solid #e2c27c;
+  border-radius: 8px;
+  background: #fff8e6;
+  color: #715722;
+  box-shadow: 0 4px 16px #18223524;
+  font-size: 14px;
+}
+.shareTitle {
+  margin: 0 0 8px;
   font-size: 1em;
 }
-.single .values {
+.shareDescription {
   margin: 0;
+  line-height: 1.6;
 }
-.single .values li {
+.shareActions {
   display: flex;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 8px;
+  margin-top: 12px;
 }

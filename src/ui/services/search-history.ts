@@ -1,3 +1,4 @@
+import stableStringify from "fast-json-stable-stringify";
 import { clanCount, jobSchemas } from "@/domain";
 import type {
   CommonGearSlot,
@@ -92,7 +93,7 @@ interface SearchHistoryBase {
   error?: string;
 }
 
-export type SearchHistoryRecord =
+type StoredSearchHistoryRecord =
   | (SearchHistoryBase & {
       kind: "single";
       config: OptimizationConfig;
@@ -104,9 +105,41 @@ export type SearchHistoryRecord =
       result?: JointOptimizationResult;
     });
 
+/** Validated, successful snapshots exposed to history consumers. */
+export type SearchHistoryRecord =
+  | (SearchHistoryBase & {
+      status: "completed";
+      finishedAtISO: string;
+      kind: "single";
+      config: OptimizationConfig;
+      result: OptimizationResult;
+    })
+  | (SearchHistoryBase & {
+      status: "completed";
+      finishedAtISO: string;
+      kind: "joint";
+      config: JointOptimizationConfig;
+      result: JointOptimizationResult;
+    });
+
+function isCompletedRecord(
+  record: StoredSearchHistoryRecord,
+): record is SearchHistoryRecord {
+  return record.status === "completed";
+}
+
 export type CreateSearchHistoryInput =
   | { kind: "single"; config: OptimizationConfig; dataVersion: string }
   | { kind: "joint"; config: JointOptimizationConfig; dataVersion: string };
+
+export type CompletedSearchHistoryInput = (
+  | { kind: "single"; config: OptimizationConfig; result: OptimizationResult }
+  | {
+      kind: "joint";
+      config: JointOptimizationConfig;
+      result: JointOptimizationResult;
+    }
+) & { dataVersion: string; startedAtISO: string; finishedAtISO: string };
 
 export type FinishSearchHistoryInput =
   | {
@@ -286,7 +319,10 @@ function isMateria(value: unknown): value is Materia {
     MATERIA_STAT_IDS.has(value.stat as Stat) &&
     isFiniteNumber(value.value) &&
     isSafeInteger(value.grade) &&
-    (value.slotIndex === undefined || (isSafeInteger(value.slotIndex) && value.slotIndex >= 0 && value.slotIndex < 5))
+    (value.slotIndex === undefined ||
+      (isSafeInteger(value.slotIndex) &&
+        value.slotIndex >= 0 &&
+        value.slotIndex < 5))
   );
 }
 
@@ -619,7 +655,7 @@ function validateJointResult(
   );
 }
 
-function validateRecord(value: unknown): SearchHistoryRecord {
+function validateRecord(value: unknown): StoredSearchHistoryRecord {
   assert(isObject(value), "记录必须是对象。");
   assert(typeof value.id === "string" && value.id.length > 0, "缺少记录编号。");
   assert(value.kind === "single" || value.kind === "joint", "职业类型无效。");
@@ -701,7 +737,7 @@ function validateRecord(value: unknown): SearchHistoryRecord {
     );
   if (value.status !== "completed")
     assert(value.result === undefined, "非成功记录不能包含结果。");
-  return value as unknown as SearchHistoryRecord;
+  return value as unknown as StoredSearchHistoryRecord;
 }
 
 /** 将 IndexedDB 记录交给历史记录使用方前，先校验其结构与字段。 */
@@ -709,7 +745,9 @@ export function validateSearchHistoryRecord(
   value: unknown,
 ): SearchHistoryRecord {
   // 存储边界统一核对记录结构，避免不完整数据进入页面逻辑。
-  return validateRecord(value);
+  const record = validateRecord(value);
+  assert(isCompletedRecord(record), "历史记录必须包含成功完成的结果。");
+  return record;
 }
 
 function requestTransaction<T>(
@@ -762,15 +800,25 @@ function requestTransaction<T>(
   );
 }
 
-function makeId(): string {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function")
-    return crypto.randomUUID();
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+async function configSnapshot(
+  config: OptimizationConfig | JointOptimizationConfig,
+) {
+  const serialized = stableStringify(config);
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(serialized),
+  );
+  return {
+    id: Array.from(new Uint8Array(digest), (byte) =>
+      byte.toString(16).padStart(2, "0"),
+    ).join(""),
+    config: JSON.parse(serialized) as typeof config,
+  };
 }
 
 export async function createSearchHistory(
   input: CreateSearchHistoryInput & { startedAtISO?: string },
-): Promise<SearchHistoryRecord> {
+): Promise<StoredSearchHistoryRecord> {
   if (input.kind === "single")
     assert(
       validateSingleConfig(input.config),
@@ -786,32 +834,81 @@ export async function createSearchHistory(
     "缺少数据版本。",
   );
 
+  const snapshot = await configSnapshot(input.config);
   const record = validateRecord({
-    id: makeId(),
+    id: snapshot.id,
     kind: input.kind,
     startedAtISO: input.startedAtISO ?? new Date().toISOString(),
     dataVersion: input.dataVersion,
-    config: input.config,
+    config: snapshot.config,
     status: "running",
   });
   await requestTransaction<IDBValidKey>(
     "readwrite",
-    (store) => store.add(record),
+    (store) => store.put(record),
     "创建",
   );
   window.dispatchEvent(new Event("search-history-changed"));
   return record;
 }
 
+/** Save a complete snapshot atomically, only after entering the result phase. */
+export async function saveCompletedSearchHistory(
+  input: CompletedSearchHistoryInput,
+): Promise<SearchHistoryRecord> {
+  const snapshot = await configSnapshot(input.config);
+  const record = validateSearchHistoryRecord({
+    ...input,
+    ...snapshot,
+    status: "completed",
+  });
+  await requestTransaction("readwrite", (store) => store.put(record), "保存");
+  window.dispatchEvent(new Event("search-history-changed"));
+  return record;
+}
+
 export async function getSearchHistoryRecord(
   id: string,
-): Promise<SearchHistoryRecord | undefined> {
+): Promise<StoredSearchHistoryRecord | undefined> {
   const value = await requestTransaction<unknown>(
     "readonly",
     (store) => store.get(id),
     "读取",
   );
   return value === undefined ? undefined : validateRecord(value);
+}
+
+export async function deleteSearchHistory(id: string): Promise<void> {
+  await requestTransaction("readwrite", (store) => store.delete(id), "删除");
+  window.dispatchEvent(new Event("search-history-changed"));
+}
+
+/** Clear only the current workbench kind, in one atomic transaction. */
+export async function clearSearchHistory(
+  kind: SearchHistoryKind,
+): Promise<void> {
+  const database = await openDatabase();
+  await new Promise<void>((resolve, reject) => {
+    try {
+      const transaction = database.transaction(STORE_NAME, "readwrite");
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.openCursor();
+      request.onsuccess = () => {
+        const cursor = request.result;
+        if (!cursor) return;
+        if (cursor.value?.kind === kind) cursor.delete();
+        cursor.continue();
+      };
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () =>
+        reject(storageError("清空", transaction.error));
+      transaction.onabort = () =>
+        reject(storageError("清空", transaction.error));
+    } catch (error) {
+      reject(storageError("清空", error));
+    }
+  });
+  window.dispatchEvent(new Event("search-history-changed"));
 }
 
 export async function listSearchHistory(
@@ -833,6 +930,7 @@ export async function listSearchHistory(
         throw error;
       }
     })
+    .filter(isCompletedRecord)
     .filter((record) => kind === undefined || record.kind === kind)
     .sort(
       (left, right) =>
@@ -844,11 +942,11 @@ export async function listSearchHistory(
 async function updateSearchHistoryRecord(
   id: string,
   update: FinishSearchHistoryInput & { finishedAtISO?: string },
-): Promise<SearchHistoryRecord> {
+): Promise<StoredSearchHistoryRecord> {
   const database = await openDatabase();
-  return new Promise<SearchHistoryRecord>((resolve, reject) => {
+  return new Promise<StoredSearchHistoryRecord>((resolve, reject) => {
     let transaction: IDBTransaction | undefined;
-    let nextRecord: SearchHistoryRecord | undefined;
+    let nextRecord: StoredSearchHistoryRecord | undefined;
     let settled = false;
     const fail = (cause: unknown) => {
       if (settled) return;
@@ -938,7 +1036,7 @@ async function updateSearchHistoryRecord(
 export function updateSearchHistory(
   id: string,
   update: FinishSearchHistoryInput & { finishedAtISO?: string },
-): Promise<SearchHistoryRecord> {
+): Promise<StoredSearchHistoryRecord> {
   const previous = resultWriteQueues.get(id) ?? Promise.resolve();
   const operation = previous
     .catch(() => undefined)

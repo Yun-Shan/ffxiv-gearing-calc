@@ -19,7 +19,7 @@ export function CheckboxInput({
 }) {
   const labelId = useId();
   return (
-    <label className={styles.label}>
+    <label className={styles.label} data-disabled={disabled || undefined}>
       <Checkbox.Root
         className={styles.control}
         aria-labelledby={labelId}

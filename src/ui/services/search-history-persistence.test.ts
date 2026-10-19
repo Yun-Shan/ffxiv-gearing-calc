@@ -361,7 +361,7 @@ describe("history list tolerates individual invalid payloads", () => {
     });
     const second = await service.createSearchHistory({
       kind: "single",
-      config: makeConfig("SAM"),
+      config: { ...makeConfig("SAM"), minItemLevel: 10 },
       dataVersion: "test",
       startedAtISO: "2026-10-18T00:00:02.000Z",
     });
@@ -410,5 +410,112 @@ describe("history list tolerates individual invalid payloads", () => {
       "database unavailable",
     );
     spy.mockRestore();
+  });
+});
+
+describe("completed-only history", () => {
+  it("saves a complete snapshot in a single write and preserves search timestamps", async () => {
+    vi.resetModules();
+    const service = await import("./search-history");
+    const stored = fakeDatabase();
+    const changed = vi.fn();
+    window.addEventListener("search-history-changed", changed);
+    try {
+      const input = {
+        kind: "single" as const,
+        config: makeConfig("SAM"),
+        result: fixtureResult(),
+        dataVersion: "snapshot-version",
+        startedAtISO: "2026-10-19T00:00:00.000Z",
+        finishedAtISO: "2026-10-19T00:00:02.000Z",
+      };
+      const pending = service.saveCompletedSearchHistory(input);
+      expect(stored.size).toBe(0);
+      expect(changed).not.toHaveBeenCalled();
+      const record = await pending;
+      expect(record).toMatchObject({
+        ...input,
+        config: JSON.parse(JSON.stringify(input.config)),
+        status: "completed",
+      });
+      expect(stored.size).toBe(1);
+      expect(stored.get(record.id)).toEqual(record);
+      expect(changed).toHaveBeenCalledOnce();
+      expect(await service.listSearchHistory()).toEqual([record]);
+    } finally {
+      window.removeEventListener("search-history-changed", changed);
+    }
+  });
+
+  it("hashes the entire stable config and replaces matching keys across versions", async () => {
+    vi.resetModules();
+    const service = await import("./search-history");
+    const stored = fakeDatabase();
+    const config = makeConfig("SAM");
+    const input = {
+      kind: "single" as const,
+      config,
+      result: fixtureResult(),
+      dataVersion: "first",
+      startedAtISO: "2026-10-19T00:00:00.000Z",
+      finishedAtISO: "2026-10-19T00:00:01.000Z",
+    };
+    const first = await service.saveCompletedSearchHistory(input);
+    stored.set(first.id, { ...first, error: "旧字段", legacyField: true });
+    const reordered = Object.fromEntries(
+      Object.entries(config).reverse(),
+    ) as typeof config;
+    const second = await service.saveCompletedSearchHistory({
+      ...input,
+      config: reordered,
+      dataVersion: "second",
+      result: { ...input.result, durationMs: 42 },
+      startedAtISO: "2026-10-19T00:00:01.000Z",
+      finishedAtISO: "2026-10-19T00:00:02.000Z",
+    });
+    expect(first.id).toMatch(/^[a-f0-9]{64}$/);
+    expect(second.id).toBe(first.id);
+    expect(stored.size).toBe(1);
+    expect(stored.get(first.id)).toEqual(second);
+    expect(stored.get(first.id)).not.toHaveProperty("error");
+    expect(stored.get(first.id)).not.toHaveProperty("legacyField");
+    expect(await service.listSearchHistory()).toEqual([second]);
+    expect(second.kind === "single" && second.result.durationMs).toBe(42);
+    const different = await service.saveCompletedSearchHistory({
+      ...input,
+      config: { ...config, minItemLevel: config.minItemLevel + 1 },
+    });
+    expect(different.id).not.toBe(first.id);
+    expect(stored.size).toBe(2);
+  });
+
+  it("omits legacy unsuccessful records from history without rewriting stored data", async () => {
+    vi.resetModules();
+    const service = await import("./search-history");
+    const stored = fakeDatabase();
+    const running = await service.createSearchHistory({
+      kind: "single",
+      config: makeConfig("SAM"),
+      dataVersion: "test",
+    });
+    for (const [index, status] of ([
+      "cancelled",
+      "failed",
+      "no-result",
+      "interrupted",
+    ] as const).entries()) {
+      const record = await service.createSearchHistory({
+        kind: "single",
+        config: { ...makeConfig("SAM"), minItemLevel: index + 1 },
+        dataVersion: "test",
+      });
+      await service.finishSearchHistory(
+        record.id,
+        status === "failed" ? { status, error: "failed" } : { status },
+      );
+    }
+    expect(await service.listSearchHistory()).toEqual([]);
+    expect(stored.size).toBe(5);
+    expect(await service.getSearchHistoryRecord(running.id)).toEqual(running);
   });
 });

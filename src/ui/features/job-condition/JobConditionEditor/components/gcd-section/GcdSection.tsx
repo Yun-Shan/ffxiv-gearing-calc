@@ -13,14 +13,13 @@ function Issue({objective, gcdAnalysisState, issues}: {
   gcdAnalysisState: GcdAnalysisState,
   issues: readonly ValidationIssue[]
 }) {
+  // 有意在部分情况下不显示issue的内容，避免出现矛盾的提示
   const [className, msg] = useMemo(() => {
     let className: string | undefined;
     let msg: string | undefined;
-    if (gcdAnalysisState.status === 'ready') {
-      if (gcdAnalysisState.feasibleTiers.length === 0) {
-        className = styles.objectiveTipError;
-        msg = '当前条件下没有可行 GCD 档位。';
-      }
+    if (gcdAnalysisState.status === 'ready' && gcdAnalysisState.feasibleTiers.length === 0) {
+      className = styles.objectiveTipError;
+      msg = '当前条件下没有可行 GCD 档位。';
     } else if (gcdAnalysisState.status === 'error') {
       className = styles.objectiveTipError;
       msg = gcdAnalysisState.message;

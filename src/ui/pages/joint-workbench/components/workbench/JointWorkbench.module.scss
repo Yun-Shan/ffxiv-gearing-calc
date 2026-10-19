@@ -1,3 +1,10 @@
+@use "@/styles/notices";
+
+@include notices.notices;
+.notice {
+  margin-bottom: 8px;
+}
+
 .selectionMain,
 .conditionsMain,
 .progressMain,
@@ -37,6 +44,20 @@
   min-width: 0;
   flex-direction: column;
   gap: 3px;
+}
+
+.conditionsHeading {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.returnButton {
+  border: 1px solid #b6cac3;
+  background: white;
+  padding: 7px 12px;
+  border-radius: 4px;
+  color: #316c67;
 }
 
 .pageHeading h1,
@@ -126,6 +147,7 @@
 }
 
 .selectionHistory {
+  min-width: 0;
   display: flex;
   min-height: 0;
 }
@@ -139,20 +161,12 @@
   display: flex;
   min-width: 0;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
   padding-top: 8px;
   border-top: 1px solid #d8e1db;
 }
 
-.selectionAction p {
-  margin: 0;
-  color: #63736c;
-  font-size: 12px;
-}
-
-.selectionAction button,
-.resultHeading button {
+.selectionAction button {
   min-height: 36px;
   padding: 7px 14px;
   border: 1px solid #287b79;
@@ -286,10 +300,6 @@
   font-size: 12px;
 }
 
-.sharedGear {
-  min-width: 0;
-}
-
 .progressJobSummary {
   padding: 8px 0;
   border-bottom: 1px solid #d8e1db;
@@ -331,8 +341,7 @@
   justify-content: space-between;
   gap: 12px;
 }
-.overview h2,
-.sharedGear h2 {
+.overview h2 {
   margin: 0;
   font-size: 14px;
   line-height: 1.4;
@@ -357,10 +366,8 @@
   gap: 8px;
 }
 .sharedGear {
-  display: grid;
-  min-height: 0;
-  grid-template-rows: auto minmax(0, 1fr);
-  gap: 6px;
+  display: flex;
+  height: 100%;
 }
 
 .conditionsTabs {
@@ -373,4 +380,20 @@
 .editorTargets button:focus-visible {
   outline: 3px solid #49a9b4;
   outline-offset: 2px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.durationBadge {
+  flex: none;
+  padding: 3px 8px;
+  border: 1px solid #bdcec5;
+  border-radius: 5px;
+  background: #edf6f3;
+  color: #316c67;
+  font-size: 16px;
+  white-space: nowrap;
 }

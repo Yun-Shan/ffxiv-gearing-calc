@@ -1,3 +1,5 @@
+import styles from "./JointWorkbench.module.scss";
+import { formatSharedSlots } from "@/ui/services/labels";
 import { jobSchemas, type JobId } from "@/domain";
 import { SidePanel } from "@/ui/components/side-panel/SidePanel";
 import { makeConfig } from "@/ui/services/app-config";
@@ -9,6 +11,24 @@ import {
 } from "../../joint-workbench-model";
 import { HistoryDialog, SideFooter, SideRows } from "./JointWorkbenchMain";
 import { useJointWorkbench } from "../../useJointWorkbenchController";
+
+const jointSearchNotices = [
+  {
+    type: "warning",
+    message:
+      "目前非共享槽位的唯一装备可能被多个职业同时选用，导致实际使用时较为麻烦(需要通过陆行鸟背包或者雇员来回交换)",
+  },
+  {
+    type: "info",
+    message:
+      "联合搜索暂不支持职业优先级设置，目前联合搜索目标为每个职业亏损之和最小",
+  },
+  {
+    type: "info",
+    message:
+      "联合搜索暂不支持不同职业设置不同的GCD类型，目前只能都选单个GCD或者都选多个GCD(不建议选择多个GCD)",
+  },
+] as const;
 
 function HistoryOverlayView() {
   const controller = useJointWorkbench();
@@ -34,35 +54,11 @@ export function JointWorkbenchAside() {
           <SidePanel.Header subtitle="实验室" title="联合搜索" />
           <SidePanel.Content>
             <SidePanel.Section>
-              <h2>职业选择</h2>
-              <SideRows
-                rows={[
-                  {
-                    label: "已选择",
-                    value: String(selected.length) + " 个职业",
-                  },
-                  {
-                    label: "有效性",
-                    value: controller.selectionState?.valid
-                      ? "可继续"
-                      : "需选择同组职业",
-                  },
-                ]}
-              />
-            </SidePanel.Section>
-            <SidePanel.Section>
-              <p>请选择同一装备分组中的职业。搜索在本地浏览器运行。</p>
+              {jointSearchNotices.map((notice) => (
+                <p key={notice.message} className={`${styles.notice} ${styles[notice.type]}`}>{notice.message}</p>
+              ))}
             </SidePanel.Section>
           </SidePanel.Content>
-          <SidePanel.Status
-            status={controller.selectionState?.valid ? "valid" : "pending"}
-          >
-            {controller.selectionState?.valid
-              ? "职业选择有效。"
-              : controller.selectionState?.invalidReason === "mixed-gear-groups"
-                ? "所选职业跨越多个装备分组。"
-                : "请选择至少两个同组职业。"}
-          </SidePanel.Status>
           <SidePanel.Footer />
         </SidePanel>
         <HistoryOverlayView />
@@ -76,7 +72,9 @@ export function JointWorkbenchAside() {
         ? undefined
         : controller.editorTarget;
     const config = controller.currentConfig!;
-    const sharedRows = jointSharedSummaryRows(config);
+    const sharedRows = jointSharedSummaryRows(config).map(row => row.label === "共享部位"
+      ? { ...row, value: formatSharedSlots(config.commonSlots) }
+      : row);
     return (
       <>
         <SidePanel>
@@ -109,17 +107,9 @@ export function JointWorkbenchAside() {
             </SidePanel.Section>
           </SidePanel.Content>
           <SidePanel.Status status={controller.currentValidation.status}>
-            {controller.currentValidation.status === "valid"
-              ? "条件验证通过。"
-              : controller.currentValidation.status === "pending"
-                ? "正在分析可行 GCD 档位。"
-                : (controller.currentValidation.issues[0]?.message ??
-                  "请修正无效条件。")}
+            {controller.currentValidation.issues.length ? "存在无效的条件设置，请检查所有条件约束" : "已就绪，可以开始搜索"}
           </SidePanel.Status>
           <SidePanel.Actions>
-            <button type="button" onClick={controller.returnToSelection}>
-              返回职业选择
-            </button>
             <button
               type="button"
               disabled={!controller.currentValidation.valid}
@@ -165,9 +155,7 @@ export function JointWorkbenchAside() {
           <SidePanel.Status
             status={controller.cancelPending ? "cancelling" : "running"}
           >
-            {controller.cancelPending
-              ? "正在等待搜索任务结束…"
-              : "搜索将在本地运行。"}
+            已就绪，可以开始搜索
           </SidePanel.Status>
           <SidePanel.Actions>
             <button
@@ -197,7 +185,9 @@ export function JointWorkbenchAside() {
             rows={jointSharedSummaryRows(
               phase.snapshot.config,
               phase.result.commonFood?.name,
-            )}
+            ).map(row => row.label === "共享部位"
+              ? { ...row, value: formatSharedSlots(phase.snapshot.config.commonSlots) }
+              : row)}
           />
         </SidePanel.Section>
       ) : (
@@ -222,36 +212,14 @@ export function JointWorkbenchAside() {
           <SidePanel.Header subtitle="结果" title="联合配装" />
           <SidePanel.Content>
             {resultContent}
-            <SidePanel.Section>
-              <h2>结果来源</h2>
-              <SideRows
-                rows={[
-                  {
-                    label: "开始时间",
-                    value: phase.snapshot.startedAtISO
-                      ? new Date(phase.snapshot.startedAtISO).toLocaleString(
-                          "zh-CN",
-                        )
-                      : "未记录",
-                  },
-                  {
-                    label: "耗时",
-                    value: (phase.durationMs / 1000).toFixed(1) + " 秒",
-                  },
-                  { label: "数据版本", value: phase.snapshot.dataVersion },
-                ]}
-              />
-            </SidePanel.Section>
           </SidePanel.Content>
+          <SidePanel.Status>数据版本 {phase.snapshot.dataVersion}</SidePanel.Status>
           <SidePanel.Actions>
             <button
               type="button"
               onClick={() => void controller.adjustConditions()}
             >
               调整条件
-            </button>
-            <button type="button" onClick={controller.returnToSelection}>
-              重新选择职业
             </button>
           </SidePanel.Actions>
           <SideFooter onHistory={() => controller.setHistoryOpen(true)} />

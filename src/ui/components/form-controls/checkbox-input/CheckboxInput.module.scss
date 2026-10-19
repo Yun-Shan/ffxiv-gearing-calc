@@ -26,5 +26,12 @@
   outline-offset: 2px;
 }
 .control[data-disabled] {
+  pointer-events: none;
+  background: #e8eeeb;
+  border-color: #c5d0ca;
   opacity: 0.6;
+}
+.label[data-disabled] {
+  pointer-events: none;
+  color: #7c8984;
 }

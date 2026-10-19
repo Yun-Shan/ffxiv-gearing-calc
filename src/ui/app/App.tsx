@@ -45,6 +45,7 @@ function RouteView({ page }: { page: AppPage }) {
 
 export function App() {
   const [page, setPage] = useState<AppPage>(currentPage);
+  const [singleVisit, setSingleVisit] = useState(0);
   useEffect(() => {
     const update = () => setPage(currentPage());
     const navigate = (event: MouseEvent) => {
@@ -66,6 +67,9 @@ export function App() {
       if (url.origin !== location.origin || !Object.hasOwn(routes, url.pathname))
         return;
       event.preventDefault();
+      if (url.pathname === "/single" && link.closest('nav[aria-label="主导航"]')) {
+        setSingleVisit((visit) => visit + 1);
+      }
       navigateTo(url.pathname);
     };
     const unsubscribe = subscribeNavigation(update);
@@ -80,7 +84,7 @@ export function App() {
       <div className={styles.root}>
         <AppHeader page={page} />
         <div className={styles.route}>
-          <RouteView page={page} />
+          <RouteView key={page === "single" ? `single-${singleVisit}` : page} page={page} />
         </div>
       </div>
     </FeedbackProvider>

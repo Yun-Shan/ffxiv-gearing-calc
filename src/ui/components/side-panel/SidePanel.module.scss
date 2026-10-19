@@ -1,4 +1,7 @@
+@use "@/styles/tokens" as tokens;
+
 .root {
+  container-type: inline-size;
   min-height: 0;
   min-width: 0;
   display: flex;
@@ -7,6 +10,9 @@
   padding: 16px;
   border-top: 3px solid #81914b;
   background: #f5f7f2;
+}
+.root > * {
+  font-size: clamp(12px, 4.84cqw, 16px);
 }
 .header {
   display: flex;
@@ -17,13 +23,13 @@
 }
 .eyebrow {
   color: #788848;
-  font-size: 12px;
 }
 .title {
-  font-size: 21px;
+  font-size: 1.75em;
   color: #354a37;
 }
 .content {
+  overflow-y: auto;
   flex: 1;
   min-height: 0;
   display: flex;
@@ -34,13 +40,12 @@
 .rows {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 4px;
 }
 .row {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  font-size: 12px;
   line-height: 1.6;
 }
 .row > :last-child {
@@ -48,9 +53,33 @@
   overflow-wrap: anywhere;
 }
 .status {
-  font-size: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
   color: #65715e;
   margin: 0;
+  line-height: 1.6;
+
+  &::before {
+    content: "";
+    flex: 0 0 0.5em;
+    height: 0.5em;
+    margin-top: 0.55em;
+    background: tokens.$color-text-subtle;
+  }
+  &[data-status="valid"]::before {
+    background: tokens.$color-status-ready;
+  }
+  &[data-status="invalid"]::before {
+    background: tokens.$color-status-error;
+  }
+  &[data-status="pending"]::before,
+  &[data-status="cancelling"]::before {
+    background: tokens.$color-accent-olive;
+  }
+  &[data-status="running"]::before {
+    background: tokens.$color-accent-teal;
+  }
 }
 .actions {
   display: flex;
@@ -58,8 +87,9 @@
   gap: 8px;
 }
 .actions button {
+  font-size: 1.333em;
   width: 100%;
-  min-height: 36px;
+  height: clamp(40px, 4vh, 50px);
   border: 1px solid #b7c9be;
   border-radius: 4px;
   background: #087f80;
@@ -74,8 +104,11 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  font-size: 11px;
   color: #75836b;
+}
+.footer > div,
+.footer > span {
+  font-size: 0.917em;
 }
 .footer > div {
   display: flex;
@@ -88,12 +121,9 @@
   background: transparent;
 }
 .section > h2 {
-  margin: 0;
-  font-size: 14px;
+  font-size: 1.167em;
   line-height: 1.4;
 }
 .section > p {
-  margin: 0;
-  font-size: 12px;
   line-height: 1.6;
 }

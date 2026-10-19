@@ -107,6 +107,7 @@ export function buildComparisonMetricEntries(
       gcd: snapshot.effects.gcd,
       criticalRate: snapshot.effects.crtChance,
       directHitRate: snapshot.effects.dhtChance,
+      hp: snapshot.effects.hp,
       tenacityMitigation: snapshot.effects.tenMitigation,
     };
     if (!baseline || index === 0) return base;

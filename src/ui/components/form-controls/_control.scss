@@ -18,7 +18,7 @@
   &[data-disabled] {
     background: #f4f6f4;
     color: #7c8984;
-    cursor: not-allowed;
+    pointer-events: none;
   }
   &[aria-invalid="true"] {
     border-color: #a63131;

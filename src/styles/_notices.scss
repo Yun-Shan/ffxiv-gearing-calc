@@ -1,0 +1,22 @@
+@mixin notices {
+  .notice {
+    margin: 0;
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 1em;
+    line-height: 1.6;
+  }
+
+  .warning {
+    border-color: #e2c27c;
+    background: #fff8e6;
+    color: #715722;
+  }
+
+  .info {
+    border-color: #a8c7e8;
+    background: #eef6ff;
+    color: #2b4b6f;
+  }
+}

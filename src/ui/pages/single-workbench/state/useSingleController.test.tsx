@@ -5,7 +5,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   optimize: vi.fn(),
   start: vi.fn(),
-  finish: vi.fn(),
   notify: vi.fn(),
   confirm: vi.fn(),
   replace: vi.fn(),
@@ -15,8 +14,7 @@ vi.mock("@/domain", async (original) => ({
   optimize: mocks.optimize,
 }));
 vi.mock("@/ui/services/search-history", () => ({
-  createSearchHistory: mocks.start,
-  finishSearchHistory: mocks.finish,
+  saveCompletedSearchHistory: mocks.start,
   replaceSearchHistoryResult: mocks.replace,
 }));
 vi.mock("@/ui/components/feedback/FeedbackProvider", () => ({
@@ -57,7 +55,6 @@ beforeEach(() => {
   document.body.append(host);
   root = createRoot(host);
   act(() => root.render(<Harness />));
-  mocks.finish.mockResolvedValue(undefined);
   mocks.start.mockResolvedValue({ id: "a" });
   mocks.confirm.mockResolvedValue(true);
 });
@@ -78,13 +75,14 @@ describe("Single run ownership and nonblocking history", () => {
     });
     expect(mocks.optimize).toHaveBeenCalledOnce();
     expect(controller.state.phase).toBe("progress");
+    expect(mocks.start).not.toHaveBeenCalled();
     const result = { score: 1 } as OptimizationResult;
     await act(async () => {
       search.resolve(result);
       await run;
     });
     expect(controller.state.phase).toBe("result");
-    expect(mocks.finish).not.toHaveBeenCalled();
+    expect(mocks.start).toHaveBeenCalledOnce();
     await act(async () => {
       storage.resolve({ id: "late" });
       await Promise.resolve();
@@ -93,12 +91,8 @@ describe("Single run ownership and nonblocking history", () => {
     expect(
       controller.state.phase === "result" && controller.state.historyId,
     ).toBe("late");
-    expect(mocks.finish).toHaveBeenCalledWith(
-      "late",
-      expect.objectContaining({
-        status: "completed",
-        finishedAtISO: expect.any(String),
-      }),
+    expect(mocks.start).toHaveBeenCalledWith(
+      expect.objectContaining({ result, finishedAtISO: expect.any(String) }),
     );
   });
   it("storage failure never suppresses a valid search result", async () => {
@@ -109,7 +103,7 @@ describe("Single run ownership and nonblocking history", () => {
       await controller.start(() => ({ valid: true }));
     });
     expect(controller.state.phase).toBe("result");
-    expect(mocks.finish).not.toHaveBeenCalled();
+    expect(mocks.start).toHaveBeenCalledOnce();
     expect(mocks.notify).toHaveBeenCalledWith(
       expect.stringContaining("storage unavailable"),
       "warning",
@@ -130,6 +124,7 @@ describe("Single run ownership and nonblocking history", () => {
       await run;
     });
     expect(controller.state.phase).toBe("conditions");
+    expect(mocks.start).not.toHaveBeenCalled();
   });
   it("navigation detaches old callbacks/finally from a newer selection", async () => {
     const search = deferred<OptimizationResult | undefined>();
@@ -147,7 +142,22 @@ describe("Single run ownership and nonblocking history", () => {
     expect(
       controller.state.phase === "conditions" && controller.state.draft.jobId,
     ).toBe("WAR");
+    expect(mocks.start).not.toHaveBeenCalled();
   });
+  it.each(["no-result", "failed"])(
+    "does not save %s searches",
+    async (outcome) => {
+      if (outcome === "failed")
+        mocks.optimize.mockRejectedValue(new Error("search failed"));
+      else mocks.optimize.mockResolvedValue(undefined);
+      act(() => controller.choose("PLD"));
+      await act(async () => {
+        await controller.start(() => ({ valid: true }));
+      });
+      expect(controller.state.phase).toBe("conditions");
+      expect(mocks.start).not.toHaveBeenCalled();
+    },
+  );
   it("old-version completed snapshots load without recomputation", async () => {
     const result = { score: 3 } as OptimizationResult;
     await act(async () => {
@@ -228,12 +238,6 @@ describe("Single run ownership and nonblocking history", () => {
       controller.state.phase === "result" &&
         controller.state.result.gear[0]?.name,
     ).toBe("test replacement C");
-    expect(mocks.finish).toHaveBeenCalledWith(
-      "late-replacement",
-      expect.objectContaining({
-        result: expect.objectContaining({ gear: [c] }),
-      }),
-    );
     expect(mocks.replace).toHaveBeenLastCalledWith(
       "late-replacement",
       expect.objectContaining({ gear: [c] }),

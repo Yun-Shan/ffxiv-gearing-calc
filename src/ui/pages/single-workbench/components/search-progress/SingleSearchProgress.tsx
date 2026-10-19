@@ -1,5 +1,5 @@
-import { useElapsedTime } from "@/ui/components/search-progress/use-elapsed-time";
-import styles from "@/ui/components/search-progress/SearchWorkflowProgress.module.scss";
+import { useElapsedTime } from "@/ui/features/search-progress/use-elapsed-time";
+import styles from "@/ui/features/search-progress/SearchWorkflowProgress.module.scss";
 
 export type SingleSearchPhase = "prepare" | "solve" | "verify";
 

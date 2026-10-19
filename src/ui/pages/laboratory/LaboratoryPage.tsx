@@ -1,10 +1,10 @@
-import { Dialog } from "@base-ui/react/dialog";
-import { useState, type MouseEvent } from "react";
-import { Breadcrumbs } from "@/ui/components/breadcrumbs/Breadcrumbs";
-import { navigateTo } from "@/ui/services/navigation";
-import styles from "./LaboratoryPage.module.scss";
+import { Dialog } from '@base-ui/react/dialog';
+import { type MouseEvent, useState } from 'react';
+import { Breadcrumbs } from '@/ui/components/breadcrumbs/Breadcrumbs';
+import { navigateTo } from '@/ui/services/navigation';
+import styles from './LaboratoryPage.module.scss';
 
-type LabNoticeType = "warning" | "info";
+type LabNoticeType = 'warning' | 'info';
 
 interface LabNotice {
   type: LabNoticeType;
@@ -21,33 +21,17 @@ interface LabTool {
 
 const labTools: readonly LabTool[] = [
   {
-    href: "/joint",
-    title: "联合搜索",
-    summary: "为多个职业共同搜索配装",
-    details: "在共享装备与各职业条件下寻找联合方案。",
-    notices: [
-      {
-        type: "warning",
-        message:
-          "目前非共享槽位的唯一装备可能被多个职业同时选用，导致实际使用时较为麻烦(需要通过陆行鸟背包或者雇员来回交换)",
-      },
-      {
-        type: "info",
-        message:
-          "联合搜索暂不支持职业优先级设置，目前联合搜索目标为每个职业亏损之和最小",
-      },
-      {
-        type: "info",
-        message:
-          "联合搜索暂不支持不同职业设置不同的GCD类型，目前只能都选单个GCD或者都选多个GCD(不建议选择多个GCD)",
-      },
-    ],
+    href: '/joint',
+    title: '联合搜索',
+    summary: '为多个职业共同搜索配装',
+    details: '在共享装备与各职业条件下寻找联合方案。',
+    notices: [],
   },
   {
-    href: "/gear-comparison",
-    title: "装备对比",
-    summary: "比较同职业的多套配装",
-    details: "从历史结果添加方案，查看核心指标与装备差异。",
+    href: '/gear-comparison',
+    title: '装备对比',
+    summary: '比较同职业的多套配装',
+    details: '从历史结果添加方案，查看核心指标与装备差异。',
     notices: [],
   },
 ];
@@ -76,16 +60,18 @@ function Card({
 
 export function LaboratoryPage() {
   const [pendingTool, setPendingTool] = useState<LabTool>();
+
   function confirmNavigation() {
     if (!pendingTool) return;
     const href = pendingTool.href;
     setPendingTool(undefined);
     navigateTo(href);
   }
+
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <Breadcrumbs items={["实验室"]} />
+        <Breadcrumbs items={['实验室']}/>
         <h1>选择实验性工具</h1>
       </header>
       <p className={`${styles.notice} ${styles.warning}`}>
@@ -117,10 +103,10 @@ export function LaboratoryPage() {
         }}
       >
         <Dialog.Portal>
-          <Dialog.Backdrop className={styles.backdrop} />
+          <Dialog.Backdrop className={styles.backdrop}/>
           <Dialog.Popup className={styles.dialog}>
             <Dialog.Title className={styles.dialogTitle}>
-              {pendingTool ? `进入「${pendingTool.title}」` : "进入实验性工具"}
+              {pendingTool ? `进入「${pendingTool.title}」` : '进入实验性工具'}
             </Dialog.Title>
             <ul className={styles.notices}>
               {pendingTool?.notices.map((notice) => (

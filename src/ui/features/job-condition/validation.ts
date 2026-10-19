@@ -199,12 +199,6 @@ export function validateJobConditionDraft(
     options.expectedGcdKey,
     options.jobId ? speedAttributeLabel(options.jobId) : undefined,
   );
-  const foodIssues =
-    draft.food.mode === "specific" &&
-    (!Number.isInteger(draft.food.foodId) || draft.food.foodId <= 0)
-      ? [issue("food.id.invalid", "请选择有效食物。", "food")]
-      : [];
-
   const tankIssues: ValidationIssue[] = [];
   if (
     Number(draft.tank.minimumTenacity !== undefined) +
@@ -275,7 +269,6 @@ export function validateJobConditionDraft(
   const baseSections = {
     range: rangeSection,
     gcd,
-    food: section(foodIssues),
     tank: section(tankIssues),
   } as const;
   const withJobId = (current: SectionValidation): SectionValidation => ({
@@ -287,7 +280,6 @@ export function validateJobConditionDraft(
   const sections = {
     range: withJobId(baseSections.range),
     gcd: withJobId(baseSections.gcd),
-    food: withJobId(baseSections.food),
     tank: withJobId(baseSections.tank),
   };
   const issues = Object.values(sections).flatMap((value) => value.issues);

@@ -1,8 +1,9 @@
 import { Check } from "lucide-react";
 import { Popover } from "@base-ui/react/popover";
-import { useRef, useState } from "react";
+import { Select } from "@base-ui/react/select";
+import { useId, useRef, useState } from "react";
 import type { Stats } from "@/domain";
-import { SearchSelect } from "@/ui/components/form-controls/search-select/SearchSelect";
+import { FormField } from "@/ui/components/form-controls/form-field/FormField";
 import { EquipmentIcon } from "@/ui/components/equipment-icon/EquipmentIcon";
 import { statName } from "@/ui/services/labels";
 import { itemIconId } from "@/ui/services/item-icons";
@@ -25,6 +26,33 @@ const autoOption: FoodOption = {
   statRates: {},
 };
 
+function FoodOptionContent({
+  item,
+  selected = false,
+  compact = false,
+}: {
+  item: FoodOption;
+  selected?: boolean;
+  compact?: boolean;
+}) {
+  return (
+    <span className={`${styles.option} ${compact ? styles.selected : ""}`}>
+      {item.id === 0 ? (
+        <span className={styles.autoIcon} aria-hidden="true" />
+      ) : (
+        <EquipmentIcon iconId={itemIconId(item.id)} className={styles.icon} />
+      )}
+      <span className={styles.name}>{item.name}</span>
+      {item.level !== undefined && (
+        <span className={styles.level}>品级 {item.level}</span>
+      )}
+      {selected && (
+        <Check size={14} className={styles.check} aria-hidden="true" />
+      )}
+    </span>
+  );
+}
+
 export function FoodSelect({
   label,
   food,
@@ -36,6 +64,7 @@ export function FoodSelect({
   disabled?: boolean;
   onChange(food: FoodDraft): void;
 }) {
+  const id = useId();
   const [hovered, setHovered] = useState<FoodOption>();
   const listRef = useRef<HTMLDivElement>(null);
   const items = [
@@ -60,59 +89,74 @@ export function FoodSelect({
     : [];
   return (
     <>
-      <SearchSelect
-        controlSize="wide"
-        label={label}
-        layout="inline"
-        placeholder="搜索食物名称"
-        items={items}
-        value={value}
-        disabled={disabled}
-        getLabel={(item) => item.name}
-        getKey={(item) => String(item.id)}
-        popupRef={listRef}
-        onOpenChange={(open) => {
-          if (!open) setHovered(undefined);
-        }}
-        onItemHighlighted={(item) => {
-          setHovered(item && item.id !== 0 ? item : undefined);
-        }}
-        renderOption={(item, { selected }) => (
-          <span className={styles.option}>
-            {item.id === 0 ? (
-              <span className={styles.autoIcon} aria-hidden="true" />
-            ) : (
-              <EquipmentIcon
-                iconId={itemIconId(item.id)}
-                className={styles.icon}
-              />
-            )}
-            <span className={styles.name}>{item.name}</span>
-            {item.level !== undefined && (
-              <span className={styles.level}>品级 {item.level}</span>
-            )}
-            {selected && (
-              <Check size={14} className={styles.check} aria-hidden="true" />
-            )}
-          </span>
-        )}
-        onSelect={(item) => {
-          setHovered(undefined);
-          onChange(
-            item.id === 0
-              ? { mode: "auto" }
-              : { mode: "specific", foodId: item.id },
-          );
-        }}
-        onClear={
-          food.mode === "specific"
-            ? () => {
-                setHovered(undefined);
-                onChange({ mode: "auto" });
+      <FormField id={id} label={label} layout="inline" controlSize="wide">
+        <Select.Root
+          value={value?.id ?? 0}
+          disabled={disabled}
+          onOpenChange={(open) => {
+            if (!open) setHovered(undefined);
+          }}
+          onValueChange={(next) => {
+            setHovered(undefined);
+            onChange(
+              next === 0 || next === null
+                ? { mode: "auto" }
+                : { mode: "specific", foodId: next },
+            );
+          }}
+        >
+          <Select.Trigger id={id} aria-label={label} className={styles.trigger}>
+            <Select.Value className={styles.value}>
+              {() =>
+                value &&
+                (value.id === 0 ? (
+                  value.name
+                ) : (
+                  <FoodOptionContent item={value} compact />
+                ))
               }
-            : undefined
-        }
-      />
+            </Select.Value>
+            <Select.Icon aria-hidden="true">▾</Select.Icon>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Positioner
+              className={styles.positioner}
+              sideOffset={4}
+              alignItemWithTrigger={false}
+            >
+              <Select.Popup
+                ref={listRef}
+                className={styles.popup}
+                onMouseLeave={() => setHovered(undefined)}
+              >
+                <Select.List className={styles.list}>
+                  {items.map((item) => (
+                    <Select.Item
+                      key={item.id}
+                      value={item.id}
+                      label={item.name}
+                      className={styles.item}
+                      onMouseEnter={() =>
+                        setHovered(item.id === 0 ? undefined : item)
+                      }
+                      onFocus={() =>
+                        setHovered(item.id === 0 ? undefined : item)
+                      }
+                    >
+                      <Select.ItemText className={styles.value}>
+                        <FoodOptionContent
+                          item={item}
+                          selected={item.id === value?.id}
+                        />
+                      </Select.ItemText>
+                    </Select.Item>
+                  ))}
+                </Select.List>
+              </Select.Popup>
+            </Select.Positioner>
+          </Select.Portal>
+        </Select.Root>
+      </FormField>
       <Popover.Root open={hovered !== undefined}>
         <Popover.Portal>
           <Popover.Positioner
@@ -133,19 +177,15 @@ export function FoodSelect({
               initialFocus={false}
               finalFocus={false}
             >
-              {hovered && (
-                <>
-                  <strong className={styles.statsTitle}>{hovered.name}</strong>
-                  <ul className={styles.statsList}>
-                    {hoveredStats.map(([stat, value]) => (
-                      <li className={styles.statsRow} key={stat}>
-                        <span>{statName(stat)}</span>
-                        <span className={styles.statsValue}>+{value}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
+              <strong className={styles.statsTitle}>{hovered?.name}</strong>
+              <ul className={styles.statsList}>
+                {hoveredStats.map(([stat, value]) => (
+                  <li className={styles.statsRow} key={stat}>
+                    <span>{statName(stat)}</span>
+                    <span className={styles.statsValue}>+{value}</span>
+                  </li>
+                ))}
+              </ul>
             </Popover.Popup>
           </Popover.Positioner>
         </Popover.Portal>
