@@ -14,16 +14,6 @@
   align-items: center;
   gap: 12px;
 }
-.note {
-  margin: 0;
-  color: var(--text-subtle, #657083);
-  font-size: 0.8125rem;
-}
-.issue {
-  margin: 0;
-  color: var(--danger, #a63131);
-  font-size: 0.8125rem;
-}
 
 .controls {
   display: flex;
@@ -65,10 +55,14 @@
   color: #304c48;
   font-size: 0.8125rem;
 }
-.objectiveNote {
+
+.objectiveTipNote {
   margin: 0;
   color: var(--text-subtle, #657083);
   font-size: 0.8125rem;
-  line-height: 20px;
-  text-align: right;
+}
+.objectiveTipError {
+  margin: 0;
+  color: var(--danger, #a63131);
+  font-size: 0.8125rem;
 }
