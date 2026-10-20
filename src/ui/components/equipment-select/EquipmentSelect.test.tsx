@@ -60,6 +60,43 @@ afterEach(() => {
 });
 
 describe("virtual equipment selection", () => {
+  it("searches by name, item level, and source while allowing missing sources", async () => {
+    const searchableItems: EquipmentSelectionItem[] = [
+      {
+        id: 100001,
+        slot: "head",
+        name: "测试头盔",
+        level: 795,
+        source: "测试副本 Savage",
+      },
+      { id: 100002, slot: "head", name: "其他头盔", level: 780 },
+    ];
+    const onSelect = vi.fn();
+    act(() =>
+      root.render(
+        <EquipmentSelect
+          label="测试装备"
+          placeholder="搜索"
+          items={searchableItems}
+          onSelect={onSelect}
+        />,
+      ),
+    );
+    await open();
+    for (const query of ["测试头盔", "795", "副本", "  SAVAGE  "]) {
+      await search(query);
+      expect(rows()).toHaveLength(1);
+      expect(rows()[0]!.textContent).toContain("测试头盔");
+    }
+    act(() => rows()[0]!.click());
+    expect(onSelect).toHaveBeenCalledWith(searchableItems[0]);
+    await open();
+    await search("780");
+    expect(rows()).toHaveLength(1);
+    expect(rows()[0]!.textContent).toContain("其他头盔");
+    await search("");
+    expect(rows()).toHaveLength(2);
+  });
   it("mounts only a window and reaches the last item by scrolling", async () => {
     act(() =>
       root.render(

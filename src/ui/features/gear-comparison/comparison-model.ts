@@ -160,6 +160,7 @@ function comparisonFoodItem(entry: ComparisonEntry): GearTableFoodItem {
     ? {
         kind: "food",
         key: foodIdentity(entry),
+        itemId: food.id,
         name: food.name,
         level: food.level,
         source: food.sourceFile,

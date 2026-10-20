@@ -1,8 +1,8 @@
 import { NumberInput } from "@/ui/components/form-controls/number-input/NumberInput";
-import { bounds, selectableSyncLevels } from "@/ui/services/app-config";
+import { bounds } from "@/ui/services/app-config";
 import { useJobConditionScope } from "../../../scope";
 import type { SearchRangeDraft, ValidationIssue } from "../../../types";
-import { LabeledSelect } from "@/ui/components/form-controls/labeled-select/LabeledSelect";
+import { SyncLevelSelect } from "./sync-level-select/SyncLevelSelect";
 import { ClanSelect } from "./clan-select/ClanSelect";
 import styles from "./SearchRangeSection.module.scss";
 
@@ -36,6 +36,7 @@ export function SearchRangeSectionFields({
             minDigits={8}
             hideLabel
             label="最低装备品级"
+            debounceMs={1500}
             min={bounds[0]}
             max={bounds[1]}
             value={range.minItemLevel}
@@ -50,6 +51,7 @@ export function SearchRangeSectionFields({
             minDigits={8}
             hideLabel
             label="最高装备品级"
+            debounceMs={1500}
             min={bounds[0]}
             max={bounds[1]}
             value={range.maxItemLevel}
@@ -60,23 +62,13 @@ export function SearchRangeSectionFields({
             }
           />
         </div>
-        <LabeledSelect
-          controlSize="regular"
-          layout="inline"
-          label="同步品级"
+        <SyncLevelSelect
           value={
             range.sync.mode === "enabled"
               ? String(range.sync.itemLevel)
               : "disabled"
           }
           disabled={readOnly}
-          options={[
-            { value: "disabled", label: "未启用" },
-            ...selectableSyncLevels.map((level) => ({
-              value: String(level),
-              label: String(level),
-            })),
-          ]}
           onChange={(value) =>
             onChange({
               ...range,

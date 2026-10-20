@@ -40,7 +40,7 @@ export function EquipmentSelect<T extends EquipmentSelectionItem>(props: {
         />
       )}
       matches={(gear, query) =>
-        `${gear.name} ${gear.level}`
+        `${gear.name} ${gear.level} ${gear.source ?? ""}`
           .toLocaleLowerCase()
           .includes(query.trim().toLocaleLowerCase())
       }

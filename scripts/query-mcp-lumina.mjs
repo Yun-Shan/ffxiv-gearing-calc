@@ -682,7 +682,22 @@ try {
   if (!genericQueriesAvailable)
     throw new Error(`Lumina MCP 通用查询不可用：${JSON.stringify(health)}`);
 
-  if (process.argv.includes("--level-basis-data-only")) {
+  if (process.argv.includes("--sync-level-duties-only")) {
+    const description = (await client.callTool("describe_sheet", { sheet: "ContentFinderCondition" })).value;
+    validateSyncLevelSchema("ContentFinderCondition", description, ["Name", "ItemLevelSync", "JournalGenre"]);
+    const queries = [];
+    const result = await queryAllRows(client, "ContentFinderCondition", "Name,ItemLevelSync,JournalGenre", queries);
+    if (description.gameVersion !== health.gameVersion || result.rows.length !== description.rowCount ||
+      result.missingRowIds.length || queries.some(query => query.gameVersion !== health.gameVersion))
+      throw new Error("同步品级说明查询行数不完整或版本不一致");
+    const snapshot = {
+      schemaVersion: 1, server: "ffxiv-mcp-lumina", sheet: "ContentFinderCondition",
+      gameVersion: health.gameVersion, queriedAt: queries[0].queriedAt,
+      query: { method: "list_rows", limit: -1, languages: "chs", fields: ["Name", "ItemLevelSync", "JournalGenre"] },
+      rowCount: description.rowCount, rows: result.rows,
+    };
+    await writeFile(resolve(root, "src/data/mcp-sync-level-duties.snapshot.json"), `${JSON.stringify(snapshot)}\n`, "utf8");
+  } else if (process.argv.includes("--level-basis-data-only")) {
     await refreshLevelBasisData(client, health);
   } else if (process.argv.includes("--item-special-bonus-data-only")) {
     await refreshItemSpecialBonusData(client, health);

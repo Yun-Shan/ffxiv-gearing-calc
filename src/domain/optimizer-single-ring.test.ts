@@ -72,8 +72,8 @@ function lowLevelForcedConfig(
   const config: OptimizationConfig = {
     ...configFor(jobId),
     syncLevel: gameData.syncLevelOfJobLevels[50],
-    minItemLevel: 15,
-    maxItemLevel: 20,
+    minItemLevel: 90,
+    maxItemLevel: 130,
     foodId,
   };
   const forcedGear: OptimizationConfig["forcedGear"] = {};
@@ -94,7 +94,7 @@ function lowLevelForcedConfig(
 
 describe("joint search with independently shared ring slots", () => {
   it("factorizes a shared pair while preserving other shared slots and rejects a unique duplicate", async () => {
-    const weakRingId = 15133;
+    const weakRingId = 18109;
     expect(gears.find((gear) => gear.id === sharedUniqueRingId)?.unique).toBe(true);
     expect(gears.find((gear) => gear.id === weakRingId)?.unique).toBe(false);
 

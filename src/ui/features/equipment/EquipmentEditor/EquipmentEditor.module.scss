@@ -141,13 +141,40 @@
   min-width: 0;
 }
 
-.sourceTrigger {
+.sourceControl {
   @include control.control;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
   min-width: 160px;
+  padding: 0;
+  &:focus-within {
+    outline: 3px solid #49a9b4;
+    outline-offset: 2px;
+  }
+}
+.sourceInput {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 6px 9px;
+  outline: none;
+}
+.sourceTrigger {
+  flex: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+.sourceInput:focus-visible,
+.sourceTrigger:focus-visible {
+  outline: none;
 }
 .sourcePositioner {
   z-index: 1000;
@@ -158,6 +185,16 @@
   width: 100%;
   min-width: 0;
   max-height: min(380px, var(--available-height));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sourceTree {
+  min-height: 0;
+  overflow-y: auto;
+}
+.sourceEmpty {
+  margin: 8px;
 }
 .sourceTree,
 .sourceChildren {

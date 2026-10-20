@@ -1,11 +1,13 @@
 import { generateUiJobIcons } from "./generate-ui-job-icons.mjs";
 import { generateUiItemIcons } from "./generate-ui-item-icons.mjs";
+import { generateUiSyncLevelDuties } from "./generate-ui-sync-level-duties.mjs";
 import { execFileSync } from "node:child_process";
 import { access, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parse } from "@babel/parser";
 import { encodeGeneratedData } from "../src/data/binary-format.mjs";
+import { excludeReferenceGearSource, includeGearInCatalog, referenceGearSource } from "./gear-catalog-policy.mjs";
 import { acceptsVersionWarning } from "./mcp-query-validation.mjs";
 import {
   itemActionReturnFields,
@@ -511,6 +513,7 @@ function normalizeJobSchemas(rawSchemas, snapshot) {
 function normalizeGear(raw, sourceFile) {
   const slot = slotMap.get(raw.slot);
   if (!slot) return undefined;
+  const source = referenceGearSource(raw);
   // 参考项目只提供待查询的装备候选 ID；职业适用性必须由后续 MCP 分类确定。
   // 这里不依据 reference jobCategories 过滤装备，避免在 MCP 查询前丢失候选。
   const jobs = [];
@@ -528,7 +531,7 @@ function normalizeGear(raw, sourceFile) {
     ...(raw.materiaAdvanced ? { materiaAdvanced: true } : {}),
     ...(raw.hq ? { hq: true } : {}),
     ...(raw.customizable ? { customizable: true } : {}),
-    ...(raw.source ? { source: raw.source } : {}),
+    ...(source ? { source } : {}),
     jobs,
     weaponDamage: raw.stats.PDMG ?? raw.stats.MDMG,
     sourceFile,
@@ -1402,6 +1405,9 @@ const constants = parseGameConstants(gameSource);
 const gearGroups = await Promise.all(
   gearFiles.map(async (file) => ({ file, items: await importDefault(resolve(outDir, file)) })),
 );
+const excludedReferenceGearIds = new Set(
+  gearGroups.flatMap(({ items }) => items.filter(excludeReferenceGearSource).map(({ id }) => id)),
+);
 const gears = gearGroups.flatMap(({ file, items }) =>
   items.map((item) => normalizeGear(item, `data/out/${file}`)).filter(Boolean),
 );
@@ -1423,6 +1429,7 @@ const referenceSource = {
   commit,
   importedAt: importStartedAt,
   sourceFiles: referenceSourceFiles,
+  note: "参考装备 obsolete=true 的来源统一映射为已废弃；否则以→诗学或/诗学结尾映射为点数/诗学，以→战利品、→兵团、→同盟结尾分别映射为怪物狩猎战利品、兵团徽章、同盟徽章。以→雇员探险结尾映射为雇员探险；完整来源点数/哲学→无限城古迹、日影地修炼所、野营地映射为迷宫挑战/无限城古迹、日影地修炼所、野营地。其余保留原始来源。生成目录排除原始来源包含古董系列或军票的装备，此判断先于来源映射。",
 };
 let foods = rawFoods.filter((food) => food.slot === -1).map(normalizeFood);
 let effectiveLevelCaps = levelCaps;
@@ -1557,10 +1564,13 @@ if (mcpSnapshot) {
 } else if (!offline) {
   console.warn(`未找到 MCP 查询产物：${mcpSnapshotPath}。请先使用环境 MCP 工具生成该文件；本次仅使用参考项目。`);
 }
+const levelFilteredGears = gears.filter(includeGearInCatalog);
+const catalogGears = levelFilteredGears.filter(({ id }) => !excludedReferenceGearIds.has(id));
+console.log(`剔除 ${gears.length - levelFilteredGears.length} 件同时满足穿戴等级低于 50 且品级低于 90 的装备，另剔除 ${levelFilteredGears.length - catalogGears.length} 件参考来源包含古董系列或军票的装备。`);
 const payload = {
   version: mcpSnapshot
-    ? `mcp-${mcpSnapshot.gameVersion}-upstream-${commit.slice(0, 12)}-level-basis-v3-item-special-bonus-v1`
-    : `upstream-${commit.slice(0, 12)}-level-basis-v3-item-special-bonus-v1`,
+    ? `mcp-${mcpSnapshot.gameVersion}-upstream-${commit.slice(0, 12)}-level-basis-v3-item-special-bonus-v1-gear-catalog-v4`
+    : `upstream-${commit.slice(0, 12)}-level-basis-v3-item-special-bonus-v1-gear-catalog-v4`,
   provenance: {
     repository,
     commit,
@@ -1568,7 +1578,7 @@ const payload = {
     sourceFiles: referenceSourceFiles,
     sources: sourceRecords,
   },
-  gears,
+  gears: catalogGears,
   foods,
   materias,
   bluMdmgAdditions,
@@ -1589,6 +1599,7 @@ await mkdir(resolve(outputPath, ".."), { recursive: true });
 const generated = await encodeGeneratedData(payload);
 if (mcpSnapshot && !skipUiGeneratedIcons) await generateUiJobIcons(mcpSnapshot);
 if (mcpSnapshot && !skipUiGeneratedIcons) await generateUiItemIcons(mcpSnapshot);
+await generateUiSyncLevelDuties();
 await writeFile(outputPath, generated.bytes);
 console.log(
   `Imported ${generated.gearCount} gears, ${payload.foods.length} foods and ${supportedJobs.length} jobs from ${commit.slice(0, 12)}. ${mcpSummary}`,

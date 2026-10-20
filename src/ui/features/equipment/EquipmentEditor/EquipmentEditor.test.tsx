@@ -65,8 +65,8 @@ function checkbox(name: string) {
 }
 function open() {
   click(
-    [...host.querySelectorAll("button")].find(
-      (el) => el.textContent === "选择来源",
+    host.querySelector<HTMLButtonElement>(
+      'button[aria-label="打开排除来源列表"]',
     )!,
   );
 }
@@ -74,6 +74,18 @@ const selectedSources = () =>
   [
     ...host.querySelectorAll('ul[aria-label="已排除来源"] [data-source-name]'),
   ].map((el) => el.textContent);
+function searchSources(value: string) {
+  const input = document.body.querySelector<HTMLInputElement>(
+    'input[placeholder="搜索来源"]',
+  )!;
+  act(() => {
+    Object.getOwnPropertyDescriptor(
+      HTMLInputElement.prototype,
+      "value",
+    )!.set!.call(input, value);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
 beforeEach(() => {
   (
     globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
@@ -88,6 +100,68 @@ afterEach(() => {
 });
 
 describe("source tree selection", () => {
+  it("opens filtered source choices from the external input without a search input in the popup", () => {
+    act(() => root.render(<Harness />));
+    const input = host.querySelector<HTMLInputElement>(
+      'input[role="combobox"][placeholder="搜索来源"]',
+    )!;
+    expect(input.getAttribute("aria-expanded")).toBe("false");
+    searchSources("Alpha");
+    expect(input.getAttribute("aria-expanded")).toBe("true");
+    const popup = document.getElementById(
+      input.getAttribute("aria-controls")!,
+    )!;
+    expect(popup).not.toBeNull();
+    expect(popup.contains(input)).toBe(false);
+    expect(popup.querySelector("input[placeholder]")).toBeNull();
+    expect(labels().map((el) => el.textContent)).toEqual([
+      "A2",
+      "Group2",
+      "Alpha2",
+    ]);
+  });
+  it("filters full source paths and preserves hidden selections when toggling a filtered parent", () => {
+    act(() => root.render(<Harness initial={["B/Second"]} />));
+    open();
+    click(document.body.querySelector<HTMLElement>('[aria-label="收起A"]')!);
+    searchSources("  ALPHA  ");
+    expect(labels().map((el) => el.textContent)).toEqual([
+      "A2",
+      "Group2",
+      "Alpha2",
+    ]);
+    click(checkbox("A2"));
+    expect(selectedSources()).toEqual(["A/Group/Alpha", "B/Second"]);
+    click(checkbox("A2"));
+    expect(selectedSources()).toEqual(["B/Second"]);
+    searchSources("a/group");
+    expect(labels().map((el) => el.textContent)).toEqual([
+      "A3",
+      "Group3",
+      "Alpha2",
+      "Zulu1",
+    ]);
+    searchSources("missing");
+    expect(labels()).toHaveLength(0);
+    expect(document.body.textContent).toContain("没有匹配的来源。");
+    expect(selectedSources()).toEqual(["B/Second"]);
+    searchSources("");
+    expect(labels()).toHaveLength(6);
+    expect(checkbox("Second1").getAttribute("aria-checked")).toBe("true");
+  });
+  it("clears the search when closing and reopening the source selector", () => {
+    act(() => root.render(<Harness />));
+    open();
+    searchSources("missing");
+    open();
+    open();
+    expect(
+      document.body.querySelector<HTMLInputElement>(
+        'input[placeholder="搜索来源"]',
+      )!.value,
+    ).toBe("");
+    expect(labels()).toHaveLength(6);
+  });
   it("sorts each level, aggregates unique gear counts and selects a partial parent fully", () => {
     act(() => root.render(<Harness />));
     open();
@@ -133,8 +207,8 @@ describe("source tree selection", () => {
   it("disables the selector for read-only scopes", () => {
     act(() => root.render(<Harness readOnly />));
     expect(
-      [...host.querySelectorAll("button")].find(
-        (el) => el.textContent === "选择来源",
+      host.querySelector<HTMLButtonElement>(
+        'button[aria-label="打开排除来源列表"]',
       )!.disabled,
     ).toBe(true);
   });

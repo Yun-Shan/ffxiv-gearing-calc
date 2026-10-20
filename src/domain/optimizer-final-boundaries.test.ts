@@ -13,8 +13,8 @@ function lowLevelForcedConfig(jobId: JobId, foodId: number): OptimizationConfig 
   const config: OptimizationConfig = {
     jobId,
     syncLevel: gameData.syncLevelOfJobLevels[50],
-    minItemLevel: 15,
-    maxItemLevel: 20,
+    minItemLevel: 90,
+    maxItemLevel: 130,
     maximizeTenacity: false,
     objective: "dps",
     excludedSources: [],

@@ -229,6 +229,7 @@ describe("gear comparison model", () => {
     expect(weaponRows.map((row) => row.slotLabel)).toEqual(["武器", ""]);
     expect(foodRows).toHaveLength(2);
     expect(foodRows.map((row) => row.marker)).toEqual(["A/C", "B"]);
+    expect(foodRows.map((row) => row.item.kind === "food" ? row.item.itemId : undefined)).toEqual([10, 11]);
     expect(
       foodRows.every(
         (row) =>

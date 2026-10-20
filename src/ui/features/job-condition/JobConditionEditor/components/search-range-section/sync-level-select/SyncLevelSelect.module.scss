@@ -1,0 +1,35 @@
+.positioner {
+  z-index: 1001;
+}
+.popup {
+  min-width: 180px;
+  max-width: min(440px, var(--available-width));
+  max-height: var(--available-height);
+  overflow-y: auto;
+  padding: 10px 12px;
+  border: 1px solid #c6d6d1;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgb(28 46 62 / 18%);
+  color: #26323b;
+}
+.title {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.list {
+  display: grid;
+  gap: 3px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  color: #4b5a63;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.empty {
+  margin: 0;
+  font-size: 12px;
+}

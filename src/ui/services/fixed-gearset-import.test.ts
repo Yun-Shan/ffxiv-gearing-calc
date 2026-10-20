@@ -44,6 +44,33 @@ function configFor(weaponId?: number): OptimizationConfig {
 }
 
 describe("fixed gearset import adapter", () => {
+  it.each([2228, 59999])(
+    "rejects unknown gear %i as an empty slot",
+    async (id) => {
+      expect(gears.some((gear) => gear.id === id)).toBe(false);
+      const config = configFor();
+      const complete = Object.values(config.forcedGear).map((gearId) => ({
+        id: gearId as number,
+        materias: [],
+      }));
+      for (const entries of [
+        [{ id, materias: [] }, ...complete.slice(1)],
+        [...complete, { id, materias: [] }],
+        complete.slice(1),
+      ]) {
+        const payload = stringifyReferenceGearset({
+          job: "SAM",
+          role: "str",
+          jobLevel: 100,
+          foodId: config.foodId,
+          gears: entries,
+        })!;
+        await expect(resolveImportedGearset(payload)).rejects.toThrow(
+          "配装槽位不完整",
+        );
+      }
+    },
+  );
   it.each([42177, 52439])(
     "uses the job cap for gear %i when formula level is lower",
     async (itemId) => {

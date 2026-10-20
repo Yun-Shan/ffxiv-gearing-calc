@@ -1,4 +1,4 @@
-import { useId, type ReactNode } from "react";
+import { useId, type ReactNode, type Ref } from "react";
 import {
   FormField,
   type LabelLayout,
@@ -30,6 +30,8 @@ export function LabeledSelect<Multiple extends boolean = false>({
   controlSize,
   hideLabel,
   invalid = false,
+  onOptionHighlighted,
+  popupRef,
 }: {
   label: string;
   multiple?: Multiple;
@@ -42,6 +44,8 @@ export function LabeledSelect<Multiple extends boolean = false>({
   controlSize?: ControlSize;
   hideLabel?: boolean;
   invalid?: boolean;
+  onOptionHighlighted?(option: LabeledSelectOption | undefined): void;
+  popupRef?: Ref<HTMLDivElement>;
 }) {
   const id = useId();
   return (
@@ -57,6 +61,7 @@ export function LabeledSelect<Multiple extends boolean = false>({
         value={value}
         items={options}
         disabled={disabled}
+        onOpenChange={(open) => { if (!open) onOptionHighlighted?.(undefined); }}
         onValueChange={(nextValue) => {
           if (nextValue !== null) onChange(nextValue);
         }}
@@ -110,6 +115,8 @@ export function LabeledSelect<Multiple extends boolean = false>({
             alignItemWithTrigger={false}
           >
             <Select.Popup
+              ref={popupRef}
+              onMouseLeave={() => onOptionHighlighted?.(undefined)}
               className={`${styles.popup} ${invalid ? styles.invalid : ""}`}
             >
               <Select.List className={styles.list}>
@@ -119,6 +126,8 @@ export function LabeledSelect<Multiple extends boolean = false>({
                     key={option.value}
                     value={option.value}
                     disabled={option.disabled}
+                    onMouseEnter={() => onOptionHighlighted?.(option)}
+                    onFocus={() => onOptionHighlighted?.(option)}
                   >
                     <Select.ItemText>{option.label}{option.suffix}</Select.ItemText>
                     <Select.ItemIndicator

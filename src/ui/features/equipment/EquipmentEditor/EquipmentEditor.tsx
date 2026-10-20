@@ -1,4 +1,5 @@
 import { Popover } from "@base-ui/react/popover";
+import { Input } from "@base-ui/react/input";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { CheckboxInput } from "@/ui/components/form-controls/checkbox-input/CheckboxInput";
 import { FormField } from "@/ui/components/form-controls/form-field/FormField";
@@ -149,6 +150,13 @@ function SourceTreeSelect({
   onChange(sources: string[]): void;
 }) {
   const id = useId();
+  const popupId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const controlRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const normalizedQuery = query.trim().toLocaleLowerCase();
   // Expand historical prefix exclusions to the current concrete source leaves.
   const choices = useMemo(
     () => [
@@ -162,8 +170,14 @@ function SourceTreeSelect({
     [sources, excludedSources],
   );
   const nodes = useMemo(
-    () => buildSourceTree(choices, counts),
-    [choices, counts],
+    () =>
+      buildSourceTree(
+        choices.filter((source) =>
+          source.toLocaleLowerCase().includes(normalizedQuery),
+        ),
+        counts,
+      ),
+    [choices, counts, normalizedQuery],
   );
   const selected = new Set(
     choices.filter((source) =>
@@ -179,15 +193,69 @@ function SourceTreeSelect({
   }
   return (
     <FormField id={id} label="排除来源" layout="inline" hideLabel>
-      <Popover.Root>
-        <Popover.Trigger
-          id={id}
-          className={styles.sourceTrigger}
-          disabled={disabled || nodes.length === 0}
+      <Popover.Root
+        open={open}
+        onOpenChange={(nextOpen, details) => {
+          if (
+            !nextOpen &&
+            details.reason !== "trigger-press" &&
+            details.event.target instanceof Node &&
+            controlRef.current?.contains(details.event.target)
+          ) {
+            details.cancel();
+            return;
+          }
+          setOpen(nextOpen);
+          if (!nextOpen) setQuery("");
+        }}
+      >
+        <div
+          ref={controlRef}
+          className={styles.sourceControl}
+          data-disabled={disabled || choices.length === 0 ? "" : undefined}
         >
-          <span>选择来源</span>
-          <ChevronDown size={14} aria-hidden="true" />
-        </Popover.Trigger>
+          <Input
+            id={id}
+            ref={inputRef}
+            className={styles.sourceInput}
+            role="combobox"
+            aria-label="排除来源"
+            aria-haspopup="dialog"
+            aria-expanded={open}
+            aria-controls={open ? popupId : undefined}
+            autoComplete="off"
+            placeholder="搜索来源"
+            value={query}
+            disabled={disabled || choices.length === 0}
+            onClick={() => setOpen(true)}
+            onValueChange={(value) => {
+              setQuery(value);
+              setOpen(true);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "ArrowDown") {
+                event.preventDefault();
+                setOpen(true);
+                requestAnimationFrame(() =>
+                  popupRef.current
+                    ?.querySelector<HTMLElement>('[role="checkbox"]')
+                    ?.focus(),
+                );
+              } else if (event.key === "Escape") {
+                event.preventDefault();
+                setOpen(false);
+                setQuery("");
+              }
+            }}
+          />
+          <Popover.Trigger
+            className={styles.sourceTrigger}
+            aria-label="打开排除来源列表"
+            disabled={disabled || choices.length === 0}
+          >
+            ▾
+          </Popover.Trigger>
+        </div>
         <Popover.Portal>
           <Popover.Positioner
             anchor={popupAnchor}
@@ -202,13 +270,19 @@ function SourceTreeSelect({
             align="start"
           >
             <Popover.Popup
+              id={popupId}
+              ref={popupRef}
+              initialFocus={false}
+              finalFocus={(type) =>
+                type === "keyboard" ? inputRef.current : false
+              }
               className={styles.sourcePopup}
               aria-label="选择排除来源"
             >
               <ul className={styles.sourceTree} aria-label="来源分类">
                 {nodes.map((node) => (
                   <SourceTreeBranch
-                    key={node.path}
+                    key={`${normalizedQuery}:${node.path}`}
                     node={node}
                     selected={selected}
                     disabled={disabled}
@@ -216,6 +290,11 @@ function SourceTreeSelect({
                   />
                 ))}
               </ul>
+              {nodes.length === 0 && (
+                <p className={styles.sourceEmpty} role="status">
+                  没有匹配的来源。
+                </p>
+              )}
             </Popover.Popup>
           </Popover.Positioner>
         </Popover.Portal>
@@ -327,7 +406,7 @@ function ExcludedGearEditor() {
             hideLabel
             label="排除装备"
             popupAnchor={popupAnchor}
-            placeholder="搜索装备名称或品级"
+            placeholder="搜索装备名称、品级或来源"
             items={available}
             disabled={readOnly || available.length === 0}
             onSelect={(gear) => add(gear.id)}
@@ -410,7 +489,10 @@ function ForcedGearEditor({
         <h3 className={styles.sectionLabel}>
           强制装备{" "}
           <span className={styles.count}>
-        {Object.values(forcedGear).filter((value) => value !== undefined).length}{" "}
+            {
+              Object.values(forcedGear).filter((value) => value !== undefined)
+                .length
+            }{" "}
             个部位
           </span>
         </h3>
@@ -436,7 +518,7 @@ function ForcedGearEditor({
             hideLabel
             label="指定装备"
             popupAnchor={popupAnchor}
-            placeholder="搜索装备名称或品级"
+            placeholder="搜索装备名称、品级或来源"
             items={choices}
             value={selectedGear}
             disabled={readOnly || choices.length === 0}

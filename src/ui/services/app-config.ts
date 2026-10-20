@@ -33,9 +33,9 @@ export function foodOptionsFor(foodId?: number) {
 }
 export const defaultJobLevel = 100;
 
-// 与 Asvel 同步品级选择器中标记为常用的选项保持一致。
+// Asvel 常用同步品级，加上已确认提供的 50 级旧内容档位。
 const popularSyncLevels = [
-  795, 735, 700, 695, 665, 635, 605, 475, 375, 345, 300,
+  795, 735, 700, 695, 665, 635, 605, 475, 375, 345, 300, 135, 120, 100,
 ] as const;
 export const selectableSyncLevels = popularSyncLevels.filter((level) =>
   gameData.levelCaps.level.includes(level),

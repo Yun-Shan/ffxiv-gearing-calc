@@ -5,7 +5,7 @@ import type { GcdAnalysisState, GcdDraft, ValidationIssue } from '../../../types
 import { LabeledSelect } from '@/ui/components/form-controls/labeled-select/LabeledSelect';
 import { deriveJobObjective } from '../../../compiler';
 import styles from './GcdSection.module.scss';
-import { useMemo } from 'react';
+import { useEffect } from 'react';
 
 
 function Issue({objective, gcdAnalysisState, issues}: {
@@ -14,7 +14,7 @@ function Issue({objective, gcdAnalysisState, issues}: {
   issues: readonly ValidationIssue[]
 }) {
   // 有意在部分情况下不显示issue的内容，避免出现矛盾的提示
-  const [className, msg] = useMemo(() => {
+  const [className, msg] = (() => {
     let className: string | undefined;
     let msg: string | undefined;
     if (gcdAnalysisState.status === 'ready' && gcdAnalysisState.feasibleTiers.length === 0) {
@@ -25,13 +25,13 @@ function Issue({objective, gcdAnalysisState, issues}: {
       msg = gcdAnalysisState.message;
     } else if (objective === 'dps') {
       className = styles.objectiveTipNote;
-      msg = '仅供参考：副本时间轴与职业技能轴可能使实际 GCD 收益偏离估算。';
+      msg = '多GCD搜索仅供参考：副本时间轴与职业技能轴可能使实际 GCD 收益与期望不符。';
     } else if (gcdAnalysisState.status !== 'loading' && issues.length > 0) {
       className = styles.objectiveTipError;
       msg = issues.map(it => it.message).join(',');
     }
     return [className, msg];
-  }, [objective, gcdAnalysisState.status, issues]);
+  })();
   return (<>
     {className && (
       <p className={className}>{msg}</p>
@@ -50,6 +50,21 @@ export function GcdSection() {
       ? deriveJobObjective(gcd, analysis.feasibleTiers)
       : undefined;
   const issues = validation?.sections.gcd.issues ?? [];
+
+  useEffect(() => {
+    if (readOnly || analysis.status !== 'ready' || gcd.mode !== 'tiers') return;
+    if (gcd.tiers.every((tier) => analysis.feasibleTiers.includes(tier))) return;
+    updateDraft((current) => {
+      if (current.gcd.mode !== 'tiers') return current;
+      return {
+        ...current,
+        gcd: {
+          mode: 'tiers',
+          tiers: current.gcd.tiers.filter((tier) => analysis.feasibleTiers.includes(tier)),
+        },
+      };
+    });
+  }, [analysis, gcd, readOnly, updateDraft]);
 
   function setMode(mode: GcdDraft['mode']) {
     updateDraft((current) => ({
@@ -96,7 +111,7 @@ export function GcdSection() {
               }
               options={(runtime.gcdAnalysis.status === 'ready'
                   ? runtime.gcdAnalysis.feasibleTiers
-                  : []
+                  : gcd.tiers
               ).map((tier) => ({
                 value: String(tier),
                 label: `${tier.toFixed(2)} 秒`,
@@ -114,9 +129,13 @@ export function GcdSection() {
           </div>
         )}
         {gcd.mode === 'speed' && (
-          <div className={styles.bounds}>
+          <div className={styles.bounds} role="group" aria-label={`${speedLabel}范围`}>
+            <span>{speedLabel}范围</span>
             <NumberInput
+              key={`${jobId}-min`}
               minDigits={8}
+              hideLabel
+              debounceMs={1500}
               label={`最低${speedLabel}`}
               min={0}
               value={gcd.min}
@@ -135,8 +154,12 @@ export function GcdSection() {
                 )
               }
             />
+            <span aria-hidden="true">–</span>
             <NumberInput
+              key={`${jobId}-max`}
               minDigits={8}
+              hideLabel
+              debounceMs={1500}
               label={`最高${speedLabel}`}
               min={0}
               value={gcd.max}
