@@ -256,7 +256,7 @@ describe("联合工作台", () => {
     ).toContain(foods[1]!.name);
   });
 
-  it("结果可查看；编辑旧数据版本结果前要求确认", async () => {
+  it("结果可查看；编辑不因数据版本不同而要求确认", async () => {
     const config = testSupport.testJointConfig(["RDM", "BLM"]);
     testSupport.seedCompletedJointHistory(config);
     testSupport.historyStore.records[0]!.dataVersion = "old-game-version";
@@ -272,14 +272,9 @@ describe("联合工作台", () => {
     expect(testSupport.host.querySelector("h1")?.textContent).toBe(
       "联合配装结果",
     );
-    expect(testSupport.host.textContent).toContain("不会按当前数据重新计算");
+    expect(testSupport.host.textContent).not.toContain("此结果来自旧数据版本");
     testSupport.click(testSupport.buttonNamed("调整条件"));
-    expect(testSupport.host.textContent).toContain("结果来自旧数据版本");
-    const confirmButton = [
-      ...document.body.querySelectorAll<HTMLButtonElement>("button"),
-    ].find((button) => normalizedText(button) === "确认");
-    expect(confirmButton).toBeDefined();
-    confirmButton!.click();
+    expect(testSupport.host.textContent).not.toContain("结果来自旧数据版本");
     await testSupport.settleApp();
     expect(testSupport.host.querySelector("h1")?.textContent).toBe(
       "设置联合条件",
@@ -343,11 +338,6 @@ describe("联合工作台", () => {
     await testSupport.settleApp();
 
     testSupport.click(testSupport.buttonNamed("调整条件"));
-    const confirmButton = [
-      ...document.body.querySelectorAll<HTMLButtonElement>("button"),
-    ].find((button) => normalizedText(button) === "确认");
-    expect(confirmButton).toBeDefined();
-    testSupport.click(confirmButton!);
     await testSupport.settleApp();
 
     expect(testSupport.host.querySelector("h1")?.textContent).toBe(

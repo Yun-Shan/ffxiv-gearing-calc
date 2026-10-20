@@ -1,6 +1,6 @@
 import { resultReferenceUrl } from "@/ui/services/reference-gearset-share";
 import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
-import { jobIconUrl } from "@/ui/services/job-icons";
+import { jobIconUrl } from "@/ui/services/icons";
 import { useEffect, useRef } from "react";
 import { Tabs } from "@base-ui/react/tabs";
 import {
@@ -57,7 +57,7 @@ import {
   HistoryOverlay,
 } from "@/ui/features/search-history/SearchHistory";
 import { useJointWorkbench } from "../../useJointWorkbenchController";
-import { currentDataVersion, makeConfig } from "@/ui/services/app-config";
+import { makeConfig } from "@/ui/services/app-config";
 import {
   jobConditionForEffectiveFood,
   jointJobConditionFromEffectiveDraft,
@@ -509,7 +509,6 @@ export function ResultMain({
   config,
   result,
   durationMs,
-  dataVersion,
   selectedTab,
   setSelectedTab,
   onReturnSelection,
@@ -517,7 +516,6 @@ export function ResultMain({
   config: JointOptimizationConfig;
   result: JointOptimizationResult;
   durationMs: number;
-  dataVersion: string;
   selectedTab: string;
   setSelectedTab(value: string): void;
   onReturnSelection(): void;
@@ -549,11 +547,6 @@ export function ResultMain({
         </div>
         <button className={styles.returnButton} type="button" onClick={onReturnSelection}>重新选择职业</button>
       </header>
-      {dataVersion !== currentDataVersion && (
-        <p className={styles.versionNotice}>
-          此结果来自旧数据版本，显示的是当时保存的结果，不会按当前数据重新计算。
-        </p>
-      )}
       <Tabs.Root
         value={selectedTab}
         onValueChange={(value) => setSelectedTab(String(value))}
@@ -657,7 +650,6 @@ export function JointWorkbenchMain() {
         config={phase.snapshot.config}
         result={phase.result}
         durationMs={phase.durationMs}
-        dataVersion={phase.snapshot.dataVersion}
         selectedTab={controller.resultTab}
         setSelectedTab={controller.setResultTab}
         onReturnSelection={controller.returnToSelection}

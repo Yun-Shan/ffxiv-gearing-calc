@@ -89,7 +89,7 @@ interface SearchHistoryBase {
   id: string;
   startedAtISO: string;
   finishedAtISO?: string;
-  dataVersion: string;
+  dataVersion?: string;
   status: SearchHistoryStatus;
   error?: string;
 }
@@ -130,8 +130,8 @@ function isCompletedRecord(
 }
 
 export type CreateSearchHistoryInput =
-  | { kind: "single"; config: OptimizationConfig; dataVersion: string }
-  | { kind: "joint"; config: JointOptimizationConfig; dataVersion: string };
+  | { kind: "single"; config: OptimizationConfig; dataVersion?: string }
+  | { kind: "joint"; config: JointOptimizationConfig; dataVersion?: string };
 
 export type CompletedSearchHistoryInput = (
   | { kind: "single"; config: OptimizationConfig; result: OptimizationResult }
@@ -140,7 +140,7 @@ export type CompletedSearchHistoryInput = (
       config: JointOptimizationConfig;
       result: JointOptimizationResult;
     }
-) & { dataVersion: string; startedAtISO: string; finishedAtISO: string };
+) & { dataVersion?: string; startedAtISO: string; finishedAtISO: string };
 
 export type FinishSearchHistoryInput =
   | {
@@ -679,10 +679,6 @@ function validateRecord(value: unknown): StoredSearchHistoryRecord {
     "结束时间不是有效 ISO 日期。",
   );
   assert(
-    typeof value.dataVersion === "string" && value.dataVersion.length > 0,
-    "缺少数据版本。",
-  );
-  assert(
     value.status === "running" ||
       value.status === "completed" ||
       value.status === "cancelled" ||
@@ -843,10 +839,6 @@ export async function createSearchHistory(
       validateJointConfig(input.config),
       "联合配置缺少必要字段或类型错误。",
     );
-  assert(
-    typeof input.dataVersion === "string" && input.dataVersion.length > 0,
-    "缺少数据版本。",
-  );
 
   const snapshot = await configSnapshot(input.config);
   const record = validateRecord({

@@ -21,7 +21,7 @@ import {
 import { LabeledSelect } from "@/ui/components/form-controls/labeled-select/LabeledSelect";
 import { EquipmentSelect } from "@/ui/components/equipment-select/EquipmentSelect";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
-import { itemIconId } from "@/ui/services/item-icons";
+import { itemIconId } from "@/ui/services/icons";
 import styles from "./EquipmentEditor.module.scss";
 import { ForcedMateriaSlots } from "./components/forced-materia-slots/ForcedMateriaSlots";
 

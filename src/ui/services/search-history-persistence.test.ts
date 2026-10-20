@@ -414,6 +414,25 @@ describe("history list tolerates individual invalid payloads", () => {
 });
 
 describe("completed-only history", () => {
+  it("saves and replaces the same configuration regardless of missing or changed version metadata", async () => {
+    vi.resetModules();
+    const service = await import("./search-history");
+    const stored = fakeDatabase();
+    const input = {
+      kind: "single" as const,
+      config: makeConfig("SAM"),
+      result: fixtureResult(),
+      startedAtISO: "2026-10-19T00:00:00.000Z",
+      finishedAtISO: "2026-10-19T00:00:01.000Z",
+    };
+    const first = await service.saveCompletedSearchHistory(input);
+    const second = await service.saveCompletedSearchHistory({ ...input, dataVersion: "display-only" });
+    const third = await service.saveCompletedSearchHistory(input);
+    expect(first.id).toBe(second.id);
+    expect(second.id).toBe(third.id);
+    expect(stored.size).toBe(1);
+    expect(await service.listSearchHistory()).toEqual([third]);
+  });
   it("saves a complete snapshot in a single write and preserves search timestamps", async () => {
     vi.resetModules();
     const service = await import("./search-history");

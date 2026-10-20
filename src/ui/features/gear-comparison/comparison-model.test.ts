@@ -12,7 +12,6 @@ import {
   buildComparisonMetricEntries,
   comparisonEntryValidationError,
   comparisonPlanLabel,
-  hasCrossDataVersion,
   MAX_COMPARISON_ENTRIES,
   removeComparisonEntry,
 } from "./comparison-model";
@@ -133,6 +132,8 @@ describe("gear comparison model", () => {
   });
 
   it("rejects invalid damage values and mixed jobs before adding", () => {
+    const withoutVersion = { ...entry(), dataVersion: undefined };
+    expect(comparisonEntryValidationError(withoutVersion, "PLD")).toBeUndefined();
     expect(
       comparisonEntryValidationError(entry({ damage: 0 }), "PLD"),
     ).toContain("伤害指标");
@@ -237,10 +238,6 @@ describe("gear comparison model", () => {
       ),
     ).toBe(true);
     expect(rows.filter((row) => row.item.kind === "summary")).toHaveLength(3);
-    expect(hasCrossDataVersion(entries)).toBe(false);
-    expect(
-      hasCrossDataVersion([entries[0]!, { ...entries[1]!, dataVersion: "v2" }]),
-    ).toBe(true);
   });
 
   it("does not merge same-id gear snapshots with distinct UI variant keys", () => {

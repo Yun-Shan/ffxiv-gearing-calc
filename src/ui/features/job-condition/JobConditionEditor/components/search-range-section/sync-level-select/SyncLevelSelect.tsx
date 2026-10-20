@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
 import { Popover } from "@base-ui/react/popover";
+import { gameData } from "@/domain";
 import { LabeledSelect } from "@/ui/components/form-controls/labeled-select/LabeledSelect";
 import { selectableSyncLevels } from "@/ui/services/app-config";
-import catalog from "@/ui/services/generated/sync-level-duties.json";
 import styles from "./SyncLevelSelect.module.scss";
 
 const duties: Readonly<
   Record<string, readonly { id: number; name: string }[]>
-> = catalog.duties;
+> = gameData.syncLevelDuties;
 
 export function SyncLevelSelect({
   value,

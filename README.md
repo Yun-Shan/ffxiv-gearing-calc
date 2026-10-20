@@ -69,15 +69,15 @@ npm run data:update
 node scripts/update-data.mjs --offline
 ```
 
-仅更新领域数据、无需重生成界面图标映射时，可追加 `--skip-ui-generated-icons`。为同版本已有快照补充装备特殊效果字段，可先运行 `node scripts/query-mcp-lumina.mjs --item-special-bonus-data-only`，再离线生成；缺失字段、来源或版本不一致时失败。
+为同版本已有快照补充装备特殊效果字段，可先运行 `node scripts/query-mcp-lumina.mjs --item-special-bonus-data-only`，再离线生成；缺失字段、来源或版本不一致时失败。
 
-同步品级选项的匹配条目浮层使用独立的界面说明快照。运行 `node scripts/query-mcp-lumina.mjs --sync-level-duties-only` 全表查询名称、同步品级与 JournalGenre，再运行 `node scripts/generate-ui-sync-level-duties.mjs` 生成界面目录；`data:update` 也会从该快照重生成目录。它不参与配装计算，可独立于计算快照更新版本。
+同步品级选项的匹配条目说明随主快照全表查询名称、同步品级与 JournalGenre，并由 `data:update` 统一生成到 bin，与其他游戏数据使用同一版本。
 
 仅补充已有同版本快照的同步等级和可变等级装备查询输入时，可运行 `node scripts/query-mcp-lumina.mjs --level-basis-data-only`，再离线生成；版本不一致时失败。
 
-运行时产物为 `src/data/generated-data.bin`，MCP 输入保存在 `src/data/mcp-lumina.snapshot.json`。版本、数量和缺口以来源元数据为准；二进制契约见[格式规范](docs/运行时数据二进制格式.md)。`npm run data:benchmark` 用于测量数据加载与解码。
+运行时产物为 `src/data/generated-data.bin`，MCP 输入保存在 `scripts/data/mcp-lumina.snapshot.json`。版本、数量和缺口以来源元数据为准；二进制契约见[格式规范](docs/运行时数据二进制格式.md)。`npm run data:benchmark` 用于测量数据加载与解码。
 
-装备与食物图标使用统一数字 ID URL helper，从 XIVAPI CDN 加载 PNG；映射元数据位于 `src/ui/services/generated/`，不保留旧本地职业 PNG。图标映射生成入口为 `scripts/generate-ui-item-icons.mjs` 与 `scripts/generate-ui-job-icons.mjs`。
+装备与食物图标读取 bin 中物品的 `icon`；职业图标读取 bin 中职业数字 ID 并加 `62100`，统一通过图标 URL helper 从 XIVAPI CDN 加载 PNG。没有独立图标 JSON 或本地职业 PNG。
 
 ## 文档入口
 

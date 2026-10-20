@@ -2,7 +2,7 @@ import { jobSchemas, type JobId } from "@/domain";
 import { EquipmentIcon } from "@/ui/components/equipment-icon/EquipmentIcon";
 import { SyncIcon } from "@/ui/components/sync-icon/SyncIcon";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
-import { itemIconId } from "@/ui/services/item-icons";
+import { itemIconId } from "@/ui/services/icons";
 import { useState, type CSSProperties } from "react";
 import { Popover } from "@base-ui/react/popover";
 import { statName, statValue, gearSlotLabels } from "@/ui/services/labels";

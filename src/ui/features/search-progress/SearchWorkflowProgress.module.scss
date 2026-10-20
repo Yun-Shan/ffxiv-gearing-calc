@@ -1,3 +1,5 @@
+@use "@/styles/tokens" as tokens;
+
 .main {
   display: flex;
   flex: 1;
@@ -90,9 +92,18 @@
   font-weight: 700;
 }
 .elapsedTime {
-  margin: 6px 0 0;
-  font-size: 12px;
-  color: #728078;
+  display: inline-flex;
+  width: fit-content;
+  margin: 10px 0 0;
+  padding: 6px 12px;
+  border: 1px solid tokens.$color-accent-teal;
+  border-radius: 6px;
+  background: tokens.$color-accent-soft;
+  color: tokens.$color-accent-teal;
+  font-size: 20px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
 }
 .modelMetrics {
   display: flex;

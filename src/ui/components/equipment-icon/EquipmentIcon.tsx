@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { iconUrl } from "@/ui/services/icon-url";
+import { iconUrl } from "@/ui/services/icons";
 import styles from "./EquipmentIcon.module.scss";
 
 export function EquipmentIcon({

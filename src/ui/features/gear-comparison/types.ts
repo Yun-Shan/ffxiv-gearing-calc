@@ -20,7 +20,7 @@ export interface ComparisonEntry {
   /** Stable UI identity; deliberately excluded from the result snapshot. */
   entryId: string;
   snapshot: GearsetResultSnapshot;
-  dataVersion: string;
+  dataVersion?: string;
   source: ComparisonEntrySource;
 }
 

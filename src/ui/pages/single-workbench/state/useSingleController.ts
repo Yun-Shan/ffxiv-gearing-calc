@@ -122,22 +122,13 @@ export function useSingleController() {
       }))
     )
       return false;
-    if (
-      !result &&
-      record.dataVersion !== currentDataVersion &&
-      !(await feedback.confirm({
-        title: "数据版本已变化",
-        description: "重新搜索将使用当前数据，结果可能不同。",
-      }))
-    )
-      return false;
     if (result)
       navigate({
         phase: "result",
         snapshot: record.config,
         result: record.result,
         durationMs: historyDuration(record),
-        dataVersion: record.dataVersion,
+        dataVersion: record.dataVersion ?? "未记录",
         historyId: record.id,
       });
     else if (!result)
@@ -339,14 +330,6 @@ export function useSingleController() {
     edit: async () => {
       const s = current.current;
       if (s.phase !== "result") return;
-      if (
-        s.dataVersion !== currentDataVersion &&
-        !(await feedback.confirm({
-          title: "数据版本已变化",
-          description: "重新搜索将使用当前数据，结果可能不同。",
-        }))
-      )
-        return;
       navigate({
         phase: "conditions",
         draft: singleDraftFromConfig(s.snapshot),

@@ -1,4 +1,4 @@
-import { jobIconUrl } from "@/ui/services/job-icons";
+import { jobIconUrl } from "@/ui/services/icons";
 import { jobSchemas, type JobId } from "@/domain";
 import styles from "./JobButton.module.scss";
 import { Button } from "@base-ui/react/button";

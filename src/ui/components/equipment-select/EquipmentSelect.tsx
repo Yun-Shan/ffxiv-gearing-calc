@@ -1,7 +1,7 @@
 import { SearchSelect } from "@/ui/components/form-controls/search-select/SearchSelect";
 import type { RefObject } from "react";
 import type { GearSlot } from "@/domain";
-import { itemIconId } from "@/ui/services/item-icons";
+import { itemIconId } from "@/ui/services/icons";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
 
 export interface EquipmentSelectionItem {

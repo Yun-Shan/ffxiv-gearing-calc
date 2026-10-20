@@ -72,8 +72,7 @@
   line-height: 1.25;
 }
 
-.resultMetadata,
-.versionNotice {
+.resultMetadata {
   color: #63736c;
   font-size: 12px;
 }
@@ -217,13 +216,6 @@
 
 .resultMetadata {
   text-align: right;
-}
-
-.versionNotice {
-  margin: 0;
-  padding: 8px 10px;
-  border: 1px solid #e2d2aa;
-  background: #fffaf0;
 }
 
 .resultTabs {

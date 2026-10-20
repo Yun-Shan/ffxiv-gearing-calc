@@ -111,6 +111,11 @@ function jointConfig(): JointOptimizationConfig {
 }
 
 describe("搜索历史记录结构校验", () => {
+  it("does not require version metadata to read a completed record", () => {
+    const { dataVersion: _version, ...withoutVersion } = completedSingleRecord();
+    expect(validateSearchHistoryRecord(withoutVersion).kind).toBe("single");
+    expect(validateSearchHistoryRecord({ ...withoutVersion, dataVersion: "different" }).kind).toBe("single");
+  });
   it("rejects unfinished records at the consumer validation boundary", () => {
     const valid = completedSingleRecord();
     expect(() => validateSearchHistoryRecord({ ...valid, status: "running", finishedAtISO: undefined, result: undefined })).toThrow("历史记录必须包含成功完成的结果");

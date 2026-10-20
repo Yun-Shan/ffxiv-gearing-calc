@@ -71,6 +71,8 @@ export interface ResistanceWeaponAdjust {
 
 export interface Gear {
   id: number;
+  /** Optional on historical result snapshots created before icons were stored in the binary catalog. */
+  icon?: number;
   name: string;
   slot: GearSlot;
   rawSlot: number;
@@ -98,6 +100,11 @@ export interface Gear {
   dataSources?: DataSourceRef[];
 }
 
+/** Gear decoded from the current generated catalog always has a validated icon ID. */
+export interface GeneratedGear extends Gear {
+  icon: number;
+}
+
 export interface CustomWeaponParameter {
   materiaId: number;
   stat: CustomizableStat;
@@ -109,6 +116,8 @@ export interface CustomWeaponParameter {
 
 export interface Food {
   id: number;
+  /** Optional on historical result snapshots created before icons were stored in the binary catalog. */
+  icon?: number;
   name: string;
   level: number;
   stats: Stats;
@@ -116,6 +125,11 @@ export interface Food {
   best?: true;
   sourceFile: string;
   dataSources?: DataSourceRef[];
+}
+
+/** Food decoded from the current generated data always has a validated icon ID. */
+export interface GeneratedFood extends Food {
+  icon: number;
 }
 
 /** A calculated food snapshot with the complete applied effect. */
@@ -155,6 +169,20 @@ export interface JobSchema {
   defaultItemLevel?: readonly [number, number];
   dataSources?: DataSourceRef[];
 }
+
+export interface GeneratedJob {
+  /** ClassJob Row ID used to calculate the icon ID. */
+  id: number;
+  name: string;
+  abbreviation: JobId;
+}
+
+export interface SyncLevelDuty {
+  id: number;
+  name: string;
+}
+
+export type SyncLevelDutyData = Record<string, SyncLevelDuty[]>;
 
 export interface DataProvenance {
   repository: string;

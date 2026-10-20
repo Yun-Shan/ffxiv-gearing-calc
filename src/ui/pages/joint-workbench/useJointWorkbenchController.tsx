@@ -367,15 +367,10 @@ export function useJointWorkbenchController() {
     if (record.kind !== "joint") return;
     const beforeConfirm = phaseRef.current;
     const activeSearch = beforeConfirm.phase === "progress";
-    const oldDataVersionEdit = action === "config" && record.dataVersion !== currentDataVersion;
-    if (activeSearch || oldDataVersionEdit) {
-      const descriptions = [
-        activeSearch ? "继续后会取消当前联合搜索，并载入所选历史记录。" : "",
-        oldDataVersionEdit ? `该条件来自 ${record.dataVersion}；重新搜索会使用当前游戏数据 ${currentDataVersion}，结果可能不同。` : "",
-      ].filter(Boolean);
+    if (activeSearch) {
       const accepted = await confirm({
-        title: oldDataVersionEdit ? "历史条件来自旧数据版本" : "载入历史记录",
-        description: descriptions.join(" "),
+        title: "载入历史记录",
+        description: "继续后会取消当前联合搜索，并载入所选历史记录。",
       });
       if (!accepted) return;
     }
@@ -416,7 +411,7 @@ export function useJointWorkbenchController() {
       phase: "result",
       snapshot: {
         config: freezeJointConfig(record.config),
-        dataVersion: record.dataVersion,
+        dataVersion: record.dataVersion ?? "未记录",
         startedAtISO: record.startedAtISO,
         historyId: record.id,
       },
@@ -428,13 +423,6 @@ export function useJointWorkbenchController() {
   async function adjustConditions() {
     const initial = phaseRef.current;
     if (initial.phase !== "result") return;
-    if (initial.snapshot.dataVersion !== currentDataVersion) {
-      const accepted = await confirm({
-        title: "结果来自旧数据版本",
-        description: `该结果使用 ${initial.snapshot.dataVersion} 游戏数据；当前条件编辑与后续搜索将使用 ${currentDataVersion}。`,
-      });
-      if (!accepted) return;
-    }
     const current = phaseRef.current;
     if (current.phase !== "result" || current.snapshot.config !== initial.snapshot.config || current.result !== initial.result) return;
     let draft: JointWorkbenchDraft;

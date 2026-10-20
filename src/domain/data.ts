@@ -2,14 +2,16 @@ import { decodeGeneratedData } from "../data/binary-format.mjs";
 import { selectFoodCandidates } from "./food-candidates.ts";
 import type {
   DataProvenance,
-  Food,
-  Gear,
+  GeneratedFood,
+  GeneratedGear,
+  GeneratedJob,
   GearStat,
   JobId,
   JobSchema,
   LevelModifier,
   Materia,
   Stat,
+  SyncLevelDutyData,
 } from "./types";
 
 type MateriaTable = Partial<Record<Materia["stat"], number[]>>;
@@ -18,8 +20,10 @@ type GearPhysicalGroup = "VIT" | "STR" | "DEX" | "MND" | "INT" | "SHARED";
 interface GeneratedGameData {
   version: string;
   provenance: DataProvenance;
-  gears: Gear[];
-  foods: Food[];
+  gears: GeneratedGear[];
+  foods: GeneratedFood[];
+  jobs: Record<JobId, GeneratedJob>;
+  syncLevelDuties: SyncLevelDutyData;
   materias: MateriaTable;
   materiaGradeRequiredLevels: number[];
   materiaGradeIsRestricted: boolean[];
@@ -39,8 +43,8 @@ interface GeneratedGameData {
   gearMinLevel: number;
   gearMaxLevel: number;
   gearStatNames: GearStat[];
-  getGearAtRecordIndex(index: number): Gear;
-  getGearById(id: number): Gear | undefined;
+  getGearAtRecordIndex(index: number): GeneratedGear;
+  getGearById(id: number): GeneratedGear | undefined;
 }
 
 async function loadGeneratedGameData(): Promise<GeneratedGameData> {

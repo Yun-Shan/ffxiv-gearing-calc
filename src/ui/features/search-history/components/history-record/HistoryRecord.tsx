@@ -7,7 +7,6 @@ import {
   type JointOptimizationConfig,
   type OptimizationConfig,
 } from "@/domain";
-import { currentDataVersion } from "@/ui/services/app-config";
 import type { SearchHistoryRecord } from "@/ui/services/search-history";
 import { jobConditionDraftFromConfig } from "@/ui/features/job-condition/draft";
 import {
@@ -15,7 +14,7 @@ import {
   formatFood,
 } from "@/ui/features/job-condition/summary";
 import styles from "./HistoryRecord.module.scss";
-import { jobIconUrl } from "@/ui/services/job-icons.ts";
+import { jobIconUrl } from "@/ui/services/icons";
 import { clanLabel } from "@/ui/services/clans.ts";
 import { tankGroup } from '@/ui/components/job-selection/JobSelection.tsx';
 
@@ -173,17 +172,6 @@ function HistoryRecordFrame({
   conditions: Condition[];
   objective: "damage" | "dps";
 }) {
-  const displayedConditions =
-    record.dataVersion !== currentDataVersion
-      ? [
-          ...conditions,
-          {
-            label: "历史版本结果",
-            value: "编辑后使用当前数据重新搜索。",
-            className: styles.version,
-          },
-        ]
-      : conditions;
   const duration =
     Math.max(
       0,
@@ -217,7 +205,7 @@ function HistoryRecordFrame({
         </div>
       </div>
       <dl className={styles.conditions}>
-        {displayedConditions.map(({ label, value, className }) => (
+        {conditions.map(({ label, value, className }) => (
           <div key={label} className={className}>
             <dt>{label}</dt>
             <dd>{value}</dd>

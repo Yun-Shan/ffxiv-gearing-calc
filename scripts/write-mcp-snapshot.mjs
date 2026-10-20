@@ -4,7 +4,7 @@ import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const outputPath = resolve(
-  process.env.FFXIV_MCP_LUMINA_SNAPSHOT ?? resolve(root, "src", "data", "mcp-lumina.snapshot.json"),
+  process.env.FFXIV_MCP_LUMINA_SNAPSHOT ?? resolve(root, "scripts", "data", "mcp-lumina.snapshot.json"),
 );
 const lines = createInterface({ input: process.stdin });
 let input = "";

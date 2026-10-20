@@ -9,7 +9,7 @@ import {
 } from "../mcp-lumina-import.mjs";
 
 const snapshot = JSON.parse(
-  readFileSync(new URL("../../src/data/mcp-lumina.snapshot.json", import.meta.url), "utf8"),
+  readFileSync(new URL("../data/mcp-lumina.snapshot.json", import.meta.url), "utf8"),
 );
 const itemRow = snapshot.rows.Item.find((row) => row.rowId === 33146);
 assert.ok(itemRow, "the reproducible MCP snapshot must contain Item 33146");

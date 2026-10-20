@@ -1,6 +1,5 @@
 import {
   defaultDataVersion,
-  dataProvenance,
   foods,
   gameData,
   jobSchemas,
@@ -13,11 +12,8 @@ import type { SingleGcdMode } from "./types";
 
 export type CommonSlot = GearSlot;
 
-/** Identity for calculations, persisted results and cross-version comparisons. */
+/** Game version embedded in the generated game-data binary; result display metadata only. */
 export const currentDataVersion = defaultDataVersion;
-/** Game asset version, also used to validate the independently generated icon catalogs. */
-export const displayedDataVersion =
-  dataProvenance.sources?.find(source => source.kind === "mcp" && source.gameVersion)?.gameVersion ?? dataProvenance.commit.slice(0, 12);
 
 export const bounds = [gameData.gearMinLevel, gameData.gearMaxLevel] as const;
 export const availableFoods = searchFoods.filter(

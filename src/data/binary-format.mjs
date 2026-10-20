@@ -1,6 +1,6 @@
 // 快照容器带格式版本与循环冗余校验码；装备目录单独存放，以便按需解码单件装备。
 const MAGIC = new TextEncoder().encode("FFXIVGDB");
-const FORMAT_VERSION = 6;
+const FORMAT_VERSION = 7;
 const SECTION_IDS = [1, 2];
 const DIRECTORY_ENTRY_BYTES = 12;
 const HEADER_BYTES = 16 + SECTION_IDS.length * DIRECTORY_ENTRY_BYTES;
@@ -325,6 +325,8 @@ function validateGearForWrite(gear, jobIndexes, seenIds) {
   if (seenIds.has(gear.id)) fail('装备 ID 重复：' + gear.id);
   seenIds.add(gear.id);
   if (typeof gear.name !== 'string' || !gear.name.trim()) fail('装备 ' + gear.id + ' 名称无效');
+  if (!Number.isSafeInteger(gear.icon) || gear.icon <= 0)
+    fail('装备 ' + gear.id + ' 缺少有效 icon');
   if (typeof gear.sourceFile !== 'string' || !gear.sourceFile ||
       !Array.isArray(gear.dataSources) || !gear.dataSources.length)
     fail('装备 ' + gear.id + ' 缺少逐件来源记录');
@@ -343,6 +345,7 @@ function validateGearForWrite(gear, jobIndexes, seenIds) {
   if (!SLOT_CODES.has(gear.slot)) fail('装备 ' + gear.id + ' 的槽位无效');
   for (const [label, value, bits] of [
     ['id', gear.id, 32],
+    ['icon', gear.icon, 32],
     ['level', gear.level, 16],
     ['equipLevel', gear.equipLevel, 8],
     ['rawSlot', gear.rawSlot, 8],
@@ -491,6 +494,7 @@ function encodeGearRecordBody(gear, row, jobIndexes, stringIndexes) {
     if (Object.hasOwn(gear.stats, stat)) statMask |= 1 << STAT_CODES.get(stat);
 
   writer.u8(SLOT_CODES.get(gear.slot), '装备槽位代码');
+  writer.u32(gear.icon, '装备图标 ID');
   writer.u8(gear.equipLevel, '装备穿戴等级');
   writer.u8(gear.rawSlot, '装备原始槽位');
   writer.u8(gear.roleId, '装备角色分类 ID');
@@ -554,6 +558,60 @@ function encodeGearRecordBody(gear, row, jobIndexes, stringIndexes) {
 }
 
 const PHYSICAL_GROUPS = [...MAIN_STATS, 'SHARED'];
+
+function isRecord(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function validateGameDataMetadata(gameData, label) {
+  if (!isRecord(gameData) || !isRecord(gameData.jobSchemas) ||
+      !isRecord(gameData.jobs) || !isRecord(gameData.syncLevelDuties) ||
+      !Array.isArray(gameData.foods))
+    fail(`${label} 缺少职业、食物或同步品级说明`);
+
+  const schemaIds = Object.keys(gameData.jobSchemas);
+  const jobIds = Object.keys(gameData.jobs);
+  if (!schemaIds.length || schemaIds.length !== jobIds.length ||
+      schemaIds.some((jobId) => !Object.hasOwn(gameData.jobs, jobId)))
+    fail(`${label} 的 jobs 与 jobSchemas 职业范围不一致`);
+  const numericJobIds = new Set();
+  for (const jobId of jobIds) {
+    const job = gameData.jobs[jobId];
+    if (!isRecord(job) || !Number.isSafeInteger(job.id) || job.id <= 0 ||
+        typeof job.name !== 'string' || !job.name.trim() || job.abbreviation !== jobId ||
+        gameData.jobSchemas[jobId]?.name !== job.name)
+      fail(`${label} 的职业 ${jobId} 元数据无效`);
+    assertUInt(job.id, 32, `${label} 的职业 ${jobId} 数字 ID`);
+    if (numericJobIds.has(job.id)) fail(`${label} 的职业数字 ID 重复：${job.id}`);
+    numericJobIds.add(job.id);
+  }
+
+  for (const food of gameData.foods) {
+    if (!isRecord(food) || !Number.isSafeInteger(food.icon) || food.icon <= 0)
+      fail(`${label} 的食物缺少有效 icon`);
+    assertUInt(food.icon, 32, `${label} 食物图标 ID`);
+  }
+
+  const syncData = gameData.syncLevelDuties;
+  if (!Object.keys(syncData).length)
+    fail(`${label} 的同步品级副本表为空`);
+  const seenDutyIds = new Set();
+  for (const [level, duties] of Object.entries(syncData)) {
+    if (!/^[1-9]\d*$/.test(level) || !Number.isSafeInteger(Number(level)) ||
+        !Array.isArray(duties))
+      fail(`${label} 的同步品级 ${level} 无效`);
+    let previousDutyId = -1;
+    for (const duty of duties) {
+      if (!isRecord(duty) || !Number.isSafeInteger(duty.id) || duty.id < 0 ||
+          typeof duty.name !== 'string' || !duty.name.trim() || duty.id <= previousDutyId ||
+          seenDutyIds.has(duty.id))
+        fail(`${label} 的同步品级 ${level} 副本条目无效或未按 ID 升序`);
+      assertUInt(duty.id, 32, `${label} 的副本 ID`);
+      previousDutyId = duty.id;
+      seenDutyIds.add(duty.id);
+    }
+  }
+}
 
 function encodeGearCatalog(gearsInput, jobSchemas) {
   const jobIds = Object.keys(jobSchemas ?? {});
@@ -737,6 +795,7 @@ export async function encodeGeneratedData(payload) {
   if (!payload || typeof payload !== 'object' || !payload.jobSchemas ||
       !Array.isArray(payload.gears) || !payload.gears.length)
     fail('运行时快照结构无效');
+  validateGameDataMetadata(payload, '运行时快照');
   if (Object.hasOwn(payload, 'gearIndexesByMainStat'))
     fail('输入快照不能包含生成的主属性索引');
   const { gears: _gears, ...gameData } = payload;
@@ -914,6 +973,8 @@ function decodeGearRecord(recordIndex, entry, endOffset, section, strings, templ
   const bytes = section.subarray(entry.bodyOffset, endOffset);
   const reader = new BinaryValueReader(bytes, 'GEAR_CATALOG_BINARY 装备记录 ' + recordIndex);
   const slotCode = reader.u8();
+  const icon = reader.u32();
+  if (icon === 0) fail('装备图标 ID 无效');
   const equipLevel = reader.u8();
   const rawSlot = reader.u8();
   const roleId = reader.u8();
@@ -1026,6 +1087,7 @@ function decodeGearRecord(recordIndex, entry, endOffset, section, strings, templ
   const gear = {
     id: entry.id,
     slot: SLOT_NAMES[slotCode],
+    icon,
     rawSlot,
     level: entry.level,
     equipLevel,
@@ -1210,6 +1272,7 @@ export async function decodeGeneratedData(input, options = undefined) {
       Object.hasOwn(gameData, 'gears') || !gameData.jobSchemas ||
       typeof gameData.jobSchemas !== 'object')
     fail('GAME_DATA_BINARY 缺少必要结构');
+  validateGameDataMetadata(gameData, 'GAME_DATA_BINARY');
   const gearCatalogStartedAt = timingStart(onTiming);
   const gearData = decodeGearCatalog(
     sections.get(2), Object.keys(gameData.jobSchemas), onTiming,

@@ -52,7 +52,6 @@ export function comparisonEntryValidationError(
   ) {
     return "坦克结果缺少有效的坚韧减伤数据，无法加入对比。";
   }
-  if (!entry.dataVersion.trim()) return "结果缺少数据版本，无法加入对比。";
   return undefined;
 }
 
@@ -86,12 +85,6 @@ export async function approveComparisonJobChange(
   confirm: () => Promise<boolean>,
 ): Promise<boolean> {
   return entries.length === 0 || confirm();
-}
-
-export function hasCrossDataVersion(
-  entries: readonly ComparisonEntry[],
-): boolean {
-  return new Set(entries.map(({ dataVersion }) => dataVersion)).size > 1;
 }
 
 export function buildComparisonMetricEntries(

@@ -31,7 +31,6 @@ import {
   buildComparisonMetricEntries,
   comparisonEntryValidationError,
   comparisonPlanLabel,
-  hasCrossDataVersion,
   MAX_COMPARISON_ENTRIES,
   removeComparisonEntry,
 } from "@/ui/features/gear-comparison/comparison-model";
@@ -174,7 +173,6 @@ export function GearComparisonPage({
     () => buildComparisonGearTableRows(entries),
     [entries],
   );
-  const crossVersion = hasCrossDataVersion(entries);
   const showTenacity = selectedJob
     ? jobSchemas[selectedJob].role === "tank"
     : false;
@@ -438,11 +436,6 @@ export function GearComparisonPage({
               </article>
             ))}
           </section>
-          {crossVersion && (
-            <p className={styles.versionWarning} role="status">
-              当前方案来自不同数据版本。历史结果按保存时的快照展示和比较，没有使用当前数据重新计算。
-            </p>
-          )}
           <CoreMetricBar
             entries={metricEntries}
             showTenacity={showTenacity}
