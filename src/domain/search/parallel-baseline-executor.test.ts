@@ -17,7 +17,7 @@ const adapter = vi.hoisted(() => ({
   createNodeBaselineWorker: vi.fn(),
 }));
 
-vi.mock("./parallel-baseline-node-adapter.mjs", () => ({
+vi.mock("../node/parallel-baseline-node-adapter.mjs", () => ({
   createNodeBaselineWorker: adapter.createNodeBaselineWorker,
 }));
 

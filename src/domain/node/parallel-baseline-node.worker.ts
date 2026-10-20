@@ -1,6 +1,6 @@
 import { parentPort } from "node:worker_threads";
 import { readFile } from "node:fs/promises";
-import type { BaselineWorkerMessage, BaselineWorkerRequest } from "./parallel-baseline-executor.ts";
+import type { BaselineWorkerMessage, BaselineWorkerRequest } from "../search/parallel-baseline-executor.ts";
 
 const workerPort = parentPort;
 if (!workerPort) throw new Error("基线工作线程缺少 parentPort");
@@ -9,7 +9,7 @@ if (!workerPort) throw new Error("基线工作线程缺少 parentPort");
   .__FFXIV_GENERATED_DATA_BINARY__ = new Uint8Array(
     await readFile(new URL("../../data/generated-data.bin", import.meta.url)),
   );
-const { solveSerializedBaseline } = await import("./parallel-baseline-solver.ts");
+const { solveSerializedBaseline } = await import("../search/parallel-baseline-solver.ts");
 
 workerPort.on("message", async (request: BaselineWorkerRequest) => {
   const { options, callbacks: requestedCallbacks } = request;
