@@ -1,1 +1,0 @@
-export * from "../../src/domain/search/equipment-sync.ts";

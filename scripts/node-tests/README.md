@@ -43,4 +43,4 @@ $env:DATA_TEST_JOB_CONSTRAINTS = '{"RDM":{"gcd":2.48},"PCT":{"gcdChoices":[2.48,
 npm run data:test:v3
 ```
 
-正式搜索的规则测试和算法验收位于 `src/domain`，通过 `npm test` 或 `npm run test:coverage` 运行。历史算法代码和探索记录保存在 `scripts/archive`，手动复现方式见该目录的说明。
+正式搜索的规则测试和算法验收位于 `src/domain`，通过 `npm test` 或 `npm run test:coverage` 运行。历史算法和探索记录可通过 Git 历史查阅。

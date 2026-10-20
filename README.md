@@ -89,5 +89,3 @@ node scripts/update-data.mjs --offline
 | 当前搜索模型与边界 | [联合搜索模型](docs/V3正确性与验收.md)、[条件最优性证明](docs/当前搜索算法最优性证明.md) |
 | 界面风格与交付验收 | [前端设计总览](docs/前端设计总览.md)、[工程规则](docs/rules/工程规则.md) |
 | 性能证据 | [优化总结](docs/search-optimization/搜索耗时优化总结.md)及其引用的验收记录 |
-
-`scripts/archive` 仅保存历史探索，不作为当前入口；旧记录不定义当前规则，也不代表当前性能。

@@ -1,1 +1,0 @@
-export * from "../../src/domain/search/ring-pairs.ts";

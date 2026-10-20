@@ -26,5 +26,3 @@
 ## 项目 skills
 
 - [astra-orchestrator](.agents/skills/astra-orchestrator/SKILL.md)：复杂工作中需要任务拆分、并行执行或独立复核时使用；不以文件数量强制委派。模型和推理配置集中在 `.codex`，不在流程文档复制。
-
-`scripts/archive` 只保留历史探索，不作为当前入口；其中内容不受当前实现规范约束，但数据来源与引用要求仍适用。不得由生产代码或正式验收调用。

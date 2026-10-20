@@ -77,4 +77,4 @@ node docs/search-optimization/tools/run-acceptance.mjs --timeout-ms 180000
 - `cases[].strategy.orderedProfilePhases[]`：按到达顺序记录的求解阶段和 profile 数据。
 - `cases[].execution`：Node 执行文件、参数、工作目录、堆上限、profile 开关和时限。
 
-未提供 `--timeout-ms` 时，每案父进程时限为 300000ms；`unlimited` 会关闭该外部时限。单职业结果按场景指定的 damage/DPS 下限检查，多职业结果按精确 `normalizedJointValue` 下限检查。历史禁用场景不纳入套件。历史运行可能使用不同的 MCP 输入、品级/同步范围和探索期脚本，因此与当前正式候选准备路径的数字不一定能直接比较；旧版运行说明保存在 `scripts/archive/旧版Node验收说明.md`。
+未提供 `--timeout-ms` 时，每案父进程时限为 300000ms；`unlimited` 会关闭该外部时限。单职业结果按场景指定的 damage/DPS 下限检查，多职业结果按精确 `normalizedJointValue` 下限检查。历史禁用场景不纳入套件。历史运行可能使用不同的 MCP 输入、品级/同步范围和探索期脚本，因此与当前正式候选准备路径的数字不一定能直接比较。
