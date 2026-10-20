@@ -145,6 +145,22 @@ describe("complete equivalent result groups", () => {
       expect(selected).not.toHaveProperty("uniqueReplacementGroupKey");
     }
   });
+  it.each([
+    1,
+    { id: 1, melds: [null] },
+    { id: 1, customStats: { CRT: 36 } },
+  ])("skips all equivalent candidate generation for forced value %j", (forced) => {
+    const selected = gear(1);
+    pool([selected, gear(2)]);
+    const next = attachEquivalentGear(result([selected]), {
+      ...config, forcedGear: { ring: forced },
+    });
+    expect(candidates.makeGearCandidates).not.toHaveBeenCalled();
+    expect(next.equivalentGear).toBeUndefined();
+    expect(next.gear[0]).not.toHaveProperty("replacementGroupKey");
+    expect(next.gear[0]).not.toHaveProperty("uniqueReplacementGroupKey");
+    expect(next.gear[0]!.id).toBe(1);
+  });
   it("compares all final weapon stats, performance and delay; zero equals an absent stat", () => {
     const a = {
       ...gear(1, "weapon", { CRT: 100, PDMG: 100, MDMG: 50, DLY: 2800 }),

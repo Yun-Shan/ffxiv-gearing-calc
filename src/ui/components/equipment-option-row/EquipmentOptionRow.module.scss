@@ -16,10 +16,22 @@
   color: #657083;
   white-space: nowrap;
 }
+.withAfterName {
+  grid-template-columns: 42px 24px minmax(0, 1fr) max-content fit-content(28%) max-content;
+}
 .name {
   min-width: 0;
   overflow-wrap: anywhere;
   line-height: 1.4;
+}
+.iconInName .name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.iconInName .source {
+  max-width: none;
 }
 .level {
   justify-self: end;

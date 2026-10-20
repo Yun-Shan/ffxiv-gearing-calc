@@ -1,5 +1,5 @@
 import { createContext, useContext, type ReactNode } from "react";
-import type { Gear, GearSlot, JobId } from "@/domain";
+import type { ForcedGearValue, Gear, GearSlot, JobId } from "@/domain";
 import type {
   EquipmentAction,
   EquipmentGearCatalog,
@@ -128,8 +128,8 @@ export function useForcedGear() {
   const value = useEquipmentScope();
   return {
     forcedGear: value.draft.forcedGear,
-    set: (slot: GearSlot, gearId: number) =>
-      value.dispatch({ type: "set-force", slot, gearId }),
+    set: (slot: GearSlot, gearId: number, forcedValue?: ForcedGearValue) =>
+      value.dispatch({ type: "set-force", slot, gearId, forcedValue }),
     clear: (slot: GearSlot) => value.dispatch({ type: "clear-force", slot }),
     gearOptionsForSlot: (slot: GearSlot): readonly Gear[] => {
       const supplied = value.catalog.forceGearOptions?.[slot];

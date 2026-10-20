@@ -54,4 +54,58 @@ describe("GCD analysis input identity", () => {
     expect(projected).not.toHaveProperty("objective");
     expect(projected).not.toHaveProperty("gcdChoices");
   });
+
+  it("tracks materia and custom stat changes in the feasibility request key", () => {
+    const materiaConfig = {
+      ...input,
+      forcedGear: {
+        head: {
+          id: 2,
+          melds: [{ stat: "CRT" as const, value: 54, grade: 12 }, null],
+        },
+      },
+    };
+    const changedMateria = {
+      ...materiaConfig,
+      forcedGear: {
+        head: {
+          id: 2,
+          melds: [{ stat: "DET" as const, value: 54, grade: 12 }, null],
+        },
+      },
+    };
+    expect(gcdAnalysisKey(materiaConfig)).not.toBe(
+      gcdAnalysisKey(changedMateria),
+    );
+    expect(
+      gcdAnalysisKey({
+        ...materiaConfig,
+        forcedGear: {
+          head: { id: 2, customStats: { DET: 100, CRT: 200 } },
+        },
+      }),
+    ).not.toBe(
+      gcdAnalysisKey({
+        ...materiaConfig,
+        forcedGear: {
+          head: { id: 2, customStats: { DET: 100, CRT: 201 } },
+        },
+      }),
+    );
+    expect(
+      gcdAnalysisKey({
+        ...materiaConfig,
+        forcedGear: {
+          head: { id: 2, customStats: { CRT: 200, DET: 100 } },
+        },
+      }),
+    ).toBe(
+      gcdAnalysisKey({
+        ...materiaConfig,
+        forcedGear: {
+          head: { id: 2, customStats: { DET: 100, CRT: 200 } },
+        },
+      }),
+    );
+  });
 });

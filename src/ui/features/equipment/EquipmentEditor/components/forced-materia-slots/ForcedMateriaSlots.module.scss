@@ -1,0 +1,84 @@
+@use "@/ui/components/form-controls/control";
+.syncIcon {
+  width: 24px;
+  height: 24px;
+  justify-self: start;
+  fill: currentColor;
+  color: #657083;
+}
+.root {
+  display: grid;
+  grid-template-columns: repeat(5, max-content);
+  justify-content: start;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.root .hole {
+  display: grid;
+  justify-items: center;
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  padding: 3px 4px;
+  border: 1px solid;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 3px #18352b26;
+  cursor: pointer;
+  &:focus-visible {
+    outline: 3px solid #49a9b4;
+    outline-offset: 2px;
+  }
+  &:disabled {
+    cursor: default;
+    opacity: 0.65;
+  }
+}
+.root .safe {
+  color: #287648;
+  background: #e0f0e4;
+  border-color: #9ec8aa;
+}
+.root .overmeld {
+  color: #b23e4e;
+  background: #f8e3e6;
+  border-color: #dea8b0;
+}
+.value,
+.attribute {
+  font-variant-numeric: tabular-nums;
+}
+.attribute.atCap {
+  color: #000;
+  font-weight: 700;
+}
+.attribute.overCap {
+  color: #b23e4e;
+  font-weight: 700;
+}
+.positioner {
+  z-index: 1000;
+}
+.popup {
+  @include control.popup;
+  min-width: 240px;
+  max-width: var(--available-width);
+}
+.option {
+  @include control.item;
+  display: grid;
+  grid-template-columns: 14px max-content minmax(0, 1fr);
+  gap: 8px;
+}
+.indicator {
+  display: flex;
+  visibility: hidden;
+}
+.option[data-selected] .indicator {
+  visibility: visible;
+}
+.attribute {
+  justify-self: end;
+  color: #657083;
+  white-space: nowrap;
+}

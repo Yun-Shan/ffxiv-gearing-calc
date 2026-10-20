@@ -4,6 +4,7 @@ import { jobLevelFor, slotsForJob } from "../gear-options.ts";
 import type { ExactMipOptions } from "../search/loadout-finder-exact-mip.ts";
 import type {
   Food,
+  ForcedGearMap,
   JobId,
   MeldedGear,
   CustomizableStat,
@@ -58,6 +59,8 @@ export type PreparedSearch = {
   slots: SearchSlot[];
   foods: SolverFood[];
   gearsByIdentity: Map<string, MeldedGear>;
+  /** 仅用于结果还原孔位，不传给求解器或加入候选身份。 */
+  forcedGear?: ForcedGearMap;
   foodsByIdentity: Map<string, Food>;
   searchedCandidates: number;
   options: ExactMipOptions;

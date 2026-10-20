@@ -1,4 +1,10 @@
-import type { Gear, GearSlot, JobId } from "@/domain";
+import type {
+  ForcedGearMap,
+  ForcedGearValue,
+  Gear,
+  GearSlot,
+  JobId,
+} from "@/domain";
 
 export type EquipmentScope =
   | { kind: "single" }
@@ -11,18 +17,18 @@ export type JointCommonSlot = GearSlot | "rings";
 export interface SingleEquipmentDraft {
   excludedSources: string[];
   excludedGearIds: number[];
-  forcedGear: Partial<Record<GearSlot, number>>;
+  forcedGear: ForcedGearMap;
 }
 
 export interface JointSharedEquipmentDraft {
   excludedSources: string[];
   excludedGearIds: number[];
-  forcedGear: Partial<Record<GearSlot, number>>;
+  forcedGear: ForcedGearMap;
 }
 
 export interface JointJobEquipmentDraft {
   excludedGearIds: number[];
-  forcedGear: Partial<Record<GearSlot, number>>;
+  forcedGear: ForcedGearMap;
 }
 
 export interface JointEquipmentDraft {
@@ -40,7 +46,12 @@ export type EquipmentAction =
   | { type: "remove-source-exclusion"; source: string }
   | { type: "add-gear-exclusion"; gearId: number }
   | { type: "remove-gear-exclusion"; gearId: number }
-  | { type: "set-force"; slot: GearSlot; gearId: number }
+  | {
+      type: "set-force";
+      slot: GearSlot;
+      gearId: number;
+      forcedValue?: ForcedGearValue;
+    }
   | { type: "clear-force"; slot: GearSlot };
 
 export interface EquipmentGearCatalog {

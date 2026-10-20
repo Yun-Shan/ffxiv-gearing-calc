@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  cloneForcedGearMap,
   optimize,
   type JobId,
   type GearSlot,
@@ -56,7 +57,7 @@ export function singleDraftFromConfig(config: OptimizationConfig): SingleDraft {
     equipment: {
       excludedSources: [...config.excludedSources],
       excludedGearIds: [...(config.excludedGearIds ?? [])],
-      forcedGear: { ...config.forcedGear },
+      forcedGear: cloneForcedGearMap(config.forcedGear),
     },
   };
 }

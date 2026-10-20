@@ -77,7 +77,11 @@ describe("optimizer with imported game data", () => {
   });
 
   it("returns no result for an unknown forced id", async () =>
-    expect(await optimize({ ...base, forcedGear: { weapon: -1 } })).toBeUndefined());
+    expect(await optimize({ ...base, forcedGear: { weapon: 999_999 } })).toBeUndefined());
+
+  it.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])("rejects invalid numeric forced id %s", async (id) => {
+    await expect(optimize({ ...base, forcedGear: { weapon: id } })).rejects.toThrow("ID 必须是正安全整数");
+  });
 
   it("returns no result when all real weapon sources are excluded", async () => {
     const sources = gearOptionsFor(base, "weapon").flatMap((gear) => gear.source ? [gear.source] : []);

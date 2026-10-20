@@ -75,7 +75,7 @@ export function JointJobEquipmentRestrictions({
         catalog={catalog}
         onAction={onAction}
       >
-        <EquipmentEditor title="职业专属装备限制" />
+        <EquipmentEditor title="职业专属装备限制" materiaConfig={config} />
       </JointJobEquipmentScope>
     </section>
   );

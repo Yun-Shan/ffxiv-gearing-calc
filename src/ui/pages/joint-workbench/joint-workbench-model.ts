@@ -9,6 +9,7 @@ import { freezeSnapshot } from "@/ui/services/snapshots/freeze-snapshot";
 import { buildGearTableGearItem } from "@/ui/components/results/gear-table/result-gear-table-rows";
 import {
   gears,
+  calculationJobLevelFor,
   jobSchemas,
   slotsForJob,
   type GearSlot,
@@ -265,7 +266,11 @@ export function jointSharedSummaryRows(
 
 export function sharedGearRows(
   result: JointOptimizationResult,
+  config: JointOptimizationConfig,
 ): GearTableRow[] {
+  const job = config.jobs[0];
+  const calculated = job && result.jobResults[job.jobId];
+  const sync = calculated ? { jobLevel: calculated.calculationLevel ?? calculationJobLevelFor(job), syncLevel: job.syncLevel } : undefined;
   return Object.entries(result.commonGear).flatMap(([commonSlot, items]) =>
     (items ?? []).map((gear, index) => ({
       key:
@@ -278,7 +283,7 @@ export function sharedGearRows(
           : commonGearSlotLabels[
               commonSlot as keyof typeof commonGearSlotLabels
             ],
-      item: buildGearTableGearItem(gear),
+      item: buildGearTableGearItem(gear, gear.slot, sync),
       marker: "共享",
     })),
   );

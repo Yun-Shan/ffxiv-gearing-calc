@@ -235,6 +235,7 @@ export function prepareSearch(
     foods: solverFoods,
     gearsByIdentity,
     foodsByIdentity,
+    forcedGear: config.forcedGear,
     searchedCandidates: slotCandidateCount,
     options: exactOptions,
   };

@@ -75,7 +75,7 @@ export function JointSharedEquipmentRestrictions({
         catalog={catalog}
         onAction={onAction}
       >
-        <EquipmentEditor title="共享装备限制" />
+        <EquipmentEditor title="共享装备限制" materiaConfig={jobs[0] ? configs[jobs[0]] : undefined} />
       </JointSharedEquipmentScope>
     </section>
   );

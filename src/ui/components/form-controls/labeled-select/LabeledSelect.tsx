@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 import {
   FormField,
   type LabelLayout,
@@ -11,6 +11,7 @@ export interface LabeledSelectOption {
   value: string;
   label: string;
   disabled?: boolean;
+  suffix?: ReactNode;
 }
 
 type SelectValue<Multiple extends boolean> = Multiple extends true
@@ -28,6 +29,7 @@ export function LabeledSelect<Multiple extends boolean = false>({
   layout = "stacked",
   controlSize,
   hideLabel,
+  invalid = false,
 }: {
   label: string;
   multiple?: Multiple;
@@ -39,6 +41,7 @@ export function LabeledSelect<Multiple extends boolean = false>({
   layout?: LabelLayout;
   controlSize?: ControlSize;
   hideLabel?: boolean;
+  invalid?: boolean;
 }) {
   const id = useId();
   return (
@@ -60,6 +63,7 @@ export function LabeledSelect<Multiple extends boolean = false>({
       >
         <Select.Trigger
           id={id}
+          aria-invalid={invalid || undefined}
           className={`${styles.trigger} ${multiple ? styles.multiple : ""} ${controlSize === "slot" ? styles.slot : ""} ${controlSize === "fit" ? styles.fit : ""} ${controlSize === "strategy" ? styles.strategy : ""}`}
         >
           <Select.Value
@@ -87,9 +91,12 @@ export function LabeledSelect<Multiple extends boolean = false>({
                       )
                       .join("、")
                   : placeholder
-                : (options.find((item) => item.value === selected)?.label ??
-                  selected ??
-                  placeholder)
+                : selected === null
+                  ? placeholder
+                  : <>
+                      {options.find((item) => item.value === selected)?.label ?? selected}
+                      {options.find((item) => item.value === selected)?.suffix}
+                    </>
             }
           </Select.Value>
           <Select.Icon className={styles.icon} aria-hidden="true">
@@ -102,7 +109,9 @@ export function LabeledSelect<Multiple extends boolean = false>({
             sideOffset={4}
             alignItemWithTrigger={false}
           >
-            <Select.Popup className={styles.popup}>
+            <Select.Popup
+              className={`${styles.popup} ${invalid ? styles.invalid : ""}`}
+            >
               <Select.List className={styles.list}>
                 {options.map((option) => (
                   <Select.Item
@@ -111,7 +120,7 @@ export function LabeledSelect<Multiple extends boolean = false>({
                     value={option.value}
                     disabled={option.disabled}
                   >
-                    <Select.ItemText>{option.label}</Select.ItemText>
+                    <Select.ItemText>{option.label}{option.suffix}</Select.ItemText>
                     <Select.ItemIndicator
                       className={styles.indicator}
                       aria-hidden="true"

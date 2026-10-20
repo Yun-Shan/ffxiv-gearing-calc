@@ -1,6 +1,11 @@
 import { shareableSlotsForJobs } from "./shared-slot-options";
 import {
+  cloneForcedGearValue,
+  cloneForcedGearMap,
+  forcedGearEqual,
   type GearSlot,
+  type ForcedGearMap,
+  type ForcedGearValue,
   type JobId,
   type JointOptimizationConfig,
   type OptimizationConfig,
@@ -60,7 +65,7 @@ export function createJointWorkbenchDraft(jobs: readonly JobId[]): JointWorkbenc
     shared: { excludedSources: [], excludedGearIds: [], forcedGear: {} },
     jobs: Object.fromEntries(jobs.map((jobId) => [jobId, {
       excludedGearIds: [...(configs[jobId]?.excludedGearIds ?? [])],
-      forcedGear: { ...configs[jobId]?.forcedGear },
+      forcedGear: cloneForcedGearMap(configs[jobId]?.forcedGear ?? {}),
     }])),
   };
 
@@ -92,16 +97,17 @@ export function jointWorkbenchDraftFromConfig(config: JointOptimizationConfig): 
   const commonGearSlots = new Set<GearSlot>(config.commonSlots.flatMap((slot) =>
     slot === "rings" ? ["ring", "ring2"] : [slot],
   ));
-  const sharedForcedGear: Partial<Record<GearSlot, number>> = {};
+  const sharedForcedGear: ForcedGearMap = {};
   for (const slot of commonGearSlots) {
-    const forcedIds = new Set(config.jobs
+    const forcedValues = config.jobs
       .map((job) => job.forcedGear[slot])
-      .filter((id): id is number => id !== undefined));
-    if (forcedIds.size > 1) {
+      .filter((value): value is ForcedGearValue => value !== undefined);
+    const [forcedValue] = forcedValues;
+    if (forcedValues.some((value) => !forcedGearEqual(forcedValue, value))) {
       throw new Error(`历史快照的共享部位 ${slot} 包含多个不同强制装备，无法安全恢复。`);
     }
-    const [forcedId] = forcedIds;
-    if (forcedId !== undefined) sharedForcedGear[slot] = forcedId;
+    const copy = cloneForcedGearValue(forcedValue);
+    if (copy !== undefined) sharedForcedGear[slot] = copy;
   }
   const equipment: JointEquipmentDraft = {
     commonSlots: config.commonSlots.filter(slot => slot === "rings"
@@ -110,9 +116,11 @@ export function jointWorkbenchDraftFromConfig(config: JointOptimizationConfig): 
     shared: { excludedSources: sharedSources, excludedGearIds: sharedGearIds, forcedGear: sharedForcedGear },
     jobs: Object.fromEntries(config.jobs.map((job) => {
       const excludedGearIds = (job.excludedGearIds ?? []).filter((id) => !sharedGearIds.includes(id));
-      const forcedGear = Object.fromEntries(Object.entries(job.forcedGear).filter(([slot, id]) =>
-        id !== undefined && !(commonGearSlots.has(slot as GearSlot) && sharedForcedGear[slot as GearSlot] === id),
-      )) as Partial<Record<GearSlot, number>>;
+      const forcedGear = cloneForcedGearMap(Object.fromEntries(
+        Object.entries(job.forcedGear).filter(([slot, value]) =>
+          value !== undefined && !(commonGearSlots.has(slot as GearSlot) && forcedGearEqual(sharedForcedGear[slot as GearSlot], value)),
+        ),
+      ));
       return [job.jobId, { excludedGearIds, forcedGear }];
     })),
   };
@@ -183,7 +191,10 @@ export function compileJointWorkbenchDraft(
       autoFoodId: 0,
       feasibleGcds: gcdAnalysis?.status === "ready" ? gcdAnalysis.feasibleTiers : undefined,
     });
-    const forcedGear = { ...equipment?.forcedGear, ...draft.shared.equipment.shared.forcedGear };
+    const forcedGear = cloneForcedGearMap({
+      ...equipment?.forcedGear,
+      ...draft.shared.equipment.shared.forcedGear,
+    });
     const excludedGearIds = new Set([
       ...(equipment?.excludedGearIds ?? []),
       ...draft.shared.equipment.shared.excludedGearIds,

@@ -244,11 +244,122 @@ export interface OptimizationConfig {
   objective?: "damage" | "dps";
   excludedSources: string[];
   excludedGearIds?: number[];
-  forcedGear: Partial<Record<GearSlot, number>>;
+  forcedGear: ForcedGearMap;
   sharedSlots?: GearSlot[];
   foodId: number;
   /** 仅供测试和验收设置的执行时限；前端工作线程请求会忽略此字段。 */
   maxSearchMs?: number;
+}
+
+/** A locked item can retain automatic holes or a fixed absolute custom weapon allocation. */
+export type ForcedGearValue =
+  | number
+  | { id: number; melds: readonly (Materia | null)[] }
+  | { id: number; customStats: Stats };
+
+export type ForcedGearMap = Partial<Record<GearSlot, ForcedGearValue>>;
+
+function assertForcedGearId(id: unknown): void {
+  if (typeof id !== "number" || !Number.isSafeInteger(id) || id <= 0) {
+    throw new TypeError("强制装备 ID 必须是正安全整数");
+  }
+}
+
+/** Runtime guard for JSON/worker input, where TypeScript types are no longer available. */
+export function assertForcedGearValue(
+  value: unknown,
+): asserts value is ForcedGearValue | undefined {
+  if (value === undefined) return;
+  if (typeof value === "number") {
+    assertForcedGearId(value);
+    return;
+  }
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    throw new TypeError("强制装备配置必须是物品 ID 或装备对象");
+  }
+  const record = value as Record<string, unknown>;
+  assertForcedGearId(record.id);
+  const keys = Object.keys(record);
+  const hasMelds = Object.hasOwn(record, "melds");
+  const hasCustomStats = Object.hasOwn(record, "customStats");
+  if (
+    hasMelds === hasCustomStats ||
+    keys.some((key) => key !== "id" && key !== "melds" && key !== "customStats") ||
+    (hasMelds && !Array.isArray(record.melds)) ||
+    (hasCustomStats && (
+      typeof record.customStats !== "object" ||
+      record.customStats === null ||
+      Array.isArray(record.customStats)
+    ))
+  ) {
+    throw new TypeError("强制装备对象必须且只能包含有效的 ID 与 melds 或 customStats");
+  }
+}
+
+export function forcedGearId(value: ForcedGearValue | undefined): number | undefined {
+  return typeof value === "number" ? value : value?.id;
+}
+
+/** Returns a detached snapshot suitable for mutable UI drafts or worker requests. */
+export function cloneForcedGearValue(
+  value: ForcedGearValue | undefined,
+): ForcedGearValue | undefined {
+  if (value === undefined || typeof value === "number") return value;
+  if ("melds" in value) {
+    return {
+      id: value.id,
+      melds: value.melds.map((meld) => meld === null ? null : { ...meld }),
+    };
+  }
+  return { id: value.id, customStats: { ...value.customStats } };
+}
+
+/** Clone a complete force map without retaining mutable values or undefined entries. */
+export function cloneForcedGearMap(force: ForcedGearMap): ForcedGearMap {
+  return Object.fromEntries(
+    Object.entries(force).flatMap(([slot, value]) => {
+      const copy = cloneForcedGearValue(value);
+      return copy === undefined ? [] : [[slot, copy]];
+    }),
+  );
+}
+
+function equalRecord(left: object, right: object): boolean {
+  const leftRecord = left as Record<string, unknown>;
+  const rightRecord = right as Record<string, unknown>;
+  const leftKeys = Object.keys(leftRecord).sort();
+  const rightKeys = Object.keys(rightRecord).sort();
+  return leftKeys.length === rightKeys.length && leftKeys.every((key, index) =>
+    key === rightKeys[index] && Object.is(leftRecord[key], rightRecord[key]),
+  );
+}
+
+/** Compares a fixed restriction by value; object property order has no meaning. */
+export function forcedGearEqual(
+  left: ForcedGearValue | undefined,
+  right: ForcedGearValue | undefined,
+): boolean {
+  if (left === right) return true;
+  if (left === undefined || right === undefined) return false;
+  if (typeof left === "number" || typeof right === "number") {
+    return typeof left === "number" && typeof right === "number" && left === right;
+  }
+  if (left.id !== right.id) return false;
+  const leftHasMelds = "melds" in left;
+  const rightHasMelds = "melds" in right;
+  if (leftHasMelds !== rightHasMelds) return false;
+  if (leftHasMelds && rightHasMelds) {
+    return left.melds.length === right.melds.length && left.melds.every((meld, index) => {
+      const other = right.melds[index];
+      return meld === null || other === null
+        ? meld === other
+        : meld !== undefined && other !== undefined && equalRecord(meld, other);
+    });
+  }
+  if ("customStats" in left && "customStats" in right) {
+    return equalRecord(left.customStats, right.customStats);
+  }
+  return false;
 }
 
 export type CommonGearSlot = GearSlot | "rings";

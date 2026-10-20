@@ -85,7 +85,7 @@ function SharedResultContent({
   result: JointOptimizationResult;
 }) {
   const summaries = resultSummaryRows(config, result);
-  const rows = sharedGearRows(result);
+  const rows = sharedGearRows(result, config);
   if (result.commonFood) {
     rows.push({
       key: "shared-food",

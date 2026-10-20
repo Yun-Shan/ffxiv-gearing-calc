@@ -423,7 +423,22 @@ describe("completed-only history", () => {
     try {
       const input = {
         kind: "single" as const,
-        config: makeConfig("SAM"),
+        config: {
+          ...makeConfig("SAM"),
+          forcedGear: {
+            weapon: {
+              id: 39920,
+              customStats: { CRT: 209, DET: 209, SKS: 51, TEN: 0 },
+            },
+            head: {
+              id: gears.find((gear) => gear.slot === "head")!.id,
+              melds: [
+                { stat: "DHT" as const, value: 54, grade: 12 },
+                null,
+              ],
+            },
+          },
+        },
         result: fixtureResult(),
         dataVersion: "snapshot-version",
         startedAtISO: "2026-10-19T00:00:00.000Z",
@@ -441,7 +456,19 @@ describe("completed-only history", () => {
       expect(stored.size).toBe(1);
       expect(stored.get(record.id)).toEqual(record);
       expect(changed).toHaveBeenCalledOnce();
-      expect(await service.listSearchHistory()).toEqual([record]);
+      const restored = await service.listSearchHistory();
+      expect(restored).toEqual([record]);
+      expect(restored[0]!.kind).toBe("single");
+      if (restored[0]!.kind === "single")
+        expect(restored[0]!.config.forcedGear).toEqual(input.config.forcedGear);
+      for (const id of [0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1]) {
+        for (const forcedValue of [id, { id, melds: [] }, { id, customStats: {} }]) {
+          expect(() => service.validateSearchHistoryRecord({
+            ...record,
+            config: { ...input.config, forcedGear: { weapon: forcedValue } },
+          })).toThrow();
+        }
+      }
     } finally {
       window.removeEventListener("search-history-changed", changed);
     }

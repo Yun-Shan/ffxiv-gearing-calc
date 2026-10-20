@@ -24,6 +24,10 @@ import { equipmentIdentity } from "../search/equipment-identity.ts";
 import { buildRingPairEquipInfos } from "../search/ring-pairs.ts";
 import { applyItemSpecialBonus } from "../item-special-bonus.ts";
 import { filterStatsForJob } from "../job-stats.ts";
+import {
+  customParameterMelds,
+  fixedCustomEquipmentMelds,
+} from "../custom-gear-parameters.ts";
 import type {
   Food,
   Gear,
@@ -33,9 +37,11 @@ import type {
   MeldedGear,
   Materia,
   OptimizationConfig,
+  ForcedGearValue,
   Stat,
   Stats,
 } from "../types.ts";
+import { assertForcedGearValue, forcedGearId } from "../types.ts";
 import {
   attributeIndex,
   attributeStats,
@@ -55,7 +61,7 @@ export function materiaAttributeStats(jobId: JobId): Materia["stat"][] {
   return ["CRT", "DET", "DHT", "SKS"];
 }
 
-function materiaForGrade(stat: Materia["stat"], grade: number): Materia {
+export function materiaForGrade(stat: Materia["stat"], grade: number): Materia {
   const value = gameData.materias[stat]?.[grade - 1];
   if (!Number.isSafeInteger(value) || value! <= 0) {
     throw new Error(`魔晶石 ${stat} 缺少 ${grade} 级数值`);
@@ -63,14 +69,14 @@ function materiaForGrade(stat: Materia["stat"], grade: number): Materia {
   return { stat, value: value!, grade };
 }
 
-function highestMateriaGrade(itemLevel: number, unrestricted: boolean): number {
+export function highestMateriaGrade(itemLevel: number, unrestricted: boolean): number {
   const restrictedGrades = gameData.materiaGradeIsRestricted;
   if (restrictedGrades.length !== materiaGradeRequiredLevels.length + 1) {
     throw new Error("魔晶石禁断等级数据与等级要求数据长度不一致");
   }
   for (let grade = materiaGradeRequiredLevels.length; grade >= 1; grade--) {
     if (materiaGradeRequiredLevels[grade - 1]! > itemLevel) continue;
-    if (!unrestricted && restrictedGrades[grade] !== false) continue;
+    if (!unrestricted && restrictedGrades[grade]) continue;
     return grade;
   }
   throw new Error(
@@ -79,6 +85,8 @@ function highestMateriaGrade(itemLevel: number, unrestricted: boolean): number {
       : `装备品级 ${itemLevel} 没有限制孔可用的魔晶石等级`,
   );
 }
+
+export { customParameterMelds };
 
 function* countCombinations(
   attributeCount: number,
@@ -132,33 +140,143 @@ export function mergeCandidateStats(
   return finalStats;
 }
 
-export function customParameterMelds(gear: Gear): Materia[][] {
-  const slots = gear.customParameters;
-  if (!slots?.length) return [];
-  if (slots.length !== 4) {
-    throw new Error(
-      `自定义参数武器 ${gear.id} 的槽位数 ${slots.length} 不是 4，无法按 2 big + 1 small + 1 空槽规则生成候选`,
+
+function forcedValueForSlot(
+  config: OptimizationConfig,
+  slot: GearSlot,
+): ForcedGearValue | undefined {
+  if (
+    typeof config.forcedGear !== "object" ||
+    config.forcedGear === null ||
+    Array.isArray(config.forcedGear)
+  ) {
+    throw new TypeError("强制装备配置必须是按槽位索引的对象");
+  }
+  const value: unknown = config.forcedGear[slot];
+  try {
+    assertForcedGearValue(value);
+  } catch (error) {
+    throw new TypeError(
+      `槽位 ${slot} 的强制装备配置无效：${(error as Error).message}`,
     );
   }
-  const result: Materia[][] = [];
-  for (let smallIndex = 0; smallIndex < slots.length; smallIndex++) {
-    const remaining = slots
-      .map((_, index) => index)
-      .filter((index) => index !== smallIndex);
-    for (let first = 0; first < remaining.length; first++) {
-      for (let second = first + 1; second < remaining.length; second++) {
-        const bigA = slots[remaining[first]!]!;
-        const bigB = slots[remaining[second]!]!;
-        const small = slots[smallIndex]!;
-        result.push([
-          { stat: bigA.stat, value: bigA.bigValue, grade: 0 },
-          { stat: bigB.stat, value: bigB.bigValue, grade: 0 },
-          { stat: small.stat, value: small.smallValue, grade: 0 },
-        ]);
-      }
+  return value;
+}
+
+function forcedMateriaCapacity(gear: Gear): number {
+  return gear.materiaAdvanced === true ? 5 : gear.materiaSlots;
+}
+
+function materiaAllowedAtPosition(
+  gear: Gear,
+  index: number,
+  materia: Materia,
+): boolean {
+  const restrictedGrades = gameData.materiaGradeIsRestricted;
+  if (restrictedGrades.length !== materiaGradeRequiredLevels.length + 1) {
+    throw new Error("魔晶石禁断等级数据与等级要求数据长度不一致");
+  }
+  const grade = materia.grade;
+  if (!Number.isSafeInteger(grade) || grade < 1 || grade > materiaGradeRequiredLevels.length) return false;
+  const value = gameData.materias[materia.stat]?.[grade - 1];
+  if (!Number.isSafeInteger(value) || value! <= 0 || materia.value !== value) return false;
+  if (materiaGradeRequiredLevels[grade - 1]! > gear.level) return false;
+  return index <= gear.materiaSlots || !restrictedGrades[grade];
+}
+
+function forcedAllowedMateriaStats(jobId: JobId): Materia["stat"][] {
+  const stats = materiaAttributeStats(jobId);
+  if (jobSchemas[jobId].role === "healer") stats.push("PIE");
+  return stats;
+}
+
+function forcedRegularMateriaMelds(
+  gear: Gear,
+  jobId: JobId,
+  jobLevel: number,
+  syncLevel: number | undefined,
+  requested: readonly (Materia | null)[],
+): Materia[][] {
+  if (gear.customParameters !== undefined || gear.resistanceWeaponAdjust !== undefined) {
+    throw new RangeError(`自定义参数装备 ${gear.id} 不能使用普通魔晶石锁定`);
+  }
+  const capacity = forcedMateriaCapacity(gear);
+  if (requested.length !== capacity) {
+    throw new RangeError(`装备 ${gear.id} 的强制魔晶石数组长度必须是 ${capacity}`);
+  }
+  const allowedStats = new Set(forcedAllowedMateriaStats(jobId));
+  const fixed = Array.from({ length: requested.length }, (_, index) => {
+    const meld = requested[index];
+    if (meld === null) return null;
+    if (typeof meld !== "object" || Array.isArray(meld)) {
+      throw new TypeError(`装备 ${gear.id} 的第 ${index + 1} 个强制魔晶石数据无效`);
+    }
+    if (Object.keys(meld).some((key) => !["stat", "value", "grade", "slotIndex"].includes(key))) {
+      throw new TypeError(`装备 ${gear.id} 的第 ${index + 1} 个强制魔晶石包含未知字段`);
+    }
+    if (!allowedStats.has(meld.stat)) {
+      throw new RangeError(`职业 ${jobId} 不能镶嵌 ${String(meld.stat)} 属性魔晶石`);
+    }
+    if (meld.slotIndex !== undefined && meld.slotIndex !== index) {
+      throw new RangeError(`装备 ${gear.id} 的第 ${index + 1} 个魔晶石位置与 slotIndex 不一致`);
+    }
+    if (!materiaAllowedAtPosition(gear, index, meld)) {
+      throw new RangeError(`装备 ${gear.id} 的第 ${index + 1} 个魔晶石等级或属性值不合法`);
+    }
+    return { ...meld, slotIndex: index };
+  });
+
+  // Sync disables regular materia effects, but retain and validate stored locks so a
+  // later unsynced run can apply them without losing their physical positions.
+  if (effectiveGearSyncLevel(gear, jobLevel, syncLevel) !== undefined) return [[]];
+
+  const highIndexes = fixed.flatMap((meld, index) =>
+    meld === null && index <= gear.materiaSlots ? [index] : [],
+  );
+  const lowIndexes = fixed.flatMap((meld, index) =>
+    meld === null && index > gear.materiaSlots ? [index] : [],
+  );
+  const automaticStats = materiaAttributeStats(jobId);
+  const highGrade = highIndexes.length > 0
+    ? highestMateriaGrade(gear.level, true)
+    : undefined;
+  const lowGrade = lowIndexes.length > 0
+    ? highestMateriaGrade(gear.level, false)
+    : undefined;
+  const highMateria = highGrade === undefined
+    ? []
+    : automaticStats.map((stat) => materiaForGrade(stat, highGrade));
+  const lowMateria = lowGrade === undefined
+    ? []
+    : automaticStats.map((stat) => materiaForGrade(stat, lowGrade));
+  const highIndexSet = new Set(highIndexes);
+  const lowIndexSet = new Set(lowIndexes);
+  const output: Materia[] = [];
+  const candidates: Materia[][] = [];
+  function assign(index: number): void {
+    if (index === capacity) {
+      candidates.push(output.map((meld) => ({ ...meld })));
+      return;
+    }
+    const locked = fixed[index];
+    if (locked !== null) {
+      output[index] = locked;
+      assign(index + 1);
+      return;
+    }
+    const materias = highIndexSet.has(index)
+      ? highMateria
+      : lowIndexSet.has(index)
+        ? lowMateria
+        : [];
+    for (const materia of materias) {
+      output[index] = { ...materia, slotIndex: index };
+      assign(index + 1);
     }
   }
-  return result;
+  // Preserve each fixed slot position and enumerate only the automatic holes.
+  assign(0);
+  return candidates;
 }
 
 function regularMateriaMelds(
@@ -234,6 +352,7 @@ function toSolverEquipment(
   gear: MeldedGear,
   job: JobSchema,
   resistanceWeaponAdjust = gear.resistanceWeaponAdjust,
+  includeResistanceAllocation = true,
 ): SolverGear {
   const baseParams = Object.entries(filterStatsForJob(gear.finalStats, job))
     .flatMap(([key, value]) => {
@@ -244,14 +363,13 @@ function toSolverEquipment(
     })
     .sort((left, right) => left.baseParamId - right.baseParamId);
   const key = baseParams.map(({ baseParamId }) => baseParamId).join("-");
-  const variantKey = JSON.stringify(
-    gear.melds
-      .map(({ stat, value, grade }) => [stat, value, grade] as const)
-      .sort(
-        ([statA, valueA, gradeA], [statB, valueB, gradeB]) =>
-          statA.localeCompare(statB) || gradeA - gradeB || valueA - valueB,
-      ),
-  );
+  const variantKey = JSON.stringify(gear.melds
+    .map(({ stat, value, grade }) => [stat, value, grade] as const)
+    .sort((left, right) =>
+      left[0].localeCompare(right[0]) ||
+      left[2] - right[2] ||
+      left[1] - right[1],
+    ));
   return {
     itemId: gear.id,
     itemLevel: gear.level,
@@ -261,7 +379,9 @@ function toSolverEquipment(
     PDMG: gear.finalStats.PDMG ?? 0,
     MDMG: gear.finalStats.MDMG ?? 0,
     DLY: gear.finalStats.DLY ?? 0,
-    ...(resistanceWeaponAdjust === undefined ? {} : { resistanceWeaponAdjust }),
+    ...(!includeResistanceAllocation || resistanceWeaponAdjust === undefined
+      ? {}
+      : { resistanceWeaponAdjust }),
   };
 }
 
@@ -367,6 +487,9 @@ export function makeGearCandidates(
   config: OptimizationConfig,
   gearsByIdentity: Map<string, MeldedGear>,
 ): GearCandidate[] {
+  const forcedValue = forcedValueForSlot(config, slot);
+  const forcedId = forcedGearId(forcedValue);
+  if (forcedId !== undefined && forcedId !== gear.id) return [];
   const job = jobSchemas[config.jobId];
   // 参考实现的 store.jobLevel 在同步搜索中等于同步映射等级；
   // 候选穿戴资格已由 gearOptionsFor 按职业上限过滤，这里只用于 Gear.syncedLevel。
@@ -375,22 +498,50 @@ export function makeGearCandidates(
     ...gear,
     stats: concretizeGearStats(gear.stats, job),
   };
-  const options = resolvedGear.resistanceWeaponAdjust !== undefined
-    ? [[]]
-    : resolvedGear.customParameters?.length
-    ? customParameterMelds(resolvedGear)
-    : regularMateriaMelds(resolvedGear, config.jobId, config, syncJobLevel);
+  let options: Materia[][];
+  let suppressResistanceAllocation = false;
+  let fixedCustomStats: Stats | undefined;
+  if (forcedValue !== undefined && typeof forcedValue !== "number" && "melds" in forcedValue) {
+    options = forcedRegularMateriaMelds(
+      resolvedGear,
+      config.jobId,
+      syncJobLevel,
+      config.syncLevel,
+      forcedValue.melds,
+    );
+  } else if (forcedValue !== undefined && typeof forcedValue !== "number") {
+    options = [fixedCustomEquipmentMelds(resolvedGear, config.jobId, forcedValue.customStats)];
+    fixedCustomStats = forcedValue.customStats;
+    suppressResistanceAllocation = resolvedGear.resistanceWeaponAdjust !== undefined;
+  } else if (resolvedGear.resistanceWeaponAdjust !== undefined) {
+    options = [[]];
+  } else if (resolvedGear.customParameters?.length) {
+    options = customParameterMelds(resolvedGear);
+  } else {
+    options = regularMateriaMelds(resolvedGear, config.jobId, config, syncJobLevel);
+  }
   const candidates = new Map<string, GearCandidate>();
   const enabledItemSpecialBonuses = config.enabledItemSpecialBonuses ?? [];
   for (const melds of options) {
-    // 参考实现先完成同步封顶与魔晶石封顶，再追加特殊加成且不再封顶。
+    // Custom parameters are absolute equipment stats, not materia contributions:
+    // apply them over the base gear and only apply the gear sync cap when active.
+    // Ordinary materia follows the regular per-materia caps below.
+    const mergedStats = fixedCustomStats === undefined
+      ? mergeCandidateStats(
+          resolvedGear,
+          melds,
+          syncJobLevel,
+          config.syncLevel,
+        )
+      : customCandidateStats(
+          resolvedGear,
+          fixedCustomStats,
+          syncJobLevel,
+          config.syncLevel,
+        );
+    // 参考实现先完成同步封顶，再追加特殊加成且不再封顶。
     const finalStats = applyItemSpecialBonus(
-      mergeCandidateStats(
-        resolvedGear,
-        melds,
-        syncJobLevel,
-        config.syncLevel,
-      ),
+      mergedStats,
       resolvedGear,
       job,
       enabledItemSpecialBonuses,
@@ -415,6 +566,7 @@ export function makeGearCandidates(
         syncJobLevel,
         config.syncLevel,
       ),
+      !suppressResistanceAllocation,
     );
     const identity = equipmentIdentity(equipment);
     if (candidates.has(identity)) continue;
@@ -422,6 +574,20 @@ export function makeGearCandidates(
     gearsByIdentity.set(identity, meldedGear);
   }
   return [...candidates.values()];
+}
+
+function customCandidateStats(
+  gear: Gear,
+  customStats: Stats,
+  jobLevel: number,
+  syncLevel?: number,
+): Stats {
+  // Keep custom weapon values absolute, matching fixed gearset calculation.
+  const finalStats: Stats = { ...gear.stats, ...customStats };
+  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, syncLevel);
+  return synchronizedLevel === undefined
+    ? finalStats
+    : capGearStatsAtLevel(gear, finalStats, synchronizedLevel);
 }
 
 export function foodsFor(config: OptimizationConfig): Food[] {
@@ -484,7 +650,7 @@ export function candidatePools(
   for (const slotName of slots.filter((name) => name !== "rings")) {
     const slot = slotName as GearSlot;
     const pool = gearOptionsFor(config, slot);
-    const forcedId = config.forcedGear[slot];
+    const forcedId = forcedGearId(forcedValueForSlot(config, slot));
     const gearsForSlot =
       forcedId === undefined
         ? pool
@@ -535,8 +701,8 @@ export function candidatePools(
   }
 
   const ringPool = gearOptionsFor(config, "ring");
-  const forcedRing = config.forcedGear.ring;
-  const forcedRing2 = config.forcedGear.ring2;
+  const forcedRing = forcedGearId(forcedValueForSlot(config, "ring"));
+  const forcedRing2 = forcedGearId(forcedValueForSlot(config, "ring2"));
   const firstPool =
     forcedRing === undefined
       ? ringPool

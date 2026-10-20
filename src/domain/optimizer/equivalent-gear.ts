@@ -102,19 +102,18 @@ export function attachEquivalentGear(
   const gear = result.gear.map((selected) => {
     throwIfAborted(options.signal);
     const slot = selected.slot;
+    if (config.forcedGear[slot] !== undefined) return selected;
     const physicalSlot: GearSlot = slot === "ring2" ? "ring" : slot;
-    const forced = config.forcedGear[slot];
-    const signature = JSON.stringify([effectKey(selected), forced ?? null]);
+    const signature = effectKey(selected);
     let keys = cache.get(signature);
     if (!keys) {
       const matches = new Map<string, MeldedGear>();
       for (const raw of gearOptionsFor(config, slot)) {
         throwIfAborted(options.signal);
-        if (forced !== undefined && raw.id !== forced) continue;
         const map = new Map<string, MeldedGear>();
         for (const candidate of makeGearCandidates(
           raw,
-          physicalSlot,
+          slot,
           config,
           map,
         )) {

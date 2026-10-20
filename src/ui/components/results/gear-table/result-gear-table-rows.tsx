@@ -1,4 +1,7 @@
 import {
+  effectiveGearSyncLevel,
+  calculationJobLevelFor,
+  getGearStatCap,
   type GearSlot,
   type MeldedGear,
   type OptimizationConfig,
@@ -84,7 +87,23 @@ export function equivalentGearKey(gear: MeldedGear): string {
 function gearItem(
   gear: MeldedGear,
   displaySlot: GearSlot = gear.slot,
+  sync?: { jobLevel: number; syncLevel?: number },
 ): GearTableGearItem {
+  const synchronizedLevel = sync === undefined ? undefined
+    : effectiveGearSyncLevel(gear, sync.jobLevel, sync.syncLevel);
+  const custom = gear.customParameters !== undefined || gear.resistanceWeaponAdjust !== undefined;
+  let materiaSync: GearTableGearItem["materiaSync"];
+  if (synchronizedLevel !== undefined) {
+    if (custom) {
+      const allocated: Stats = {};
+      for (const meld of gear.melds) allocated[meld.stat] = (allocated[meld.stat] ?? 0) + meld.value;
+      const stats = gear.customParameters?.map(({ stat }) => stat) ?? gear.resistanceWeaponAdjust!.stats;
+      if (stats.some((stat) => (gear.stats[stat] ?? 0) + (allocated[stat] ?? 0) > getGearStatCap(gear, stat, synchronizedLevel)))
+        materiaSync = "capped";
+    } else if (gear.materiaSlots > 0 || gear.materiaAdvanced === true) {
+      materiaSync = "disabled";
+    }
+  }
   const displayStats = Object.fromEntries(
     Object.entries(gear.finalStats).filter(
       ([stat]) => stat !== "PDMG" && stat !== "MDMG" && stat !== "DLY",
@@ -111,6 +130,7 @@ function gearItem(
     level: gear.level,
     source: gear.source,
     stats: displayStats,
+    ...(materiaSync === undefined ? {} : { materiaSync }),
     melds: gear.melds.map(({ stat, value, grade, slotIndex }, index) => ({
       stat,
       value,
@@ -175,22 +195,20 @@ export function buildResultGearTableRows(
   config: OptimizationConfig,
   options: ResultGearTableOptions = {},
 ): GearTableRow[] {
-  // Config stays in this adapter's API for existing Result callers. Result rows
-  // are built exclusively from the stored result snapshot; config is not used
-  // to recalculate historical values against current game data.
-  void config;
+  // Sync only annotates the rows; numerical values remain the saved result snapshot.
+  const sync = { jobLevel: result.calculationLevel ?? calculationJobLevelFor(config), syncLevel: config.syncLevel };
   const rows: GearTableRow[] = [];
   for (const slot of displaySlots) {
     const gear = result.gear.find((candidate) => candidate.slot === slot);
     if (!gear) continue;
-    const item = gearItem(gear, slot);
+    const item = gearItem(gear, slot, sync);
     const candidates = replacementCandidates(result, gear);
     const candidateByKey = new Map(
       candidates.map((candidate) => [equivalentGearKey(candidate), candidate]),
     );
     const selectedKey = equivalentGearKey(gear);
     const replacements = candidates.map((candidate) => ({
-      ...gearItem(candidate, slot),
+      ...gearItem(candidate, slot, sync),
       replacementSelected: equivalentGearKey(candidate) === selectedKey,
       replacementDisabled: conflictingUniqueRing(result, slot, candidate),
     }));

@@ -42,7 +42,7 @@ export function SingleEquipmentRestrictions({
         else if (result.reason === "unique-ring") notify("不能同时强制装备两枚相同的唯一戒指。", "warning");
       }}
     >
-      <EquipmentEditor />
+      <EquipmentEditor materiaConfig={compileSingleDraft(draft)} />
     </SingleEquipmentScope>
   );
 }

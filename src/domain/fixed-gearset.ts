@@ -8,7 +8,10 @@ import { calculationJobLevelFor, jobLevelFor } from "./job-level.ts";
 import { jobSchemas } from "./jobs.ts";
 import { slotsForJob } from "./gear-options.ts";
 import {
-  customParameterMelds,
+  fixedCustomParameterMelds,
+  resistanceAllocation,
+} from "./custom-gear-parameters.ts";
+import {
   foodStatsForJob,
   materiaAttributeStats,
   mergeCandidateStats,
@@ -27,8 +30,8 @@ import {
   applyItemSpecialBonus,
 } from "./item-special-bonus.ts";
 import { addStatsForJob } from "./job-stats.ts";
+export { validateCustomEquipmentStats } from "./custom-gear-parameters.ts";
 import type {
-  CustomizableStat,
   Effects,
   FoodResult,
   Gear,
@@ -95,89 +98,6 @@ function validateCustomStats(customStats: Stats | undefined): Stats {
     validated[rawStat as Stat] = value;
   }
   return validated;
-}
-
-function statTotals(melds: readonly Materia[]): Stats {
-  const result: Stats = {};
-  for (const meld of melds) {
-    result[meld.stat] = (result[meld.stat] ?? 0) + meld.value;
-  }
-  return result;
-}
-
-function sameStatTotals(left: Stats, right: Stats): boolean {
-  const stats = new Set([...Object.keys(left), ...Object.keys(right)] as Stat[]);
-  return [...stats].every((stat) => (left[stat] ?? 0) === (right[stat] ?? 0));
-}
-
-function fixedCustomParameterMelds(
-  gear: Gear,
-  customStats: Stats | undefined,
-  job: JobSchema,
-): Materia[] {
-  if (customStats === undefined) {
-    return fail(`自定义参数武器 ${gear.id} 缺少完整参数`);
-  }
-  const overrides = validateCustomStats(customStats);
-  const allowedStats = new Set(gear.customParameters?.map(({ stat }) => stat));
-  for (const stat of Object.keys(overrides) as Stat[]) {
-    if (!allowedStats.has(stat as CustomizableStat)) {
-      return fail(`自定义参数武器 ${gear.id} 不支持 ${stat} 参数`);
-    }
-  }
-  const baseStats = concretizeGearStats(gear.stats, job);
-  const requestedTotals: Stats = {};
-  for (const stat of allowedStats) {
-    const absoluteValue = overrides[stat] ?? baseStats[stat] ?? 0;
-    const allocation = absoluteValue - (baseStats[stat] ?? 0);
-    if (!Number.isSafeInteger(allocation) || allocation < 0) {
-      return fail(`自定义参数武器 ${gear.id} 的 ${stat} 参数低于装备基础属性`);
-    }
-    if (allocation > 0) requestedTotals[stat] = allocation;
-  }
-  const validOptions = customParameterMelds(gear);
-  const selected = validOptions.find((melds) =>
-    sameStatTotals(requestedTotals, statTotals(melds)),
-  );
-  if (selected === undefined) {
-    return fail(`自定义参数武器 ${gear.id} 的参数不符合 2 大 + 1 小分配规则`);
-  }
-  return selected;
-}
-
-function resistanceAllocation(
-  gear: Gear,
-  customStats: Stats | undefined,
-  job: JobSchema,
-): Materia[] {
-  const adjustment = gear.resistanceWeaponAdjust!;
-  const resolvedStats = concretizeGearStats(gear.stats, job);
-  const overrides = validateCustomStats(customStats);
-  const allowedStats = new Set(adjustment.stats);
-  for (const stat of Object.keys(overrides) as Stat[]) {
-    if (!allowedStats.has(stat as CustomizableStat)) {
-      return fail(`义军武器 ${gear.id} 不支持 ${stat} 参数`);
-    }
-  }
-  const allocations: Materia[] = [];
-  let total = 0;
-  for (const stat of adjustment.stats) {
-    const absoluteValue = overrides[stat] ?? resolvedStats[stat] ?? 0;
-    const allocation = absoluteValue - (resolvedStats[stat] ?? 0);
-    if (
-      !Number.isSafeInteger(allocation) ||
-      allocation < 0 ||
-      allocation > adjustment.maxEachStat
-    ) {
-      return fail(`义军武器 ${gear.id} 的 ${stat} 分配超过单项上限`);
-    }
-    total += allocation;
-    if (allocation > 0) allocations.push({ stat, value: allocation, grade: 0 });
-  }
-  if (!Number.isSafeInteger(total) || total > adjustment.maxTotalStats) {
-    return fail(`义军武器 ${gear.id} 的总分配属性超过 ResistanceWeaponAdjust 上限`);
-  }
-  return allocations;
 }
 
 function regularMelds(

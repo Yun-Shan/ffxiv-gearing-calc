@@ -9,6 +9,7 @@ import {
   useImperativeHandle,
   type ReactNode,
   type Ref,
+  type RefObject,
   type CSSProperties,
 } from "react";
 import {
@@ -36,6 +37,7 @@ export function SearchSelect<T>({
   onOpenChange,
   onItemHighlighted,
   popupRef,
+  popupAnchor,
   disabled = false,
   virtualized = false,
 }: {
@@ -59,6 +61,7 @@ export function SearchSelect<T>({
     details: { reason: string; index: number },
   ): void;
   popupRef?: Ref<HTMLDivElement>;
+  popupAnchor?: RefObject<HTMLDivElement | null>;
   disabled?: boolean;
   virtualized?: boolean;
 }) {
@@ -145,7 +148,11 @@ export function SearchSelect<T>({
         </Combobox.InputGroup>
       </FormField>
       <Combobox.Portal>
-        <Combobox.Positioner className={styles.positioner} sideOffset={4}>
+        <Combobox.Positioner
+          className={styles.positioner}
+          anchor={popupAnchor}
+          sideOffset={4}
+        >
           <Combobox.Popup
             ref={popupRef}
             className={`${styles.popup} ${virtualized ? styles.virtualPopup : ""}`}

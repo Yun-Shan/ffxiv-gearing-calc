@@ -45,7 +45,9 @@ function RouteView({ page }: { page: AppPage }) {
 
 export function App() {
   const [page, setPage] = useState<AppPage>(currentPage);
+  // 因为页面内部没有路由所以目前是通过一个visit变量强行刷新
   const [singleVisit, setSingleVisit] = useState(0);
+  // 目前还是手动实现的路由机制不是用的路由库
   useEffect(() => {
     const update = () => setPage(currentPage());
     const navigate = (event: MouseEvent) => {

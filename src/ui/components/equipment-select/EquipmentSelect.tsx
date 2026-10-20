@@ -1,4 +1,5 @@
 import { SearchSelect } from "@/ui/components/form-controls/search-select/SearchSelect";
+import type { RefObject } from "react";
 import type { GearSlot } from "@/domain";
 import { itemIconId } from "@/ui/services/item-icons";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
@@ -20,6 +21,7 @@ export function EquipmentSelect<T extends EquipmentSelectionItem>(props: {
   onSelect(gear: T): void;
   onClear?: () => void;
   disabled?: boolean;
+  popupAnchor?: RefObject<HTMLDivElement | null>;
 }) {
   return (
     <SearchSelect

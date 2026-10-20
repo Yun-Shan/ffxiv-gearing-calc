@@ -203,6 +203,44 @@ describe("jointWorkbenchDraftFromConfig", () => {
     expect(draft.shared.equipment.jobs.PLD?.forcedGear.head).toBeUndefined();
   });
 
+  it("restores copied structured forces as shared only when their full values match", () => {
+    const first = makeConfig("PLD");
+    const second = makeConfig("WAR");
+    const sharedValue = {
+      id: 12345,
+      melds: [{ stat: "CRT" as const, value: 54, grade: 12 }, null],
+    };
+    first.forcedGear = { ...first.forcedGear, head: sharedValue };
+    second.forcedGear = {
+      ...second.forcedGear,
+      head: JSON.parse(JSON.stringify(sharedValue)),
+    };
+
+    const draft = jointWorkbenchDraftFromConfig({
+      jobs: [first, second],
+      commonSlots: ["head"],
+      foodStrategy: "shared",
+    });
+    expect(draft.shared.equipment.shared.forcedGear.head).toEqual(sharedValue);
+    expect(draft.shared.equipment.jobs.PLD?.forcedGear.head).toBeUndefined();
+    expect(draft.shared.equipment.jobs.WAR?.forcedGear.head).toBeUndefined();
+    expect(
+      compileJointWorkbenchDraft(
+        draft,
+        createJointWorkbenchRuntime(draft.jobs),
+      ).jobs.map((job) => job.forcedGear.head),
+    ).toEqual([sharedValue, sharedValue]);
+
+    second.forcedGear.head = { ...sharedValue, melds: [null, null] };
+    expect(() =>
+      jointWorkbenchDraftFromConfig({
+        jobs: [first, second],
+        commonSlots: ["head"],
+        foodStrategy: "shared",
+      }),
+    ).toThrow("多个不同强制装备");
+  });
+
   it("rejects conflicting forces on a shared slot", () => {
     const first = makeConfig("PLD");
     const second = makeConfig("WAR");

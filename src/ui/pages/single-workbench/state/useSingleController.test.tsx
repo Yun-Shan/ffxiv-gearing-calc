@@ -20,7 +20,10 @@ vi.mock("@/ui/services/search-history", () => ({
 vi.mock("@/ui/components/feedback/FeedbackProvider", () => ({
   useFeedback: () => ({ notify: mocks.notify, confirm: mocks.confirm }),
 }));
-import { useSingleController } from "./useSingleController";
+import {
+  singleDraftFromConfig,
+  useSingleController,
+} from "./useSingleController";
 import { makeConfig } from "@/ui/services/app-config";
 import { gears, type OptimizationResult, type MeldedGear } from "@/domain";
 import { type OptimizationResultWithEquivalentGear } from "@/ui/components/results/gear-table/GearTable";
@@ -63,6 +66,29 @@ afterEach(() => {
   host.remove();
 });
 describe("Single run ownership and nonblocking history", () => {
+  it("restores structured force values into an editable detached draft", () => {
+    const forcedValue = {
+      id: gears.find((gear) => gear.slot === "head")!.id,
+      melds: [{ stat: "DHT" as const, value: 54, grade: 12 }, null],
+    };
+    const config = {
+      ...makeConfig("SAM"),
+      forcedGear: { head: forcedValue },
+    };
+    const draft = singleDraftFromConfig(config);
+
+    expect(draft.equipment.forcedGear.head).toEqual(forcedValue);
+    expect(draft.equipment.forcedGear.head).not.toBe(forcedValue);
+    if (
+      draft.equipment.forcedGear.head !== undefined &&
+      typeof draft.equipment.forcedGear.head !== "number" &&
+      "melds" in draft.equipment.forcedGear.head
+    )
+      expect(draft.equipment.forcedGear.head.melds).not.toBe(
+        forcedValue.melds,
+      );
+  });
+
   it("starts and settles without waiting for history; binds a late id only to its own result", async () => {
     const storage = deferred<{ id: string }>(),
       search = deferred<OptimizationResult | undefined>();

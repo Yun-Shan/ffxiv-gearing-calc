@@ -1,9 +1,10 @@
 import stableStringify from "fast-json-stable-stringify";
-import { clanCount, jobSchemas } from "@/domain";
+import { assertForcedGearValue, clanCount, jobSchemas } from "@/domain";
 import type {
   CommonGearSlot,
   Effects,
   Food,
+  ForcedGearValue,
   Gear,
   GearSlot,
   JobId,
@@ -286,6 +287,19 @@ function isStats(value: unknown): value is Stats {
   );
 }
 
+function isForcedGearValue(value: unknown): value is ForcedGearValue {
+  try {
+    assertForcedGearValue(value);
+  } catch {
+    return false;
+  }
+  if (typeof value === "number") return true;
+  if (value === undefined) return false;
+  return "melds" in value
+    ? value.melds.every((meld) => meld === null || isMateria(meld))
+    : isStats(value.customStats);
+}
+
 function isFood(value: unknown): value is Food {
   return (
     isObject(value) &&
@@ -467,9 +481,9 @@ function validateOptimizationConfig(
     value.excludedSources.every((item) => typeof item === "string") &&
     isObject(value.forcedGear) &&
     Object.entries(value.forcedGear).every(
-      ([slot, id]) =>
+      ([slot, forcedValue]) =>
         GEAR_SLOT_IDS.has(slot as GearSlot) &&
-        (id === undefined || isSafeInteger(id)),
+        (forcedValue === undefined || isForcedGearValue(forcedValue)),
     ) &&
     isFiniteNumber(value.foodId) &&
     (value.syncLevel === undefined || isFiniteNumber(value.syncLevel)) &&

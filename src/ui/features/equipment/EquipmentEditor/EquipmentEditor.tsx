@@ -2,7 +2,7 @@ import { Popover } from "@base-ui/react/popover";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { CheckboxInput } from "@/ui/components/form-controls/checkbox-input/CheckboxInput";
 import { FormField } from "@/ui/components/form-controls/form-field/FormField";
-import { useId, useMemo, useState } from "react";
+import { useId, useMemo, useRef, useState, type RefObject } from "react";
 import { gearSlotLabels } from "@/ui/services/labels";
 import {
   useAllowedForcedGearSlots,
@@ -11,12 +11,18 @@ import {
   useExcludedSources,
   useForcedGear,
 } from "../scope";
-import type { GearSlot } from "@/domain";
+import {
+  forcedGearId,
+  type EquipmentMateriaConfig,
+  type ForcedGearValue,
+  type GearSlot,
+} from "@/domain";
 import { LabeledSelect } from "@/ui/components/form-controls/labeled-select/LabeledSelect";
 import { EquipmentSelect } from "@/ui/components/equipment-select/EquipmentSelect";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
 import { itemIconId } from "@/ui/services/item-icons";
 import styles from "./EquipmentEditor.module.scss";
+import { ForcedMateriaSlots } from "./components/forced-materia-slots/ForcedMateriaSlots";
 
 const sourceOrder = (a: string, b: string) => a.localeCompare(b, "zh-CN");
 
@@ -128,12 +134,14 @@ function SourceTreeBranch({
 }
 
 function SourceTreeSelect({
+  popupAnchor,
   sources,
   excludedSources,
   counts,
   disabled,
   onChange,
 }: {
+  popupAnchor: RefObject<HTMLDivElement | null>;
   sources: readonly string[];
   excludedSources: readonly string[];
   counts: ReadonlyMap<string, number>;
@@ -182,6 +190,7 @@ function SourceTreeSelect({
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Positioner
+            anchor={popupAnchor}
             className={styles.sourcePositioner}
             side="bottom"
             collisionAvoidance={{
@@ -216,6 +225,7 @@ function SourceTreeSelect({
 }
 
 function ExcludedSourcesEditor() {
+  const popupAnchor = useRef<HTMLDivElement>(null);
   const { excludedSources, sourceOptions, remove, setSources } =
     useExcludedSources();
   const { readOnly, catalog } = useEquipmentScope();
@@ -231,10 +241,11 @@ function ExcludedSourcesEditor() {
   }, [catalog.gearOptions]);
   return (
     <section className={styles.section} aria-label="排除来源">
-      <div className={styles.titleRow}>
+      <div ref={popupAnchor} className={styles.titleRow}>
         <h3 className={styles.sectionLabel}>排除来源</h3>
         <div className={styles.pickerRow}>
           <SourceTreeSelect
+            popupAnchor={popupAnchor}
             sources={sourceOptions}
             excludedSources={excludedSources}
             counts={counts}
@@ -271,6 +282,7 @@ function ExcludedSourcesEditor() {
 }
 
 function ExcludedGearEditor() {
+  const popupAnchor = useRef<HTMLDivElement>(null);
   const { excludedGearIds, gearOptions, add, remove } = useExcludedGear();
   const [part, setPart] = useState("all");
   const parts: GearSlot[] = [
@@ -288,7 +300,7 @@ function ExcludedGearEditor() {
   );
   return (
     <section className={styles.section} aria-label="排除指定装备">
-      <div className={styles.titleRow}>
+      <div ref={popupAnchor} className={styles.titleRow}>
         <h3 className={styles.sectionLabel}>排除装备</h3>
         <div className={styles.pickerRow}>
           <div className={styles.slotFilter}>
@@ -314,6 +326,7 @@ function ExcludedGearEditor() {
           <EquipmentSelect
             hideLabel
             label="排除装备"
+            popupAnchor={popupAnchor}
             placeholder="搜索装备名称或品级"
             items={available}
             disabled={readOnly || available.length === 0}
@@ -352,7 +365,12 @@ function ExcludedGearEditor() {
   );
 }
 
-function ForcedGearEditor() {
+function ForcedGearEditor({
+  materiaConfig,
+}: {
+  materiaConfig?: EquipmentMateriaConfig;
+}) {
+  const popupAnchor = useRef<HTMLDivElement>(null);
   const slots = useAllowedForcedGearSlots();
   const { forcedGear, gearOptionsForSlot, set, clear } = useForcedGear();
   const { catalog, readOnly } = useEquipmentScope();
@@ -379,7 +397,8 @@ function ForcedGearEditor() {
           ).values(),
         ]
       : gearOptionsForSlot(activeSlot);
-  const selectedId = activeSlot === "all" ? undefined : forcedGear[activeSlot];
+  const selectedId =
+    activeSlot === "all" ? undefined : forcedGearId(forcedGear[activeSlot]);
   const selectedGear =
     selectedId === undefined
       ? undefined
@@ -387,11 +406,11 @@ function ForcedGearEditor() {
         catalog.gearOptions.find((gear) => gear.id === selectedId));
   return (
     <section className={styles.section} aria-label="强制装备">
-      <div className={styles.titleRow}>
+      <div ref={popupAnchor} className={styles.titleRow}>
         <h3 className={styles.sectionLabel}>
           强制装备{" "}
           <span className={styles.count}>
-            {Object.values(forcedGear).filter((id) => id !== undefined).length}{" "}
+        {Object.values(forcedGear).filter((value) => value !== undefined).length}{" "}
             个部位
           </span>
         </h3>
@@ -416,6 +435,7 @@ function ForcedGearEditor() {
           <EquipmentSelect
             hideLabel
             label="指定装备"
+            popupAnchor={popupAnchor}
             placeholder="搜索装备名称或品级"
             items={choices}
             value={selectedGear}
@@ -429,16 +449,29 @@ function ForcedGearEditor() {
                       ),
                     )
                   : activeSlot;
-              if (target) set(target, gear.id);
+              if (target) {
+                const current = forcedGear[target];
+                set(
+                  target,
+                  gear.id,
+                  forcedGearId(current) === gear.id ? current : gear.id,
+                );
+              }
             }}
             onClear={activeSlot === "all" ? undefined : () => clear(activeSlot)}
           />
         </div>
       </div>
-      <ul className={styles.list} tabIndex={0} aria-label="已强制装备">
+      <ul
+        className={`${styles.list} ${styles.forcedList}`}
+        tabIndex={0}
+        aria-label="已强制装备"
+      >
         {Object.entries(forcedGear)
-          .filter(([, id]) => id !== undefined)
-          .map(([slot, id]) => {
+          .filter(([, value]) => value !== undefined)
+          .map(([slot, value]) => {
+            const forcedValue = value as ForcedGearValue;
+            const id = forcedGearId(forcedValue)!;
             const gear =
               catalog.gearOptions.find((item) => item.id === id) ??
               gearOptionsForSlot(slot as GearSlot).find(
@@ -448,14 +481,32 @@ function ForcedGearEditor() {
               <li key={slot}>
                 {gear ? (
                   <EquipmentOptionRow
+                    className={styles.forcedEquipmentRow}
+                    iconInName
                     slot={slot as GearSlot}
                     iconId={itemIconId(gear.id)}
                     name={gear.name}
                     level={gear.level}
                     source={gear.source}
+                    afterName={
+                      materiaConfig ? (
+                        <ForcedMateriaSlots
+                          key={`${gear.id}:${materiaConfig.jobId}:${gear.customParameters || gear.resistanceWeaponAdjust ? "custom" : "materia"}`}
+                          gear={gear}
+                          config={materiaConfig}
+                          readOnly={readOnly}
+                          value={forcedValue}
+                          onChange={(next) =>
+                            set(slot as GearSlot, gear.id, next)
+                          }
+                        />
+                      ) : (
+                        <span />
+                      )
+                    }
                   />
                 ) : (
-                  <span>
+                  <span className={styles.missingForcedEquipment}>
                     {gearSlotLabels[slot as GearSlot]} · 装备 {id}
                   </span>
                 )}
@@ -474,7 +525,13 @@ function ForcedGearEditor() {
   );
 }
 
-export function EquipmentEditor({ title = "装备限制" }: { title?: string }) {
+export function EquipmentEditor({
+  title = "装备限制",
+  materiaConfig,
+}: {
+  title?: string;
+  materiaConfig?: EquipmentMateriaConfig;
+}) {
   const { scope } = useEquipmentScope();
   return (
     <section className={styles.root} aria-label={title}>
@@ -486,7 +543,7 @@ export function EquipmentEditor({ title = "装备限制" }: { title?: string }) 
           {scope.kind !== "joint-job" && <ExcludedSourcesEditor />}
           <ExcludedGearEditor />
         </div>
-        <ForcedGearEditor />
+        <ForcedGearEditor materiaConfig={materiaConfig} />
       </div>
     </section>
   );

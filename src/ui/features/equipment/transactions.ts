@@ -1,4 +1,12 @@
-import type { GearSlot, JobId } from "@/domain";
+import {
+  cloneForcedGearValue,
+  cloneForcedGearMap,
+  forcedGearId,
+  type ForcedGearMap,
+  type ForcedGearValue,
+  type GearSlot,
+  type JobId,
+} from "@/domain";
 import type {
   EquipmentAction,
   EquipmentActionResult,
@@ -57,33 +65,37 @@ function setMembership(
   return values.filter((item) => item !== value);
 }
 
-function copyForce(
-  force: Partial<Record<GearSlot, number>>,
-): Partial<Record<GearSlot, number>> {
-  return { ...force };
-}
-
 function conflictsWithUniqueRing(
-  force: Partial<Record<GearSlot, number>>,
+  force: ForcedGearMap,
   action: Extract<EquipmentAction, { type: "set-force" }>,
   lookup: GearLookup,
 ): boolean {
   if (action.slot !== "ring" && action.slot !== "ring2") return false;
   const otherSlot = action.slot === "ring" ? "ring2" : "ring";
   return (
-    lookup(action.gearId)?.unique === true && force[otherSlot] === action.gearId
+    lookup(action.gearId)?.unique === true &&
+    forcedGearId(force[otherSlot]) === action.gearId
   );
+}
+
+function actionValue(action: Extract<EquipmentAction, { type: "set-force" }>): ForcedGearValue {
+  return cloneForcedGearValue(action.forcedValue ?? action.gearId)!;
+}
+
+function validForceAction(action: Extract<EquipmentAction, { type: "set-force" }>): boolean {
+  return forcedGearId(action.forcedValue ?? action.gearId) === action.gearId;
 }
 
 function applyLocalAction<
   T extends SingleEquipmentDraft | JointJobEquipmentDraft,
 >(draft: T, action: EquipmentAction, lookup: GearLookup): T {
-  const next = { ...draft, forcedGear: copyForce(draft.forcedGear) };
+  const next = { ...draft, forcedGear: cloneForcedGearMap(draft.forcedGear) };
   if (action.type === "add-source-exclusion" && "excludedSources" in next) {
     next.excludedSources = next.excludedSources.includes(action.source)
       ? [...next.excludedSources]
       : [...next.excludedSources, action.source];
-    for (const [slot, id] of Object.entries(next.forcedGear)) {
+    for (const [slot, value] of Object.entries(next.forcedGear)) {
+      const id = forcedGearId(value);
       if (id !== undefined && lookup(id)?.source?.startsWith(action.source))
         delete next.forcedGear[slot as GearSlot];
     }
@@ -100,8 +112,9 @@ function applyLocalAction<
       action.gearId,
       true,
     );
-    for (const [slot, id] of Object.entries(next.forcedGear)) {
-      if (id === action.gearId) delete next.forcedGear[slot as GearSlot];
+    for (const [slot, value] of Object.entries(next.forcedGear)) {
+      if (forcedGearId(value) === action.gearId)
+        delete next.forcedGear[slot as GearSlot];
     }
   } else if (action.type === "remove-gear-exclusion") {
     next.excludedGearIds = setMembership(
@@ -121,7 +134,7 @@ function applyLocalAction<
       action.gearId,
       false,
     );
-    next.forcedGear[action.slot] = action.gearId;
+    next.forcedGear[action.slot] = actionValue(action);
   } else if (action.type === "clear-force") {
     delete next.forcedGear[action.slot];
   }
@@ -133,6 +146,8 @@ export function applySingleEquipmentAction(
   action: EquipmentAction,
   lookup: GearLookup,
 ): EquipmentActionResult<SingleEquipmentDraft> {
+  if (action.type === "set-force" && !validForceAction(action))
+    return { state: draft, accepted: false, reason: "invalid-slot" };
   if (
     action.type === "set-force" &&
     conflictsWithUniqueRing(draft.forcedGear, action, lookup)
@@ -194,9 +209,10 @@ function pruneJobForceByGearIds(
     JobId,
     JointJobEquipmentDraft,
   ][]) {
-    const forcedGear = copyForce(existing.forcedGear);
-    for (const [slot, id] of Object.entries(forcedGear)) {
-      if (id === gearId) delete forcedGear[slot as GearSlot];
+    const forcedGear = cloneForcedGearMap(existing.forcedGear);
+    for (const [slot, value] of Object.entries(forcedGear)) {
+      if (forcedGearId(value) === gearId)
+        delete forcedGear[slot as GearSlot];
     }
     jobs[jobId] = { ...existing, forcedGear };
   }
@@ -213,6 +229,8 @@ export function applyJointEquipmentAction(
     sharedSlots?: readonly GearSlot[];
   },
 ): EquipmentActionResult<JointEquipmentDraft> {
+  if (action.type === "set-force" && !validForceAction(action))
+    return { state, accepted: false, reason: "invalid-slot" };
   if (action.type === "set-source-exclusions") {
     if (scope.kind === "joint-job")
       return { state, accepted: false, reason: "invalid-slot" };
@@ -261,7 +279,7 @@ export function applyJointEquipmentAction(
         return { state, accepted: false, reason: "not-private" };
       }
       const sharedForceConflict = Object.values(state.shared.forcedGear).some(
-        (id) => id === action.gearId,
+        (value) => forcedGearId(value) === action.gearId,
       );
       if (sharedForceConflict)
         return { state, accepted: false, reason: "shared-restriction" };
@@ -298,8 +316,9 @@ export function applyJointEquipmentAction(
     const sources = state.shared.excludedSources.includes(action.source)
       ? [...state.shared.excludedSources]
       : [...state.shared.excludedSources, action.source];
-    const sharedForce = copyForce(state.shared.forcedGear);
-    for (const [slot, id] of Object.entries(sharedForce)) {
+    const sharedForce = cloneForcedGearMap(state.shared.forcedGear);
+    for (const [slot, value] of Object.entries(sharedForce)) {
+      const id = forcedGearId(value);
       if (
         id !== undefined &&
         options.lookup(id)?.source?.startsWith(action.source)
@@ -318,8 +337,9 @@ export function applyJointEquipmentAction(
       JobId,
       JointJobEquipmentDraft,
     ][]) {
-      const forcedGear = copyForce(job.forcedGear);
-      for (const [slot, id] of Object.entries(forcedGear)) {
+      const forcedGear = cloneForcedGearMap(job.forcedGear);
+      for (const [slot, value] of Object.entries(forcedGear)) {
+        const id = forcedGearId(value);
         if (
           id !== undefined &&
           options.lookup(id)?.source?.startsWith(action.source)
@@ -353,9 +373,10 @@ export function applyJointEquipmentAction(
       action.gearId,
       true,
     );
-    const sharedForce = copyForce(state.shared.forcedGear);
-    for (const [slot, id] of Object.entries(sharedForce))
-      if (id === action.gearId) delete sharedForce[slot as GearSlot];
+    const sharedForce = cloneForcedGearMap(state.shared.forcedGear);
+    for (const [slot, value] of Object.entries(sharedForce))
+      if (forcedGearId(value) === action.gearId)
+        delete sharedForce[slot as GearSlot];
     const next = pruneJobForceByGearIds(
       {
         ...state,
@@ -420,7 +441,10 @@ export function applyJointEquipmentAction(
         action.gearId,
         false,
       ),
-      forcedGear: { ...state.shared.forcedGear, [action.slot]: action.gearId },
+      forcedGear: {
+        ...cloneForcedGearMap(state.shared.forcedGear),
+        [action.slot]: actionValue(action),
+      },
     };
     return { state: { ...state, shared }, accepted: true };
   }
@@ -449,7 +473,7 @@ export function updateJointSharedSlots(
   },
 ): JointEquipmentDraft {
   const next: JointEquipmentDraft = { ...state, commonSlots: [...nextSlots] };
-  const sharedForce = copyForce(state.shared.forcedGear);
+  const sharedForce = cloneForcedGearMap(state.shared.forcedGear);
   for (const slot of Object.keys(sharedForce) as GearSlot[]) {
     if (isSlotShared(slot, state.commonSlots) && !isSlotShared(slot, nextSlots))
       delete sharedForce[slot];
@@ -459,7 +483,7 @@ export function updateJointSharedSlots(
     JobId,
     JointJobEquipmentDraft,
   ][]) {
-    const forcedGear = copyForce(job.forcedGear);
+    const forcedGear = cloneForcedGearMap(job.forcedGear);
     for (const slot of Object.keys(forcedGear) as GearSlot[]) {
       if (
         !isSlotShared(slot, state.commonSlots) &&

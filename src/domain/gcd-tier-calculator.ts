@@ -1,4 +1,4 @@
-import { foods, gameData, materiaGradeRequiredLevels, searchFoods } from "./data.ts";
+import { foods, gameData, searchFoods } from "./data.ts";
 import { assertClanIndex } from "./clans.ts";
 import { itemSpecialBonusAdditions } from "./item-special-bonus.ts";
 import { jobSchemas } from "./jobs.ts";
@@ -25,6 +25,15 @@ import type {
   Stat,
   Stats,
 } from "./types.ts";
+import { assertForcedGearValue, forcedGearId } from "./types.ts";
+import {
+  makeGearCandidates,
+  materiaAttributeStats,
+  materiaForGrade,
+  highestMateriaGrade,
+} from "./optimizer/equipment-candidates.ts";
+import { customParameterMelds } from "./custom-gear-parameters.ts";
+import type { MeldedGear, ForcedGearValue } from "./types.ts";
 
 interface GcdTierCalculatorDependencies {
   getJobLevel(config: OptimizationConfig): number;
@@ -92,6 +101,40 @@ function validateConfig(config: OptimizationConfig): void {
   if (config.clanIndex !== undefined) assertClanIndex(config.clanIndex);
 }
 
+function forcedGearSignature(value: ForcedGearValue | undefined): string {
+  if (value === undefined) return "unforced";
+  if (typeof value === "number") return JSON.stringify(["id", value]);
+  if ("melds" in value) {
+    return JSON.stringify([
+      value.id,
+      "melds",
+      value.melds.map((meld) => meld === null
+        ? null
+        : Object.entries(meld).sort(([left], [right]) => left.localeCompare(right))),
+    ]);
+  }
+  return JSON.stringify([
+    value.id,
+    "customStats",
+    Object.entries(value.customStats).sort(([left], [right]) => left.localeCompare(right)),
+  ]);
+}
+
+function profileForCandidateStats(
+  gears: readonly MeldedGear[],
+  speedStat: "SKS" | "SPS",
+): Map<number, number> {
+  const profiles = new Map<number, number>();
+  for (const gear of gears) {
+    addProfile(
+      profiles,
+      gear.finalStats[speedStat] ?? 0,
+      gear.finalStats.TEN ?? 0,
+    );
+  }
+  return profiles;
+}
+
 function statCapAtLevel(gear: Gear, stat: Stat, level: number): number {
   return getGearStatCap(gear, stat, level);
 }
@@ -111,67 +154,6 @@ function baseStatFor(
   return !isSynchronized
     ? value
     : Math.min(value, statCapAtLevel(gear, stat, level));
-}
-
-function materiaAttributeStats(jobId: JobId): Materia["stat"][] {
-  const role = jobSchemas[jobId].role;
-  if (role === "tank") return ["CRT", "DET", "DHT", "SKS", "TEN"];
-  if (role === "healer" || role === "int") return ["CRT", "DET", "DHT", "SPS"];
-  return ["CRT", "DET", "DHT", "SKS"];
-}
-
-function materiaForGrade(stat: Materia["stat"], grade: number): Materia {
-  const value = gameData.materias[stat]?.[grade - 1];
-  if (!Number.isSafeInteger(value) || value! <= 0) {
-    throw new Error("魔晶石 " + stat + " 缺少 " + grade + " 级数值");
-  }
-  return { stat, value: value!, grade };
-}
-
-function highestMateriaGrade(itemLevel: number, unrestricted: boolean): number {
-  const restrictedGrades = gameData.materiaGradeIsRestricted;
-  if (restrictedGrades.length !== materiaGradeRequiredLevels.length + 1) {
-    throw new Error("魔晶石禁断等级数据与等级要求数据长度不一致");
-  }
-  for (let grade = materiaGradeRequiredLevels.length; grade >= 1; grade--) {
-    if (materiaGradeRequiredLevels[grade - 1]! > itemLevel) continue;
-    if (!unrestricted && restrictedGrades[grade] !== false) continue;
-    return grade;
-  }
-  throw new Error(
-    unrestricted
-      ? "装备品级 " + itemLevel + " 没有可用魔晶石等级"
-      : "装备品级 " + itemLevel + " 没有限制孔可用的魔晶石等级",
-  );
-}
-
-function customParameterMelds(gear: Gear): Materia[][] {
-  const slots = gear.customParameters;
-  if (!slots?.length) return [];
-  if (slots.length !== 4) {
-    throw new Error(
-      "自定义参数武器 " + gear.id +
-      " 的槽位数 " + slots.length +
-      " 不是 4，无法按 2 big + 1 small + 1 空槽规则生成候选",
-    );
-  }
-  const result: Materia[][] = [];
-  for (let smallIndex = 0; smallIndex < slots.length; smallIndex++) {
-    const remaining = slots.map((_, index) => index).filter((index) => index !== smallIndex);
-    for (let first = 0; first < remaining.length; first++) {
-      for (let second = first + 1; second < remaining.length; second++) {
-        const bigA = slots[remaining[first]!]!;
-        const bigB = slots[remaining[second]!]!;
-        const small = slots[smallIndex]!;
-        result.push([
-          { stat: bigA.stat, value: bigA.bigValue, grade: 0 },
-          { stat: bigB.stat, value: bigB.bigValue, grade: 0 },
-          { stat: small.stat, value: small.smallValue, grade: 0 },
-        ]);
-      }
-    }
-  }
-  return result;
 }
 
 function addProfile(
@@ -441,14 +423,15 @@ function gearProfiles(
 
 function slotProfiles(
   gears: readonly Gear[],
-  profilesForGear: (gear: Gear) => Map<number, number>,
+  slot: GearSlot,
+  profilesForGear: (gear: Gear, slot: GearSlot) => Map<number, number>,
   signal?: AbortSignal,
 ): Map<number, number> {
   const profiles = new Map<number, number>();
   for (let index = 0; index < gears.length; index++) {
     abortIfNeeded(signal);
     const gear = gears[index]!;
-    for (const [speed, tenacity] of profilesForGear(gear)) {
+    for (const [speed, tenacity] of profilesForGear(gear, slot)) {
       addProfile(profiles, speed, tenacity);
     }
   }
@@ -477,7 +460,7 @@ function updateBestRingProfiles(
 function ringPairProfiles(
   firstCandidates: readonly Gear[],
   secondCandidates: readonly Gear[],
-  profilesForGear: (gear: Gear) => Map<number, number>,
+  profilesForGear: (gear: Gear, slot: GearSlot) => Map<number, number>,
   signal?: AbortSignal,
 ): Map<number, number> {
   if (firstCandidates.length === 0 || secondCandidates.length === 0) return new Map();
@@ -486,7 +469,7 @@ function ringPairProfiles(
   for (let index = 0; index < secondCandidates.length; index++) {
     abortIfNeeded(signal);
     const gear = secondCandidates[index]!;
-    for (const [speed, tenacity] of profilesForGear(gear)) {
+    for (const [speed, tenacity] of profilesForGear(gear, "ring2")) {
       updateBestRingProfiles(secondBySpeed, speed, { itemId: gear.id, tenacity });
     }
   }
@@ -495,7 +478,7 @@ function ringPairProfiles(
   for (let index = 0; index < firstCandidates.length; index++) {
     abortIfNeeded(signal);
     const gear = firstCandidates[index]!;
-    const firstProfiles = profilesForGear(gear);
+    const firstProfiles = profilesForGear(gear, "ring");
     for (const [firstSpeed, firstTenacity] of firstProfiles) {
       for (const [secondSpeed, ranked] of secondBySpeed) {
         const second = gear.unique === true && ranked[0]?.itemId === gear.id
@@ -545,7 +528,15 @@ export function calculateFeasibleGcdTiers(
   const candidatePools = new Map<GearSlot, Gear[]>();
   const emptySlots: GearSlot[] = [];
   const eligiblePoolForSlot = (slot: GearSlot, pool: Gear[]): Gear[] => {
-    const forcedId = config.forcedGear[slot];
+    const forcedValue: unknown = config.forcedGear[slot];
+    try {
+      assertForcedGearValue(forcedValue);
+    } catch (error) {
+      throw new TypeError(
+        `槽位 ${slot} 的强制装备配置无效：${(error as Error).message}`,
+      );
+    }
+    const forcedId = forcedGearId(forcedValue);
     const eligible = forcedId === undefined
       ? pool
       : pool.filter((gear) => gear.id === forcedId);
@@ -596,18 +587,33 @@ export function calculateFeasibleGcdTiers(
 
   options.onProgress?.("正在按装备二进制索引准备 GCD 候选");
 
-  const profilesByGearId = new Map<number, Map<number, number>>();
-  const profilesForGear = (gear: Gear): Map<number, number> => {
-    let profiles = profilesByGearId.get(gear.id);
+  const profilesByGearSlotAndRestriction = new Map<string, Map<number, number>>();
+  const profilesForGear = (gear: Gear, slot: GearSlot): Map<number, number> => {
+    const forcedValue = config.forcedGear[slot];
+    const cacheKey = JSON.stringify([
+      gear.id,
+      slot,
+      forcedGearSignature(forcedValue),
+    ]);
+    let profiles = profilesByGearSlotAndRestriction.get(cacheKey);
     if (profiles === undefined) {
-      profiles = gearProfiles(
-        gear,
-        config,
-        config.jobId,
-        speedStat,
-        jobLevel,
-      );
-      profilesByGearId.set(gear.id, profiles);
+      if (forcedValue !== undefined && typeof forcedValue !== "number") {
+        const candidateMap = new Map<string, MeldedGear>();
+        const candidates = makeGearCandidates(gear, slot, config, candidateMap);
+        profiles = profileForCandidateStats(
+          candidates.map(({ gear: candidateGear }) => candidateGear),
+          speedStat,
+        );
+      } else {
+        profiles = gearProfiles(
+          gear,
+          config,
+          config.jobId,
+          speedStat,
+          jobLevel,
+        );
+      }
+      profilesByGearSlotAndRestriction.set(cacheKey, profiles);
     }
     return profiles;
   };
@@ -619,6 +625,7 @@ export function calculateFeasibleGcdTiers(
       name: slot,
       profiles: slotProfiles(
         candidatePools.get(slot) ?? [],
+        slot,
         profilesForGear,
         options.signal,
       ),

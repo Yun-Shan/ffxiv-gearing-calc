@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { getGearById, concretizeGearStats, jobSchemas } from "@/domain";
 import type {
   Food,
   MeldedGear,
@@ -242,6 +243,27 @@ describe("Result GearTable adapter", () => {
 });
 
 describe("materia slot display", () => {
+  it("marks synced ordinary gear only when it has materia holes, independently of saved melds", () => {
+    const item = { ...gear(10, 0), melds: [] };
+    expect(buildGearTableGearItem(item, "weapon", { jobLevel: 100, syncLevel: 475 }).materiaSync).toBe("disabled");
+    expect(buildGearTableGearItem(item, "weapon", { jobLevel: 100 }).materiaSync).toBeUndefined();
+    expect(buildGearTableGearItem({ ...item, materiaSlots: 0 }, "weapon", { jobLevel: 100, syncLevel: 475 }).materiaSync).toBeUndefined();
+    expect(buildGearTableGearItem({ ...item, materiaSlots: 0, materiaAdvanced: true }, "weapon", { jobLevel: 100, syncLevel: 475 }).materiaSync).toBe("disabled");
+  });
+
+  it.each([39920, 33462])("marks custom gear %i only when a selected parameter is actually truncated", (id) => {
+    const raw = getGearById(id)!;
+    const item: MeldedGear = {
+      ...raw, slot: "weapon", stats: concretizeGearStats(raw.stats, jobSchemas.PLD),
+      melds: [{ stat: "CRT", value: 150, grade: 0 }], finalStats: { CRT: 131 },
+    };
+    const before = structuredClone(item);
+    expect(buildGearTableGearItem(item, "weapon", { jobLevel: 80, syncLevel: 475 }).materiaSync).toBe("capped");
+    expect(buildGearTableGearItem(item, "weapon", { jobLevel: 100 }).materiaSync).toBeUndefined();
+    const low = { ...item, melds: [{ stat: "CRT" as const, value: 50, grade: 0 }] };
+    expect(buildGearTableGearItem(low, "weapon", { jobLevel: 80, syncLevel: 475 }).materiaSync).toBeUndefined();
+    expect(item).toEqual(before);
+  });
   it("preserves original order and marks entries beyond the safe slots without sorting by grade", () => {
     const item = gear(10, 0);
     item.melds = [

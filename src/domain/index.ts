@@ -6,4 +6,6 @@ export * from "./rules";
 export * from "./types";
 export * from "./food-result";
 export * from "./fixed-gearset";
+export * from "./equipment-materia";
+export * from "./custom-equipment-parameters";
 export { jobLevelFor, calculationJobLevelFor } from "./gear-options";

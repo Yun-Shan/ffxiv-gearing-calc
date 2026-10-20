@@ -1,4 +1,6 @@
+import stableStringify from "fast-json-stable-stringify";
 import { useEffect, useMemo, useState } from "react";
+import { cloneForcedGearMap } from "@/domain";
 import type { OptimizationConfig } from "@/domain";
 import type {
   AnalyzeFeasibleGcds,
@@ -25,13 +27,13 @@ export function gcdAnalysisInputFromConfig(
     excludedGearIds: config.excludedGearIds
       ? [...config.excludedGearIds]
       : undefined,
-    forcedGear: { ...config.forcedGear },
+    forcedGear: cloneForcedGearMap(config.forcedGear),
     foodId: config.foodId,
   };
 }
 
 export function gcdAnalysisKey(input: GcdAnalysisInput): string {
-  return JSON.stringify({
+  return stableStringify({
     jobId: input.jobId,
     minItemLevel: input.minItemLevel,
     maxItemLevel: input.maxItemLevel,

@@ -34,6 +34,7 @@ import {
   type SolverGear,
 } from "./context.ts";
 import { withDomainItemSpecialBonusDefaults } from "../item-special-bonus.ts";
+import { assertForcedGearValue, forcedGearEqual } from "../types.ts";
 
 function normalizedCommonSlots(commonSlots: readonly CommonGearSlot[]): {
   slots: string[];
@@ -98,6 +99,14 @@ export async function runJointOptimizationLocally(
     throw new RangeError("联合搜索中所有职业必须使用相同的 damage 或 dps 目标");
   }
   const sharedSlots = normalizedCommonSlots(config.commonSlots);
+  for (const slot of config.commonSlots.flatMap((name): GearSlot[] => name === "rings" ? ["ring", "ring2"] : [name])) {
+    const values = config.jobs.map((job) => job.forcedGear[slot]);
+    values.forEach((value) => assertForcedGearValue(value));
+    if (values.some((value) => typeof value === "object" && "melds" in value) &&
+        values.some((value) => !forcedGearEqual(value, values[0]))) {
+      throw new RangeError(`共享槽位 ${slot} 的逐孔强制配置必须在所有职业中一致`);
+    }
+  }
   const hasSharedRing = config.commonSlots.some(
     (slot) => slot === "rings" || slot === "ring" || slot === "ring2",
   );

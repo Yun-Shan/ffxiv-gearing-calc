@@ -27,17 +27,20 @@ import type {
 import { foodIdentity, foodStatsForJob } from "./equipment-candidates.ts";
 import type { PreparedSearch, SolverFood } from "./context.ts";
 import type { EquipInfo } from "../search/types.ts";
+import { restoreMateriaLayout } from "./materia-layout.ts";
 
 export function candidateGearFromInfo(
   equipment: EquipInfo,
   slot: GearSlot,
-  prepared: Pick<PreparedSearch, "gearsByIdentity">,
+  prepared: Pick<PreparedSearch, "gearsByIdentity" | "forcedGear">,
 ): MeldedGear {
   const canonical = prepared.gearsByIdentity.get(equipmentCandidateIdentity(equipment));
   if (!canonical) {
     throw new Error(`精确搜索返回了未生成的装备候选：${equipment.itemId}`);
   }
-  if (equipment.resistanceAllocation === undefined) return { ...canonical, slot };
+  if (equipment.resistanceAllocation === undefined) {
+    return restoreMateriaLayout({ ...canonical, slot }, prepared.forcedGear?.[slot]);
+  }
   const adjustment = canonical.resistanceWeaponAdjust;
   if (adjustment === undefined) {
     throw new Error(`装备 ${equipment.itemId} 返回了不支持的义军武器属性分配`);

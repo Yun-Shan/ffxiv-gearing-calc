@@ -199,7 +199,9 @@ export function buildComparisonGearTableRows(
     entries.forEach(({ snapshot }, index) => {
       const gear = snapshot.gear.find((candidate) => candidate.slot === slot);
       if (!gear) return;
-      const item = buildGearTableGearItem(gear);
+      const item = buildGearTableGearItem(gear, gear.slot, {
+        jobLevel: snapshot.calculationLevel, syncLevel: snapshot.syncItemLevel,
+      });
       const group = groups.get(item.key);
       if (group) group.indexes.push(index);
       else groups.set(item.key, { item, indexes: [index] });

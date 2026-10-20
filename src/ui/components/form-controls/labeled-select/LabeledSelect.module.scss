@@ -16,6 +16,10 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+.trigger[aria-invalid="true"] .value,
+.invalid .item[data-selected] {
+  color: #b23e4e;
+}
 .icon {
   flex: none;
 }

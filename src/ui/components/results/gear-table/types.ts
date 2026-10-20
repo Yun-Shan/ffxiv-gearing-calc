@@ -17,6 +17,7 @@ export interface GearTableGearItem {
   source?: string;
   stats: Stats;
   melds: readonly GearTableMateria[];
+  materiaSync?: "disabled" | "capped";
   weaponPerformance?: string;
   cappedStats?: readonly Stat[];
   /** Used by the replacement chooser; selected entries remain visible. */

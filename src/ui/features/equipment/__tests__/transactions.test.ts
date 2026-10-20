@@ -61,6 +61,108 @@ const txOptions = {
 };
 
 describe("equipment scope transactions", () => {
+  it("uses the value's gear ID for unique-ring and exclusion rules while retaining its payload", () => {
+    const uniqueMateriaForce = {
+      id: 4,
+      melds: [{ stat: "CRT" as const, value: 54, grade: 12 }, null],
+    };
+    const single: SingleEquipmentDraft = {
+      excludedSources: ["raid/"],
+      excludedGearIds: [4],
+      forcedGear: { ring2: uniqueMateriaForce },
+    };
+    const conflict = applySingleEquipmentAction(
+      single,
+      {
+        type: "set-force",
+        slot: "ring",
+        gearId: 4,
+        forcedValue: uniqueMateriaForce,
+      },
+      lookup,
+    );
+    expect(conflict).toEqual({
+      state: single,
+      accepted: false,
+      reason: "unique-ring",
+    });
+
+    const accepted = applySingleEquipmentAction(
+      { ...single, forcedGear: {} },
+      {
+        type: "set-force",
+        slot: "ring",
+        gearId: 4,
+        forcedValue: uniqueMateriaForce,
+      },
+      lookup,
+    );
+    expect(accepted.state.forcedGear.ring).toEqual(uniqueMateriaForce);
+    expect(accepted.state.forcedGear.ring).not.toBe(uniqueMateriaForce);
+    expect(accepted.state.excludedSources).toEqual([]);
+    expect(accepted.state.excludedGearIds).toEqual([]);
+    const excluded = applySingleEquipmentAction(
+      accepted.state,
+      { type: "add-gear-exclusion", gearId: 4 },
+      lookup,
+    );
+    expect(excluded.state.forcedGear).toEqual({});
+
+    const mismatched = applySingleEquipmentAction(
+      { ...single, forcedGear: {} },
+      {
+        type: "set-force",
+        slot: "ring",
+        gearId: 3,
+        forcedValue: uniqueMateriaForce,
+      },
+      lookup,
+    );
+    expect(mismatched.accepted).toBe(false);
+    expect(mismatched.reason).toBe("invalid-slot");
+  });
+
+  it("stores structured forces in shared and job-private joint scopes", () => {
+    const sharedValue = {
+      id: 1,
+      melds: [null, { stat: "DHT" as const, value: 54, grade: 12 }],
+    };
+    const sharedResult = applyJointEquipmentAction(
+      jointState(),
+      { kind: "joint-shared" },
+      {
+        type: "set-force",
+        slot: "head",
+        gearId: 1,
+        forcedValue: sharedValue,
+      },
+      txOptions,
+    );
+    expect(sharedResult.accepted).toBe(true);
+    expect(sharedResult.state.shared.forcedGear.head).toEqual(sharedValue);
+    expect(sharedResult.state.shared.forcedGear.head).not.toBe(sharedValue);
+
+    const privateValue = {
+      id: 3,
+      melds: [{ stat: "CRT" as const, value: 54, grade: 12 }, null],
+    };
+    const privateResult = applyJointEquipmentAction(
+      jointState(),
+      { kind: "joint-job", jobId: "RDM" },
+      {
+        type: "set-force",
+        slot: "ring2",
+        gearId: 3,
+        forcedValue: privateValue,
+      },
+      txOptions,
+    );
+    expect(privateResult.accepted).toBe(true);
+    expect(privateResult.state.jobs.RDM?.forcedGear.ring2).toEqual(
+      privateValue,
+    );
+  });
+
   it.each(["ring", "ring2"] as const)(
     "rejects duplicate unique rings in %s atomically, but allows non-unique duplicates",
     (slot) => {

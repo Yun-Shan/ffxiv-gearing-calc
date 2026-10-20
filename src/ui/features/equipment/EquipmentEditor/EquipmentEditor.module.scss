@@ -13,7 +13,7 @@
 }
 .editor {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
   gap: 16px;
   min-height: 0;
 }
@@ -104,7 +104,28 @@
   font-size: 0.75rem;
   font-weight: 400;
 }
-
+.list.forcedList {
+  display: grid;
+  grid-template-columns: max-content max-content minmax(
+      0,
+      1fr
+    ) max-content max-content max-content;
+  align-content: start;
+  column-gap: 8px;
+}
+.forcedList > li {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  column-gap: 8px;
+}
+.forcedList .forcedEquipmentRow {
+  grid-column: 1 / -2;
+  grid-template-columns: subgrid;
+}
+.missingForcedEquipment {
+  grid-column: 1 / -2;
+}
 .pickerRow {
   display: flex;
   align-items: center;
@@ -130,11 +151,12 @@
 }
 .sourcePositioner {
   z-index: 1000;
+  width: var(--anchor-width);
 }
 .sourcePopup {
   @include control.popup;
-  min-width: max(var(--anchor-width), 300px);
-  max-width: min(520px, var(--available-width));
+  width: 100%;
+  min-width: 0;
   max-height: min(380px, var(--available-height));
 }
 .sourceTree,

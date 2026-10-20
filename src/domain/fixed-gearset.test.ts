@@ -279,6 +279,42 @@ describe("calculateFixedGearset", () => {
     expect(body.finalStats.DET).toBeGreaterThanOrEqual(selected.stats.DET ?? 0);
   });
 
+  it("accepts legal fixed healer PIE and preserves its explicit slot", () => {
+    const jobId = "WHM" as const;
+    const input = inputFor(jobId);
+    const item = gears.find(
+      (candidate) =>
+        candidate.jobs.includes(jobId) &&
+        candidate.slot === "head" &&
+        candidate.materiaSlots > 0 &&
+        candidate.customParameters === undefined &&
+        candidate.resistanceWeaponAdjust === undefined,
+    );
+    if (item === undefined) throw new Error("缺少治疗职业普通孔装备");
+    const grade =
+      gameData.materiaGradeRequiredLevels.findLastIndex(
+        (requiredLevel, index) =>
+          requiredLevel <= item.level &&
+          gameData.materiaGradeIsRestricted[index + 1] === false,
+      ) + 1;
+    if (grade <= 0) throw new Error("缺少治疗测试装备可用魔晶石等级");
+    const result = calculateFixedGearset(
+      replaceGear(input, "head", {
+        id: item.id,
+        materias: [["PIE", grade]],
+      }),
+    );
+
+    expect(result.gear.find(({ id }) => id === item.id)?.melds).toEqual([
+      {
+        stat: "PIE",
+        grade,
+        value: gameData.materias.PIE![grade - 1],
+        slotIndex: 0,
+      },
+    ]);
+  });
+
   it("accepts two copies of a non-unique ring and rejects a duplicate unique ring", () => {
     const input = inputFor();
     const nonUniqueRing = gears.find((candidate) =>
@@ -483,6 +519,14 @@ describe("calculateFixedGearset", () => {
     if (manderville === undefined) throw new Error("缺少自定义参数测试装备");
     const noCustomStats = replaceGear(input, "weapon", { id: manderville.id, materias: [] });
     expect(() => calculateFixedGearset(noCustomStats)).toThrow("缺少完整参数");
+    const customWithOrdinaryMateria = replaceGear(input, "weapon", {
+      id: manderville.id,
+      materias: [["CRT", 1]],
+      customStats: {},
+    });
+    expect(() => calculateFixedGearset(customWithOrdinaryMateria)).toThrow(
+      "不能同时配置普通魔晶石",
+    );
     const unsupportedCustomStat = replaceGear(input, "weapon", {
       id: manderville.id,
       materias: [],
@@ -506,6 +550,15 @@ describe("calculateFixedGearset", () => {
       candidate.jobs.includes(input.jobId) && candidate.resistanceWeaponAdjust !== undefined,
     );
     if (resistance === undefined) throw new Error("缺少 Resistance 测试装备");
+    const defaultResistance = replaceGear(input, "weapon", {
+      id: resistance.id,
+      materias: [],
+    });
+    expect(
+      calculateFixedGearset(defaultResistance).gear.find(
+        ({ id }) => id === resistance.id,
+      )?.melds,
+    ).toEqual([]);
     const resistanceBase = concretizeGearStats(resistance.stats, jobSchemas[input.jobId]);
     const invalidResistanceStat = replaceGear(input, "weapon", {
       id: resistance.id,

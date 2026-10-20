@@ -1,5 +1,6 @@
 import { jobSchemas, type JobId } from "@/domain";
 import { EquipmentIcon } from "@/ui/components/equipment-icon/EquipmentIcon";
+import { SyncIcon } from "@/ui/components/sync-icon/SyncIcon";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
 import { itemIconId } from "@/ui/services/item-icons";
 import { useState, type CSSProperties } from "react";
@@ -292,7 +293,7 @@ export function GearTableView({
                   {item.kind === "summary"
                     ? ""
                     : item.kind === "food"
-                      ? "生产制造"
+                      ? "生产制作"
                       : (item.source ?? "上游未标注")}
                 </td>
                 <td>
@@ -303,9 +304,11 @@ export function GearTableView({
                   </span>
                 </td>
                 <td>
-                  {item.kind === "gear" && item.melds.length > 0 && (
+                  {item.kind === "gear" && (item.melds.length > 0 || item.materiaSync) && (
                     <div className={styles.melds}>
-                      {item.melds.map(({ stat, value, isOvermeld }, index) => (
+                      {item.materiaSync && <SyncIcon className={styles.syncIcon}
+                        aria-label={item.materiaSync === "disabled" ? "品级同步后魔晶石不生效" : "自定义属性因同步被截断"} />}
+                      {item.materiaSync !== "disabled" && item.melds.map(({ stat, value, isOvermeld }, index) => (
                         <span
                           className={`${styles.meld} ${isOvermeld ? styles.overmeld : ""}`}
                           title={isOvermeld ? "禁忌镶嵌" : undefined}
