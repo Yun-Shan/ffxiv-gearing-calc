@@ -72,6 +72,9 @@ export function SearchRangeSectionFields({
           onChange={(value) =>
             onChange({
               ...range,
+              minItemLevel: value === "disabled"
+                ? range.minItemLevel
+                : Math.min(range.minItemLevel, Math.floor(Number(value) / 10) * 10),
               sync:
                 value === "disabled"
                   ? { mode: "disabled" }
