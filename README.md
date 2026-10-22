@@ -30,6 +30,12 @@ npm run build
 npm run preview
 ```
 
+## GitHub Pages 部署
+
+`.github/workflows/deploy-pages.yml` 仅在推送到 `main` 且包含 `src/**` 文件变更时自动构建并部署；只修改文档、工作流或其他目录不会触发。首次使用需在仓库 Settings → Pages 将 Source 设置为 GitHub Actions，然后推送包含 `src/**` 变更的提交。
+
+流程使用 Node.js 24、`npm ci` 和 `npm run build`，上传 `dist` 后部署到 `github-pages` 环境，无需个人访问令牌。Pages 的站点路径通过官方配置 action 传入构建，兼容仓库子目录与自定义域名；Pages 构建使用 hash 路由，支持刷新和直接打开页面。本地开发仍使用原有路径。
+
 ## 验证与性能验收
 
 按[工程规则](docs/rules/工程规则.md)选择与改动相关的检查：

@@ -1,7 +1,7 @@
 import { Dialog } from '@base-ui/react/dialog';
 import { type MouseEvent, useState } from 'react';
 import { Breadcrumbs } from '@/ui/components/breadcrumbs/Breadcrumbs';
-import { navigateTo } from '@/ui/services/navigation';
+import { navigateTo, routeHref } from '@/ui/services/navigation';
 import styles from './LaboratoryPage.module.scss';
 
 type LabNoticeType = 'warning' | 'info';
@@ -50,7 +50,7 @@ function Card({
   onOpen(event: MouseEvent<HTMLAnchorElement>): void;
 }) {
   return (
-    <a href={href} className={styles.card} onClick={onOpen}>
+    <a href={routeHref(href)} className={styles.card} onClick={onOpen}>
       <strong className={styles.cardTitle}>{title}</strong>
       <span className={styles.cardSummary}>{summary}</span>
       <span className={styles.cardDetails}>{details}</span>

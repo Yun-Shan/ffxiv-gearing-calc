@@ -66,13 +66,14 @@ export function App() {
       )
         return;
       const url = new URL(link.href);
-      if (url.origin !== location.origin || !Object.hasOwn(routes, url.pathname))
+      const path = url.hash.startsWith("#/") ? url.hash.slice(1) : url.pathname;
+      if (url.origin !== location.origin || !Object.hasOwn(routes, path))
         return;
       event.preventDefault();
-      if (url.pathname === "/single" && link.closest('nav[aria-label="主导航"]')) {
+      if (path === "/single" && link.closest('nav[aria-label="主导航"]')) {
         setSingleVisit((visit) => visit + 1);
       }
-      navigateTo(url.pathname);
+      navigateTo(path);
     };
     const unsubscribe = subscribeNavigation(update);
     document.addEventListener("click", navigate);

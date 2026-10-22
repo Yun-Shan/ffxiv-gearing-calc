@@ -19,6 +19,7 @@ import {
   type SearchHistoryRecord,
 } from "@/ui/services/search-history";
 import { parseReferenceGearset } from "@/ui/services/reference-gearset-share";
+import { routeHref } from "@/ui/services/navigation";
 import { resolveImportedGearset } from "@/ui/services/fixed-gearset-import";
 import {
   historyComparisonEntry,
@@ -291,7 +292,7 @@ export function GearComparisonPage({
           <Breadcrumbs items={["实验室", "装备对比"]} />
           <h1>同职业配装对比</h1>
         </div>
-        <a href="/lab">返回实验室</a>
+        <a href={routeHref("/lab")}>返回实验室</a>
       </header>
 
       {capacityPreview && (

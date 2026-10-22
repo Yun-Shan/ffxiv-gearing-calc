@@ -1,4 +1,5 @@
 import styles from "./AppHeader.module.scss";
+import { routeHref } from "@/ui/services/navigation";
 
 export type AppPage =
   | "single"
@@ -34,7 +35,7 @@ function NavLinks({
   return items.map((item) => (
     <a
       key={item.page}
-      href={item.href}
+      href={routeHref(item.href)}
       className={`${styles.navLink} ${page === item.page ? styles.active : ""}`}
       aria-current={page === item.page ? "page" : undefined}
     >
@@ -47,7 +48,7 @@ export function AppHeader({ page }: { page: AppPage }) {
   return (
     <header className={styles.header}>
       <div className={styles.brand}>
-        <img className={styles.mark} src="/icons/logo-128.png" alt="" />
+        <img className={styles.mark} src={`${import.meta.env.BASE_URL}icons/logo-128.png`} alt="" />
         <div className={styles.name}>
           <span>最终幻想14</span>
           <span>自动配装器</span>

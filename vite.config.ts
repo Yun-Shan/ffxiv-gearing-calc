@@ -16,6 +16,7 @@ function isWithin(root: string, path: string): boolean {
 }
 
 export default defineConfig({
+  base: process.env.PAGES_BASE_PATH ?? "/",
   plugins: [react()],
   resolve: {
     alias: {
