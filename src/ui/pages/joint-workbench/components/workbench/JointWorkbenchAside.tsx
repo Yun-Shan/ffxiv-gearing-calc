@@ -15,6 +15,10 @@ import { useJointWorkbench } from "../../useJointWorkbenchController";
 const jointSearchNotices = [
   {
     type: "warning",
+    message: "目前联合搜索算法还有待优化，部分高压力条件可能耗时较长",
+  },
+  {
+    type: "warning",
     message:
       "目前非共享槽位的唯一装备可能被多个职业同时选用，导致实际使用时较为麻烦(需要通过陆行鸟背包或者雇员来回交换)",
   },
