@@ -1,4 +1,4 @@
-import { Button } from "@base-ui/react/button";
+import { FeedbackEntryButton } from "@/ui/components/feedback/components/feedback-entry-button/FeedbackEntryButton";
 import type { ReactNode } from "react";
 
 export interface FaqEntry {
@@ -17,9 +17,10 @@ export const faqEntries: readonly FaqEntry[] = [
           <li>穿戴等级不满 50 级且品级不满 90 的装备：低等级副本装、商店装、纯幻化装。</li>
           <li>部分品级 90 的 4.0 特职任务校服。</li>
           <li>所有军票兑换的装备。</li>
+          <li>50–70 级肝武（上古武器、元灵武器、优雷卡武器）的自定义属性不参与计算。</li>
+          <li>优雷卡专用元素加持不参与计算</li>
         </ul>
-        <p>50–70 级肝武（上古武器、元灵武器、禁地兵装）的自定义属性不参与计算。</p>
-        <p>其他未列出的所有装备和自定义属性肝武都参与搜索。</p>
+        <p>其他未列出的所有装备和自定义属性肝武（包括义军武器、曼德维尔武器、幻境武器）都参与搜索。</p>
       </>
     ),
   },
@@ -57,7 +58,7 @@ export const faqEntries: readonly FaqEntry[] = [
       <p>
         尽管已经为尽可能保证最优解做了很多的努力，但是由于目前并未在数学上进行形式化验证，因此不能从数学上绝对保证是最优解。
         目前搜索会先覆盖当前条件约束下的装备与镶嵌选择， 求解后再按同一套公式逐项复算属性、限制和期望伤害，并做完整的最优性复核，尽量确认没有更优的可行方案。
-        如果您发现了伤害更高的配装，欢迎通过<Button type="button">反馈入口</Button>提交搜索条件、本项目结果和更高伤害配装的配装器分享链接。
+        如果您发现了伤害更高的配装，欢迎通过<FeedbackEntryButton>反馈入口</FeedbackEntryButton>提交搜索条件、本项目结果和更高伤害配装的配装器分享链接。
       </p>
     ),
   },

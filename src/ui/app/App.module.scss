@@ -1,8 +1,36 @@
 .root {
+  position: relative;
   height: 100dvh;
   display: flex;
   flex-direction: column;
   min-height: 0;
+}
+.viewportWarning {
+  display: none;
+  position: absolute;
+  z-index: 70;
+  top: 8px;
+  left: 50vw;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  margin: 0;
+  padding: 8px 14px;
+  border: 1px solid #e7c47d;
+  border-radius: 5px;
+  background: #fff5df;
+  color: #946518;
+  font-size: 18px;
+  line-height: 1.5;
+  text-align: center;
+  pointer-events: none;
+}
+
+@media (width < 1000px) {
+  .viewportWarning {
+    display: block;
+  }
 }
 .route {
   display: flex;

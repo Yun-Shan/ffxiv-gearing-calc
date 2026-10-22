@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
 import styles from "./SidePanel.module.scss";
 function Root({
   children,
@@ -62,9 +63,13 @@ function Actions({ children }: { children: ReactNode }) {
   return <div className={styles.actions}>{children}</div>;
 }
 function Footer({ children }: { children?: ReactNode }) {
+  const { openAdvancedSettings } = useFeedback();
   return (
     <footer className={styles.footer}>
-      <div>{children}</div>
+      <div>
+        {children}
+        <button type="button" onClick={openAdvancedSettings}>高级设置</button>
+      </div>
       {/*<span>纯前端计算 · 可离线运行</span>*/}
     </footer>
   );

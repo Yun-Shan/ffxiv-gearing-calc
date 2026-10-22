@@ -85,6 +85,9 @@ export function App() {
   return (
     <FeedbackProvider>
       <div className={styles.root}>
+        <p className={styles.viewportWarning} role="status">
+          当前屏幕过小，可能无法正常使用
+        </p>
         <AppHeader page={page} />
         <div className={styles.route}>
           <RouteView key={page === "single" ? `single-${singleVisit}` : page} page={page} />

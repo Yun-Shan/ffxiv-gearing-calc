@@ -50,6 +50,14 @@
   border-color: #a4dcd9;
   color: white;
 }
+.feedbackButton {
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+}
 .navLink:focus-visible {
   outline: 3px solid #49a9b4;
   outline-offset: -4px;

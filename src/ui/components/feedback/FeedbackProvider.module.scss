@@ -53,3 +53,23 @@
 
 .toastTitle { margin: 0; font-size: 13px; line-height: 1.5; font-weight: 600; }
 .dialogTitle { margin: 0 0 12px; font-size: 18px; line-height: 1.4; }
+
+.feedbackDescription { margin: 0 0 16px; color: #657083; font-size: 14px; }
+.feedbackEntries { display: grid; gap: 12px; }
+.feedbackCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  border: 1px solid #bacbc4;
+  border-radius: 6px;
+  background: #f8faf8;
+  color: #304c48;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  &:hover { background: #edf6f3; border-color: #3a8f84; }
+  &:focus-visible { outline: 3px solid #49a9b4; outline-offset: 2px; }
+  svg { width: 24px; height: 24px; }
+}

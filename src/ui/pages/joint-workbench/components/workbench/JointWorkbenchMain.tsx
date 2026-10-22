@@ -1,5 +1,4 @@
 import { resultReferenceUrl } from "@/ui/services/reference-gearset-share";
-import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
 import { jobIconUrl } from "@/ui/services/icons";
 import { useEffect, useRef } from "react";
 import { Tabs } from "@base-ui/react/tabs";
@@ -199,14 +198,10 @@ export function SideRows({
 }
 
 export function SideFooter({ onHistory }: { onHistory(): void }) {
-  const { openAdvancedSettings } = useFeedback();
   return (
     <SidePanel.Footer>
       <button type="button" onClick={onHistory}>
         搜索记录
-      </button>
-      <button type="button" onClick={openAdvancedSettings}>
-        高级设置
       </button>
     </SidePanel.Footer>
   );

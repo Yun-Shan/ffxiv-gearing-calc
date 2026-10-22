@@ -1,5 +1,6 @@
 import styles from "./AppHeader.module.scss";
 import { routeHref } from "@/ui/services/navigation";
+import { FeedbackEntryButton } from "@/ui/components/feedback/components/feedback-entry-button/FeedbackEntryButton";
 
 export type AppPage =
   | "single"
@@ -58,6 +59,7 @@ export function AppHeader({ page }: { page: AppPage }) {
         <NavLinks items={primaryNavItems} page={page} />
         <span className={styles.spacer} aria-hidden="true" />
         <NavLinks items={secondaryNavItems} page={page} />
+        <FeedbackEntryButton className={`${styles.navLink} ${styles.feedbackButton}`}>支持与反馈</FeedbackEntryButton>
       </nav>
     </header>
   );

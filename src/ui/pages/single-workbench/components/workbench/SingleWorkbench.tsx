@@ -7,10 +7,8 @@ import {
   type ReactNode,
 } from "react";
 import { jobSchemas } from "@/domain";
-import { WorkbenchLayout } from "@/ui/components/workbench-layout/WorkbenchLayout";
 import { SidePanel } from "@/ui/components/side-panel/SidePanel";
 import { JobSelection } from "@/ui/components/job-selection/JobSelection";
-import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
 import {
   SearchHistory,
   HistoryOverlay,
@@ -75,7 +73,6 @@ function Summary({ draft }: { draft: SingleDraft }) {
 function useSingleWorkbenchValue() {
   const controller = useSingleController();
   const { state } = controller;
-  const feedback = useFeedback();
   const [historyOpen, setHistoryOpen] = useState(false);
   const draft =
     state.phase === "conditions"
@@ -129,7 +126,6 @@ function useSingleWorkbenchValue() {
   return {
     controller,
     state,
-    feedback,
     historyOpen,
     setHistoryOpen,
     draft,
@@ -240,7 +236,6 @@ export function SingleWorkbenchAside() {
     draft,
     validation,
     submitState,
-    feedback,
     setHistoryOpen,
   } = useWorkbench();
   return (
@@ -289,9 +284,6 @@ export function SingleWorkbenchAside() {
         {state.phase !== "selection" && (
           <button onClick={() => setHistoryOpen(true)}>搜索记录</button>
         )}
-        <button onClick={feedback.openAdvancedSettings}>
-          高级设置
-        </button>
       </SidePanel.Footer>
     </SidePanel>
   );
