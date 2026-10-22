@@ -4,12 +4,12 @@ import {
   concretizeGearStats,
   effectiveGearSyncLevel,
   getGearStatCap,
-  getSpeedStat,
 } from "./rules.ts";
 import {
   highestMateriaGrade,
   materiaForGrade,
   mergeCandidateStats,
+  forcedAllowedMateriaStats,
 } from "./optimizer/equipment-candidates.ts";
 import {
   applyItemSpecialBonus,
@@ -31,7 +31,7 @@ export function prepareEquipmentMateria(
   const job = jobSchemas[config.jobId];
   const jobLevel = calculationJobLevelFor(config);
   const syncLevel = effectiveGearSyncLevel(gear, jobLevel, config.syncLevel);
-  const stats: Materia["stat"][] = ["CRT", "DET", "DHT", getSpeedStat(job)];
+  const stats = forcedAllowedMateriaStats(config.jobId);
   const resolvedGear = { ...gear, stats: concretizeGearStats(gear.stats, job) };
   const custom =
     gear.customParameters !== undefined ||

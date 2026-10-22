@@ -33,6 +33,7 @@ const items = new Map([
   [2, gear(2, "head", "crafted/alpha")],
   [3, gear(3, "ring")],
   [4, { ...gear(4, "ring"), unique: true }],
+  [5, gear(5, "head", "crafted/beta")],
 ]);
 const lookup = (id: number) => items.get(id);
 const jobSlots: Partial<Record<JobId, readonly GearSlot[]>> = {
@@ -61,6 +62,170 @@ const txOptions = {
 };
 
 describe("equipment scope transactions", () => {
+  it("atomically imports a replacement pair of unique rings and preserves unrelated constraints", () => {
+    const original: SingleEquipmentDraft = {
+      excludedSources: ["old/"],
+      excludedGearIds: [91],
+      forcedGear: { head: 1, ring: 4, ring2: 3 },
+    };
+    const result = applySingleEquipmentAction(
+      original,
+      {
+        type: "import-forces",
+        forces: { ring: 3, ring2: 4 },
+      },
+      lookup,
+    );
+    expect(result).toMatchObject({ accepted: true });
+    expect(result.state.forcedGear).toEqual({ head: 1, ring: 3, ring2: 4 });
+    expect(result.state.excludedSources).toEqual(["old/"]);
+    expect(result.state.excludedGearIds).toEqual([91]);
+    expect(original.forcedGear).toEqual({ head: 1, ring: 4, ring2: 3 });
+  });
+
+  it("rolls back all imported single forces if any ring conflicts or a slot is invalid", () => {
+    const original: SingleEquipmentDraft = {
+      excludedSources: ["old/"],
+      excludedGearIds: [],
+      forcedGear: { head: 1, ring2: 4 },
+    };
+    const conflict = applySingleEquipmentAction(
+      original,
+      { type: "import-forces", forces: { head: 2, ring: 4 } },
+      lookup,
+    );
+    expect(conflict).toEqual({
+      state: original,
+      accepted: false,
+      reason: "unique-ring",
+    });
+    const invalid = applySingleEquipmentAction(
+      original,
+      { type: "import-forces", forces: { head: 3 } },
+      lookup,
+    );
+    expect(invalid.state).toBe(original);
+    expect(invalid.accepted).toBe(false);
+    expect(invalid.reason).toBe("invalid-slot");
+  });
+
+  it("imports only shared targets, clearing those targets first and retaining private forces", () => {
+    const state = jointState({
+      shared: {
+        excludedSources: ["crafted/"],
+        excludedGearIds: [2],
+        forcedGear: { head: 1, ring: 3 },
+      },
+      jobs: {
+        RDM: { excludedGearIds: [], forcedGear: { ring2: 3 } },
+        GNB: { excludedGearIds: [], forcedGear: { ring2: 3 } },
+      },
+    });
+    const result = applyJointEquipmentAction(
+      state,
+      { kind: "joint-shared" },
+      { type: "import-forces", forces: { head: 2 } },
+      txOptions,
+    );
+    expect(result.accepted).toBe(true);
+    expect(result.state.shared.forcedGear).toEqual({ head: 2, ring: 3 });
+    expect(result.state.shared.excludedSources).toEqual([]);
+    expect(result.state.shared.excludedGearIds).toEqual([]);
+    expect(result.state.jobs.RDM?.forcedGear).toEqual({ ring2: 3 });
+  });
+
+  it("rolls back shared imports rejected by private unique-ring conflicts or job exclusions", () => {
+    const uniqueConflict = jointState({
+      commonSlots: ["head", "ring"],
+      jobs: {
+        RDM: { excludedGearIds: [], forcedGear: { ring2: 4 } },
+        GNB: { excludedGearIds: [], forcedGear: {} },
+      },
+    });
+    const ringResult = applyJointEquipmentAction(
+      uniqueConflict,
+      { kind: "joint-shared" },
+      { type: "import-forces", forces: { head: 2, ring: 4 } },
+      txOptions,
+    );
+    expect(ringResult).toEqual({
+      state: uniqueConflict,
+      accepted: false,
+      reason: "unique-ring",
+    });
+
+    const restricted = jointState({
+      jobs: {
+        RDM: { excludedGearIds: [2], forcedGear: {} },
+        GNB: { excludedGearIds: [], forcedGear: {} },
+      },
+    });
+    const excludedResult = applyJointEquipmentAction(
+      restricted,
+      { kind: "joint-shared" },
+      { type: "import-forces", forces: { head: 2 } },
+      txOptions,
+    );
+    expect(excludedResult).toEqual({
+      state: restricted,
+      accepted: false,
+      reason: "job-restriction",
+    });
+  });
+
+  it("imports only private targets for one job and rolls back shared restrictions", () => {
+    const state = jointState({
+      commonSlots: ["head"],
+      shared: {
+        excludedSources: [],
+        excludedGearIds: [],
+        forcedGear: { head: 1 },
+      },
+      jobs: { RDM: { excludedGearIds: [], forcedGear: { ring2: 3 } } },
+    });
+    const result = applyJointEquipmentAction(
+      state,
+      { kind: "joint-job", jobId: "RDM" },
+      { type: "import-forces", forces: { ring2: 3, head: 5 } },
+      txOptions,
+    );
+    expect(result).toEqual({
+      state,
+      accepted: false,
+      reason: "not-private",
+    });
+
+    const valid = applyJointEquipmentAction(
+      state,
+      { kind: "joint-job", jobId: "RDM" },
+      { type: "import-forces", forces: { ring2: 3 } },
+      txOptions,
+    );
+    expect(valid.accepted).toBe(true);
+    expect(valid.state.jobs.RDM?.forcedGear).toEqual({ ring2: 3 });
+    expect(valid.state.shared.forcedGear).toEqual({ head: 1 });
+
+    const restricted = jointState({
+      commonSlots: ["head"],
+      shared: {
+        excludedSources: ["raid/"],
+        excludedGearIds: [],
+        forcedGear: { head: 1 },
+      },
+    });
+    const restrictionResult = applyJointEquipmentAction(
+      restricted,
+      { kind: "joint-job", jobId: "RDM" },
+      { type: "import-forces", forces: { ring2: 4 } },
+      txOptions,
+    );
+    expect(restrictionResult).toEqual({
+      state: restricted,
+      accepted: false,
+      reason: "shared-restriction",
+    });
+  });
+
   it("uses the value's gear ID for unique-ring and exclusion rules while retaining its payload", () => {
     const uniqueMateriaForce = {
       id: 4,

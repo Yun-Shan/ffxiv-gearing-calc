@@ -16,6 +16,8 @@ export const gearSlotLabels: Record<GearSlot, string> = {
   ring2: "戒指2",
 };
 
+export const gearSlotOrder = Object.keys(gearSlotLabels) as GearSlot[];
+
 export const commonGearSlotLabels: Record<CommonGearSlot, string> = {
   ...gearSlotLabels,
   ring: "戒指 1",

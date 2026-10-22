@@ -40,6 +40,7 @@ export function SingleEquipmentRestrictions({
         );
         if (result.accepted) onChange({ ...draft, equipment: result.state });
         else if (result.reason === "unique-ring") notify("不能同时强制装备两枚相同的唯一戒指。", "warning");
+        return result.accepted;
       }}
     >
       <EquipmentEditor materiaConfig={compileSingleDraft(draft)} />

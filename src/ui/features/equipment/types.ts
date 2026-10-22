@@ -52,6 +52,7 @@ export type EquipmentAction =
       gearId: number;
       forcedValue?: ForcedGearValue;
     }
+  | { type: "import-forces"; forces: ForcedGearMap }
   | { type: "clear-force"; slot: GearSlot };
 
 export interface EquipmentGearCatalog {

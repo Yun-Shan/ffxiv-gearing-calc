@@ -94,7 +94,7 @@ export function useJointWorkbenchController() {
 
   function updateSharedEquipmentAction(action: EquipmentAction) {
     const current = phaseRef.current;
-    if (current.phase !== "conditions") return;
+    if (current.phase !== "conditions") return false;
     const applied = applyJointEquipmentAction(
       current.draft.shared.equipment,
       { kind: "joint-shared" },
@@ -106,17 +106,18 @@ export function useJointWorkbenchController() {
     );
     if (!applied.accepted) {
       notify(applied.reason === "unique-ring" ? "不能同时强制装备两枚相同的唯一戒指。" : applied.reason === "job-restriction" ? "该装备被职业专属限制排除，无法设为共享强制装备。" : "当前共享部位不允许此装备操作。", "warning");
-      return;
+      return false;
     }
     updateSharedDraft((draft) => ({
       ...draft,
       shared: { ...draft.shared, equipment: applied.state },
     }));
+    return true;
   }
 
   function updateJobEquipmentAction(jobId: JobId, action: EquipmentAction) {
     const current = phaseRef.current;
-    if (current.phase !== "conditions") return;
+    if (current.phase !== "conditions") return false;
     const applied = applyJointEquipmentAction(
       current.draft.shared.equipment,
       { kind: "joint-job", jobId },
@@ -133,12 +134,13 @@ export function useJointWorkbenchController() {
         ? "该装备与共享限制冲突，未应用职业专属设置。"
         : "该装备类型目前没有可用的私有部位，未应用设置。";
       notify(message, "warning");
-      return;
+      return false;
     }
     updateSharedDraft((draft) => ({
       ...draft,
       shared: { ...draft.shared, equipment: applied.state },
     }));
+    return true;
   }
 
   function updateSharedSlots(next: JointEquipmentDraft) {

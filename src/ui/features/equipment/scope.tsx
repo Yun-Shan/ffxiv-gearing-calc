@@ -15,7 +15,7 @@ export interface EquipmentScopeValue {
   draft: EquipmentScopeDraft;
   catalog: EquipmentGearCatalog;
   readOnly: boolean;
-  dispatch(action: EquipmentAction): void;
+  dispatch(action: EquipmentAction): boolean | void;
 }
 
 const EquipmentScopeContext = createContext<EquipmentScopeValue | undefined>(
@@ -33,7 +33,7 @@ export function EquipmentScopeProvider({
   scope: EquipmentScope;
   draft: EquipmentScopeDraft;
   catalog: EquipmentGearCatalog;
-  onAction: (action: EquipmentAction) => void;
+  onAction: (action: EquipmentAction) => boolean | void;
   readOnly?: boolean;
   children: ReactNode;
 }) {

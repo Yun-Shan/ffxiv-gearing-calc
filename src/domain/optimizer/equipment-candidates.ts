@@ -167,7 +167,7 @@ function forcedMateriaCapacity(gear: Gear): number {
   return gear.materiaAdvanced === true ? 5 : gear.materiaSlots;
 }
 
-function materiaAllowedAtPosition(
+export function materiaAllowedAtPosition(
   gear: Gear,
   index: number,
   materia: Materia,
@@ -184,7 +184,7 @@ function materiaAllowedAtPosition(
   return index <= gear.materiaSlots || !restrictedGrades[grade];
 }
 
-function forcedAllowedMateriaStats(jobId: JobId): Materia["stat"][] {
+export function forcedAllowedMateriaStats(jobId: JobId): Materia["stat"][] {
   const stats = materiaAttributeStats(jobId);
   if (jobSchemas[jobId].role === "healer") stats.push("PIE");
   return stats;

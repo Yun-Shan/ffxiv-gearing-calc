@@ -123,6 +123,12 @@
   grid-column: 1 / -2;
   grid-template-columns: subgrid;
 }
+.list.forcedList[data-preview] {
+  grid-template-columns: max-content max-content minmax(0, 1fr) max-content max-content;
+}
+.forcedList[data-preview] .forcedEquipmentRow {
+  grid-column: 1 / -1;
+}
 .missingForcedEquipment {
   grid-column: 1 / -2;
 }
@@ -132,11 +138,15 @@
   gap: 8px;
   min-width: 0;
 }
+
+.pickerRow > button {
+  flex: 0 0 auto;
+}
 .slotFilter {
   flex: 0 0 88px;
   width: 88px;
 }
-.pickerRow > :not(.slotFilter) {
+.pickerRow > :not(.slotFilter):not(button) {
   flex: 1;
   min-width: 0;
 }

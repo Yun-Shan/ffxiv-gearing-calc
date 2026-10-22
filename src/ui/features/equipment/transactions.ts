@@ -78,12 +78,41 @@ function conflictsWithUniqueRing(
   );
 }
 
-function actionValue(action: Extract<EquipmentAction, { type: "set-force" }>): ForcedGearValue {
+function actionValue(
+  action: Extract<EquipmentAction, { type: "set-force" }>,
+): ForcedGearValue {
   return cloneForcedGearValue(action.forcedValue ?? action.gearId)!;
 }
 
-function validForceAction(action: Extract<EquipmentAction, { type: "set-force" }>): boolean {
+function validForceAction(
+  action: Extract<EquipmentAction, { type: "set-force" }>,
+): boolean {
   return forcedGearId(action.forcedValue ?? action.gearId) === action.gearId;
+}
+
+function validImportedForces(
+  forces: ForcedGearMap,
+  lookup: GearLookup,
+): boolean {
+  return Object.entries(forces).every(([rawSlot, value]) => {
+    const slot = rawSlot as GearSlot;
+    const id = forcedGearId(value);
+    const gear = id === undefined ? undefined : lookup(id);
+    return (
+      gear !== undefined && (slot === "ring2" ? "ring" : slot) === gear.slot
+    );
+  });
+}
+
+function importedForceActions(forces: ForcedGearMap) {
+  return (Object.entries(forces) as [GearSlot, ForcedGearValue][]).map(
+    ([slot, forcedValue]) => ({
+      type: "set-force" as const,
+      slot,
+      gearId: forcedGearId(forcedValue)!,
+      forcedValue,
+    }),
+  );
 }
 
 function applyLocalAction<
@@ -146,6 +175,20 @@ export function applySingleEquipmentAction(
   action: EquipmentAction,
   lookup: GearLookup,
 ): EquipmentActionResult<SingleEquipmentDraft> {
+  if (action.type === "import-forces") {
+    if (!validImportedForces(action.forces, lookup))
+      return { state: draft, accepted: false, reason: "invalid-slot" };
+    let staged = draft;
+    for (const slot of Object.keys(action.forces) as GearSlot[])
+      staged = applyLocalAction(staged, { type: "clear-force", slot }, lookup);
+    for (const setAction of importedForceActions(action.forces)) {
+      const applied = applySingleEquipmentAction(staged, setAction, lookup);
+      if (!applied.accepted)
+        return { state: draft, accepted: false, reason: applied.reason };
+      staged = applied.state;
+    }
+    return { state: staged, accepted: true };
+  }
   if (action.type === "set-force" && !validForceAction(action))
     return { state: draft, accepted: false, reason: "invalid-slot" };
   if (
@@ -211,8 +254,7 @@ function pruneJobForceByGearIds(
   ][]) {
     const forcedGear = cloneForcedGearMap(existing.forcedGear);
     for (const [slot, value] of Object.entries(forcedGear)) {
-      if (forcedGearId(value) === gearId)
-        delete forcedGear[slot as GearSlot];
+      if (forcedGearId(value) === gearId) delete forcedGear[slot as GearSlot];
     }
     jobs[jobId] = { ...existing, forcedGear };
   }
@@ -229,6 +271,34 @@ export function applyJointEquipmentAction(
     sharedSlots?: readonly GearSlot[];
   },
 ): EquipmentActionResult<JointEquipmentDraft> {
+  if (action.type === "import-forces") {
+    if (!validImportedForces(action.forces, options.lookup))
+      return { state, accepted: false, reason: "invalid-slot" };
+    let staged = state;
+    for (const slot of Object.keys(action.forces) as GearSlot[]) {
+      const cleared = applyJointEquipmentAction(
+        staged,
+        scope,
+        { type: "clear-force", slot },
+        options,
+      );
+      if (!cleared.accepted)
+        return { state, accepted: false, reason: cleared.reason };
+      staged = cleared.state;
+    }
+    for (const setAction of importedForceActions(action.forces)) {
+      const applied = applyJointEquipmentAction(
+        staged,
+        scope,
+        setAction,
+        options,
+      );
+      if (!applied.accepted)
+        return { state, accepted: false, reason: applied.reason };
+      staged = applied.state;
+    }
+    return { state: staged, accepted: true };
+  }
   if (action.type === "set-force" && !validForceAction(action))
     return { state, accepted: false, reason: "invalid-slot" };
   if (action.type === "set-source-exclusions") {

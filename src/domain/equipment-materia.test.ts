@@ -14,6 +14,30 @@ const crafted = gearNamed("宫廷爱人御敌发夹");
 const weapon = gearNamed("狂奔长刀");
 
 describe("equipment materia selection description", () => {
+  it.each([['PLD', 'TEN'], ['WHM', 'PIE']] as const)("offers legal %s forced %s choices with matching totals", (jobId, stat) => {
+    const equipment = gears.find((item) => item.jobs.includes(jobId) && item.level === 770 && item.materiaSlots === 2)!;
+    const prepared = prepareEquipmentMateria(equipment, { jobId });
+    const choice = prepared.slots[0]!.options.find((option) => option.stat === stat)!;
+    expect(choice).toBeDefined();
+    const baseline = evaluateEquipmentMateria(prepared).attributes.find((item) => item.stat === stat)!;
+    const selected = evaluateEquipmentMateria(prepared, [stat]).attributes.find((item) => item.stat === stat)!;
+    expect(selected.total).toBe(baseline.total + choice.value);
+    expect(selected.current).toBe(Math.min(selected.cap, baseline.current + choice.value));
+    expect(prepared.slots[0]!.options.some((option) => option.stat === (stat === 'TEN' ? 'PIE' : 'TEN'))).toBe(false);
+  });
+
+  it.each([['PLD', 'TEN'], ['WHM', 'PIE']] as const)("offers legal %s forced %s choices with matching totals", (jobId, stat) => {
+    const equipment = gears.find((item) => item.jobs.includes(jobId) && item.level === 770 && item.materiaSlots === 2)!;
+    const prepared = prepareEquipmentMateria(equipment, { jobId });
+    const choice = prepared.slots[0]!.options.find((option) => option.stat === stat)!;
+    expect(choice).toBeDefined();
+    const baseline = evaluateEquipmentMateria(prepared).attributes.find((item) => item.stat === stat)!;
+    const selected = evaluateEquipmentMateria(prepared, [stat]).attributes.find((item) => item.stat === stat)!;
+    expect(selected.total).toBe(baseline.total + choice.value);
+    expect(selected.current).toBe(Math.min(selected.cap, baseline.current + choice.value));
+    expect(prepared.slots[0]!.options.some((option) => option.stat === (stat === 'TEN' ? 'PIE' : 'TEN'))).toBe(false);
+  });
+
   it("uses XII for safe and first overmeld holes, XI for later overmelds", () => {
     const result = evaluateEquipmentMateria(prepareEquipmentMateria(crafted, { jobId: "PLD" }));
     expect(result.slots.map((slot) => slot.safe)).toEqual([
@@ -35,6 +59,7 @@ describe("equipment materia selection description", () => {
       { stat: "DET", current: 0, total: 0, cap: 257 },
       { stat: "DHT", current: 0, total: 0, cap: 257 },
       { stat: "SKS", current: 0, total: 0, cap: 257 },
+      { stat: "TEN", current: crafted.stats.TEN ?? 0, total: crafted.stats.TEN ?? 0, cap: 257 },
     ]);
   });
   it("adds only manual choices and truncates their total at the gear cap", () => {

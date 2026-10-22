@@ -4,7 +4,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { CheckboxInput } from "@/ui/components/form-controls/checkbox-input/CheckboxInput";
 import { FormField } from "@/ui/components/form-controls/form-field/FormField";
 import { useId, useMemo, useRef, useState, type RefObject } from "react";
-import { gearSlotLabels } from "@/ui/services/labels";
+import { gearSlotLabels, gearSlotOrder } from "@/ui/services/labels";
 import {
   useAllowedForcedGearSlots,
   useEquipmentScope,
@@ -17,13 +17,15 @@ import {
   type EquipmentMateriaConfig,
   type ForcedGearValue,
   type GearSlot,
+  type JobId,
 } from "@/domain";
 import { LabeledSelect } from "@/ui/components/form-controls/labeled-select/LabeledSelect";
 import { EquipmentSelect } from "@/ui/components/equipment-select/EquipmentSelect";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
 import { itemIconId } from "@/ui/services/icons";
 import styles from "./EquipmentEditor.module.scss";
-import { ForcedMateriaSlots } from "./components/forced-materia-slots/ForcedMateriaSlots";
+import { ForcedEquipmentRow } from "./components/forced-equipment-row/ForcedEquipmentRow";
+import { ForcedGearImport } from "./components/forced-gear-import/ForcedGearImport";
 
 const sourceOrder = (a: string, b: string) => a.localeCompare(b, "zh-CN");
 
@@ -446,8 +448,10 @@ function ExcludedGearEditor() {
 
 function ForcedGearEditor({
   materiaConfig,
+  importJobs,
 }: {
   materiaConfig?: EquipmentMateriaConfig;
+  importJobs?: readonly JobId[];
 }) {
   const popupAnchor = useRef<HTMLDivElement>(null);
   const slots = useAllowedForcedGearSlots();
@@ -542,6 +546,7 @@ function ForcedGearEditor({
             }}
             onClear={activeSlot === "all" ? undefined : () => clear(activeSlot)}
           />
+          {materiaConfig && <ForcedGearImport config={materiaConfig} allowedJobs={importJobs ?? [materiaConfig.jobId]} />}
         </div>
       </div>
       <ul
@@ -551,6 +556,7 @@ function ForcedGearEditor({
       >
         {Object.entries(forcedGear)
           .filter(([, value]) => value !== undefined)
+          .sort(([left], [right]) => gearSlotOrder.indexOf(left as GearSlot) - gearSlotOrder.indexOf(right as GearSlot))
           .map(([slot, value]) => {
             const forcedValue = value as ForcedGearValue;
             const id = forcedGearId(forcedValue)!;
@@ -559,39 +565,16 @@ function ForcedGearEditor({
               gearOptionsForSlot(slot as GearSlot).find(
                 (item) => item.id === id,
               );
-            return (
+            return gear ? (
+              <ForcedEquipmentRow key={slot} gear={gear} slot={slot as GearSlot}
+                value={forcedValue} config={materiaConfig} readOnly={readOnly}
+                onChange={(next) => set(slot as GearSlot, gear.id, next)}
+                onRemove={() => clear(slot as GearSlot)} />
+            ) : (
               <li key={slot}>
-                {gear ? (
-                  <EquipmentOptionRow
-                    className={styles.forcedEquipmentRow}
-                    iconInName
-                    slot={slot as GearSlot}
-                    iconId={itemIconId(gear.id)}
-                    name={gear.name}
-                    level={gear.level}
-                    source={gear.source}
-                    afterName={
-                      materiaConfig ? (
-                        <ForcedMateriaSlots
-                          key={`${gear.id}:${materiaConfig.jobId}:${gear.customParameters || gear.resistanceWeaponAdjust ? "custom" : "materia"}`}
-                          gear={gear}
-                          config={materiaConfig}
-                          readOnly={readOnly}
-                          value={forcedValue}
-                          onChange={(next) =>
-                            set(slot as GearSlot, gear.id, next)
-                          }
-                        />
-                      ) : (
-                        <span />
-                      )
-                    }
-                  />
-                ) : (
                   <span className={styles.missingForcedEquipment}>
                     {gearSlotLabels[slot as GearSlot]} · 装备 {id}
                   </span>
-                )}
                 <button
                   type="button"
                   disabled={readOnly}
@@ -610,9 +593,11 @@ function ForcedGearEditor({
 export function EquipmentEditor({
   title = "装备限制",
   materiaConfig,
+  importJobs,
 }: {
   title?: string;
   materiaConfig?: EquipmentMateriaConfig;
+  importJobs?: readonly JobId[];
 }) {
   const { scope } = useEquipmentScope();
   return (
@@ -625,7 +610,7 @@ export function EquipmentEditor({
           {scope.kind !== "joint-job" && <ExcludedSourcesEditor />}
           <ExcludedGearEditor />
         </div>
-        <ForcedGearEditor materiaConfig={materiaConfig} />
+        <ForcedGearEditor materiaConfig={materiaConfig} importJobs={importJobs} />
       </div>
     </section>
   );
