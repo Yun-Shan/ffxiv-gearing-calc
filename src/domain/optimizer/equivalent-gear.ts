@@ -145,6 +145,30 @@ export function attachEquivalentGear(
         : { uniqueReplacementGroupKey: keys.unique }),
     };
   });
+  const ring = gear.find((item) => item.slot === "ring");
+  const ring2 = gear.find((item) => item.slot === "ring2");
+  const ringGroupKey = ring?.replacementGroupKey;
+  const ringGroup = ringGroupKey === undefined ? undefined : groups[ringGroupKey];
+  if (
+    ring &&
+    ring2 &&
+    ringGroupKey !== undefined &&
+    ringGroupKey === ring2.replacementGroupKey &&
+    ringGroup?.length === 2 &&
+    ringGroup.every((item) => item.unique === true) &&
+    ringGroup[0]!.id !== ringGroup[1]!.id &&
+    ring.id !== ring2.id &&
+    [ring, ring2].every((selected) =>
+      ringGroup.some((item) => identity(item) === identity(selected)),
+    )
+  ) {
+    // Swapping these two unique rings cannot change the equipped pair.
+    for (const selected of [ring, ring2]) {
+      delete selected.replacementGroupKey;
+      delete selected.uniqueReplacementGroupKey;
+    }
+    delete groups[ringGroupKey];
+  }
   return {
     ...result,
     gear,

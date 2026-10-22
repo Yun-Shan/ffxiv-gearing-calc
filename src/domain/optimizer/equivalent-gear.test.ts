@@ -103,6 +103,65 @@ function pool(
 afterEach(() => vi.restoreAllMocks());
 
 describe("complete equivalent result groups", () => {
+  it.each([false, true])("omits the identical two-unique-ring pool when both are equipped (reversed: %s)", (reversed) => {
+    const a = { ...gear(1), unique: true };
+    const b = { ...gear(2), unique: true };
+    pool([a, b]);
+    const pair = reversed ? [b, a] : [a, b];
+    const original = result([pair[0]!, { ...pair[1]!, slot: "ring2" }]);
+    const next = attachEquivalentGear(original, config);
+    expect(next.equivalentGear).toBeUndefined();
+    for (const selected of next.gear) {
+      expect(selected).not.toHaveProperty("replacementGroupKey");
+      expect(selected).not.toHaveProperty("uniqueReplacementGroupKey");
+    }
+    expect(next.gear).toEqual(original.gear);
+    expect(next.stats).toBe(original.stats);
+    expect(next.score).toBe(original.score);
+  });
+
+  it("keeps unrelated replacement groups when omitting the equipped unique ring pair", () => {
+    const a = { ...gear(1), unique: true };
+    const b = { ...gear(2), unique: true };
+    const head = gear(3, "head");
+    pool([a, b, head, gear(4, "head")]);
+    const next = attachEquivalentGear(result([a, { ...b, slot: "ring2" }, head]), config);
+    expect(Object.keys(next.equivalentGear!)).toHaveLength(1);
+    expect(next.equivalentGear![next.gear[2]!.replacementGroupKey!]!.map((item) => item.id)).toEqual([3, 4]);
+    expect(next.gear[0]).not.toHaveProperty("replacementGroupKey");
+    expect(next.gear[1]).not.toHaveProperty("replacementGroupKey");
+  });
+
+  it("keeps a pool with a third unique ring", () => {
+    const items = [1, 2, 3].map((id) => ({ ...gear(id), unique: true }));
+    pool(items);
+    const next = attachEquivalentGear(result([items[0]!, { ...items[1]!, slot: "ring2" }]), config);
+    expect(next.equivalentGear![next.gear[0]!.replacementGroupKey!]).toHaveLength(3);
+  });
+
+  it("keeps different two-unique-ring pools", () => {
+    const a = { ...gear(1), unique: true };
+    const b = { ...gear(2), unique: true };
+    const c = { ...gear(3, "ring", { DET: 100 }), unique: true };
+    const d = { ...gear(4, "ring", { DET: 100 }), unique: true };
+    pool([a, b, c, d]);
+    const next = attachEquivalentGear(result([a, { ...c, slot: "ring2" }]), config);
+    expect(next.gear[0]!.replacementGroupKey).toBeDefined();
+    expect(next.gear[1]!.replacementGroupKey).toBeDefined();
+    expect(next.gear[0]!.replacementGroupKey).not.toBe(next.gear[1]!.replacementGroupKey);
+  });
+
+  it("keeps the unforced pool when the other unique ring is forced", () => {
+    const a = { ...gear(1), unique: true };
+    const b = { ...gear(2), unique: true };
+    pool([a, b]);
+    const next = attachEquivalentGear(result([a, { ...b, slot: "ring2" }]), {
+      ...config, forcedGear: { ring2: b.id },
+    });
+    expect(next.equivalentGear![next.gear[0]!.replacementGroupKey!]).toHaveLength(2);
+    expect(next.gear[1]).not.toHaveProperty("replacementGroupKey");
+  });
+
   it("keeps selected, includes unique rings in the full array and indexes their subset, and shares groups across both ring slots", () => {
     const a = gear(1),
       b = { ...gear(2), unique: true },
