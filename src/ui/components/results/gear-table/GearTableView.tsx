@@ -8,6 +8,7 @@ import { Popover } from "@base-ui/react/popover";
 import { statName, statValue, gearSlotLabels } from "@/ui/services/labels";
 import type { GearTableGearItem, GearTableRow } from "./types";
 import styles from "./GearTable.module.scss";
+import { ItemName } from "./components/item-name/ItemName";
 
 export const gearTableStatOrder = [
   "STR",
@@ -250,15 +251,15 @@ export function GearTableView({
                         className={styles.equipmentIcon}
                       />
                       <div className={styles.itemText}>
-                        <strong
+                        <ItemName
+                          name={item.name}
+                          itemId={item.itemId}
                           className={
                             item.kind === "food"
                               ? styles.foodName
                               : styles.itemName
                           }
-                        >
-                          {item.name}
-                        </strong>
+                        />
                         {gearRow?.item.weaponPerformance && (
                           <small className={styles.weaponPerformance}>
                             {gearRow.item.weaponPerformance}
