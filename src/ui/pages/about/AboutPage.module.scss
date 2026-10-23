@@ -41,7 +41,7 @@
 .card {
   display: grid;
   gap: 10px;
-  padding: 18px;
+  padding: 12px;
   border: 1px solid tokens.$color-border-default;
   border-radius: 10px;
   background: tokens.$color-neutral-white;
@@ -68,20 +68,42 @@
   font-weight: 700;
 }
 
-.cardHeading a {
+.projectLinks a {
   color: tokens.$color-accent-teal;
   font-size: 1.5em;
   font-weight: 700;
   text-decoration: none;
 }
 
-.cardHeading a:hover {
+.projectLinks a:hover {
   text-decoration: underline;
 }
 
-.cardHeading a:focus-visible {
+.projectLinks a:focus-visible,
+.licenseBadge:focus-visible {
   outline: 3px solid #49a9b4;
   outline-offset: 2px;
+}
+
+.licenseBadge {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0.333em 0.667em;
+  border: 1px solid tokens.$color-history-badge-border;
+  border-radius: 4px;
+  background: tokens.$color-history-badge;
+  color: tokens.$color-history-badge-text;
+  font-size: 0.917em;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    background: tokens.$color-accent-soft;
+    color: tokens.$color-accent-teal;
+  }
 }
 
 .card p {

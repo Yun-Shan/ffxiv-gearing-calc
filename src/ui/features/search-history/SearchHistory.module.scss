@@ -1,3 +1,5 @@
+@use "@/styles/tokens" as tokens;
+
 .root {
   container-type: size;
   display: flex;
@@ -10,7 +12,8 @@
 .root > .heading,
 .root > p,
 .list {
-  font-size: clamp(12px, 3.2cqh, 16px);
+  // 弹框与职业选择页共用视口基准，避免容器高度改变卡片密度。
+  font-size: clamp(12px, 1.5vh, 16px);
 }
 .root h2 {
   font-size: 1.25em;
@@ -38,6 +41,30 @@
 .actionButton:disabled {
   opacity: 0.5;
   pointer-events: none;
+}
+.closeButton {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid tokens.$color-border-default;
+  border-radius: 4px;
+  background: tokens.$color-neutral-white;
+  color: tokens.$color-text-secondary;
+  cursor: pointer;
+
+  &:hover {
+    background: tokens.$color-accent-soft;
+    border-color: tokens.$color-history-badge-border;
+    color: tokens.$color-accent-teal;
+  }
+
+  &:focus-visible {
+    outline: 2px solid tokens.$color-accent-teal;
+    outline-offset: 2px;
+  }
 }
 .confirmPositioner {
   z-index: 1000;
@@ -79,7 +106,7 @@
   top: 10%;
   bottom: 10%;
   left: 50%;
-  width: max(60%, 1040px);
+  width: clamp(1120px, 75%, 1440px);
   max-width: calc(100% - 48px);
   transform: translateX(-50%);
   padding: 20px;

@@ -1,6 +1,7 @@
 import { Popover } from "@base-ui/react/popover";
 import { useEffect, useRef, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
+import { X } from "lucide-react";
 import {
   listSearchHistory,
   deleteSearchHistory,
@@ -161,7 +162,13 @@ export function HistoryOverlay({
         <Dialog.Popup className={styles.overlay}>
           <div className={styles.heading}>
             <Dialog.Title>本地搜索记录</Dialog.Title>
-            <Dialog.Close>关闭</Dialog.Close>
+            <Dialog.Close
+              className={styles.closeButton}
+              aria-label="关闭搜索记录"
+              title="关闭搜索记录"
+            >
+              <X size={18} aria-hidden="true" />
+            </Dialog.Close>
           </div>
           <Dialog.Description>
             查看保存的结果或重新编辑条件。

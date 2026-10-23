@@ -70,8 +70,24 @@
 .openActions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   flex-wrap: wrap;
   gap: 6px;
+
+  .openLink {
+    border-color: tokens.$color-accent-teal;
+    background: tokens.$color-accent-teal;
+    color: tokens.$color-neutral-white;
+
+    &:hover {
+      filter: brightness(1.15);
+    }
+
+    &:focus-visible {
+      outline: 2px solid tokens.$color-accent-teal;
+      outline-offset: 2px;
+    }
+  }
 }
 .compact {
   gap: 8px;

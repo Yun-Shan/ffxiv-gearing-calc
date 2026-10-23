@@ -9,6 +9,7 @@ interface ProjectLink {
 
 interface CommunityProject {
   links: readonly ProjectLink[];
+  license?: ProjectLink;
   description: string;
 }
 
@@ -20,6 +21,10 @@ const communityProjects: readonly CommunityProject[] = [
         href: "https://github.com/Asvel/ffxiv-gearing",
       },
     ],
+    license: {
+      name: "MIT License",
+      href: "https://github.com/Asvel/ffxiv-gearing#license",
+    },
     description:
       "FFXIV 配装器，本项目的主要参考项目。MCP 缺少必需资料时以它的导出作为回退与核对来源；职业 schema、职业公式与食物利用率公式也参考该项目。",
   },
@@ -61,6 +66,16 @@ function ProjectCard({ project }: { project: CommunityProject }) {
             </Fragment>
           ))}
         </div>
+        {project.license && (
+          <a
+            className={styles.licenseBadge}
+            href={project.license.href}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {project.license.name}
+          </a>
+        )}
       </div>
       <p>{project.description}</p>
     </li>

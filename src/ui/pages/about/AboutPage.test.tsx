@@ -26,12 +26,14 @@ describe("关于页", () => {
     ];
     expect(links.map(normalizedText)).toEqual([
       "Asvel / ffxiv-gearing",
+      "MIT License",
       "thewakingsands/xivapi-v2",
       "Lumina",
       "EXDSchema",
     ]);
     expect(links.map((link) => link.href)).toEqual([
       "https://github.com/Asvel/ffxiv-gearing",
+      "https://github.com/Asvel/ffxiv-gearing#license",
       "https://github.com/thewakingsands/xivapi-v2",
       "https://github.com/NotAdam/Lumina",
       "https://github.com/xivdev/EXDSchema",
