@@ -63,26 +63,19 @@ node docs/search-optimization/tools/run-acceptance.mjs
 
 ## 更新数据
 
-来源、回退条件和版本要求见[数据规则](docs/rules/数据规则.md)。先查询 MCP 保存可复现输入，再由统一更新器生成运行时二进制快照：
+来源、回退条件和版本要求见[数据规则](docs/rules/数据规则.md)。统一命令先准备并固定参考项目 commit，再查询 MCP，在内存中校验和合并资料，直接生成最终二进制文件：
 
 ```bash
-npm run data:mcp
 npm run data:update
 ```
 
-本机需配置游戏目录、EXDSchema 与 Lumina MCP 可执行文件。可用 `FFXIV_MCP_LUMINA_COMMAND`、`McpLumina__GamePath`、`McpLumina__SchemaPath` 和 `FFXIV_MCP_LUMINA_CONCURRENCY` 覆盖查询脚本默认配置。
+本机需配置游戏目录、EXDSchema 与 Lumina MCP 可执行文件。可用 `FFXIV_MCP_LUMINA_COMMAND`、`McpLumina__GamePath`、`McpLumina__SchemaPath` 和 `FFXIV_MCP_LUMINA_CONCURRENCY` 覆盖查询配置。脚本使用 Node 原生 TypeScript 加载，需使用支持类型擦除的现代 Node（部署构建使用 Node 24）。
 
-参考项目默认检出到 `reference/ffxiv-gearing`，可用 `FFXIV_GEARING_ROOT` 指定其他本地检出。已有 MCP 快照及参考导出时可离线生成，不启动 MCP 或访问网络：
-
-```bash
-node scripts/update-data.mjs --offline
-```
-
-为同版本已有快照补充装备特殊效果字段，可先运行 `node scripts/query-mcp-lumina.mjs --item-special-bonus-data-only`，再离线生成；缺失字段、来源或版本不一致时失败。
+参考项目默认检出到 `reference/ffxiv-gearing`，可用 `FFXIV_GEARING_ROOT` 指定其他本地检出。查询和编码在同一次更新中使用相同 commit；所有必需资料及完整产物校验通过后才替换原 bin，失败保留原产物。只保存最终 bin，不再保存查询 JSON、支持旧快照离线重生成或增量补字段。开发、构建及部署直接使用已提交的 bin，不启动 MCP。
 
 同步面板支持仅等级或具体品级目标，按品级/副本共享生成目录，自定义品级至少 90 且须有完整属性上限。来源与目录生成见[数据规则](docs/rules/数据规则.md#同步等级与副本目录)，计算语义见[领域与搜索规则](docs/rules/领域与搜索规则.md)。
 
-运行时产物为 `src/data/generated-data.bin`，MCP 输入保存在 `scripts/data/mcp-lumina.snapshot.json`。版本、数量和缺口以来源元数据为准；二进制契约见[格式规范](docs/运行时数据二进制格式.md)。`npm run data:benchmark` 用于测量数据加载与解码。
+运行时产物为 `src/data/generated-data.bin`，包含十个业务段，保留装备获取途径和全局摘要（游戏版本、参考仓库、commit、导入时间）。逐项溯源、查询范围、版本警告及资料缺失核验证据仅在生成时于内存中核验，不写入 bin。格式字段由 `src/data/binary` 下的 TypeScript Schema 定义，见[格式规范](docs/运行时数据二进制格式.md)。`npm run data:format` 生成字段文档，`npm run data:format:check` 检查文档与 Schema 一致；`npm run data:benchmark` 测量数据加载与解码。
 
 装备与食物图标读取 bin 中物品的 `icon`；职业图标读取 bin 中职业数字 ID 并加 `62100`，统一通过图标 URL helper 从 XIVAPI CDN 加载 PNG。没有独立图标 JSON 或本地职业 PNG。
 

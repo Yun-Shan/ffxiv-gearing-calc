@@ -1,7 +1,7 @@
 import os from "node:os";
 import { readFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
-import { decodeGeneratedData } from "../src/data/binary-format.mjs";
+import { decodeGeneratedData } from "../src/data/binary/decode.ts";
 
 const assetPath = new URL("../src/data/generated-data.bin", import.meta.url);
 const bytes = new Uint8Array(await readFile(assetPath));
@@ -108,7 +108,7 @@ for (let round = 0; round < rounds; round++) {
 const phaseNames = [
   "containerIntegrityAndCrcMs",
   "nonGearDataBinaryMs",
-  "equipmentStringsAndTemplatesMs",
+  "equipmentStringsMs",
   "equipmentDirectoryMs",
   "mainStatIndexDecodeMs",
   "equipmentRecordRangesMs",

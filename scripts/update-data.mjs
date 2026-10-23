@@ -1,13 +1,16 @@
 import { binUiMetadataFromSnapshot } from "./bin-ui-metadata.mjs";
 import { syncDataFromSnapshot } from "./sync-level-duties.mjs";
+import { queryMcpLumina } from "./query-mcp-lumina.mjs";
 import { execFileSync } from "node:child_process";
-import { access, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, readdir, rename, unlink, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { randomUUID } from "node:crypto";
 import { parse } from "@babel/parser";
-import { encodeGeneratedData } from "../src/data/binary-format.mjs";
+import { encodeGeneratedData } from "../src/data/binary/encode.ts";
+import { decodeGeneratedData } from "../src/data/binary/decode.ts";
 import { excludeReferenceGearSource, includeGearInCatalog, referenceGearSource } from "./gear-catalog-policy.mjs";
-import { acceptsVersionWarning } from "./mcp-query-validation.mjs";
+import { acceptsVersionWarning, allowsGenericQueries } from "./mcp-query-validation.mjs";
 import {
   itemActionReturnFields,
   itemFoodReturnFields,
@@ -31,20 +34,18 @@ import {
 
 const root = resolve(import.meta.dirname, "..");
 const repository = "https://github.com/Asvel/ffxiv-gearing.git";
-const upstreamRoot = resolve(
+const defaultUpstreamRoot = resolve(
   process.env.FFXIV_GEARING_ROOT ?? resolve(root, "reference", "ffxiv-gearing"),
 );
-const outputPath = resolve(root, "src", "data", "generated-data.bin");
-const mcpSnapshotPath = resolve(
-  process.env.FFXIV_MCP_LUMINA_SNAPSHOT ?? resolve(root, "scripts", "data", "mcp-lumina.snapshot.json"),
-);
-const offline = process.argv.includes("--offline");
+const defaultOutputPath = resolve(root, "src", "data", "generated-data.bin");
+let upstreamRoot = defaultUpstreamRoot;
+let outputPath = defaultOutputPath;
 const supportedJobs = supportedJobIds;
 const limitedJobIds = new Set(["BLU", "BST"]);
 const itemCoreReturnFields = itemReturnFields.filter((field) =>
   !["SubStatCategory", "ItemSpecialBonus", "ItemSpecialBonusParam"].includes(field),
 );
-const importStartedAt = new Date().toISOString();
+let importStartedAt = new Date().toISOString();
 let currentCommit = "unknown";
 const combatMateriaStats = ["CRT", "DET", "DHT", "SKS", "SPS", "TEN", "PIE"];
 const resistanceWeaponAdjustFields = [
@@ -68,7 +69,8 @@ async function exists(path) {
 }
 
 function runGit(args) {
-  return execFileSync("git", ["-c", `safe.directory=${upstreamRoot}`, ...args], {
+  // The reference exports have no submodules; avoid inheriting recursive updates from user Git settings.
+  return execFileSync("git", ["-c", "submodule.recurse=false", "-c", `safe.directory=${upstreamRoot}`, ...args], {
     cwd: root,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "inherit"],
@@ -77,13 +79,12 @@ function runGit(args) {
 
 async function prepareUpstream() {
   if (!(await exists(resolve(upstreamRoot, ".git")))) {
-    if (offline) throw new Error(`参考项目不存在：${upstreamRoot}`);
     await mkdir(resolve(upstreamRoot, ".."), { recursive: true });
     execFileSync("git", ["clone", "--depth", "1", repository, upstreamRoot], {
       cwd: root,
       stdio: "inherit",
     });
-  } else if (!offline) {
+  } else {
     runGit(["-C", upstreamRoot, "pull", "--ff-only"]);
   }
   return runGit(["-C", upstreamRoot, "rev-parse", "HEAD"]);
@@ -407,28 +408,28 @@ function validateBluMdmgAdditions(exported, measuredSource) {
   return exported.slice();
 }
 
-async function loadMcpSnapshot() {
-  if (!(await exists(mcpSnapshotPath))) return undefined;
-  let snapshot;
-  try {
-    snapshot = JSON.parse(await readFile(mcpSnapshotPath, "utf8"));
-  } catch (error) {
-    throw new Error(`MCP 查询产物无法解析：${mcpSnapshotPath}`, { cause: error });
-  }
+function validateMcpQueryResult(snapshot) {
   if (snapshot?.server !== "ffxiv-mcp-lumina" || snapshot?.schemaVersion !== 1)
-    throw new Error(`MCP 查询产物格式不受支持：${mcpSnapshotPath}`);
+    throw new Error("MCP 查询结果格式不受支持");
   if (!snapshot.gameVersion || !snapshot.validatedVersion || !snapshot.queriedAt)
-    throw new Error(`MCP 查询产物缺少游戏版本或查询时间：${mcpSnapshotPath}`);
+    throw new Error("MCP 查询结果缺少游戏版本或查询时间");
+  const health = snapshot.health;
+  if (!health || health.gameVersion !== snapshot.gameVersion ||
+      health.validatedVersion !== snapshot.validatedVersion || !health.schemaAvailable ||
+      !health.timestamp || !snapshot.genericQueryValidation ||
+      snapshot.genericQueryValidation.allowed !== true ||
+      !allowsGenericQueries(health))
+    throw new Error("MCP 查询结果缺少完整的 health 可用性来源");
   if (snapshot.gameVersion !== snapshot.validatedVersion) {
     const validation = snapshot.genericQueryValidation;
     if (validation?.allowed !== true || !acceptsVersionWarning(validation.warnings))
       throw new Error(`MCP 通用查询缺少版本警告可用性声明：${snapshot.gameVersion} !== ${snapshot.validatedVersion}`);
   }
   if (!snapshot.rows?.ClassJob?.length || !snapshot.queryPlan?.classJobIds)
-    throw new Error("MCP 快照缺少 ClassJob 职业行，请重新运行 npm run data:mcp");
+    throw new Error("MCP 查询结果缺少 ClassJob 职业行");
   const queriedJobIds = Object.keys(snapshot.queryPlan.classJobIds).sort();
   if (JSON.stringify(queriedJobIds) !== JSON.stringify([...supportedJobs].sort()))
-    throw new Error("MCP 快照 ClassJob 行集合与当前支持职业不一致，请重新运行 npm run data:mcp");
+    throw new Error("MCP 查询结果 ClassJob 行集合与当前支持职业不一致");
   validateBluMcpAbsence(snapshot);
   validateMcpItemRows(snapshot);
   validateMcpItemSpecialBonusInput(snapshot);
@@ -532,7 +533,7 @@ function validateMcpItemRows(snapshot) {
     : source && typeof source === "object"
       ? Object.values(source)
       : [];
-  if (!rows.length) throw new Error("MCP 快照缺少 Item 行，请重新运行 npm run data:mcp");
+  if (!rows.length) throw new Error("MCP 快照缺少 Item 行，请重新运行 npm run data:update");
   for (const row of rows) {
     if (!row || typeof row !== "object" || !Number.isSafeInteger(row.rowId))
       throw new Error("MCP Item 行缺少有效 rowId，快照格式无效");
@@ -1122,9 +1123,81 @@ function mergeMcpMaterias(materias, snapshot) {
   return { value, usedStats };
 }
 
+const dataSourceStringFields = [
+  "server", "repository", "commit", "sheet", "gameVersion", "validatedVersion",
+  "queriedAt", "importedAt", "note", "sourceId", "queryMethod",
+];
+const dataSourceFields = new Set([
+  "kind", ...dataSourceStringFields, "fields", "rowIds", "sourceFiles", "queryScope",
+]);
+
+function isRecord(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function isUInt32(value) {
+  return Number.isSafeInteger(value) && value >= 0 && value <= 0xffffffff;
+}
+
+function validateGenerationSource(source, label) {
+  if (!isRecord(source) || !["mcp", "reference"].includes(source.kind) ||
+      Object.keys(source).some((field) => !dataSourceFields.has(field)))
+    throw new Error(`${label} 结构无效`);
+  for (const field of dataSourceStringFields)
+    if (Object.hasOwn(source, field) && source[field] !== undefined && typeof source[field] !== "string")
+      throw new Error(`${label} 的 ${field} 无效`);
+  if (Object.hasOwn(source, "fields") && source.fields !== undefined &&
+      (!Array.isArray(source.fields) || source.fields.some((field) => typeof field !== "string")))
+    throw new Error(`${label} 的 fields 无效`);
+  if (Object.hasOwn(source, "rowIds") &&
+      (!Array.isArray(source.rowIds) || source.rowIds.some((rowId) => !isUInt32(rowId))))
+    throw new Error(`${label} 的 rowIds 无效`);
+  if (Object.hasOwn(source, "sourceFiles") &&
+      (!Array.isArray(source.sourceFiles) || source.sourceFiles.some((file) => typeof file !== "string")))
+    throw new Error(`${label} 的 sourceFiles 无效`);
+
+  if (Object.hasOwn(source, "queryScope") && source.queryScope !== undefined) {
+    const scope = source.queryScope;
+    if (!isRecord(scope) ||
+        Object.keys(scope).some((field) => !["kind", "rowIds", "returnedRows"].includes(field)) ||
+        !["row-ids", "all-rows"].includes(scope.kind) || !isUInt32(scope.returnedRows) ||
+        (Object.hasOwn(scope, "rowIds") && scope.rowIds !== undefined &&
+          (!Array.isArray(scope.rowIds) || scope.rowIds.some((rowId) => !isUInt32(rowId)))))
+      throw new Error(`${label} 的 queryScope 无效`);
+  }
+}
+
+function validateGenerationSources(sources, label, minimum = 1) {
+  if (!Array.isArray(sources) || sources.length < minimum)
+    throw new Error(`${label} 缺少来源记录`);
+  sources.forEach((source, index) => validateGenerationSource(source, `${label} 来源 ${index}`));
+}
+
+function validateGenerationProvenance(provenance) {
+  if (!isRecord(provenance) ||
+      ["repository", "commit", "importedAt"].some((field) =>
+        typeof provenance[field] !== "string" || !provenance[field].trim()) ||
+      !Array.isArray(provenance.sourceFiles) || !provenance.sourceFiles.length ||
+      provenance.sourceFiles.some((file) => typeof file !== "string" || !file.trim()))
+    throw new Error("生成快照缺少有效的上游来源摘要或 sourceFiles 文件清单");
+  validateGenerationSources(provenance.sources, "生成快照 provenance");
+}
+
+function validateGenerationRecordSources(sourceFile, sources, label) {
+  if (typeof sourceFile !== "string" || !sourceFile.trim() ||
+      !Array.isArray(sources) || !sources.length)
+    throw new Error(`${label} 缺少逐件来源记录`);
+  try {
+    validateGenerationSources(sources, label);
+  } catch (error) {
+    const text = error instanceof Error ? error.message : String(error);
+    if (text.includes("缺少来源记录")) throw new Error(`${label} 缺少逐件来源记录`);
+    throw new Error(`${label} 含无效逐件来源记录：${text}`);
+  }
+}
+
 function validate(payload) {
-  if (!payload.provenance?.commit)
-    throw new Error("生成快照缺少上游 commit 信息");
+  validateGenerationProvenance(payload.provenance);
   if (!payload.sync?.levels?.length || !payload.sync?.groups?.length)
     throw new Error("同步数据缺少等级规则或副本目录");
   if (!payload.provenance.sources?.some((source) =>
@@ -1162,8 +1235,12 @@ function validate(payload) {
         typeof schema.ignoreWeaponItemLevel !== "boolean" ||
         !["STR", "DEX", "INT", "MND", "VIT"].includes(schema.mainStat))
       throw new Error(`职业 ${id} 缺少合法等级上限或默认品级范围`);
-    if (!Array.isArray(schema.dataSources) || schema.dataSources.length < 2)
-      throw new Error(`职业 ${id} 缺少字段来源记录`);
+    try {
+      validateGenerationSources(schema.dataSources, `职业 ${id}`, 2);
+    } catch (error) {
+      const text = error instanceof Error ? error.message : String(error);
+      throw new Error(`职业 ${id} 缺少或包含无效字段来源记录：${text}`);
+    }
   }
   const blueMage = payload.jobSchemas.BLU;
   if (
@@ -1228,232 +1305,354 @@ function validate(payload) {
     throw new Error("装备数据包含空名称或无效名称");
   if (payload.foods.some((food) => typeof food.name !== "string" || !food.name.trim()))
     throw new Error("食物数据包含空名称或无效名称");
+  for (const food of payload.foods)
+    validateGenerationRecordSources(food.sourceFile, food.dataSources, `食物 ${food.id}`);
   const ids = new Set();
   for (const gear of payload.gears) {
     if (!Number.isSafeInteger(gear.id) || gear.id <= 0 || ids.has(gear.id))
       throw new Error(`装备 ID 无效或重复：${gear.id}`);
     ids.add(gear.id);
-    if (!Array.isArray(gear.jobs) || !gear.jobs.length || !gear.stats || !gear.sourceFile ||
+    if (!Array.isArray(gear.jobs) || !gear.jobs.length || !gear.stats ||
         gear.jobs.some((jobId) => !payload.jobSchemas[jobId]))
       throw new Error(`装备记录不完整：${gear.id}`);
+    validateGenerationRecordSources(gear.sourceFile, gear.dataSources, `装备 ${gear.id}`);
   }
 }
 
-const commit = await prepareUpstream();
-currentCommit = commit;
-const outDir = resolve(upstreamRoot, "data", "out");
-const gearFiles = (await readdir(outDir)).filter((file) => /^gears-.*\.js$/i.test(file)).sort();
-if (!gearFiles.length) throw new Error("参考项目没有装备导出文件");
+async function createPayload(mcpSnapshot, commit) {
+  currentCommit = commit;
+  const outDir = resolve(upstreamRoot, "data", "out");
+  const gearFiles = (await readdir(outDir)).filter((file) => /^gears-.*\.js$/i.test(file)).sort();
+  if (!gearFiles.length) throw new Error("参考项目没有装备导出文件");
 
-const [rawFoods, gameSource, bluMdmgAdditionsExport, bluMdmgAdditionsText] = await Promise.all([
-  importDefault(resolve(outDir, "foods.js")),
-  readFile(resolve(upstreamRoot, "src", "game.ts"), "utf8"),
-  importDefault(resolve(outDir, "bluMdmgAdditions.js")),
-  readFile(resolve(upstreamRoot, "data", "in", "bluMdmgAdditions.txt"), "utf8"),
-]);
-const bluMdmgAdditions = validateBluMdmgAdditions(bluMdmgAdditionsExport, bluMdmgAdditionsText);
-const [levelCaps, slotCaps, roleCaps] = await Promise.all([
-  importDefault(resolve(outDir, "levelCaps.js")),
-  importDefault(resolve(outDir, "slotCaps.js")),
-  importDefault(resolve(outDir, "roleCaps.js")),
-]);
-const constants = parseGameConstants(gameSource);
-const gearGroups = await Promise.all(
-  gearFiles.map(async (file) => ({ file, items: await importDefault(resolve(outDir, file)) })),
-);
-const excludedReferenceGearIds = new Set(
-  gearGroups.flatMap(({ items }) => items.filter(excludeReferenceGearSource).map(({ id }) => id)),
-);
-const gears = gearGroups.flatMap(({ file, items }) =>
-  items.map((item) => normalizeGear(item, `data/out/${file}`)).filter(Boolean),
-);
-const referenceSourceFiles = [
-  ...gearFiles.map((file) => `data/out/${file}`),
-  "data/out/foods.js",
-  "data/out/levelCaps.js",
-  "data/out/slotCaps.js",
-  "data/out/roleCaps.js",
-  "src/game.ts",
-  "data/out/bluMdmgAdditions.js",
-  "data/in/bluMdmgAdditions.txt",
-  "data/convert.ts",
-];
-const referenceSource = {
-  kind: "reference",
-  repository,
-  commit,
-  importedAt: importStartedAt,
-  sourceFiles: referenceSourceFiles,
-  note: "参考装备 obsolete=true 的来源统一映射为已废弃；否则以→诗学或/诗学结尾映射为点数/诗学，以→战利品、→兵团、→同盟结尾分别映射为怪物狩猎战利品、兵团徽章、同盟徽章。以→雇员探险结尾映射为雇员探险；完整来源点数/哲学→无限城古迹、日影地修炼所、野营地映射为迷宫挑战/无限城古迹、日影地修炼所、野营地。其余保留原始来源。生成目录排除原始来源包含古董系列或军票的装备，此判断先于来源映射。",
-};
-let foods = rawFoods.filter((food) => food.slot === -1).map(normalizeFood);
-let effectiveLevelCaps = levelCaps;
-let effectiveSlotCaps = slotCaps;
-let effectiveSyncData;
-let materias = Object.fromEntries(
-  combatMateriaStats.map((stat) => [stat, constants.materias[stat]]),
-);
-const sourceRecords = [referenceSource];
-const mcpSnapshot = await loadMcpSnapshot();
-if (!mcpSnapshot)
-  throw new Error("BLU 正式职业数据需要 MCP ClassJob 快照和武器伤害映射缺失核验；请先运行 npm run data:mcp");
-const binUiMetadata = binUiMetadataFromSnapshot(mcpSnapshot, supportedJobs);
-let mcpSummary = "MCP 查询产物未找到，使用参考项目数据";
-if (mcpSnapshot) {
-  const gearMerge = mergeMcpGearData(gears, mcpSnapshot, referenceSource);
-  gears.splice(0, gears.length, ...gearMerge.result);
-  const foodMerge = mergeMcpFoodData(foods, mcpSnapshot);
-  foods = foodMerge.result;
-  const levelMerge = mergeMcpLevelCaps(levelCaps, mcpSnapshot);
-  effectiveLevelCaps = levelMerge.value;
-  const slotMerge = mergeMcpSlotCaps(slotCaps, mcpSnapshot);
-  effectiveSlotCaps = slotMerge.value;
-  const materiaMerge = mergeMcpMaterias(materias, mcpSnapshot);
-  materias = materiaMerge.value;
-  const supportedSyncLevels = Object.keys(constants.jobLevelModifiers)
-    .map(Number)
-    .filter((level) => Number.isSafeInteger(level) && level >= 50)
-    .sort((left, right) => left - right);
-  effectiveSyncData = syncDataFromSnapshot(mcpSnapshot, effectiveLevelCaps, supportedSyncLevels);
-  const classJobRowIds = Object.values(mcpSnapshot.queryPlan.classJobIds).map(Number);
-  const syncLevelQuery = mcpSnapshot.queries.find((query) =>
-    query.method === "list_rows" && query.sheet === "ContentFinderCondition",
+  const [rawFoods, gameSource, bluMdmgAdditionsExport, bluMdmgAdditionsText] = await Promise.all([
+    importDefault(resolve(outDir, "foods.js")),
+    readFile(resolve(upstreamRoot, "src", "game.ts"), "utf8"),
+    importDefault(resolve(outDir, "bluMdmgAdditions.js")),
+    readFile(resolve(upstreamRoot, "data", "in", "bluMdmgAdditions.txt"), "utf8"),
+  ]);
+  const bluMdmgAdditions = validateBluMdmgAdditions(bluMdmgAdditionsExport, bluMdmgAdditionsText);
+  const [levelCaps, slotCaps, roleCaps] = await Promise.all([
+    importDefault(resolve(outDir, "levelCaps.js")),
+    importDefault(resolve(outDir, "slotCaps.js")),
+    importDefault(resolve(outDir, "roleCaps.js")),
+  ]);
+  const constants = parseGameConstants(gameSource);
+  const gearGroups = await Promise.all(
+    gearFiles.map(async (file) => ({ file, items: await importDefault(resolve(outDir, file)) })),
   );
-  const contentTypeQuery = mcpSnapshot.queries.find((query) =>
-    query.method === "list_rows" && query.sheet === "ContentType",
+  const excludedReferenceGearIds = new Set(
+    gearGroups.flatMap(({ items }) => items.filter(excludeReferenceGearSource).map(({ id }) => id)),
   );
-  const contentUICategoryQuery = mcpSnapshot.queries.find((query) =>
-    query.method === "list_rows" && query.sheet === "ContentUICategory",
+  const gears = gearGroups.flatMap(({ file, items }) =>
+    items.map((item) => normalizeGear(item, `data/out/${file}`)).filter(Boolean),
   );
-  const paramGrowQuery = mcpSnapshot.queries.find((query) =>
-    query.method === "list_rows" && query.sheet === "ParamGrow" && query.limit === -1,
-  );
-  const bluDamageReferenceSource = {
+  const referenceSourceFiles = [
+    ...gearFiles.map((file) => `data/out/${file}`),
+    "data/out/foods.js",
+    "data/out/levelCaps.js",
+    "data/out/slotCaps.js",
+    "data/out/roleCaps.js",
+    "src/game.ts",
+    "data/out/bluMdmgAdditions.js",
+    "data/in/bluMdmgAdditions.txt",
+    "data/convert.ts",
+  ];
+  const referenceSource = {
     kind: "reference",
-    repository,
-    commit,
-    importedAt: importStartedAt,
-    sourceFiles: [
-      "data/out/bluMdmgAdditions.js",
-      "data/in/bluMdmgAdditions.txt",
-      "data/convert.ts",
-    ],
-    note: `MCP ${mcpSnapshot.gameVersion} 的 list_sheets 与 ClassJob describe_sheet 均未提供青魔法师按 INT 索引的魔法武器伤害加值表或字段；使用参考项目原始测量映射，并与输入文本逐值校验。`,
-  };
-  if (!syncLevelQuery || !contentTypeQuery || !contentUICategoryQuery || !paramGrowQuery)
-    throw new Error("MCP 同步等级目录缺少完整查询来源");
-  const variableItemLevelReferenceSource = {
-    kind: "reference",
-    repository,
-    commit,
-    importedAt: importStartedAt,
-    sourceFiles: ["data/convert.ts"],
-    note: "参考项目 data/convert.ts:140 将 Item.SubStatCategory 为 2 的装备映射为 equipLevelVariable；当前装备标志原值由同版本 MCP Item.SubStatCategory 查询提供。",
-  };
-  sourceRecords.push(
-    snapshotSource(mcpSnapshot, "Item", itemCoreReturnFields, gearMerge.usedIds),
-    ...itemFieldQuerySources(mcpSnapshot, "Icon", [
-      ...mcpSnapshot.queryPlan.gearItemIds,
-      ...mcpSnapshot.queryPlan.foodItemIds,
-    ]),
-    ...itemFieldQuerySources(mcpSnapshot, "SubStatCategory", gearMerge.usedIds),
-    ...itemFieldQuerySources(mcpSnapshot, "ItemSpecialBonus", gearMerge.usedIds),
-    ...itemFieldQuerySources(mcpSnapshot, "ItemSpecialBonusParam", gearMerge.usedIds),
-    itemSpecialBonusTableSource(mcpSnapshot),
-    snapshotSource(mcpSnapshot, "ItemAction", itemActionReturnFields, foodMerge.usedActionIds),
-    snapshotSource(mcpSnapshot, "ItemFood", itemFoodReturnFields, undefined, mcpSnapshot.missing?.ItemFood?.length
-      ? `MCP 缺少 ItemFood 行：${mcpSnapshot.missing.ItemFood.join(",")}`
-      : undefined),
-    snapshotSource(mcpSnapshot, "ItemLevel", itemLevelReturnFields, levelMerge.usedIds),
-    snapshotSource(mcpSnapshot, "BaseParam", undefined, slotMerge.usedIds),
-    snapshotSource(mcpSnapshot, "Materia", undefined, Object.keys(snapshotRows(mcpSnapshot, "Materia")).map(Number)),
-    snapshotSource(mcpSnapshot, "ClassJob", classJobReturnFields, classJobRowIds),
-    resistanceWeaponAdjustSource(
-      mcpSnapshot,
-      mcpSnapshot.queries.find((query) =>
-        query.method === "list_rows" && query.sheet === "ResistanceWeaponAdjust",
-      ).rowIds,
-    ),
-    mcpSource({
-      sheet: "ContentFinderCondition",
-      fields: ["Name", "ItemLevelSync", "ClassJobLevelSync", "JournalGenre", "ContentType", "ContentUICategory", "HighEndDuty", "AllowUndersized", "ContentLinkType"],
-      rowIds: syncLevelQuery.rowIds,
-      gameVersion: mcpSnapshot.gameVersion,
-      validatedVersion: mcpSnapshot.validatedVersion,
-      queriedAt: syncLevelQuery.queriedAt,
-      note: "同版本完整 CFC 查询用于生成同步等级下界与副本目录；仅保存生成完成后的等级和分组目录。",
-    }),
-    mcpSource({
-      sheet: "ContentType",
-      fields: ["Name"],
-      rowIds: contentTypeQuery.rowIds,
-      gameVersion: mcpSnapshot.gameVersion,
-      validatedVersion: mcpSnapshot.validatedVersion,
-      queriedAt: contentTypeQuery.queriedAt,
-      note: "ContentType.Name 用于识别并生成副本目录名称。",
-    }),
-    mcpSource({
-      sheet: "ContentUICategory",
-      fields: ["Name"],
-      rowIds: contentUICategoryQuery.rowIds,
-      gameVersion: mcpSnapshot.gameVersion,
-      validatedVersion: mcpSnapshot.validatedVersion,
-      queriedAt: contentUICategoryQuery.queriedAt,
-      note: "ContentUICategory.Name 用于识别副本高难/零式目录类别。",
-    }),
-    mcpSource({
-      sheet: "ParamGrow",
-      fields: ["ItemLevelSync"],
-      rowIds: paramGrowQuery.rowIds,
-      gameVersion: mcpSnapshot.gameVersion,
-      validatedVersion: mcpSnapshot.validatedVersion,
-      queriedAt: paramGrowQuery.queriedAt,
-      note: "ParamGrow.ItemLevelSync 提供仅同步等级默认品级及各等级区间边界依据。",
-    }),
-    variableItemLevelReferenceSource,
-    bluDamageReferenceSource,
-  );
-  const fallbackCount = gearMerge.missing.length + foodMerge.missing.length;
-  const removedNameCount = gearMerge.removed.length + foodMerge.removed.length;
-  mcpSummary = `MCP 优先：覆盖 ${gearMerge.usedIds.length}/${gears.length} 件装备（含 ${gearMerge.result.filter((gear) => gear.resistanceWeaponAdjust).length} 件 ResistanceWeaponAdjust 武器）、${foodMerge.usedIds.length}/${foods.length} 种食物，${fallbackCount} 项回退参考项目；剔除 ${removedNameCount} 项空名称物品`;
-} else if (!offline) {
-  console.warn(`未找到 MCP 查询产物：${mcpSnapshotPath}。请先使用环境 MCP 工具生成该文件；本次仅使用参考项目。`);
-}
-const levelFilteredGears = gears.filter(includeGearInCatalog);
-const catalogGears = levelFilteredGears.filter(({ id }) => !excludedReferenceGearIds.has(id));
-for (const gear of catalogGears) gear.icon = binUiMetadata.itemIcons[gear.id];
-for (const food of foods) food.icon = binUiMetadata.itemIcons[food.id];
-console.log(`剔除 ${gears.length - levelFilteredGears.length} 件同时满足穿戴等级低于 50 且品级低于 90 的装备，另剔除 ${levelFilteredGears.length - catalogGears.length} 件参考来源包含古董系列或军票的装备。`);
-const payload = {
-  version: mcpSnapshot?.gameVersion ?? (() => { throw new Error("缺少生成游戏数据的游戏版本号"); })(),
-  provenance: {
     repository,
     commit,
     importedAt: importStartedAt,
     sourceFiles: referenceSourceFiles,
-    sources: sourceRecords,
-  },
-  gears: catalogGears,
-  foods,
-  jobs: binUiMetadata.jobs,
-  sync: effectiveSyncData,
-  materias,
-  bluMdmgAdditions,
-  materiaGradeRequiredLevels: constants.materiaGradeRequiredLevels,
-  materiaGradeIsRestricted: constants.materiaGradeIsRestricted,
-  levelCaps: effectiveLevelCaps,
-  slotCaps: effectiveSlotCaps,
-  roleCaps,
-  baseStats: constants.baseStats,
-  clanStats: constants.clanStats,
-  jobSchemas: normalizeJobSchemas(constants.jobSchemas, mcpSnapshot),
-  jobLevelModifiers: constants.jobLevelModifiers,
-};
-validate(payload);
-await mkdir(resolve(outputPath, ".."), { recursive: true });
-const generated = await encodeGeneratedData(payload);
-await writeFile(outputPath, generated.bytes);
-console.log(
-  `Imported ${generated.gearCount} gears, ${payload.foods.length} foods and ${supportedJobs.length} jobs from ${commit.slice(0, 12)}. ${mcpSummary}`,
-);
-console.log(`Generated ${outputPath} (${generated.bytes.byteLength} bytes); physical groups: ${JSON.stringify(generated.physicalGroupCounts)}; main-stat indexes: ${JSON.stringify(generated.mainStatIndexCounts)} (${generated.mainStatIndexBytes} bytes); binary sections: ${JSON.stringify(generated.sectionSizes)}.`);
+    note: "参考装备 obsolete=true 的来源统一映射为已废弃；否则以→诗学或/诗学结尾映射为点数/诗学，以→战利品、→兵团、→同盟结尾分别映射为怪物狩猎战利品、兵团徽章、同盟徽章。以→雇员探险结尾映射为雇员探险；完整来源点数/哲学→无限城古迹、日影地修炼所、野营地映射为迷宫挑战/无限城古迹、日影地修炼所、野营地。其余保留原始来源。生成目录排除原始来源包含古董系列或军票的装备，此判断先于来源映射。",
+  };
+  let foods = rawFoods.filter((food) => food.slot === -1).map(normalizeFood);
+  let effectiveLevelCaps = levelCaps;
+  let effectiveSlotCaps = slotCaps;
+  let effectiveSyncData;
+  let materias = Object.fromEntries(
+    combatMateriaStats.map((stat) => [stat, constants.materias[stat]]),
+  );
+  const sourceRecords = [referenceSource];
+
+  const binUiMetadata = binUiMetadataFromSnapshot(mcpSnapshot, supportedJobs);
+  let mcpSummary = "";
+    const gearMerge = mergeMcpGearData(gears, mcpSnapshot, referenceSource);
+    gears.splice(0, gears.length, ...gearMerge.result);
+    const foodMerge = mergeMcpFoodData(foods, mcpSnapshot);
+    foods = foodMerge.result;
+    const levelMerge = mergeMcpLevelCaps(levelCaps, mcpSnapshot);
+    effectiveLevelCaps = levelMerge.value;
+    const slotMerge = mergeMcpSlotCaps(slotCaps, mcpSnapshot);
+    effectiveSlotCaps = slotMerge.value;
+    const materiaMerge = mergeMcpMaterias(materias, mcpSnapshot);
+    materias = materiaMerge.value;
+    const supportedSyncLevels = Object.keys(constants.jobLevelModifiers)
+      .map(Number)
+      .filter((level) => Number.isSafeInteger(level) && level >= 50)
+      .sort((left, right) => left - right);
+    effectiveSyncData = syncDataFromSnapshot(mcpSnapshot, effectiveLevelCaps, supportedSyncLevels);
+    const classJobRowIds = Object.values(mcpSnapshot.queryPlan.classJobIds).map(Number);
+    const syncLevelQuery = mcpSnapshot.queries.find((query) =>
+      query.method === "list_rows" && query.sheet === "ContentFinderCondition",
+    );
+    const contentTypeQuery = mcpSnapshot.queries.find((query) =>
+      query.method === "list_rows" && query.sheet === "ContentType",
+    );
+    const contentUICategoryQuery = mcpSnapshot.queries.find((query) =>
+      query.method === "list_rows" && query.sheet === "ContentUICategory",
+    );
+    const paramGrowQuery = mcpSnapshot.queries.find((query) =>
+      query.method === "list_rows" && query.sheet === "ParamGrow" && query.limit === -1,
+    );
+    const bluDamageReferenceSource = {
+      kind: "reference",
+      repository,
+      commit,
+      importedAt: importStartedAt,
+      sourceFiles: [
+        "data/out/bluMdmgAdditions.js",
+        "data/in/bluMdmgAdditions.txt",
+        "data/convert.ts",
+      ],
+      note: `MCP ${mcpSnapshot.gameVersion} 的 list_sheets 与 ClassJob describe_sheet 均未提供青魔法师按 INT 索引的魔法武器伤害加值表或字段；使用参考项目原始测量映射，并与输入文本逐值校验。`,
+    };
+    if (!syncLevelQuery || !contentTypeQuery || !contentUICategoryQuery || !paramGrowQuery)
+      throw new Error("MCP 同步等级目录缺少完整查询来源");
+    const variableItemLevelReferenceSource = {
+      kind: "reference",
+      repository,
+      commit,
+      importedAt: importStartedAt,
+      sourceFiles: ["data/convert.ts"],
+      note: "参考项目 data/convert.ts:140 将 Item.SubStatCategory 为 2 的装备映射为 equipLevelVariable；当前装备标志原值由同版本 MCP Item.SubStatCategory 查询提供。",
+    };
+    sourceRecords.push(
+      snapshotSource(mcpSnapshot, "Item", itemCoreReturnFields, gearMerge.usedIds),
+      ...itemFieldQuerySources(mcpSnapshot, "Icon", [
+        ...mcpSnapshot.queryPlan.gearItemIds,
+        ...mcpSnapshot.queryPlan.foodItemIds,
+      ]),
+      ...itemFieldQuerySources(mcpSnapshot, "SubStatCategory", gearMerge.usedIds),
+      ...itemFieldQuerySources(mcpSnapshot, "ItemSpecialBonus", gearMerge.usedIds),
+      ...itemFieldQuerySources(mcpSnapshot, "ItemSpecialBonusParam", gearMerge.usedIds),
+      itemSpecialBonusTableSource(mcpSnapshot),
+      snapshotSource(mcpSnapshot, "ItemAction", itemActionReturnFields, foodMerge.usedActionIds),
+      snapshotSource(mcpSnapshot, "ItemFood", itemFoodReturnFields, undefined, mcpSnapshot.missing?.ItemFood?.length
+        ? `MCP 缺少 ItemFood 行：${mcpSnapshot.missing.ItemFood.join(",")}`
+        : undefined),
+      snapshotSource(mcpSnapshot, "ItemLevel", itemLevelReturnFields, levelMerge.usedIds),
+      snapshotSource(mcpSnapshot, "BaseParam", undefined, slotMerge.usedIds),
+      snapshotSource(mcpSnapshot, "Materia", undefined, Object.keys(snapshotRows(mcpSnapshot, "Materia")).map(Number)),
+      snapshotSource(mcpSnapshot, "ClassJob", classJobReturnFields, classJobRowIds),
+      resistanceWeaponAdjustSource(
+        mcpSnapshot,
+        mcpSnapshot.queries.find((query) =>
+          query.method === "list_rows" && query.sheet === "ResistanceWeaponAdjust",
+        ).rowIds,
+      ),
+      mcpSource({
+        sheet: "ContentFinderCondition",
+        fields: ["Name", "ItemLevelSync", "ClassJobLevelSync", "JournalGenre", "ContentType", "ContentUICategory", "HighEndDuty", "AllowUndersized", "ContentLinkType"],
+        rowIds: syncLevelQuery.rowIds,
+        gameVersion: mcpSnapshot.gameVersion,
+        validatedVersion: mcpSnapshot.validatedVersion,
+        queriedAt: syncLevelQuery.queriedAt,
+        note: "同版本完整 CFC 查询用于生成同步等级下界与副本目录；仅保存生成完成后的等级和分组目录。",
+      }),
+      mcpSource({
+        sheet: "ContentType",
+        fields: ["Name"],
+        rowIds: contentTypeQuery.rowIds,
+        gameVersion: mcpSnapshot.gameVersion,
+        validatedVersion: mcpSnapshot.validatedVersion,
+        queriedAt: contentTypeQuery.queriedAt,
+        note: "ContentType.Name 用于识别并生成副本目录名称。",
+      }),
+      mcpSource({
+        sheet: "ContentUICategory",
+        fields: ["Name"],
+        rowIds: contentUICategoryQuery.rowIds,
+        gameVersion: mcpSnapshot.gameVersion,
+        validatedVersion: mcpSnapshot.validatedVersion,
+        queriedAt: contentUICategoryQuery.queriedAt,
+        note: "ContentUICategory.Name 用于识别副本高难/零式目录类别。",
+      }),
+      mcpSource({
+        sheet: "ParamGrow",
+        fields: ["ItemLevelSync"],
+        rowIds: paramGrowQuery.rowIds,
+        gameVersion: mcpSnapshot.gameVersion,
+        validatedVersion: mcpSnapshot.validatedVersion,
+        queriedAt: paramGrowQuery.queriedAt,
+        note: "ParamGrow.ItemLevelSync 提供仅同步等级默认品级及各等级区间边界依据。",
+      }),
+      variableItemLevelReferenceSource,
+      bluDamageReferenceSource,
+    );
+    const fallbackCount = gearMerge.missing.length + foodMerge.missing.length;
+    const removedNameCount = gearMerge.removed.length + foodMerge.removed.length;
+    mcpSummary = `MCP 优先：覆盖 ${gearMerge.usedIds.length}/${gears.length} 件装备（含 ${gearMerge.result.filter((gear) => gear.resistanceWeaponAdjust).length} 件 ResistanceWeaponAdjust 武器）、${foodMerge.usedIds.length}/${foods.length} 种食物，${fallbackCount} 项回退参考项目；剔除 ${removedNameCount} 项空名称物品`;
+
+  const levelFilteredGears = gears.filter(includeGearInCatalog);
+  const catalogGears = levelFilteredGears.filter(({ id }) => !excludedReferenceGearIds.has(id));
+  for (const gear of catalogGears) gear.icon = binUiMetadata.itemIcons[gear.id];
+  for (const food of foods) food.icon = binUiMetadata.itemIcons[food.id];
+  const excludedGearCounts = { belowLevelAndItemLevel: gears.length - levelFilteredGears.length, referenceSources: levelFilteredGears.length - catalogGears.length };
+  const payload = {
+    version: mcpSnapshot?.gameVersion ?? (() => { throw new Error("缺少生成游戏数据的游戏版本号"); })(),
+    provenance: {
+      repository,
+      commit,
+      importedAt: importStartedAt,
+      sourceFiles: referenceSourceFiles,
+      sources: sourceRecords,
+    },
+    gears: catalogGears,
+    foods,
+    jobs: binUiMetadata.jobs,
+    sync: effectiveSyncData,
+    materias,
+    bluMdmgAdditions,
+    materiaGradeRequiredLevels: constants.materiaGradeRequiredLevels,
+    materiaGradeIsRestricted: constants.materiaGradeIsRestricted,
+    levelCaps: effectiveLevelCaps,
+    slotCaps: effectiveSlotCaps,
+    roleCaps,
+    baseStats: constants.baseStats,
+    clanStats: constants.clanStats,
+    jobSchemas: normalizeJobSchemas(constants.jobSchemas, mcpSnapshot),
+    jobLevelModifiers: constants.jobLevelModifiers,
+  };
+  validate(payload);
+  return { payload, mcpSummary, excludedGearCounts };
+}
+
+function withoutFields(value, fields) {
+  const result = { ...value };
+  for (const field of fields) delete result[field];
+  return result;
+}
+
+/**
+ * Project an already validated, source-rich generation payload into its runtime shape.
+ * Source checks must happen before this projection because the audit fields are removed.
+ */
+export function projectRuntimeData(payload) {
+  return {
+    ...payload,
+    provenance: withoutFields(payload.provenance, ["sources", "sourceFiles", "queryEvidence"]),
+    gears: payload.gears.map((gear) => withoutFields(gear, ["sourceFile", "dataSources"])),
+    foods: payload.foods.map((food) => withoutFields(food, ["sourceFile", "dataSources"])),
+    jobSchemas: Object.fromEntries(Object.entries(payload.jobSchemas).map(([jobId, schema]) => [
+      jobId,
+      withoutFields(schema, ["dataSources"]),
+    ])),
+  };
+}
+
+function assertRuntimeDataHasNoGenerationAudit(payload) {
+  const hasAny = (value, fields) => fields.some((field) => Object.hasOwn(value ?? {}, field));
+  if (hasAny(payload?.provenance, ["sources", "sourceFiles", "queryEvidence"]) ||
+      payload?.gears?.some((gear) => hasAny(gear, ["sourceFile", "dataSources"])) ||
+      payload?.foods?.some((food) => hasAny(food, ["sourceFile", "dataSources"])) ||
+      Object.values(payload?.jobSchemas ?? {}).some((schema) => hasAny(schema, ["dataSources"])))
+    throw new Error("运行时快照仍包含生成审计字段；请先完成来源校验并投影");
+}
+
+/** Write an already validated runtime payload; this boundary does not validate upstream sources. */
+export async function writeRuntimeGeneratedData(payload, { outputPath: targetPath = defaultOutputPath } = {}) {
+  assertRuntimeDataHasNoGenerationAudit(payload);
+  await mkdir(resolve(targetPath, ".."), { recursive: true });
+  const generated = await encodeGeneratedData(payload);
+  const temporaryPath = `${targetPath}.tmp-${process.pid}-${randomUUID()}`;
+  try {
+    await writeFile(temporaryPath, generated.bytes);
+    const verifiedBytes = new Uint8Array(await readFile(temporaryPath));
+    const decoded = await decodeGeneratedData(verifiedBytes);
+    if (decoded.version !== payload.version ||
+        decoded.provenance.commit !== payload.provenance.commit ||
+        decoded.gears.length !== payload.gears.length ||
+        decoded.foods.length !== payload.foods.length ||
+        Object.keys(decoded.jobs).length !== Object.keys(payload.jobs).length)
+      throw new Error("生成二进制解码后与原始 payload 的版本、来源或目录数量不一致");
+    const decodedGearIds = new Set();
+    for (const gear of decoded.gears) {
+      if (!gear || decodedGearIds.has(gear.id) || decoded.getGearById(gear.id)?.id !== gear.id)
+        throw new Error(`生成二进制解码后装备记录缺失或重复：${gear?.id}`);
+      decodedGearIds.add(gear.id);
+    }
+    if (decodedGearIds.size !== payload.gears.length ||
+        payload.gears.some((gear) => !decodedGearIds.has(gear.id)))
+      throw new Error("生成二进制解码后装备 ID 集合与原始 payload 不一致");
+
+    // The decoder validates gear records lazily. Re-encoding its normalized view
+    // forces every record through that validation and verifies all wire fields.
+    const {
+      gearIndexesByMainStat,
+      gearLevelByRecordIndex,
+      gearPhysicalGroupRanges,
+      gearMinLevel,
+      gearMaxLevel,
+      gearStatNames,
+      getGearAtRecordIndex,
+      getGearById,
+      ...decodedPayload
+    } = decoded;
+    const reencoded = await encodeGeneratedData(decodedPayload);
+    if (reencoded.bytes.byteLength !== verifiedBytes.byteLength ||
+        reencoded.bytes.some((byte, index) => byte !== verifiedBytes[index]))
+      throw new Error("生成二进制解码后重新编码与临时文件内容不一致");
+    await rename(temporaryPath, targetPath);
+  } catch (error) {
+    await unlink(temporaryPath).catch(() => {});
+    throw error;
+  }
+  return generated;
+}
+
+export async function buildGeneratedData(payload, options = {}) {
+  validate(payload);
+  return writeRuntimeGeneratedData(projectRuntimeData(payload), options);
+}
+
+function rejectObsoleteDataUpdateInputs(args = process.argv.slice(2)) {
+  const obsoleteEnvironment = [
+    "FFXIV_MCP_LUMINA_SNAPSHOT",
+    "FFXIV_MCP_LUMINA_SCOPE",
+  ].filter((name) => process.env[name] !== undefined);
+  if (obsoleteEnvironment.length)
+    throw new Error(`MCP 快照文件和查询范围配置已移除（${obsoleteEnvironment.join(", ")}）；请清除旧配置并运行 npm run data:update`);
+  const obsoleteOptions = args.filter((argument) =>
+    argument === "--offline" || argument === "--item-special-bonus-data-only" ||
+    argument === "--snapshot" || argument.startsWith("--snapshot=") ||
+    argument === "--scope" || argument.startsWith("--scope=") ||
+    argument === "--mcp-snapshot" || argument.startsWith("--mcp-snapshot="),
+  );
+  if (obsoleteOptions.length)
+    throw new Error(`已移除数据更新选项：${obsoleteOptions.join(", ")}；完整数据更新请运行 npm run data:update`);
+  if (args.length)
+    throw new Error(`数据更新不接受命令行参数：${args.join(" ")}；请运行 npm run data:update`);
+}
+
+export async function updateData({ upstreamRoot: upstreamRootOption, outputPath: outputPathOption } = {}) {
+  rejectObsoleteDataUpdateInputs(arguments.length === 0 ? process.argv.slice(2) : []);
+  upstreamRoot = resolve(upstreamRootOption ?? defaultUpstreamRoot);
+  outputPath = resolve(outputPathOption ?? defaultOutputPath);
+  importStartedAt = new Date().toISOString();
+  const commit = await prepareUpstream();
+  currentCommit = commit;
+  const queryResult = await queryMcpLumina({ upstreamRoot });
+  const mcpSnapshot = validateMcpQueryResult(queryResult);
+  const built = await createPayload(mcpSnapshot, commit);
+  const generated = await buildGeneratedData(built.payload, { outputPath });
+  console.log(`剔除 ${built.excludedGearCounts.belowLevelAndItemLevel} 件同时满足穿戴等级低于 50 且品级低于 90 的装备，另剔除 ${built.excludedGearCounts.referenceSources} 件参考来源包含古董系列或军票的装备。`);
+  console.log(
+    `Imported ${generated.gearCount} gears, ${built.payload.foods.length} foods and ${supportedJobs.length} jobs from ${commit.slice(0, 12)}. ${built.mcpSummary}`,
+  );
+  console.log(`Generated ${outputPath} (${generated.bytes.byteLength} bytes); physical groups: ${JSON.stringify(generated.physicalGroupCounts)}; main-stat indexes: ${JSON.stringify(generated.mainStatIndexCounts)} (${generated.mainStatIndexBytes} bytes); binary sections: ${JSON.stringify(generated.sectionSizes)}.`);
+  return { payload: built.payload, generated, outputPath };
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href)
+  await updateData();

@@ -500,7 +500,8 @@ export async function createParallelBaselineExecutor(): Promise<BaselineExecutor
     process?: { versions?: { node?: string } };
   }).process;
   if (typeof runtimeProcess?.versions?.node === "string") {
-    const adapterUrl = new URL("../node/parallel-baseline-node-adapter.mjs", import.meta.url);
+    const adapterPath = "../node/parallel-baseline-node-adapter.ts";
+    const adapterUrl = new URL(/* @vite-ignore */ adapterPath, import.meta.url);
     const adapter = await import(/* @vite-ignore */ adapterUrl.href) as {
       createNodeBaselineWorker: () => BaselineWorkerHandle;
     };

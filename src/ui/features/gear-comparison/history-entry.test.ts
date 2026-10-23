@@ -15,7 +15,6 @@ const result = {
     level: 700,
     stats: { DET: 20 },
     statRates: {},
-    sourceFile: "saved.json",
   },
   stats: { STR: 1234 },
   effects: {

@@ -28,7 +28,6 @@ const gear = {
   stats: {},
   materiaSlots: 0,
   jobs: ["SAM"],
-  sourceFile: "test",
 } as Gear;
 const config: EquipmentMateriaConfig = { jobId: "SAM" };
 const draft: SingleEquipmentDraft = {

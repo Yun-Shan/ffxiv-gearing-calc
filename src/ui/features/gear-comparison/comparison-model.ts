@@ -142,7 +142,6 @@ function foodIdentity(entry: ComparisonEntry): string {
     actualStats: food.actualStats,
     utilization: food.utilization,
     statsMeaning: "actual-gain",
-    sourceFile: food.sourceFile,
     best: food.best,
   });
 }
@@ -156,7 +155,7 @@ function comparisonFoodItem(entry: ComparisonEntry): GearTableFoodItem {
         itemId: food.id,
         name: food.name,
         level: food.level,
-        source: food.sourceFile,
+        source: "生产制作",
         statsMeaning: "actual-gain",
         actualStats: food.actualStats,
         utilization: food.utilization,

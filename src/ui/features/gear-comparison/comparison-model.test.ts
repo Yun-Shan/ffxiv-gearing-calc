@@ -35,7 +35,6 @@ function testGear(
     materiaSlots: 2,
     source: "测试来源",
     jobs: ["PLD"],
-    sourceFile: "test.json",
     melds: [{ stat: "CRT", value: 36, grade: 12 }],
     finalStats: stats,
   };
@@ -50,7 +49,6 @@ function testFood(id: number): FoodResult {
     statRates: { DET: 10 },
     actualStats: { DET: 50 },
     utilization: 100,
-    sourceFile: "food-test.json",
   };
 }
 
@@ -106,6 +104,26 @@ function entry({
 }
 
 describe("gear comparison model", () => {
+  it("uses the crafted food source and ignores legacy source-file identity", () => {
+    const firstFood = Object.assign(testFood(10), {
+      sourceFile: "legacy-food-a.json",
+    });
+    const secondFood = Object.assign(testFood(10), {
+      sourceFile: "legacy-food-b.json",
+    });
+    const rows = buildComparisonGearTableRows([
+      entry({ food: firstFood }),
+      entry({ food: secondFood }),
+    ]);
+    const foodRow = rows.find(({ item }) => item.kind === "food");
+
+    expect(foodRow?.marker).toBe("全部");
+    expect(foodRow?.item.kind).toBe("food");
+    if (foodRow?.item.kind === "food") {
+      expect(foodRow.item.source).toBe("生产制作");
+    }
+  });
+
   it("merges default socket order with identical explicit imported positions", () => {
     const original = testGear(1, "weapon", 100);
     const imported = {

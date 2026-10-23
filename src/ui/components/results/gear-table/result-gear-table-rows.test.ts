@@ -31,7 +31,6 @@ function gear(id: number, crt: number): MeldedGear {
     materiaSlots: 2,
     source: "test",
     jobs: ["PLD"],
-    sourceFile: "test.json",
     melds: [],
     finalStats: stats,
   };
@@ -43,7 +42,6 @@ const food: Food = {
   level: 700,
   stats: { DET: 20 },
   statRates: { DET: 10 },
-  sourceFile: "food.json",
 };
 
 function result(): OptimizationResultWithEquivalentGear {

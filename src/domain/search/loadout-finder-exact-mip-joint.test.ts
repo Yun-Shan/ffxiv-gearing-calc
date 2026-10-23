@@ -146,10 +146,17 @@ function food(itemId: number, stats: readonly number[]): FoodInfo {
 
 function statIndexesFor(job: JobId): ReadonlyMap<Stat, number> {
   const schema = gameData.jobSchemas[job];
-  assert.ok(schema.dataSources?.some((source) =>
-    source.kind === "mcp" && source.server === "ffxiv-mcp-lumina"));
   assert.ok(schema.mainStat);
   const attackStat: Stat = schema.mainStat === "VIT" ? "STR" : schema.mainStat;
+  assert.equal(
+    schema.attackStat,
+    attackStat,
+    `${job} main and attack stats must agree`,
+  );
+  assert.ok(
+    schema.stats.includes(attackStat),
+    `${job} schema must include its attack stat`,
+  );
   const weaponStat: Stat = schema.mainStat === "INT" || schema.mainStat === "MND" ? "MDMG" : "PDMG";
   const speedStat: Stat = schema.stats.includes("SKS") ? "SKS" : "SPS";
   const stats: Stat[] = [attackStat, weaponStat, "CRT", "DET", "DHT", "TEN", speedStat];

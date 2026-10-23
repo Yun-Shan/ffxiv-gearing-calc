@@ -310,8 +310,6 @@ function isFood(value: unknown): value is Food {
     isSafeInteger(value.level) &&
     isStats(value.stats) &&
     isStats(value.statRates) &&
-    typeof value.sourceFile === "string" &&
-    value.sourceFile.length > 0 &&
     (value.best === undefined || value.best === true)
   );
 }
@@ -380,9 +378,7 @@ function isGear(value: unknown): value is Gear {
     (value.source === undefined || typeof value.source === "string") &&
     Array.isArray(value.jobs) &&
     value.jobs.every(isJobId) &&
-    (value.weaponDamage === undefined || isFiniteNumber(value.weaponDamage)) &&
-    typeof value.sourceFile === "string" &&
-    value.sourceFile.length > 0
+    (value.weaponDamage === undefined || isFiniteNumber(value.weaponDamage))
   );
 }
 

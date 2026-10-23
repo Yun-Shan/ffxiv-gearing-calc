@@ -23,7 +23,6 @@ function gear(id: number, slot: GearSlot, source = "raid/alpha"): Gear {
     stats: {},
     materiaSlots: 2,
     jobs: ["RDM", "GNB"],
-    sourceFile: "test",
     source,
   };
 }

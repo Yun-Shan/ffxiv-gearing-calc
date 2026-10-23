@@ -96,8 +96,6 @@ export interface Gear {
   source?: string;
   jobs: JobId[];
   weaponDamage?: number;
-  sourceFile: string;
-  dataSources?: DataSourceRef[];
 }
 
 /** Gear decoded from the current generated catalog always has a validated icon ID. */
@@ -123,8 +121,6 @@ export interface Food {
   stats: Stats;
   statRates: Stats;
   best?: true;
-  sourceFile: string;
-  dataSources?: DataSourceRef[];
 }
 
 /** Food decoded from the current generated data always has a validated icon ID. */
@@ -157,7 +153,7 @@ export interface JobSchema {
   secondaryStat: "SKS" | "SPS" | "TEN" | "PIE" | "DHT";
   attackStat: "STR" | "DEX" | "INT" | "MND";
   stats: Stat[];
-  statModifiers: Partial<Record<Stat | "hp" | "gcd", number>>;
+  statModifiers: Partial<Record<Stat | "hp" | "gcd", number>> & { gcdReason?: string };
   partyBonus?: number;
   gcdModifier: number;
   traitDamageMultiplier: number;
@@ -167,7 +163,6 @@ export interface JobSchema {
   ignoreWeaponItemLevel?: boolean;
   /** 优化器为该职业选择的初始品级范围。 */
   defaultItemLevel?: readonly [number, number];
-  dataSources?: DataSourceRef[];
 }
 
 export interface GeneratedJob {
@@ -202,28 +197,11 @@ export interface SyncData {
   groups: SyncDutyGroup[];
 }
 
+/** Small runtime generation summary; detailed source checks stay in the generator. */
 export interface DataProvenance {
   repository: string;
   commit: string;
   importedAt: string;
-  sourceFiles: string[];
-  sources?: DataSourceRef[];
-}
-
-export interface DataSourceRef {
-  kind: "mcp" | "reference";
-  server?: string;
-  repository?: string;
-  commit?: string;
-  sheet?: string;
-  fields?: string[];
-  rowIds?: number[];
-  gameVersion?: string;
-  validatedVersion?: string;
-  queriedAt?: string;
-  importedAt?: string;
-  note?: string;
-  sourceFiles?: string[];
 }
 
 export interface LevelModifier {

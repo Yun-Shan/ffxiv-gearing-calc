@@ -8,7 +8,6 @@ const food: Food = {
   level: 700,
   stats: { CRT: 120, DET: 80, VIT: 100 },
   statRates: { CRT: 10, DET: 10, VIT: 10 },
-  sourceFile: "test",
 };
 describe("calculated food result", () => {
   it("returns caps, rates, exact applied gains and the reference weighted utilization", () => {

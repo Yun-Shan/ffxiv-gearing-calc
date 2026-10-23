@@ -1,49 +1,7 @@
-import { decodeGeneratedData } from "../data/binary-format.mjs";
+import { decodeGeneratedData } from "../data/binary/decode.ts";
 import { selectFoodCandidates } from "./food-candidates.ts";
-import type {
-  DataProvenance,
-  GeneratedFood,
-  GeneratedGear,
-  GeneratedJob,
-  GearStat,
-  JobId,
-  JobSchema,
-  LevelModifier,
-  Materia,
-  Stat,
-  SyncData,
-} from "./types";
-
-type MateriaTable = Partial<Record<Materia["stat"], number[]>>;
-type GearPhysicalGroup = "VIT" | "STR" | "DEX" | "MND" | "INT" | "SHARED";
-
-interface GeneratedGameData {
-  version: string;
-  provenance: DataProvenance;
-  gears: GeneratedGear[];
-  foods: GeneratedFood[];
-  jobs: Record<JobId, GeneratedJob>;
-  sync: SyncData;
-  materias: MateriaTable;
-  materiaGradeRequiredLevels: number[];
-  materiaGradeIsRestricted: boolean[];
-  bluMdmgAdditions: number[];
-  levelCaps: Record<string, number[]>;
-  slotCaps: Record<string, number[]>;
-  roleCaps: Record<string, number[]>;
-  baseStats: Partial<Record<Stat, "main" | "sub" | number>>;
-  clanStats: Partial<Record<Stat, number[]>>;
-  jobSchemas: Record<JobId, JobSchema>;
-  jobLevelModifiers: Record<number, LevelModifier>;
-  gearIndexesByMainStat: Record<"VIT" | "STR" | "DEX" | "MND" | "INT", Uint32Array>;
-  gearLevelByRecordIndex: Uint16Array;
-  gearPhysicalGroupRanges: Record<GearPhysicalGroup, { start: number; count: number }>;
-  gearMinLevel: number;
-  gearMaxLevel: number;
-  gearStatNames: GearStat[];
-  getGearAtRecordIndex(index: number): GeneratedGear;
-  getGearById(id: number): GeneratedGear | undefined;
-}
+import type { GeneratedGameData, MateriaTable } from "../data/binary/types.ts";
+import type { Materia } from './types.ts';
 
 async function loadGeneratedGameData(): Promise<GeneratedGameData> {
   const injectedBytes = (globalThis as typeof globalThis & {

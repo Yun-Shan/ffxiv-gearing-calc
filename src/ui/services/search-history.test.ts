@@ -219,6 +219,60 @@ describe("搜索历史记录结构校验", () => {
     }
   });
 
+  it("restores current snapshots without provenance and leaves legacy fields intact", () => {
+    function withoutLegacyProvenance(value: object): Record<string, unknown> {
+      const snapshot = { ...value } as unknown as Record<string, unknown>;
+      delete snapshot.sourceFile;
+      delete snapshot.dataSources;
+      return snapshot;
+    }
+
+    const weapon = gears.find((gear) => gear.slot === "weapon")!;
+    const cleanGear = withoutLegacyProvenance({
+      ...weapon,
+      melds: [],
+      finalStats: weapon.stats,
+    });
+    const cleanFood = withoutLegacyProvenance({
+      ...foods[0]!,
+      actualStats: {},
+      utilization: 0,
+    });
+    const currentRecord = {
+      ...completedSingleRecord(),
+      result: { ...result(), gear: [cleanGear], food: cleanFood },
+    };
+
+    const restoredCurrent = validateSearchHistoryRecord(currentRecord);
+    expect(restoredCurrent.kind).toBe("single");
+    if (restoredCurrent.kind !== "single") throw new Error("预期单职业记录");
+    expect(restoredCurrent.result.gear[0]).not.toHaveProperty("sourceFile");
+    expect(restoredCurrent.result.food).not.toHaveProperty("sourceFile");
+
+    const legacyRecord = {
+      ...currentRecord,
+      result: {
+        ...currentRecord.result,
+        gear: [
+          { ...cleanGear, sourceFile: "legacy-gear.json", dataSources: [] },
+        ],
+        food: { ...cleanFood, sourceFile: "legacy-food.json", dataSources: [] },
+      },
+    };
+    const restoredLegacy = validateSearchHistoryRecord(legacyRecord);
+    expect(restoredLegacy).toBe(legacyRecord);
+    expect(restoredLegacy.kind).toBe("single");
+    if (restoredLegacy.kind !== "single") throw new Error("预期单职业记录");
+    expect(restoredLegacy.result.gear[0]).toHaveProperty(
+      "sourceFile",
+      "legacy-gear.json",
+    );
+    expect(restoredLegacy.result.food).toHaveProperty(
+      "sourceFile",
+      "legacy-food.json",
+    );
+  });
+
   it("validates replacement group references and the two ring candidate groups", () => {
     const weapon = gears.find((gear) => gear.slot === "weapon")!;
     const selectedWeapon = {

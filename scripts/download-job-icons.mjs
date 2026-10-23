@@ -4,7 +4,7 @@ import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { inflateSync } from "node:zlib";
 import { allowsGenericQueries } from "./mcp-query-validation.mjs";
-import { decodeGeneratedData } from "../src/data/binary-format.mjs";
+import { decodeGeneratedData } from "../src/data/binary/decode.ts";
 
 const root = resolve(import.meta.dirname, "..");
 const generatedDataPath = resolve(root, "src", "data", "generated-data.bin");
@@ -245,13 +245,11 @@ function makeXivApiUrl(rowId) {
   return url.toString();
 }
 
-function validateGeneratedJob(jobId, schema) {
-  const rowSources = (schema?.dataSources ?? []).filter((source) =>
-    source.kind === "mcp" && source.server === "ffxiv-mcp-lumina" && source.sheet === "ClassJob",
-  );
-  if (rowSources.length !== 1 || rowSources[0].rowIds?.length !== 1)
-    throw new Error(`generated-data.bin 中 ${jobId} 缺少唯一 ClassJob MCP 行来源`);
-  return Number(rowSources[0].rowIds[0]);
+function validateGeneratedJob(jobId, job) {
+  if (!job || !Number.isSafeInteger(job.id) || job.id <= 0 ||
+      typeof job.name !== "string" || !job.name.trim() || job.abbreviation !== jobId)
+    throw new Error(`generated-data.bin 中 ${jobId} 的 ClassJob 目录数据无效`);
+  return job;
 }
 
 async function queryClassJobs(jobIds, generatedData) {
@@ -279,7 +277,7 @@ async function queryClassJobs(jobIds, generatedData) {
       throw new Error("ClassJob Schema 与 MCP health 游戏版本不一致");
 
     const jobSearchQueries = await mapConcurrent(jobIds, concurrency, async (jobId) => {
-      const expectedRowId = validateGeneratedJob(jobId, generatedData.jobSchemas[jobId]);
+      const expectedJob = validateGeneratedJob(jobId, generatedData.jobs[jobId]);
       const query = {
         sheet: "ClassJob",
         query: jobId,
@@ -294,8 +292,10 @@ async function queryClassJobs(jobIds, generatedData) {
       const row = matches[0];
       const rowId = Number(row.rowId);
       if (!Number.isInteger(rowId) || rowId <= 0) throw new Error(`MCP ClassJob ${jobId} 返回了无效行 ID`);
-      if (rowId !== expectedRowId)
-        throw new Error(`MCP ClassJob ${jobId} 当前行 ID ${rowId} 与生成数据来源 ${expectedRowId} 不一致`);
+      if (rowId !== expectedJob.id)
+        throw new Error(`MCP ClassJob ${jobId} 当前行 ID ${rowId} 与生成数据 ${expectedJob.id} 不一致`);
+      if (row.fields.Name !== expectedJob.name || row.fields.Abbreviation !== expectedJob.abbreviation)
+        throw new Error(`MCP ClassJob ${jobId} 当前名称或缩写与生成数据不一致`);
       if (response.value.gameVersion !== health.value.gameVersion)
         throw new Error(`MCP ClassJob ${jobId} 查询批次游戏版本不一致`);
       return {
@@ -369,7 +369,7 @@ function buildIconsModule(jobs) {
 
 async function main() {
   const generatedData = await decodeGeneratedData(await readFile(generatedDataPath));
-  const jobIds = Object.keys(generatedData.jobSchemas ?? {});
+  const jobIds = Object.keys(generatedData.jobs ?? {});
   if (jobIds.length !== 23) throw new Error(`当前生成数据应包含 23 个职业，实际 ${jobIds.length} 个`);
   if (new Set(jobIds).size !== jobIds.length) throw new Error("职业 ID 重复");
 

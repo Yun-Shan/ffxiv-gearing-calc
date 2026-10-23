@@ -40,7 +40,6 @@ function gear(
     stats,
     materiaSlots: 0,
     jobs: ["SAM"],
-    sourceFile: "test",
     finalStats: stats,
     melds: [],
   };
@@ -56,7 +55,6 @@ function result(gear: MeldedGear[]): OptimizationResult {
       statRates: {},
       actualStats: {},
       utilization: 0,
-      sourceFile: "test",
     },
     stats: {},
     effects: {} as OptimizationResult["effects"],

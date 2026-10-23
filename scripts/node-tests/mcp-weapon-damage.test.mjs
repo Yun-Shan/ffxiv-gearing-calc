@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -8,17 +7,48 @@ import {
   normalizeMcpItemName,
 } from "../mcp-lumina-import.mjs";
 
-const snapshot = JSON.parse(
-  readFileSync(new URL("../data/mcp-lumina.snapshot.json", import.meta.url), "utf8"),
-);
-const itemRow = snapshot.rows.Item.find((row) => row.rowId === 33146);
-assert.ok(itemRow, "the reproducible MCP snapshot must contain Item 33146");
-const categoryRow = snapshot.rows.ClassJobCategory.find(
-  (row) => row.rowId === itemRow.fields.ClassJobCategory,
-);
-assert.ok(categoryRow, "the MCP snapshot must contain the item's job category");
-
-// The reference fallback carries no PDMG/MDMG primary-stat hint.
+// Regression vector copied from the ffxiv-mcp-lumina Item 33146 row for game
+// version 2026.09.15.0000.0000. Its empty Name means production excludes it;
+// the renamed copy below isolates native zero-damage normalization behavior.
+const itemRow = {
+  sheet: "Item",
+  rowId: 33146,
+  gameVersion: "2026.09.15.0000.0000",
+  timestamp: "2026-10-23T03:46:22.5414337+00:00",
+  fields: {
+    Name: "",
+    DamagePhys: 0,
+    DamageMag: 0,
+    Delayms: 2240,
+    LevelEquip: 1,
+    ClassJobCategory: 1,
+    "BaseParam[0]": 1,
+    "BaseParam[1]": 3,
+    "BaseParam[2]": 0,
+    "BaseParam[3]": 0,
+    "BaseParam[4]": 0,
+    "BaseParam[5]": 0,
+    "BaseParamValue[0]": 0,
+    "BaseParamValue[1]": 0,
+    "BaseParamValue[2]": 0,
+    "BaseParamValue[3]": 0,
+    "BaseParamValue[4]": 0,
+    "BaseParamValue[5]": 0,
+    ItemSpecialBonus: 0,
+    ItemSpecialBonusParam: 0,
+    MateriaSlotCount: 0,
+    SubStatCategory: 0,
+    LevelItem: 1,
+    EquipSlotCategory: 1,
+  },
+};
+const categoryRow = {
+  sheet: "ClassJobCategory",
+  rowId: 1,
+  gameVersion: itemRow.gameVersion,
+  timestamp: "2026-10-23T03:46:22.7376978+00:00",
+  fields: { PLD: true },
+};
 const fallback = {
   id: 900001,
   slot: "weapon",
@@ -26,12 +56,10 @@ const fallback = {
   jobCategory: 1,
   stats: {},
 };
-// Unit-test-only named row derived from the MCP source's confirmed native zero
-// values. Production Item 33146 itself is removed because its Name is blank.
-const syntheticNamedZeroWeaponRow = {
+const namedZeroDamageFixture = {
   ...itemRow,
   rowId: fallback.id,
-  fields: { ...itemRow.fields, Name: "合成零伤害测试武器" },
+  fields: { ...itemRow.fields, Name: "隔离的零伤害测试武器" },
 };
 
 test("blank-name MCP Item 33146 is excluded from gear and food normalization", () => {
@@ -40,21 +68,21 @@ test("blank-name MCP Item 33146 is excluded from gear and food normalization", (
   assert.equal(normalizeMcpGearRow(itemRow, { ...fallback, id: 33146 }, categoryRow), undefined);
   assert.equal(normalizeMcpFoodRows(itemRow, undefined, {}, {}), undefined);
   const whitespaceNameRow = {
-    ...syntheticNamedZeroWeaponRow,
-    fields: { ...syntheticNamedZeroWeaponRow.fields, Name: " \t " },
+    ...namedZeroDamageFixture,
+    fields: { ...namedZeroDamageFixture.fields, Name: " \t " },
   };
   assert.equal(normalizeMcpGearRow(whitespaceNameRow, fallback, categoryRow), undefined);
   assert.equal(normalizeMcpFoodRows(whitespaceNameRow, undefined, {}, {}), undefined);
 });
 
-test("weapon normalization preserves confirmed zero damage in an isolated synthetic fixture", () => {
+test("weapon normalization preserves confirmed native zero damage in an isolated fixture", () => {
   for (const field of ["DamagePhys", "DamageMag", "Delayms"])
     assert.ok(itemReturnFields.includes(field), `MCP Item query requests ${field}`);
   assert.equal(itemRow.fields.DamagePhys, 0);
   assert.equal(itemRow.fields.DamageMag, 0);
   assert.equal(itemRow.fields.Delayms, 2240);
 
-  const normalized = normalizeMcpGearRow(syntheticNamedZeroWeaponRow, fallback, categoryRow);
+  const normalized = normalizeMcpGearRow(namedZeroDamageFixture, fallback, categoryRow);
   assert.equal(normalized.stats.PDMG, 0);
   assert.equal(normalized.stats.MDMG, 0);
   assert.equal(normalized.stats.DLY, 2240);
@@ -63,7 +91,7 @@ test("weapon normalization preserves confirmed zero damage in an isolated synthe
 
 test("weapon normalization retains an explicitly selected zero primary damage stat", () => {
   const normalized = normalizeMcpGearRow(
-    syntheticNamedZeroWeaponRow,
+    namedZeroDamageFixture,
     { ...fallback, stats: { PDMG: 9 } },
     categoryRow,
   );
@@ -79,10 +107,10 @@ test("weapon normalization rejects absent, malformed, or negative native fields"
     ["negative DamagePhys", (fields) => { fields.DamagePhys = -1; }],
   ];
   for (const [label, mutate] of malformedRows) {
-    const fields = { ...syntheticNamedZeroWeaponRow.fields };
+    const fields = { ...namedZeroDamageFixture.fields };
     mutate(fields);
     assert.throws(
-      () => normalizeMcpGearRow({ ...syntheticNamedZeroWeaponRow, fields }, fallback, categoryRow),
+      () => normalizeMcpGearRow({ ...namedZeroDamageFixture, fields }, fallback, categoryRow),
       /必须是非负安全整数/,
       label,
     );
@@ -90,9 +118,9 @@ test("weapon normalization rejects absent, malformed, or negative native fields"
 });
 
 test("Item rows with a missing Name field fail explicitly", () => {
-  const fields = { ...syntheticNamedZeroWeaponRow.fields };
+  const fields = { ...namedZeroDamageFixture.fields };
   delete fields.Name;
-  const malformedRow = { ...syntheticNamedZeroWeaponRow, fields };
+  const malformedRow = { ...namedZeroDamageFixture, fields };
   assert.throws(
     () => normalizeMcpGearRow(malformedRow, fallback, categoryRow),
     /缺少有效 Name 字段/,
@@ -108,11 +136,11 @@ test("present Item rows with missing fields or a non-string Name fail explicitly
   assert.equal(normalizeMcpFoodRows(undefined, undefined, {}, {}), undefined);
 
   const malformedRows = [
-    ["missing fields", { ...syntheticNamedZeroWeaponRow, fields: undefined }],
-    ["null fields", { ...syntheticNamedZeroWeaponRow, fields: null }],
+    ["missing fields", { ...namedZeroDamageFixture, fields: undefined }],
+    ["null fields", { ...namedZeroDamageFixture, fields: null }],
     ["non-string Name", {
-      ...syntheticNamedZeroWeaponRow,
-      fields: { ...syntheticNamedZeroWeaponRow.fields, Name: 33146 },
+      ...namedZeroDamageFixture,
+      fields: { ...namedZeroDamageFixture.fields, Name: 33146 },
     }],
   ];
   for (const [label, row] of malformedRows) {
