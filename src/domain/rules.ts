@@ -11,6 +11,7 @@ import type {
   JobSchema,
   Stat,
   Stats,
+  SyncTarget,
 } from "./types.ts";
 
 // 在浮点数接近整数的边界处与上游公式保持一致。
@@ -89,9 +90,11 @@ export function concretizeGearStats(stats: GearStats, job: JobSchema): Stats {
 export function effectiveGearSyncLevel(
   gear: Gear,
   jobLevel: number,
-  explicitSyncLevel?: number,
+  sync?: SyncTarget,
 ): number | undefined {
-  const jobLevelSync = gameData.syncLevelOfJobLevels[jobLevel];
+  const levelRule = gameData.sync.levels.find(({ jobLevel: level }) => level === jobLevel);
+  const jobLevelSync = levelRule?.defaultItemLevel;
+  const explicitSyncLevel = sync?.kind === "itemLevel" ? sync.value : undefined;
   let targetSyncLevel = explicitSyncLevel ?? Number.POSITIVE_INFINITY;
   if (gear.equipLevelVariable === true) {
     if (jobLevelSync === undefined) {

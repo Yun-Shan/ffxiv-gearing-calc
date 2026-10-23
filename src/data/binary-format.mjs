@@ -1,6 +1,6 @@
 // 快照容器带格式版本与循环冗余校验码；装备目录单独存放，以便按需解码单件装备。
 const MAGIC = new TextEncoder().encode("FFXIVGDB");
-const FORMAT_VERSION = 7;
+const FORMAT_VERSION = 9;
 const SECTION_IDS = [1, 2];
 const DIRECTORY_ENTRY_BYTES = 12;
 const HEADER_BYTES = 16 + SECTION_IDS.length * DIRECTORY_ENTRY_BYTES;
@@ -27,6 +27,10 @@ const RESISTANCE_WEAPON_STAT_CODES = new Map(
 );
 const MAIN_STATS = ["VIT", "STR", "DEX", "MND", "INT"];
 const MAIN_STAT_CODES = new Map(MAIN_STATS.map((stat, index) => [stat, index]));
+const LEVEL_CAP_STATS = [
+  "STR", "DEX", "VIT", "INT", "MND", "PIE", "GP", "CP", "PDMG", "MDMG",
+  "TEN", "DHT", "CRT", "DET", "SKS", "SPS", "CMS", "CRL", "GTH", "PCP",
+];
 
 function fail(message) {
   throw new Error(`生成数据二进制格式错误：${message}`);
@@ -563,11 +567,18 @@ function isRecord(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
+function hasExactKeys(value, keys) {
+  return isRecord(value) && Object.keys(value).length === keys.length &&
+    keys.every((key) => Object.hasOwn(value, key));
+}
+
 function validateGameDataMetadata(gameData, label) {
   if (!isRecord(gameData) || !isRecord(gameData.jobSchemas) ||
-      !isRecord(gameData.jobs) || !isRecord(gameData.syncLevelDuties) ||
+      !isRecord(gameData.jobs) || !isRecord(gameData.sync) ||
       !Array.isArray(gameData.foods))
-    fail(`${label} 缺少职业、食物或同步品级说明`);
+    fail(`${label} 缺少职业、食物或同步选择数据`);
+  if (['syncLevels', 'syncLevelOfJobLevels', 'syncLevelDuties'].some((key) => Object.hasOwn(gameData, key)))
+    fail(`${label} 仍包含已移除的旧同步数据字段`);
 
   const schemaIds = Object.keys(gameData.jobSchemas);
   const jobIds = Object.keys(gameData.jobs);
@@ -592,23 +603,82 @@ function validateGameDataMetadata(gameData, label) {
     assertUInt(food.icon, 32, `${label} 食物图标 ID`);
   }
 
-  const syncData = gameData.syncLevelDuties;
-  if (!Object.keys(syncData).length)
-    fail(`${label} 的同步品级副本表为空`);
-  const seenDutyIds = new Set();
-  for (const [level, duties] of Object.entries(syncData)) {
-    if (!/^[1-9]\d*$/.test(level) || !Number.isSafeInteger(Number(level)) ||
-        !Array.isArray(duties))
-      fail(`${label} 的同步品级 ${level} 无效`);
-    let previousDutyId = -1;
-    for (const duty of duties) {
-      if (!isRecord(duty) || !Number.isSafeInteger(duty.id) || duty.id < 0 ||
-          typeof duty.name !== 'string' || !duty.name.trim() || duty.id <= previousDutyId ||
-          seenDutyIds.has(duty.id))
-        fail(`${label} 的同步品级 ${level} 副本条目无效或未按 ID 升序`);
-      assertUInt(duty.id, 32, `${label} 的副本 ID`);
-      previousDutyId = duty.id;
-      seenDutyIds.add(duty.id);
+  const levelCaps = gameData.levelCaps;
+  if (!isRecord(levelCaps) || !Array.isArray(levelCaps.level) || !levelCaps.level.length)
+    fail(`${label} 缺少 ItemLevel 属性上限目录`);
+  for (const stat of LEVEL_CAP_STATS)
+    if (!Object.hasOwn(levelCaps, stat)) fail(`${label} 缺少 ItemLevel 属性上限列 ${stat}`);
+  const capLevels = new Set();
+  let previousCap = 0;
+  for (const itemLevel of levelCaps.level) {
+    if (!Number.isSafeInteger(itemLevel) || itemLevel < 1 || itemLevel <= previousCap)
+      fail(`${label} 的 ItemLevel 属性上限目录无效或未严格升序`);
+    capLevels.add(itemLevel);
+    previousCap = itemLevel;
+  }
+  for (const [stat, values] of Object.entries(levelCaps)) {
+    if (stat === 'level') continue;
+    if (!Array.isArray(values) || values.length !== levelCaps.level.length)
+      fail(`${label} 的 ItemLevel 属性上限列 ${stat} 缺失、截断或包含无效值`);
+    for (let index = 0; index < values.length; index++)
+      if (!Number.isSafeInteger(values[index]) || values[index] < 0)
+        fail(`${label} 的 ItemLevel 属性上限列 ${stat} 缺失、截断或包含无效值`);
+  }
+
+  const jobLevelModifiers = gameData.jobLevelModifiers;
+  if (!isRecord(jobLevelModifiers)) fail(`${label} 缺少职业等级公式参数`);
+  const supportedLevels = Object.keys(jobLevelModifiers)
+    .map(Number)
+    .filter((level) => Number.isSafeInteger(level) && level >= 50)
+    .sort((left, right) => left - right);
+  if (!supportedLevels.length || new Set(supportedLevels).size !== supportedLevels.length)
+    fail(`${label} 的可同步等级目录为空或包含重复值`);
+
+  const syncData = gameData.sync;
+  if (!hasExactKeys(syncData, ['levels', 'groups']) ||
+      !Array.isArray(syncData.levels) || syncData.levels.length !== supportedLevels.length ||
+      !Array.isArray(syncData.groups) || !syncData.groups.length)
+    fail(`${label} 的同步数据结构无效`);
+  const syncLevels = new Set();
+  let previousMinItemLevel = 0;
+  for (let index = 0; index < syncData.levels.length; index++) {
+    const entry = syncData.levels[index];
+    if (!hasExactKeys(entry, ['jobLevel', 'minItemLevel', 'defaultItemLevel']) ||
+        entry.jobLevel !== supportedLevels[index] || !Number.isSafeInteger(entry.minItemLevel) ||
+        entry.minItemLevel < 90 || entry.minItemLevel <= previousMinItemLevel ||
+        !Number.isSafeInteger(entry.defaultItemLevel) || entry.defaultItemLevel < 90 ||
+        entry.defaultItemLevel < entry.minItemLevel ||
+        !capLevels.has(entry.minItemLevel) || !capLevels.has(entry.defaultItemLevel) ||
+        (entry.jobLevel === 50 && entry.minItemLevel !== 90))
+      fail(`${label} 的同步等级下界、ParamGrow 默认品级或支持等级无效`);
+    syncLevels.add(entry.jobLevel);
+    previousMinItemLevel = entry.minItemLevel;
+  }
+
+  const seenGroups = new Set();
+  const seenOptions = new Set();
+  for (const group of syncData.groups) {
+    if (!hasExactKeys(group, ['name', 'options']) || typeof group.name !== 'string' ||
+        !group.name.trim() ||
+        seenGroups.has(group.name) || !Array.isArray(group.options) || !group.options.length)
+      fail(`${label} 的同步副本大分类结构无效或重复`);
+    seenGroups.add(group.name);
+    for (const option of group.options) {
+      const target = option?.target;
+      const key = `${option?.name}\0${target?.kind}:${target?.value}`;
+      if (!hasExactKeys(option, ['name', 'target']) || typeof option.name !== 'string' ||
+          !option.name.trim() || !hasExactKeys(target, ['kind', 'value']) ||
+          !Number.isSafeInteger(target.value) || seenOptions.has(key))
+        fail(`${label} 的同步副本选项或目标无效、重复`);
+      if (target.kind === 'jobLevel') {
+        if (!syncLevels.has(target.value)) fail(`${label} 的同步副本引用了未知职业等级`);
+      } else if (target.kind === 'itemLevel') {
+        if (target.value < 90 || !capLevels.has(target.value))
+          fail(`${label} 的同步副本引用了低于 90 或缺少属性上限的品级`);
+      } else {
+        fail(`${label} 的同步目标类型无效`);
+      }
+      seenOptions.add(key);
     }
   }
 }

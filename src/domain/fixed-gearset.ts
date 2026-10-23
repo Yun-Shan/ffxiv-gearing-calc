@@ -42,6 +42,7 @@ import type {
   Materia,
   Stat,
   Stats,
+  SyncTarget,
 } from "./types.ts";
 
 export type FixedGearsetMateria = readonly [Stat, number] | null;
@@ -58,7 +59,7 @@ export interface FixedGearsetInput {
   jobId: JobId;
   /** Formula level carried by the share link. */
   jobLevel: number;
-  syncLevel?: number;
+  sync?: SyncTarget;
   gears: readonly FixedGearsetGearInput[];
   foodId: number;
 }
@@ -67,7 +68,7 @@ export interface FixedGearsetInput {
 export interface FixedGearsetResult {
   jobId: JobId;
   calculationLevel: number;
-  syncItemLevel?: number;
+  sync?: SyncTarget;
   gear: MeldedGear[];
   food: FoodResult;
   stats: Stats;
@@ -105,7 +106,7 @@ function regularMelds(
   input: FixedGearsetGearInput,
   jobId: JobId,
   jobLevel: number,
-  syncLevel?: number,
+  sync?: SyncTarget,
 ): Materia[] {
   const hasCustom = gear.customParameters !== undefined || gear.resistanceWeaponAdjust !== undefined;
   if (hasCustom) {
@@ -128,7 +129,7 @@ function regularMelds(
     return fail(`普通装备 ${gear.id} 不支持自定义参数`);
   }
 
-  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, syncLevel);
+  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, sync);
   const encodedMelds = input.materias;
   if (synchronizedLevel !== undefined) {
     // The reference share writer omits regular materia whenever an item is synced.
@@ -183,7 +184,7 @@ function assembleGear(
   jobId: JobId,
   characterLevel: number,
   calculationLevel: number,
-  syncLevel?: number,
+  sync?: SyncTarget,
   enabledItemSpecialBonuses: readonly number[] = [],
 ): MeldedGear {
   if (!Number.isSafeInteger(input.id) || input.id <= 0) {
@@ -213,11 +214,11 @@ function assembleGear(
     input,
     jobId,
     calculationLevel,
-    syncLevel,
+    sync,
   );
   const mergedStats = resolvedGear.customParameters !== undefined || resolvedGear.resistanceWeaponAdjust !== undefined
-    ? customFinalStats(resolvedGear, input.customStats, calculationLevel, syncLevel)
-    : mergeCandidateStats(resolvedGear, melds, calculationLevel, syncLevel);
+    ? customFinalStats(resolvedGear, input.customStats, calculationLevel, sync)
+    : mergeCandidateStats(resolvedGear, melds, calculationLevel, sync);
   // 参考实现先完成同步封顶与魔晶石封顶，再追加特殊加成且不再封顶。
   const finalStats = applyItemSpecialBonus(
     mergedStats,
@@ -241,13 +242,13 @@ function customFinalStats(
   gear: Gear,
   customStats: Stats | undefined,
   jobLevel: number,
-  syncLevel?: number,
+  sync?: SyncTarget,
 ): Stats {
   const finalStats = {
     ...gear.stats,
     ...validateCustomStats(customStats),
   };
-  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, syncLevel);
+  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, sync);
   return synchronizedLevel === undefined
     ? finalStats
     : capGearStatsAtLevel(gear, finalStats, synchronizedLevel);
@@ -293,7 +294,7 @@ function assembleFullGear(
       input.jobId,
       characterLevel,
       calculationLevel,
-      input.syncLevel,
+      input.sync,
       enabledItemSpecialBonuses,
     ),
   );
@@ -304,22 +305,21 @@ function validateInput(input: FixedGearsetInput): {
   calculationLevel: number;
 } {
   if (!Object.hasOwn(jobSchemas, input.jobId)) return fail(`不支持的职业：${input.jobId}`);
-  if (
-    input.syncLevel !== undefined &&
-    (!Number.isSafeInteger(input.syncLevel) || input.syncLevel <= 0)
-  ) {
-    return fail("等级同步品级必须是正整数");
-  }
   if (!Number.isSafeInteger(input.jobLevel) || input.jobLevel <= 0) {
     return fail("分享链接中的职业等级无效");
   }
   const calculationLevel = calculationJobLevelFor({
     jobId: input.jobId,
-    ...(input.syncLevel === undefined ? {} : { syncLevel: input.syncLevel }),
+    ...(input.sync === undefined ? {} : { sync: input.sync }),
   });
-  if (input.jobLevel !== calculationLevel) {
+  const expectedShareLevel = input.sync?.kind === "jobLevel"
+    ? input.sync.value
+    : input.sync?.kind === "itemLevel"
+      ? calculationLevel
+      : jobLevelFor({ jobId: input.jobId });
+  if (input.jobLevel !== expectedShareLevel) {
     return fail(
-      `分享链接等级 ${input.jobLevel} 与当前统一计算等级 ${calculationLevel} 不一致`,
+      `分享链接等级 ${input.jobLevel} 与当前同步目标 ${expectedShareLevel} 不一致`,
     );
   }
   if (!Array.isArray(input.gears)) return fail("分享链接缺少装备列表");
@@ -355,7 +355,7 @@ export function calculateFixedGearset(input: FixedGearsetInput): FixedGearsetRes
   return {
     jobId: input.jobId,
     calculationLevel,
-    ...(input.syncLevel === undefined ? {} : { syncItemLevel: input.syncLevel }),
+    ...(input.sync === undefined ? {} : { sync: input.sync }),
     gear,
     food: describeFoodResult(food, unbuffedStats, stats),
     stats,

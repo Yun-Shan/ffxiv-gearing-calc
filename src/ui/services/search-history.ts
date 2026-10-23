@@ -1,5 +1,5 @@
 import stableStringify from "fast-json-stable-stringify";
-import { assertForcedGearValue, clanCount, jobSchemas } from "@/domain";
+import { assertForcedGearValue, clanCount, jobSchemas, syncTargetCalculationError } from "@/domain";
 import type {
   CommonGearSlot,
   Effects,
@@ -17,6 +17,7 @@ import type {
   ResultGear,
   Stat,
   Stats,
+  SyncTarget,
 } from "@/domain";
 
 const DATABASE_NAME = "ffxiv-gearing-calc";
@@ -472,7 +473,13 @@ function validateOptimizationConfig(
   value: unknown,
 ): value is OptimizationConfig {
   if (!isObject(value)) return false;
+  const sync = value.sync;
+  const validSync = sync === undefined || (
+    syncTargetCalculationError(sync as SyncTarget) === undefined
+  );
   return (
+    !Object.hasOwn(value, "syncLevel") &&
+    validSync &&
     isJobId(value.jobId) &&
     isFiniteNumber(value.minItemLevel) &&
     isFiniteNumber(value.maxItemLevel) &&
@@ -486,7 +493,6 @@ function validateOptimizationConfig(
         (forcedValue === undefined || isForcedGearValue(forcedValue)),
     ) &&
     isFiniteNumber(value.foodId) &&
-    (value.syncLevel === undefined || isFiniteNumber(value.syncLevel)) &&
     (value.clanIndex === undefined ||
       (isFiniteNumber(value.clanIndex) &&
         Number.isSafeInteger(value.clanIndex) &&

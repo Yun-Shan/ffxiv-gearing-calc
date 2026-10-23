@@ -80,7 +80,7 @@ export function attachEquivalentGear(
   config: OptimizationConfig,
   options: SearchOptions = {},
 ): OptimizationResult {
-  if (config.syncLevel === undefined) return result;
+  if (config.sync === undefined) return result;
   const groups: Record<string, readonly MeldedGear[]> = {};
   const groupKeys = new Map<string, string>();
   const cache = new Map<string, { all?: string; unique?: string }>();

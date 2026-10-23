@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { gameData } from "@/domain";
 import { createJobConditionRuntime } from "../draft";
 import {
   deriveWorkbenchValidation,
@@ -11,7 +12,7 @@ const validDraft: JobConditionDraft = {
   range: {
     minItemLevel: 700,
     maxItemLevel: 795,
-    sync: { mode: "disabled" },
+    sync: undefined,
     clanIndex: 0,
   },
   gcd: { mode: "any" },
@@ -20,11 +21,38 @@ const validDraft: JobConditionDraft = {
 };
 
 describe("job condition validation snapshot", () => {
+  it("rejects synchronized levels without exact formula and stat-cap support", () => {
+    const mappedLevel = gameData.sync.groups
+      .flatMap(({ options }) => options)
+      .find(({ target }) => target.kind === "itemLevel")!.target;
+    const valid = validateSearchRangeDraft({
+      ...validDraft.range,
+      sync: mappedLevel,
+    });
+    expect(valid.status).toBe("valid");
+
+    for (const itemLevel of [89, 90.5, Number.MAX_SAFE_INTEGER]) {
+      const invalid = validateSearchRangeDraft({
+        ...validDraft.range,
+        sync: { kind: "itemLevel", value: itemLevel },
+      });
+      expect(invalid.status).toBe("invalid");
+      expect(
+        invalid.issues.some((entry) => entry.code === "range.sync.invalid"),
+      ).toBe(true);
+    }
+    const unsupported = validateSearchRangeDraft({
+      ...validDraft.range,
+      sync: { kind: "itemLevel", value: Number.MAX_SAFE_INTEGER },
+    });
+    expect(unsupported.issues[0]?.message).toContain("暂无完整属性上限数据");
+  });
+
   it("validates a shared range once and skips the job-level range section", () => {
     const invalidRange = {
       minItemLevel: 800,
       maxItemLevel: 700,
-      sync: { mode: "disabled" as const },
+      sync: undefined,
       clanIndex: 0,
     };
     const shared = validateSearchRangeDraft(invalidRange, ["shared", "range"]);

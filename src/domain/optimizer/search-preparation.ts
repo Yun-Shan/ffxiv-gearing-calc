@@ -1,4 +1,5 @@
 import { jobSchemas } from "../jobs.ts";
+import { gameData } from "../data.ts";
 import { calculateBaseStats, getSpeedStat } from "../rules.ts";
 import {
   equippedEffects,
@@ -82,11 +83,14 @@ function makeExactOptions(
       : {}),
     ...(config.maximizeTenacity ? { maxToughnessMode: true } : {}),
   };
+  const syncItemLevel = config.sync === undefined
+    ? undefined
+    : syncItemLevelForCandidateRange(config.sync, jobLevel);
   const candidateItemLevelRanges = [
     { min: config.maxItemLevel - 20, max: config.maxItemLevel },
-    ...(config.syncLevel === undefined
+    ...(syncItemLevel === undefined
       ? []
-      : [{ min: config.syncLevel - 20, max: config.syncLevel }]),
+      : [{ min: syncItemLevel - 20, max: syncItemLevel }]),
   ]
     .map(({ min, max }) => ({
       min: Math.max(config.minItemLevel, min),
@@ -179,12 +183,7 @@ export function prepareSearch(
   ) {
     throw new RangeError("装备品级范围无效");
   }
-  if (
-    config.syncLevel !== undefined &&
-    (!Number.isSafeInteger(config.syncLevel) || config.syncLevel <= 0)
-  ) {
-    throw new RangeError("等级同步品级必须是正整数");
-  }
+  const jobLevel = calculationJobLevelFor(config);
   const gearsByIdentity = new Map<string, MeldedGear>();
   const candidatePoolsResult = candidatePools(
     config,
@@ -195,7 +194,6 @@ export function prepareSearch(
     paretoIndependentRings,
   );
   const slots = candidatePoolsResult.slots;
-  const jobLevel = calculationJobLevelFor(config);
   if (slots.some((slot) => slot.candidates.length === 0)) {
     throwIfAborted(options.signal);
   }
@@ -239,6 +237,16 @@ export function prepareSearch(
     searchedCandidates: slotCandidateCount,
     options: exactOptions,
   };
+}
+
+function syncItemLevelForCandidateRange(
+  sync: NonNullable<OptimizationConfig["sync"]>,
+  calculationLevel: number,
+): number {
+  if (sync.kind === "itemLevel") return sync.value;
+  const rule = gameData.sync.levels.find(({ jobLevel }) => jobLevel === calculationLevel);
+  if (rule === undefined) throw new RangeError(`不支持的等级同步：${calculationLevel}`);
+  return rule.defaultItemLevel;
 }
 
 export function privateParetoSlots(

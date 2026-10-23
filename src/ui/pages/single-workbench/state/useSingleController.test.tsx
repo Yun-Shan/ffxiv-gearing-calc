@@ -84,9 +84,7 @@ describe("Single run ownership and nonblocking history", () => {
       typeof draft.equipment.forcedGear.head !== "number" &&
       "melds" in draft.equipment.forcedGear.head
     )
-      expect(draft.equipment.forcedGear.head.melds).not.toBe(
-        forcedValue.melds,
-      );
+      expect(draft.equipment.forcedGear.head.melds).not.toBe(forcedValue.melds);
   });
 
   it("starts and settles without waiting for history; binds a late id only to its own result", async () => {
@@ -241,7 +239,7 @@ describe("Single run ownership and nonblocking history", () => {
             ...controller.state.draft.condition,
             range: {
               ...controller.state.draft.condition.range,
-              sync: { mode: "enabled", itemLevel: 735 },
+              sync: { kind: "itemLevel", value: 735 },
             },
           },
         });

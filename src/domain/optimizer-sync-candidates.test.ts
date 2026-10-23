@@ -7,14 +7,15 @@ import { capGearStatsAtLevel, effectiveGearSyncLevel } from "./rules";
 import type { OptimizationConfig } from "./types";
 
 const syncLevel = 665;
-const calculationLevel = calculationJobLevelFor({ jobId: "WAR", syncLevel });
+const sync = { kind: "itemLevel", value: syncLevel } as const;
+const calculationLevel = calculationJobLevelFor({ jobId: "WAR", sync });
 
 function syncConfig(jobId: OptimizationConfig["jobId"]): OptimizationConfig {
   return {
     jobId,
     minItemLevel: 640,
     maxItemLevel: 665,
-    syncLevel,
+    sync,
     maximizeTenacity: false,
     objective: "damage",
     excludedSources: [],
@@ -37,8 +38,8 @@ describe("candidate sync follows reference store job level", () => {
     expect(gear).toBeDefined();
     expect(calculationLevel).toBe(90);
     // 旧逻辑按职业上限 100 比较穿戴等级，会漏掉该同步。
-    expect(effectiveGearSyncLevel(gear!, 100, syncLevel)).toBeUndefined();
-    expect(effectiveGearSyncLevel(gear!, calculationLevel, syncLevel)).toBe(
+    expect(effectiveGearSyncLevel(gear!, 100, sync)).toBeUndefined();
+    expect(effectiveGearSyncLevel(gear!, calculationLevel, sync)).toBe(
       660,
     );
 
@@ -67,8 +68,8 @@ describe("candidate sync follows reference store job level", () => {
         candidate.equipLevel > calculationLevel,
     );
     expect(gear).toBeDefined();
-    expect(effectiveGearSyncLevel(gear!, 100, syncLevel)).toBe(syncLevel);
-    expect(effectiveGearSyncLevel(gear!, calculationLevel, syncLevel)).toBe(
+    expect(effectiveGearSyncLevel(gear!, 100, sync)).toBe(syncLevel);
+    expect(effectiveGearSyncLevel(gear!, calculationLevel, sync)).toBe(
       660,
     );
 

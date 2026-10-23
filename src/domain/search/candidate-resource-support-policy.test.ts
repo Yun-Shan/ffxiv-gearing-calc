@@ -106,7 +106,7 @@ test("adds a main-stat support row only to the slower PCT baseline for the measu
 test("selects the recorded resource-bound profile from job count, sync, range, and sharing topology", () => {
   const vprMchWide = resourceBudgetCandidateProfileForSearch({
     jobs: ["VPR", "MCH"].map((jobId) => ({
-      jobId, minItemLevel: 715, maxItemLevel: 795, syncLevel: 735,
+      jobId, minItemLevel: 715, maxItemLevel: 795, sync: { kind: "itemLevel", value: 735 },
     })),
     commonSlots: ["earrings", "necklace", "bracelet", "rings"],
     objective: "dps",
@@ -116,7 +116,7 @@ test("selects the recorded resource-bound profile from job count, sync, range, a
 
   const fiveJobIndependent = resourceBudgetCandidateProfileForSearch({
     jobs: ["BRD", "DNC", "MCH", "NIN", "VPR"].map((jobId) => ({
-      jobId, minItemLevel: 715, maxItemLevel: 795, syncLevel: 735,
+      jobId, minItemLevel: 715, maxItemLevel: 795, sync: { kind: "itemLevel", value: 735 },
     })),
     commonSlots: [],
     objective: "dps",
@@ -136,7 +136,7 @@ test("selects the recorded resource-bound profile from job count, sync, range, a
 
   const splitRings = resourceBudgetCandidateProfileForSearch({
     jobs: ["RPR", "SAM"].map((jobId) => ({
-      jobId, minItemLevel: 730, maxItemLevel: 795, syncLevel: 735,
+      jobId, minItemLevel: 730, maxItemLevel: 795, sync: { kind: "itemLevel", value: 735 },
     })),
     commonSlots: ["earrings", "necklace", "bracelet", "ring", "ring2"],
     objective: "dps",
@@ -146,7 +146,7 @@ test("selects the recorded resource-bound profile from job count, sync, range, a
 
   const sharedWideFourJob = resourceBudgetCandidateProfileForSearch({
     jobs: ["BRD", "DNC", "MCH", "VPR"].map((jobId) => ({
-      jobId, minItemLevel: 715, maxItemLevel: 795, syncLevel: 735,
+      jobId, minItemLevel: 715, maxItemLevel: 795, sync: { kind: "itemLevel", value: 735 },
     })),
     commonSlots: ["earrings", "necklace", "bracelet", "rings"],
     objective: "dps",
@@ -167,7 +167,7 @@ test("restores weighted compact candidate-support rows only for the recorded fou
   }), "compact-weighted");
   assert.equal(candidateResourceSupportProfileForSearch({
     jobs: ["BRD", "DNC", "MCH", "VPR"].map((jobId) => ({
-      jobId, minItemLevel: 715, maxItemLevel: 795, syncLevel: 735,
+      jobId, minItemLevel: 715, maxItemLevel: 795, sync: { kind: "itemLevel", value: 735 },
     })),
     candidateCount: 2_981,
     commonSlots: ["earrings", "necklace", "bracelet", "rings"],

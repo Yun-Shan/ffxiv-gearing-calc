@@ -22,18 +22,31 @@ describe("joint search range", () => {
     expect(draft.shared.equipment.commonSlots).toContain("body");
     expect(draft.shared.equipment.commonSlots).toContain("ring");
     expect(draft.shared.equipment.commonSlots).toContain("ring2");
-    const config = compileJointWorkbenchDraft(draft, createJointWorkbenchRuntime(draft.jobs));
+    const config = compileJointWorkbenchDraft(
+      draft,
+      createJointWorkbenchRuntime(draft.jobs),
+    );
     config.commonSlots.push("weapon");
-    expect(jointWorkbenchDraftFromConfig(config).shared.equipment.commonSlots).not.toContain("weapon");
+    expect(
+      jointWorkbenchDraftFromConfig(config).shared.equipment.commonSlots,
+    ).not.toContain("weapon");
   });
 
   it("shares only accessories across armor subgroups", () => {
     const draft = createJointWorkbenchDraft(["DRG", "SAM"]);
-    expect(draft.shared.equipment.commonSlots).toEqual(["earrings", "necklace", "bracelet", "ring", "ring2"]);
+    expect(draft.shared.equipment.commonSlots).toEqual([
+      "earrings",
+      "necklace",
+      "bracelet",
+      "ring",
+      "ring2",
+    ]);
     const sameGroup = createJointWorkbenchDraft(["DRG", "RPR"]);
     expect(sameGroup.shared.equipment.commonSlots).toContain("body");
     expect(sameGroup.shared.equipment.commonSlots).not.toContain("weapon");
-    expect(createJointWorkbenchDraft(["PLD", "WAR"]).shared.equipment.commonSlots).not.toContain("offhand");
+    expect(
+      createJointWorkbenchDraft(["PLD", "WAR"]).shared.equipment.commonSlots,
+    ).not.toContain("offhand");
   });
 
   it("keeps the search range in shared conditions and compiles it to every job", () => {
@@ -43,7 +56,7 @@ describe("joint search range", () => {
     expect(draft.shared.range).toEqual({
       minItemLevel: makeConfig("RDM").minItemLevel,
       maxItemLevel: makeConfig("RDM").maxItemLevel,
-      sync: { mode: "disabled" },
+      sync: undefined,
       clanIndex: 0,
     });
 
@@ -54,7 +67,7 @@ describe("joint search range", () => {
         range: {
           minItemLevel: 735,
           maxItemLevel: 750,
-          sync: { mode: "enabled" as const, itemLevel: 735 },
+          sync: { kind: "itemLevel" as const, value: 735 },
           clanIndex: 2,
         },
       },
@@ -66,20 +79,24 @@ describe("joint search range", () => {
     for (const job of config.jobs) {
       expect(job.minItemLevel).toBe(735);
       expect(job.maxItemLevel).toBe(750);
-      expect(job.syncLevel).toBe(735);
+      expect(job.sync).toEqual({ kind: "itemLevel", value: 735 });
       expect(job.clanIndex).toBe(2);
     }
     expect(jointSharedSummaryRows(config)).toEqual(
       expect.arrayContaining([
         { label: "种族", value: "精灵族 · 森林之民" },
         { label: "装备品级", value: "735–750" },
-        { label: "同步品级", value: "735" },
+        { label: "同步目标", value: "735" },
       ]),
     );
   });
 
   it("rejects restoring a snapshot whose jobs use different search ranges", () => {
-    const first = { ...makeConfig("RDM"), minItemLevel: 700, maxItemLevel: 750 };
+    const first = {
+      ...makeConfig("RDM"),
+      minItemLevel: 700,
+      maxItemLevel: 750,
+    };
     const second = makeConfig("BLM");
     expect(() =>
       jointWorkbenchDraftFromConfig({

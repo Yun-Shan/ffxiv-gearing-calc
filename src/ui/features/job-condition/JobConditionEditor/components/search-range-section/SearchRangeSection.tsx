@@ -1,10 +1,26 @@
 import { NumberInput } from "@/ui/components/form-controls/number-input/NumberInput";
+import { gameData, type SyncTarget } from "@/domain";
 import { bounds } from "@/ui/services/app-config";
 import { useJobConditionScope } from "../../../scope";
 import type { SearchRangeDraft, ValidationIssue } from "../../../types";
 import { SyncLevelSelect } from "./sync-level-select/SyncLevelSelect";
 import { ClanSelect } from "./clan-select/ClanSelect";
 import styles from "./SearchRangeSection.module.scss";
+
+function sameSyncTarget(left?: SyncTarget, right?: SyncTarget) {
+  return left?.kind === right?.kind && left?.value === right?.value;
+}
+
+function assistedMinItemLevel(target: SyncTarget): number | undefined {
+  const baseline =
+    target.kind === "itemLevel"
+      ? target.value
+      : gameData.sync.levels.find(({ jobLevel }) => jobLevel === target.value)
+          ?.defaultItemLevel;
+  return baseline === undefined
+    ? undefined
+    : Math.floor((baseline - 10) / 10) * 10;
+}
 
 export function SearchRangeSectionFields({
   range,
@@ -63,24 +79,20 @@ export function SearchRangeSectionFields({
           />
         </div>
         <SyncLevelSelect
-          value={
-            range.sync.mode === "enabled"
-              ? String(range.sync.itemLevel)
-              : "disabled"
-          }
+          value={range.sync}
           disabled={readOnly}
-          onChange={(value) =>
+          onChange={(target) => {
+            if (sameSyncTarget(range.sync, target)) return;
+            const assisted = target && assistedMinItemLevel(target);
             onChange({
               ...range,
-              minItemLevel: value === "disabled"
-                ? range.minItemLevel
-                : Math.min(range.minItemLevel, Math.floor(Number(value) / 10) * 10),
-              sync:
-                value === "disabled"
-                  ? { mode: "disabled" }
-                  : { mode: "enabled", itemLevel: Number(value) },
-            })
-          }
+              minItemLevel:
+                assisted === undefined
+                  ? range.minItemLevel
+                  : Math.min(range.minItemLevel, assisted),
+              sync: target,
+            });
+          }}
         />
       </div>
       {issues.map((entry, index) => (

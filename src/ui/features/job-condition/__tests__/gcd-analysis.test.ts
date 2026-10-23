@@ -9,7 +9,7 @@ const input: GcdAnalysisInput = {
   maxItemLevel: 795,
   speedMin: 400,
   speedMax: 600,
-  syncLevel: undefined,
+  sync: undefined,
   minTenacity: undefined,
   toughnessMin: undefined,
   toughnessMinPercent: undefined,
@@ -38,7 +38,7 @@ describe("GCD analysis input identity", () => {
       jobId: "RDM",
       minItemLevel: 700,
       maxItemLevel: 795,
-      syncLevel: undefined,
+      sync: undefined,
       speedMin: 400,
       speedMax: undefined,
       maximizeTenacity: false,
@@ -106,6 +106,14 @@ describe("GCD analysis input identity", () => {
           head: { id: 2, customStats: { DET: 100, CRT: 200 } },
         },
       }),
+    );
+  });
+
+  it("distinguishes level-only sync from an item-level target", () => {
+    expect(
+      gcdAnalysisKey({ ...input, sync: { kind: "jobLevel", value: 90 } }),
+    ).not.toBe(
+      gcdAnalysisKey({ ...input, sync: { kind: "itemLevel", value: 660 } }),
     );
   });
 });

@@ -23,10 +23,7 @@ export function compileJobCondition(
     jobId: context.jobId,
     minItemLevel: draft.range.minItemLevel,
     maxItemLevel: draft.range.maxItemLevel,
-    syncLevel:
-      draft.range.sync.mode === "enabled"
-        ? draft.range.sync.itemLevel
-        : undefined,
+    sync: draft.range.sync,
     clanIndex: draft.range.clanIndex,
     gcdTarget: undefined,
     gcdChoices: draft.gcd.mode === "tiers" ? [...draft.gcd.tiers] : undefined,

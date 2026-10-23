@@ -20,9 +20,7 @@ export const resolveImportedGearset: ResolveImportedGearset = async (url) => {
     snapshot: calculateFixedGearset({
       jobId: parsed.job,
       jobLevel: parsed.jobLevel,
-      ...(parsed.syncLevel === undefined
-        ? {}
-        : { syncLevel: parsed.syncLevel }),
+      ...(parsed.sync === undefined ? {} : { sync: parsed.sync }),
       gears: parsed.gears,
       foodId: parsed.foodId,
     }),

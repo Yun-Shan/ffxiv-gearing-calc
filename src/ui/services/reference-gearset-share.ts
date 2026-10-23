@@ -3,7 +3,6 @@ import {
   gameData,
   getGearById,
   effectiveGearSyncLevel,
-  jobLevelFor,
   jobSchemas,
   type JobId,
   type GearSlot,
@@ -12,6 +11,7 @@ import {
   type OptimizationResult,
   type Stat,
   type Stats,
+  type SyncTarget,
 } from "@/domain";
 
 const JOB_INDEX: Partial<Record<JobId, number>> = {
@@ -65,7 +65,7 @@ export interface ReferenceGearset {
   job: JobId;
   role: JobSchema["role"];
   jobLevel: number;
-  syncLevel?: number;
+  sync?: SyncTarget;
   gears: readonly ReferenceGearsetGear[];
   foodId?: number;
 }
@@ -84,7 +84,7 @@ export function resultReferenceUrl(
   const job = jobSchemas[config.jobId];
   const gears = result.gear.map((gear) => {
     const synced =
-      effectiveGearSyncLevel(gear, jobLevelFor(config), config.syncLevel) !==
+      effectiveGearSyncLevel(gear, calculationLevel!, config.sync) !==
       undefined;
     const customStats =
       gear.customParameters?.length || gear.resistanceWeaponAdjust !== undefined
@@ -139,7 +139,7 @@ export function resultReferenceUrl(
     job: config.jobId,
     role: job.role,
     jobLevel: calculationLevel!,
-    ...(config.syncLevel === undefined ? {} : { syncLevel: config.syncLevel }),
+    ...(config.sync === undefined ? {} : { sync: config.sync }),
     gears,
     foodId: result.food.id,
   });
@@ -229,13 +229,16 @@ export function parseReferenceGearset(input: string): ReferenceGearset {
 
   const synced = readBoolean();
   let jobLevel: number = 100;
-  let syncLevel: number | undefined;
+  let sync: SyncTarget | undefined;
   if (synced) {
     const jobLevelIndex = read(JOB_LEVELS.length);
     const decodedLevel = JOB_LEVELS[jobLevelIndex];
     if (decodedLevel === undefined) throw new Error("分享链接职业等级无效。");
     jobLevel = decodedLevel;
-    syncLevel = read(800) || undefined;
+    const syncLevel = read(800) || undefined;
+    sync = syncLevel === undefined
+      ? { kind: "jobLevel", value: jobLevel }
+      : { kind: "itemLevel", value: syncLevel };
   }
 
   const gearTypeDecode: number[] = [];
@@ -325,7 +328,7 @@ export function parseReferenceGearset(input: string): ReferenceGearset {
     job,
     role,
     jobLevel,
-    ...(syncLevel === undefined ? {} : { syncLevel }),
+    ...(sync === undefined ? {} : { sync }),
     gears: decodedGears.filter(({ id: gearId }) => gearId !== food?.id),
     ...(food ? { foodId: food.id } : {}),
   };
@@ -338,8 +341,11 @@ export function stringifyReferenceGearset(
   const jobIndex = JOB_INDEX[gearset.job] ?? -1;
   const shareVersion = gearset.job === "BST" ? 6 : 5;
   const jobRange = shareVersion === 6 ? 34 : 33;
+  const encodedJobLevel = gearset.sync?.kind === "jobLevel"
+    ? gearset.sync.value
+    : gearset.jobLevel;
   const jobLevelIndex = JOB_LEVELS.indexOf(
-    gearset.jobLevel as (typeof JOB_LEVELS)[number],
+    encodedJobLevel as (typeof JOB_LEVELS)[number],
   );
   const statDecode = MATERIA_STATS[gearset.role];
   if (
@@ -349,12 +355,16 @@ export function stringifyReferenceGearset(
   )
     return undefined;
   if (
-    gearset.syncLevel !== undefined &&
-    (!Number.isInteger(gearset.syncLevel) ||
-      gearset.syncLevel < 0 ||
-      gearset.syncLevel >= 800)
+    gearset.sync?.kind === "itemLevel" &&
+    (!Number.isInteger(gearset.sync.value) ||
+      gearset.sync.value < 90 ||
+      gearset.sync.value >= 800)
   )
     return undefined;
+  if (gearset.sync !== undefined &&
+      (gearset.sync.kind !== "jobLevel" && gearset.sync.kind !== "itemLevel")) return undefined;
+  if (gearset.sync?.kind === "jobLevel" &&
+      (!Number.isSafeInteger(gearset.sync.value) || !JOB_LEVELS.includes(gearset.sync.value as 50 | 60 | 70 | 80 | 90 | 100))) return undefined;
   if (
     gearset.foodId !== undefined &&
     (!Number.isSafeInteger(gearset.foodId) ||
@@ -536,8 +546,8 @@ export function stringifyReferenceGearset(
   for (let type = 7; type >= 0; type--)
     writeBoolean(gearTypeEncode[type] !== undefined);
 
-  if (gearset.syncLevel !== undefined || gearset.jobLevel !== 100) {
-    write(gearset.syncLevel ?? 0, 800);
+  if (gearset.sync !== undefined || gearset.jobLevel !== 100) {
+    write(gearset.sync?.kind === "itemLevel" ? gearset.sync.value : 0, 800);
     write(jobLevelIndex, 6);
     writeBoolean(true);
   } else {

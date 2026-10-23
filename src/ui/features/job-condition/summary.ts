@@ -36,18 +36,10 @@ export function formatDraftGcd(draft: JobConditionDraft, jobId: JobId): string {
 function formulaLevelLabel(draft: JobConditionDraft, jobId: JobId): string {
   try {
     return (
-      String(
-        calculationJobLevelFor({
-          jobId,
-          syncLevel:
-            draft.range.sync.mode === "enabled"
-              ? draft.range.sync.itemLevel
-              : undefined,
-        }),
-      ) + " 级"
+      String(calculationJobLevelFor({ jobId, sync: draft.range.sync })) + " 级"
     );
   } catch {
-    return "同步品级无有效等级映射";
+    return "同步目标无有效等级映射";
   }
 }
 
@@ -66,11 +58,12 @@ export function conditionRows(
       value: draft.range.minItemLevel + "–" + draft.range.maxItemLevel,
     },
     {
-      label: "同步品级",
-      value:
-        draft.range.sync.mode === "enabled"
-          ? String(draft.range.sync.itemLevel)
-          : "未启用",
+      label: "同步目标",
+      value: draft.range.sync
+        ? draft.range.sync.kind === "jobLevel"
+          ? `仅同步等级 ${draft.range.sync.value}`
+          : String(draft.range.sync.value)
+        : "未启用",
     },
     {
       label: "公式等级",

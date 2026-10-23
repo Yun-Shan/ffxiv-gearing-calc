@@ -29,7 +29,8 @@
 | --- | --- |
 | `DATA_TEST_SINGLE_JOB` | 职业缩写 |
 | `DATA_TEST_SINGLE_MIN_ITEM_LEVEL`、`DATA_TEST_SINGLE_MAX_ITEM_LEVEL` | 品级范围 |
-| `DATA_TEST_SINGLE_SYNC_LEVEL` | 装备同步等级 |
+| `DATA_TEST_SINGLE_SYNC_LEVEL` | 显式装备同步品级，与仅等级设置互斥 |
+| `DATA_TEST_SINGLE_SYNC_JOB_LEVEL` | 仅同步公式等级，与品级设置互斥 |
 | `DATA_TEST_SINGLE_OBJECTIVE` | `damage` 或 `dps` |
 | `DATA_TEST_SINGLE_FOOD_ID` | 固定食物 ID |
 | `DATA_TEST_SINGLE_TIMEOUT_MS` | 搜索时限，默认 `unlimited` |

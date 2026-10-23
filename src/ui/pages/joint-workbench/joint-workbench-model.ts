@@ -242,9 +242,13 @@ export function jointSharedSummaryRows(
       value: first.minItemLevel + "–" + first.maxItemLevel,
     },
     {
-      label: "同步品级",
+      label: "同步目标",
       value:
-        first.syncLevel === undefined ? "未启用" : String(first.syncLevel),
+        first.sync === undefined
+          ? "未启用"
+          : first.sync.kind === "jobLevel"
+            ? `仅同步等级 ${first.sync.value}`
+            : String(first.sync.value),
     },
     {
       label: "共享部位",
@@ -270,7 +274,14 @@ export function sharedGearRows(
 ): GearTableRow[] {
   const job = config.jobs[0];
   const calculated = job && result.jobResults[job.jobId];
-  const sync = calculated ? { jobLevel: calculated.calculationLevel ?? calculationJobLevelFor(job), syncLevel: job.syncLevel } : undefined;
+  const sync = calculated
+    ? {
+        jobLevel:
+          calculated.calculationLevel ??
+          calculationJobLevelFor({ jobId: job.jobId, sync: job.sync }),
+        sync: job.sync,
+      }
+    : undefined;
   return Object.entries(result.commonGear).flatMap(([commonSlot, items]) =>
     (items ?? []).map((gear, index) => ({
       key:

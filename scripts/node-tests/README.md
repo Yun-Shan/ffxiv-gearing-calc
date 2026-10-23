@@ -23,7 +23,8 @@ npm test                # Vitest 单元测试，包括 src/domain 中的规则�
 | `DATA_TEST_FOOD_STRATEGY` | `shared` 或 `independent` | `shared` |
 | `DATA_TEST_OBJECTIVE` | `damage` 或 `dps` | `damage` |
 | `DATA_TEST_MIN_ITEM_LEVEL`、`DATA_TEST_MAX_ITEM_LEVEL` | 覆盖所选职业的默认装备品级范围；未设置的一端沿用职业默认值 | 职业默认范围 |
-| `DATA_TEST_SYNC_LEVEL` | 为所有所选职业设置装备同步等级 | 无 |
+| `DATA_TEST_SYNC_LEVEL` | 为所有所选职业设置显式同步品级（至少 90） | 无 |
+| `DATA_TEST_SYNC_JOB_LEVEL` | 为所有所选职业设置仅等级同步；与 `DATA_TEST_SYNC_LEVEL` 互斥 | 无 |
 | `DATA_TEST_JOB_CONSTRAINTS` | 按职业配置约束的 JSON 对象 | `{}` |
 | `DATA_TEST_GCD`、`DATA_TEST_SPEED_MIN`、`DATA_TEST_SPEED_MAX` | 所有职业使用的 GCD 或速度约束 | 无 |
 | `DATA_TEST_TOUGH_PERCENT`、`DATA_TEST_TOUGH_MIN`、`DATA_TEST_MAX_TOUGHNESS` | 所有职业使用的坚韧约束 | 无 |

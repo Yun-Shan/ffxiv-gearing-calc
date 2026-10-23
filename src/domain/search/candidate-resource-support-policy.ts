@@ -7,8 +7,16 @@ export type MeasuredSearchDomain = {
   jobId: string;
   minItemLevel: number;
   maxItemLevel: number;
-  syncLevel?: number;
+  sync?: import("../types.ts").SyncTarget;
 };
+
+function sameSync(left: MeasuredSearchDomain["sync"], right: MeasuredSearchDomain["sync"]): boolean {
+  return left?.kind === right?.kind && left?.value === right?.value;
+}
+
+function isItemSync(sync: MeasuredSearchDomain["sync"], value: number): boolean {
+  return sync?.kind === "itemLevel" && sync.value === value;
+}
 
 /** 对照调用方的共享槽位策略时，还原优化器内部对戒指对的拆分。 */
 function policyCommonSlots(
@@ -39,7 +47,7 @@ export function resourceBudgetCandidateProfileForSearch(input: {
   const first = jobs[0]!;
   const sameDomain = jobs.every((job) =>
     job.minItemLevel === first.minItemLevel && job.maxItemLevel === first.maxItemLevel &&
-    job.syncLevel === first.syncLevel);
+    sameSync(job.sync, first.sync));
   if (!sameDomain) return "default";
   const slots = new Set(commonSlots);
   const hasRingPair = slots.has("rings") || (slots.has("ring") && slots.has("ring2"));
@@ -48,7 +56,7 @@ export function resourceBudgetCandidateProfileForSearch(input: {
   // 戒指槽拆分的 RPR+SAM 快照早于候选资源预算上界功能。
   // 不启用该上界时，候选集合和精确证明模型仍然完整。
   if (ids === "RPR+SAM" && jobs.length === 2 && objective === "dps" && foodStrategy === "shared" &&
-    first.minItemLevel === 730 && first.maxItemLevel === 795 && first.syncLevel === 735 && splitRingSlots &&
+    first.minItemLevel === 730 && first.maxItemLevel === 795 && isItemSync(first.sync, 735) && splitRingSlots &&
     slots.size === 5 && ["earrings", "necklace", "bracelet"].every((slot) => slots.has(slot))) {
     return "disabled";
   }
@@ -56,14 +64,14 @@ export function resourceBudgetCandidateProfileForSearch(input: {
   // 四职业、未同步、品级 770–795 的记录使用较早的精确证明路径，未添加候选资源预算约束。
   if (ids === "BRD+DNC+MCH+VPR" && jobs.length === 4 && objective === "dps" &&
     foodStrategy === "independent" && commonSlots.length === 0 &&
-    first.minItemLevel === 770 && first.maxItemLevel === 795 && first.syncLevel === undefined) {
+    first.minItemLevel === 770 && first.maxItemLevel === 795 && first.sync === undefined) {
     return "disabled";
   }
 
   // VPR+MCH 的同步品级 715–795 记录使用加权资源支撑约束族。
   // 这些加权界是有效上界，但仍属于可选约束。
   if (ids === "MCH+VPR" && jobs.length === 2 && objective === "dps" && foodStrategy === "shared" &&
-    first.minItemLevel === 715 && first.maxItemLevel === 795 && first.syncLevel === 735 && hasRingPair &&
+    first.minItemLevel === 715 && first.maxItemLevel === 795 && isItemSync(first.sync, 735) && hasRingPair &&
     ["earrings", "necklace", "bracelet"].every((slot) => slots.has(slot))) {
     return "weighted";
   }
@@ -72,7 +80,7 @@ export function resourceBudgetCandidateProfileForSearch(input: {
   // 额外的加权档位会增加预处理开销，却不会缩短证明时间。
   if (ids === "BRD+DNC+MCH+NIN+VPR" && jobs.length === 5 && objective === "dps" &&
     foodStrategy === "independent" && commonSlots.length === 0 &&
-    first.minItemLevel === 715 && first.maxItemLevel === 795 && first.syncLevel === 735) {
+    first.minItemLevel === 715 && first.maxItemLevel === 795 && isItemSync(first.sync, 735)) {
     return "uniform-only";
   }
 
@@ -202,10 +210,10 @@ export function candidateResourceSupportProfileForSearch(input: {
   const first = input.jobs[0];
   const sameDomain = first !== undefined && input.jobs.every((job) =>
     job.minItemLevel === first.minItemLevel && job.maxItemLevel === first.maxItemLevel &&
-    job.syncLevel === first.syncLevel);
+    sameSync(job.sync, first.sync));
   if (sameDomain && ids === "BRD+DNC+MCH+VPR" && input.jobs.length === 4 &&
     input.objective === "dps" && input.foodStrategy === "independent" && input.commonSlots.length === 0 &&
-    first!.minItemLevel === 770 && first!.maxItemLevel === 795 && first!.syncLevel === undefined) {
+    first!.minItemLevel === 770 && first!.maxItemLevel === 795 && first!.sync === undefined) {
     return "compact-weighted";
   }
   return fallback;

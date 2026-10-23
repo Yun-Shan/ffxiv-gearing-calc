@@ -464,7 +464,18 @@ async function main() {
   const maxSearchMs = parseTimeout();
   const minimumItemLevel = optionalPositiveIntegerEnvironment("DATA_TEST_MIN_ITEM_LEVEL");
   const maximumItemLevel = optionalPositiveIntegerEnvironment("DATA_TEST_MAX_ITEM_LEVEL");
-  const syncLevel = optionalPositiveIntegerEnvironment("DATA_TEST_SYNC_LEVEL");
+  const syncItemLevel = optionalPositiveIntegerEnvironment("DATA_TEST_SYNC_LEVEL");
+  const syncJobLevel = optionalPositiveIntegerEnvironment("DATA_TEST_SYNC_JOB_LEVEL");
+  if (syncItemLevel !== undefined && syncJobLevel !== undefined)
+    throw new Error("DATA_TEST_SYNC_LEVEL 与 DATA_TEST_SYNC_JOB_LEVEL 不能同时设置");
+  if (syncItemLevel !== undefined && syncItemLevel < 90)
+    throw new Error("DATA_TEST_SYNC_LEVEL 必须不低于 90");
+  if (syncJobLevel !== undefined &&
+      !gameData.sync.levels.some((entry) => entry.jobLevel === syncJobLevel))
+    throw new Error(`DATA_TEST_SYNC_JOB_LEVEL 不受支持：${syncJobLevel}`);
+  const sync = syncItemLevel === undefined
+    ? syncJobLevel === undefined ? undefined : { kind: "jobLevel", value: syncJobLevel }
+    : { kind: "itemLevel", value: syncItemLevel };
 
   const jobConfigs = jobs.map((jobId) => {
     const schema = jobSchemas[jobId];
@@ -480,7 +491,7 @@ async function main() {
       jobId,
       minItemLevel,
       maxItemLevel,
-      ...(syncLevel === undefined ? {} : { syncLevel }),
+      ...(sync === undefined ? {} : { sync }),
       maximizeTenacity: false,
       excludedSources: [],
       forcedGear: {},
@@ -495,7 +506,7 @@ async function main() {
     jobs: jobConfigs.map((config) => ({
       id: config.jobId,
       itemLevelRange: [config.minItemLevel, config.maxItemLevel],
-      ...(config.syncLevel === undefined ? {} : { syncLevel: config.syncLevel }),
+      ...(config.sync === undefined ? {} : { sync: config.sync }),
       constraints: Object.fromEntries(Object.entries(config).filter(([name]) => [
         "gcdTarget", "gcdChoices", "speedMin", "speedMax", "toughnessMin",
         "toughnessMinPercent", "maximizeTenacity",

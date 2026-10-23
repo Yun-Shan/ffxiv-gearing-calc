@@ -17,7 +17,7 @@ const config: OptimizationConfig = {
   jobId: "SAM",
   minItemLevel: 1,
   maxItemLevel: 795,
-  syncLevel: 735,
+  sync: { kind: "itemLevel", value: 735 },
   maximizeTenacity: false,
   excludedSources: [],
   forcedGear: {},
@@ -266,7 +266,7 @@ describe("complete equivalent result groups", () => {
   it("does not attach groups without sync and honors cancellation / invalid selected snapshots", () => {
     const original = result([gear(1)]);
     expect(
-      attachEquivalentGear(original, { ...config, syncLevel: undefined }),
+      attachEquivalentGear(original, { ...config, sync: undefined }),
     ).toBe(original);
     const controller = new AbortController();
     controller.abort();

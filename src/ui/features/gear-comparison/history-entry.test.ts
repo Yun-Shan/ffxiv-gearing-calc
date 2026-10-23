@@ -40,7 +40,7 @@ function record(overrides: Record<string, unknown> = {}): SearchHistoryRecord {
     status: "completed",
     startedAtISO: "2026-10-17T00:00:00.000Z",
     dataVersion: "saved-version",
-    config: { jobId: "PLD", syncLevel: 660 },
+    config: { jobId: "PLD", sync: { kind: "itemLevel", value: 660 } },
     result,
     ...overrides,
   } as unknown as SearchHistoryRecord;
@@ -62,7 +62,12 @@ describe("history comparison adapter", () => {
   it("extracts only the requested completed Joint profession result", () => {
     const jointRecord = record({
       kind: "joint",
-      config: { jobs: [{ jobId: "PLD", syncLevel: 660 }, { jobId: "WAR" }] },
+      config: {
+        jobs: [
+          { jobId: "PLD", sync: { kind: "itemLevel", value: 660 } },
+          { jobId: "WAR" },
+        ],
+      },
       result: { jobResults: { PLD: result, WAR: undefined } },
     });
     expect(historyComparisonOptions([jointRecord], "PLD")).toHaveLength(1);
@@ -77,8 +82,6 @@ describe("history comparison adapter", () => {
     const noLevel = record({
       result: { ...result, calculationLevel: undefined },
     });
-    expect(
-      historyComparisonOptions([wrongJob, noLevel], "PLD"),
-    ).toEqual([]);
+    expect(historyComparisonOptions([wrongJob, noLevel], "PLD")).toEqual([]);
   });
 });

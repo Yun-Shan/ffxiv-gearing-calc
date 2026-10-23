@@ -197,7 +197,7 @@ describe("optimizer with imported game data", () => {
 
 
 describe("formal search adapter", () => {
-  const mage = { ...base, jobId: "RDM" as const, syncLevel: gameData.syncLevelOfJobLevels[80]!, foodId: 49240 };
+  const mage = { ...base, jobId: "RDM" as const, sync: { kind: "jobLevel" as const, value: 80 }, foodId: 49240 };
   const mage2 = { ...mage, jobId: "BLM" as const };
   it("assembles shared equipment, shared food and independent baselines", async () => {
     const forced = (config: OptimizationConfig): OptimizationConfig => {
@@ -211,10 +211,7 @@ describe("formal search adapter", () => {
     const jobs = [forced(mage), forced(mage2)];
     const result = await optimizeJoint({ jobs, commonSlots: ["head", "rings"], foodStrategy: "shared", objective: "damage" });
     expect(result).toBeDefined();
-    const expectedCalculationLevel = Number(
-      Object.entries(gameData.syncLevels).find(([, levels]) => levels.includes(mage.syncLevel!))?.[0] ??
-      Object.entries(gameData.syncLevelOfJobLevels).find(([, level]) => level === mage.syncLevel)?.[0],
-    );
+    const expectedCalculationLevel = 80;
     expect(result!.commonFood?.id).toBe(mage.foodId);
     expect(result!.commonGear.rings).toHaveLength(2);
     for (const job of jobs) {
@@ -229,7 +226,7 @@ describe("formal search adapter", () => {
   });
   it("rejects malformed constraints and supports cancellation before candidate generation", async () => {
     await expect(optimize({ ...base, minItemLevel: 800, maxItemLevel: 790 })).rejects.toThrow("范围无效");
-    await expect(optimize({ ...base, syncLevel: -1 })).rejects.toThrow("正整数");
+    await expect(optimize({ ...base, sync: { kind: "itemLevel", value: -1 } })).rejects.toThrow("大于等于 90");
     await expect(optimizeJoint({ jobs: [mage], commonSlots: [], foodStrategy: "independent" })).rejects.toThrow("至少需要两个职业");
     const controller = new AbortController(); controller.abort();
     await expect(optimize(base, { signal: controller.signal })).rejects.toMatchObject({ name: "AbortError" });

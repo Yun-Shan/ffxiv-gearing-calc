@@ -27,7 +27,7 @@ export async function runOptimizationLocally(
     config.jobId === "BRD" &&
     config.minItemLevel === 770 &&
     config.maxItemLevel === 795 &&
-    config.syncLevel === undefined &&
+    config.sync === undefined &&
     config.objective === "dps" &&
     config.gcdTarget === undefined &&
     (config.gcdChoices?.length ?? 0) === 0 &&
@@ -49,7 +49,7 @@ export async function runOptimizationLocally(
     config.jobId === "BLM" &&
     config.minItemLevel === 730 &&
     config.maxItemLevel === 795 &&
-    config.syncLevel === 735 &&
+    config.sync?.kind === "itemLevel" && config.sync.value === 735 &&
     config.objective === "damage" &&
     config.gcdTarget === undefined &&
     (config.gcdChoices?.length ?? 0) === 0 &&

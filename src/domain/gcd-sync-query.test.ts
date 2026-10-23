@@ -29,7 +29,7 @@ const config: OptimizationConfig = {
   jobId: "WAR",
   minItemLevel: 663,
   maxItemLevel: 663,
-  syncLevel: 665,
+  sync: { kind: "itemLevel", value: 665 },
   maximizeTenacity: false,
   objective: "damage",
   excludedSources: [],
@@ -97,7 +97,7 @@ describe("sync GCD query", () => {
   }, 120_000);
 
   it("uses positional forced materia candidates and distinguishes ring-slot restrictions", () => {
-    const unsyncedConfig = { ...config, syncLevel: undefined };
+    const unsyncedConfig = { ...config, sync: undefined };
     const allFixedGear = Object.fromEntries(
       Object.entries(forcedGear).map(([slot, itemId]) => [
         slot,
@@ -159,7 +159,7 @@ describe("sync GCD query", () => {
     const maximum = resistanceWeapon.resistanceWeaponAdjust.maxEachStat;
     const query = (allocation: number): OptimizationConfig => ({
       ...config,
-      syncLevel: undefined,
+      sync: undefined,
       minItemLevel: 1,
       maxItemLevel: 795,
       forcedGear: {
@@ -194,8 +194,17 @@ describe("sync GCD query", () => {
       minItemLevel: 664,
       maxItemLevel: 663,
     })).toThrow("装备品级范围无效");
-    expect(() => findFeasibleGcdsLocally({ ...config, syncLevel: 0 }))
-      .toThrow("等级同步品级必须是正整数");
+    expect(() => findFeasibleGcdsLocally({ ...config, sync: { kind: "itemLevel", value: 0 } }))
+      .toThrow("同步品级必须是大于等于 90 的安全整数");
+    expect(() => calculateFeasibleGcdTiers(
+      { ...config, sync: { kind: "unknown", value: 700 } as never },
+      {},
+      {
+        getJobLevel: calculationJobLevelFor,
+        slotsForJob: () => { throw new Error("不应准备槽位"); },
+        gearOptionsFor: () => { throw new Error("不应准备装备"); },
+      },
+    )).toThrow("同步目标无效");
     expect(() => findFeasibleGcdsLocally({ ...config, clanIndex: -1 }))
       .toThrow();
     expect(() => findFeasibleGcdsLocally({
@@ -244,7 +253,7 @@ describe("sync GCD query", () => {
     }
     const automaticConfig = {
       ...config,
-      syncLevel: undefined,
+      sync: undefined,
       minItemLevel: 1,
       maxItemLevel: 795,
     };
@@ -272,7 +281,7 @@ describe("sync GCD query", () => {
     }
     const automaticConfig = {
       ...config,
-      syncLevel: undefined,
+      sync: undefined,
       minItemLevel: 1,
       maxItemLevel: 795,
     };
@@ -358,7 +367,7 @@ describe("sync GCD query", () => {
     };
     const specialConfig = {
       ...config,
-      syncLevel: undefined,
+      sync: undefined,
       minItemLevel: 1,
       maxItemLevel: 795,
       forcedGear: {},

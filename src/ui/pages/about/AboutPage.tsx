@@ -21,7 +21,7 @@ const communityProjects: readonly CommunityProject[] = [
       },
     ],
     description:
-      "FFXIV 配装器，本项目的主要参考项目。MCP 缺少必需资料时以它的导出作为回退与核对来源；职业 schema、职业公式、同步品级分组与食物利用率公式也参考该项目。",
+      "FFXIV 配装器，本项目的主要参考项目。MCP 缺少必需资料时以它的导出作为回退与核对来源；职业 schema、职业公式与食物利用率公式也参考该项目。",
   },
   {
     links: [
@@ -78,7 +78,7 @@ export function AboutPage() {
       <section className={`${styles.card} ${styles.section}`} aria-labelledby="about-project">
         <h2 id="about-project">自动配装器</h2>
         <p>
-          自动配装器是一款 FFXIV 自动配装优化器。选择职业并设置装备品级、同步品级、GCD 等条件后，即可搜索符合约束的装备、魔晶石与食物搭配，减少手动比较配装的时间。
+          自动配装器是一款 FFXIV 自动配装优化器。选择职业并设置装备品级、同步目标、GCD 等条件后，即可搜索符合约束的装备、魔晶石与食物搭配，减少手动比较配装的时间。
         </p>
         <p>
           除单职业搜索外，实验室还提供多职业联合搜索与装备对比，帮助你规划职业间的共享装备、比较不同方案。计算在本地浏览器中完成，成功结果会保存到本地历史，方便随时查看或调整条件后重新搜索。

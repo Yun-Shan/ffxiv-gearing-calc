@@ -41,7 +41,13 @@ function Harness({
       <output data-forced-value>{JSON.stringify(value)}</output>
       <ForcedMateriaSlots
         gear={freshGear ? { ...equipment } : equipment}
-        config={{ jobId, syncLevel }}
+        config={{
+          jobId,
+          sync:
+            syncLevel === undefined
+              ? undefined
+              : { kind: "itemLevel", value: syncLevel },
+        }}
         readOnly={false}
         value={value}
         onChange={setValue}
@@ -90,15 +96,29 @@ afterEach(() => {
 });
 
 describe("forced equipment materia controls", () => {
-  it.each([['PLD', 'TEN', '坚韧'], ['WHM', 'PIE', '信仰']] as const)("allows %s to force %s materia", async (jobId, stat, label) => {
-    const equipment = gears.find((item) => item.jobs.includes(jobId) && item.level === 770 && item.materiaSlots === 2 && !item.materiaAdvanced)!;
+  it.each([
+    ["PLD", "TEN", "坚韧"],
+    ["WHM", "PIE", "信仰"],
+  ] as const)("allows %s to force %s materia", async (jobId, stat, label) => {
+    const equipment = gears.find(
+      (item) =>
+        item.jobs.includes(jobId) &&
+        item.level === 770 &&
+        item.materiaSlots === 2 &&
+        !item.materiaAdvanced,
+    )!;
     act(() => root.render(<Harness equipment={equipment} jobId={jobId} />));
     await click(holes()[0]!);
-    const choice = options().find((option) => option.textContent?.startsWith(`${label} +`))!;
+    const choice = options().find((option) =>
+      option.textContent?.startsWith(`${label} +`),
+    )!;
     expect(choice).toBeDefined();
     await click(choice);
     expect(holes()[0]!.textContent).toContain(label);
-    expect(selectedForce()).toMatchObject({ id: equipment.id, melds: [{ stat }, null] });
+    expect(selectedForce()).toMatchObject({
+      id: equipment.id,
+      melds: [{ stat }, null],
+    });
   });
 
   it("selects per hole, updates equipment totals, marks the choice and restores auto", async () => {
@@ -244,7 +264,7 @@ describe("forced equipment materia controls", () => {
       root.render(
         <ForcedMateriaSlots
           gear={gear}
-          config={{ jobId: "PLD", syncLevel: 660 }}
+          config={{ jobId: "PLD", sync: { kind: "itemLevel", value: 660 } }}
           readOnly={false}
           value={gear.id}
           onChange={() => undefined}

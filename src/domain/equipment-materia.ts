@@ -20,7 +20,7 @@ import type { Gear, Materia, OptimizationConfig } from "./types.ts";
 export type EquipmentMateriaChoice = "auto" | Materia["stat"];
 export type EquipmentMateriaConfig = Pick<
   OptimizationConfig,
-  "jobId" | "syncLevel"
+  "jobId" | "sync"
 >;
 
 /** Equipment facts do not depend on the current hole selections and can be retained by the UI. */
@@ -30,7 +30,7 @@ export function prepareEquipmentMateria(
 ) {
   const job = jobSchemas[config.jobId];
   const jobLevel = calculationJobLevelFor(config);
-  const syncLevel = effectiveGearSyncLevel(gear, jobLevel, config.syncLevel);
+  const syncLevel = effectiveGearSyncLevel(gear, jobLevel, config.sync);
   const stats = forcedAllowedMateriaStats(config.jobId);
   const resolvedGear = { ...gear, stats: concretizeGearStats(gear.stats, job) };
   const custom =
@@ -61,7 +61,7 @@ export function prepareEquipmentMateria(
     resolvedGear,
     [],
     jobLevel,
-    config.syncLevel,
+    config.sync,
   );
   const current = applyItemSpecialBonus(
     base,

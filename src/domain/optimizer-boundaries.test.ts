@@ -28,7 +28,9 @@ const maxItemLevel = Math.max(...gears.map((gear) => gear.level));
 function configFor(jobId: JobId, calculationLevel?: number): OptimizationConfig {
   return {
     jobId,
-    syncLevel: calculationLevel !== undefined && calculationLevel < 100 ? gameData.syncLevelOfJobLevels[calculationLevel] : undefined,
+    sync: calculationLevel !== undefined && calculationLevel < 100
+      ? { kind: "jobLevel", value: calculationLevel }
+      : undefined,
     minItemLevel: 0,
     maxItemLevel,
     maximizeTenacity: false,
@@ -149,7 +151,7 @@ describe("optimizer runtime boundaries", () => {
       DET: 162,
     });
     expect(effectiveGearSyncLevel(variableGear!, 90)).toBe(660);
-    expect(effectiveGearSyncLevel(variableGear!, 90, 635)).toBe(635);
+    expect(effectiveGearSyncLevel(variableGear!, 90, { kind: "itemLevel", value: 635 })).toBe(635);
     expect(effectiveGearSyncLevel(variableGear!, 100)).toBeUndefined();
     const concrete = concretizeGearStats(variableGear!.stats, jobSchemas.SAM);
     const capped = capGearStatsAtLevel(
@@ -180,7 +182,7 @@ describe("optimizer runtime boundaries", () => {
       });
       expect(result!.calculationLevel).toBe(calculationJobLevelFor(config));
       if (jobLevel === 90) {
-        expect(effectiveGearSyncLevel(variableGear, 100, config.syncLevel)).toBe(660);
+        expect(effectiveGearSyncLevel(variableGear, result!.calculationLevel!, config.sync)).toBe(660);
         expect(selected.melds).toEqual([]);
         const concreteStats = concretizeGearStats(variableGear.stats, jobSchemas.SAM);
         expect(selected.finalStats.STR).toBeLessThan(concreteStats.STR!);
@@ -190,7 +192,7 @@ describe("optimizer runtime boundaries", () => {
           );
         }
       } else {
-        expect(effectiveGearSyncLevel(variableGear, 100, config.syncLevel)).toBeUndefined();
+        expect(effectiveGearSyncLevel(variableGear, 100, config.sync)).toBeUndefined();
         expect(selected.finalStats).toMatchObject({ STR: 212, DHT: 162, VIT: 214, DET: 162 });
       }
       expect(findFeasibleGcdsLocally(config)).toContain(result!.effects.gcd);
@@ -199,7 +201,15 @@ describe("optimizer runtime boundaries", () => {
 
   it("uses each job cap and clamps high sync mappings to a limited job cap", () => {
     expect(calculationJobLevelFor(configFor("SAM"))).toBe(100);
-    expect(calculationJobLevelFor({ ...configFor("BLU"), syncLevel: gameData.syncLevels[100]![0]! })).toBe(jobSchemas.BLU.maxJobLevel);
+    expect(calculationJobLevelFor({ ...configFor("BLU"), sync: { kind: "itemLevel", value: 700 } })).toBe(jobSchemas.BLU.maxJobLevel);
+
+    const variableGear = gears.find((gear) => gear.id === 52439)!;
+    const target = { kind: "jobLevel", value: 100 } as const;
+    const blueMageCalculationLevel = calculationJobLevelFor({ jobId: "BLU", sync: target });
+    const blueMageRule = gameData.sync.levels.find(({ jobLevel }) => jobLevel === blueMageCalculationLevel)!;
+
+    expect(blueMageCalculationLevel).toBe(jobSchemas.BLU.maxJobLevel);
+    expect(effectiveGearSyncLevel(variableGear, blueMageCalculationLevel, target)).toBe(blueMageRule.defaultItemLevel);
   });
 
   it("uses explicit sync mapping for single-job base stats and effects", async () => {
@@ -238,11 +248,11 @@ describe("optimizer runtime boundaries", () => {
   }, 30_000);
 
   it("keeps high equip-level gear wearable when sync formulas use the mapped lower level", async () => {
-    const syncLevel = gameData.syncLevelOfJobLevels[80]!;
+    const syncLevel = gameData.sync.levels.find(({ jobLevel }) => jobLevel === 80)!.defaultItemLevel;
     const config = forceOnePerSlot({
       ...configFor("SAM", 100),
       minItemLevel: syncLevel + 1,
-      syncLevel,
+      sync: { kind: "jobLevel", value: 80 },
     });
     const bodyCandidates = gearOptionsFor(config, "body");
     expect(bodyCandidates.some((item) => item.level > syncLevel && item.equipLevel > 80)).toBe(true);
@@ -280,12 +290,12 @@ describe("optimizer runtime boundaries", () => {
       .map((id) => gears.find((item) => item.id === id)!)
       .filter(Boolean);
     const minimumSelectedLevel = Math.min(...selectedItems.map((item) => item.level));
-    const syncLevel = [...gameData.syncLevels[80]!]
+    const syncLevel = [...gameData.levelCaps.level]
       .filter((level) => level < minimumSelectedLevel)
       .sort((left, right) => right - left)[0];
     expect(syncLevel).toBeDefined();
 
-    const result = await runOptimizationLocally({ ...config, syncLevel: syncLevel! });
+    const result = await runOptimizationLocally({ ...config, sync: { kind: "itemLevel", value: syncLevel! } });
     expect(result).toBeDefined();
     const weapon = result!.gear.find((item) => item.slot === "weapon")!;
     expect(weapon.id).toBe(customWeapon.id);
@@ -315,8 +325,8 @@ describe("optimizer runtime boundaries", () => {
     expect(() => findFeasibleGcdsLocally(configFor("SAM"), { signal: controller.signal }))
       .toThrow(expect.objectContaining({ name: "AbortError", message: "用户中止" }));
     const unavailableSync = Math.max(...gameData.levelCaps.level) + 1;
-    expect(() => findFeasibleGcdsLocally({ ...configFor("SAM"), syncLevel: unavailableSync }))
-      .toThrow(`不支持的等级同步品级：${unavailableSync}`);
+    expect(() => findFeasibleGcdsLocally({ ...configFor("SAM"), sync: { kind: "itemLevel", value: unavailableSync } }))
+      .toThrow("完整属性上限");
   });
 
   it("uses the same GCD and DPS constraints for forced real equipment", async () => {

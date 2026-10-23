@@ -20,7 +20,7 @@ function configFor(jobId: OptimizationConfig["jobId"]): OptimizationConfig {
     jobId,
     minItemLevel: 500,
     maxItemLevel: 520,
-    syncLevel: 500,
+    sync: { kind: "itemLevel", value: 500 },
     maximizeTenacity: false,
     excludedSources: [],
     forcedGear: {},
@@ -41,7 +41,7 @@ function forcedMageConfig(
     "weapon", "head", "body", "hands", "legs", "feet", "earrings", "necklace", "bracelet",
   ] as const) {
     const candidate = gearOptionsFor(config, slot).find((gear) =>
-      gear.level > config.syncLevel! && gear.customParameters === undefined);
+      gear.level > config.sync!.value && gear.customParameters === undefined);
     if (candidate === undefined) throw new Error(`缺少 ${jobId} 可用的 ${slot} 测试装备`);
     forcedGear[slot] = candidate.id;
   }
@@ -71,7 +71,7 @@ function lowLevelForcedConfig(
 ): OptimizationConfig {
   const config: OptimizationConfig = {
     ...configFor(jobId),
-    syncLevel: gameData.syncLevelOfJobLevels[50],
+    sync: { kind: "jobLevel", value: 50 },
     minItemLevel: 90,
     maxItemLevel: 130,
     foodId,
@@ -257,8 +257,8 @@ describe("full materia placement", () => {
     const targetRing = gears.find((gear) => gear.id === 34153)!;
     expect(targetRing.materiaAdvanced).toBe(true);
     expect(targetRing.materiaSlots).toBe(1);
-    const syncLevel = gameData.syncLevels[80]!.find((level) => level >= targetRing.level)!;
-    const config = { ...configFor("WHM"), minItemLevel: 510, maxItemLevel: syncLevel + 5, syncLevel };
+    const syncLevel = gameData.levelCaps.level.find((level) => level >= targetRing.level)!;
+    const config = { ...configFor("WHM"), minItemLevel: 510, maxItemLevel: syncLevel + 5, sync: { kind: "itemLevel" as const, value: syncLevel } };
     const forcedGear: OptimizationConfig["forcedGear"] = { ring: targetRing.id };
     for (const slot of [
       "weapon", "head", "body", "hands", "legs", "feet", "earrings", "necklace", "bracelet", "ring2",
@@ -284,12 +284,12 @@ describe("full materia placement", () => {
       "weapon", "head", "body", "hands", "legs", "feet", "earrings", "necklace", "bracelet",
     ] as const) {
       const candidate = gearOptionsFor(config, slot).find((gear) =>
-        gear.level > config.syncLevel! && gear.customParameters === undefined && gear.stats.PIE === undefined);
+        gear.level > config.sync!.value && gear.customParameters === undefined && gear.stats.PIE === undefined);
       if (candidate === undefined) throw new Error(`缺少 RDM 可用的 ${slot} 测试装备`);
       forcedGear[slot] = candidate.id;
     }
     const rings = gearOptionsFor(config, "ring").filter((gear) =>
-      !gear.unique && gear.level > config.syncLevel! && gear.stats.PIE === undefined);
+      !gear.unique && gear.level > config.sync!.value && gear.stats.PIE === undefined);
     expect(rings.length).toBeGreaterThanOrEqual(2);
     forcedGear.ring = rings[0]!.id;
     forcedGear.ring2 = rings[1]!.id;
@@ -305,7 +305,7 @@ describe("character equipment level", () => {
   it("keeps high-level gear wearable while synced to a lower formula level", () => {
     const config = {
       ...configFor("RDM"),
-      syncLevel: gameData.syncLevelOfJobLevels[50],
+      sync: { kind: "jobLevel" as const, value: 50 },
       minItemLevel: 1,
       maxItemLevel: 999,
     };

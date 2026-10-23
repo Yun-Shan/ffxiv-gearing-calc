@@ -45,6 +45,7 @@ const resistanceWeaponAdjustReturnFields = [
   "Unknown0",
 ];
 const classJobFields = fields(classJobReturnFields);
+const syncDutyFields = "Name,ItemLevelSync,ClassJobLevelSync,JournalGenre,ContentType,ContentUICategory,HighEndDuty,AllowUndersized,ContentLinkType";
 
 async function load(path) {
   return (await import(`${pathToFileURL(path).href}?query=${Date.now()}-${Math.random()}`)).default;
@@ -355,181 +356,6 @@ async function searchClassJobs(client, jobs, queries) {
   return found;
 }
 
-async function refreshLevelBasisData(client, health) {
-  if (!(await fileExists(outputPath)))
-    throw new Error(`同步品级增量查询需要已有 MCP 快照：${outputPath}`);
-  const snapshot = JSON.parse(await readFile(outputPath, "utf8"));
-  if (snapshot.server !== "ffxiv-mcp-lumina" || snapshot.gameVersion !== health.gameVersion)
-    throw new Error(`同步品级查询版本 ${health.gameVersion} 与现有快照 ${snapshot.gameVersion} 不一致；拒绝混合版本`);
-
-  const [sheetInventoryResult, itemDescriptionResult, cfcDescriptionResult, itemLevelDescriptionResult, paramGrowDescriptionResult] =
-    await Promise.all([
-      client.callTool("list_sheets", {}),
-      client.callTool("describe_sheet", { sheet: "Item" }),
-      client.callTool("describe_sheet", { sheet: "ContentFinderCondition" }),
-      client.callTool("describe_sheet", { sheet: "ItemLevel" }),
-      client.callTool("describe_sheet", { sheet: "ParamGrow" }),
-    ]);
-  const sheetInventory = sheetInventoryResult.value;
-  const itemDescription = itemDescriptionResult.value;
-  const cfcDescription = cfcDescriptionResult.value;
-  const itemLevelDescription = itemLevelDescriptionResult.value;
-  const paramGrowDescription = paramGrowDescriptionResult.value;
-  if (!Array.isArray(sheetInventory.sheets) ||
-      !sheetInventory.sheets.includes("ContentFinderCondition") ||
-      !sheetInventory.sheets.includes("Item") ||
-      !sheetInventory.sheets.includes("ItemLevel") ||
-      !sheetInventory.sheets.includes("ParamGrow"))
-    throw new Error("MCP Sheet 清单缺少同步品级核验所需表");
-  for (const [sheet, description] of [
-    ["Item", itemDescription],
-    ["ContentFinderCondition", cfcDescription],
-    ["ItemLevel", itemLevelDescription],
-    ["ParamGrow", paramGrowDescription],
-  ]) {
-    if (!Array.isArray(description.columns) || description.gameVersion !== health.gameVersion)
-      throw new Error(`MCP ${sheet} Schema 缺失或游戏版本与 health 不一致`);
-  }
-  validateSyncLevelSchema("Item", itemDescription, ["SubStatCategory"]);
-  validateSyncLevelSchema("ContentFinderCondition", cfcDescription, [
-    "ClassJobLevelRequired", "ItemLevelRequired", "ItemLevelSync", "Name", "JournalGenre",
-  ]);
-  validateSyncLevelSchema("ItemLevel", itemLevelDescription, ["Strength", "CriticalHit"]);
-  validateSyncLevelSchema("ParamGrow", paramGrowDescription, ["ItemLevelSync"]);
-
-  const queries = [
-    {
-      method: "health",
-      gameVersion: health.gameVersion,
-      validatedVersion: health.validatedVersion,
-      queriedAt: health.timestamp,
-    },
-    {
-      method: "list_sheets",
-      gameVersion: sheetInventory.gameVersion,
-      queriedAt: sheetInventory.timestamp,
-      returnedRows: sheetInventory.sheets.length,
-    },
-    describeQuery("ContentFinderCondition", cfcDescription),
-    describeQuery("ItemLevel", itemLevelDescription),
-    describeQuery("ParamGrow", paramGrowDescription),
-    describeQuery("Item", itemDescription),
-  ];
-  const cfcRows = await queryAllRows(
-    client,
-    "ContentFinderCondition",
-    "ClassJobLevelRequired,ItemLevelRequired,ItemLevelSync,Name,JournalGenre",
-    queries,
-  );
-  const paramGrowRows = await queryRows(
-    client,
-    "ParamGrow",
-    [50, 60, 70, 80, 90, 100],
-    "ItemLevelSync",
-    queries,
-  );
-  const expectedItemIds = [...new Set([
-    ...(snapshot.queryPlan?.gearItemIds ?? []),
-    ...(snapshot.queryPlan?.foodItemIds ?? []),
-  ])].sort((left, right) => left - right);
-  const itemQueries = [];
-  const subStatRows = await queryRows(client, "Item", expectedItemIds, "SubStatCategory", itemQueries);
-  if (subStatRows.missingRowIds.length || subStatRows.rows.length !== expectedItemIds.length)
-    throw new Error(`MCP Item.SubStatCategory 查询行数不完整：${subStatRows.rows.length}/${expectedItemIds.length}`);
-  const subStatById = new Map(subStatRows.rows.map((row) => [row.rowId, row]));
-  if (expectedItemIds.some((id) => {
-    const row = subStatById.get(id);
-    return !Number.isSafeInteger(row?.fields?.SubStatCategory) ||
-      row.fields.SubStatCategory < 0 || row.gameVersion !== health.gameVersion || !row.timestamp;
-  }))
-    throw new Error("MCP Item.SubStatCategory 查询返回了无效或跨版本行");
-  if (cfcRows.rows.length !== cfcDescription.rowCount || cfcRows.missingRowIds.length)
-    throw new Error(`MCP ContentFinderCondition 查询行数不完整：${cfcRows.rows.length}/${cfcDescription.rowCount}`);
-  if (paramGrowRows.missingRowIds.length)
-    throw new Error(`MCP ParamGrow 缺少行：${paramGrowRows.missingRowIds.join(", ")}`);
-  if ([...queries, ...itemQueries].some((query) => query.gameVersion !== health.gameVersion))
-    throw new Error("MCP 同步品级查询批次游戏版本不一致");
-
-  const syncLevelCapabilityCheck = {
-    status: "available-via-content-finder-condition",
-    checkedAt: new Date().toISOString(),
-    gameVersion: health.gameVersion,
-    listSheets: {
-      count: sheetInventory.count,
-      syncRelatedSheets: sheetInventory.sheets.filter((sheet) => /sync/i.test(String(sheet))),
-      gameVersion: sheetInventory.gameVersion,
-      queriedAt: sheetInventory.timestamp,
-    },
-    contentFinderCondition: {
-      rowCount: cfcDescription.rowCount,
-      fields: cfcDescription.columns.map((column) => column.name),
-      gameVersion: cfcDescription.gameVersion,
-      queriedAt: cfcDescription.timestamp,
-    },
-    itemLevel: {
-      rowCount: itemLevelDescription.rowCount,
-      fields: itemLevelDescription.columns.map((column) => column.name),
-      gameVersion: itemLevelDescription.gameVersion,
-      queriedAt: itemLevelDescription.timestamp,
-    },
-    paramGrow: {
-      rowCount: paramGrowDescription.rowCount,
-      fields: paramGrowDescription.columns.map((column) => column.name),
-      gameVersion: paramGrowDescription.gameVersion,
-      queriedAt: paramGrowDescription.timestamp,
-      usedForSyncLevelGrouping: false,
-    },
-  };
-  const variableEquipLevelCapabilityCheck = {
-    status: "available-via-item-sub-stat-category",
-    checkedAt: new Date().toISOString(),
-    gameVersion: health.gameVersion,
-    item: {
-      rowCount: itemDescription.rowCount,
-      fields: itemDescription.columns.map((column) => column.name),
-      gameVersion: itemDescription.gameVersion,
-      queriedAt: itemDescription.timestamp,
-      flagField: "SubStatCategory",
-      variableValue: 2,
-      persistedItemRows: expectedItemIds.length,
-    },
-  };
-  const allQueries = [...(snapshot.queries ?? []), ...queries, ...itemQueries];
-  if (allQueries.some((query) => query.gameVersion !== snapshot.gameVersion))
-    throw new Error("增量查询会造成 MCP 快照数据版本不一致");
-
-  snapshot.sourceCapabilityChecks ??= {};
-  snapshot.sourceCapabilityChecks.syncLevels = syncLevelCapabilityCheck;
-  snapshot.sourceCapabilityChecks.equipLevelVariable = variableEquipLevelCapabilityCheck;
-  snapshot.rows ??= {};
-  snapshot.rows.ContentFinderCondition = cfcRows.rows.sort((left, right) => left.rowId - right.rowId);
-  snapshot.rows.ParamGrow = paramGrowRows.rows.sort((left, right) => left.rowId - right.rowId);
-  const itemRows = snapshot.rows.Item;
-  const itemById = new Map(itemRows.map((row) => [row.rowId, row]));
-  for (const itemId of expectedItemIds) {
-    const itemRow = itemById.get(itemId);
-    if (!itemRow) throw new Error(`现有 MCP 快照缺少 Item 行 ${itemId}`);
-    itemRow.fields.SubStatCategory = subStatById.get(itemId).fields.SubStatCategory;
-  }
-  snapshot.queries = [
-    ...(snapshot.queries ?? []).filter((query) =>
-      !(query.method === "list_rows" && query.sheet === "ContentFinderCondition") &&
-      !(query.method === "get_rows" && query.sheet === "ParamGrow") &&
-      !(query.method === "get_rows" && query.sheet === "Item" &&
-        query.fields?.length === 1 && query.fields[0] === "SubStatCategory") &&
-      !(query.method === "describe_sheet" && ["ContentFinderCondition", "ItemLevel", "ParamGrow", "Item"].includes(query.sheet)),
-    ),
-    ...queries,
-    ...itemQueries,
-  ];
-  snapshot.missing ??= {};
-  snapshot.missing.ContentFinderCondition = cfcRows.missingRowIds;
-  snapshot.missing.ParamGrow = paramGrowRows.missingRowIds;
-  snapshot.missing.ItemSubStatCategory = subStatRows.missingRowIds;
-  await writeFile(outputPath, `${JSON.stringify(snapshot)}\n`, "utf8");
-  console.log(JSON.stringify({ outputPath, syncLevelRows: cfcRows.rows.length, paramGrowRows: paramGrowRows.rows.length, itemRowsWithSubStatCategory: expectedItemIds.length, gameVersion: snapshot.gameVersion }));
-}
-
 async function refreshItemSpecialBonusData(client, health) {
   if (!(await fileExists(outputPath)))
     throw new Error(`装备特殊效果增量查询需要已有 MCP 快照：${outputPath}`);
@@ -682,9 +508,7 @@ try {
   if (!genericQueriesAvailable)
     throw new Error(`Lumina MCP 通用查询不可用：${JSON.stringify(health)}`);
 
-  if (process.argv.includes("--level-basis-data-only")) {
-    await refreshLevelBasisData(client, health);
-  } else if (process.argv.includes("--item-special-bonus-data-only")) {
+  if (process.argv.includes("--item-special-bonus-data-only")) {
     await refreshItemSpecialBonusData(client, health);
   } else {
 
@@ -694,6 +518,8 @@ try {
     itemDescriptionResult,
     itemSpecialBonusDescriptionResult,
     contentFinderConditionDescriptionResult,
+    contentTypeDescriptionResult,
+    contentUICategoryDescriptionResult,
     itemLevelDescriptionResult,
     paramGrowDescriptionResult,
     resistanceWeaponAdjustDescriptionResult,
@@ -703,6 +529,8 @@ try {
     client.callTool("describe_sheet", { sheet: "Item" }),
     client.callTool("describe_sheet", { sheet: "ItemSpecialBonus" }),
     client.callTool("describe_sheet", { sheet: "ContentFinderCondition" }),
+    client.callTool("describe_sheet", { sheet: "ContentType" }),
+    client.callTool("describe_sheet", { sheet: "ContentUICategory" }),
     client.callTool("describe_sheet", { sheet: "ItemLevel" }),
     client.callTool("describe_sheet", { sheet: "ParamGrow" }),
     client.callTool("describe_sheet", { sheet: "ResistanceWeaponAdjust" }),
@@ -712,6 +540,8 @@ try {
   const itemDescription = itemDescriptionResult.value;
   const itemSpecialBonusDescription = itemSpecialBonusDescriptionResult.value;
   const contentFinderConditionDescription = contentFinderConditionDescriptionResult.value;
+  const contentTypeDescription = contentTypeDescriptionResult.value;
+  const contentUICategoryDescription = contentUICategoryDescriptionResult.value;
   const itemLevelDescription = itemLevelDescriptionResult.value;
   const paramGrowDescription = paramGrowDescriptionResult.value;
   const resistanceWeaponAdjustDescription = resistanceWeaponAdjustDescriptionResult.value;
@@ -721,8 +551,14 @@ try {
     throw new Error("Lumina MCP Sheet 清单缺少 ResistanceWeaponAdjust");
   if (!sheetInventory.sheets.includes("ItemSpecialBonus"))
     throw new Error("Lumina MCP Sheet 清单缺少 ItemSpecialBonus");
+  if (!sheetInventory.sheets.includes("ContentType"))
+    throw new Error("MCP sheet inventory lacks ContentType");
+  if (!sheetInventory.sheets.includes("ContentUICategory"))
+    throw new Error("MCP sheet inventory lacks ContentUICategory");
   for (const [sheet, description] of [
     ["ContentFinderCondition", contentFinderConditionDescription],
+    ["ContentType", contentTypeDescription],
+    ["ContentUICategory", contentUICategoryDescription],
     ["ItemLevel", itemLevelDescription],
     ["ParamGrow", paramGrowDescription],
     ["Item", itemDescription],
@@ -732,10 +568,10 @@ try {
     if (!Array.isArray(description.columns) || description.gameVersion !== health.gameVersion)
       throw new Error(`MCP ${sheet} Schema 缺失或游戏版本与 health 不一致`);
   }
-  validateSyncLevelSchema("ContentFinderCondition", contentFinderConditionDescription, [
-    "ClassJobLevelRequired", "ItemLevelRequired", "ItemLevelSync", "Name", "JournalGenre",
-  ]);
-  validateSyncLevelSchema("ItemLevel", itemLevelDescription, ["Strength", "CriticalHit"]);
+  validateSyncLevelSchema("ContentFinderCondition", contentFinderConditionDescription, syncDutyFields.split(","));
+  validateSyncLevelSchema("ContentType", contentTypeDescription, ["Name"]);
+  validateSyncLevelSchema("ContentUICategory", contentUICategoryDescription, ["Name"]);
+  validateSyncLevelSchema("ItemLevel", itemLevelDescription, itemLevelReturnFields);
   validateSyncLevelSchema("ParamGrow", paramGrowDescription, ["ItemLevelSync"]);
   validateSyncLevelSchema("Item", itemDescription, [
     "SubStatCategory", "ItemSpecialBonus", "ItemSpecialBonusParam",
@@ -772,6 +608,8 @@ try {
       queriedAt: classJobDescription.timestamp,
     },
     describeQuery("ContentFinderCondition", contentFinderConditionDescription),
+    describeQuery("ContentType", contentTypeDescription),
+    describeQuery("ContentUICategory", contentUICategoryDescription),
     describeQuery("ItemLevel", itemLevelDescription),
     describeQuery("ParamGrow", paramGrowDescription),
     describeQuery("Item", itemDescription),
@@ -794,6 +632,18 @@ try {
       gameVersion: contentFinderConditionDescription.gameVersion,
       queriedAt: contentFinderConditionDescription.timestamp,
     },
+    contentType: {
+      rowCount: contentTypeDescription.rowCount,
+      fields: contentTypeDescription.columns.map((column) => column.name),
+      gameVersion: contentTypeDescription.gameVersion,
+      queriedAt: contentTypeDescription.timestamp,
+    },
+    contentUICategory: {
+      rowCount: contentUICategoryDescription.rowCount,
+      fields: contentUICategoryDescription.columns.map((column) => column.name),
+      gameVersion: contentUICategoryDescription.gameVersion,
+      queriedAt: contentUICategoryDescription.timestamp,
+    },
     itemLevel: {
       rowCount: itemLevelDescription.rowCount,
       fields: itemLevelDescription.columns.map((column) => column.name),
@@ -805,7 +655,7 @@ try {
       fields: paramGrowDescription.columns.map((column) => column.name),
       gameVersion: paramGrowDescription.gameVersion,
       queriedAt: paramGrowDescription.timestamp,
-      usedForSyncLevelGrouping: false,
+      usedForSyncLevelGrouping: true,
     },
   };
   const variableEquipLevelCapabilityCheck = {
@@ -845,7 +695,6 @@ try {
   );
   const rawFoods = await load(resolve(outDir, "foods.js"));
   const foods = rawFoods.filter((food) => food.slot === -1);
-  const levelCaps = await load(resolve(outDir, "levelCaps.js"));
   // Query the complete custom-parameter-weapon sheet against every MCP-visible gear item.
   // The reference list is used only for the later consistency check; it never
   // determines which custom-weapon rows enter the snapshot.
@@ -903,7 +752,6 @@ try {
   const foodQueries = [];
   const foodRowsResult = await queryRows(client, "ItemFood", foodEffectIds, itemFoodFields, foodQueries);
   const levelQueries = [];
-  const levelRowsResult = await queryRows(client, "ItemLevel", levelCaps.level, itemLevelFields, levelQueries);
   const baseQueries = [];
   const baseRowsResult = await queryRows(client, "BaseParam", [1, 2, 3, 4, 5, 6, 19, 22, 27, 44, 45, 46], undefined, baseQueries);
   const mandQueries = [];
@@ -925,20 +773,38 @@ try {
   const contentFinderConditionRowsResult = await queryAllRows(
     client,
     "ContentFinderCondition",
-    "ClassJobLevelRequired,ItemLevelRequired,ItemLevelSync,Name,JournalGenre",
+    syncDutyFields,
     syncLevelQueries,
   );
-  const paramGrowRowsResult = await queryRows(
+  const contentTypeRowsResult = await queryAllRows(
+    client,
+    "ContentType",
+    "Name",
+    syncLevelQueries,
+  );
+  const contentUICategoryRowsResult = await queryAllRows(
+    client,
+    "ContentUICategory",
+    "Name",
+    syncLevelQueries,
+  );
+  const paramGrowRowsResult = await queryAllRows(
     client,
     "ParamGrow",
-    [50, 60, 70, 80, 90, 100],
     "ItemLevelSync",
     syncLevelQueries,
   );
-  if (contentFinderConditionRowsResult.rows.length !== contentFinderConditionDescription.rowCount)
+  if (contentFinderConditionRowsResult.rows.length !== contentFinderConditionDescription.rowCount || contentFinderConditionRowsResult.missingRowIds.length)
     throw new Error(`MCP ContentFinderCondition 查询行数不一致：${contentFinderConditionRowsResult.rows.length} !== ${contentFinderConditionDescription.rowCount}`);
-  if (paramGrowRowsResult.missingRowIds.length)
-    throw new Error(`MCP ParamGrow 缺少行：${paramGrowRowsResult.missingRowIds.join(", ")}`);
+  if (contentTypeRowsResult.rows.length !== contentTypeDescription.rowCount || contentTypeRowsResult.missingRowIds.length)
+    throw new Error(`MCP ContentType 查询行数不一致：${contentTypeRowsResult.rows.length} !== ${contentTypeDescription.rowCount}`);
+  if (contentUICategoryRowsResult.rows.length !== contentUICategoryDescription.rowCount || contentUICategoryRowsResult.missingRowIds.length)
+    throw new Error(`MCP ContentUICategory 查询行数不一致：${contentUICategoryRowsResult.rows.length} !== ${contentUICategoryDescription.rowCount}`);
+  if (paramGrowRowsResult.rows.length !== paramGrowDescription.rowCount || paramGrowRowsResult.missingRowIds.length)
+    throw new Error(`MCP ParamGrow 全量行查询不完整：${paramGrowRowsResult.rows.length}/${paramGrowDescription.rowCount}`);
+  const levelRowsResult = await queryAllRows(client, "ItemLevel", itemLevelFields, levelQueries);
+  if (levelRowsResult.rows.length !== itemLevelDescription.rowCount || levelRowsResult.missingRowIds.length)
+    throw new Error(`MCP ItemLevel 全量行查询不完整：${levelRowsResult.rows.length}/${itemLevelDescription.rowCount}`);
   const queriedAt = new Date().toISOString();
   const allQueries = [...capabilityQueries, ...resistanceQueries, ...classJobSearchQueries, ...classJobQueries, ...itemQueries, ...itemSpecialBonusQueries, ...categoryQueries, ...actionQueries, ...foodQueries, ...levelQueries, ...baseQueries, ...mandQueries, ...materiaQueries, ...syncLevelQueries];
   if (allQueries.some((query) => query.gameVersion !== health.gameVersion))
@@ -957,7 +823,7 @@ try {
       gearItemIds: gearIds,
       foodItemIds: foodIds,
       resistanceWeaponAdjustItemIds,
-      itemLevelIds: levelCaps.level,
+      itemLevelIds: levelRowsResult.rows.map((row) => row.rowId).sort((left, right) => left - right),
       customWeaponIds: customIds,
       classJobIds: Object.fromEntries(discoveredClassJobs.map((entry) => [entry.job, entry.rowId])),
       referenceCustomWeaponDifferences: { missing: missingReferenceCustomIds, added: unexpectedCustomIds },
@@ -1024,6 +890,8 @@ try {
       MandervilleWeaponEnhance: mandRowsResult.rows,
       Materia: materiaRowsResult.rows,
       ContentFinderCondition: contentFinderConditionRowsResult.rows,
+      ContentType: contentTypeRowsResult.rows,
+      ContentUICategory: contentUICategoryRowsResult.rows,
       ParamGrow: paramGrowRowsResult.rows,
     },
     queries: [
@@ -1044,6 +912,8 @@ try {
       MandervilleWeaponEnhance: mandRowsResult.missingRowIds,
       Materia: materiaRowsResult.missingRowIds,
       ContentFinderCondition: contentFinderConditionRowsResult.missingRowIds,
+      ContentType: contentTypeRowsResult.missingRowIds,
+      ContentUICategory: contentUICategoryRowsResult.missingRowIds,
       ParamGrow: paramGrowRowsResult.missingRowIds,
       bluMdmgAdditions: "Lumina MCP list_sheets and ClassJob describe_sheet do not expose a per-INT BLU magical-weapon-damage addition table or field; see sourceCapabilityChecks.bluMdmgAdditions.",
     },

@@ -65,6 +65,14 @@ function makeConfig() {
   const syncLevel = process.env.DATA_TEST_SINGLE_SYNC_LEVEL === undefined
     ? undefined
     : positiveInteger("DATA_TEST_SINGLE_SYNC_LEVEL", undefined);
+  const syncJobLevel = process.env.DATA_TEST_SINGLE_SYNC_JOB_LEVEL === undefined
+    ? undefined
+    : positiveInteger("DATA_TEST_SINGLE_SYNC_JOB_LEVEL", undefined);
+  if (syncLevel !== undefined && syncJobLevel !== undefined)
+    throw new Error("仅等级同步与品级同步不能同时设置");
+  const sync = syncLevel !== undefined
+    ? { kind: "itemLevel", value: syncLevel }
+    : syncJobLevel !== undefined ? { kind: "jobLevel", value: syncJobLevel } : undefined;
   const maxSearchMs = parseTimeout();
 
   return {
@@ -72,7 +80,7 @@ function makeConfig() {
       jobId,
       minItemLevel,
       maxItemLevel,
-      ...(syncLevel === undefined ? {} : { syncLevel }),
+      ...(sync === undefined ? {} : { sync }),
       maximizeTenacity: false,
       objective,
       excludedSources: [],
@@ -177,7 +185,7 @@ function summarizeResult(config, result, solverStatuses, elapsedMs, peakRssBytes
     scenario: {
       jobId: config.jobId,
       itemLevelRange: [config.minItemLevel, config.maxItemLevel],
-      ...(config.syncLevel === undefined ? {} : { syncLevel: config.syncLevel }),
+      ...(config.sync === undefined ? {} : { sync: config.sync }),
       objective: config.objective,
       foodId: config.foodId,
       maxSearchMs: config.maxSearchMs === UNLIMITED_SEARCH_MS ? "unlimited" : config.maxSearchMs,

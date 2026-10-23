@@ -138,7 +138,7 @@ describe("Beastmaster reference gearset parity", () => {
     const result = calculateFixedGearset({
       jobId: "BST",
       jobLevel: 50,
-      syncLevel: 130,
+      sync: { kind: "itemLevel", value: 130 },
       gears: gearIds.map((id) => ({ id, materias: [] })),
       foodId,
     });

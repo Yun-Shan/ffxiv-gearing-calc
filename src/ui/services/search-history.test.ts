@@ -128,6 +128,26 @@ describe("搜索历史记录结构校验", () => {
     );
   });
 
+  it("preserves explicit current-level sync separately from disabled sync", () => {
+    const disabled = completedSingleRecord();
+    const explicitTarget = completedSingleRecord();
+    explicitTarget.config = {
+      ...config("SAM"),
+      sync: { kind: "jobLevel", value: 100 },
+    };
+
+    const disabledRecord = validateSearchHistoryRecord(disabled);
+    const explicitRecord = validateSearchHistoryRecord(explicitTarget);
+    if (disabledRecord.kind !== "single" || explicitRecord.kind !== "single") {
+      throw new Error("预期单职业搜索记录");
+    }
+    expect(disabledRecord.config.sync).toBeUndefined();
+    expect(explicitRecord.config.sync).toEqual({
+      kind: "jobLevel",
+      value: 100,
+    });
+  });
+
   it("要求完成结果包含有效等级但不按当前数据重新解释历史", () => {
     const current = completedSingleRecord();
     current.result = { ...result(), calculationLevel: 80 };

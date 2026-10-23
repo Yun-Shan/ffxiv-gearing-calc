@@ -1,63 +1,70 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { gameData } from "./data";
 import { currentLevel, jobIds, jobSchemas } from "./jobs";
-import { calculationJobLevelFor, jobLevelFor } from "./job-level";
+import {
+  calculationJobLevelFor,
+  jobLevelFor,
+  syncTargetCalculationError,
+  syncTargetJobLevel,
+} from "./job-level";
 import type { JobId } from "./types";
 
 const originalSamCap = jobSchemas.SAM.maxJobLevel;
-const originalSyncGroups = structuredClone(gameData.syncLevels);
-const originalExactMappings = { ...gameData.syncLevelOfJobLevels };
+const originalSync = structuredClone(gameData.sync);
+const originalLevelCaps = structuredClone(gameData.levelCaps);
 afterEach(() => {
   jobSchemas.SAM.maxJobLevel = originalSamCap;
-  gameData.syncLevels = structuredClone(originalSyncGroups);
-  gameData.syncLevelOfJobLevels = { ...originalExactMappings };
+  gameData.sync = structuredClone(originalSync);
+  gameData.levelCaps = structuredClone(originalLevelCaps);
 });
 
 describe("job cap and formula level resolution", () => {
-  it("uses every job's own cap without a character-level input", () => {
+  it("uses each job cap when sync is disabled and clamps explicit targets to that cap", () => {
     for (const jobId of jobIds) {
       const cap = jobSchemas[jobId].maxJobLevel ?? currentLevel;
       expect(jobLevelFor({ jobId })).toBe(cap);
       expect(calculationJobLevelFor({ jobId })).toBe(cap);
+      for (const { jobLevel } of gameData.sync.levels) {
+        expect(calculationJobLevelFor({ jobId, sync: { kind: "jobLevel", value: jobLevel } })).toBe(
+          Math.min(jobLevel, cap),
+        );
+      }
     }
     jobSchemas.SAM.maxJobLevel = undefined;
     expect(jobLevelFor({ jobId: "SAM" })).toBe(currentLevel);
   });
-  it("uses sync-group mappings and clamps them to the limited job cap", () => {
-    for (const [mapped, syncLevels] of Object.entries(originalSyncGroups)) {
-      for (const syncLevel of syncLevels) {
-        expect(calculationJobLevelFor({ jobId: "SAM", syncLevel })).toBe(
-          Math.min(Number(mapped), currentLevel),
-        );
-        expect(calculationJobLevelFor({ jobId: "BLU", syncLevel })).toBe(
-          Math.min(Number(mapped), jobSchemas.BLU.maxJobLevel!),
-        );
+
+  it("maps item levels by their generated lower bounds, including gaps", () => {
+    for (let index = 0; index < gameData.sync.levels.length; index++) {
+      const row = gameData.sync.levels[index]!;
+      expect(syncTargetJobLevel({ kind: "itemLevel", value: row.minItemLevel })).toBe(row.jobLevel);
+      expect(calculationJobLevelFor({ jobId: "SAM", sync: { kind: "itemLevel", value: row.minItemLevel } })).toBe(row.jobLevel);
+      if (index > 0) {
+        expect(syncTargetJobLevel({ kind: "itemLevel", value: row.minItemLevel - 1 })).toBe(gameData.sync.levels[index - 1]!.jobLevel);
       }
     }
+    expect(syncTargetCalculationError({ kind: "itemLevel", value: 89 })).toBe("同步品级必须是大于等于 90 的安全整数。");
   });
-  it("accepts an exact level mapping outside the common groups", () => {
-    gameData.syncLevels = {};
-    const syncLevel = originalExactMappings[80]!;
-    expect(calculationJobLevelFor({ jobId: "SAM", syncLevel })).toBe(80);
+
+  it("checks custom item levels against complete stat caps", () => {
+    const target = { kind: "itemLevel", value: gameData.sync.levels[0]!.minItemLevel } as const;
+    expect(syncTargetCalculationError(target)).toBeUndefined();
+    expect(syncTargetJobLevel(target)).toBe(gameData.sync.levels[0]!.jobLevel);
+    gameData.levelCaps.level = gameData.levelCaps.level.filter((level) => level !== target.value);
+    expect(syncTargetCalculationError(target)).toBe("此品级暂无完整属性上限数据。");
+    expect(() => syncTargetJobLevel(target)).toThrow("此品级暂无完整属性上限数据。");
   });
-  it("rejects missing job rules, invalid caps and unsupported sync mappings", () => {
-    expect(() => jobLevelFor({ jobId: "NOPE" as JobId })).toThrow(
-      "缺少职业 NOPE",
-    );
+
+  it("rejects missing job rules and malformed or unsupported targets", () => {
+    expect(() => jobLevelFor({ jobId: "NOPE" as JobId })).toThrow("缺少职业 NOPE");
     for (const cap of [70.5, 999]) {
       jobSchemas.SAM.maxJobLevel = cap;
       expect(() => jobLevelFor({ jobId: "SAM" })).toThrow("不支持的职业等级");
     }
     jobSchemas.SAM.maxJobLevel = originalSamCap;
-    expect(() =>
-      calculationJobLevelFor({ jobId: "SAM", syncLevel: -1 }),
-    ).toThrow("不支持的等级同步品级");
-    gameData.syncLevels = {};
-    for (const invalidLevel of [70.5, 49]) {
-      gameData.syncLevelOfJobLevels = { [invalidLevel]: 123456 };
-      expect(() =>
-        calculationJobLevelFor({ jobId: "SAM", syncLevel: 123456 }),
-      ).toThrow("不支持的职业等级");
-    }
+    expect(() => calculationJobLevelFor({ jobId: "SAM", sync: { kind: "jobLevel", value: 49 } })).toThrow("不支持的等级同步");
+    expect(() => calculationJobLevelFor({ jobId: "SAM", sync: { kind: "itemLevel", value: 89 } })).toThrow("同步品级必须");
+    expect(() => calculationJobLevelFor({ jobId: "SAM", sync: { kind: "invalid", value: 90 } as never })).toThrow("同步目标无效");
+    expect(syncTargetCalculationError({ kind: "invalid", value: 90 } as never)).toBe("同步目标无效。");
   });
 });

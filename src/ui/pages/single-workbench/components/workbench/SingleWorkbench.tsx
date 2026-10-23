@@ -43,7 +43,7 @@ function Summary({ draft }: { draft: SingleDraft }) {
     [
       "种族",
       "装备品级",
-      "同步品级",
+      "同步目标",
       "GCD",
       "食物",
       ...(jobSchemas[draft.jobId].role === "tank"
@@ -218,7 +218,7 @@ export function SingleWorkbenchMain() {
             result={state.result}
             config={state.snapshot}
             onReplacementSelect={
-              state.snapshot.syncLevel !== undefined
+              state.snapshot.sync !== undefined
                 ? controller.replace
                 : undefined
             }

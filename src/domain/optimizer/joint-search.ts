@@ -134,7 +134,7 @@ export async function runJointOptimizationLocally(
       (job) =>
         job.minItemLevel === 730 &&
         job.maxItemLevel === 795 &&
-        job.syncLevel === 735,
+        job.sync?.kind === "itemLevel" && job.sync.value === 735,
     ) &&
     config.commonSlots.length === vprMchNarrowSharedSlots.length &&
     vprMchNarrowSharedSlots.every((slot) =>
@@ -173,7 +173,7 @@ export async function runJointOptimizationLocally(
       (job) =>
         job.minItemLevel === 715 &&
         job.maxItemLevel === 795 &&
-        job.syncLevel === 735,
+        job.sync?.kind === "itemLevel" && job.sync.value === 735,
     ) &&
     config.commonSlots.length === sharedWideAccessorySlots.length &&
     sharedWideAccessorySlots.every((slot) =>
@@ -253,11 +253,11 @@ export async function runJointOptimizationLocally(
   const resourceBudgetCandidateProfile =
     resourceBudgetCandidateProfileForSearch({
       jobs: config.jobs.map(
-        ({ jobId, minItemLevel, maxItemLevel, syncLevel }) => ({
+        ({ jobId, minItemLevel, maxItemLevel, sync }) => ({
           jobId,
           minItemLevel,
           maxItemLevel,
-          ...(syncLevel === undefined ? {} : { syncLevel }),
+          ...(sync === undefined ? {} : { sync }),
         }),
       ),
       // 保留调用方指定的戒指对或独立戒指槽结构，以便选择对应策略。
@@ -295,11 +295,11 @@ export async function runJointOptimizationLocally(
   const candidateResourceSupportProfile =
     candidateResourceSupportProfileForSearch({
       jobs: config.jobs.map(
-        ({ jobId, minItemLevel, maxItemLevel, syncLevel }) => ({
+        ({ jobId, minItemLevel, maxItemLevel, sync }) => ({
           jobId,
           minItemLevel,
           maxItemLevel,
-          ...(syncLevel === undefined ? {} : { syncLevel }),
+          ...(sync === undefined ? {} : { sync }),
         }),
       ),
       candidateCount: jobs.reduce(

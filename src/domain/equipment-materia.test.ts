@@ -146,7 +146,7 @@ describe("equipment materia selection description", () => {
     ]);
   });
   it("disables synced holes and ignores any prior selections", () => {
-    const prepared = prepareEquipmentMateria(crafted, { jobId: "PLD", syncLevel: 660 });
+    const prepared = prepareEquipmentMateria(crafted, { jobId: "PLD", sync: { kind: "itemLevel", value: 660 } });
     const result = evaluateEquipmentMateria(prepared, ["DET", "DET"]);
     expect(result.disabledReason).toBe("品级同步后魔晶石不生效");
     expect(result.slots).toHaveLength(5);

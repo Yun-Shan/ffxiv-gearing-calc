@@ -27,10 +27,7 @@ export function jobConditionDraftFromConfig(
     range: {
       minItemLevel: config.minItemLevel,
       maxItemLevel: config.maxItemLevel,
-      sync:
-        config.syncLevel === undefined
-          ? { mode: "disabled" }
-          : { mode: "enabled", itemLevel: config.syncLevel },
+      sync: config.sync,
       clanIndex: config.clanIndex ?? 0,
     },
     gcd,

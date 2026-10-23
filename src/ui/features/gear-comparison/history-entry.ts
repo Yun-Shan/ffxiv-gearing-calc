@@ -79,9 +79,7 @@ export function historyComparisonEntry(
   const snapshot: GearsetResultSnapshot = {
     jobId,
     calculationLevel: result.calculationLevel!,
-    ...(config.syncLevel === undefined
-      ? {}
-      : { syncItemLevel: config.syncLevel }),
+    ...(config.sync === undefined ? {} : { sync: config.sync }),
     gear: result.gear,
     food: result.food,
     stats: result.stats,

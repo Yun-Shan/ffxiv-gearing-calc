@@ -400,7 +400,7 @@ describe("forced materia candidate generation", () => {
   });
 
   it("retains validated stored materia restrictions while ordinary materia has no sync effect", () => {
-    const syncLevel = gameData.syncLevelOfJobLevels[80]!;
+    const syncLevel = gameData.sync.levels.find(({ jobLevel }) => jobLevel === 80)!.defaultItemLevel;
     const gear = gears.find(
       (item) =>
         item.jobs.includes("SAM") &&
@@ -415,7 +415,7 @@ describe("forced materia candidate generation", () => {
     fixed[0] = materiaForGrade("CRT", highestMateriaGrade(gear.level, true));
     const config = {
       ...configFor(),
-      syncLevel,
+      sync: { kind: "jobLevel" as const, value: 80 },
       forcedGear: { body: { id: gear.id, melds: fixed } },
     };
     const candidate = makeGearCandidates(gear, "body", config, new Map())[0]!;
@@ -424,7 +424,7 @@ describe("forced materia candidate generation", () => {
     const syncedLevel = effectiveGearSyncLevel(
       gear,
       calculationJobLevelFor(config),
-      syncLevel,
+      config.sync,
     )!;
     expect(candidate.gear.finalStats).toEqual(
       capGearStatsAtLevel(gear, base, syncedLevel),
@@ -681,9 +681,9 @@ describe("forced materia candidate generation", () => {
       { stat: "CRT", value: 202, grade: 0 },
     ]);
 
-    const syncLevel = gameData.syncLevels[80]!.find(
+    const syncLevel = gameData.levelCaps.level.filter(
       (level) => level < gear.level,
-    );
+    ).sort((left, right) => right - left)[0];
     if (syncLevel === undefined || syncLevel >= gear.level) {
       throw new Error("缺少 WAR 32671 可用的同步测试品级");
     }
@@ -692,7 +692,7 @@ describe("forced materia candidate generation", () => {
       "weapon",
       {
         ...configFor("WAR"),
-        syncLevel,
+        sync: { kind: "itemLevel" as const, value: syncLevel },
         forcedGear: { weapon: { id: gear.id, customStats } },
       },
       new Map(),

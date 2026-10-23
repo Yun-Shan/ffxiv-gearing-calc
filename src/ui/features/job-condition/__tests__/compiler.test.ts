@@ -15,7 +15,7 @@ function config(
     jobId: "PLD",
     minItemLevel: 700,
     maxItemLevel: 795,
-    syncLevel: undefined,
+    sync: undefined,
     gcdTarget: undefined,
     gcdChoices: undefined,
     speedMin: undefined,
@@ -37,7 +37,7 @@ const draft: JobConditionDraft = {
   range: {
     minItemLevel: 735,
     maxItemLevel: 795,
-    sync: { mode: "enabled", itemLevel: 735 },
+    sync: { kind: "itemLevel", value: 735 },
     clanIndex: 0,
   },
   gcd: { mode: "speed", min: 400, max: 500 },
@@ -62,7 +62,7 @@ describe("job condition draft compiler", () => {
         jobId: "PLD",
         minItemLevel: 735,
         maxItemLevel: 795,
-        syncLevel: 735,
+        sync: { kind: "itemLevel", value: 735 },
         speedMin: 400,
         speedMax: 500,
         objective: "damage",
@@ -89,14 +89,14 @@ describe("job condition draft compiler", () => {
 
   it("round-trips only normalized compiled values and keeps the objective normalization external to Draft", () => {
     const configValue = config({
-      syncLevel: 735,
+      sync: { kind: "itemLevel", value: 735 },
       gcdChoices: [2.5],
       foodId: 55,
     });
     const draftValue = jobConditionDraftFromConfig(configValue);
     expect(normalizeCompiledDraft(configValue)).toEqual(draftValue);
     expect(draftValue).toMatchObject({
-      range: { sync: { mode: "enabled", itemLevel: 735 } },
+      range: { sync: { kind: "itemLevel", value: 735 } },
       gcd: { mode: "tiers", tiers: [2.5] },
       food: { mode: "specific", foodId: 55 },
     });

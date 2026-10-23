@@ -7,6 +7,7 @@ import {
   type OptimizationConfig,
   type OptimizationResult,
   type Stats,
+  type SyncTarget,
 } from "@/domain";
 import { gearSlotLabels, statName, statValue } from "@/ui/services/labels";
 import { GearTableView } from "./GearTableView";
@@ -87,10 +88,10 @@ export function equivalentGearKey(gear: MeldedGear): string {
 function gearItem(
   gear: MeldedGear,
   displaySlot: GearSlot = gear.slot,
-  sync?: { jobLevel: number; syncLevel?: number },
+  sync?: { jobLevel: number; sync?: SyncTarget },
 ): GearTableGearItem {
   const synchronizedLevel = sync === undefined ? undefined
-    : effectiveGearSyncLevel(gear, sync.jobLevel, sync.syncLevel);
+    : effectiveGearSyncLevel(gear, sync.jobLevel, sync.sync);
   const custom = gear.customParameters !== undefined || gear.resistanceWeaponAdjust !== undefined;
   let materiaSync: GearTableGearItem["materiaSync"];
   if (synchronizedLevel !== undefined) {
@@ -196,7 +197,7 @@ export function buildResultGearTableRows(
   options: ResultGearTableOptions = {},
 ): GearTableRow[] {
   // Sync only annotates the rows; numerical values remain the saved result snapshot.
-  const sync = { jobLevel: result.calculationLevel ?? calculationJobLevelFor(config), syncLevel: config.syncLevel };
+  const sync = { jobLevel: result.calculationLevel ?? calculationJobLevelFor(config), sync: config.sync };
   const rows: GearTableRow[] = [];
   for (const slot of displaySlots) {
     const gear = result.gear.find((candidate) => candidate.slot === slot);

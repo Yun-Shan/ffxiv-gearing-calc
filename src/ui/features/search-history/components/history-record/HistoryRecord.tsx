@@ -86,7 +86,7 @@ function SingleHistoryRecord(
     },
     {
       label: "装备品级",
-      value: `${config.minItemLevel}–${config.maxItemLevel}${config.syncLevel !== undefined ? `（同步等级 ${config.syncLevel}）` : ""}`,
+      value: `${config.minItemLevel}–${config.maxItemLevel}${config.sync ? `（${config.sync.kind === "jobLevel" ? `仅同步等级 ${config.sync.value}` : `同步品级 ${config.sync.value}`}）` : ""}`,
     },
     { label: "食物", value: formatFood(config.foodId) },
     equipmentRestrictionCondition(config),
@@ -128,11 +128,13 @@ function JointHistoryRecord(
       value: `${firstJob.minItemLevel}–${firstJob.maxItemLevel}`,
     },
     {
-      label: "同步品级",
+      label: "同步目标",
       value:
-        firstJob.syncLevel === undefined
+        firstJob.sync === undefined
           ? "未启用"
-          : String(firstJob.syncLevel),
+          : firstJob.sync.kind === "jobLevel"
+            ? `仅同步等级 ${firstJob.sync.value}`
+            : String(firstJob.sync.value),
     },
     {
       label: "共享部位",

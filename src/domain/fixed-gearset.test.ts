@@ -42,7 +42,7 @@ function inputFor(
 ): FixedGearsetInput {
   const jobLevel = calculationJobLevelFor({
     jobId,
-    ...(syncLevel === undefined ? {} : { syncLevel }),
+    ...(syncLevel === undefined ? {} : { sync: { kind: "itemLevel", value: syncLevel } }),
   });
   const characterLevel = jobLevelFor({ jobId });
   const usedRings = new Set<number>();
@@ -69,7 +69,7 @@ function inputFor(
   return {
     jobId,
     jobLevel,
-    ...(syncLevel === undefined ? {} : { syncLevel }),
+    ...(syncLevel === undefined ? {} : { sync: { kind: "itemLevel", value: syncLevel } }),
     gears: gearInputs,
     foodId: food.id,
   };
@@ -177,17 +177,17 @@ describe("calculateFixedGearset", () => {
   });
 
   it("uses the unified sync formula level while retaining the job cap for wearability", () => {
-    const syncLevel = gameData.syncLevelOfJobLevels[80]!;
+    const syncLevel = gameData.sync.levels.find(({ jobLevel }) => jobLevel === 80)!.defaultItemLevel;
     const input = inputFor(defaultJob, syncLevel);
     const result = calculateFixedGearset(input);
 
     expect(result.calculationLevel).toBe(80);
-    expect(result.syncItemLevel).toBe(syncLevel);
+    expect(result.sync).toEqual({ kind: "itemLevel", value: syncLevel });
     expect(() => calculateFixedGearset({ ...input, jobLevel: 100 })).toThrow(
-      "与当前统一计算等级 80 不一致",
+      "与当前同步目标 80 不一致",
     );
-    expect(() => calculateFixedGearset({ ...input, syncLevel: 0 })).toThrow(
-      "等级同步品级必须是正整数",
+    expect(() => calculateFixedGearset({ ...input, sync: { kind: "itemLevel", value: 0 } })).toThrow(
+      "同步品级必须",
     );
   });
 
@@ -200,8 +200,9 @@ describe("calculateFixedGearset", () => {
     expect(item.equipLevel).toBe(94);
     expect(inputFor(jobId, 665).jobLevel).toBe(90);
     // 旧逻辑按职业上限 100 比较穿戴等级会漏掉同步；参考实现按同步映射等级 90 计算。
-    expect(effectiveGearSyncLevel(item, jobLevelFor({ jobId }), 665)).toBeUndefined();
-    expect(effectiveGearSyncLevel(item, calculationJobLevelFor({ jobId, syncLevel: 665 }), 665)).toBe(660);
+    const sync = { kind: "itemLevel", value: 665 } as const;
+    expect(effectiveGearSyncLevel(item, jobLevelFor({ jobId }), sync)).toBeUndefined();
+    expect(effectiveGearSyncLevel(item, calculationJobLevelFor({ jobId, sync }), sync)).toBe(660);
 
     // 分享写入器在同步时省略普通魔晶石；同步装备带普通魔晶石属于无效输入。
     const withMateria = inputFor(jobId, 665, {
@@ -235,7 +236,7 @@ describe("calculateFixedGearset", () => {
     const result = calculateFixedGearset(input);
     const selected = result.gear.find(({ id }) => id === item.id)!;
     const base = concretizeGearStats(item.stats, jobSchemas[jobId]);
-    const equipmentSync = effectiveGearSyncLevel(item, input.jobLevel, 665);
+    const equipmentSync = effectiveGearSyncLevel(item, input.jobLevel, input.sync);
     const expected = equipmentSync === undefined
       ? base
       : capGearStatsAtLevel(item, base, equipmentSync);
@@ -343,7 +344,7 @@ describe("calculateFixedGearset", () => {
   });
 
   it("applies absolute Manderville parameters before the synchronization cap", () => {
-    const syncLevel = gameData.syncLevelOfJobLevels[80]!;
+    const syncLevel = gameData.sync.levels.find(({ jobLevel }) => jobLevel === 80)!.defaultItemLevel;
     const input = inputFor(defaultJob, syncLevel);
     const weapon = gears.find((candidate) =>
       candidate.jobs.includes(input.jobId) && candidate.slot === "weapon" &&
@@ -365,7 +366,7 @@ describe("calculateFixedGearset", () => {
     });
     const result = calculateFixedGearset(configured);
     const importedWeapon = result.gear.find(({ slot }) => slot === "weapon")!;
-    const sync = effectiveGearSyncLevel(weapon, input.jobLevel, syncLevel);
+    const sync = effectiveGearSyncLevel(weapon, input.jobLevel, input.sync);
     const expected = sync === undefined
       ? absoluteStats
       : capGearStatsAtLevel(weapon, absoluteStats, sync);
@@ -375,7 +376,7 @@ describe("calculateFixedGearset", () => {
   });
 
   it("accepts zero and valid Resistance allocations and caps the absolute override after sync", () => {
-    const syncLevel = gameData.syncLevelOfJobLevels[80]!;
+    const syncLevel = gameData.sync.levels.find(({ jobLevel }) => jobLevel === 80)!.defaultItemLevel;
     const input = inputFor(defaultJob, syncLevel);
     const weapon = gears.find((candidate) =>
       candidate.jobs.includes(input.jobId) && candidate.slot === "weapon" &&
@@ -392,7 +393,7 @@ describe("calculateFixedGearset", () => {
     });
     const result = calculateFixedGearset(configured);
     const importedWeapon = result.gear.find(({ slot }) => slot === "weapon")!;
-    const sync = effectiveGearSyncLevel(weapon, input.jobLevel, syncLevel);
+    const sync = effectiveGearSyncLevel(weapon, input.jobLevel, input.sync);
     const absolute = { ...base, [stat]: (base[stat] ?? 0) + amount };
     const expected = sync === undefined
       ? absolute
@@ -410,7 +411,7 @@ describe("calculateFixedGearset", () => {
 
   it("rejects invalid job levels, missing gear or food, and unknown gear", () => {
     const input = inputFor();
-    expect(() => calculateFixedGearset({ ...input, jobLevel: 99 })).toThrow("统一计算等级");
+    expect(() => calculateFixedGearset({ ...input, jobLevel: 99 })).toThrow("当前同步目标");
     expect(() => calculateFixedGearset({ ...input, gears: input.gears.slice(1) })).toThrow("配装槽位不完整");
     expect(() => calculateFixedGearset({ ...input, foodId: 999_999 })).toThrow("不存在食物");
     expect(() => calculateFixedGearset({ ...input, foodId: 0 })).toThrow("必须包含有效食物");
@@ -480,7 +481,7 @@ describe("calculateFixedGearset", () => {
     });
     expect(() => calculateFixedGearset(illegalOvermeld)).toThrow("禁断槽不能使用");
 
-    const syncLevel = gameData.syncLevelOfJobLevels[80]!;
+    const syncLevel = gameData.sync.levels.find(({ jobLevel }) => jobLevel === 80)!.defaultItemLevel;
     const syncedInput = inputFor(input.jobId, syncLevel);
     const syncedBody = gearInput(syncedInput, "body");
     const syncedWithMateria = replaceGear(syncedInput, "body", {
@@ -495,7 +496,7 @@ describe("calculateFixedGearset", () => {
     expect(() => calculateFixedGearset({ ...input, jobId: "not-a-job" as JobId })).toThrow("不支持的职业");
     expect(() => calculateFixedGearset({ ...input, jobLevel: 0 })).toThrow("职业等级无效");
     expect(() => calculateFixedGearset({ ...input, gears: undefined as never })).toThrow("缺少装备列表");
-    expect(() => calculateFixedGearset({ ...input, syncLevel: 1.5 })).toThrow("正整数");
+    expect(() => calculateFixedGearset({ ...input, sync: { kind: "itemLevel", value: 1.5 } })).toThrow("同步目标无效");
 
     const zeroId = { ...input, gears: input.gears.map((entry, index) => index === 0 ? { ...entry, id: 0 } : entry) };
     expect(() => calculateFixedGearset(zeroId)).toThrow("装备编号无效");

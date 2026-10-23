@@ -21,7 +21,7 @@ function Harness({
     range: {
       minItemLevel: 780,
       maxItemLevel: 795,
-      sync: { mode: "disabled" },
+      sync: undefined,
       clanIndex: 0,
     },
     gcd: { mode: "tiers", tiers: initialTiers },

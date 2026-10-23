@@ -1,5 +1,5 @@
 import { speedAttributeLabel } from "@/ui/services/labels";
-import { clanCount, type JobId } from "@/domain";
+import { clanCount, syncTargetCalculationError, type JobId } from "@/domain";
 import type {
   GcdAnalysisState,
   JobConditionDraft,
@@ -139,7 +139,10 @@ export function validateSearchRangeDraft(
   pathPrefix: readonly (string | number)[] = ["range"],
 ): SectionValidation {
   const rangeIssues: ValidationIssue[] = [];
-  if (!Number.isFinite(range.minItemLevel) || !Number.isFinite(range.maxItemLevel)) {
+  if (
+    !Number.isFinite(range.minItemLevel) ||
+    !Number.isFinite(range.maxItemLevel)
+  ) {
     rangeIssues.push(
       issue("range.finite", "装备品级范围必须是有限数值。", ...pathPrefix),
     );
@@ -149,18 +152,12 @@ export function validateSearchRangeDraft(
       issue("range.order", "最低装备品级不能高于最高装备品级。", ...pathPrefix),
     );
   }
-  if (
-    range.sync.mode === "enabled" &&
-    (!Number.isFinite(range.sync.itemLevel) || range.sync.itemLevel <= 0)
-  ) {
-    rangeIssues.push(
-      issue(
-        "range.sync.invalid",
-        "同步品级必须是大于零的有限数值。",
-        ...pathPrefix,
-        "sync",
-      ),
-    );
+  if (range.sync) {
+    const syncError = syncTargetCalculationError(range.sync);
+    if (syncError)
+      rangeIssues.push(
+        issue("range.sync.invalid", syncError, ...pathPrefix, "sync"),
+      );
   }
   if (
     !Number.isSafeInteger(range.clanIndex) ||
@@ -168,12 +165,7 @@ export function validateSearchRangeDraft(
     range.clanIndex >= clanCount
   ) {
     rangeIssues.push(
-      issue(
-        "range.clan.invalid",
-        "种族选择无效。",
-        ...pathPrefix,
-        "clanIndex",
-      ),
+      issue("range.clan.invalid", "种族选择无效。", ...pathPrefix, "clanIndex"),
     );
   }
   return section(rangeIssues);

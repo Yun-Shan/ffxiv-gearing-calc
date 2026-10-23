@@ -40,6 +40,7 @@ import type {
   ForcedGearValue,
   Stat,
   Stats,
+  SyncTarget,
 } from "../types.ts";
 import { assertForcedGearValue, forcedGearId } from "../types.ts";
 import {
@@ -115,17 +116,17 @@ function statCapAtLevel(gear: Gear, stat: Stat, level: number): number {
   return getGearStatCap(gear, stat, level);
 }
 
-function capLevelFor(gear: Gear, jobLevel: number, syncLevel?: number): number {
-  return effectiveGearSyncLevel(gear, jobLevel, syncLevel) ?? gear.level;
+function capLevelFor(gear: Gear, jobLevel: number, sync?: SyncTarget): number {
+  return effectiveGearSyncLevel(gear, jobLevel, sync) ?? gear.level;
 }
 
 export function mergeCandidateStats(
   gear: Gear,
   melds: readonly Materia[],
   jobLevel: number,
-  syncLevel?: number,
+  sync?: SyncTarget,
 ): Stats {
-  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, syncLevel);
+  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, sync);
   const level = synchronizedLevel ?? gear.level;
   const finalStats: Stats = synchronizedLevel === undefined
     ? { ...gear.stats }
@@ -194,7 +195,7 @@ function forcedRegularMateriaMelds(
   gear: Gear,
   jobId: JobId,
   jobLevel: number,
-  syncLevel: number | undefined,
+  sync: SyncTarget | undefined,
   requested: readonly (Materia | null)[],
 ): Materia[][] {
   if (gear.customParameters !== undefined || gear.resistanceWeaponAdjust !== undefined) {
@@ -228,7 +229,7 @@ function forcedRegularMateriaMelds(
 
   // Sync disables regular materia effects, but retain and validate stored locks so a
   // later unsynced run can apply them without losing their physical positions.
-  if (effectiveGearSyncLevel(gear, jobLevel, syncLevel) !== undefined) return [[]];
+  if (effectiveGearSyncLevel(gear, jobLevel, sync) !== undefined) return [[]];
 
   const highIndexes = fixed.flatMap((meld, index) =>
     meld === null && index <= gear.materiaSlots ? [index] : [],
@@ -286,7 +287,7 @@ function regularMateriaMelds(
   jobLevel: number,
 ): Materia[][] {
   const syncApplies =
-    effectiveGearSyncLevel(gear, jobLevel, config.syncLevel) !== undefined;
+    effectiveGearSyncLevel(gear, jobLevel, config.sync) !== undefined;
   // 品级同步时普通装备的魔晶石失效。自定义参数武器按独立路径处理：
   // 上游算法保留其十二种参数组合，并在同步后封顶属性。
   if (syncApplies) return [[]];
@@ -319,7 +320,7 @@ function regularMateriaMelds(
         const totalValue =
           highCount * highMateria[index]!.value +
           lowCount * (lowMateria[index]?.value ?? 0);
-        const level = capLevelFor(gear, jobLevel, config.syncLevel);
+        const level = capLevelFor(gear, jobLevel, config.sync);
         const available =
           statCapAtLevel(gear, stat, level) - (gear.stats[stat] ?? 0);
         const finalMeldValue =
@@ -389,11 +390,11 @@ function resistanceAdjustmentForSearch(
   gear: Gear,
   finalStats: Stats,
   jobLevel: number,
-  syncLevel?: number,
+  sync?: SyncTarget,
 ) {
   const adjustment = gear.resistanceWeaponAdjust;
   if (adjustment === undefined) return undefined;
-  const effectiveLevel = effectiveGearSyncLevel(gear, jobLevel, syncLevel);
+  const effectiveLevel = effectiveGearSyncLevel(gear, jobLevel, sync);
   if (effectiveLevel === undefined) return adjustment;
   const statMaximums = Object.fromEntries(adjustment.stats.map((stat) => [
     stat,
@@ -506,7 +507,7 @@ export function makeGearCandidates(
       resolvedGear,
       config.jobId,
       syncJobLevel,
-      config.syncLevel,
+      config.sync,
       forcedValue.melds,
     );
   } else if (forcedValue !== undefined && typeof forcedValue !== "number") {
@@ -531,13 +532,13 @@ export function makeGearCandidates(
           resolvedGear,
           melds,
           syncJobLevel,
-          config.syncLevel,
+          config.sync,
         )
       : customCandidateStats(
           resolvedGear,
           fixedCustomStats,
           syncJobLevel,
-          config.syncLevel,
+          config.sync,
         );
     // 参考实现先完成同步封顶，再追加特殊加成且不再封顶。
     const finalStats = applyItemSpecialBonus(
@@ -564,7 +565,7 @@ export function makeGearCandidates(
         resolvedGear,
         finalStats,
         syncJobLevel,
-        config.syncLevel,
+        config.sync,
       ),
       !suppressResistanceAllocation,
     );
@@ -580,11 +581,11 @@ function customCandidateStats(
   gear: Gear,
   customStats: Stats,
   jobLevel: number,
-  syncLevel?: number,
+  sync?: SyncTarget,
 ): Stats {
   // Keep custom weapon values absolute, matching fixed gearset calculation.
   const finalStats: Stats = { ...gear.stats, ...customStats };
-  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, syncLevel);
+  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, sync);
   return synchronizedLevel === undefined
     ? finalStats
     : capGearStatsAtLevel(gear, finalStats, synchronizedLevel);

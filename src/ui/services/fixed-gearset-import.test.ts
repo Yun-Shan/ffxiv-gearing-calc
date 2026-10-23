@@ -19,7 +19,7 @@ function configFor(weaponId?: number): OptimizationConfig {
     jobId: "SAM",
     minItemLevel: weaponId ? 1 : 780,
     maxItemLevel: 795,
-    syncLevel: 475,
+    sync: { kind: "itemLevel", value: 475 },
     maximizeTenacity: false,
     excludedSources: [],
     forcedGear: {},
@@ -77,7 +77,7 @@ describe("fixed gearset import adapter", () => {
       const item = gears.find((g) => g.id === itemId)!;
       const config = configFor();
       config.minItemLevel = 1;
-      config.syncLevel = 665;
+      config.sync = { kind: "itemLevel", value: 665 };
       config.forcedGear[item.slot] = item.id;
       const result = (await runOptimizationLocally(config))!;
       expect(result.calculationLevel).toBe(90);

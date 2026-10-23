@@ -1,5 +1,5 @@
 import { binUiMetadataFromSnapshot } from "./bin-ui-metadata.mjs";
-import { syncLevelDutiesFromSnapshot } from "./sync-level-duties.mjs";
+import { syncDataFromSnapshot } from "./sync-level-duties.mjs";
 import { execFileSync } from "node:child_process";
 import { access, mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -218,170 +218,7 @@ function parseGameConstants(sourceText) {
     ),
     baseStats: evaluateIdentifier("baseStats"),
     clanStats: evaluateIdentifier("clanStats"),
-    syncLevelOfJobLevels: evaluateIdentifier("syncLevelOfJobLevels"),
   };
-}
-
-function buildMcpSyncLevels(snapshot) {
-  const rows = snapshotRows(snapshot, "ContentFinderCondition");
-  const ownerByItemLevel = new Map();
-  const usedRowIds = [];
-  for (const row of Object.values(rows).sort((left, right) => left.rowId - right.rowId)) {
-    const fields = row?.fields;
-    if (!fields || !Number.isSafeInteger(row.rowId))
-      throw new Error("MCP ContentFinderCondition 行缺少有效 rowId 或 fields");
-    const jobLevel = fields.ClassJobLevelRequired;
-    if (!Number.isSafeInteger(jobLevel) || jobLevel < 0)
-      throw new Error(`MCP ContentFinderCondition 行 ${row.rowId} 的 ClassJobLevelRequired 无效`);
-    if (jobLevel < 50 || jobLevel % 10 !== 0) continue;
-
-    let used = false;
-    for (const field of ["ItemLevelRequired", "ItemLevelSync"]) {
-      const itemLevel = fields[field];
-      if (!Number.isSafeInteger(itemLevel) || itemLevel < 0)
-        throw new Error(`MCP ContentFinderCondition 行 ${row.rowId} 的 ${field} 无效`);
-      if (itemLevel === 0) continue;
-      // The reference converter iterates rows by ID and overwrites an earlier
-      // owner when multiple duties use the same sync item level.
-      ownerByItemLevel.set(itemLevel, jobLevel);
-      used = true;
-    }
-    if (used) usedRowIds.push(row.rowId);
-  }
-
-  const result = {};
-  for (const [itemLevel, jobLevel] of [...ownerByItemLevel].sort((a, b) => a[0] - b[0]))
-    (result[jobLevel] ??= []).push(itemLevel);
-  return { value: result, usedRowIds };
-}
-
-const syncLevelFallbackJobLevels = [50, 60, 70, 80, 90, 100];
-
-/**
- * 参考实现以 store.jobLevel 对应的 ParamGrow.ItemLevelSync 作为
- * 同步分组未精确命中时的 fallback。
- */
-function buildMcpSyncLevelFallback(snapshot) {
-  const rows = snapshotRows(snapshot, "ParamGrow");
-  return Object.fromEntries(syncLevelFallbackJobLevels.map((jobLevel) => {
-    const itemLevel = rows[jobLevel]?.fields?.ItemLevelSync;
-    if (!Number.isSafeInteger(itemLevel) || itemLevel < 1)
-      throw new Error(`MCP ParamGrow ${jobLevel} 级的 ItemLevelSync 无效`);
-    return [jobLevel, itemLevel];
-  }));
-}
-
-function compareSyncLevelFallbackWithReference(actual, reference, maxSupportedJobLevel) {
-  for (const [jobLevel, itemLevel] of Object.entries(actual)) {
-    // 参考项目最高等级的值是为后续版本预留的预测值；当前满级不会触发同级同步，
-    // 因此参考值只用于最高等级以下的对照。
-    if (Number(jobLevel) >= maxSupportedJobLevel) continue;
-    if (reference[jobLevel] !== itemLevel)
-      throw new Error(`同步等级 fallback 与参考项目 ${jobLevel} 级不一致`);
-  }
-}
-
-function validateSyncLevelMappings(syncLevels, syncLevelOfJobLevels, levelCaps, jobLevelModifiers) {
-  const legalJobLevels = new Set(Object.keys(jobLevelModifiers).map(Number));
-  const legalItemLevels = new Set(levelCaps.level);
-  const ownerByItemLevel = new Map();
-  const addMapping = (jobLevelKey, itemLevel, label) => {
-    const jobLevel = Number(jobLevelKey);
-    if (!Number.isSafeInteger(jobLevel) || String(jobLevel) !== String(jobLevelKey) ||
-        !legalJobLevels.has(jobLevel))
-      throw new Error(`${label} 包含无效或不支持的职业等级 ${jobLevelKey}`);
-    if (!Number.isSafeInteger(itemLevel) || itemLevel < 1 || !legalItemLevels.has(itemLevel))
-      throw new Error(`${label} 的职业等级 ${jobLevel} 指向无效或无属性上限的品级 ${itemLevel}`);
-    const previous = ownerByItemLevel.get(itemLevel);
-    if (previous !== undefined && previous !== jobLevel)
-      throw new Error(`同步品级 ${itemLevel} 同时映射到职业等级 ${previous} 和 ${jobLevel}`);
-    ownerByItemLevel.set(itemLevel, jobLevel);
-  };
-
-  if (!syncLevels || typeof syncLevels !== "object" || Array.isArray(syncLevels) ||
-      !Object.keys(syncLevels).length)
-    throw new Error("同步品级所属等级列表为空或格式错误");
-  for (const [jobLevel, itemLevels] of Object.entries(syncLevels)) {
-    if (!Array.isArray(itemLevels) || itemLevels.length === 0)
-      throw new Error(`同步等级 ${jobLevel} 缺少品级列表`);
-    const seen = new Set();
-    let previousItemLevel = 0;
-    for (const itemLevel of itemLevels) {
-      if (seen.has(itemLevel)) throw new Error(`同步等级 ${jobLevel} 重复包含品级 ${itemLevel}`);
-      if (itemLevel <= previousItemLevel)
-        throw new Error(`同步等级 ${jobLevel} 的品级必须严格升序`);
-      seen.add(itemLevel);
-      previousItemLevel = itemLevel;
-      addMapping(jobLevel, itemLevel, "syncLevels");
-    }
-  }
-  if (!syncLevelOfJobLevels || typeof syncLevelOfJobLevels !== "object" ||
-      Array.isArray(syncLevelOfJobLevels) || !Object.keys(syncLevelOfJobLevels).length)
-    throw new Error("职业等级同步品级表为空或格式错误");
-  for (const [jobLevel, itemLevel] of Object.entries(syncLevelOfJobLevels))
-    addMapping(jobLevel, itemLevel, "syncLevelOfJobLevels");
-}
-
-function validateMcpSyncLevelInput(snapshot) {
-  const check = snapshot.sourceCapabilityChecks?.syncLevels;
-  const requiredFields = ["ClassJobLevelRequired", "ItemLevelRequired", "ItemLevelSync", "Name", "JournalGenre"];
-  const contentDescription = check?.contentFinderCondition;
-  const itemLevelDescription = check?.itemLevel;
-  const paramGrowDescription = check?.paramGrow;
-  const contentQuery = snapshot.queries?.find((query) =>
-    query.method === "list_rows" && query.sheet === "ContentFinderCondition" &&
-    requiredFields.every((field) => query.fields?.includes(field)),
-  );
-  const paramGrowQuery = snapshot.queries?.find((query) =>
-    query.method === "get_rows" && query.sheet === "ParamGrow",
-  );
-  const contentRows = snapshot.rows?.ContentFinderCondition;
-  const paramGrowRows = snapshot.rows?.ParamGrow;
-  const supportedJobLevels = [50, 60, 70, 80, 90, 100];
-  if (
-    check?.status !== "available-via-content-finder-condition" ||
-    check.gameVersion !== snapshot.gameVersion ||
-    !Array.isArray(check.listSheets?.syncRelatedSheets) ||
-    check.listSheets.gameVersion !== snapshot.gameVersion ||
-    !check.listSheets.queriedAt ||
-    !requiredFields.every((field) => contentDescription?.fields?.includes(field)) ||
-    contentDescription.gameVersion !== snapshot.gameVersion ||
-    !contentDescription.queriedAt ||
-    !itemLevelDescription?.fields?.includes("Strength") ||
-    itemLevelDescription.gameVersion !== snapshot.gameVersion ||
-    !paramGrowDescription?.fields?.includes("ItemLevelSync") ||
-    paramGrowDescription.gameVersion !== snapshot.gameVersion ||
-    !Array.isArray(contentRows) || contentRows.length !== contentDescription.rowCount ||
-    !Number.isSafeInteger(contentDescription.rowCount) || contentDescription.rowCount < 1 ||
-    !contentQuery || contentQuery.gameVersion !== snapshot.gameVersion || contentQuery.limit !== -1 ||
-    contentQuery.returnedRows !== contentRows.length ||
-    contentQuery.rowIds?.length !== contentRows.length || !contentQuery.queriedAt ||
-    !Array.isArray(paramGrowRows) ||
-    paramGrowRows.length !== supportedJobLevels.length ||
-    !paramGrowQuery || paramGrowQuery.gameVersion !== snapshot.gameVersion ||
-    !paramGrowQuery.queriedAt ||
-    paramGrowQuery.returnedRows !== supportedJobLevels.length ||
-    check.paramGrow.usedForSyncLevelGrouping !== false
-  )
-    throw new Error("MCP 快照缺少可复现的 ContentFinderCondition 同步品级查询产物");
-
-  const contentRowIds = new Set(contentRows.map((row) => row?.rowId));
-  if (contentRowIds.size !== contentRows.length ||
-      contentQuery.rowIds.some((rowId) => !contentRowIds.has(rowId)) ||
-      contentRows.some((row) => row?.gameVersion !== snapshot.gameVersion || !row.timestamp))
-    throw new Error("MCP ContentFinderCondition 查询行目录与保存的数据不一致");
-  const paramGrowById = new Map();
-  for (const row of paramGrowRows) {
-    if (!Number.isSafeInteger(row?.rowId) || !Number.isSafeInteger(row?.fields?.ItemLevelSync) ||
-        row.fields.ItemLevelSync < 0 || row.gameVersion !== snapshot.gameVersion ||
-        !row.timestamp || paramGrowById.has(row.rowId))
-      throw new Error("MCP ParamGrow 同步等级审计行格式错误");
-    paramGrowById.set(row.rowId, row);
-  }
-  if (supportedJobLevels.some((level) => !paramGrowById.has(level)) ||
-      paramGrowQuery.rowIds?.length !== supportedJobLevels.length ||
-      supportedJobLevels.some((level) => !paramGrowQuery.rowIds.includes(level)))
-    throw new Error("MCP ParamGrow 同步等级审计行集合不完整");
 }
 
 function validateMcpVariableEquipLevelInput(snapshot) {
@@ -426,18 +263,6 @@ function validateMcpVariableEquipLevelInput(snapshot) {
     if (!Number.isSafeInteger(row?.fields?.SubStatCategory) || row.fields.SubStatCategory < 0)
       throw new Error(`MCP Item 行 ${itemId} 缺少有效 SubStatCategory`);
   }
-}
-
-function compareSyncLevelsWithReference(actual, reference) {
-  const normalize = (value) => Object.fromEntries(
-    Object.keys(value).map(Number).sort((left, right) => left - right).map((jobLevel) => {
-      const itemLevels = value[jobLevel];
-      if (!Array.isArray(itemLevels)) throw new Error(`同步等级 ${jobLevel} 缺少品级数组`);
-      return [jobLevel, [...itemLevels].sort((left, right) => left - right)];
-    }),
-  );
-  if (JSON.stringify(normalize(actual)) !== JSON.stringify(normalize(reference)))
-    throw new Error("MCP ContentFinderCondition 按参考转换流程生成的 syncLevels 与参考导出不一致");
 }
 
 function normalizeJobSchemas(rawSchemas, snapshot) {
@@ -607,7 +432,6 @@ async function loadMcpSnapshot() {
   validateBluMcpAbsence(snapshot);
   validateMcpItemRows(snapshot);
   validateMcpItemSpecialBonusInput(snapshot);
-  validateMcpSyncLevelInput(snapshot);
   validateMcpVariableEquipLevelInput(snapshot);
   validateMcpResistanceWeaponAdjustInput(snapshot);
   return snapshot;
@@ -1204,20 +1028,52 @@ function mergeMcpFoodData(foods, snapshot) {
 }
 
 function mergeMcpLevelCaps(levelCaps, snapshot) {
-  const rows = snapshotRows(snapshot, "ItemLevel");
-  const levels = levelCaps.level.slice();
-  const merged = Object.fromEntries(Object.entries(levelCaps).map(([stat, values]) => [stat, values.slice()]));
-  const usedIds = [];
-  for (let index = 0; index < levels.length; index++) {
-    const row = rows[levels[index]];
+  const check = snapshot.sourceCapabilityChecks?.syncLevels?.itemLevel;
+  const query = snapshot.queries?.find((entry) =>
+    entry.method === "list_rows" && entry.sheet === "ItemLevel" && entry.limit === -1 &&
+    itemLevelReturnFields.every((field) => entry.fields?.includes(field)),
+  );
+  const sourceRows = snapshot.rows?.ItemLevel;
+  const rowValues = Array.isArray(sourceRows)
+    ? sourceRows
+    : sourceRows && typeof sourceRows === "object"
+      ? Object.values(sourceRows)
+      : undefined;
+  const sourceFields = check?.fields;
+  if (check?.gameVersion !== snapshot.gameVersion || !check.queriedAt ||
+      !Number.isSafeInteger(check.rowCount) || check.rowCount < 1 ||
+      !Array.isArray(sourceFields) || itemLevelReturnFields.some((field) => !sourceFields.includes(field)) ||
+      !Array.isArray(rowValues) || rowValues.length !== check.rowCount ||
+      !query || query.gameVersion !== snapshot.gameVersion || !query.queriedAt ||
+      query.returnedRows !== check.rowCount || !Array.isArray(query.rowIds) ||
+      query.rowIds.length !== check.rowCount ||
+      !Array.isArray(snapshot.missing?.ItemLevel) || snapshot.missing.ItemLevel.length)
+    throw new Error("MCP ItemLevel 全量查询缺失、截断或来源不完整");
+
+  const expectedStats = Object.keys(levelCaps).filter((key) => key !== "level");
+  const rows = rowValues.slice().sort((left, right) => left.rowId - right.rowId);
+  const queryIds = new Set(query.rowIds);
+  const seenIds = new Set();
+  const value = { level: [] };
+  for (const stat of expectedStats) value[stat] = [];
+  for (const row of rows) {
+    if (!Number.isSafeInteger(row?.rowId) || row.rowId < 0 || seenIds.has(row.rowId) ||
+        !queryIds.has(row.rowId) || row.gameVersion !== snapshot.gameVersion || !row.timestamp ||
+        !row.fields || typeof row.fields !== "object" || Array.isArray(row.fields))
+      throw new Error("MCP ItemLevel 全量行目录包含无效、重复、缺失或跨版本行");
     const stats = normalizeMcpItemLevel(row);
-    if (!stats) continue;
-    usedIds.push(levels[index]);
-    for (const [stat, value] of Object.entries(stats)) {
-      if (merged[stat]) merged[stat][index] = value;
-    }
+    if (!stats || expectedStats.some((stat) =>
+      !Number.isSafeInteger(stats[stat]) || stats[stat] < 0,
+    ))
+      throw new Error(`MCP ItemLevel 行 ${row.rowId} 缺少完整属性上限`);
+    seenIds.add(row.rowId);
+    if (row.rowId === 0) continue;
+    value.level.push(row.rowId);
+    for (const stat of expectedStats) value[stat].push(stats[stat]);
   }
-  return { value: merged, usedIds };
+  if (seenIds.size !== check.rowCount || query.rowIds.some((rowId) => !seenIds.has(rowId)))
+    throw new Error("MCP ItemLevel 行目录与全量查询范围不一致");
+  return { value, usedIds: value.level };
 }
 
 function mergeMcpSlotCaps(slotCaps, snapshot) {
@@ -1269,26 +1125,22 @@ function mergeMcpMaterias(materias, snapshot) {
 function validate(payload) {
   if (!payload.provenance?.commit)
     throw new Error("生成快照缺少上游 commit 信息");
-  validateSyncLevelMappings(
-    payload.syncLevels,
-    payload.syncLevelOfJobLevels,
-    payload.levelCaps,
-    payload.jobLevelModifiers,
-  );
+  if (!payload.sync?.levels?.length || !payload.sync?.groups?.length)
+    throw new Error("同步数据缺少等级规则或副本目录");
   if (!payload.provenance.sources?.some((source) =>
     source.kind === "mcp" && source.sheet === "ContentFinderCondition" &&
-    ["ClassJobLevelRequired", "Name", "JournalGenre"].every((field) => source.fields?.includes(field)) &&
+    ["Name", "ItemLevelSync", "ClassJobLevelSync", "JournalGenre", "ContentType", "ContentUICategory", "HighEndDuty", "AllowUndersized", "ContentLinkType"].every((field) => source.fields?.includes(field)) &&
     source.rowIds?.length,
   ) || !payload.provenance.sources?.some((source) =>
-    source.kind === "mcp" && source.sheet === "ParamGrow" &&
-    source.fields?.includes("ItemLevelSync") &&
-    source.rowIds?.length === syncLevelFallbackJobLevels.length &&
-    source.note?.includes("syncLevelOfJobLevels"),
+    source.kind === "mcp" && source.sheet === "ContentType" &&
+    source.fields?.includes("Name") && source.rowIds?.length,
   ) || !payload.provenance.sources?.some((source) =>
-    source.kind === "reference" && source.sourceFiles?.includes("src/game.ts") &&
-    source.note?.includes("syncLevelOfJobLevels"),
-  ))
-    throw new Error("同步品级映射缺少 MCP CFC 分组、MCP ParamGrow fallback 或参考对照来源记录");
+    source.kind === "mcp" && source.sheet === "ContentUICategory" &&
+    source.fields?.includes("Name") && source.rowIds?.length,
+  ) || !payload.provenance.sources?.some((source) =>
+    source.kind === "mcp" && source.sheet === "ParamGrow" &&
+    source.fields?.includes("ItemLevelSync") && source.rowIds?.length > 0,
+  )) throw new Error("同步数据缺少完整的同版本 MCP 来源记录");
   if (!payload.provenance.sources?.some((source) =>
     source.kind === "mcp" && source.sheet === "Item" &&
     source.fields?.includes("Icon") && source.rowIds?.length,
@@ -1405,7 +1257,6 @@ const [levelCaps, slotCaps, roleCaps] = await Promise.all([
   importDefault(resolve(outDir, "slotCaps.js")),
   importDefault(resolve(outDir, "roleCaps.js")),
 ]);
-const referenceSyncLevels = await importDefault(resolve(outDir, "syncLevels.js"));
 const constants = parseGameConstants(gameSource);
 const gearGroups = await Promise.all(
   gearFiles.map(async (file) => ({ file, items: await importDefault(resolve(outDir, file)) })),
@@ -1423,7 +1274,6 @@ const referenceSourceFiles = [
   "data/out/slotCaps.js",
   "data/out/roleCaps.js",
   "src/game.ts",
-  "data/out/syncLevels.js",
   "data/out/bluMdmgAdditions.js",
   "data/in/bluMdmgAdditions.txt",
   "data/convert.ts",
@@ -1439,8 +1289,7 @@ const referenceSource = {
 let foods = rawFoods.filter((food) => food.slot === -1).map(normalizeFood);
 let effectiveLevelCaps = levelCaps;
 let effectiveSlotCaps = slotCaps;
-let effectiveSyncLevels;
-let effectiveSyncLevelOfJobLevels;
+let effectiveSyncData;
 let materias = Object.fromEntries(
   combatMateriaStats.map((stat) => [stat, constants.materias[stat]]),
 );
@@ -1449,11 +1298,8 @@ const mcpSnapshot = await loadMcpSnapshot();
 if (!mcpSnapshot)
   throw new Error("BLU 正式职业数据需要 MCP ClassJob 快照和武器伤害映射缺失核验；请先运行 npm run data:mcp");
 const binUiMetadata = binUiMetadataFromSnapshot(mcpSnapshot, supportedJobs);
-const syncLevelDuties = syncLevelDutiesFromSnapshot(mcpSnapshot);
 let mcpSummary = "MCP 查询产物未找到，使用参考项目数据";
 if (mcpSnapshot) {
-  const syncLevelMerge = buildMcpSyncLevels(mcpSnapshot);
-  const syncLevelFallback = buildMcpSyncLevelFallback(mcpSnapshot);
   const gearMerge = mergeMcpGearData(gears, mcpSnapshot, referenceSource);
   gears.splice(0, gears.length, ...gearMerge.result);
   const foodMerge = mergeMcpFoodData(foods, mcpSnapshot);
@@ -1464,26 +1310,23 @@ if (mcpSnapshot) {
   effectiveSlotCaps = slotMerge.value;
   const materiaMerge = mergeMcpMaterias(materias, mcpSnapshot);
   materias = materiaMerge.value;
-  effectiveSyncLevels = syncLevelMerge.value;
-  effectiveSyncLevelOfJobLevels = syncLevelFallback;
-  validateSyncLevelMappings(
-    effectiveSyncLevels,
-    effectiveSyncLevelOfJobLevels,
-    effectiveLevelCaps,
-    constants.jobLevelModifiers,
-  );
-  compareSyncLevelsWithReference(effectiveSyncLevels, referenceSyncLevels);
-  compareSyncLevelFallbackWithReference(
-    effectiveSyncLevelOfJobLevels,
-    constants.syncLevelOfJobLevels,
-    Math.max(...Object.keys(constants.jobLevelModifiers).map(Number)),
-  );
+  const supportedSyncLevels = Object.keys(constants.jobLevelModifiers)
+    .map(Number)
+    .filter((level) => Number.isSafeInteger(level) && level >= 50)
+    .sort((left, right) => left - right);
+  effectiveSyncData = syncDataFromSnapshot(mcpSnapshot, effectiveLevelCaps, supportedSyncLevels);
   const classJobRowIds = Object.values(mcpSnapshot.queryPlan.classJobIds).map(Number);
   const syncLevelQuery = mcpSnapshot.queries.find((query) =>
     query.method === "list_rows" && query.sheet === "ContentFinderCondition",
   );
+  const contentTypeQuery = mcpSnapshot.queries.find((query) =>
+    query.method === "list_rows" && query.sheet === "ContentType",
+  );
+  const contentUICategoryQuery = mcpSnapshot.queries.find((query) =>
+    query.method === "list_rows" && query.sheet === "ContentUICategory",
+  );
   const paramGrowQuery = mcpSnapshot.queries.find((query) =>
-    query.method === "get_rows" && query.sheet === "ParamGrow",
+    query.method === "list_rows" && query.sheet === "ParamGrow" && query.limit === -1,
   );
   const bluDamageReferenceSource = {
     kind: "reference",
@@ -1497,31 +1340,8 @@ if (mcpSnapshot) {
     ],
     note: `MCP ${mcpSnapshot.gameVersion} 的 list_sheets 与 ClassJob describe_sheet 均未提供青魔法师按 INT 索引的魔法武器伤害加值表或字段；使用参考项目原始测量映射，并与输入文本逐值校验。`,
   };
-  const syncLevelReferenceSource = {
-    kind: "reference",
-    repository,
-    commit,
-    importedAt: importStartedAt,
-    sourceFiles: ["data/convert.ts", "data/out/syncLevels.js"],
-    note: "syncLevels 按参考项目 data/convert.ts 转换规则从 MCP CFC 行生成，并逐值核对 data/out/syncLevels.js；按 rowId 升序处理，相同品级由后行覆盖。",
-  };
-  const syncLevelFallbackSource = mcpSource({
-    sheet: "ParamGrow",
-    fields: ["ItemLevelSync"],
-    rowIds: syncLevelFallbackJobLevels,
-    gameVersion: mcpSnapshot.gameVersion,
-    validatedVersion: mcpSnapshot.validatedVersion,
-    queriedAt: paramGrowQuery.queriedAt,
-    note: "syncLevelOfJobLevels 由 ParamGrow 对应职业等级行的 ItemLevelSync 提供，作为同步分组未精确命中时的 fallback。",
-  });
-  const syncLevelFallbackReferenceSource = {
-    kind: "reference",
-    repository,
-    commit,
-    importedAt: importStartedAt,
-    sourceFiles: ["src/game.ts"],
-    note: "参考项目 src/game.ts 的 syncLevelOfJobLevels 仅用于最高职业等级以下的 fallback 对照；最高等级的值是为后续版本预留的预测值，当前满级不会触发同级同步，因此不要求与该值一致。",
-  };
+  if (!syncLevelQuery || !contentTypeQuery || !contentUICategoryQuery || !paramGrowQuery)
+    throw new Error("MCP 同步等级目录缺少完整查询来源");
   const variableItemLevelReferenceSource = {
     kind: "reference",
     repository,
@@ -1556,16 +1376,40 @@ if (mcpSnapshot) {
     ),
     mcpSource({
       sheet: "ContentFinderCondition",
-      fields: ["ClassJobLevelRequired", "ItemLevelRequired", "ItemLevelSync", "Name", "JournalGenre"],
+      fields: ["Name", "ItemLevelSync", "ClassJobLevelSync", "JournalGenre", "ContentType", "ContentUICategory", "HighEndDuty", "AllowUndersized", "ContentLinkType"],
       rowIds: syncLevelQuery.rowIds,
       gameVersion: mcpSnapshot.gameVersion,
       validatedVersion: mcpSnapshot.validatedVersion,
       queriedAt: syncLevelQuery.queriedAt,
-      note: "同版本完整 CFC 查询同时提供计算用同步品级和副本说明；说明仅保留 ItemLevelSync 大于零且 JournalGenre 不为零的行，按 rowId 升序排列。",
+      note: "同版本完整 CFC 查询用于生成同步等级下界与副本目录；仅保存生成完成后的等级和分组目录。",
     }),
-    syncLevelFallbackSource,
-    syncLevelFallbackReferenceSource,
-    syncLevelReferenceSource,
+    mcpSource({
+      sheet: "ContentType",
+      fields: ["Name"],
+      rowIds: contentTypeQuery.rowIds,
+      gameVersion: mcpSnapshot.gameVersion,
+      validatedVersion: mcpSnapshot.validatedVersion,
+      queriedAt: contentTypeQuery.queriedAt,
+      note: "ContentType.Name 用于识别并生成副本目录名称。",
+    }),
+    mcpSource({
+      sheet: "ContentUICategory",
+      fields: ["Name"],
+      rowIds: contentUICategoryQuery.rowIds,
+      gameVersion: mcpSnapshot.gameVersion,
+      validatedVersion: mcpSnapshot.validatedVersion,
+      queriedAt: contentUICategoryQuery.queriedAt,
+      note: "ContentUICategory.Name 用于识别副本高难/零式目录类别。",
+    }),
+    mcpSource({
+      sheet: "ParamGrow",
+      fields: ["ItemLevelSync"],
+      rowIds: paramGrowQuery.rowIds,
+      gameVersion: mcpSnapshot.gameVersion,
+      validatedVersion: mcpSnapshot.validatedVersion,
+      queriedAt: paramGrowQuery.queriedAt,
+      note: "ParamGrow.ItemLevelSync 提供仅同步等级默认品级及各等级区间边界依据。",
+    }),
     variableItemLevelReferenceSource,
     bluDamageReferenceSource,
   );
@@ -1592,7 +1436,7 @@ const payload = {
   gears: catalogGears,
   foods,
   jobs: binUiMetadata.jobs,
-  syncLevelDuties,
+  sync: effectiveSyncData,
   materias,
   bluMdmgAdditions,
   materiaGradeRequiredLevels: constants.materiaGradeRequiredLevels,
@@ -1604,8 +1448,6 @@ const payload = {
   clanStats: constants.clanStats,
   jobSchemas: normalizeJobSchemas(constants.jobSchemas, mcpSnapshot),
   jobLevelModifiers: constants.jobLevelModifiers,
-  syncLevels: effectiveSyncLevels,
-  syncLevelOfJobLevels: effectiveSyncLevelOfJobLevels,
 };
 validate(payload);
 await mkdir(resolve(outputPath, ".."), { recursive: true });

@@ -55,7 +55,13 @@ function Harness({
       <output data-forced-value>{JSON.stringify(value)}</output>
       <CustomEquipmentParameters
         gear={getGearById(id)!}
-        config={{ jobId: "PLD", syncLevel }}
+        config={{
+          jobId: "PLD",
+          sync:
+            syncLevel === undefined
+              ? undefined
+              : { kind: "itemLevel", value: syncLevel },
+        }}
         readOnly={readOnly}
         value={value}
         onChange={setValue}
@@ -127,7 +133,7 @@ describe("custom equipment parameter confirmation", () => {
     expect(mark.style.left).toBe(`${Number((cap / 150 * 100).toFixed(3))}%`);
     const gear = getGearById(id)!;
     const cappedRange = { ...gear, resistanceWeaponAdjust: { ...gear.resistanceWeaponAdjust!, maxEachStat: cap - 1 } };
-    act(() => root.render(<CustomEquipmentParameters gear={cappedRange} config={{ jobId: "PLD", syncLevel: 475 }} readOnly={false} value={id} onChange={() => undefined} />));
+    act(() => root.render(<CustomEquipmentParameters gear={cappedRange} config={{ jobId: "PLD", sync: { kind: "itemLevel", value: 475 } }} readOnly={false} value={id} onChange={() => undefined} />));
     await click(host.querySelector<HTMLButtonElement>("button")!);
     expect(document.querySelector('[aria-label*="同步上限"]')).toBeNull();
     act(() => root.render(<CustomEquipmentParameters gear={gear} config={{ jobId: "PLD" }} readOnly={false} value={id} onChange={() => undefined} />));

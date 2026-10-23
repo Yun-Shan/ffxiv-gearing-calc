@@ -24,6 +24,7 @@ import type {
   SearchOptions,
   Stat,
   Stats,
+  SyncTarget,
 } from "./types.ts";
 import { assertForcedGearValue, forcedGearId } from "./types.ts";
 import {
@@ -92,12 +93,6 @@ function validateConfig(config: OptimizationConfig): void {
   ) {
     throw new RangeError("装备品级范围无效");
   }
-  if (
-    config.syncLevel !== undefined &&
-    (!Number.isSafeInteger(config.syncLevel) || config.syncLevel <= 0)
-  ) {
-    throw new RangeError("等级同步品级必须是正整数");
-  }
   if (config.clanIndex !== undefined) assertClanIndex(config.clanIndex);
 }
 
@@ -139,8 +134,8 @@ function statCapAtLevel(gear: Gear, stat: Stat, level: number): number {
   return getGearStatCap(gear, stat, level);
 }
 
-function capLevelFor(gear: Gear, jobLevel: number, syncLevel?: number): number {
-  return effectiveGearSyncLevel(gear, jobLevel, syncLevel) ?? gear.level;
+function capLevelFor(gear: Gear, jobLevel: number, sync?: SyncTarget): number {
+  return effectiveGearSyncLevel(gear, jobLevel, sync) ?? gear.level;
 }
 
 function baseStatFor(
@@ -168,9 +163,9 @@ function profilesForCustomParameters(
   gear: Gear,
   speedStat: "SKS" | "SPS",
   jobLevel: number,
-  syncLevel?: number,
+  sync?: SyncTarget,
 ): Map<number, number> {
-  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, syncLevel);
+  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, sync);
   const level = synchronizedLevel ?? gear.level;
   const baseSpeed = baseStatFor(gear, speedStat, level, synchronizedLevel !== undefined);
   const baseTenacity = baseStatFor(gear, "TEN", level, synchronizedLevel !== undefined);
@@ -200,10 +195,10 @@ function profilesForResistanceWeapon(
   gear: Gear,
   speedStat: "SKS" | "SPS",
   jobLevel: number,
-  syncLevel?: number,
+  sync?: SyncTarget,
 ): Map<number, number> {
   const adjustment = gear.resistanceWeaponAdjust!;
-  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, syncLevel);
+  const synchronizedLevel = effectiveGearSyncLevel(gear, jobLevel, sync);
   const level = synchronizedLevel ?? gear.level;
   const baseSpeed = baseStatFor(gear, speedStat, level, synchronizedLevel !== undefined);
   const baseTenacity = baseStatFor(gear, "TEN", level, synchronizedLevel !== undefined);
@@ -383,20 +378,20 @@ function gearProfiles(
       resolvedGear,
       speedStat,
       jobLevel,
-      config.syncLevel,
+      config.sync,
     );
   } else if (resolvedGear.customParameters?.length) {
     profiles = profilesForCustomParameters(
       resolvedGear,
       speedStat,
       jobLevel,
-      config.syncLevel,
+      config.sync,
     );
   } else {
     const syncApplies =
-      effectiveGearSyncLevel(resolvedGear, jobLevel, config.syncLevel) !== undefined;
+      effectiveGearSyncLevel(resolvedGear, jobLevel, config.sync) !== undefined;
     if (syncApplies || (resolvedGear.materiaSlots === 0 && resolvedGear.materiaAdvanced !== true)) {
-      const level = capLevelFor(resolvedGear, jobLevel, config.syncLevel);
+      const level = capLevelFor(resolvedGear, jobLevel, config.sync);
       const stats = syncApplies
         ? capGearStatsAtLevel(resolvedGear, resolvedGear.stats, level)
         : resolvedGear.stats;
@@ -521,6 +516,7 @@ export function calculateFeasibleGcdTiers(
 ): number[] {
   abortIfNeeded(options.signal);
   validateConfig(config);
+  const jobLevel = dependencies.getJobLevel(config);
   const job = jobSchemas[config.jobId];
   const speedStat = getSpeedStat(job);
   const allSlots = dependencies.slotsForJob(config.jobId);
@@ -557,7 +553,6 @@ export function calculateFeasibleGcdTiers(
       `以下槽位没有可用候选装备：${labels.join("、")}。请调整装备品级范围或装备限制条件。`,
     );
   }
-  const jobLevel = dependencies.getJobLevel(config);
   const usesTenacity =
     config.minTenacity !== undefined ||
     config.toughnessMin !== undefined ||

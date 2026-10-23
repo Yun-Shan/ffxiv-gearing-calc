@@ -77,7 +77,11 @@ export function CustomEquipmentParameters({
     },
     [gear.id, config.jobId],
   );
-  const syncLevel = effectiveGearSyncLevel(gear, calculationJobLevelFor(config), config.syncLevel);
+  const syncLevel = effectiveGearSyncLevel(
+    gear,
+    calculationJobLevelFor({ jobId: config.jobId, sync: config.sync }),
+    config.sync,
+  );
   const syncCaps = useMemo(
     () => syncLevel === undefined ? undefined : Object.fromEntries(
       model.attributes.map(({ stat }) => [stat, getGearStatCap(gear, stat, syncLevel)]),

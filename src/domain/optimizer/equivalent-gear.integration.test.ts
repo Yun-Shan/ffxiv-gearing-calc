@@ -13,7 +13,7 @@ function fixed(jobId: JobId, weaponId?: number): OptimizationConfig {
     jobId,
     minItemLevel: 780,
     maxItemLevel: 795,
-    syncLevel: 475,
+    sync: { kind: "itemLevel", value: 475 },
     maximizeTenacity: false,
     excludedSources: [],
     forcedGear: {},
@@ -67,7 +67,7 @@ describe("real synced single replacement results", () => {
     const ring = gears.find((gear) => gear.id === 35241)!;
     expect(ring.unique).toBe(false);
     const config: OptimizationConfig = {
-      jobId: "SAM", minItemLevel: 600, maxItemLevel: 600, syncLevel: 665,
+      jobId: "SAM", minItemLevel: 600, maxItemLevel: 600, sync: { kind: "itemLevel", value: 665 },
       maximizeTenacity: false, excludedSources: [], foodId: 0,
       forcedGear: { ring2: { id: ring.id, melds: [null, null] } },
     };
@@ -131,7 +131,7 @@ describe("real synced single replacement results", () => {
     ).toBeGreaterThan(1);
     const unsynced = (await runOptimizationLocally({
       ...fixed("PLD"),
-      syncLevel: undefined,
+      sync: undefined,
     }))!;
     expect(unsynced.equivalentGear).toBeUndefined();
     expect(
@@ -160,7 +160,7 @@ describe("real synced single replacement results", () => {
       (g) => g.jobs.includes("SAM") && g.customParameters?.length === 4,
     )!;
     const config = fixed("SAM", weapon.id);
-    config.syncLevel = gameData.syncLevels[50]![0]!;
+    config.sync = { kind: "itemLevel", value: 90 };
     const result = (await runOptimizationLocally(config))!;
     const selected = result.gear.find((g) => g.slot === "weapon")!;
     const plans = choices(result, selected).filter((g) => g.id === weapon.id);

@@ -34,7 +34,7 @@ describe("reference gearset share compatibility", () => {
     const parsed = parseReferenceGearset(
       resultReferenceUrl(result, {
         jobId: "SAM",
-        syncLevel: 660,
+        sync: { kind: "itemLevel", value: 660 },
       } as OptimizationConfig)!,
     );
     expect(parsed.gears.map((gear) => gear.id)).toEqual([
@@ -57,7 +57,7 @@ describe("reference gearset share compatibility", () => {
           job: "SAM" as const,
           role: "str" as const,
           jobLevel: 100,
-          syncLevel,
+          ...(syncLevel === undefined ? {} : { sync: { kind: "itemLevel" as const, value: syncLevel } }),
           foodId: foods[0]!.id,
           gears: ordered.map((gear) => ({ id: gear.id, materias: [] })),
         };
@@ -70,7 +70,7 @@ describe("reference gearset share compatibility", () => {
           true,
         );
         expect(parsed.foodId).toBe(input.foodId);
-        expect(parsed.syncLevel).toBe(syncLevel);
+        expect(parsed.sync).toEqual(syncLevel === undefined ? undefined : { kind: "itemLevel", value: syncLevel });
         return payload;
       });
       expect(payloads[0]).not.toBe(payloads[1]);
@@ -104,7 +104,7 @@ describe("reference gearset share compatibility", () => {
         job: "SAM" as const,
         role: "str" as const,
         jobLevel: 100,
-        syncLevel,
+        sync: { kind: "itemLevel" as const, value: syncLevel },
         gears: [
           {
             id: 42001,
@@ -197,7 +197,7 @@ describe("reference gearset share compatibility", () => {
       job: "SAM",
       role: "str",
       jobLevel: 100,
-      syncLevel: 660,
+      sync: { kind: "itemLevel", value: 660 },
       gears: [
         {
           id: 42001,
@@ -216,7 +216,7 @@ describe("reference gearset share compatibility", () => {
     expect(parsed).toMatchObject({
       job: "SAM",
       jobLevel: 100,
-      syncLevel: 660,
+      sync: { kind: "itemLevel", value: 660 },
     });
     expect(
       parsed.gears
@@ -233,6 +233,43 @@ describe("reference gearset share compatibility", () => {
       [42008, []],
       [42013, [["SKS", 10]]],
     ]);
+  });
+
+  it("keeps an explicit current-level sync target distinct from disabled sync", () => {
+    const base = {
+      job: "SAM" as const,
+      role: "str" as const,
+      jobLevel: 100,
+      gears: [{ id: 42001, materias: [] }],
+    };
+    const disabled = stringifyReferenceGearset(base)!;
+    const explicitLevelTarget = stringifyReferenceGearset({
+      ...base,
+      sync: { kind: "jobLevel", value: 100 },
+    })!;
+
+    expect(explicitLevelTarget).not.toBe(disabled);
+    expect(parseReferenceGearset(explicitLevelTarget).sync).toEqual({
+      kind: "jobLevel",
+      value: 100,
+    });
+    expect(parseReferenceGearset(disabled).sync).toBeUndefined();
+  });
+
+  it("uses the only-level sync target when the redundant job level disagrees", () => {
+    const payload = stringifyReferenceGearset({
+      job: "SAM",
+      role: "str",
+      jobLevel: 100,
+      sync: { kind: "jobLevel", value: 90 },
+      gears: [{ id: 42001, materias: [] }],
+    });
+
+    expect(parseReferenceGearset(payload!).jobLevel).toBe(90);
+    expect(parseReferenceGearset(payload!).sync).toEqual({
+      kind: "jobLevel",
+      value: 90,
+    });
   });
 
   it("round-trips a current catalog food without fabricating a gear", () => {
@@ -274,12 +311,12 @@ describe("reference gearset share compatibility", () => {
       gear: [weapon],
       food: { id: 49240 },
     } as OptimizationResult;
-    const config = { jobId: "SAM", syncLevel: 660 } as OptimizationConfig;
+    const config = { jobId: "SAM", sync: { kind: "itemLevel", value: 660 } } as OptimizationConfig;
     const payload = stringifyReferenceGearset({
       job: "SAM",
       role: "str",
       jobLevel: 100,
-      syncLevel: 660,
+      sync: { kind: "itemLevel", value: 660 },
       gears: [{ id: 42001, materias: [] }],
       foodId: 49240,
     });
@@ -308,7 +345,7 @@ describe("reference gearset share compatibility", () => {
     } as OptimizationResult;
     const url = resultReferenceUrl(result, {
       jobId: "SAM",
-      syncLevel: 660,
+      sync: { kind: "itemLevel", value: 660 },
     } as OptimizationConfig)!;
     expect(parseReferenceGearset(url).gears[0]!.customStats).toEqual({
       CRT: 172,

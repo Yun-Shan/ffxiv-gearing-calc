@@ -1,10 +1,17 @@
-import type { Effects, FoodResult, JobId, MeldedGear, Stats } from "@/domain";
+import type {
+  Effects,
+  FoodResult,
+  JobId,
+  MeldedGear,
+  Stats,
+  SyncTarget,
+} from "@/domain";
 
 /** Saved result values used by Comparison; the UI never recalculates them. */
 export interface GearsetResultSnapshot {
   jobId: JobId;
   calculationLevel: number;
-  syncItemLevel?: number;
+  sync?: SyncTarget;
   gear: readonly MeldedGear[];
   food?: FoodResult;
   stats: Stats;

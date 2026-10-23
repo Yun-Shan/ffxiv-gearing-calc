@@ -155,7 +155,7 @@ export function prepareForcedGearImport(
       try {
         const config = {
           ...makeConfig(jobId),
-          syncLevel: options.config.syncLevel,
+          sync: options.config.sync,
           forcedGear: { [slot]: value },
         };
         if (!makeGearCandidates(gear, slot, config, new Map()).length) {

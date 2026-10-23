@@ -9,3 +9,4 @@ export * from "./fixed-gearset";
 export * from "./equipment-materia";
 export * from "./custom-equipment-parameters";
 export { jobLevelFor, calculationJobLevelFor } from "./gear-options";
+export { syncTargetCalculationError, syncTargetJobLevel } from "./job-level";

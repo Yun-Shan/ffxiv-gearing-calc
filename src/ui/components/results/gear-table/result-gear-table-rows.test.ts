@@ -81,7 +81,7 @@ describe("Result GearTable adapter", () => {
   it("builds rows from saved gear, food, and total stat snapshots", () => {
     const rows = buildResultGearTableRows(result(), {
       jobId: "PLD",
-      syncLevel: 1,
+      sync: { kind: "itemLevel", value: 100 },
     } as OptimizationConfig);
     expect(rows.find((row) => row.item.kind === "gear")?.item.stats).toEqual({
       CRT: 10,
@@ -151,7 +151,7 @@ describe("Result GearTable adapter", () => {
       throw new Error("没有生成可替换装备行。");
     }
     // Keep the logical row mounted so the replacement trigger can regain focus.
-    const config = { jobId: "PLD", syncLevel: 700 } as OptimizationConfig;
+    const config = { jobId: "PLD", sync: { kind: "itemLevel", value: 700 } } as OptimizationConfig;
     expect(buildResultGearTableRows(after, config)[0]?.key).toBe(
       buildResultGearTableRows(before, config)[0]?.key,
     );
@@ -245,10 +245,10 @@ describe("Result GearTable adapter", () => {
 describe("materia slot display", () => {
   it("marks synced ordinary gear only when it has materia holes, independently of saved melds", () => {
     const item = { ...gear(10, 0), melds: [] };
-    expect(buildGearTableGearItem(item, "weapon", { jobLevel: 100, syncLevel: 475 }).materiaSync).toBe("disabled");
+    expect(buildGearTableGearItem(item, "weapon", { jobLevel: 100, sync: { kind: "itemLevel", value: 475 } }).materiaSync).toBe("disabled");
     expect(buildGearTableGearItem(item, "weapon", { jobLevel: 100 }).materiaSync).toBeUndefined();
-    expect(buildGearTableGearItem({ ...item, materiaSlots: 0 }, "weapon", { jobLevel: 100, syncLevel: 475 }).materiaSync).toBeUndefined();
-    expect(buildGearTableGearItem({ ...item, materiaSlots: 0, materiaAdvanced: true }, "weapon", { jobLevel: 100, syncLevel: 475 }).materiaSync).toBe("disabled");
+    expect(buildGearTableGearItem({ ...item, materiaSlots: 0 }, "weapon", { jobLevel: 100, sync: { kind: "itemLevel", value: 475 } }).materiaSync).toBeUndefined();
+    expect(buildGearTableGearItem({ ...item, materiaSlots: 0, materiaAdvanced: true }, "weapon", { jobLevel: 100, sync: { kind: "itemLevel", value: 475 } }).materiaSync).toBe("disabled");
   });
 
   it.each([39920, 33462])("marks custom gear %i only when a selected parameter is actually truncated", (id) => {
@@ -258,10 +258,10 @@ describe("materia slot display", () => {
       melds: [{ stat: "CRT", value: 150, grade: 0 }], finalStats: { CRT: 131 },
     };
     const before = structuredClone(item);
-    expect(buildGearTableGearItem(item, "weapon", { jobLevel: 80, syncLevel: 475 }).materiaSync).toBe("capped");
+    expect(buildGearTableGearItem(item, "weapon", { jobLevel: 80, sync: { kind: "itemLevel", value: 475 } }).materiaSync).toBe("capped");
     expect(buildGearTableGearItem(item, "weapon", { jobLevel: 100 }).materiaSync).toBeUndefined();
     const low = { ...item, melds: [{ stat: "CRT" as const, value: 50, grade: 0 }] };
-    expect(buildGearTableGearItem(low, "weapon", { jobLevel: 80, syncLevel: 475 }).materiaSync).toBeUndefined();
+    expect(buildGearTableGearItem(low, "weapon", { jobLevel: 80, sync: { kind: "itemLevel", value: 475 } }).materiaSync).toBeUndefined();
     expect(item).toEqual(before);
   });
   it("preserves original order and marks entries beyond the safe slots without sorting by grade", () => {

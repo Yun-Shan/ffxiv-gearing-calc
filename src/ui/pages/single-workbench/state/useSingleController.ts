@@ -295,8 +295,7 @@ export function useSingleController() {
   }
   function replace(slot: GearSlot, replacement: MeldedGear) {
     const value = current.current;
-    if (value.phase !== "result" || value.snapshot.syncLevel === undefined)
-      return;
+    if (value.phase !== "result" || value.snapshot.sync === undefined) return;
     const result = replaceEquivalentGear(
       value.result,
       slot,

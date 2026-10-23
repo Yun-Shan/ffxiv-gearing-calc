@@ -125,13 +125,13 @@ describe("联合工作台", () => {
       );
     expect(labelsNamed("最低装备品级")).toHaveLength(1);
     expect(labelsNamed("最高装备品级")).toHaveLength(1);
-    expect(labelsNamed("同步品级")).toHaveLength(1);
+    expect(labelsNamed("同步方式")).toHaveLength(1);
 
     testSupport.click(testSupport.buttonNamed(jobSchemas.RDM.name));
     await testSupport.settleApp();
     expect(labelsNamed("最低装备品级")).toHaveLength(0);
     expect(labelsNamed("最高装备品级")).toHaveLength(0);
-    expect(labelsNamed("同步品级")).toHaveLength(0);
+    expect(labelsNamed("同步方式")).toHaveLength(0);
   });
 
   it("选择页按职业选择、前往条件设置操作行、搜索记录的顺序排列", async () => {

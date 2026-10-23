@@ -1,12 +1,9 @@
-import type { JobId, OptimizationConfig } from "@/domain";
-
-export type SyncItemLevelDraft =
-  { mode: "disabled" } | { mode: "enabled"; itemLevel: number };
+import type { JobId, OptimizationConfig, SyncTarget } from "@/domain";
 
 export interface SearchRangeDraft {
   minItemLevel: number;
   maxItemLevel: number;
-  sync: SyncItemLevelDraft;
+  sync?: SyncTarget;
   /** 族群基础属性索引；默认 0（人族·中原之民）。 */
   clanIndex: number;
 }
@@ -53,7 +50,7 @@ export type GcdAnalysisInput = Pick<
   | "maxItemLevel"
   | "speedMin"
   | "speedMax"
-  | "syncLevel"
+  | "sync"
   | "clanIndex"
   | "minTenacity"
   | "toughnessMin"
@@ -77,7 +74,7 @@ export interface CompiledJobCondition {
     | "jobId"
     | "minItemLevel"
     | "maxItemLevel"
-    | "syncLevel"
+    | "sync"
     | "clanIndex"
     | "gcdTarget"
     | "gcdChoices"

@@ -29,14 +29,6 @@ export function foodOptionsFor(foodId?: number) {
 }
 export const defaultJobLevel = 100;
 
-// Asvel 常用同步品级，加上已确认提供的 50 级旧内容档位。
-const popularSyncLevels = [
-  795, 735, 700, 695, 665, 635, 605, 475, 375, 345, 300, 135, 120, 100,
-] as const;
-export const selectableSyncLevels = popularSyncLevels.filter((level) =>
-  gameData.levelCaps.level.includes(level),
-);
-
 export const defaultCommonSlots: CommonSlot[] = [
   "head",
   "body",
@@ -57,7 +49,7 @@ export function makeConfig(jobId: JobId): OptimizationConfig {
       jobSchemas[jobId].defaultItemLevel?.[0] ??
       Math.max(bounds[0], bounds[1] - 15),
     maxItemLevel: jobSchemas[jobId].defaultItemLevel?.[1] ?? bounds[1],
-    syncLevel: undefined,
+    sync: undefined,
     gcdTarget: undefined,
     gcdChoices: [],
     speedMin: undefined,

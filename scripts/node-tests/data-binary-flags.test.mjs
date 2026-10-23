@@ -3,6 +3,14 @@ import { test } from "node:test";
 import { encodeGeneratedData, decodeGeneratedData } from "../../src/data/binary-format.mjs";
 
 // Isolated codec fixtures; these objects are never imported by production code.
+const levelCapStats = [
+  "STR", "DEX", "VIT", "INT", "MND", "PIE", "GP", "CP", "PDMG", "MDMG",
+  "TEN", "DHT", "CRT", "DET", "SKS", "SPS", "CMS", "CRL", "GTH", "PCP",
+];
+const levelCaps = Object.fromEntries([
+  ["level", [90, 130]],
+  ...levelCapStats.map((stat) => [stat, [1, 1]]),
+]);
 const gear = {
   id: 1, name: "codec fixture", slot: "body", rawSlot: 4,
   icon: 45678,
@@ -16,7 +24,15 @@ const payloadFor = (flags) => ({
   jobSchemas: { SAM: { id: "SAM", name: "武士", mainStat: "STR" } },
   jobs: { SAM: { id: 34, name: "武士", abbreviation: "SAM" } },
   foods: [{ id: 10, icon: 65432, name: "codec food" }],
-  syncLevelDuties: { "100": [{ id: 123, name: "codec duty" }] },
+  jobLevelModifiers: { 50: { main: 1 } },
+  levelCaps: structuredClone(levelCaps),
+  sync: {
+    levels: [{ jobLevel: 50, minItemLevel: 90, defaultItemLevel: 130 }],
+    groups: [{
+      name: "讨伐歼灭战",
+      options: [{ name: "codec duty", target: { kind: "itemLevel", value: 130 } }],
+    }],
+  },
   gears: [{ ...gear, ...flags }],
 });
 
@@ -28,7 +44,7 @@ test("variable gear flags and raw main/secondary attributes survive the binary c
     { unique: true, materiaAdvanced: true },
   ]) {
     const { bytes } = await encodeGeneratedData(payloadFor(flags));
-    assert.equal(new DataView(bytes.buffer, bytes.byteOffset).getUint16(8, true), 7);
+    assert.equal(new DataView(bytes.buffer, bytes.byteOffset).getUint16(8, true), 9);
     const decoded = await decodeGeneratedData(bytes);
     const actual = decoded.getGearById(1);
     assert.equal(actual.equipLevelVariable === true, flags.equipLevelVariable === true);
@@ -39,7 +55,13 @@ test("variable gear flags and raw main/secondary attributes survive the binary c
     assert.equal(actual.icon, gear.icon);
     assert.equal(decoded.foods[0].icon, 65432);
     assert.deepEqual(decoded.jobs.SAM, { id: 34, name: "武士", abbreviation: "SAM" });
-    assert.deepEqual(decoded.syncLevelDuties, { "100": [{ id: 123, name: "codec duty" }] });
+    assert.deepEqual(decoded.sync, {
+      levels: [{ jobLevel: 50, minItemLevel: 90, defaultItemLevel: 130 }],
+      groups: [{
+        name: "讨伐歼灭战",
+        options: [{ name: "codec duty", target: { kind: "itemLevel", value: 130 } }],
+      }],
+    });
   }
 });
 
@@ -81,4 +103,55 @@ test("gear and food icons are required positive u32 values", async () => {
   const payloadWithoutFoodIcon = payloadFor({});
   delete payloadWithoutFoodIcon.foods[0].icon;
   await assert.rejects(encodeGeneratedData(payloadWithoutFoodIcon), /食物缺少有效 icon/);
+});
+
+test("sync metadata rejects unsupported thresholds, targets, and legacy structures", async () => {
+  const payload = payloadFor({});
+  payload.sync.levels[0].minItemLevel = 89;
+  await assert.rejects(encodeGeneratedData(payload), /同步等级下界/);
+
+  const unsupportedTarget = payloadFor({});
+  unsupportedTarget.sync.groups[0].options[0].target.value = 89;
+  await assert.rejects(encodeGeneratedData(unsupportedTarget), /低于 90/);
+
+  const unknownTarget = payloadFor({});
+  unknownTarget.sync.groups[0].options[0].target.value = 120;
+  await assert.rejects(encodeGeneratedData(unknownTarget), /缺少属性上限/);
+
+  const legacy = payloadFor({});
+  legacy.syncLevelDuties = {};
+  await assert.rejects(encodeGeneratedData(legacy), /旧同步数据字段/);
+});
+
+test("ItemLevel caps reject missing columns, truncated arrays, and negative values", async () => {
+  const missingColumn = payloadFor({});
+  delete missingColumn.levelCaps.CRT;
+  await assert.rejects(encodeGeneratedData(missingColumn), /缺少 ItemLevel 属性上限列 CRT/);
+
+  const truncatedColumn = payloadFor({});
+  truncatedColumn.levelCaps.CRT.pop();
+  await assert.rejects(encodeGeneratedData(truncatedColumn), /属性上限列 CRT 缺失、截断/);
+
+  const negativeCap = payloadFor({});
+  negativeCap.levelCaps.CRT[0] = -1;
+  await assert.rejects(encodeGeneratedData(negativeCap), /属性上限列 CRT 缺失、截断或包含无效值/);
+
+  const sparseColumn = payloadFor({});
+  delete sparseColumn.levelCaps.CRT[0];
+  await assert.rejects(encodeGeneratedData(sparseColumn), /属性上限列 CRT 缺失、截断或包含无效值/);
+});
+
+test("sync codec validates category structure without owning generated category order", async () => {
+  const payload = payloadFor({});
+  payload.sync.groups = [
+    { name: "新生成分类", options: [{ name: "first", target: { kind: "itemLevel", value: 130 } }] },
+    { name: "讨伐歼灭战", options: [{ name: "second", target: { kind: "jobLevel", value: 50 } }] },
+  ];
+  const { bytes } = await encodeGeneratedData(payload);
+  const decoded = await decodeGeneratedData(bytes);
+  assert.deepEqual(decoded.sync.groups, payload.sync.groups);
+
+  const duplicateGroups = payloadFor({});
+  duplicateGroups.sync.groups.push(structuredClone(duplicateGroups.sync.groups[0]));
+  await assert.rejects(encodeGeneratedData(duplicateGroups), /大分类结构无效或重复/);
 });

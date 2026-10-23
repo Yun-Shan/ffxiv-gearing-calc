@@ -33,10 +33,7 @@ function searchRangeDraftFromConfig(config: OptimizationConfig): SearchRangeDraf
   return {
     minItemLevel: config.minItemLevel,
     maxItemLevel: config.maxItemLevel,
-    sync:
-      config.syncLevel === undefined
-        ? { mode: "disabled" }
-        : { mode: "enabled", itemLevel: config.syncLevel },
+    sync: config.sync,
     clanIndex: config.clanIndex ?? 0,
   };
 }
@@ -45,7 +42,8 @@ function sameSearchRange(left: OptimizationConfig, right: OptimizationConfig): b
   return (
     left.minItemLevel === right.minItemLevel &&
     left.maxItemLevel === right.maxItemLevel &&
-    left.syncLevel === right.syncLevel &&
+    left.sync?.kind === right.sync?.kind &&
+    left.sync?.value === right.sync?.value &&
     (left.clanIndex ?? 0) === (right.clanIndex ?? 0)
   );
 }

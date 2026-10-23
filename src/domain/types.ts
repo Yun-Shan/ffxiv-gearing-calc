@@ -177,12 +177,30 @@ export interface GeneratedJob {
   abbreviation: JobId;
 }
 
-export interface SyncLevelDuty {
-  id: number;
-  name: string;
+export type SyncTarget =
+  | { kind: "jobLevel"; value: number }
+  | { kind: "itemLevel"; value: number };
+
+export interface SyncLevelRule {
+  jobLevel: number;
+  minItemLevel: number;
+  defaultItemLevel: number;
 }
 
-export type SyncLevelDutyData = Record<string, SyncLevelDuty[]>;
+export interface SyncDutyOption {
+  name: string;
+  target: SyncTarget;
+}
+
+export interface SyncDutyGroup {
+  name: string;
+  options: SyncDutyOption[];
+}
+
+export interface SyncData {
+  levels: SyncLevelRule[];
+  groups: SyncDutyGroup[];
+}
 
 export interface DataProvenance {
   repository: string;
@@ -254,8 +272,8 @@ export interface OptimizationConfig {
   jobId: JobId;
   minItemLevel: number;
   maxItemLevel: number;
-  /** 将装备属性和武器伤害同步到此品级。 */
-  syncLevel?: number;
+  /** 不启用、仅同步等级或同步到指定品级。 */
+  sync?: SyncTarget;
   /** 底层搜索允许按此列表启用装备的 ItemSpecialBonus。领域入口暂按职业覆盖此值。 */
   enabledItemSpecialBonuses?: number[];
   /** 族群基础属性索引；未提供时使用 0（人族·中原之民）。 */

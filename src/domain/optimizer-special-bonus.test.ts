@@ -111,7 +111,7 @@ describe("ItemSpecialBonus gear stats", () => {
   });
 
   it("applies the bonus after sync caps instead of capping the bonus itself", () => {
-    const syncLevel = gameData.syncLevelOfJobLevels[80];
+    const syncLevel = gameData.sync.levels.find(({ jobLevel }) => jobLevel === 80)?.defaultItemLevel;
     if (syncLevel === undefined) throw new Error("缺少 80 级同步品级");
     const template = gears.find((gear) =>
       gear.slot === "body" &&
@@ -135,7 +135,7 @@ describe("ItemSpecialBonus gear stats", () => {
     const synced = makeGearCandidates(
       syncedGear,
       syncedGear.slot,
-      { ...config([11], "SAM"), syncLevel },
+      { ...config([11], "SAM"), sync: { kind: "jobLevel", value: 80 } },
       new Map(),
     )[0]!.gear;
     const cappedBase = capGearStatsAtLevel(
