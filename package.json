@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "test:domain:coverage": "vitest run --config vitest.domain.config.ts --coverage",
     "data:update": "node scripts/update-data.mjs",
     "data:format": "node scripts/describe-binary-format.mjs",
     "data:format:check": "node scripts/describe-binary-format.mjs --check",

@@ -46,13 +46,14 @@ npm run preview
 ```bash
 npm test
 npm run test:coverage
+npm run test:domain:coverage
 npx vitest run src/ui
 npm run test:data
 npm run test:v3:runner
 npm run data:test:v3
 ```
 
-覆盖率门槛与正式搜索验收是不同检查，不能用测试命令成功代替覆盖率达标或完整证明。Node 测试和多职业验收的配置见[运行说明](scripts/node-tests/README.md)。
+`test:domain:coverage` 对领域生产代码的语句、分支、函数和行执行 90% 门槛；仅排除类型声明、测试及 Worker/环境传输适配器，具体范围由 `vitest.domain.config.ts` 固定。覆盖率门槛与正式搜索验收是不同检查，不能用测试命令成功代替覆盖率达标或完整证明。Node 测试和多职业验收的配置见[运行说明](scripts/node-tests/README.md)。
 
 全场景性能验收：
 
