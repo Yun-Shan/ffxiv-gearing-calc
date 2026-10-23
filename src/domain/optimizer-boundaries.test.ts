@@ -146,8 +146,9 @@ describe("optimizer runtime boundaries", () => {
       DET: 162,
     });
     expect(concretizeGearStats(variableGear!.stats, jobSchemas.PLD)).toMatchObject({
-      VIT: 212,
+      STR: 212,
       TEN: 162,
+      VIT: 214,
       DET: 162,
     });
     expect(effectiveGearSyncLevel(variableGear!, 90)).toBe(660);
@@ -198,6 +199,22 @@ describe("optimizer runtime boundaries", () => {
       expect(findFeasibleGcdsLocally(config)).toContain(result!.effects.gcd);
     }
   }, 30_000);
+
+  it("shares the STR gear index while keeping weapon candidates job-specific", () => {
+    const tankConfig = configFor("PLD");
+    const strengthDpsConfig = configFor("RPR");
+    expect(jobSchemas.PLD.mainStat).toBe("STR");
+    expect(jobSchemas.RPR.mainStat).toBe("STR");
+
+    const tankWeapons = gearOptionsFor(tankConfig, "weapon");
+    const strengthDpsWeapons = gearOptionsFor(strengthDpsConfig, "weapon");
+    expect(tankWeapons.some((gear) => gear.jobs.includes("PLD"))).toBe(true);
+    expect(strengthDpsWeapons.some((gear) => gear.jobs.includes("RPR"))).toBe(true);
+    expect(tankWeapons.every((gear) => gear.jobs.includes("PLD"))).toBe(true);
+    expect(strengthDpsWeapons.every((gear) => gear.jobs.includes("RPR"))).toBe(true);
+    expect(tankWeapons.some((gear) => gear.jobs.includes("PLD") && !gear.jobs.includes("RPR"))).toBe(true);
+    expect(strengthDpsWeapons.some((gear) => gear.jobs.includes("RPR") && !gear.jobs.includes("PLD"))).toBe(true);
+  });
 
   it("uses each job cap and clamps high sync mappings to a limited job cap", () => {
     expect(calculationJobLevelFor(configFor("SAM"))).toBe(100);

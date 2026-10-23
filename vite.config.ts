@@ -27,7 +27,6 @@ export default defineConfig({
     exclude: [
       ...configDefaults.exclude,
       "**/*.helper.test.*",
-      "scripts/cpsat-unique-research/**",
       "scripts/node-tests/**",
       "reference/**",
     ],

@@ -994,12 +994,12 @@ function candidateUpperBoundAttributeIndexes(
 ): number[] | undefined {
   const schema = gameData.jobSchemas[options.job];
   if (schema?.mainStat === undefined) return undefined;
-  const attackStat: Stat = schema.mainStat === "VIT" ? "STR" : schema.mainStat;
+  const mainStat: Stat = schema.mainStat;
   const weaponStat: Stat = schema.mainStat === "INT" || schema.mainStat === "MND" ? "MDMG" : "PDMG";
   const speedStat: Stat = schema.stats.includes("SKS") ? "SKS" : "SPS";
-  const requiredStats = new Set<Stat>([attackStat, weaponStat, speedStat]);
+  const requiredStats = new Set<Stat>([mainStat, weaponStat, speedStat]);
   const relevantStats = new Set<Stat>([
-    attackStat, weaponStat, speedStat, "CRT", "DET", "TEN", "DHT",
+    mainStat, weaponStat, speedStat, "CRT", "DET", "TEN", "DHT",
   ]);
   const indexes = new Set<number>();
   for (const stat of relevantStats) {
@@ -5673,10 +5673,10 @@ async function prepareExactMipModel(
   if (zeroFactors === undefined) throw new Error(`职业 ${options.job} 没有整数伤害因子公式`);
   const schema = gameData.jobSchemas[options.job];
   if (schema.mainStat === undefined) throw new Error(`职业 ${options.job} 缺少主属性公式`);
-  const attackStat: Stat = schema.mainStat === "VIT" ? "STR" : schema.mainStat;
+  const mainStat: Stat = schema.mainStat;
   const weaponStat: Stat = schema.mainStat === "INT" || schema.mainStat === "MND" ? "MDMG" : "PDMG";
   const speedStat: Stat = schema.stats?.includes("SKS") ? "SKS" : "SPS";
-  const mainIndex = options.statIndexes.get(attackStat);
+  const mainIndex = options.statIndexes.get(mainStat);
   const detIndex = options.statIndexes.get("DET");
   const tenIndex = options.statIndexes.get("TEN");
   const crtIndex = options.statIndexes.get("CRT");
@@ -5689,7 +5689,7 @@ async function prepareExactMipModel(
     const id = options.attributeIds[vectorIndex];
     return id === undefined ? undefined : model.idToIndex.get(id);
   };
-  const mainAttribute = mainIndex === undefined ? undefined : indexForStat(attackStat);
+  const mainAttribute = mainIndex === undefined ? undefined : indexForStat(mainStat);
   const detAttribute = detIndex === undefined ? undefined : indexForStat("DET");
   const tenAttribute = tenIndex === undefined ? undefined : indexForStat("TEN");
   const crtAttribute = crtIndex === undefined ? undefined : indexForStat("CRT");

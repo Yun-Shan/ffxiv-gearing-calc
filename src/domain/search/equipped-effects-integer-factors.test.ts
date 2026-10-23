@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import { gameData } from "../data.ts";
 import { jobSchemas } from "../jobs";
 import { addStats, calculateBaseStats, calculateEffects, getSpeedStat } from "../rules";
 import type { Job, JobLevel } from "./equipped-effects.ts";
-import type { Stat } from "../types.ts";
+import type { Stat, Stats } from "../types.ts";
 import {
   createDamageGcdVectorEvaluator,
   createIntegerDamageFactorEvaluator,
@@ -98,7 +99,7 @@ test("search factors and displayed formulas agree for every supported job", () =
       assert.ok(Math.abs(reconstruct(factors) - effects.damage) < 1e-10);
       assert.equal(factors.gcdCentiseconds, Math.round(effects.gcd * 100));
     }
-    for (const stat of [schema.attackStat, "CRT", "DET", "DHT", "TEN", getSpeedStat(schema)] as Stat[]) {
+    for (const stat of [schema.mainStat, "CRT", "DET", "DHT", "TEN", getSpeedStat(schema)] as Stat[]) {
       assert.ok(Number.isSafeInteger(equippedAttributeTier(schema.id, 100, stat, 1700)));
     }
     const range = equippedSpeedRangeForGcd(schema.id, 100, equippedEffects(schema.id, 100, {})!.gcd)!;
@@ -111,6 +112,55 @@ test("search factors and displayed formulas agree for every supported job", () =
       assert.equal(equippedToughnessForMitigationPercent(schema.id, 100, 0), 0);
     }
   }
+});
+
+test("tank STR main preserves legacy AP, HP, and integer damage factors", () => {
+  const job = jobSchemas.PLD;
+  const level = 100;
+  const levelMod = gameData.jobLevelModifiers[level]!;
+  const baseStats = calculateBaseStats(job, level);
+  const stats: Stats = {
+    ...baseStats,
+    PDMG: 160,
+    STR: 5_000,
+    VIT: 8_000,
+    CRT: 3_200,
+    DET: 2_600,
+    DHT: 2_100,
+    TEN: 1_600,
+    SKS: 1_200,
+  };
+  const contributions: Stats = Object.fromEntries(Object.entries(stats).map(([rawStat, value]) => {
+    const stat = rawStat as Stat;
+    return [stat, value - (baseStats[stat] ?? 0)];
+  }));
+  const contributionVector = vector(contributions);
+  const factors = createIntegerDamageFactorEvaluator(job.id, level, indexes)(contributionVector)!;
+  const equipped = equippedEffects(job.id, level, contributions)!;
+  const displayed = calculateEffects({ stats, job, level, weaponDamage: stats.PDMG! });
+  const floor = (value: number) => Math.trunc(value + 1e-7);
+  const expectedMainFactor = floor(
+    (levelMod.apTank * (floor(stats.STR! * (job.partyBonus ?? 1.05)) - levelMod.main)) /
+      levelMod.main +
+      100,
+  );
+  const expectedHp = levelMod.hp * job.statModifiers.hp! +
+    floor(levelMod.vitTank * (stats.VIT! - levelMod.main));
+
+  assert.equal(job.mainStat, "STR");
+  assert.equal("attackStat" in job, false);
+  assert.equal(factors.mainStat, expectedMainFactor);
+  assert.equal(equippedAttributeTier(
+    job.id,
+    level,
+    "STR",
+    contributions.STR!,
+  ), expectedMainFactor);
+  assert.equal(displayed.hp, expectedHp);
+  assert.equal(equipped.hp, expectedHp);
+  const { ssDamage: _ssDamage, ...equippedDisplay } = equipped;
+  assert.deepEqual(displayed, equippedDisplay);
+  assert.ok(Math.abs(reconstruct(factors) - equipped.damage) < 1e-12);
 });
 
 test("formula thresholds reject unsupported attributes, levels and invalid percentages", () => {

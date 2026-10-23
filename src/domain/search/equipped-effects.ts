@@ -76,18 +76,17 @@ export function createIntegerDamageFactorEvaluator(
   const traitMultiplier = schema.traitDamageMultiplier;
   const effects = (attributes: readonly number[]) => {
     const stat = (name: Stat): number => attributes[statIndexes.get(name) ?? -1] ?? 0;
-    const attackStat: Stat = mainStat === "VIT" ? "STR" : mainStat;
     const weaponStat: Stat = mainStat === "INT" || mainStat === "MND" ? "MDMG" : "PDMG";
     const speedStat: Stat = schema.stats.includes("SKS")
       ? "SKS"
       : "SPS";
-    const attackTier = equippedAttributeTier(job, jobLevel, attackStat, stat(attackStat), clanIndex);
+    const attackTier = equippedAttributeTier(job, jobLevel, mainStat, stat(mainStat), clanIndex);
     const crtTier = equippedAttributeTier(job, jobLevel, "CRT", stat("CRT"), clanIndex);
     const detTier = equippedAttributeTier(job, jobLevel, "DET", stat("DET"), clanIndex);
     const dhtTier = equippedAttributeTier(job, jobLevel, "DHT", stat("DHT"), clanIndex);
     const tenTier = equippedAttributeTier(job, jobLevel, "TEN", stat("TEN"), clanIndex);
     const speedValue = (baseStats[speedStat] ?? 0) + stat(speedStat);
-    const weaponBase = floor((levelMod.main * statModifiers[attackStat]!) / 1000);
+    const weaponBase = floor((levelMod.main * statModifiers[mainStat]!) / 1000);
     const gcdModifier = (jobLevel >= 80 && statModifiers.gcd) || 100;
     const gcdCentiseconds = floor(
       (floor(((1000 - floor((130 * (speedValue - levelMod.sub)) / levelMod.div)) * 2500) / 1000) * gcdModifier) / 1000,
@@ -129,11 +128,9 @@ export function equippedAttributeTier(
   const { main, sub, div, det, detTrunc } = levelMod;
   const baseStats = getBaseStats(job, levelMod, clanIndex);
   const value = (baseStats[stat] ?? 0) + gearAndFoodValue;
-  const attackMainStat = mainStat === "VIT" ? "STR" : mainStat;
-
-  if (stat === attackMainStat) {
+  if (stat === mainStat) {
     return floor(
-      ((mainStat === "VIT" ? levelMod.apTank : levelMod.ap) *
+      ((schema.role === "tank" ? levelMod.apTank : levelMod.ap) *
         (floor(value * (partyBonus ?? 1.05)) - main)) /
         main +
         100,
@@ -239,7 +236,6 @@ function calculateFromTotalStats(
   const { CRT, DET, DHT, TEN, VIT, PIE, PDMG, MDMG } = equippedStats;
   const speedStat: Stat = schema.stats.includes("SKS") ? "SKS" : "SPS";
   const speed = equippedStats[speedStat]!;
-  const attackMainStat = mainStat === "VIT" ? "STR" : mainStat;
   const crtChance =
     floor((200 * (CRT! - sub)) / div + 50 + (job === "BLU" ? 200 : 0)) / 1000;
   const crtDamage = floor((200 * (CRT! - sub)) / div + 1400) / 1000;
@@ -249,14 +245,14 @@ function calculateFromTotalStats(
   const tenDamage = floor((112 * ((TEN ?? sub) - sub)) / div + 1000) / 1000;
   const tenMitigation = floor((200 * ((TEN ?? sub) - sub)) / div) / 1000;
   const weaponDamage =
-    floor((main * statModifiers[attackMainStat]!) / 1000) +
+    floor((main * statModifiers[mainStat]!) / 1000) +
     ((mainStat === "MND" || mainStat === "INT" ? MDMG : PDMG) ?? 0) +
     (job === "BLU" ? blueMageWeaponDamageAddition((equippedStats.INT ?? 0) - (getBaseStats(job, levelMod, clanIndex).INT ?? 0)) : 0);
   const mainDamage =
     floor(
-      ((mainStat === "VIT" ? levelMod.apTank : levelMod.ap) *
+      ((schema.role === "tank" ? levelMod.apTank : levelMod.ap) *
         (floor(
-          (equippedStats[attackMainStat as Stat] ?? 0) * (partyBonus ?? 1.05),
+          (equippedStats[mainStat] ?? 0) * (partyBonus ?? 1.05),
         ) -
           main)) /
         main +
@@ -283,7 +279,7 @@ function calculateFromTotalStats(
   const hp =
     levelMod.hp * statModifiers.hp +
     floor(
-      (mainStat === "VIT" ? levelMod.vitTank : levelMod.vit) * (VIT! - main),
+      (schema.role === "tank" ? levelMod.vitTank : levelMod.vit) * (VIT! - main),
     );
   const mp = floor((150 * ((PIE ?? main) - main)) / div + 200);
   return {

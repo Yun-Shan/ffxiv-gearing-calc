@@ -1,7 +1,10 @@
-const CFC_FIELDS = [
-  "Name", "ItemLevelSync", "ClassJobLevelSync", "JournalGenre", "ContentType",
-  "ContentUICategory", "HighEndDuty", "AllowUndersized", "ContentLinkType",
-];
+import {
+  contentFinderConditionReturnFields,
+  contentTypeReturnFields,
+  contentUICategoryReturnFields,
+  paramGrowReturnFields,
+} from "./mcp-lumina/query-presets.mjs";
+
 const EXPLORATION_LINK_TYPE = 3;
 const BEASTMASTER_CONTENT_TYPE = "●XBM";
 const GROUP_ORDER = [
@@ -62,11 +65,11 @@ export function syncDataFromSnapshot(snapshot, levelCaps, supportedSyncLevels) {
       typeof gameVersion !== "string" || !gameVersion || capability?.gameVersion !== gameVersion)
     throw new Error("同步数据缺少有效的 MCP 来源版本");
 
-  const cfc = validateRows(snapshot, "ContentFinderCondition", CFC_FIELDS);
-  const contentTypes = validateRows(snapshot, "ContentType", ["Name"]);
-  const uiCategories = validateRows(snapshot, "ContentUICategory", ["Name"]);
+  const cfc = validateRows(snapshot, "ContentFinderCondition", contentFinderConditionReturnFields);
+  const contentTypes = validateRows(snapshot, "ContentType", contentTypeReturnFields);
+  const uiCategories = validateRows(snapshot, "ContentUICategory", contentUICategoryReturnFields);
   const paramRows = rowsFromSnapshot(snapshot.rows?.ParamGrow);
-  const paramQuery = queryFor(snapshot, "ParamGrow", ["ItemLevelSync"]);
+  const paramQuery = queryFor(snapshot, "ParamGrow", paramGrowReturnFields);
   const paramDescription = capability.paramGrow;
   const supportedLevels = [...new Set(supportedSyncLevels ?? [])].sort((left, right) => left - right);
   if (!supportedLevels.length || supportedLevels.some((level) => !Number.isSafeInteger(level) || level < 50 || level % 10 !== 0) ||

@@ -149,9 +149,8 @@ export interface JobSchema {
   name: string;
   isLimitedJob: boolean;
   role: "tank" | "healer" | "str" | "dex" | "int";
-  mainStat: "STR" | "DEX" | "INT" | "MND" | "VIT";
+  mainStat: "STR" | "DEX" | "INT" | "MND";
   secondaryStat: "SKS" | "SPS" | "TEN" | "PIE" | "DHT";
-  attackStat: "STR" | "DEX" | "INT" | "MND";
   stats: Stat[];
   statModifiers: Partial<Record<Stat | "hp" | "gcd", number>> & { gcdReason?: string };
   partyBonus?: number;

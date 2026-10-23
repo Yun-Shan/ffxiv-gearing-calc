@@ -66,7 +66,7 @@ node docs/search-optimization/tools/run-acceptance.mjs --timeout-ms 180000
 
 每次运行在 `acceptance-runs/<时间戳>/` 建立新目录，不覆盖旧记录。`suite.json` 和 `suite.md` 汇总场景；每个 `cases/<场景ID>/config.json` 保存输入、阈值来源、实际子进程参数、工作目录、堆上限、profile 开关、日志捕获方式及超时；`result.json` 保存最终结果、证明与耗时判定、逐职业单职业分数、联合结果、求解统计、原始 HiGHS profile 事件、阶段列表和策略摘要。完整 stdout/stderr 分别保存在 `stdout.log`、`stderr.log`。
 
-`strategy-snapshot/` 保存 `src/domain`、`src/data` 中的运行时源码、`scripts/node-tests`、`docs/search-optimization/tools` 下的非测试运行时代码和根目录包清单；其中必须包含 `binary-format.mjs` 与 `binary-format.d.mts`。`data-snapshot/generated-data.bin` 保存本次使用的运行时数据。套件开始时记录策略文件和二进制数据的 SHA-256；每案启动前、结束后重新比对。输入不一致会跳过该案，运行期间发生变化会使该案失败，并在结果中记录变化路径、基线及观测到的哈希和字节数。`suite.json` 还记录游戏数据版本、Git HEAD、dirty 文件、Node 版本、平台、CPU 和内存信息，不保存进程环境变量或密钥。
+`strategy-snapshot/` 保存 `src/domain`、`src/data` 中的运行时源码、`scripts/node-tests`、`docs/search-optimization/tools` 下的非测试运行时代码和根目录包清单；其中必须包含 `src/data/binary` 下的 `schema.ts`、`types.ts`、`encode.ts` 与 `decode.ts`。`data-snapshot/generated-data.bin` 保存本次使用的运行时数据。套件开始时记录策略文件和二进制数据的 SHA-256；每案启动前、结束后重新比对。输入不一致会跳过该案，运行期间发生变化会使该案失败，并在结果中记录变化路径、基线及观测到的哈希和字节数。`suite.json` 还记录游戏数据版本、Git HEAD、dirty 文件、Node 版本、平台、CPU 和内存信息，不保存进程环境变量或密钥。
 
 验收结果按 `schemaVersion: 5` 记录，重点字段包括：
 

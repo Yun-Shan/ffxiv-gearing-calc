@@ -120,7 +120,7 @@ export function calculateEffects({
   clanIndex = defaultClanIndex,
 }: CalculationInput): Effects {
   const levelMod = levelModifierFor(level);
-  const attackModifier = job.statModifiers[job.attackStat];
+  const attackModifier = job.statModifiers[job.mainStat];
   const hpModifier = job.statModifiers.hp;
   if (attackModifier === undefined) throw new Error(`职业 ${job.id} 缺少主属性修正`);
   if (hpModifier === undefined) throw new Error(`职业 ${job.id} 缺少生命值修正`);
@@ -131,7 +131,7 @@ export function calculateEffects({
   const dht = stats.DHT ?? sub;
   const ten = stats.TEN ?? sub;
   const vit = stats.VIT ?? main;
-  const attack = stats[job.attackStat] ?? main;
+  const attack = stats[job.mainStat] ?? main;
   const crtChance = floor((200 * (crt - sub)) / div + 50 + (job.id === "BLU" ? 200 : 0)) / 1000;
   const crtDamage = floor((200 * (crt - sub)) / div + 1400) / 1000;
   const detDamage =
@@ -143,7 +143,7 @@ export function calculateEffects({
   const adjustedAttack = floor(attack * (job.partyBonus ?? 1.05));
   const mainDamage =
     floor(
-      ((job.mainStat === "VIT" ? levelMod.apTank : levelMod.ap) *
+      ((job.role === "tank" ? levelMod.apTank : levelMod.ap) *
         (adjustedAttack - main)) /
         main +
         100,
@@ -170,7 +170,7 @@ export function calculateEffects({
   const hp =
     levelMod.hp * hpModifier +
     floor(
-      (job.mainStat === "VIT" ? levelMod.vitTank : levelMod.vit) * (vit - main),
+      (job.role === "tank" ? levelMod.vitTank : levelMod.vit) * (vit - main),
     );
   const mp = floor((150 * ((stats.PIE ?? main) - main)) / div + 200);
   return {

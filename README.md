@@ -48,6 +48,7 @@ npm test
 npm run test:coverage
 npx vitest run src/ui
 npm run test:data
+npm run test:v3:runner
 npm run data:test:v3
 ```
 
@@ -72,6 +73,8 @@ npm run data:update
 本机需配置游戏目录、EXDSchema 与 Lumina MCP 可执行文件。可用 `FFXIV_MCP_LUMINA_COMMAND`、`McpLumina__GamePath`、`McpLumina__SchemaPath` 和 `FFXIV_MCP_LUMINA_CONCURRENCY` 覆盖查询配置。脚本使用 Node 原生 TypeScript 加载，需使用支持类型擦除的现代 Node（部署构建使用 Node 24）。
 
 参考项目默认检出到 `reference/ffxiv-gearing`，可用 `FFXIV_GEARING_ROOT` 指定其他本地检出。查询和编码在同一次更新中使用相同 commit；所有必需资料及完整产物校验通过后才替换原 bin，失败保留原产物。只保存最终 bin，不再保存查询 JSON、支持旧快照离线重生成或增量补字段。开发、构建及部署直接使用已提交的 bin，不启动 MCP。
+
+装备是否采用 HQ 属性以同版本 MCP `Item.CanBeHq` 为准，伤害类型按适用职业的 `ClassJob.PrimaryStat` 选择。领域统一使用该字段生成的 `mainStat`，不再保存独立 `attackStat`；角色分组取自 `ClassJob.JobType`，未知类型要求先定义新的 Type 类型。受支持的 `ItemSpecialBonus=11` 附加属性仍独立保存并按领域规则启用。
 
 同步面板支持仅等级或具体品级目标，按品级/副本共享生成目录，自定义品级至少 90 且须有完整属性上限。来源与目录生成见[数据规则](docs/rules/数据规则.md#同步等级与副本目录)，计算语义见[领域与搜索规则](docs/rules/领域与搜索规则.md)。
 

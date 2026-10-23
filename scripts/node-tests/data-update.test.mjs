@@ -64,7 +64,7 @@ async function sourceRichPayloadFromCurrentBin() {
   payload.gears = payload.gears.map((gear) => ({
     ...gear,
     sourceFile: 'fixture/gears.js',
-    dataSources: [mcpSource('Item', ['Icon'], [gear.id], version)],
+    dataSources: [mcpSource('Item', ['Icon', 'CanBeHq'], [gear.id], version)],
   }));
   payload.foods = payload.foods.map((food) => ({
     ...food,
@@ -76,7 +76,7 @@ async function sourceRichPayloadFromCurrentBin() {
     {
       ...schema,
       dataSources: [
-        mcpSource('ClassJob', ['Name', 'Abbreviation'], [payload.jobs[jobId].id], version),
+        mcpSource('ClassJob', ['Name', 'Abbreviation', 'PrimaryStat', 'JobType'], [payload.jobs[jobId].id], version),
         referenceSource,
       ],
     },
@@ -107,7 +107,7 @@ test('runtime projection drops only generation audit fields and preserves the ac
     },
     gears: [{ id: 1, source: '点数/诗学', sourceFile: 'data/out/gears.js', dataSources: [{ kind: 'reference' }] }],
     foods: [{ id: 2, sourceFile: 'data/out/foods.js', dataSources: [{ kind: 'reference' }] }],
-    jobSchemas: { PLD: { id: 'PLD', dataSources: [{ kind: 'mcp' }] } },
+    jobSchemas: { PLD: { id: 'PLD', mainStat: 'STR', role: 'tank', dataSources: [{ kind: 'mcp' }] } },
   };
 
   const runtime = projectRuntimeData(payload);
@@ -122,6 +122,10 @@ test('runtime projection drops only generation audit fields and preserves the ac
   assert.equal(Object.hasOwn(runtime.gears[0], 'dataSources'), false);
   assert.equal(Object.hasOwn(runtime.foods[0], 'sourceFile'), false);
   assert.equal(Object.hasOwn(runtime.foods[0], 'dataSources'), false);
+  assert.equal(runtime.jobSchemas.PLD.mainStat, 'STR');
+  assert.equal(runtime.jobSchemas.PLD.role, 'tank');
+  assert.equal(Object.hasOwn(runtime.jobSchemas.PLD, 'JobType'), false);
+  assert.equal(Object.hasOwn(runtime.jobSchemas.PLD, 'attackStat'), false);
   assert.equal(Object.hasOwn(runtime.jobSchemas.PLD, 'dataSources'), false);
 });
 
@@ -153,10 +157,16 @@ test('source-rich generation validates audit shapes and preserves the output on 
     ['empty gear dataSources', (value) => { value.gears[0].dataSources = []; }, /装备 \d+ 缺少逐件来源记录/],
     ['invalid source object', (value) => { value.gears[0].dataSources = [null]; }, /含无效逐件来源记录/],
     ['invalid rowIds', (value) => { value.gears[0].dataSources[0].rowIds = '1'; }, /rowIds 无效/],
+    ['missing CanBeHq source field', (value) => { value.gears[0].dataSources[0].fields = ['Icon']; }, /缺少同版本 MCP Item.CanBeHq 来源记录/],
+    ['cross-version CanBeHq source', (value) => { value.gears[0].dataSources[0].gameVersion = 'older-fixture'; }, /缺少同版本 MCP Item.CanBeHq 来源记录/],
     ['invalid sourceFiles', (value) => { value.gears[0].dataSources[0].sourceFiles = 'fixture.js'; }, /sourceFiles 无效/],
     ['invalid provenance source', (value) => { value.provenance.sources[0] = []; }, /provenance 来源 0 结构无效/],
     ['missing food dataSources', (value) => { delete value.foods[0].dataSources; }, /食物 \d+ 缺少逐件来源记录/],
     ['invalid job dataSources', (value) => { value.jobSchemas.PLD.dataSources = [null]; }, /职业 PLD 缺少或包含无效字段来源记录/],
+    ['missing ClassJob.PrimaryStat source field', (value) => { value.jobSchemas.PLD.dataSources[0].fields = ['Name', 'Abbreviation', 'JobType']; }, /职业 PLD 缺少与 MCP ClassJob.PrimaryStat 对应的同版本来源记录/],
+    ['missing ClassJob.JobType source field', (value) => { value.jobSchemas.PLD.dataSources[0].fields = ['Name', 'Abbreviation', 'PrimaryStat']; }, /职业 PLD 缺少与 MCP ClassJob.PrimaryStat 对应的同版本来源记录/],
+    ['cross-version ClassJob.PrimaryStat source', (value) => { value.jobSchemas.PLD.dataSources[0].gameVersion = 'older-fixture'; }, /职业 PLD 缺少与 MCP ClassJob.PrimaryStat 对应的同版本来源记录/],
+    ['wrong ClassJob.PrimaryStat rowId', (value) => { value.jobSchemas.PLD.dataSources[0].rowIds = [value.jobs.PLD.id + 1]; }, /职业 PLD 缺少与 MCP ClassJob.PrimaryStat 对应的同版本来源记录/],
   ];
 
   try {
@@ -178,6 +188,8 @@ test('source-rich generation validates audit shapes and preserves the output on 
     });
     assert.equal(result.gears.length, payload.gears.length);
     assert.deepEqual(result.gears[0].source, payload.gears[0].source);
+    for (const schema of Object.values(result.jobSchemas))
+      assert.equal(Object.hasOwn(schema, 'attackStat'), false);
     assert.equal(Object.hasOwn(result.gears[0], 'sourceFile'), false);
     assert.equal(Object.hasOwn(result.gears[0], 'dataSources'), false);
   } finally {

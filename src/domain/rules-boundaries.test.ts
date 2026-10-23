@@ -29,7 +29,7 @@ describe("rules runtime boundaries", () => {
   it("uses 100% for an omitted optional secondary modifier and defaults missing speed", () => {
     const sam = jobSchemas.SAM;
     const optionalStat = sam.stats.find(
-      (stat) => stat !== sam.attackStat && sam.statModifiers[stat] === undefined,
+      (stat) => stat !== sam.mainStat && sam.statModifiers[stat] === undefined,
     );
     expect(optionalStat).toBeDefined();
     const withoutOptionalModifier = {
@@ -74,7 +74,7 @@ describe("rules runtime boundaries", () => {
     expect(() => calculateEffects({ ...input, level: 999 })).toThrow();
     expect(() => calculateEffects({
       ...input,
-      job: { ...sam, statModifiers: { ...sam.statModifiers, [sam.attackStat]: undefined } },
+      job: { ...sam, statModifiers: { ...sam.statModifiers, [sam.mainStat]: undefined } },
     })).toThrow();
     expect(() => calculateEffects({
       ...input,

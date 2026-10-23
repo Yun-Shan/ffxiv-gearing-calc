@@ -600,11 +600,11 @@ export function foodsFor(config: OptimizationConfig): Food[] {
 function paretoAttributeStats(jobId: JobId): Stat[] {
   const schema = jobSchemas[jobId];
   if (schema.mainStat === undefined) return attributeStats;
-  const attackStat: Stat = schema.mainStat === "VIT" ? "STR" : schema.mainStat;
+  const mainStat: Stat = schema.mainStat;
   const weaponStat: Stat =
     schema.mainStat === "INT" || schema.mainStat === "MND" ? "MDMG" : "PDMG";
   const relevant = new Set<Stat>([
-    attackStat,
+    mainStat,
     weaponStat,
     "DET",
     "TEN",

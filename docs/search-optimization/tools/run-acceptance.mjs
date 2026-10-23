@@ -7,7 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { StringDecoder } from "node:string_decoder";
 import { performance } from "node:perf_hooks";
-import { decodeGeneratedData } from "../../../src/data/binary-format.mjs";
+import { decodeGeneratedData } from "../../../src/data/binary/decode.ts";
 import { compareHistoricalTiming, evaluateOptimizationTarget } from "./timing-acceptance.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -281,8 +281,10 @@ const PACKAGE_MANIFEST_FILES = [
   "yarn.lock",
 ];
 const REQUIRED_BINARY_DATA_SOURCE_FILES = [
-  "src/data/binary-format.mjs",
-  "src/data/binary-format.d.mts",
+  "src/data/binary/schema.ts",
+  "src/data/binary/types.ts",
+  "src/data/binary/encode.ts",
+  "src/data/binary/decode.ts",
 ];
 const RUNTIME_SOURCE_EXTENSION = /\.(?:[cm]?[jt]sx?)$/i;
 const TEST_SOURCE_FILE = /(?:^|[.-])(?:test|spec)\.[^.]+$/i;

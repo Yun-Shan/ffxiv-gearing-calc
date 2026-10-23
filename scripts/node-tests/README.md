@@ -5,7 +5,8 @@
 ## 命令
 
 ```powershell
-npm run test:data       # MCP 数据导入器的 Node 测试
+npm run test:data       # MCP 查询、数据导入与二进制回归
+npm run test:v3:runner  # 联合验收入口的配置、报告与 Worker 保护回归
 npm run data:test:v3    # 正式领域层的多职业联合搜索验收
 npm test                # Vitest 单元测试，包括 src/domain 中的规则与算法测试
 ```

@@ -147,19 +147,13 @@ function food(itemId: number, stats: readonly number[]): FoodInfo {
 function statIndexesFor(job: JobId): ReadonlyMap<Stat, number> {
   const schema = gameData.jobSchemas[job];
   assert.ok(schema.mainStat);
-  const attackStat: Stat = schema.mainStat === "VIT" ? "STR" : schema.mainStat;
-  assert.equal(
-    schema.attackStat,
-    attackStat,
-    `${job} main and attack stats must agree`,
-  );
   assert.ok(
-    schema.stats.includes(attackStat),
-    `${job} schema must include its attack stat`,
+    schema.stats.includes(schema.mainStat),
+    `${job} schema must include its main stat`,
   );
   const weaponStat: Stat = schema.mainStat === "INT" || schema.mainStat === "MND" ? "MDMG" : "PDMG";
   const speedStat: Stat = schema.stats.includes("SKS") ? "SKS" : "SPS";
-  const stats: Stat[] = [attackStat, weaponStat, "CRT", "DET", "DHT", "TEN", speedStat];
+  const stats: Stat[] = [schema.mainStat, weaponStat, "CRT", "DET", "DHT", "TEN", speedStat];
   return new Map(stats.map((stat) => {
     const attributeId = attributeIdByStat[stat];
     assert.notEqual(attributeId, undefined, `fixture must map the ${stat} vector coordinate`);

@@ -93,4 +93,11 @@ test("the final generated bin keeps provenance summary and excludes per-item aud
   }
   for (const schema of Object.values(data.jobSchemas))
     assert.equal(Object.hasOwn(schema, "dataSources"), false);
+  for (const schema of Object.values(data.jobSchemas)) {
+    assert.ok(["STR", "DEX", "INT", "MND"].includes(schema.mainStat));
+    assert.ok(["tank", "healer", "str", "dex", "int"].includes(schema.role));
+    assert.equal(Object.hasOwn(schema, "attackStat"), false);
+    assert.equal(Object.hasOwn(schema, "JobType"), false);
+    assert.equal(Object.hasOwn(schema, "jobType"), false);
+  }
 });

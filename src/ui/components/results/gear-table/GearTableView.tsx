@@ -179,7 +179,7 @@ export function GearTableView({
 }) {
   const job = jobSchemas[jobId];
   const statColumns = [
-    job.attackStat,
+    job.mainStat,
     "CRT",
     "DET",
     "DHT",

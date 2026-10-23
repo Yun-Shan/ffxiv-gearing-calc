@@ -1,7 +1,7 @@
 import { wire } from "./shared/schema.ts";
 
 export const MAGIC = new TextEncoder().encode("FFXIVGDB");
-export const FORMAT_VERSION = 12;
+export const FORMAT_VERSION = 13;
 export const SECTION_NAMES = [
   "METADATA",
   "JOBS",

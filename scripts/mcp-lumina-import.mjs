@@ -11,145 +11,14 @@ export const supportedJobIds = [
   "SAM", "RPR", "VPR", "BRD", "MCH", "DNC", "BLM", "SMN", "RDM", "PCT", "BLU", "BST",
 ];
 
-export const itemReturnFields = [
-  "Name",
-  "DamagePhys",
-  "DamageMag",
-  "Delayms",
-  "DefensePhys",
-  "DefenseMag",
-  "BaseParamValue[0]",
-  "BaseParamValue[1]",
-  "BaseParamValue[2]",
-  "BaseParamValue[3]",
-  "BaseParamValue[4]",
-  "BaseParamValue[5]",
-  "BaseParamValueSpecial[0]",
-  "BaseParamValueSpecial[1]",
-  "BaseParamValueSpecial[2]",
-  "BaseParamValueSpecial[3]",
-  "BaseParamValueSpecial[4]",
-  "BaseParamValueSpecial[5]",
-  "LevelEquip",
-  "ClassJobCategory",
-  "BaseParam[0]",
-  "BaseParam[1]",
-  "BaseParam[2]",
-  "BaseParam[3]",
-  "BaseParam[4]",
-  "BaseParam[5]",
-  "BaseParamSpecial[0]",
-  "BaseParamSpecial[1]",
-  "BaseParamSpecial[2]",
-  "BaseParamSpecial[3]",
-  "BaseParamSpecial[4]",
-  "BaseParamSpecial[5]",
-  "ItemSpecialBonus",
-  "ItemSpecialBonusParam",
-  "MateriaSlotCount",
-  "IsAdvancedMeldingPermitted",
-  "IsUnique",
-  "SubStatCategory",
-  "LevelItem",
-  "EquipSlotCategory",
-  "CanBeHq",
-  "Icon",
-  "Rarity",
-  "ItemAction",
-  "ItemUICategory",
-  "FilterGroup",
-];
-
-export const itemLevelReturnFields = [
-  "Strength",
-  "Dexterity",
-  "Vitality",
-  "Intelligence",
-  "Mind",
-  "Piety",
-  "GP",
-  "CP",
-  "Craftsmanship",
-  "Control",
-  "Gathering",
-  "Perception",
-  "PhysicalDamage",
-  "MagicalDamage",
-  "Delay",
-  "Tenacity",
-  "DirectHitRate",
-  "CriticalHit",
-  "Determination",
-  "SkillSpeed",
-  "SpellSpeed",
-];
-
-export const itemActionReturnFields = [
-  "Action",
-  "Data[0]",
-  "Data[1]",
-  "Data[2]",
-  "Data[3]",
-  "Data[4]",
-  "Data[5]",
-  "Data[6]",
-  "Data[7]",
-  "Data[8]",
-];
-
-export const itemFoodReturnFields = [
-  "Max[0]",
-  "Max[1]",
-  "Max[2]",
-  "MaxHQ[0]",
-  "MaxHQ[1]",
-  "MaxHQ[2]",
-  "BaseParam[0]",
-  "BaseParam[1]",
-  "BaseParam[2]",
-  "Value[0]",
-  "Value[1]",
-  "Value[2]",
-  "ValueHQ[0]",
-  "ValueHQ[1]",
-  "ValueHQ[2]",
-  "IsRelative[0]",
-  "IsRelative[1]",
-  "IsRelative[2]",
-];
-
-export const mandervilleReturnFields = [
-  "Materia[0]",
-  "Materia[1]",
-  "Materia[2]",
-  "Materia[3]",
-  "UpgradeItem",
-  "Image",
-  "UpgradeCost",
-  "Unknown7",
-  "MateriaBigValueIndex[0]",
-  "MateriaBigValueIndex[1]",
-  "MateriaBigValueIndex[2]",
-  "MateriaBigValueIndex[3]",
-  "MateriaSmallValueIndex[0]",
-  "MateriaSmallValueIndex[1]",
-  "MateriaSmallValueIndex[2]",
-  "MateriaSmallValueIndex[3]",
-];
-
-export const classJobReturnFields = [
-  "Name",
-  "Abbreviation",
-  "ModifierHitPoints",
-  "ModifierStrength",
-  "ModifierVitality",
-  "ModifierDexterity",
-  "ModifierIntelligence",
-  "ModifierMind",
-  "ModifierPiety",
-  "IsLimitedJob",
-  "CanWearShield",
-];
+export {
+  itemReturnFields,
+  itemLevelReturnFields,
+  itemActionReturnFields,
+  itemFoodReturnFields,
+  mandervilleReturnFields,
+  classJobReturnFields,
+} from "./mcp-lumina/query-presets.mjs";
 
 const statByBaseParam = new Map([
   [1, "STR"],
@@ -191,11 +60,53 @@ export function rowMap(rows = []) {
 }
 
 export function normalizeMcpClassJobRow(row) {
-  const values = fieldsOf(row);
-  if (!values) return undefined;
+  const values = fieldsOf(row) ?? {};
   const name = typeof values.Name === "string" ? values.Name : undefined;
-  const abbreviation = typeof values.Abbreviation === "string" ? values.Abbreviation : undefined;
-  if (!name || !abbreviation) return undefined;
+  const abbreviation = typeof values.Abbreviation === "string" && values.Abbreviation
+    ? values.Abbreviation
+    : "未知缩写";
+  const rowLabel = Number.isSafeInteger(row?.rowId) ? row.rowId : "未知";
+
+  const supportedJobTypes = new Set([1, 2, 3, 4, 5, 6]);
+  const jobType = values.JobType;
+  if (!Number.isSafeInteger(jobType) || !supportedJobTypes.has(jobType))
+    throw new Error(`MCP ClassJob ${abbreviation} 行 ${rowLabel} 的 JobType 原值 ${String(jobType)} 无效，需要定义新的 Type 类型`);
+
+  const mainStatByPrimaryStat = new Map([
+    [1, "STR"],
+    [2, "DEX"],
+    [4, "INT"],
+    [5, "MND"],
+  ]);
+  const mainStat = Number.isSafeInteger(values.PrimaryStat)
+    ? mainStatByPrimaryStat.get(values.PrimaryStat)
+    : undefined;
+  if (!mainStat) {
+    throw new Error(`MCP ClassJob ${abbreviation} 行 ${rowLabel} 的 PrimaryStat 原值 ${String(values.PrimaryStat)} 必须是受支持的 uint（1=STR、2=DEX、4=INT、5=MND）`);
+  }
+
+  const mainStatsByJobType = new Map([
+    [1, ["STR"]],
+    [2, ["MND"]],
+    [3, ["STR", "DEX"]],
+    [4, ["DEX"]],
+    [5, ["INT"]],
+    [6, ["MND"]],
+  ]);
+  const allowedMainStats = mainStatsByJobType.get(jobType);
+  if (!allowedMainStats.includes(mainStat))
+    throw new Error(`MCP ClassJob ${abbreviation} 行 ${rowLabel} 的 JobType 原值 ${jobType} 与 PrimaryStat 原值 ${String(values.PrimaryStat)}（${mainStat}）不兼容`);
+  const role = jobType === 1
+    ? "tank"
+    : jobType === 2 || jobType === 6
+      ? "healer"
+      : jobType === 3
+        ? mainStat === "STR" ? "str" : "dex"
+        : jobType === 4
+          ? "dex"
+          : "int";
+
+  if (!name || abbreviation === "未知缩写") return undefined;
 
   const modifierFields = {
     hp: "ModifierHitPoints",
@@ -218,6 +129,8 @@ export function normalizeMcpClassJobRow(row) {
   return {
     name,
     abbreviation,
+    mainStat,
+    role,
     statModifiers,
     isLimitedJob: values.IsLimitedJob,
     canWearShield: values.CanWearShield,
@@ -256,6 +169,34 @@ function requiredUInt32(row, name) {
   return value;
 }
 
+function hasDamageParameters(row, special = false) {
+  const suffix = special ? "Special" : "";
+  for (let index = 0; index < 6; index++) {
+    const stat = statByBaseParam.get(field(row, `BaseParam${suffix}[${index}]`));
+    if ((stat === "PDMG" || stat === "MDMG") &&
+        numberOrUndefined(field(row, `BaseParamValue${suffix}[${index}]`)) > 0)
+      return true;
+  }
+  return false;
+}
+
+function damageStatForJobs(row, jobs, jobSchemas, required) {
+  if (!jobSchemas || typeof jobSchemas !== "object" || Array.isArray(jobSchemas))
+    throw new Error("MCP 装备归一化缺少职业主属性 schema");
+  const damageStats = new Set();
+  for (const job of jobs) {
+    const mainStat = jobSchemas[job]?.mainStat;
+    if (mainStat === "INT" || mainStat === "MND") damageStats.add("MDMG");
+    else if (mainStat === "STR" || mainStat === "DEX") damageStats.add("PDMG");
+    else
+      throw new Error(`MCP Item 行 ${row.rowId} 的适用职业 ${job} 缺少有效主属性，无法确定武器伤害类型`);
+  }
+  if (!required) return undefined;
+  if (damageStats.size !== 1)
+    throw new Error(`MCP Item 行 ${row.rowId} 的适用职业 ${jobs.join(", ")} 跨物理和魔法伤害，必须为该物品硬编码伤害类型映射`);
+  return [...damageStats][0];
+}
+
 function readSpecialStats(row, { damageStat, requireComplete = false } = {}) {
   const stats = {};
   for (let index = 0; index < 6; index++) {
@@ -273,8 +214,9 @@ function readSpecialStats(row, { damageStat, requireComplete = false } = {}) {
       const rowId = Number.isSafeInteger(row?.rowId) ? ` ${row.rowId}` : "";
       throw new Error(`MCP Item 行${rowId} 的 ${baseParamField} 不支持 BaseParam ${baseParam}`);
     }
+    const isWeaponDamage = stat === "PDMG" || stat === "MDMG";
     if (stat && value !== undefined && value > 0 &&
-        (!(stat === "PDMG" || stat === "MDMG") || stat === damageStat))
+        (!isWeaponDamage || stat === damageStat))
       stats[stat] = (stats[stat] ?? 0) + value;
   }
   return stats;
@@ -286,23 +228,19 @@ function readStats(row, { hq = false, damageStat, isWeapon = false } = {}) {
     const baseParam = numberOrUndefined(field(row, `BaseParam[${index}]`));
     const value = numberOrUndefined(field(row, `BaseParamValue[${index}]`));
     const stat = statByBaseParam.get(baseParam);
-    if (stat && value !== undefined && value > 0) stats[stat] = value;
+    const isWeaponDamage = stat === "PDMG" || stat === "MDMG";
+    if (stat && value !== undefined && value > 0 &&
+        (!isWeaponDamage || stat === damageStat)) stats[stat] = value;
   }
-  const physical = isWeapon
-    ? requiredNonNegativeInteger(row, "DamagePhys")
-    : numberOrUndefined(field(row, "DamagePhys"));
-  const magical = isWeapon
-    ? requiredNonNegativeInteger(row, "DamageMag")
-    : numberOrUndefined(field(row, "DamageMag"));
+  if (isWeapon) {
+    const physical = requiredNonNegativeInteger(row, "DamagePhys");
+    const magical = requiredNonNegativeInteger(row, "DamageMag");
+    if (damageStat === "PDMG") stats.PDMG = physical;
+    if (damageStat === "MDMG") stats.MDMG = magical;
+  }
   const delay = isWeapon
     ? requiredNonNegativeInteger(row, "Delayms")
     : numberOrUndefined(field(row, "Delayms"));
-  if (damageStat === "PDMG" && physical !== undefined) stats.PDMG = physical;
-  if (damageStat === "MDMG" && magical !== undefined) stats.MDMG = magical;
-  if (isWeapon && damageStat === undefined) {
-    stats.PDMG = physical;
-    stats.MDMG = magical;
-  }
   if (delay !== undefined && delay > 0) stats.DLY = delay;
   if (hq) {
     for (const [stat, value] of Object.entries(readSpecialStats(row, { damageStat })))
@@ -311,8 +249,7 @@ function readStats(row, { hq = false, damageStat, isWeapon = false } = {}) {
   return stats;
 }
 
-export function normalizeMcpGearRow(row, fallback, categoryRow, options = {}) {
-  const { hq = false } = options;
+export function normalizeMcpGearRow(row, fallback, categoryRow, { jobSchemas, isWeapon: isWeaponOption } = {}) {
   if (!row) return undefined;
   const itemFields = fieldsOf(row);
   if (!itemFields) {
@@ -336,15 +273,16 @@ export function normalizeMcpGearRow(row, fallback, categoryRow, options = {}) {
   const materiaSlots = numberOrUndefined(itemFields.MateriaSlotCount);
   if (rawSlot === undefined || level === undefined || equipLevel === undefined || materiaSlots === undefined)
     return undefined;
-  const damageStat = fallback?.stats?.PDMG !== undefined
-    ? "PDMG"
-    : fallback?.stats?.MDMG !== undefined
-      ? "MDMG"
-      : undefined;
-  const isWeapon = options.isWeapon ?? fallback?.slot === "weapon";
+  const isWeapon = isWeaponOption ?? fallback?.slot === "weapon";
   const itemSpecialBonus = requiredUInt32(row, "ItemSpecialBonus");
   const itemSpecialBonusParam = requiredUInt32(row, "ItemSpecialBonusParam");
+  const hq = itemFields.CanBeHq;
+  if (typeof hq !== "boolean")
+    throw new Error(`MCP Item 行 ${row.rowId} 的 CanBeHq 未查询或不是有效布尔值`);
   const hasSupportedSpecialBonus = supportedItemSpecialBonusIds.includes(itemSpecialBonus);
+  const requiresDamageType = isWeapon || hasDamageParameters(row) ||
+    ((hq || hasSupportedSpecialBonus) && hasDamageParameters(row, true));
+  const damageStat = damageStatForJobs(row, jobs, jobSchemas, requiresDamageType);
   const stats = readStats(row, { hq: hq && !hasSupportedSpecialBonus, damageStat, isWeapon });
   const specialBonusData = hasSupportedSpecialBonus
     ? {

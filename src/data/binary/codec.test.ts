@@ -11,6 +11,8 @@ import { decodeGeneratedData } from "./decode.ts";
 import { encodeGeneratedData } from "./encode.ts";
 import { decodeGearCatalog } from "./sections/gear-catalog/read.ts";
 import { encodeGearCatalog } from "./sections/gear-catalog/write.ts";
+import { readSection as readJobsSection } from "./sections/jobs/read.ts";
+import { writeSection as writeJobsSection } from "./sections/jobs/write.ts";
 import { readSection as readFoodsSection } from "./sections/foods/read.ts";
 import { writeSection as writeFoodsSection } from "./sections/foods/write.ts";
 import { readSection as readLevelCapsSection } from "./sections/item-level-caps/read.ts";
@@ -297,7 +299,7 @@ function makeBareGear(
   return { ...gear, ...overrides };
 }
 
-describe("format 12 wire schema", () => {
+describe("format 13 wire schema", () => {
   it("matches the independent little-endian, UTF-8, optional-mask, and enum golden bytes", () => {
     const bytes = encodeSection(
       goldenSchema,
@@ -349,11 +351,12 @@ describe("format 12 wire schema", () => {
   });
 });
 
-describe("format 12 container integrity", () => {
-  it("writes the version 12 header and an exact ten-section directory", () => {
+describe("format 13 container integrity", () => {
+  it("writes the version 13 header and an exact ten-section directory", () => {
     const bytes = makeContainer();
     const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 
+    expect(FORMAT_VERSION).toBe(13);
     expect(view.getUint16(8, true)).toBe(FORMAT_VERSION);
     expect(view.getUint16(12, true)).toBe(10);
     expect(view.getUint16(14, true)).toBe(HEADER_BYTES);
@@ -366,11 +369,7 @@ describe("format 12 container integrity", () => {
     const valid = makeContainer();
 
     const unsupportedVersion = valid.slice();
-    new DataView(unsupportedVersion.buffer).setUint16(
-      8,
-      FORMAT_VERSION - 1,
-      true,
-    );
+    new DataView(unsupportedVersion.buffer).setUint16(8, 12, true);
     expect(() => readContainer(resealCrc(unsupportedVersion))).toThrow(
       /不支持的格式版本/,
     );
@@ -465,6 +464,81 @@ describe("generated snapshot codec", () => {
       ),
     ).toBe(true);
   }, 300_000);
+
+  it("roundtrips unique primary job main stats without a duplicate attack stat", () => {
+    const bytes = writeJobsSection({
+      jobs: generatedPayload.jobs,
+      jobSchemas: generatedPayload.jobSchemas,
+    });
+    const decoded = readJobsSection(bytes);
+
+    expect(
+      Object.values(decoded.jobSchemas)
+        .filter((job) => job.role === "tank")
+        .every((job) => job.mainStat === "STR"),
+    ).toBe(true);
+    expect(
+      Object.values(decoded.jobSchemas).every(
+        (job) => !Object.hasOwn(job, "attackStat"),
+      ),
+    ).toBe(true);
+    expect(decoded).toEqual({
+      jobs: generatedPayload.jobs,
+      jobSchemas: generatedPayload.jobSchemas,
+    });
+  });
+
+  it("indexes tank and STR DPS gear together under STR and preserves their job lists", () => {
+    const tankJobs = (
+      Object.keys(generatedPayload.jobSchemas) as JobId[]
+    ).filter(
+      (jobId) =>
+        generatedPayload.jobSchemas[jobId].role === "tank" &&
+        generatedPayload.jobSchemas[jobId].mainStat === "STR",
+    );
+    const strDpsJobs = (
+      Object.keys(generatedPayload.jobSchemas) as JobId[]
+    ).filter(
+      (jobId) =>
+        generatedPayload.jobSchemas[jobId].role === "str" &&
+        generatedPayload.jobSchemas[jobId].mainStat === "STR",
+    );
+    expect(tankJobs.length).toBeGreaterThan(0);
+    expect(strDpsJobs.length).toBeGreaterThan(0);
+
+    const sourceGear = generatedPayload.gears[0]!;
+    const tankGear = makeBareGear(sourceGear, {
+      id: 1_200_000_001,
+      name: "tank-str-gear",
+      jobs: tankJobs,
+    });
+    const strDpsGear = makeBareGear(sourceGear, {
+      id: 1_200_000_002,
+      name: "str-dps-gear",
+      jobs: strDpsJobs,
+    });
+    const catalog = encodeGearCatalog(
+      [tankGear, strDpsGear],
+      generatedPayload.jobSchemas,
+    );
+    const decoded = decodeGearCatalog(
+      catalog.bytes,
+      Object.keys(generatedPayload.jobSchemas) as JobId[],
+    );
+
+    expect(catalog.gearPhysicalGroupRanges.VIT.count).toBe(0);
+    expect(catalog.gearPhysicalGroupRanges.STR.count).toBe(2);
+    expect(decoded.gearPhysicalGroupRanges.VIT.count).toBe(0);
+    expect(decoded.gearIndexesByMainStat.VIT).toHaveLength(0);
+    expect(decoded.gearIndexesByMainStat.STR).toHaveLength(2);
+    expect(decoded.getGearById(tankGear.id)?.jobs).toEqual(tankJobs);
+    expect(decoded.getGearById(strDpsGear.id)?.jobs).toEqual(strDpsJobs);
+    const indexedIds = Array.from(
+      decoded.gearIndexesByMainStat.STR,
+      (index) => decoded.getGearAtRecordIndex(index).id,
+    ).sort((left, right) => left - right);
+    expect(indexedIds).toEqual([tankGear.id, strDpsGear.id]);
+  });
 
   it("rejects an out-of-range main-stat record reference after CRC repair", async () => {
     const payload = makeMinimalPayload(generatedPayload);

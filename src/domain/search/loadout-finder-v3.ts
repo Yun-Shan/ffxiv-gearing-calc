@@ -566,10 +566,10 @@ function canonicalBaselineDamageAttributes(context: JobContext): ReadonlySet<num
     context.job.options.equipmentAttributeExtractor !== undefined) return undefined;
   const schema = gameData.jobSchemas[context.job.options.job];
   if (schema?.mainStat === undefined) return undefined;
-  const attackStat: Stat = schema.mainStat === "VIT" ? "STR" : schema.mainStat;
+  const mainStat: Stat = schema.mainStat;
   const weaponStat: Stat = schema.mainStat === "INT" || schema.mainStat === "MND" ? "MDMG" : "PDMG";
   const speedStat: Stat = schema.stats.includes("SKS") ? "SKS" : "SPS";
-  const relevantStats: readonly Stat[] = [attackStat, weaponStat, "DET", "TEN", "CRT", "DHT", speedStat];
+  const relevantStats: readonly Stat[] = [mainStat, weaponStat, "DET", "TEN", "CRT", "DHT", speedStat];
   const result = new Set<number>();
   for (const stat of relevantStats) {
     const vectorIndex = context.job.options.statIndexes.get(stat);

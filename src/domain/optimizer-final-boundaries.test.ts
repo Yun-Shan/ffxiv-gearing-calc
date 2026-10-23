@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { foods, gameData } from "./data";
+import { jobSchemas } from "./jobs";
 import {
   findFeasibleGcdsLocally,
   gearOptionsFor,
@@ -104,6 +105,10 @@ describe("optimizer public adapter final boundaries", () => {
     ["RDM", "WHM"],
     ["PLD", "RPR"],
   ] as const)("rejects joint search when %s and %s belong to different groups", async (firstJob, secondJob) => {
+    if (firstJob === "PLD" && secondJob === "RPR") {
+      expect(jobSchemas.PLD.mainStat).toBe("STR");
+      expect(jobSchemas.RPR.mainStat).toBe("STR");
+    }
     const jobConfig = (jobId: JobId): OptimizationConfig => ({
       jobId,
       minItemLevel: 15,

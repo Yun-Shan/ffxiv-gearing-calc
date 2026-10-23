@@ -71,6 +71,17 @@ describe("ItemSpecialBonus gear stats", () => {
     expect(itemSpecialBonusAdditions(gear, jobSchemas.BST, [10])).toEqual({});
   });
 
+  it("resolves a tank special main placeholder to its unified STR main stat", () => {
+    const additions = itemSpecialBonusAdditions(
+      bonusGear(),
+      jobSchemas.PLD,
+      [11],
+    );
+
+    expect(jobSchemas.PLD.mainStat).toBe("STR");
+    expect(additions).toEqual({ STR: 18, TEN: 5 });
+  });
+
   it("appends the bonus onto already-final stats without clipping it", () => {
     const gear = bonusGear();
     const capped = { STR: 30, DHT: 12 };

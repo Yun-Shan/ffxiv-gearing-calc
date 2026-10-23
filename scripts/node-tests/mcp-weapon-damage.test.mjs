@@ -36,6 +36,7 @@ const itemRow = {
     "BaseParamValue[5]": 0,
     ItemSpecialBonus: 0,
     ItemSpecialBonusParam: 0,
+    CanBeHq: false,
     MateriaSlotCount: 0,
     SubStatCategory: 0,
     LevelItem: 1,
@@ -56,6 +57,8 @@ const fallback = {
   jobCategory: 1,
   stats: {},
 };
+const jobSchemas = { PLD: { mainStat: "STR" } };
+const normalizeOptions = { jobSchemas };
 const namedZeroDamageFixture = {
   ...itemRow,
   rowId: fallback.id,
@@ -65,26 +68,26 @@ const namedZeroDamageFixture = {
 test("blank-name MCP Item 33146 is excluded from gear and food normalization", () => {
   assert.equal(itemRow.fields.Name, "");
   assert.equal(normalizeMcpItemName(itemRow), undefined);
-  assert.equal(normalizeMcpGearRow(itemRow, { ...fallback, id: 33146 }, categoryRow), undefined);
+  assert.equal(normalizeMcpGearRow(itemRow, { ...fallback, id: 33146 }, categoryRow, normalizeOptions), undefined);
   assert.equal(normalizeMcpFoodRows(itemRow, undefined, {}, {}), undefined);
   const whitespaceNameRow = {
     ...namedZeroDamageFixture,
     fields: { ...namedZeroDamageFixture.fields, Name: " \t " },
   };
-  assert.equal(normalizeMcpGearRow(whitespaceNameRow, fallback, categoryRow), undefined);
+  assert.equal(normalizeMcpGearRow(whitespaceNameRow, fallback, categoryRow, normalizeOptions), undefined);
   assert.equal(normalizeMcpFoodRows(whitespaceNameRow, undefined, {}, {}), undefined);
 });
 
-test("weapon normalization preserves confirmed native zero damage in an isolated fixture", () => {
+test("weapon normalization preserves selected native zero damage in an isolated fixture", () => {
   for (const field of ["DamagePhys", "DamageMag", "Delayms"])
     assert.ok(itemReturnFields.includes(field), `MCP Item query requests ${field}`);
   assert.equal(itemRow.fields.DamagePhys, 0);
   assert.equal(itemRow.fields.DamageMag, 0);
   assert.equal(itemRow.fields.Delayms, 2240);
 
-  const normalized = normalizeMcpGearRow(namedZeroDamageFixture, fallback, categoryRow);
+  const normalized = normalizeMcpGearRow(namedZeroDamageFixture, fallback, categoryRow, normalizeOptions);
   assert.equal(normalized.stats.PDMG, 0);
-  assert.equal(normalized.stats.MDMG, 0);
+  assert.equal(normalized.stats.MDMG, undefined);
   assert.equal(normalized.stats.DLY, 2240);
   assert.equal(normalized.weaponDamage, 0);
 });
@@ -92,8 +95,9 @@ test("weapon normalization preserves confirmed native zero damage in an isolated
 test("weapon normalization retains an explicitly selected zero primary damage stat", () => {
   const normalized = normalizeMcpGearRow(
     namedZeroDamageFixture,
-    { ...fallback, stats: { PDMG: 9 } },
+    { ...fallback, stats: { MDMG: 9 } },
     categoryRow,
+    normalizeOptions,
   );
   assert.equal(normalized.stats.PDMG, 0);
   assert.equal(normalized.weaponDamage, 0);
@@ -110,7 +114,7 @@ test("weapon normalization rejects absent, malformed, or negative native fields"
     const fields = { ...namedZeroDamageFixture.fields };
     mutate(fields);
     assert.throws(
-      () => normalizeMcpGearRow({ ...namedZeroDamageFixture, fields }, fallback, categoryRow),
+      () => normalizeMcpGearRow({ ...namedZeroDamageFixture, fields }, fallback, categoryRow, normalizeOptions),
       /必须是非负安全整数/,
       label,
     );
@@ -122,7 +126,7 @@ test("Item rows with a missing Name field fail explicitly", () => {
   delete fields.Name;
   const malformedRow = { ...namedZeroDamageFixture, fields };
   assert.throws(
-    () => normalizeMcpGearRow(malformedRow, fallback, categoryRow),
+    () => normalizeMcpGearRow(malformedRow, fallback, categoryRow, normalizeOptions),
     /缺少有效 Name 字段/,
   );
   assert.throws(
@@ -132,7 +136,7 @@ test("Item rows with a missing Name field fail explicitly", () => {
 });
 
 test("present Item rows with missing fields or a non-string Name fail explicitly", () => {
-  assert.equal(normalizeMcpGearRow(undefined, fallback, categoryRow), undefined);
+  assert.equal(normalizeMcpGearRow(undefined, fallback, categoryRow, normalizeOptions), undefined);
   assert.equal(normalizeMcpFoodRows(undefined, undefined, {}, {}), undefined);
 
   const malformedRows = [
@@ -145,7 +149,7 @@ test("present Item rows with missing fields or a non-string Name fail explicitly
   ];
   for (const [label, row] of malformedRows) {
     assert.throws(
-      () => normalizeMcpGearRow(row, fallback, categoryRow),
+      () => normalizeMcpGearRow(row, fallback, categoryRow, normalizeOptions),
       /缺少 ?(?:fields|有效 Name 字段)/,
       label,
     );

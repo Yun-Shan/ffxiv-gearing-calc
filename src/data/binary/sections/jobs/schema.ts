@@ -45,13 +45,12 @@ export const STAT_NAMES = [
   "DLY",
 ] as const satisfies readonly Stat[];
 
-export const MAIN_STATS = ["VIT", "STR", "DEX", "MND", "INT"] as const;
 export const SECONDARY_STATS = ["SKS", "SPS", "TEN", "PIE", "DHT"] as const;
-export const ATTACK_STATS = ["STR", "DEX", "INT", "MND"] as const;
+export const PRIMARY_STATS = ["STR", "DEX", "INT", "MND"] as const;
 
 const jobIdSchema = wire.enum(JOB_IDS);
 const statSchema = wire.enum(STAT_NAMES);
-const mainStatSchema = wire.enum(MAIN_STATS);
+const mainStatSchema = wire.enum(PRIMARY_STATS);
 const statModifierSchema = wire.struct([
   ["STR", wire.optional(wire.f64)],
   ["DEX", wire.optional(wire.f64)],
@@ -86,7 +85,6 @@ const jobSchema = wire.struct([
   ["role", wire.enum(["tank", "healer", "str", "dex", "int"] as const)],
   ["mainStat", mainStatSchema],
   ["secondaryStat", wire.enum(SECONDARY_STATS)],
-  ["attackStat", wire.enum(ATTACK_STATS)],
   ["stats", wire.array(statSchema)],
   ["statModifiers", statModifierSchema],
   ["partyBonus", wire.optional(wire.f64)],
