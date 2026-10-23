@@ -1,0 +1,54 @@
+[
+  {
+    "conditionalKept": 234,
+    "conditionalScope": "Other factors fixed to sampled incumbent factors, budgets unchanged; illustrative conditional branch certificate only.",
+    "label": "BLM 770–780",
+    "crtSlices": 234,
+    "kept": 234,
+    "minKept": 0,
+    "maxKept": 3239,
+    "sampleIncumbent": "3614442813135754080000",
+    "otherFactorUpper": "692080000",
+    "sampleCount": 1587,
+    "scope": "Safe full-damage necessary region relative to a sampled feasible incumbent; no claim of global optimality or tightness. Other-factor bound is deliberately independent and optimistic."
+  },
+  {
+    "conditionalKept": 234,
+    "conditionalScope": "Other factors fixed to sampled incumbent factors, budgets unchanged; illustrative conditional branch certificate only.",
+    "label": "BLM 735–780",
+    "crtSlices": 234,
+    "kept": 234,
+    "minKept": 0,
+    "maxKept": 3239,
+    "sampleIncumbent": "3453379119639993600000",
+    "otherFactorUpper": "692080000",
+    "sampleCount": 1584,
+    "scope": "Safe full-damage necessary region relative to a sampled feasible incumbent; no claim of global optimality or tightness. Other-factor bound is deliberately independent and optimistic."
+  },
+  {
+    "conditionalKept": 208,
+    "conditionalScope": "Other factors fixed to sampled incumbent factors, budgets unchanged; illustrative conditional branch certificate only.",
+    "label": "WAR 770–780",
+    "crtSlices": 234,
+    "kept": 234,
+    "minKept": 0,
+    "maxKept": 3239,
+    "sampleIncumbent": "2924319619987584000000",
+    "otherFactorUpper": "608086908",
+    "sampleCount": 1596,
+    "scope": "Safe full-damage necessary region relative to a sampled feasible incumbent; no claim of global optimality or tightness. Other-factor bound is deliberately independent and optimistic."
+  },
+  {
+    "conditionalKept": 224,
+    "conditionalScope": "Other factors fixed to sampled incumbent factors, budgets unchanged; illustrative conditional branch certificate only.",
+    "label": "WHM 同步 320",
+    "crtSlices": 224,
+    "kept": 224,
+    "minKept": 0,
+    "maxKept": 1004,
+    "sampleIncumbent": "307182558200053536000",
+    "otherFactorUpper": "63063000",
+    "sampleCount": 1599,
+    "scope": "Safe full-damage necessary region relative to a sampled feasible incumbent; no claim of global optimality or tightness. Other-factor bound is deliberately independent and optimistic."
+  }
+]

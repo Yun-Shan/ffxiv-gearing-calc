@@ -1,0 +1,12 @@
+{
+  "status": "timeout",
+  "complete": false,
+  "externalLimitSeconds": 600,
+  "exitCode": 124,
+  "scope": "Both baseline and joint candidate domains filtered before full model construction. Final proof did not complete; 600 seconds is a lower bound on completion time, not a successful runtime.",
+  "knownValidatedInitialRatio": {
+    "numerator": "8673",
+    "denominator": "4337"
+  },
+  "lastLog": "Initial joint rounded-log MIP optimal at inner cumulative 3192 ms; final no-improvement proof still pending when external limit terminated process."
+}

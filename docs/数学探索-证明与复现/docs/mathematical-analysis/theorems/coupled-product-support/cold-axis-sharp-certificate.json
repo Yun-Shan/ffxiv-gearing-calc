@@ -1,0 +1,13 @@
+{
+  "radiusKind": "certified-refined",
+  "initialH": "3740893",
+  "Qmax": 99362638084461,
+  "ratioCap": "1999591266",
+  "etaNumerator": "198963523380425138814539100535976250000000000",
+  "etaDenominator": "14217491431106456616950750109548153620172916000000000000",
+  "hNumerator": "34241",
+  "hDenominator": "1000000000000",
+  "axisTubes": true,
+  "lossQ": "34242",
+  "addedBinaries": 2
+}

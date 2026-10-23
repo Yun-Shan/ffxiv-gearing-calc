@@ -1,0 +1,5046 @@
+{
+  "scope": "Full DPS AM-GM support bound, same Pareto-pruned production candidates, strong optimum used as reference/incumbent; no cold performance claim.",
+  "candidates": 719,
+  "pruned": 168,
+  "selectedChecked": 11,
+  "inverseGcdHullVertices": 4,
+  "inverseGcdSupportLines": 3,
+  "queries": 430983,
+  "prepMs": 76.60364199999998,
+  "queryMs": 949.323557,
+  "rows": [
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.000878241524096,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0007036564785923,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.000529095796493,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0003545594752477,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0001800475123068,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0000055599051207,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0007085788149814,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0005340174459567,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.000359480437858,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0001849677881354,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0000104794942395,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0005389391147883,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0003644014198338,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0001898880833278,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.00001539910272,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9985248357847342,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9983505792293867,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9981763470030542,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49443,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9916768369099841,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49443,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9915086314817786,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49443,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 0.9913404488787715,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49443,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9919325367622971,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49443,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 0.991764192796956,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49443,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 0.9922350647253092,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 50869,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0008674843852248,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 50869,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.000692873658907,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 50869,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0005182873034237,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 50869,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0006977967193011,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 50869,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0005232096766827,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 50869,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0005281320693153,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51148,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.999947048008233,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 51148,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9997725657589863,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 51148,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9995981078671236,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 51148,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9997774851969734,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 51148,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9996030266183549,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 51148,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 0.9996079453889493,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 51872,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.999920352113073,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 51872,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9997458735904663,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 51872,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9995714194248536,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 51872,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9997507929233809,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 51872,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9995763380710234,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 51872,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 0.9995812567365561,
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49619,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.005715381797291,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49619,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0055444023541495,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49619,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.005373446166068,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49619,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0051077563436088,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49619,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0049367880296405,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49619,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.0044843658224232,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49696,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0060120366520173,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49696,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0058369523768824,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49696,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.005661892479643,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49696,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.006330268702663,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49696,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0061550320285457,
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49696,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.0066140786396425,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.00200031921381,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0024980639616758,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.002001961691064,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.002499707091619,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020036041704719,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.002501350223717,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0025029933579692,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0024397909012481,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0023815205506823,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0023232529098838,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0024414339547818,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0023831635278089,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.002324895810606,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0023848065070897,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0023265387134823,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0023281816185132,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020052466520337,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020068891357492,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0025046364943764,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020085316216187,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0025062796329376,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0025079227736537,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0024447200683124,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.002386449488525,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0024463631283094,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0023880924721147,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "upperRatio": 1.0023298245256982,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0023897354578588,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "upperRatio": 1.0023314674350376,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0023331103465312,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0024496492547665,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0023913784457572,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0024512923212268,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0023930214358099,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11]]",
+      "upperRatio": 1.0023347532601792,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0023946644280173,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11]]",
+      "upperRatio": 1.0023363961759815,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.002338039093938,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49469,
+      "variantKey": "[[\"SKS\",54,12]]",
+      "upperRatio": 0.9961234680815797,
+      "pruned": true
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49469,
+      "variantKey": "[[\"CRT\",54,12]]",
+      "upperRatio": 0.9955912234234447,
+      "pruned": true
+    },
+    {
+      "slot": "necklace",
+      "itemId": 51174,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014180070248038,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 51174,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0035690948803941,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 51174,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0033941071921169,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 51174,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.003574029257538,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 51174,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0033990408809415,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 51174,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.003403974589173,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49645,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.005715381797291,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49645,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0055444023541495,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49645,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.003339263315406,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49645,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0054047905873436,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49645,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.005229844613755,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49645,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.005597493847061,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49722,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.006330268702663,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49722,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0061550320285457,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49722,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.005979819767059,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49722,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0066140786396425,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49722,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0064386936276577,
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49722,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.004457268700689,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016048960529607,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0015483502630194,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014918070269494,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001435266344664,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0017408124804121,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016842430514525,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016276761781533,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.00186079422204,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018042106009166,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019312756167187,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.001378728216077,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.001322192641102,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0012656596196519,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0015711118604276,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0015145500981888,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014579908913506,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016910510284924,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016344750770185,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0017614965140917,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0012091291516407,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0011526012369816,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0010960758755885,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.001401434239826,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0013448801435292,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0012883286023728,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0015213308431137,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0014647625605093,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0015917404277508,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018746800250002,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.00181808699082,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014469820722625,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0013903995701818,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0013338196256927,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0017049085947285,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0016483232326439,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0012772422387088,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0012206674091433,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12]]",
+      "upperRatio": 1.0011640951369094,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49474,
+      "variantKey": "[[\"SKS\",54,12]]",
+      "upperRatio": 0.9972109856948862,
+      "pruned": true
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49474,
+      "variantKey": "[[\"DHT\",54,12]]",
+      "upperRatio": 0.9970369125950665,
+      "pruned": true
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49474,
+      "variantKey": "[[\"DET\",54,12]]",
+      "upperRatio": 0.9970418204971637,
+      "pruned": true
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 51179,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0024311151807013,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 51179,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0022613472962059,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 51179,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.002091602413479,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 51179,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0027411079159894,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 51179,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.002571219038311,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49650,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0066140786396425,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49650,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0064386936276577,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49650,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0041767887049444,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49650,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0064436385190771,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49650,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.006268277264892,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49650,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0062732214864611,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49727,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.005715381797291,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49727,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0055492230407097,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49727,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0033449666980203,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49727,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.005148829404057,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49727,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0049788766195733,
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49727,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.005403552456692,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0028548278014062,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0027996272239443,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.002744429077253,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0026892333612516,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0026170855145988,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0025618898618462,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.002506696640007,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.002351627380187,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.002296432275134,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0021365121392198,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0021258866403602,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0024515058490002,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018882094148807,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0021860493594739,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016227585629698,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019709457506027,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.002081320911352,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.002026132115173,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019638436935148,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019086544557694,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018534676499566,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016934506379473,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016382620258164,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014847467693158,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0014076945497588,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0017982832759962,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0012350524109603,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0015278920990756,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12]]",
+      "upperRatio": 1.0009646676675241,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0013191988118126,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0014295616841116,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0013743790316376,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.001277639848637,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0012224582033695,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11]]",
+      "upperRatio": 1.0011672789910315,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0011453967899384,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11]]",
+      "upperRatio": 1.0010888717539594,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.0013316057263946,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49464,
+      "variantKey": "[[\"DHT\",54,12]]",
+      "upperRatio": 0.9980121707232502,
+      "pruned": true
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49464,
+      "variantKey": "[[\"DET\",54,12]]",
+      "upperRatio": 0.9980169571198673,
+      "pruned": true
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49464,
+      "variantKey": "[[\"CRT\",54,12]]",
+      "upperRatio": 0.9974644145071184,
+      "pruned": true
+    },
+    {
+      "slot": "earrings",
+      "itemId": 51169,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0036354856547716,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 51169,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.003469788097259,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 51169,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.001179342137124,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 51169,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0029170379110912,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 51169,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0027513683661435,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 51169,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.002265185810758,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49640,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.006109042717298,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49640,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0059387767031691,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49640,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0057685337414093,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49640,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0063419531614501,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49640,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.006171549903583,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49640,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.0041632605115227,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49717,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0066140786396425,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49717,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0064386936276577,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49717,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0062633330627575,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49717,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0064436385190771,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49717,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.006268277264892,
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49717,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0041826387796893,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9638631427217649,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.963806682095474,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9637502241150689,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.963808274045762,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9637518159907538,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.963753407868542,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9636937687804566,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9636373160915441,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9635808660482382,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9636389078180303,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9635824577001291,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9635840493541232,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.963524418650446,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9634679738980747,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9634115317910313,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9634695654007829,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.963413123219152,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9634147146493757,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 0.9633550923292225,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9632986555125556,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9632422213409375,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9633002467915092,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9632438125453117,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9632454037517885,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9636985441900194,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9636420912773127,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9635856410102206,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.963643683010109,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9635872326684214,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9635291933886503,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9634727484125085,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9634163060817024,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9634743399215261,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9634178975161323,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 0.9633598663961389,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9633034293557252,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9632469949603681,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9633050206409876,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9632485861710507,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9634775229458705,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9633082032178211,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49486,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9675768968770794,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49585,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9916167900541988,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 50982,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9990388838667077,
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",447,0],[\"DET\",447,0],[\"DHT\",108,0]]",
+      "upperRatio": 1.0051940284860739,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",447,0],[\"DHT\",108,0],[\"SKS\",447,0]]",
+      "upperRatio": 1.0066041875364047,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"DET\",447,0],[\"DHT\",108,0],[\"SKS\",447,0]]",
+      "upperRatio": 1.005715381797291,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",108,0],[\"DET\",447,0],[\"DHT\",447,0]]",
+      "upperRatio": 1.0034115283315432,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",108,0],[\"DHT\",447,0],[\"SKS\",447,0]]",
+      "upperRatio": 1.0047864327707512,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",108,0],[\"DET\",447,0],[\"SKS\",447,0]]",
+      "upperRatio": 1.0048263474322183,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+      "upperRatio": 1.005163016716759,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"DET\",108,0],[\"DHT\",447,0],[\"SKS\",447,0]]",
+      "upperRatio": 1.005685114904118,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"SKS\",447,0]]",
+      "upperRatio": 1.0066140786396425,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",447,0],[\"DHT\",447,0],[\"SKS\",108,0]]",
+      "upperRatio": 1.0055035729972275,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"DET\",447,0],[\"DHT\",447,0],[\"SKS\",108,0]]",
+      "upperRatio": 1.0046423960442896,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",447,0],[\"DET\",447,0],[\"SKS\",108,0]]",
+      "upperRatio": 1.0055444758661414,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 52303,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0008401181578348,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 52303,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0006657811520754,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 52303,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0004914684414654,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 52303,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0003171800234656,
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 52303,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0008585945653867,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0022131394096596,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0021548795993276,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020966224983954,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020383681067682,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0021565222792626,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020982651019361,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020400106339178,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020999077076311,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.002041653163221,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020432956946785,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019801164243518,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019218674510515,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001863621186773,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019817588751125,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019235098254264,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018652634847645,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.001925152201955,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018669057849094,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018685480872083,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0018053776314217,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0017471367849031,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0016888986471226,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0018070198530324,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0017487789301358,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.00169054071598,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0017504210775219,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0016921827869907,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.001693824860155,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019850437830957,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019267945806372,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014654975066546,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014072724681509,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.001349050137834,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0018103043027147,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0017520632270618,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0012908305156092,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0012326136013825,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "upperRatio": 1.001174399395059,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49479,
+      "variantKey": "[[\"SKS\",54,12]]",
+      "upperRatio": 0.9961948762786024,
+      "pruned": true
+    },
+    {
+      "slot": "ring",
+      "itemId": 49479,
+      "variantKey": "[[\"DET\",54,12]]",
+      "upperRatio": 0.9960299941908437,
+      "pruned": true
+    },
+    {
+      "slot": "ring",
+      "itemId": 49479,
+      "variantKey": "[[\"CRT\",54,12]]",
+      "upperRatio": 0.9964864002765806,
+      "pruned": true
+    },
+    {
+      "slot": "ring",
+      "itemId": 49578,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0024499985729531,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49578,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0022753026676678,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49578,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0021006311184883,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49578,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0027600047669654,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49578,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.002585184355384,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 51184,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0030267927348167,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 51184,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.002851907927773,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 51184,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0026770475155014,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 51184,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0028568387159293,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 51184,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0026819776158478,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 51184,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.000507616042112,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49655,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0061419799414557,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49655,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0059667694983199,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49655,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.005791583465074,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49655,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0063749169363454,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49655,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0061995652615503,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49655,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.004196167181963,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49732,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0066140786396425,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49732,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0064386936276577,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49732,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0041767887049444,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49732,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0064436385190771,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49732,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.006268277264892,
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49732,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0062732214864611,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0022131394096596,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0021548795993276,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020966224983954,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020383681067682,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0021565222792626,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020982651019361,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020400106339178,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020999077076311,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.002041653163221,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020432956946785,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019801164243518,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019218674510515,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001863621186773,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019817588751125,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019235098254264,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018652634847645,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.001925152201955,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018669057849094,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018685480872083,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0018053776314217,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0017471367849031,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0016888986471226,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0018070198530324,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0017487789301358,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.00169054071598,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0017504210775219,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0016921827869907,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.001693824860155,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019850437830957,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019267945806372,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014654975066546,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014072724681509,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.001349050137834,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0018103043027147,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0017520632270618,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0012908305156092,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0012326136013825,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "upperRatio": 1.001174399395059,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49479,
+      "variantKey": "[[\"SKS\",54,12]]",
+      "upperRatio": 0.9961948762786024,
+      "pruned": true
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49479,
+      "variantKey": "[[\"DET\",54,12]]",
+      "upperRatio": 0.9960299941908437,
+      "pruned": true
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49479,
+      "variantKey": "[[\"CRT\",54,12]]",
+      "upperRatio": 0.9964864002765806,
+      "pruned": true
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49578,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0024499985729531,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49578,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0022753026676678,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49578,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0021006311184883,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49578,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0027600047669654,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49578,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.002585184355384,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 51184,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0030267927348167,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 51184,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.002851907927773,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 51184,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0026770475155014,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 51184,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0028568387159293,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 51184,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0026819776158478,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 51184,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.000507616042112,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49655,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0061419799414557,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49655,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0059667694983199,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49655,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.005791583465074,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49655,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0063749169363454,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49655,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0061995652615503,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49655,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.004196167181963,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49732,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0066140786396425,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49732,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0064386936276577,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49732,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0041767887049444,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49732,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0064436385190771,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49732,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.006268277264892,
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49732,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0062732214864611,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019072028800102,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018506346924612,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001794069060036,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019757145087196,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019191344678038,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020452319527777,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0017375059826477,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.00168094546021,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001624387492636,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018059820539449,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0017494096808288,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0018754637601452,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0015678320798398,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0015112792217344,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014547289182332,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016362726017896,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0015797078956934,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001705718578223,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0013981811692498,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0013416359746976,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0012850933344901,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.001466586149915,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0014100291100598,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.001535996404672,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.002187272917152,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0021306569557664,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020740435531073,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0022597907615483,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0022031627070003,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016027553558715,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020174327090872,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019608244236198,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0019042186966178,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.002089914276719,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0020332939008125,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014329679689602,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0018476155279954,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0017910149176652,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0017344168655407,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0019200608270338,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.001863448128988,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0012632036081308,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.000637025679939,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0004673692729493,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 50872,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0004768592000295,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 50872,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0017400325689514,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 50872,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0015743994573074,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 50872,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0012983130935658,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 50872,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0011326691235287,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 50872,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.0014645482410298,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 51875,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0025409362220998,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 51875,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0023660647106822,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 51875,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0021912176021481,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 51875,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0023709951238384,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 51875,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.002196147327266,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 51875,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0008268388124146,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49622,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.006330268702663,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49622,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.006159972737843,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49622,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.005989699828434,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49622,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0066140786396425,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49622,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0064436385190771,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49622,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.0053926658353407,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49699,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.005715381797291,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49699,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0055444023541495,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49699,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.00412480690205,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49699,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0051164014465255,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49699,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.004941575898289,
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49699,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.0053629577707761,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0010009845909773,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0009442026996282,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0008874233850757,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0007986386671182,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0007418600474758,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0005978751168119,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.000830646647232,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0007738724860094,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0001179785328278,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0006283105391651,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0005715396503212,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0004275565381426,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9990299502289284,
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0003936706049803,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0003368925234015,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0002801170198377,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0003918914890375,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0003338417120766,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0004500113265193,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.000223344094201,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0001665737464034,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.999510723949419,
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.00021775024245,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.000159708549597,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0002758354127654,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9985836339645038,
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0005693485684002,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0005112639319267,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0004531819930087,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0006305602218948,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0005724638394664,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0006927967358459,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0003951027515525,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0003370262074636,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "upperRatio": 0.9996660907068227,
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0004562791699605,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "upperRatio": 1.0003981908826949,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0005184802603593,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.000769900097752,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0007117704445772,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",18,11]]",
+      "upperRatio": 1.0006536434925992,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0008856267942687,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11]]",
+      "upperRatio": 1.0008274828011672,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.000951934121903,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49444,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9965659841691794,
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 49444,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9979523626717914,
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 49444,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9977782131225004,
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 49444,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9979572734150219,
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 49444,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9977831231801525,
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 49444,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 0.9977880332571345,
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 51149,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0009255870428628,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51149,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0007552593635458,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51149,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9992489862554482,
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 51149,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0003182781159528,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51149,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0001479618744549,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51149,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.0004922211901583,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51873,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014028997484363,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51873,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0012284037622252,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51873,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0010539321018155,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51873,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0017251218336767,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51873,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.001550472891972,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49620,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0045518162547669,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49620,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.005715381797291,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49620,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0055444023541495,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49620,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0052787479260417,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49620,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0051077563436088,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49620,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.0055670644074854,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49697,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0066140786396425,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49697,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0064386936276577,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49697,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0062633330627575,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49697,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0064436385190771,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49697,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.006268277264892,
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49697,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0049899516128422,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016643418377895,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001606116603959,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0015478940777955,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016077583089846,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001549535706476,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0015511773373091,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014896742592052,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014314571480933,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0007588979916555,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014330986240916,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0013748841440264,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0013765255458398,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9997941194829845,
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001494598922677,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001436381582545,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0013781669498054,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0014380230650008,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0013798083559236,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0013814497641942,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0013199550243632,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0012617458061244,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0005892778395673,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0012633870595757,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001205180472116,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.00120682165139,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9996246301631545,
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0013248790201705,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.001266669572935,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0012084628328164,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.001268310832843,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 1.0012101040163945,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0012117452021252,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0011502587997199,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0010920574735513,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "upperRatio": 1.0004196806876016,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0010936985044783,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "upperRatio": 1.0010354998088213,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.001037140765579,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0011551821279303,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 1.0010969805727885,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11]]",
+      "upperRatio": 1.0010387817244881,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 1.0010986216101716,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11]]",
+      "upperRatio": 1.0010404226855494,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0010420636487627,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49442,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9971047233619029,
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 49442,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9969349336691627,
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 49442,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9967651671070095,
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 49442,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9968320459563557,
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 49442,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9966580798396186,
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 50868,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016940860569643,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 50868,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001519387171333,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 50868,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.00134471266102,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 50868,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.001524312717441,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 50868,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0013496375198667,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 50868,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 0.9999816805819426,
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 51147,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0016773005181785,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51147,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0015026039745563,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51147,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0015075294546314,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51147,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.001332856598828,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51147,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0013377814110258,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51871,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0031941102791762,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51871,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0030237164201483,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51871,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0015168561662422,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51871,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0024462518025299,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51871,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0022758914769474,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51871,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.0017701806440495,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49618,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0056746507523189,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49618,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0055084973793353,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49618,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0053423659680114,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49618,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0057673672167777,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49618,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.005597094714362,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49618,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.0045430000729092,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49695,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0054156027483905,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49695,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0066091330783045,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49695,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0064337487556745,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49695,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0066140786396425,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49695,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0064386936276577,
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49695,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0064436385190771,
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9968039995173346,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9967460004141814,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9966880040108049,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9967476357432437,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9966896392637445,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9966912745188303,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9966300103071107,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9965720193030045,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9965140309983923,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9965736544037067,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9965156660229797,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9965173010497131,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9964560453931796,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.996398062487272,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9963400822805758,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9963996973596381,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9963417170768349,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.99634335187524,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 0.9962821047729963,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9962241299644394,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9961661578548109,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9962257646084931,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9961677924227658,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9961694269928664,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9966349158440081,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9965769246115495,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9965189360785929,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9965785597186904,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9965205711096187,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9965222061427906,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9964609502450437,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9964029671108079,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9963449866757911,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9964046019896118,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.996346621478488,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9963482562833307,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 0.996287008939899,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9962290339030376,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9961710615651126,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9962306685535285,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9961726961395044,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9961743307160421,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9964658551162223,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9964078717536574,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9963498910903194,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9962679981472713,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "upperRatio": 0.9962100239954239,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "upperRatio": 0.9962919131261143,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9962339378609476,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "upperRatio": 0.9961759652947253,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "upperRatio": 0.9960940837883511,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "upperRatio": 0.9960361177329374,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 50871,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9987928687236893,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 50871,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.998622831451263,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 50871,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9984528173377191,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 50871,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9981857039166407,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 50871,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9980156782192319,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 50871,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 0.9975628268522437,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 51150,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9995004487634389,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 51150,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9993260560125243,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 51150,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9991516876048846,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 51150,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9993309729271735,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 51150,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 0.9991566038331761,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 51150,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 0.9991615200808194,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 51874,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9984182003025629,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 51874,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9982491067100276,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 51874,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 0.9980800360286226,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 51874,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 0.9986096297803749,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 51874,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 0.9984404321387207,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 51874,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 0.9989294050321803,
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 49621,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0066140786396425,
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49621,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0064386936276577,
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49621,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.0062633330627575,
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49621,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0064436385190771,
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49621,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "upperRatio": 1.006268277264892,
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49621,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0062732214864611,
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49698,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.005715381797291,
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49698,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0055492230407097,
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49698,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0053830862463216,
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49698,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "upperRatio": 1.0051077563436088,
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49698,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "upperRatio": 1.0049416084022467,
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49698,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "upperRatio": 1.0044843658224232,
+      "pruned": false
+    }
+  ]
+}

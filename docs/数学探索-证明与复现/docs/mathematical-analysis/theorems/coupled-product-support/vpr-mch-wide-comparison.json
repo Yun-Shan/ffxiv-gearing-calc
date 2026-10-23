@@ -1,0 +1,72 @@
+{
+  "runs": [
+    {
+      "run": "control",
+      "elapsedMs": 151004.14122000002,
+      "sameExactObjective": true
+    },
+    {
+      "run": "control-repeat",
+      "elapsedMs": 151869.217486,
+      "sameExactObjective": true
+    },
+    {
+      "run": "candidate",
+      "elapsedMs": 137214.145169,
+      "sameExactObjective": true
+    },
+    {
+      "run": "solo-preload",
+      "elapsedMs": 115856.904937,
+      "sameExactObjective": true
+    },
+    {
+      "run": "combined",
+      "elapsedMs": 111496.173349,
+      "sameExactObjective": true
+    },
+    {
+      "run": "combined-repeat",
+      "elapsedMs": 108616.942354,
+      "sameExactObjective": true
+    },
+    {
+      "run": "rings",
+      "elapsedMs": 265914.79355199996,
+      "sameExactObjective": true
+    },
+    {
+      "run": "rebuild",
+      "elapsedMs": 86783.236665,
+      "sameExactObjective": true
+    },
+    {
+      "run": "rebuild-repeat",
+      "elapsedMs": 87599.519782,
+      "sameExactObjective": true
+    },
+    {
+      "run": "rebuild-rings",
+      "elapsedMs": 98112.83787999999,
+      "sameExactObjective": true
+    }
+  ],
+  "rightCensored": [
+    {
+      "status": "timeout",
+      "complete": false,
+      "externalLimitSeconds": 600,
+      "exitCode": 124,
+      "scope": "Both baseline and joint candidate domains filtered before full model construction. Final proof did not complete; 600 seconds is a lower bound on completion time, not a successful runtime.",
+      "knownValidatedInitialRatio": {
+        "numerator": "8673",
+        "denominator": "4337"
+      },
+      "lastLog": "Initial joint rounded-log MIP optimal at inner cumulative 3192 ms; final no-improvement proof still pending when external limit terminated process."
+    }
+  ],
+  "excluded": [
+    "vpr-mch-wide-solo-candidate: main-thread-only hook did not cover parallel baseline workers"
+  ],
+  "scope": "Frozen snapshot; full-pipeline timings. Controls, ordinary two-stage zero rows, and baseline-prefiltered hybrid repeated. Other variants single runs."
+}

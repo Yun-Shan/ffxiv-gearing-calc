@@ -1,0 +1,90 @@
+{
+  "total": 240,
+  "nonzeros": 252000,
+  "details": [
+    {
+      "job": "BLM",
+      "planes": 120,
+      "groups": [
+        {
+          "name": "weapon",
+          "classes": 3,
+          "min": 203,
+          "max": 205
+        },
+        {
+          "name": "main",
+          "classes": 88,
+          "min": 3208,
+          "max": 3376
+        },
+        {
+          "name": "det",
+          "classes": 148,
+          "min": 1014,
+          "max": 1161
+        },
+        {
+          "name": "ten",
+          "classes": 1,
+          "min": 1000,
+          "max": 1000
+        },
+        {
+          "name": "crt",
+          "classes": 224,
+          "min": 1024600,
+          "max": 1179139
+        },
+        {
+          "name": "dht",
+          "classes": 602,
+          "min": 4000,
+          "max": 4614
+        }
+      ]
+    },
+    {
+      "job": "RDM",
+      "planes": 120,
+      "groups": [
+        {
+          "name": "weapon",
+          "classes": 3,
+          "min": 203,
+          "max": 205
+        },
+        {
+          "name": "main",
+          "classes": 88,
+          "min": 3208,
+          "max": 3376
+        },
+        {
+          "name": "det",
+          "classes": 149,
+          "min": 1014,
+          "max": 1162
+        },
+        {
+          "name": "ten",
+          "classes": 1,
+          "min": 1000,
+          "max": 1000
+        },
+        {
+          "name": "crt",
+          "classes": 202,
+          "min": 1035424,
+          "max": 1179139
+        },
+        {
+          "name": "dht",
+          "classes": 601,
+          "min": 4000,
+          "max": 4613
+        }
+      ]
+    }
+  ]
+}

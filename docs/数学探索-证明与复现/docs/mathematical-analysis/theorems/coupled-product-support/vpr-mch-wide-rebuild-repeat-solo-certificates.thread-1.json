@@ -1,0 +1,48 @@
+[
+  {
+    "threadId": 1,
+    "job": "VPR",
+    "objective": "dps",
+    "reference": "supplied positive factor reference",
+    "status": "certified",
+    "targetRatio": {
+      "n": "1",
+      "d": "1"
+    },
+    "method": "adaptive concave chords with exact CRT-tier leaves",
+    "candidates": 397,
+    "pruned": 47,
+    "selectedChecked": 0,
+    "queries": 14071,
+    "leafQueries": 1565,
+    "cachedRegions": 109,
+    "prepMs": 55.25596299999995,
+    "queryMs": 142.76684799999998,
+    "fullCertificateMs": 199.87636300000008,
+    "representation": "candidate pool filtered before full model construction",
+    "validatedSeedSlots": 11
+  },
+  {
+    "threadId": 1,
+    "job": "MCH",
+    "objective": "dps",
+    "reference": "supplied positive factor reference",
+    "status": "certified",
+    "targetRatio": {
+      "n": "1",
+      "d": "1"
+    },
+    "method": "adaptive concave chords with exact CRT-tier leaves",
+    "candidates": 221,
+    "pruned": 143,
+    "selectedChecked": 0,
+    "queries": 3058,
+    "leafQueries": 300,
+    "cachedRegions": 85,
+    "prepMs": 42.73201700000209,
+    "queryMs": 36.44142500000453,
+    "fullCertificateMs": 79.43000200000097,
+    "representation": "candidate pool filtered before full model construction",
+    "validatedSeedSlots": 11
+  }
+]

@@ -1,7 +1,84 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createMcpQueryHelpers } from "../mcp-lumina/query-helpers.mjs";
+import { initializeMcpQuery } from "../mcp-lumina/orchestrate-query.mjs";
 import { parseJsonRpcBuffer } from "../mcp-lumina/transport.mjs";
+
+test("MCP query startup waits for schema refresh before reading health", async () => {
+  const calls = [];
+  const refreshStarted = Promise.withResolvers();
+  const refreshCompleted = Promise.withResolvers();
+  const initialization = { serverInfo: { name: "fixture-lumina" } };
+  const health = { status: "ok", gameVersion: "test-version", validatedVersion: "test-version", schemaAvailable: true };
+  const client = {
+    async initialize() {
+      calls.push("initialize");
+      return initialization;
+    },
+    async callTool(name, args) {
+      calls.push(name);
+      assert.deepEqual(args, {});
+      if (name === "refresh_schema") {
+        refreshStarted.resolve();
+        return refreshCompleted.promise;
+      }
+      assert.equal(name, "health");
+      return { value: health };
+    },
+  };
+
+  let ready = false;
+  const startup = initializeMcpQuery(client).then((result) => {
+    ready = true;
+    return result;
+  });
+  await refreshStarted.promise;
+  assert.deepEqual(calls, ["initialize", "refresh_schema"]);
+  assert.equal(ready, false);
+
+  refreshCompleted.resolve({ value: { refreshed: true, message: "Schema refreshed." } });
+  assert.deepEqual(await startup, { initialization, health, genericQueriesAvailable: true });
+  assert.deepEqual(calls, ["initialize", "refresh_schema", "health"]);
+});
+
+test("MCP query startup stops when schema refresh fails or is not confirmed", async (t) => {
+  for (const [name, refresh, expected] of [
+    ["reported failure", { value: { refreshed: false, message: "Schema fetch failed." } }, /Schema fetch failed/],
+    ["missing confirmation", { value: { message: "No refresh status." } }, /No refresh status/],
+    ["invalid confirmation", { value: { refreshed: "true" } }, /未确认刷新成功/],
+    ["MCP tool error", { value: { refreshed: true, message: "Tool failed." }, raw: { isError: true } }, /Tool failed/],
+    ["transport failure", new Error("refresh transport failed"), /refresh transport failed/],
+  ]) {
+    await t.test(name, async () => {
+      const calls = [];
+      const client = {
+        async initialize() { calls.push("initialize"); },
+        async callTool(tool) {
+          calls.push(tool);
+          if (refresh instanceof Error) throw refresh;
+          return refresh;
+        },
+      };
+      await assert.rejects(initializeMcpQuery(client), expected);
+      assert.deepEqual(calls, ["initialize", "refresh_schema"]);
+    });
+  }
+});
+
+test("MCP query startup still rejects unusable health after a successful refresh", async () => {
+  const calls = [];
+  const client = {
+    async initialize() {},
+    async callTool(name) {
+      calls.push(name);
+      return name === "refresh_schema"
+        ? { value: { refreshed: true } }
+        : { value: { status: "degraded", schemaAvailable: false } };
+    },
+  };
+  await assert.rejects(initializeMcpQuery(client), /通用查询不可用/);
+  assert.deepEqual(calls, ["refresh_schema", "health"]);
+});
 
 test("JSON-RPC parser buffers Content-Length frames and newline messages", () => {
   const state = { buffer: "" };

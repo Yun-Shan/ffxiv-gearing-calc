@@ -1,0 +1,26 @@
+[
+  {
+    "kind": "control",
+    "totalMs": 22140.105304,
+    "solverMs": 21609.522304000002,
+    "sameExactObjective": true
+  },
+  {
+    "kind": "pruned",
+    "totalMs": 20593.203691,
+    "solverMs": 18922.403935000002,
+    "sameExactObjective": true
+  },
+  {
+    "kind": "pruned",
+    "totalMs": 20506.070211,
+    "solverMs": 18759.264144,
+    "sameExactObjective": true
+  },
+  {
+    "kind": "control",
+    "totalMs": 21085.64030600001,
+    "solverMs": 20677.738056000002,
+    "sameExactObjective": true
+  }
+]

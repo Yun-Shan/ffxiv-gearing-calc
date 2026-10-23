@@ -1,0 +1,116 @@
+[
+  {
+    "job": "BLM",
+    "objective": "damage",
+    "reference": "pre-MIP feasible seed",
+    "method": "concave threshold chord to fixed point",
+    "candidates": 674,
+    "pruned": 485,
+    "elapsedMs": 89.01877999999999,
+    "rounds": [
+      {
+        "newlyPruned": 403,
+        "lo": 142,
+        "hi": 3240
+      },
+      {
+        "newlyPruned": 82,
+        "lo": 1160,
+        "hi": 3232
+      },
+      {
+        "newlyPruned": 0,
+        "lo": 1160,
+        "hi": 3232
+      }
+    ]
+  },
+  {
+    "job": "BLM",
+    "objective": "damage",
+    "reference": "pre-MIP feasible seed",
+    "method": "concave threshold chord to fixed point",
+    "candidates": 1237,
+    "pruned": 1042,
+    "elapsedMs": 113.37491899999998,
+    "rounds": [
+      {
+        "newlyPruned": 857,
+        "lo": 0,
+        "hi": 3240
+      },
+      {
+        "newlyPruned": 168,
+        "lo": 1030,
+        "hi": 3236
+      },
+      {
+        "newlyPruned": 17,
+        "lo": 1160,
+        "hi": 3232
+      },
+      {
+        "newlyPruned": 0,
+        "lo": 1160,
+        "hi": 3232
+      }
+    ]
+  },
+  {
+    "job": "WAR",
+    "objective": "damage",
+    "reference": "pre-MIP feasible seed",
+    "method": "concave threshold chord to fixed point",
+    "candidates": 1972,
+    "pruned": 1300,
+    "elapsedMs": 167.81282399999998,
+    "rounds": [
+      {
+        "newlyPruned": 1171,
+        "lo": 990,
+        "hi": 3240
+      },
+      {
+        "newlyPruned": 109,
+        "lo": 1779,
+        "hi": 3240
+      },
+      {
+        "newlyPruned": 17,
+        "lo": 1894,
+        "hi": 3240
+      },
+      {
+        "newlyPruned": 3,
+        "lo": 1948,
+        "hi": 3240
+      },
+      {
+        "newlyPruned": 0,
+        "lo": 1948,
+        "hi": 3240
+      }
+    ]
+  },
+  {
+    "job": "WHM",
+    "objective": "damage",
+    "reference": "pre-MIP feasible seed",
+    "method": "concave threshold chord to fixed point",
+    "candidates": 1088,
+    "pruned": 135,
+    "elapsedMs": 121.60143799999997,
+    "rounds": [
+      {
+        "newlyPruned": 135,
+        "lo": 0,
+        "hi": 1004
+      },
+      {
+        "newlyPruned": 0,
+        "lo": 0,
+        "hi": 968
+      }
+    ]
+  }
+]

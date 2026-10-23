@@ -1,0 +1,50 @@
+{
+  "status": "pass",
+  "scope": "Exact formula counterexample on the relaxed simplex C+D+H=2000, C,D,H>=0; not claimed to be an attainable complete equipment loadout or a solved global optimum.",
+  "job": "BRD",
+  "level": 100,
+  "order": [
+    "CRT contribution",
+    "DET contribution",
+    "DHT contribution"
+  ],
+  "points": [
+    {
+      "C": 2000,
+      "D": 0,
+      "H": 0,
+      "critical": 1104799,
+      "determination": 1000,
+      "directHit": 4000,
+      "product": "4419196000000"
+    },
+    {
+      "C": 0,
+      "D": 2000,
+      "H": 0,
+      "critical": 1020000,
+      "determination": 1100,
+      "directHit": 4000,
+      "product": "4488000000000"
+    },
+    {
+      "C": 0,
+      "D": 0,
+      "H": 2000,
+      "critical": 1020000,
+      "determination": 1000,
+      "directHit": 4395,
+      "product": "4482900000000"
+    },
+    {
+      "C": 0,
+      "D": 1200,
+      "H": 800,
+      "critical": 1020000,
+      "determination": 1060,
+      "directHit": 4158,
+      "product": "4495629600000"
+    }
+  ],
+  "gainOverBestVertexBp": 17
+}

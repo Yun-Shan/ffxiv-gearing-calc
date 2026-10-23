@@ -1,0 +1,3496 @@
+{
+  "scope": "Real complete equipment candidate domain; synthetic MNK action profiles; isolated process-local objective hook",
+  "startedAt": "2026-10-23T16:13:38.908Z",
+  "scenario": "meld-fixed",
+  "mode": "certificate",
+  "config": {
+    "jobId": "MNK",
+    "minItemLevel": 790,
+    "maxItemLevel": 795,
+    "clanIndex": 0,
+    "gcdChoices": [
+      1.94,
+      1.96,
+      2
+    ],
+    "maximizeTenacity": false,
+    "objective": "damage",
+    "excludedSources": [],
+    "excludedGearIds": [],
+    "forcedGear": {},
+    "sharedSlots": [],
+    "foodId": 49245
+  },
+  "maxTotalMs": 180000,
+  "status": "optimal",
+  "globalOptimalityProven": true,
+  "stageTimes": {
+    "bootstrapMs": 165.7662,
+    "provenanceMs": 59.40409999999997,
+    "candidatePreparationMs": 9.739299999999957
+  },
+  "branches": [
+    {
+      "gcd": 1.94,
+      "profile": {
+        "gcd": 194,
+        "alpha": 13040,
+        "beta": 4000,
+        "gamma": 3200,
+        "duration": 120,
+        "synthetic": true,
+        "key": "194:13040:4000:3200:120",
+        "coefficientDivisor": "3200",
+        "coefficients": [
+          5957500000,
+          4126250,
+          4575,
+          1
+        ],
+        "rawCoefficients": [
+          "19064000000000",
+          "13204000000",
+          "14640000",
+          "3200"
+        ],
+        "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+      },
+      "status": "optimal",
+      "optimalityProven": true,
+      "events": {
+        "models": {
+          "MNK:candidate_upper_bound_gate": {
+            "events": 1
+          },
+          "exact_damage_initial#1": {
+            "events": 33,
+            "variableCount": 923,
+            "rowCount": 156,
+            "nodes": "11317",
+            "totalLpIterations": "52758",
+            "elapsedMs": 7692.9384,
+            "status": "Optimal",
+            "completed": true
+          },
+          "exact_search_MNK": {
+            "events": 1
+          }
+        },
+        "profiles": [
+          {
+            "phase": "candidate-upper-bound-gate",
+            "job": "MNK",
+            "candidateCount": 154,
+            "trustedCanonicalEvaluator": true,
+            "enabled": false,
+            "resourceBudgetCandidateProfile": "default"
+          },
+          {
+            "phase": "highs-call-start",
+            "variables": 923,
+            "constraints": 156,
+            "nonzeros": 28694,
+            "objectiveTerms": 703,
+            "hintTerms": 923
+          },
+          {
+            "phase": "highs-solve-start",
+            "getHighsMs": 22.610000000000014,
+            "lpSerializationMs": 6.6381999999999834,
+            "modelImportMs": 27.801699999999983,
+            "lpCharacters": 461365,
+            "variables": 923,
+            "constraints": 156,
+            "nonzeros": 28694
+          },
+          {
+            "phase": "highs-solve-end",
+            "status": "Optimal",
+            "getHighsMs": 22.610000000000014,
+            "lpSerializationMs": 6.6381999999999834,
+            "modelImportMs": 27.801699999999983,
+            "nativeRunMs": 7657.8318,
+            "totalMs": 7722.0665,
+            "lpCharacters": 461365
+          },
+          {
+            "phase": "exact-search-summary",
+            "job": "MNK",
+            "elapsedMs": 7775.1061,
+            "modelPreparationMs": 32.23270000000002,
+            "greedyMipStartMs": 3.776800000000037,
+            "solverWallMs": 7722.3701,
+            "otherSearchMs": 10.866800000000694,
+            "resourceBudgetCandidateCuts": 0,
+            "primaryResourceSupportsEnabled": true,
+            "mainStatResourceSupportEnabled": false,
+            "solverRuns": 1,
+            "incumbentCandidateUpperBoundCuts": 0,
+            "excludedSignatures": 1,
+            "signatureBandChecks": 1,
+            "signatureBandElapsedMs": 5.859699999999975,
+            "signatureBandProof": true,
+            "variables": 923,
+            "constraints": 157,
+            "reachableFactorClassesRemoved": 51,
+            "reachableAttributePruningSkipped": 0,
+            "reachableWeaponFactorClassesRemoved": 0,
+            "reachableWeaponPruningSkipped": 0,
+            "maximumSurrogate": 58451112951132,
+            "memoryUsage": {
+              "rssBytes": 214245376,
+              "heapUsedBytes": 45142936
+            },
+            "conditionalResourceSupport": {
+              "candidateBands": 0,
+              "rowsAdded": 0,
+              "nonzerosAdded": 0,
+              "skipReason": "no-out-of-window-candidates"
+            }
+          }
+        ],
+        "profilesOmitted": 0,
+        "profileParseErrors": 0
+      },
+      "canonicalCompatibility": {
+        "proof": "Nonnegative cubic coefficients on w >= 0; all remaining integer factors unchanged",
+        "minimumW": 0,
+        "maximumW": 227,
+        "conservativeMaximumCrtContribution": 3168,
+        "maximumCritical": 7141601008
+      },
+      "certificateSeedMs": 10.185799999999972,
+      "certificateIncumbent": {
+        "score": {
+          "numerator": "77582583336025606439731200000000000",
+          "denominator": "4800000000000000000000000000000",
+          "approximate": 16163.038195005338,
+          "criticalFactor": 7109942848,
+          "scale": "3200",
+          "actionFactor": 22751.8171136,
+          "ordinaryDamage": 99.67150608481123
+        },
+        "identities": [
+          "{\"itemId\":49690,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[1,54],[3,242],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49614,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,299],[3,108],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49692,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[3,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49693,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[3,407],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49617,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[3,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49639,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,54],[3,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49644,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,108],[3,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49726,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,148],[3,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49654,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,148],[10,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49731,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,212],[3,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,108],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}"
+        ],
+        "foodId": 49245
+      },
+      "certificate": {
+        "strategy": "full-product-det-dht-amgm-crt-support",
+        "candidatesBefore": 157,
+        "candidatesAfter": 154,
+        "removed": 3,
+        "independentRemoved": 0,
+        "amgmRemoved": 3,
+        "independentQueries": 146,
+        "amgmQueries": 1757,
+        "upperQueries": 1903,
+        "crtNodes": 1757,
+        "attemptedCandidateTests": 146,
+        "supportBuilds": 11,
+        "supportSegments": 210,
+        "preparedPoints": 1570,
+        "budgetExhausted": false,
+        "foodRelaxation": "Independent maximum caps; no food identity removed",
+        "uniqueRelaxation": "Cross-slot unique and ring compatibility relaxed only in upper bounds",
+        "affineEnvelopeChecks": 5953,
+        "incumbentPins": 11,
+        "elapsedMs": 6.083900000000028
+      },
+      "removedCandidates": [
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "280665743899204105501080753735214712597956210176000000000",
+          "upperDenominator": "11578802783351672650945152640000",
+          "incumbentProduct": "24244557292508002012416000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"DET\\\",447,0],[\\\"DHT\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[1,447],[3,108],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 30,
+          "upperNumerator": "280711404673614586055369184785120620116325547064000000000",
+          "upperDenominator": "11578802783351672650945152640000",
+          "incumbentProduct": "24244557292508002012416000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",108,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,108],[3,447],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "280578887503465454439931572869822477634901061763840000000",
+          "upperDenominator": "11578802783351672650945152640000",
+          "incumbentProduct": "24244557292508002012416000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[1,108],[3,447],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        }
+      ],
+      "certificateTotalMs": 16.755499999999984,
+      "optionalPolicy": {
+        "canonicalMarker": true,
+        "candidateUpperBoundGate": false,
+        "primaryResourceSupports": true,
+        "mainStatResourceSupport": true,
+        "candidateResourceSupportProfile": "compact-weighted",
+        "resourceBudgetCandidateProfile": "default"
+      },
+      "optionPreparationMs": 17.147400000000005,
+      "searchMs": 7775.7845,
+      "statistics": {
+        "elapsedMs": 7775.1061,
+        "modelPreparationMs": 32.23270000000002,
+        "greedyMipStartMs": 3.776800000000037,
+        "solverWallMs": 7722.3701,
+        "otherSearchMs": 10.866800000000694,
+        "resourceBudgetCandidateCuts": 0,
+        "primaryResourceSupportsEnabled": true,
+        "mainStatResourceSupportEnabled": false,
+        "solverRuns": 1,
+        "incumbentCandidateUpperBoundCuts": 0,
+        "excludedSignatures": 1,
+        "signatureBandChecks": 1,
+        "signatureBandElapsedMs": 5.859699999999975,
+        "signatureBandProof": true,
+        "variables": 923,
+        "constraints": 157,
+        "reachableFactorClassesRemoved": 51,
+        "reachableAttributePruningSkipped": 0,
+        "reachableWeaponFactorClassesRemoved": 0,
+        "reachableWeaponPruningSkipped": 0,
+        "maximumSurrogate": 58451112951132,
+        "memoryUsage": {
+          "rssBytes": 214245376,
+          "heapUsedBytes": 45142936
+        },
+        "conditionalResourceSupport": {
+          "candidateBands": 0,
+          "rowsAdded": 0,
+          "nonzerosAdded": 0,
+          "skipReason": "no-out-of-window-candidates"
+        }
+      },
+      "verificationMs": 1.8777000000000044,
+      "result": {
+        "gcd": 1.94,
+        "score": {
+          "numerator": "77650774910911801860096000000000000",
+          "denominator": "4800000000000000000000000000000",
+          "approximate": 16177.24477310663,
+          "criticalFactor": 7109942848,
+          "scale": "3200",
+          "actionFactor": 22751.8171136,
+          "ordinaryDamage": 99.75911282177388
+        },
+        "identities": [
+          {
+            "slot": "head",
+            "itemId": 49690,
+            "identity": "{\"itemId\":49690,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[1,54],[3,242],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "body",
+            "itemId": 49614,
+            "identity": "{\"itemId\":49614,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,353],[3,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "hands",
+            "itemId": 49692,
+            "identity": "{\"itemId\":49692,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[10,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "legs",
+            "itemId": 49693,
+            "identity": "{\"itemId\":49693,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,54],[3,299],[10,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "feet",
+            "itemId": 49694,
+            "identity": "{\"itemId\":49694,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[3,54],[10,269],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "earrings",
+            "itemId": 49639,
+            "identity": "{\"itemId\":49639,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[3,212],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "necklace",
+            "itemId": 49644,
+            "identity": "{\"itemId\":49644,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,54],[3,148],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "bracelet",
+            "itemId": 49726,
+            "identity": "{\"itemId\":49726,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,202],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring",
+            "itemId": 49654,
+            "identity": "{\"itemId\":49654,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,54],[3,202],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring2",
+            "itemId": 49731,
+            "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,212],[3,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "weapon",
+            "itemId": 51001,
+            "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",447,0],[\\\"DHT\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,447],[3,108],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}"
+          }
+        ],
+        "foodId": 49245,
+        "vector": [
+          3094,
+          1790,
+          0,
+          1524,
+          2560,
+          0,
+          0,
+          0,
+          158,
+          0,
+          539,
+          0,
+          6007,
+          0,
+          7027
+        ],
+        "fixedGearsetInput": {
+          "jobId": "MNK",
+          "jobLevel": 100,
+          "foodId": 49245,
+          "gears": [
+            {
+              "id": 49690,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49614,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49692,
+              "materias": [
+                [
+                  "CRT",
+                  12
+                ],
+                [
+                  "SKS",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49693,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "SKS",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49694,
+              "materias": [
+                [
+                  "CRT",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49639,
+              "materias": [
+                [
+                  "CRT",
+                  12
+                ],
+                [
+                  "SKS",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49644,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "SKS",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49726,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "SKS",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49654,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49731,
+              "materias": [
+                [
+                  "CRT",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 51001,
+              "materias": [],
+              "customStats": {
+                "DHT": 108,
+                "CRT": 447,
+                "DET": 447,
+                "SKS": 0
+              }
+            }
+          ]
+        },
+        "finalStats": {
+          "PDMG": 158,
+          "MDMG": 0,
+          "STR": 6493,
+          "CRT": 3514,
+          "DET": 2230,
+          "DHT": 1944,
+          "SKS": 959,
+          "VIT": 7467,
+          "DLY": 2560
+        },
+        "validation": {
+          "originalSlotMembership": true,
+          "originalFoodMembership": true,
+          "uniqueItems": true,
+          "completeElevenItems": true,
+          "exactRequestedGcd": true,
+          "fixedGearsetStatsMatch": true,
+          "ordinaryDamageMatch": true,
+          "researchFloatMatchesExactFraction": true
+        }
+      },
+      "elapsedMs": 7794.8756,
+      "hookStatistics": {
+        "sourceSha256": "3092c4defc8f86da7fd2eab56019c00122690f8ae6f0e215badfc693111d1ded",
+        "transformedSourceSha256": "f09b83631869b146f54b616b0cd261fe0183535b4636c697e5815b9994ad7e75",
+        "hookHits": 1,
+        "captureMatches": 1,
+        "criticalMatches": 1,
+        "evaluatorCreations": 3,
+        "researchEvaluatorCreations": 3,
+        "evaluatorCalls": 10035,
+        "differentFromLegacy": 10035,
+        "numericSafetyChecks": 12737,
+        "maximumCritical": 7141601008,
+        "profileCreations": {
+          "194:13040:4000:3200:120": 3
+        },
+        "profileCalls": {
+          "194:13040:4000:3200:120": 10035
+        },
+        "activeProfile": {
+          "gcd": 194,
+          "alpha": 13040,
+          "beta": 4000,
+          "gamma": 3200,
+          "duration": 120,
+          "synthetic": true,
+          "key": "194:13040:4000:3200:120",
+          "coefficientDivisor": "3200",
+          "coefficients": [
+            5957500000,
+            4126250,
+            4575,
+            1
+          ],
+          "rawCoefficients": [
+            "19064000000000",
+            "13204000000",
+            "14640000",
+            "3200"
+          ],
+          "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+        },
+        "scope": "Process-local synthetic MNK critical factor; six-factor proof path retained; no production source writes"
+      }
+    },
+    {
+      "gcd": 1.96,
+      "profile": {
+        "gcd": 196,
+        "alpha": 12200,
+        "beta": 4500,
+        "gamma": 2880,
+        "duration": 120,
+        "synthetic": true,
+        "key": "196:12200:4500:2880:120",
+        "coefficientDivisor": "320",
+        "coefficients": [
+          59034000000,
+          40601250,
+          42625,
+          9
+        ],
+        "rawCoefficients": [
+          "18890880000000",
+          "12992400000",
+          "13640000",
+          "2880"
+        ],
+        "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+      },
+      "status": "optimal",
+      "optimalityProven": true,
+      "events": {
+        "models": {
+          "MNK:candidate_upper_bound_gate": {
+            "events": 1
+          },
+          "exact_damage_initial#2": {
+            "events": 19,
+            "variableCount": 914,
+            "rowCount": 156,
+            "nodes": "920",
+            "totalLpIterations": "15964",
+            "elapsedMs": 2454.453800000001,
+            "status": "Optimal",
+            "completed": true
+          },
+          "exact_search_MNK": {
+            "events": 1
+          }
+        },
+        "profiles": [
+          {
+            "phase": "candidate-upper-bound-gate",
+            "job": "MNK",
+            "candidateCount": 148,
+            "trustedCanonicalEvaluator": true,
+            "enabled": false,
+            "resourceBudgetCandidateProfile": "default"
+          },
+          {
+            "phase": "highs-call-start",
+            "variables": 914,
+            "constraints": 156,
+            "nonzeros": 28543,
+            "objectiveTerms": 703,
+            "hintTerms": 914
+          },
+          {
+            "phase": "highs-solve-start",
+            "getHighsMs": 0.08159999999952561,
+            "lpSerializationMs": 4.891200000000026,
+            "modelImportMs": 16.127700000000004,
+            "lpCharacters": 459031,
+            "variables": 914,
+            "constraints": 156,
+            "nonzeros": 28543
+          },
+          {
+            "phase": "highs-solve-end",
+            "status": "Optimal",
+            "getHighsMs": 0.08159999999952561,
+            "lpSerializationMs": 4.891200000000026,
+            "modelImportMs": 16.127700000000004,
+            "nativeRunMs": 2435.1989000000003,
+            "totalMs": 2459.3723999999993,
+            "lpCharacters": 459031
+          },
+          {
+            "phase": "exact-search-summary",
+            "job": "MNK",
+            "elapsedMs": 2505.173599999999,
+            "modelPreparationMs": 28.466199999999844,
+            "greedyMipStartMs": 4.103900000000067,
+            "solverWallMs": 2459.4821999999995,
+            "otherSearchMs": 9.535600000000159,
+            "resourceBudgetCandidateCuts": 0,
+            "primaryResourceSupportsEnabled": true,
+            "mainStatResourceSupportEnabled": false,
+            "solverRuns": 1,
+            "incumbentCandidateUpperBoundCuts": 0,
+            "excludedSignatures": 1,
+            "signatureBandChecks": 1,
+            "signatureBandElapsedMs": 3.5856999999996333,
+            "signatureBandProof": true,
+            "variables": 914,
+            "constraints": 157,
+            "reachableFactorClassesRemoved": 51,
+            "reachableAttributePruningSkipped": 0,
+            "reachableWeaponFactorClassesRemoved": 0,
+            "reachableWeaponPruningSkipped": 0,
+            "maximumSurrogate": 60751672917859,
+            "memoryUsage": {
+              "rssBytes": 222224384,
+              "heapUsedBytes": 40290608
+            },
+            "conditionalResourceSupport": {
+              "candidateBands": 0,
+              "rowsAdded": 0,
+              "nonzerosAdded": 0,
+              "skipReason": "no-out-of-window-candidates"
+            }
+          }
+        ],
+        "profilesOmitted": 0,
+        "profileParseErrors": 0
+      },
+      "canonicalCompatibility": {
+        "proof": "Nonnegative cubic coefficients on w >= 0; all remaining integer factors unchanged",
+        "minimumW": 0,
+        "maximumW": 227,
+        "conservativeMaximumCrtContribution": 3168,
+        "maximumCritical": 70552181122
+      },
+      "certificateSeedMs": 5.161300000000665,
+      "certificateIncumbent": {
+        "score": {
+          "numerator": "77391605863774598918307840000000000",
+          "denominator": "4800000000000000000000000000000",
+          "approximate": 16123.251221619714,
+          "criticalFactor": 70004025088,
+          "scale": "320",
+          "actionFactor": 22401.28802816,
+          "ordinaryDamage": 100.67447135177751
+        },
+        "identities": [
+          "{\"itemId\":49690,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[1,54],[3,242],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49614,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,299],[3,108],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49692,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[3,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49693,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[3,407],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49617,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[3,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49639,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,54],[3,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49644,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,108],[3,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49726,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,148],[3,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49654,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,148],[10,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49731,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,212],[10,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",447,0],[\\\"SKS\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,447],[4,2560],[8,158],[10,108],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}"
+        ],
+        "foodId": 49245
+      },
+      "certificate": {
+        "strategy": "full-product-det-dht-amgm-crt-support",
+        "candidatesBefore": 157,
+        "candidatesAfter": 148,
+        "removed": 9,
+        "independentRemoved": 0,
+        "amgmRemoved": 9,
+        "independentQueries": 146,
+        "amgmQueries": 1808,
+        "upperQueries": 1954,
+        "crtNodes": 1808,
+        "attemptedCandidateTests": 146,
+        "supportBuilds": 11,
+        "supportSegments": 210,
+        "preparedPoints": 1570,
+        "budgetExhausted": false,
+        "foodRelaxation": "Independent maximum caps; no food identity removed",
+        "uniqueRelaxation": "Cross-slot unique and ring compatibility relaxed only in upper bounds",
+        "affineEnvelopeChecks": 5953,
+        "incumbentPins": 11,
+        "elapsedMs": 5.4716000000007625
+      },
+      "removedCandidates": [
+        {
+          "slotIndex": 2,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 19,
+          "upperNumerator": "2874118464718361046518251381997656656902248373944320000000",
+          "upperDenominator": "11885271205932656984398325760000",
+          "incumbentProduct": "241848768324295621619712000",
+          "identity": "{\"itemId\":49615,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,269],[10,269],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49615
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 14,
+          "upperNumerator": "237200919562399485034049110234535666528437693318041600000000",
+          "upperDenominator": "981000277820957634815917762560000",
+          "incumbentProduct": "241848768324295621619712000",
+          "identity": "{\"itemId\":49582,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,310],[3,443],[4,2560],[8,157],[10,108],[12,840],[14,942]],\"PDMG\":157,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49582
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 30,
+          "upperNumerator": "132414830208002498881314309239450141877920009817600000000000",
+          "upperDenominator": "547513392117208287636649175040000",
+          "incumbentProduct": "241848768324295621619712000",
+          "identity": "{\"itemId\":49582,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,310],[1,54],[3,443],[4,2560],[8,157],[10,54],[12,840],[14,942]],\"PDMG\":157,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49582
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "2871803429421444865716160817823461624920662280765440000000",
+          "upperDenominator": "11885271205932656984398325760000",
+          "incumbentProduct": "241848768324295621619712000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DHT\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[3,108],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 6,
+          "upperNumerator": "237172872263315886963345065031958940622542693952000000000000",
+          "upperDenominator": "981000277820957634815917762560000",
+          "incumbentProduct": "241848768324295621619712000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"DET\\\",447,0],[\\\"DHT\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[1,447],[3,108],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "1299183952999009024406168426128620529327196160000000000",
+          "upperDenominator": "5380385335415417376368640000",
+          "incumbentProduct": "241848768324295621619712000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",108,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,108],[3,447],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "1299234267646155770357021945395101614922723840000000000",
+          "upperDenominator": "5380385335415417376368640000",
+          "incumbentProduct": "241848768324295621619712000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",108,0],[\\\"DET\\\",447,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,108],[1,447],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 6,
+          "upperNumerator": "237165750150116421728077810645345918381286902293120000000000",
+          "upperDenominator": "981000277820957634815917762560000",
+          "incumbentProduct": "241848768324295621619712000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[1,108],[3,447],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "2871831255798651257881122744976978029935493458165760000000",
+          "upperDenominator": "11885271205932656984398325760000",
+          "incumbentProduct": "241848768324295621619712000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,108],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        }
+      ],
+      "certificateTotalMs": 10.802700000000186,
+      "optionalPolicy": {
+        "canonicalMarker": true,
+        "candidateUpperBoundGate": false,
+        "primaryResourceSupports": true,
+        "mainStatResourceSupport": true,
+        "candidateResourceSupportProfile": "compact-weighted",
+        "resourceBudgetCandidateProfile": "default"
+      },
+      "optionPreparationMs": 10.872199999999793,
+      "searchMs": 2505.3022,
+      "statistics": {
+        "elapsedMs": 2505.173599999999,
+        "modelPreparationMs": 28.466199999999844,
+        "greedyMipStartMs": 4.103900000000067,
+        "solverWallMs": 2459.4821999999995,
+        "otherSearchMs": 9.535600000000159,
+        "resourceBudgetCandidateCuts": 0,
+        "primaryResourceSupportsEnabled": true,
+        "mainStatResourceSupportEnabled": false,
+        "solverRuns": 1,
+        "incumbentCandidateUpperBoundCuts": 0,
+        "excludedSignatures": 1,
+        "signatureBandChecks": 1,
+        "signatureBandElapsedMs": 3.5856999999996333,
+        "signatureBandProof": true,
+        "variables": 914,
+        "constraints": 157,
+        "reachableFactorClassesRemoved": 51,
+        "reachableAttributePruningSkipped": 0,
+        "reachableWeaponFactorClassesRemoved": 0,
+        "reachableWeaponPruningSkipped": 0,
+        "maximumSurrogate": 60751672917859,
+        "memoryUsage": {
+          "rssBytes": 222224384,
+          "heapUsedBytes": 40290608
+        },
+        "conditionalResourceSupport": {
+          "candidateBands": 0,
+          "rowsAdded": 0,
+          "nonzerosAdded": 0,
+          "skipReason": "no-out-of-window-candidates"
+        }
+      },
+      "verificationMs": 0.48809999999866704,
+      "result": {
+        "gcd": 1.96,
+        "score": {
+          "numerator": "77493681407710131704616960000000000",
+          "denominator": "4800000000000000000000000000000",
+          "approximate": 16144.516959939614,
+          "criticalFactor": 70246677432,
+          "scale": "320",
+          "actionFactor": 22478.93677824,
+          "ordinaryDamage": 100.7658561621771
+        },
+        "identities": [
+          {
+            "slot": "head",
+            "itemId": 49690,
+            "identity": "{\"itemId\":49690,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[1,54],[3,242],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "body",
+            "itemId": 49614,
+            "identity": "{\"itemId\":49614,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,407],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "hands",
+            "itemId": 49692,
+            "identity": "{\"itemId\":49692,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[10,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "legs",
+            "itemId": 49693,
+            "identity": "{\"itemId\":49693,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,54],[3,353],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "feet",
+            "itemId": 49694,
+            "identity": "{\"itemId\":49694,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,54],[10,269],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "earrings",
+            "itemId": 49639,
+            "identity": "{\"itemId\":49639,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,54],[3,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "necklace",
+            "itemId": 49644,
+            "identity": "{\"itemId\":49644,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,54],[3,202],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "bracelet",
+            "itemId": 49726,
+            "identity": "{\"itemId\":49726,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,202],[3,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring",
+            "itemId": 49654,
+            "identity": "{\"itemId\":49654,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,108],[3,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring2",
+            "itemId": 49731,
+            "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,212],[3,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "weapon",
+            "itemId": 51001,
+            "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",447,0],[\\\"DHT\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,447],[3,108],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}"
+          }
+        ],
+        "foodId": 49245,
+        "vector": [
+          3094,
+          2006,
+          0,
+          1524,
+          2560,
+          0,
+          0,
+          0,
+          158,
+          0,
+          323,
+          0,
+          6007,
+          0,
+          7027
+        ],
+        "fixedGearsetInput": {
+          "jobId": "MNK",
+          "jobLevel": 100,
+          "foodId": 49245,
+          "gears": [
+            {
+              "id": 49690,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49614,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DET",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49692,
+              "materias": [
+                [
+                  "CRT",
+                  12
+                ],
+                [
+                  "SKS",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49693,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49694,
+              "materias": [
+                [
+                  "CRT",
+                  12
+                ],
+                [
+                  "DET",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49639,
+              "materias": [
+                [
+                  "CRT",
+                  12
+                ],
+                [
+                  "DET",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49644,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49726,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49654,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DET",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49731,
+              "materias": [
+                [
+                  "CRT",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 51001,
+              "materias": [],
+              "customStats": {
+                "DHT": 108,
+                "CRT": 447,
+                "DET": 447,
+                "SKS": 0
+              }
+            }
+          ]
+        },
+        "finalStats": {
+          "PDMG": 158,
+          "MDMG": 0,
+          "STR": 6493,
+          "CRT": 3514,
+          "DET": 2446,
+          "DHT": 1944,
+          "SKS": 743,
+          "VIT": 7467,
+          "DLY": 2560
+        },
+        "validation": {
+          "originalSlotMembership": true,
+          "originalFoodMembership": true,
+          "uniqueItems": true,
+          "completeElevenItems": true,
+          "exactRequestedGcd": true,
+          "fixedGearsetStatsMatch": true,
+          "ordinaryDamageMatch": true,
+          "researchFloatMatchesExactFraction": true
+        }
+      },
+      "elapsedMs": 2516.7974000000013,
+      "hookStatistics": {
+        "sourceSha256": "3092c4defc8f86da7fd2eab56019c00122690f8ae6f0e215badfc693111d1ded",
+        "transformedSourceSha256": "f09b83631869b146f54b616b0cd261fe0183535b4636c697e5815b9994ad7e75",
+        "hookHits": 1,
+        "captureMatches": 1,
+        "criticalMatches": 1,
+        "evaluatorCreations": 6,
+        "researchEvaluatorCreations": 6,
+        "evaluatorCalls": 19582,
+        "differentFromLegacy": 19582,
+        "numericSafetyChecks": 24861,
+        "maximumCritical": 70552181122,
+        "profileCreations": {
+          "194:13040:4000:3200:120": 3,
+          "196:12200:4500:2880:120": 3
+        },
+        "profileCalls": {
+          "194:13040:4000:3200:120": 10035,
+          "196:12200:4500:2880:120": 9547
+        },
+        "activeProfile": {
+          "gcd": 196,
+          "alpha": 12200,
+          "beta": 4500,
+          "gamma": 2880,
+          "duration": 120,
+          "synthetic": true,
+          "key": "196:12200:4500:2880:120",
+          "coefficientDivisor": "320",
+          "coefficients": [
+            59034000000,
+            40601250,
+            42625,
+            9
+          ],
+          "rawCoefficients": [
+            "18890880000000",
+            "12992400000",
+            "13640000",
+            "2880"
+          ],
+          "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+        },
+        "scope": "Process-local synthetic MNK critical factor; six-factor proof path retained; no production source writes"
+      }
+    },
+    {
+      "gcd": 2,
+      "profile": {
+        "gcd": 200,
+        "alpha": 11360,
+        "beta": 5000,
+        "gamma": 2640,
+        "duration": 120,
+        "synthetic": true,
+        "key": "200:11360:5000:2640:120",
+        "coefficientDivisor": "80",
+        "coefficients": [
+          234023000000,
+          160802500,
+          158500,
+          33
+        ],
+        "rawCoefficients": [
+          "18721840000000",
+          "12864200000",
+          "12680000",
+          "2640"
+        ],
+        "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+      },
+      "status": "optimal",
+      "optimalityProven": true,
+      "events": {
+        "models": {
+          "MNK:candidate_upper_bound_gate": {
+            "events": 1
+          },
+          "exact_damage_initial#3": {
+            "events": 11,
+            "variableCount": 192,
+            "rowCount": 156,
+            "nodes": "1",
+            "totalLpIterations": "49",
+            "elapsedMs": 20.94840000000113,
+            "status": "Optimal",
+            "completed": true
+          },
+          "exact_search_MNK": {
+            "events": 1
+          }
+        },
+        "profiles": [
+          {
+            "phase": "candidate-upper-bound-gate",
+            "job": "MNK",
+            "candidateCount": 28,
+            "trustedCanonicalEvaluator": true,
+            "enabled": false,
+            "resourceBudgetCandidateProfile": "default"
+          },
+          {
+            "phase": "highs-call-start",
+            "variables": 192,
+            "constraints": 156,
+            "nonzeros": 4932,
+            "objectiveTerms": 118,
+            "hintTerms": 192
+          },
+          {
+            "phase": "highs-solve-start",
+            "getHighsMs": 0.09469999999964784,
+            "lpSerializationMs": 1.0513000000009924,
+            "modelImportMs": 2.9227999999984604,
+            "lpCharacters": 81382,
+            "variables": 192,
+            "constraints": 156,
+            "nonzeros": 4932
+          },
+          {
+            "phase": "highs-solve-end",
+            "status": "Optimal",
+            "getHighsMs": 0.09469999999964784,
+            "lpSerializationMs": 1.0513000000009924,
+            "modelImportMs": 2.9227999999984604,
+            "nativeRunMs": 17.318999999999505,
+            "totalMs": 22.026599999999235,
+            "lpCharacters": 81382
+          },
+          {
+            "phase": "exact-search-summary",
+            "job": "MNK",
+            "elapsedMs": 33.57020000000011,
+            "modelPreparationMs": 8.994199999999182,
+            "greedyMipStartMs": 0.8091000000003987,
+            "solverWallMs": 22.12379999999939,
+            "otherSearchMs": 1.4232000000010885,
+            "resourceBudgetCandidateCuts": 0,
+            "primaryResourceSupportsEnabled": true,
+            "mainStatResourceSupportEnabled": false,
+            "solverRuns": 1,
+            "incumbentCandidateUpperBoundCuts": 0,
+            "excludedSignatures": 1,
+            "signatureBandChecks": 1,
+            "signatureBandElapsedMs": 0.2199000000000524,
+            "signatureBandProof": true,
+            "variables": 192,
+            "constraints": 157,
+            "reachableFactorClassesRemoved": 197,
+            "reachableAttributePruningSkipped": 0,
+            "reachableWeaponFactorClassesRemoved": 0,
+            "reachableWeaponPruningSkipped": 0,
+            "maximumSurrogate": 62141551098022,
+            "memoryUsage": {
+              "rssBytes": 223076352,
+              "heapUsedBytes": 39823248
+            },
+            "conditionalResourceSupport": {
+              "candidateBands": 0,
+              "rowsAdded": 0,
+              "nonzerosAdded": 0,
+              "skipReason": "no-out-of-window-candidates"
+            }
+          }
+        ],
+        "profilesOmitted": 0,
+        "profileParseErrors": 0
+      },
+      "canonicalCompatibility": {
+        "proof": "Nonnegative cubic coefficients on w >= 0; all remaining integer factors unchanged",
+        "minimumW": 0,
+        "maximumW": 227,
+        "conservativeMaximumCrtContribution": 3168,
+        "maximumCritical": 279078517739
+      },
+      "certificateSeedMs": 5.712600000000748,
+      "certificateIncumbent": {
+        "score": {
+          "numerator": "77771902989009506099343360000000000",
+          "denominator": "4800000000000000000000000000000",
+          "approximate": 16202.479789376985,
+          "criticalFactor": 277893723584,
+          "scale": "80",
+          "actionFactor": 22231.49788672,
+          "ordinaryDamage": 102.2531917188304
+        },
+        "identities": [
+          "{\"itemId\":49690,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[1,108],[3,188],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49614,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,353],[3,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49692,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[3,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49693,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[3,407],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49617,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[3,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49639,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,54],[3,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49644,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,108],[3,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49726,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,148],[3,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49654,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,108],[3,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49731,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,212],[3,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",447,0],[\\\"DHT\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,447],[3,108],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}"
+        ],
+        "foodId": 49245
+      },
+      "certificate": {
+        "strategy": "full-product-det-dht-amgm-crt-support",
+        "candidatesBefore": 157,
+        "candidatesAfter": 28,
+        "removed": 129,
+        "independentRemoved": 0,
+        "amgmRemoved": 129,
+        "independentQueries": 146,
+        "amgmQueries": 3080,
+        "upperQueries": 3226,
+        "crtNodes": 3080,
+        "attemptedCandidateTests": 146,
+        "supportBuilds": 11,
+        "supportSegments": 180,
+        "preparedPoints": 1570,
+        "budgetExhausted": false,
+        "foodRelaxation": "Independent maximum caps; no food identity removed",
+        "uniqueRelaxation": "Cross-slot unique and ring compatibility relaxed only in upper bounds",
+        "affineEnvelopeChecks": 5953,
+        "incumbentPins": 11,
+        "elapsedMs": 7.084499999999025
+      },
+      "removedCandidates": [
+        {
+          "slotIndex": 0,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "19891665802019864268913282968264109475047905407262720000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49613,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[10,269],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49613
+        },
+        {
+          "slotIndex": 0,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "19940530035641904899508040364452807301338019970539520000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49613,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[3,54],[10,242],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49613
+        },
+        {
+          "slotIndex": 0,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 9,
+          "upperNumerator": "5357330555480700031760917849372927899720040908000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49613,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[3,108],[10,188],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49613
+        },
+        {
+          "slotIndex": 0,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "19940263100384303957287226639625578738108984048148480000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49613,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[1,54],[10,242],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49613
+        },
+        {
+          "slotIndex": 0,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 9,
+          "upperNumerator": "5357258249246148913201237421989992514896181924320000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49613,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[1,54],[3,54],[10,188],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49613
+        },
+        {
+          "slotIndex": 0,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 9,
+          "upperNumerator": "5357185943499548536410986906130639382366080998880000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49613,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[1,108],[10,188],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49613
+        },
+        {
+          "slotIndex": 0,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "5360028796944005078215493945844906961892083248000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49690,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[3,188],[10,108],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49690
+        },
+        {
+          "slotIndex": 0,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 18,
+          "upperNumerator": "977314900201183401939883908276997562047825314291816480000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49690,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[3,242],[10,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49690
+        },
+        {
+          "slotIndex": 0,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 28,
+          "upperNumerator": "5362612641141572813887248365167513519106280732000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49690,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[3,269],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49690
+        },
+        {
+          "slotIndex": 0,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 18,
+          "upperNumerator": "977301791252793045857923269735952784476370426304379680000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49690,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[1,54],[3,188],[10,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49690
+        },
+        {
+          "slotIndex": 1,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "33459218527171503825438876808844240916328708307314560000000",
+          "upperDenominator": "34429746727014268351901522560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49614,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,299],[10,108],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49614
+        },
+        {
+          "slotIndex": 1,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "5360732552480054873389949765066479012474230005760000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49614,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,299],[3,54],[10,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49614
+        },
+        {
+          "slotIndex": 1,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "5360660468797424995127754900002723607923903495040000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49614,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,353],[10,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49614
+        },
+        {
+          "slotIndex": 1,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "85606382849272657658609312634325776205529552633692500000",
+          "upperDenominator": "88267256470474009554626560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49691,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,427],[3,299],[10,108],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49691
+        },
+        {
+          "slotIndex": 1,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 8,
+          "upperNumerator": "545538922396182850234053746744111234933786507246989440000000",
+          "upperDenominator": "561385267855744105393022085760000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49691,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,427],[3,353],[10,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49691
+        },
+        {
+          "slotIndex": 1,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "5356636518942343654657969154976512115923112960000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49691,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,427],[3,407],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49691
+        },
+        {
+          "slotIndex": 1,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 9,
+          "upperNumerator": "5356751777920209099721401101568145405189233797760000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49691,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,54],[1,427],[3,299],[10,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49691
+        },
+        {
+          "slotIndex": 1,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "5361200718564397536049024003450920304168704312960000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49691,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,54],[1,427],[3,353],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49691
+        },
+        {
+          "slotIndex": 1,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 11,
+          "upperNumerator": "33459507670602247689709339373747250797157161512419840000000",
+          "upperDenominator": "34429746727014268351901522560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49691,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"CRT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,108],[1,427],[3,299],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49691
+        },
+        {
+          "slotIndex": 2,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 5,
+          "upperNumerator": "647963713926268000744340284829533172448830732695680000000",
+          "upperDenominator": "667521127057959697256863360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49615,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,269],[10,269],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49615
+        },
+        {
+          "slotIndex": 2,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 6,
+          "upperNumerator": "975271317175268252944758651943050532621844851507200000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49615,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,269],[3,54],[10,242],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49615
+        },
+        {
+          "slotIndex": 2,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 6,
+          "upperNumerator": "977666376093217324265535484349527816207276601290752000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49615,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,269],[3,108],[10,188],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49615
+        },
+        {
+          "slotIndex": 2,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 6,
+          "upperNumerator": "976163007713764930229633570466992243442181869351168000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49615,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,54],[1,269],[10,242],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49615
+        },
+        {
+          "slotIndex": 2,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "975335428437939290456542250708936936457171163462320000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49615,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,54],[1,269],[3,54],[10,188],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49615
+        },
+        {
+          "slotIndex": 2,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "5352652263230387931666178107681338626691636736000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49615,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"CRT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,108],[1,269],[10,188],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49615
+        },
+        {
+          "slotIndex": 2,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "545334300879177019221784834337738850156661471408206720000000",
+          "upperDenominator": "561385267855744105393022085760000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49692,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,269],[10,108],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49692
+        },
+        {
+          "slotIndex": 2,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 13,
+          "upperNumerator": "977343783779090345005567295295513592552758016673379840000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49692,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,269],[3,54],[10,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49692
+        },
+        {
+          "slotIndex": 2,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "977581585616509464607593055456830245798609602372709280000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49692,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[10,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49692
+        },
+        {
+          "slotIndex": 3,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "85608607390033730247782445225885127133652511625692500000",
+          "upperDenominator": "88267256470474009554626560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49616,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,299],[3,427],[10,108],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49616
+        },
+        {
+          "slotIndex": 3,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 8,
+          "upperNumerator": "977429889908223993846805371247716458693291209334290560000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49616,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,353],[3,427],[10,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49616
+        },
+        {
+          "slotIndex": 3,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "33430322815577840074476457742548258293069311595840000000000",
+          "upperDenominator": "34429746727014268351901522560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49616,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,407],[3,427],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49616
+        },
+        {
+          "slotIndex": 3,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 9,
+          "upperNumerator": "5356525322755390015422535516911418701272632102560000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49616,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,54],[1,299],[3,427],[10,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49616
+        },
+        {
+          "slotIndex": 3,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "33459247693842073413220436083302847172083968593264640000000",
+          "upperDenominator": "34429746727014268351901522560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49616,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,54],[1,353],[3,427],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49616
+        },
+        {
+          "slotIndex": 3,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 11,
+          "upperNumerator": "19948363453445381298453339759277474268376809750691840000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49616,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"CRT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,108],[1,299],[3,427],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49616
+        },
+        {
+          "slotIndex": 3,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "19949032541622196204016381498936037254680446375216000000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49693,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[3,299],[10,108],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49693
+        },
+        {
+          "slotIndex": 3,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "5360732552480054873389949765066479012474230005760000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49693,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[3,353],[10,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49693
+        },
+        {
+          "slotIndex": 3,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "5360660468797424995127754900002723607923903495040000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49693,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,54],[3,299],[10,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49693
+        },
+        {
+          "slotIndex": 4,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "977227651911637683035704234180838367542006231781550080000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49617,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,269],[10,108],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49617
+        },
+        {
+          "slotIndex": 4,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "5360433479750739982159077821950143883610214635520000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49617,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,269],[3,54],[10,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49617
+        },
+        {
+          "slotIndex": 4,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "977554679123825349540821308796017490032167333716874240000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49617,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[10,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49617
+        },
+        {
+          "slotIndex": 4,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "33356413667099570838089893350877585599498097879565280000000",
+          "upperDenominator": "34429746727014268351901522560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49694,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,108],[10,269],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49694
+        },
+        {
+          "slotIndex": 4,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "33355967484326691324873357514550636525340646535532000000000",
+          "upperDenominator": "34429746727014268351901522560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49694,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,54],[3,54],[10,269],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49694
+        },
+        {
+          "slotIndex": 4,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "33355521304537951537756545546326466991017656639827680000000",
+          "upperDenominator": "34429746727014268351901522560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49694,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,108],[10,269],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49694
+        },
+        {
+          "slotIndex": 4,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "85570164847487507077623373185341027807548019119852500000",
+          "upperDenominator": "88267256470474009554626560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49694,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[3,54],[10,269],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49694
+        },
+        {
+          "slotIndex": 4,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "85569045700309902805610077479568829312023924740652500000",
+          "upperDenominator": "88267256470474009554626560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49694,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,54],[10,269],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49694
+        },
+        {
+          "slotIndex": 4,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 6,
+          "upperNumerator": "977731149435363820204677579693037610699522757093957120000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49694,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"CRT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[10,269],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49694
+        },
+        {
+          "slotIndex": 5,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "977429821590401217545663057772270626262230356093962240000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49639,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,212],[10,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49639
+        },
+        {
+          "slotIndex": 5,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 14,
+          "upperNumerator": "5361567691103847030361124608832837306694459617280000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49639,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,54],[3,212],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49639
+        },
+        {
+          "slotIndex": 5,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 16,
+          "upperNumerator": "5360764798877811346177500910595385791622331692000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49639,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[3,212],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49639
+        },
+        {
+          "slotIndex": 5,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 18,
+          "upperNumerator": "977772662061974091301522828100309542131909293761536000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49639,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"CRT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49639
+        },
+        {
+          "slotIndex": 5,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 9,
+          "upperNumerator": "5357115455628491600491650809196307709451790510080000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49716,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,212],[3,148],[10,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49716
+        },
+        {
+          "slotIndex": 5,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "977296598661633550407205778884444075216422451694077920000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49716,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,212],[3,202],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49716
+        },
+        {
+          "slotIndex": 5,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "977739435746939767413084310432610261195121455515741920000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49716,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,212],[3,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49716
+        },
+        {
+          "slotIndex": 5,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "5360098353256912833756050773065839429387160207360000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49716,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,54],[1,212],[3,148],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49716
+        },
+        {
+          "slotIndex": 5,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 16,
+          "upperNumerator": "977791238532172308317586896420038520860255171922206080000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49716,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,54],[1,212],[3,202],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49716
+        },
+        {
+          "slotIndex": 5,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 22,
+          "upperNumerator": "545701280220007047008170753593241779950941081859727360000000",
+          "upperDenominator": "561385267855744105393022085760000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49716,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"CRT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,108],[1,212],[3,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49716
+        },
+        {
+          "slotIndex": 6,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "5360028796944005078215493945844906961892083248000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49644,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,148],[10,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49644
+        },
+        {
+          "slotIndex": 6,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 18,
+          "upperNumerator": "977314900201183401939883908276997562047825314291816480000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49644,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,202],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49644
+        },
+        {
+          "slotIndex": 6,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 18,
+          "upperNumerator": "977759608207315274151711061253186618143980803725608480000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49644,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49644
+        },
+        {
+          "slotIndex": 6,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 18,
+          "upperNumerator": "977301791252793045857923269735952784476370426304379680000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49644,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,54],[3,148],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49644
+        },
+        {
+          "slotIndex": 6,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "19927855774657612051450340918489840983321255768350720000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49721,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[10,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49721
+        },
+        {
+          "slotIndex": 6,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 9,
+          "upperNumerator": "5353897412468276797044751546923234805831839948000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49721,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,54],[10,202],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49721
+        },
+        {
+          "slotIndex": 6,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "977263039137205705046786134230908936800703603880238080000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49721,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,108],[10,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49721
+        },
+        {
+          "slotIndex": 6,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 9,
+          "upperNumerator": "5353825129405551777871640152313772488587161181920000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49721,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,54],[10,202],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49721
+        },
+        {
+          "slotIndex": 6,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "977249902793780681585853475508611068769428361258490880000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49721,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,54],[3,54],[10,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49721
+        },
+        {
+          "slotIndex": 6,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "977236766538645438601697562770236621787519744456555520000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49721,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,108],[10,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49721
+        },
+        {
+          "slotIndex": 7,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 9,
+          "upperNumerator": "5357240522721734434257403029004374273220299694080000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49649,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,212],[3,148],[10,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49649
+        },
+        {
+          "slotIndex": 7,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "977320046815010140726228521980739098128055061483283680000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49649,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,212],[3,202],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49649
+        },
+        {
+          "slotIndex": 7,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "977762889212149849770593433863669922598150487645011680000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49649,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[1,212],[3,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49649
+        },
+        {
+          "slotIndex": 7,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "5359491130990803968362421126306588877268463170560000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49649,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,54],[1,212],[3,148],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49649
+        },
+        {
+          "slotIndex": 7,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 16,
+          "upperNumerator": "977814732028172223904951558644035869255771450113792000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49649,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,54],[1,212],[3,202],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49649
+        },
+        {
+          "slotIndex": 7,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 20,
+          "upperNumerator": "5362596680790272160614679202739429973813727887360000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49649,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"CRT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,108],[1,212],[3,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49649
+        },
+        {
+          "slotIndex": 7,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "5357748784764984265570805746945596583798620791520000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49726,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,148],[10,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49726
+        },
+        {
+          "slotIndex": 7,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "5361860085875512177070641548227455449464062500000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49726,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,148],[3,54],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49726
+        },
+        {
+          "slotIndex": 7,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "5361787810666459797925532028728212054364062500000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49726,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,202],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49726
+        },
+        {
+          "slotIndex": 7,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 18,
+          "upperNumerator": "977744878343602100775712037435126420131179853946471040000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49726,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49726
+        },
+        {
+          "slotIndex": 8,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "5359538157059172194124336668973144667191324672000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49654,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,148],[10,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49654
+        },
+        {
+          "slotIndex": 8,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 17,
+          "upperNumerator": "5362612641141572813887248365167513519106280732000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49654,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,202],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49654
+        },
+        {
+          "slotIndex": 8,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 18,
+          "upperNumerator": "977771722402637839484165136007863666407090830850033760000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49654,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49654
+        },
+        {
+          "slotIndex": 8,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 17,
+          "upperNumerator": "5362540422315714998401210422355073586861361258080000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49654,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,54],[3,148],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49654
+        },
+        {
+          "slotIndex": 8,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "977352949291393313330305192520833742739487682728622880000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,212],[10,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49731
+        },
+        {
+          "slotIndex": 8,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "976779843165745798511038894392345529577337516315648000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,212],[3,54],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49731
+        },
+        {
+          "slotIndex": 8,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 28,
+          "upperNumerator": "5362722404955767609589841045955269697327222569440000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,212],[3,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49731
+        },
+        {
+          "slotIndex": 8,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "977681250400966365730367890559870256447841459492752000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,212],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49731
+        },
+        {
+          "slotIndex": 8,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 18,
+          "upperNumerator": "977720547916571873809178005676622285786490850258076000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"CRT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49731
+        },
+        {
+          "slotIndex": 9,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "5359538157059172194124336668973144667191324672000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49654,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,148],[10,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49654
+        },
+        {
+          "slotIndex": 9,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 17,
+          "upperNumerator": "5362612641141572813887248365167513519106280732000000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49654,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,202],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49654
+        },
+        {
+          "slotIndex": 9,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 18,
+          "upperNumerator": "977771722402637839484165136007863666407090830850033760000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49654,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[3,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49654
+        },
+        {
+          "slotIndex": 9,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 17,
+          "upperNumerator": "5362540422315714998401210422355073586861361258080000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49654,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,54],[3,148],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49654
+        },
+        {
+          "slotIndex": 9,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "977352949291393313330305192520833742739487682728622880000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,212],[10,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49731
+        },
+        {
+          "slotIndex": 9,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "976779843165745798511038894392345529577337516315648000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,212],[3,54],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49731
+        },
+        {
+          "slotIndex": 9,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 28,
+          "upperNumerator": "5362722404955767609589841045955269697327222569440000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,212],[3,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49731
+        },
+        {
+          "slotIndex": 9,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 15,
+          "upperNumerator": "977681250400966365730367890559870256447841459492752000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,212],[10,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49731
+        },
+        {
+          "slotIndex": 9,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 18,
+          "upperNumerator": "977720547916571873809178005676622285786490850258076000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"CRT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "itemId": 49731
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 4,
+          "upperNumerator": "5343436241768724549683604882774352797977169331200000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49582,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,310],[3,443],[4,2560],[8,157],[10,108],[12,840],[14,942]],\"PDMG\":157,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49582
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 4,
+          "upperNumerator": "5356169572126518500757177329643584747618759500800000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49582,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,310],[1,54],[3,443],[4,2560],[8,157],[10,54],[12,840],[14,942]],\"PDMG\":157,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49582
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 6,
+          "upperNumerator": "975587183071721683477374240339807995367478063771449600000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49582,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,310],[1,108],[3,443],[4,2560],[8,157],[12,840],[14,942]],\"PDMG\":157,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49582
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 4,
+          "upperNumerator": "5360741192620822208378583048631492504300141209600000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49582,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,364],[3,443],[4,2560],[8,157],[10,54],[12,840],[14,942]],\"PDMG\":157,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49582
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 6,
+          "upperNumerator": "975683460559106678463020465604135007531960318038142200000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49582,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,364],[1,54],[3,443],[4,2560],[8,157],[12,840],[14,942]],\"PDMG\":157,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49582
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 6,
+          "upperNumerator": "976612540095856775374356298137431197337878271484375000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49582,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"CRT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,418],[3,443],[4,2560],[8,157],[12,840],[14,942]],\"PDMG\":157,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49582
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "11814260384654874362156899707427036674016654501363200000000",
+          "upperDenominator": "12186398096454817944135629440000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":50979,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,443],[3,443],[4,2560],[8,157],[10,108],[12,840],[14,942]],\"PDMG\":157,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 50979
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "11842515256719439689362218125593553475029733820812800000000",
+          "upperDenominator": "12186398096454817944135629440000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":50979,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,443],[1,54],[3,443],[4,2560],[8,157],[10,54],[12,840],[14,942]],\"PDMG\":157,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 50979
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "33438814851807360523448153173032518677561500194188800000000",
+          "upperDenominator": "34429746727014268351901522560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":50979,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,443],[1,108],[3,443],[4,2560],[8,157],[12,840],[14,942]],\"PDMG\":157,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 50979
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "19905098019205331451805930640670118584336903005153280000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49659,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,313],[4,2560],[8,158],[10,108],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49659
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "19954061214174878428651466411957278412834452133806080000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49659,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,313],[3,54],[4,2560],[8,158],[10,54],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49659
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "976988603299099981418115795414206045660782661579520000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49659,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,313],[3,108],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49659
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "19953793738092073736002460723247524465686483640494080000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49659,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,367],[4,2560],[8,158],[10,54],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49659
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "976975457661397546475977667705372993037175006801920000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49659,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,367],[3,54],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49659
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "976962312112134706743532599691741536491269212046080000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":49659,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,421],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 49659
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 4,
+          "upperNumerator": "5337602203423149376834647082716215197107428712960000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DHT\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[3,108],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 3,
+          "upperNumerator": "19839496607074791863560353517307410191125138111280000000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"DET\\\",447,0],[\\\"DHT\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[1,447],[3,108],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "977395970933225734150888120311052147317341188629420000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",108,0],[\\\"DET\\\",447,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,108],[1,447],[3,447],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 3,
+          "upperNumerator": "19877254814549020659778599361590135990366880837068000000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",108,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,108],[3,447],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 3,
+          "upperNumerator": "19875053372490974613354567960088129593286443884776320000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",108,0],[\\\"DET\\\",447,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,108],[1,447],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 3,
+          "upperNumerator": "19841159084464109132634038113215005873113528375980000000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[1,108],[3,447],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 4,
+          "upperNumerator": "5337461598144071725898880198788209170133956579840000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,108],[4,2560],[8,158],[10,447],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "5356464362136100184259292093020610120475384924160000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[3,447],[4,2560],[8,158],[10,108],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 6,
+          "upperNumerator": "977395970933225734150888120311052147317341188629420000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"DET\\\",447,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[1,447],[3,447],[4,2560],[8,158],[10,108],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 11,
+          "upperNumerator": "33470283579422690810836528285906770591609297893184000000000",
+          "upperDenominator": "34429746727014268351901522560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",447,0],[\\\"SKS\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,447],[4,2560],[8,158],[10,108],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "19905098019205331451805930640670118584336903005153280000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":52300,\"variantKey\":\"[[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,313],[4,2560],[8,158],[10,162],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 52300
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "19954061214174878428651466411957278412834452133806080000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":52300,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,313],[3,54],[4,2560],[8,158],[10,108],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 52300
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "976988603299099981418115795414206045660782661579520000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":52300,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,313],[3,108],[4,2560],[8,158],[10,54],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 52300
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "5362905823127434169699287374200697513742153359360000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":52300,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,313],[3,162],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 52300
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 7,
+          "upperNumerator": "19953793738092073736002460723247524465686483640494080000000",
+          "upperDenominator": "20527653832914611847047839360000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":52300,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,367],[4,2560],[8,158],[10,108],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 52300
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "976975457661397546475977667705372993037175006801920000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":52300,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,367],[3,54],[4,2560],[8,158],[10,54],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 52300
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "5362833571615980202199691473366651117850855997440000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":52300,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,367],[3,108],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 52300
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 10,
+          "upperNumerator": "976962312112134706743532599691741536491269212046080000000000",
+          "upperDenominator": "1005855037812815980505344128640000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":52300,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12],[\\\"SKS\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,421],[4,2560],[8,158],[10,54],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 52300
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 12,
+          "upperNumerator": "5362761320591232159142043958788645057525467914240000000",
+          "upperDenominator": "5516703529404625597164160000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":52300,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,421],[3,54],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 52300
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 11,
+          "upperNumerator": "33470283579422690810836528285906770591609297893184000000000",
+          "upperDenominator": "34429746727014268351901522560000",
+          "incumbentProduct": "972148787362618826241792000",
+          "identity": "{\"itemId\":52300,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,447],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 52300
+        }
+      ],
+      "certificateTotalMs": 13.13720000000103,
+      "optionalPolicy": {
+        "canonicalMarker": true,
+        "candidateUpperBoundGate": false,
+        "primaryResourceSupports": true,
+        "mainStatResourceSupport": true,
+        "candidateResourceSupportProfile": "compact-weighted",
+        "resourceBudgetCandidateProfile": "default"
+      },
+      "optionPreparationMs": 13.201199999999517,
+      "searchMs": 33.65380000000005,
+      "statistics": {
+        "elapsedMs": 33.57020000000011,
+        "modelPreparationMs": 8.994199999999182,
+        "greedyMipStartMs": 0.8091000000003987,
+        "solverWallMs": 22.12379999999939,
+        "otherSearchMs": 1.4232000000010885,
+        "resourceBudgetCandidateCuts": 0,
+        "primaryResourceSupportsEnabled": true,
+        "mainStatResourceSupportEnabled": false,
+        "solverRuns": 1,
+        "incumbentCandidateUpperBoundCuts": 0,
+        "excludedSignatures": 1,
+        "signatureBandChecks": 1,
+        "signatureBandElapsedMs": 0.2199000000000524,
+        "signatureBandProof": true,
+        "variables": 192,
+        "constraints": 157,
+        "reachableFactorClassesRemoved": 197,
+        "reachableAttributePruningSkipped": 0,
+        "reachableWeaponFactorClassesRemoved": 0,
+        "reachableWeaponPruningSkipped": 0,
+        "maximumSurrogate": 62141551098022,
+        "memoryUsage": {
+          "rssBytes": 223076352,
+          "heapUsedBytes": 39823248
+        },
+        "conditionalResourceSupport": {
+          "candidateBands": 0,
+          "rowsAdded": 0,
+          "nonzerosAdded": 0,
+          "skipReason": "no-out-of-window-candidates"
+        }
+      },
+      "verificationMs": 0.3166000000001077,
+      "result": {
+        "gcd": 2,
+        "score": {
+          "numerator": "77771902989009506099343360000000000",
+          "denominator": "4800000000000000000000000000000",
+          "approximate": 16202.479789376985,
+          "criticalFactor": 277893723584,
+          "scale": "80",
+          "actionFactor": 22231.49788672,
+          "ordinaryDamage": 102.2531917188304
+        },
+        "identities": [
+          {
+            "slot": "head",
+            "itemId": 49690,
+            "identity": "{\"itemId\":49690,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[1,108],[3,188],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "body",
+            "itemId": 49614,
+            "identity": "{\"itemId\":49614,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,353],[3,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "hands",
+            "itemId": 49692,
+            "identity": "{\"itemId\":49692,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[3,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "legs",
+            "itemId": 49693,
+            "identity": "{\"itemId\":49693,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[3,407],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "feet",
+            "itemId": 49617,
+            "identity": "{\"itemId\":49617,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[3,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "earrings",
+            "itemId": 49639,
+            "identity": "{\"itemId\":49639,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,54],[3,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "necklace",
+            "itemId": 49644,
+            "identity": "{\"itemId\":49644,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,108],[3,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "bracelet",
+            "itemId": 49726,
+            "identity": "{\"itemId\":49726,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,148],[3,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring",
+            "itemId": 49654,
+            "identity": "{\"itemId\":49654,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,108],[3,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring2",
+            "itemId": 49731,
+            "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,212],[3,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "weapon",
+            "itemId": 51001,
+            "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",447,0],[\\\"DHT\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,447],[3,108],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}"
+          }
+        ],
+        "foodId": 49245,
+        "vector": [
+          3094,
+          2167,
+          0,
+          1686,
+          2560,
+          0,
+          0,
+          0,
+          158,
+          0,
+          0,
+          0,
+          6007,
+          0,
+          7027
+        ],
+        "fixedGearsetInput": {
+          "jobId": "MNK",
+          "jobLevel": 100,
+          "foodId": 49245,
+          "gears": [
+            {
+              "id": 49690,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DET",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49614,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49692,
+              "materias": [
+                [
+                  "CRT",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49693,
+              "materias": [
+                [
+                  "DHT",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49617,
+              "materias": [
+                [
+                  "CRT",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49639,
+              "materias": [
+                [
+                  "CRT",
+                  12
+                ],
+                [
+                  "DET",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49644,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DET",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49726,
+              "materias": [
+                [
+                  "DHT",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49654,
+              "materias": [
+                [
+                  "DET",
+                  12
+                ],
+                [
+                  "DET",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 49731,
+              "materias": [
+                [
+                  "CRT",
+                  12
+                ],
+                [
+                  "DHT",
+                  12
+                ]
+              ]
+            },
+            {
+              "id": 51001,
+              "materias": [],
+              "customStats": {
+                "DHT": 108,
+                "CRT": 447,
+                "DET": 447,
+                "SKS": 0
+              }
+            }
+          ]
+        },
+        "finalStats": {
+          "PDMG": 158,
+          "MDMG": 0,
+          "STR": 6493,
+          "CRT": 3514,
+          "DET": 2607,
+          "DHT": 2106,
+          "SKS": 420,
+          "VIT": 7467,
+          "DLY": 2560
+        },
+        "validation": {
+          "originalSlotMembership": true,
+          "originalFoodMembership": true,
+          "uniqueItems": true,
+          "completeElevenItems": true,
+          "exactRequestedGcd": true,
+          "fixedGearsetStatsMatch": true,
+          "ordinaryDamageMatch": true,
+          "researchFloatMatchesExactFraction": true
+        }
+      },
+      "elapsedMs": 47.22979999999916,
+      "hookStatistics": {
+        "sourceSha256": "3092c4defc8f86da7fd2eab56019c00122690f8ae6f0e215badfc693111d1ded",
+        "transformedSourceSha256": "f09b83631869b146f54b616b0cd261fe0183535b4636c697e5815b9994ad7e75",
+        "hookHits": 1,
+        "captureMatches": 1,
+        "criticalMatches": 1,
+        "evaluatorCreations": 9,
+        "researchEvaluatorCreations": 9,
+        "evaluatorCalls": 22856,
+        "differentFromLegacy": 22856,
+        "numericSafetyChecks": 31782,
+        "maximumCritical": 279078517739,
+        "profileCreations": {
+          "194:13040:4000:3200:120": 3,
+          "196:12200:4500:2880:120": 3,
+          "200:11360:5000:2640:120": 3
+        },
+        "profileCalls": {
+          "194:13040:4000:3200:120": 10035,
+          "196:12200:4500:2880:120": 9547,
+          "200:11360:5000:2640:120": 3274
+        },
+        "activeProfile": {
+          "gcd": 200,
+          "alpha": 11360,
+          "beta": 5000,
+          "gamma": 2640,
+          "duration": 120,
+          "synthetic": true,
+          "key": "200:11360:5000:2640:120",
+          "coefficientDivisor": "80",
+          "coefficients": [
+            234023000000,
+            160802500,
+            158500,
+            33
+          ],
+          "rawCoefficients": [
+            "18721840000000",
+            "12864200000",
+            "12680000",
+            "2640"
+          ],
+          "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+        },
+        "scope": "Process-local synthetic MNK critical factor; six-factor proof path retained; no production source writes"
+      }
+    }
+  ],
+  "provenance": {
+    "node": "v26.8.1",
+    "platform": "win32",
+    "arch": "x64",
+    "highsPackageVersion": "1.15.3",
+    "cpu": "Intel(R) Core(TM) Ultra 7 265K",
+    "logicalCpuCount": 20,
+    "totalSystemMemoryBytes": 50862731264,
+    "repositoryCommit": "303877be8f57d7b5215bf9d7d97850177372f8a3",
+    "gameVersion": "2026.09.15.0000.0000",
+    "dataReferenceCommit": "8d75ef89c317401727066a28025fb4d860a92f20",
+    "binarySha256": "4436a1374320e70ab60b8915e9b71a09a55a1a716658b63b43398ba9ca51989b",
+    "runtimeSha256": "775b3285606bb26e1bbfdca0d34925f634922313064f74ef514a43c3c0a6d87e",
+    "runnerSha256": "07a00c3e86fce7587ceb68486c69f0fc79325c711c0331c16bd1af746da41928",
+    "certificateSha256": "9c5d21e5b89168f73e8100b891f026936040cc986d4006fe2d67b83dbd56ee14",
+    "supportSha256": "9b58ec373cb1093af5acc2f1bced1d99872eb26fe5569ac5f278b9e9f9774f93"
+  },
+  "candidates": {
+    "slots": [
+      {
+        "slot": "head",
+        "count": 12
+      },
+      {
+        "slot": "body",
+        "count": 12
+      },
+      {
+        "slot": "hands",
+        "count": 12
+      },
+      {
+        "slot": "legs",
+        "count": 12
+      },
+      {
+        "slot": "feet",
+        "count": 12
+      },
+      {
+        "slot": "earrings",
+        "count": 12
+      },
+      {
+        "slot": "necklace",
+        "count": 12
+      },
+      {
+        "slot": "bracelet",
+        "count": 12
+      },
+      {
+        "slot": "ring",
+        "count": 12
+      },
+      {
+        "slot": "ring2",
+        "count": 12
+      },
+      {
+        "slot": "weapon",
+        "count": 37
+      }
+    ],
+    "total": 157,
+    "foods": 1,
+    "paretoApplied": false,
+    "topKApplied": false,
+    "independentRingSlots": true
+  },
+  "profiles": [
+    {
+      "gcd": 194,
+      "alpha": 13040,
+      "beta": 4000,
+      "gamma": 3200,
+      "duration": 120,
+      "synthetic": true,
+      "key": "194:13040:4000:3200:120",
+      "coefficientDivisor": "3200",
+      "coefficients": [
+        5957500000,
+        4126250,
+        4575,
+        1
+      ],
+      "rawCoefficients": [
+        "19064000000000",
+        "13204000000",
+        "14640000",
+        "3200"
+      ],
+      "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+    },
+    {
+      "gcd": 196,
+      "alpha": 12200,
+      "beta": 4500,
+      "gamma": 2880,
+      "duration": 120,
+      "synthetic": true,
+      "key": "196:12200:4500:2880:120",
+      "coefficientDivisor": "320",
+      "coefficients": [
+        59034000000,
+        40601250,
+        42625,
+        9
+      ],
+      "rawCoefficients": [
+        "18890880000000",
+        "12992400000",
+        "13640000",
+        "2880"
+      ],
+      "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+    },
+    {
+      "gcd": 200,
+      "alpha": 11360,
+      "beta": 5000,
+      "gamma": 2640,
+      "duration": 120,
+      "synthetic": true,
+      "key": "200:11360:5000:2640:120",
+      "coefficientDivisor": "80",
+      "coefficients": [
+        234023000000,
+        160802500,
+        158500,
+        33
+      ],
+      "rawCoefficients": [
+        "18721840000000",
+        "12864200000",
+        "12680000",
+        "2640"
+      ],
+      "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+    }
+  ],
+  "candidateSha256": "c95d17b353cecdb379bef6db89e284018f36484543f1ab9a2d1bbd051e4821fb",
+  "inputSha256": "0aa93a4873cb09e7a8aba24b67d37b1073eb6b4ef6ace8476a45bf844496e345",
+  "winner": {
+    "gcd": 2,
+    "score": {
+      "numerator": "77771902989009506099343360000000000",
+      "denominator": "4800000000000000000000000000000",
+      "approximate": 16202.479789376985,
+      "criticalFactor": 277893723584,
+      "scale": "80",
+      "actionFactor": 22231.49788672,
+      "ordinaryDamage": 102.2531917188304
+    },
+    "identities": [
+      {
+        "slot": "head",
+        "itemId": 49690,
+        "identity": "{\"itemId\":49690,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,269],[1,108],[3,188],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "body",
+        "itemId": 49614,
+        "identity": "{\"itemId\":49614,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[1,353],[3,54],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "hands",
+        "itemId": 49692,
+        "identity": "{\"itemId\":49692,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[3,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "legs",
+        "itemId": 49693,
+        "identity": "{\"itemId\":49693,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,427],[3,407],[12,810],[14,908]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "feet",
+        "itemId": 49617,
+        "identity": "{\"itemId\":49617,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,242],[1,269],[3,54],[12,510],[14,572]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "earrings",
+        "itemId": 49639,
+        "identity": "{\"itemId\":49639,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,54],[3,212],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "necklace",
+        "itemId": 49644,
+        "identity": "{\"itemId\":49644,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,108],[3,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "bracelet",
+        "itemId": 49726,
+        "identity": "{\"itemId\":49726,\"variantKey\":\"[[\\\"DHT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,148],[3,108],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "ring",
+        "itemId": 49654,
+        "identity": "{\"itemId\":49654,\"variantKey\":\"[[\\\"DET\\\",54,12],[\\\"DET\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,212],[1,108],[3,148],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "ring2",
+        "itemId": 49731,
+        "identity": "{\"itemId\":49731,\"variantKey\":\"[[\\\"CRT\\\",54,12],[\\\"DHT\\\",54,12]]\",\"itemLevel\":790,\"baseParams\":[[0,202],[1,212],[3,54],[12,402],[14,451]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "weapon",
+        "itemId": 51001,
+        "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",447,0],[\\\"DHT\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,447],[1,447],[3,108],[4,2560],[8,158],[12,847],[14,943]],\"PDMG\":158,\"MDMG\":0,\"DLY\":2560}"
+      }
+    ],
+    "foodId": 49245,
+    "vector": [
+      3094,
+      2167,
+      0,
+      1686,
+      2560,
+      0,
+      0,
+      0,
+      158,
+      0,
+      0,
+      0,
+      6007,
+      0,
+      7027
+    ],
+    "fixedGearsetInput": {
+      "jobId": "MNK",
+      "jobLevel": 100,
+      "foodId": 49245,
+      "gears": [
+        {
+          "id": 49690,
+          "materias": [
+            [
+              "DET",
+              12
+            ],
+            [
+              "DET",
+              12
+            ]
+          ]
+        },
+        {
+          "id": 49614,
+          "materias": [
+            [
+              "DET",
+              12
+            ],
+            [
+              "DHT",
+              12
+            ]
+          ]
+        },
+        {
+          "id": 49692,
+          "materias": [
+            [
+              "CRT",
+              12
+            ],
+            [
+              "DHT",
+              12
+            ]
+          ]
+        },
+        {
+          "id": 49693,
+          "materias": [
+            [
+              "DHT",
+              12
+            ],
+            [
+              "DHT",
+              12
+            ]
+          ]
+        },
+        {
+          "id": 49617,
+          "materias": [
+            [
+              "CRT",
+              12
+            ],
+            [
+              "DHT",
+              12
+            ]
+          ]
+        },
+        {
+          "id": 49639,
+          "materias": [
+            [
+              "CRT",
+              12
+            ],
+            [
+              "DET",
+              12
+            ]
+          ]
+        },
+        {
+          "id": 49644,
+          "materias": [
+            [
+              "DET",
+              12
+            ],
+            [
+              "DET",
+              12
+            ]
+          ]
+        },
+        {
+          "id": 49726,
+          "materias": [
+            [
+              "DHT",
+              12
+            ],
+            [
+              "DHT",
+              12
+            ]
+          ]
+        },
+        {
+          "id": 49654,
+          "materias": [
+            [
+              "DET",
+              12
+            ],
+            [
+              "DET",
+              12
+            ]
+          ]
+        },
+        {
+          "id": 49731,
+          "materias": [
+            [
+              "CRT",
+              12
+            ],
+            [
+              "DHT",
+              12
+            ]
+          ]
+        },
+        {
+          "id": 51001,
+          "materias": [],
+          "customStats": {
+            "DHT": 108,
+            "CRT": 447,
+            "DET": 447,
+            "SKS": 0
+          }
+        }
+      ]
+    },
+    "finalStats": {
+      "PDMG": 158,
+      "MDMG": 0,
+      "STR": 6493,
+      "CRT": 3514,
+      "DET": 2607,
+      "DHT": 2106,
+      "SKS": 420,
+      "VIT": 7467,
+      "DLY": 2560
+    },
+    "validation": {
+      "originalSlotMembership": true,
+      "originalFoodMembership": true,
+      "uniqueItems": true,
+      "completeElevenItems": true,
+      "exactRequestedGcd": true,
+      "fixedGearsetStatsMatch": true,
+      "ordinaryDamageMatch": true,
+      "researchFloatMatchesExactFraction": true
+    }
+  },
+  "hookStatistics": {
+    "sourceSha256": "3092c4defc8f86da7fd2eab56019c00122690f8ae6f0e215badfc693111d1ded",
+    "transformedSourceSha256": "f09b83631869b146f54b616b0cd261fe0183535b4636c697e5815b9994ad7e75",
+    "hookHits": 1,
+    "captureMatches": 1,
+    "criticalMatches": 1,
+    "evaluatorCreations": 9,
+    "researchEvaluatorCreations": 9,
+    "evaluatorCalls": 22856,
+    "differentFromLegacy": 22856,
+    "numericSafetyChecks": 31782,
+    "maximumCritical": 279078517739,
+    "profileCreations": {
+      "194:13040:4000:3200:120": 3,
+      "196:12200:4500:2880:120": 3,
+      "200:11360:5000:2640:120": 3
+    },
+    "profileCalls": {
+      "194:13040:4000:3200:120": 10035,
+      "196:12200:4500:2880:120": 9547,
+      "200:11360:5000:2640:120": 3274
+    },
+    "activeProfile": {
+      "gcd": 200,
+      "alpha": 11360,
+      "beta": 5000,
+      "gamma": 2640,
+      "duration": 120,
+      "synthetic": true,
+      "key": "200:11360:5000:2640:120",
+      "coefficientDivisor": "80",
+      "coefficients": [
+        234023000000,
+        160802500,
+        158500,
+        33
+      ],
+      "rawCoefficients": [
+        "18721840000000",
+        "12864200000",
+        "12680000",
+        "2640"
+      ],
+      "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+    },
+    "scope": "Process-local synthetic MNK critical factor; six-factor proof path retained; no production source writes"
+  },
+  "elapsedMs": 10595.7801,
+  "finishedAt": "2026-10-23T16:13:49.504Z",
+  "processMemoryBytes": {
+    "rss": 223232000,
+    "heapTotal": 75833344,
+    "heapUsed": 40053656,
+    "external": 9208543,
+    "arrayBuffers": 2858778
+  },
+  "processResourceUsage": {
+    "userCPUTime": 10515000,
+    "systemCPUTime": 1328000,
+    "maxRSS": 218004,
+    "sharedMemorySize": 0,
+    "unsharedDataSize": 0,
+    "unsharedStackSize": 0,
+    "minorPageFault": 0,
+    "majorPageFault": 174793,
+    "swappedOut": 0,
+    "fsRead": 126,
+    "fsWrite": 29,
+    "ipcSent": 0,
+    "ipcReceived": 0,
+    "signalsCount": 0,
+    "voluntaryContextSwitches": 0,
+    "involuntaryContextSwitches": 0,
+    "maxRSSUnit": "KiB (Node/libuv ru_maxrss convention)",
+    "maxRSSScope": "OS process-lifetime high-water mark, including cold bootstrap and all completed branches; not a browser measurement"
+  }
+}

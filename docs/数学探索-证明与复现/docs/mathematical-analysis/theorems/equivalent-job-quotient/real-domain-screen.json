@@ -1,0 +1,146 @@
+{
+  "scope": "Static sufficient-feature screening on five chosen real gear domains; same GCD2.50 and all nonweapon slots plus food shared. Not a measured frequency over all possible user constraints, nor a solver benchmark.",
+  "domains": [
+    {
+      "label": "70 同步320",
+      "contexts": 19,
+      "equivalentGroups": [],
+      "contextsInNontrivialClasses": 0,
+      "errors": [
+        {
+          "jobId": "VPR",
+          "reason": "empty slot"
+        },
+        {
+          "jobId": "PCT",
+          "reason": "empty slot"
+        },
+        {
+          "jobId": "BST",
+          "reason": "empty slot"
+        }
+      ]
+    },
+    {
+      "label": "80 同步530",
+      "contexts": 21,
+      "equivalentGroups": [
+        [
+          {
+            "job": "WHM",
+            "weaponFeatures": 104
+          },
+          {
+            "job": "AST",
+            "weaponFeatures": 104
+          }
+        ]
+      ],
+      "contextsInNontrivialClasses": 2,
+      "errors": [
+        {
+          "jobId": "BST",
+          "reason": "empty slot"
+        }
+      ]
+    },
+    {
+      "label": "90 同步660",
+      "contexts": 21,
+      "equivalentGroups": [],
+      "contextsInNontrivialClasses": 0,
+      "errors": [
+        {
+          "jobId": "BST",
+          "reason": "empty slot"
+        }
+      ]
+    },
+    {
+      "label": "100 770–780",
+      "contexts": 21,
+      "equivalentGroups": [
+        [
+          {
+            "job": "WAR",
+            "weaponFeatures": 188
+          },
+          {
+            "job": "DRK",
+            "weaponFeatures": 188
+          }
+        ],
+        [
+          {
+            "job": "WHM",
+            "weaponFeatures": 56
+          },
+          {
+            "job": "SGE",
+            "weaponFeatures": 56
+          }
+        ],
+        [
+          {
+            "job": "SCH",
+            "weaponFeatures": 63
+          },
+          {
+            "job": "AST",
+            "weaponFeatures": 63
+          }
+        ],
+        [
+          {
+            "job": "SMN",
+            "weaponFeatures": 71
+          },
+          {
+            "job": "RDM",
+            "weaponFeatures": 71
+          }
+        ]
+      ],
+      "contextsInNontrivialClasses": 8,
+      "errors": [
+        {
+          "jobId": "BST",
+          "reason": "empty slot"
+        }
+      ]
+    },
+    {
+      "label": "100 735–780",
+      "contexts": 21,
+      "equivalentGroups": [
+        [
+          {
+            "job": "WHM",
+            "weaponFeatures": 60
+          },
+          {
+            "job": "SGE",
+            "weaponFeatures": 60
+          }
+        ],
+        [
+          {
+            "job": "SCH",
+            "weaponFeatures": 109
+          },
+          {
+            "job": "AST",
+            "weaponFeatures": 109
+          }
+        ]
+      ],
+      "contextsInNontrivialClasses": 4,
+      "errors": [
+        {
+          "jobId": "BST",
+          "reason": "empty slot"
+        }
+      ]
+    }
+  ]
+}

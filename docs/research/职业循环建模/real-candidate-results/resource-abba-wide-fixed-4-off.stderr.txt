@@ -1,0 +1,29 @@
+wide-fixed/off cold bootstrap
+wide-fixed/off preparing complete raw candidates
+wide-fixed/off/1.94 complete exact search
+wide-fixed/off/1.94 profile candidate-upper-bound-gate
+wide-fixed/off/1.94 profile highs-call-start
+wide-fixed/off/1.94 profile highs-solve-start
+wide-fixed/off/1.94 profile highs-solve-end
+wide-fixed/off/1.94 HiGHS exact_damage_initial 状态=Optimal；目标=-2086227.9891509989
+wide-fixed/off/1.94 精确候选已核验 1 个；固定点上界=58451112951132
+wide-fixed/off/1.94 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+wide-fixed/off/1.94 profile exact-search-summary
+wide-fixed/off/1.96 complete exact search
+wide-fixed/off/1.96 profile candidate-upper-bound-gate
+wide-fixed/off/1.96 profile highs-call-start
+wide-fixed/off/1.96 profile highs-solve-start
+wide-fixed/off/1.96 profile highs-solve-end
+wide-fixed/off/1.96 HiGHS exact_damage_initial 状态=Optimal；目标=-1931437.4166565107
+wide-fixed/off/1.96 精确候选已核验 1 个；固定点上界=60751672917859
+wide-fixed/off/1.96 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+wide-fixed/off/1.96 profile exact-search-summary
+wide-fixed/off/2 complete exact search
+wide-fixed/off/2 profile candidate-upper-bound-gate
+wide-fixed/off/2 profile highs-call-start
+wide-fixed/off/2 profile highs-solve-start
+wide-fixed/off/2 profile highs-solve-end
+wide-fixed/off/2 HiGHS exact_damage_initial 状态=Optimal；目标=-1706559.3932493795
+wide-fixed/off/2 精确候选已核验 1 个；固定点上界=62141551098022
+wide-fixed/off/2 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+wide-fixed/off/2 profile exact-search-summary

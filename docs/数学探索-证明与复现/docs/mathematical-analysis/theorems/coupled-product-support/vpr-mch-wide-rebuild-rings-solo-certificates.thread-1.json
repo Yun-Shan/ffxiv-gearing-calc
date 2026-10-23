@@ -1,0 +1,129 @@
+[
+  {
+    "threadId": 1,
+    "job": "VPR",
+    "objective": "dps",
+    "reference": "supplied positive factor reference",
+    "status": "certified",
+    "targetRatio": {
+      "n": "1",
+      "d": "1"
+    },
+    "method": "adaptive concave chords with exact CRT-tier leaves and unique-ring support",
+    "ringHullStats": [
+      {
+        "ringIndexes": [
+          8,
+          9
+        ],
+        "leftCandidates": 42,
+        "rightCandidates": 42,
+        "cartesianPairs": 1764,
+        "hullVertices": 6,
+        "oracleCalls": 11
+      },
+      {
+        "ringIndexes": [
+          8,
+          9
+        ],
+        "leftCandidates": 42,
+        "rightCandidates": 42,
+        "cartesianPairs": 1764,
+        "hullVertices": 6,
+        "oracleCalls": 11
+      },
+      {
+        "ringIndexes": [
+          8,
+          9
+        ],
+        "leftCandidates": 42,
+        "rightCandidates": 42,
+        "cartesianPairs": 1764,
+        "hullVertices": 6,
+        "oracleCalls": 11
+      },
+      {
+        "ringIndexes": [
+          8,
+          9
+        ],
+        "leftCandidates": 42,
+        "rightCandidates": 42,
+        "cartesianPairs": 1764,
+        "hullVertices": 8,
+        "oracleCalls": 15
+      }
+    ],
+    "candidates": 397,
+    "pruned": 89,
+    "selectedChecked": 0,
+    "queries": 13284,
+    "leafQueries": 1388,
+    "cachedRegions": 110,
+    "prepMs": 57.75927499999989,
+    "queryMs": 144.64551400000005,
+    "fullCertificateMs": 204.02308800000014,
+    "representation": "candidate pool filtered before full model construction",
+    "validatedSeedSlots": 11
+  },
+  {
+    "threadId": 1,
+    "job": "MCH",
+    "objective": "dps",
+    "reference": "supplied positive factor reference",
+    "status": "certified",
+    "targetRatio": {
+      "n": "1",
+      "d": "1"
+    },
+    "method": "adaptive concave chords with exact CRT-tier leaves and unique-ring support",
+    "ringHullStats": [
+      {
+        "ringIndexes": [
+          9,
+          10
+        ],
+        "leftCandidates": 1,
+        "rightCandidates": 1,
+        "cartesianPairs": 1,
+        "hullVertices": 1,
+        "oracleCalls": 2
+      },
+      {
+        "ringIndexes": [
+          9,
+          10
+        ],
+        "leftCandidates": 1,
+        "rightCandidates": 1,
+        "cartesianPairs": 1,
+        "hullVertices": 1,
+        "oracleCalls": 2
+      },
+      {
+        "ringIndexes": [
+          9,
+          10
+        ],
+        "leftCandidates": 1,
+        "rightCandidates": 1,
+        "cartesianPairs": 1,
+        "hullVertices": 1,
+        "oracleCalls": 2
+      }
+    ],
+    "candidates": 221,
+    "pruned": 143,
+    "selectedChecked": 0,
+    "queries": 3058,
+    "leafQueries": 300,
+    "cachedRegions": 85,
+    "prepMs": 35.02035000000615,
+    "queryMs": 33.23580399999628,
+    "fullCertificateMs": 68.50406999999541,
+    "representation": "candidate pool filtered before full model construction",
+    "validatedSeedSlots": 11
+  }
+]

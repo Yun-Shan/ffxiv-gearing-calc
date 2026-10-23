@@ -1,0 +1,29 @@
+sync-foods/certificate cold bootstrap
+sync-foods/certificate preparing complete raw candidates
+sync-foods/certificate/1.94 complete exact search
+sync-foods/certificate/1.94 profile candidate-upper-bound-gate
+sync-foods/certificate/1.94 profile highs-call-start
+sync-foods/certificate/1.94 profile highs-solve-start
+sync-foods/certificate/1.94 profile highs-solve-end
+sync-foods/certificate/1.94 HiGHS exact_damage_initial 状态=Optimal；目标=-1807439.3225097656
+sync-foods/certificate/1.94 精确候选已核验 1 个；固定点上界=58035123088198
+sync-foods/certificate/1.94 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+sync-foods/certificate/1.94 profile exact-search-summary
+sync-foods/certificate/1.96 complete exact search
+sync-foods/certificate/1.96 profile candidate-upper-bound-gate
+sync-foods/certificate/1.96 profile highs-call-start
+sync-foods/certificate/1.96 profile highs-solve-start
+sync-foods/certificate/1.96 profile highs-solve-end
+sync-foods/certificate/1.96 HiGHS exact_damage_initial 状态=Optimal；目标=-1655810.336151123
+sync-foods/certificate/1.96 精确候选已核验 1 个；固定点上界=60335978108300
+sync-foods/certificate/1.96 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+sync-foods/certificate/1.96 profile exact-search-summary
+sync-foods/certificate/2 complete exact search
+sync-foods/certificate/2 profile candidate-upper-bound-gate
+sync-foods/certificate/2 profile highs-call-start
+sync-foods/certificate/2 profile highs-solve-start
+sync-foods/certificate/2 profile highs-solve-end
+sync-foods/certificate/2 HiGHS exact_damage_initial 状态=Optimal；目标=-1416404.0900726318
+sync-foods/certificate/2 精确候选已核验 1 个；固定点上界=61727219958671
+sync-foods/certificate/2 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+sync-foods/certificate/2 profile exact-search-summary

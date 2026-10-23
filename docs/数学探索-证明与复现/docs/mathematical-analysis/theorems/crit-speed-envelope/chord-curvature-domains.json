@@ -1,0 +1,426 @@
+{
+  "domainChecks": 84,
+  "passed": 84,
+  "rows": [
+    {
+      "label": "L50-BRD",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L50-BRD",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L50-BRD",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L50-BLM",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L50-BLM",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L50-BLM",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L50-WAR",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L50-WAR",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L50-WAR",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L50-WHM",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L50-WHM",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L50-WHM",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L60-BRD",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L60-BRD",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L60-BRD",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L60-BLM",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L60-BLM",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L60-BLM",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L60-WAR",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L60-WAR",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L60-WAR",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L60-WHM",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L60-WHM",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L60-WHM",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L70-BRD",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L70-BRD",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L70-BRD",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L70-BLM",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L70-BLM",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L70-BLM",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L70-WAR",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L70-WAR",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L70-WAR",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L70-WHM",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L70-WHM",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L70-WHM",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L80-BRD",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L80-BRD",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L80-BRD",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L80-BLM",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L80-BLM",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L80-BLM",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L80-WAR",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L80-WAR",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L80-WAR",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L80-WHM",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L80-WHM",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L80-WHM",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L90-BRD",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L90-BRD",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L90-BRD",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L90-BLM",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L90-BLM",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L90-BLM",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L90-WAR",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L90-WAR",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L90-WAR",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L90-WHM",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L90-WHM",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L90-WHM",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L100-BRD",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L100-BRD",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L100-BRD",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L100-BLM",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L100-BLM",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L100-BLM",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L100-WAR",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L100-WAR",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L100-WAR",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L100-WHM",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L100-WHM",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L100-WHM",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L100-MNK",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L100-MNK",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L100-MNK",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "L100-NIN",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "L100-NIN",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "L100-NIN",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "BLU-sync80",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "BLU-sync80",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "BLU-sync80",
+      "factors": 6,
+      "guard": true
+    },
+    {
+      "label": "BRD-wide770-795",
+      "factors": 4,
+      "guard": true
+    },
+    {
+      "label": "BRD-wide770-795",
+      "factors": 5,
+      "guard": true
+    },
+    {
+      "label": "BRD-wide770-795",
+      "factors": 6,
+      "guard": true
+    }
+  ]
+}

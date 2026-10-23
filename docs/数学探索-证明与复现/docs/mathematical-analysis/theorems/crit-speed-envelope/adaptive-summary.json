@@ -1,0 +1,58 @@
+[
+  {
+    "job": "BLM",
+    "objective": "damage",
+    "reference": "pre-MIP feasible seed",
+    "method": "adaptive concave chords with exact CRT-tier leaves",
+    "candidates": 674,
+    "pruned": 588,
+    "selectedChecked": 11,
+    "queries": 2001,
+    "leafQueries": 129,
+    "cachedRegions": 33,
+    "prepMs": 74.70114500000005,
+    "queryMs": 23.960901999999976
+  },
+  {
+    "job": "BLM",
+    "objective": "damage",
+    "reference": "pre-MIP feasible seed",
+    "method": "adaptive concave chords with exact CRT-tier leaves",
+    "candidates": 1237,
+    "pruned": 1140,
+    "selectedChecked": 11,
+    "queries": 2753,
+    "leafQueries": 115,
+    "cachedRegions": 37,
+    "prepMs": 130.33500300000003,
+    "queryMs": 31.905190000000005
+  },
+  {
+    "job": "WAR",
+    "objective": "damage",
+    "reference": "pre-MIP feasible seed",
+    "method": "adaptive concave chords with exact CRT-tier leaves",
+    "candidates": 1972,
+    "pruned": 1445,
+    "selectedChecked": 11,
+    "queries": 7341,
+    "leafQueries": 623,
+    "cachedRegions": 29,
+    "prepMs": 146.80582900000007,
+    "queryMs": 93.60397799999998
+  },
+  {
+    "job": "WHM",
+    "objective": "damage",
+    "reference": "pre-MIP feasible seed",
+    "method": "adaptive concave chords with exact CRT-tier leaves",
+    "candidates": 1088,
+    "pruned": 158,
+    "selectedChecked": 11,
+    "queries": 8605,
+    "leafQueries": 933,
+    "cachedRegions": 29,
+    "prepMs": 125.84420699999998,
+    "queryMs": 101.89833799999997
+  }
+]

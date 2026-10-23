@@ -1,0 +1,1804 @@
+{
+  "scope": "Real complete equipment candidate domain; synthetic MNK action profiles; isolated process-local objective hook",
+  "startedAt": "2026-10-23T16:13:14.373Z",
+  "scenario": "sync-foods",
+  "mode": "certificate",
+  "config": {
+    "jobId": "MNK",
+    "minItemLevel": 790,
+    "maxItemLevel": 795,
+    "sync": {
+      "kind": "itemLevel",
+      "value": 735
+    },
+    "clanIndex": 0,
+    "gcdChoices": [
+      1.94,
+      1.96,
+      2
+    ],
+    "maximizeTenacity": false,
+    "objective": "damage",
+    "excludedSources": [],
+    "excludedGearIds": [],
+    "forcedGear": {},
+    "sharedSlots": [],
+    "foodId": 0
+  },
+  "maxTotalMs": 180000,
+  "status": "optimal",
+  "globalOptimalityProven": true,
+  "stageTimes": {
+    "bootstrapMs": 161.4402,
+    "provenanceMs": 63.48889999999997,
+    "candidatePreparationMs": 8.432900000000018
+  },
+  "branches": [
+    {
+      "gcd": 1.94,
+      "profile": {
+        "gcd": 194,
+        "alpha": 13040,
+        "beta": 4000,
+        "gamma": 3200,
+        "duration": 120,
+        "synthetic": true,
+        "key": "194:13040:4000:3200:120",
+        "coefficientDivisor": "3200",
+        "coefficients": [
+          5957500000,
+          4126250,
+          4575,
+          1
+        ],
+        "rawCoefficients": [
+          "19064000000000",
+          "13204000000",
+          "14640000",
+          "3200"
+        ],
+        "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+      },
+      "status": "optimal",
+      "optimalityProven": true,
+      "events": {
+        "models": {
+          "MNK:candidate_upper_bound_gate": {
+            "events": 1
+          },
+          "exact_damage_initial#1": {
+            "events": 14,
+            "variableCount": 687,
+            "rowCount": 390,
+            "nodes": "0",
+            "totalLpIterations": "256",
+            "elapsedMs": 521.3877,
+            "status": "Optimal",
+            "completed": true
+          },
+          "exact_search_MNK": {
+            "events": 1
+          }
+        },
+        "profiles": [
+          {
+            "phase": "candidate-upper-bound-gate",
+            "job": "MNK",
+            "candidateCount": 36,
+            "trustedCanonicalEvaluator": true,
+            "enabled": false,
+            "resourceBudgetCandidateProfile": "default"
+          },
+          {
+            "phase": "highs-call-start",
+            "variables": 687,
+            "constraints": 390,
+            "nonzeros": 20520,
+            "objectiveTerms": 498,
+            "hintTerms": 687
+          },
+          {
+            "phase": "highs-solve-start",
+            "getHighsMs": 21.09960000000001,
+            "lpSerializationMs": 5.7695999999999685,
+            "modelImportMs": 21.732700000000023,
+            "lpCharacters": 331940,
+            "variables": 687,
+            "constraints": 390,
+            "nonzeros": 20520
+          },
+          {
+            "phase": "highs-solve-end",
+            "status": "Optimal",
+            "getHighsMs": 21.09960000000001,
+            "lpSerializationMs": 5.7695999999999685,
+            "modelImportMs": 21.732700000000023,
+            "nativeRunMs": 493.57289999999995,
+            "totalMs": 548.1628,
+            "lpCharacters": 331940
+          },
+          {
+            "phase": "exact-search-summary",
+            "job": "MNK",
+            "elapsedMs": 591.9866999999999,
+            "modelPreparationMs": 26.1943,
+            "greedyMipStartMs": 2.044999999999959,
+            "solverWallMs": 548.5622,
+            "otherSearchMs": 9.297000000000025,
+            "resourceBudgetCandidateCuts": 0,
+            "primaryResourceSupportsEnabled": true,
+            "mainStatResourceSupportEnabled": false,
+            "solverRuns": 1,
+            "incumbentCandidateUpperBoundCuts": 0,
+            "excludedSignatures": 1,
+            "signatureBandChecks": 1,
+            "signatureBandElapsedMs": 5.8881999999999834,
+            "signatureBandProof": true,
+            "variables": 687,
+            "constraints": 391,
+            "reachableFactorClassesRemoved": 73,
+            "reachableAttributePruningSkipped": 0,
+            "reachableWeaponFactorClassesRemoved": 0,
+            "reachableWeaponPruningSkipped": 0,
+            "maximumSurrogate": 58035123088198,
+            "memoryUsage": {
+              "rssBytes": 156553216,
+              "heapUsedBytes": 40970120
+            },
+            "conditionalResourceSupport": {
+              "candidateBands": 0,
+              "rowsAdded": 0,
+              "nonzerosAdded": 0,
+              "skipReason": "no-out-of-window-candidates"
+            }
+          }
+        ],
+        "profilesOmitted": 0,
+        "profileParseErrors": 0
+      },
+      "canonicalCompatibility": {
+        "proof": "Nonnegative cubic coefficients on w >= 0; all remaining integer factors unchanged",
+        "minimumW": 0,
+        "maximumW": 202,
+        "conservativeMaximumCrtContribution": 2817,
+        "maximumCritical": 6985923208
+      },
+      "certificateSeedMs": 8.666999999999973,
+      "certificateIncumbent": {
+        "score": {
+          "numerator": "51126740798393344486400000000000000",
+          "denominator": "4800000000000000000000000000000",
+          "approximate": 10651.404332998613,
+          "criticalFactor": 6943498000,
+          "scale": "3200",
+          "actionFactor": 22219.1936,
+          "ordinaryDamage": 65.91119202260239
+        },
+        "identities": [
+          "{\"itemId\":49613,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[10,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[4,2560],[8,146],[10,393],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+        ],
+        "foodId": 49240
+      },
+      "certificate": {
+        "strategy": "full-product-det-dht-amgm-crt-support",
+        "candidatesBefore": 36,
+        "candidatesAfter": 36,
+        "removed": 0,
+        "independentRemoved": 0,
+        "amgmRemoved": 0,
+        "independentQueries": 25,
+        "amgmQueries": 275,
+        "upperQueries": 300,
+        "crtNodes": 275,
+        "attemptedCandidateTests": 25,
+        "supportBuilds": 11,
+        "supportSegments": 90,
+        "preparedPoints": 360,
+        "budgetExhausted": false,
+        "foodRelaxation": "Independent maximum caps; no food identity removed",
+        "uniqueRelaxation": "Cross-slot unique and ring compatibility relaxed only in upper bounds",
+        "affineEnvelopeChecks": 4644,
+        "incumbentPins": 11,
+        "elapsedMs": 3.355099999999993
+      },
+      "removedCandidates": [],
+      "certificateTotalMs": 12.5471,
+      "optionalPolicy": {
+        "canonicalMarker": true,
+        "candidateUpperBoundGate": false,
+        "primaryResourceSupports": true,
+        "mainStatResourceSupport": true,
+        "candidateResourceSupportProfile": "compact-weighted",
+        "resourceBudgetCandidateProfile": "default"
+      },
+      "optionPreparationMs": 12.915699999999958,
+      "searchMs": 592.6751,
+      "statistics": {
+        "elapsedMs": 591.9866999999999,
+        "modelPreparationMs": 26.1943,
+        "greedyMipStartMs": 2.044999999999959,
+        "solverWallMs": 548.5622,
+        "otherSearchMs": 9.297000000000025,
+        "resourceBudgetCandidateCuts": 0,
+        "primaryResourceSupportsEnabled": true,
+        "mainStatResourceSupportEnabled": false,
+        "solverRuns": 1,
+        "incumbentCandidateUpperBoundCuts": 0,
+        "excludedSignatures": 1,
+        "signatureBandChecks": 1,
+        "signatureBandElapsedMs": 5.8881999999999834,
+        "signatureBandProof": true,
+        "variables": 687,
+        "constraints": 391,
+        "reachableFactorClassesRemoved": 73,
+        "reachableAttributePruningSkipped": 0,
+        "reachableWeaponFactorClassesRemoved": 0,
+        "reachableWeaponPruningSkipped": 0,
+        "maximumSurrogate": 58035123088198,
+        "memoryUsage": {
+          "rssBytes": 156553216,
+          "heapUsedBytes": 40970120
+        },
+        "conditionalResourceSupport": {
+          "candidateBands": 0,
+          "rowsAdded": 0,
+          "nonzerosAdded": 0,
+          "skipReason": "no-out-of-window-candidates"
+        }
+      },
+      "verificationMs": 1.9203000000001111,
+      "result": {
+        "gcd": 1.94,
+        "score": {
+          "numerator": "51225203467239552179200000000000000",
+          "denominator": "4800000000000000000000000000000",
+          "approximate": 10671.917389008238,
+          "criticalFactor": 6943498000,
+          "scale": "3200",
+          "actionFactor": 22219.1936,
+          "ordinaryDamage": 66.03812739481732
+        },
+        "identities": [
+          {
+            "slot": "head",
+            "itemId": 49690,
+            "identity": "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "body",
+            "itemId": 49614,
+            "identity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "hands",
+            "itemId": 49692,
+            "identity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "legs",
+            "itemId": 49693,
+            "identity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "feet",
+            "itemId": 49617,
+            "identity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "earrings",
+            "itemId": 49639,
+            "identity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "necklace",
+            "itemId": 49721,
+            "identity": "{\"itemId\":49721,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[10,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "bracelet",
+            "itemId": 49726,
+            "identity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring",
+            "itemId": 49654,
+            "identity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring2",
+            "itemId": 49731,
+            "identity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "weapon",
+            "itemId": 51001,
+            "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[4,2560],[8,146],[10,393],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+          }
+        ],
+        "foodId": 49240,
+        "vector": [
+          2717,
+          1372,
+          0,
+          823,
+          2560,
+          0,
+          0,
+          0,
+          146,
+          0,
+          541,
+          0,
+          4481,
+          0,
+          5060
+        ],
+        "fixedGearsetInput": {
+          "jobId": "MNK",
+          "jobLevel": 100,
+          "sync": {
+            "kind": "itemLevel",
+            "value": 735
+          },
+          "foodId": 49240,
+          "gears": [
+            {
+              "id": 49690,
+              "materias": []
+            },
+            {
+              "id": 49614,
+              "materias": []
+            },
+            {
+              "id": 49692,
+              "materias": []
+            },
+            {
+              "id": 49693,
+              "materias": []
+            },
+            {
+              "id": 49617,
+              "materias": []
+            },
+            {
+              "id": 49639,
+              "materias": []
+            },
+            {
+              "id": 49721,
+              "materias": []
+            },
+            {
+              "id": 49726,
+              "materias": []
+            },
+            {
+              "id": 49654,
+              "materias": []
+            },
+            {
+              "id": 49731,
+              "materias": []
+            },
+            {
+              "id": 51001,
+              "materias": [],
+              "customStats": {
+                "DHT": 0,
+                "CRT": 447,
+                "DET": 108,
+                "SKS": 447
+              }
+            }
+          ]
+        },
+        "finalStats": {
+          "PDMG": 146,
+          "MDMG": 0,
+          "STR": 4967,
+          "CRT": 3137,
+          "DET": 1812,
+          "DHT": 1243,
+          "SKS": 961,
+          "VIT": 5500,
+          "DLY": 2560
+        },
+        "validation": {
+          "originalSlotMembership": true,
+          "originalFoodMembership": true,
+          "uniqueItems": true,
+          "completeElevenItems": true,
+          "exactRequestedGcd": true,
+          "fixedGearsetStatsMatch": true,
+          "ordinaryDamageMatch": true,
+          "researchFloatMatchesExactFraction": true
+        }
+      },
+      "elapsedMs": 607.5725,
+      "hookStatistics": {
+        "sourceSha256": "3092c4defc8f86da7fd2eab56019c00122690f8ae6f0e215badfc693111d1ded",
+        "transformedSourceSha256": "f09b83631869b146f54b616b0cd261fe0183535b4636c697e5815b9994ad7e75",
+        "hookHits": 1,
+        "captureMatches": 1,
+        "criticalMatches": 1,
+        "evaluatorCreations": 3,
+        "researchEvaluatorCreations": 3,
+        "evaluatorCalls": 7186,
+        "differentFromLegacy": 7186,
+        "numericSafetyChecks": 7891,
+        "maximumCritical": 6985923208,
+        "profileCreations": {
+          "194:13040:4000:3200:120": 3
+        },
+        "profileCalls": {
+          "194:13040:4000:3200:120": 7186
+        },
+        "activeProfile": {
+          "gcd": 194,
+          "alpha": 13040,
+          "beta": 4000,
+          "gamma": 3200,
+          "duration": 120,
+          "synthetic": true,
+          "key": "194:13040:4000:3200:120",
+          "coefficientDivisor": "3200",
+          "coefficients": [
+            5957500000,
+            4126250,
+            4575,
+            1
+          ],
+          "rawCoefficients": [
+            "19064000000000",
+            "13204000000",
+            "14640000",
+            "3200"
+          ],
+          "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+        },
+        "scope": "Process-local synthetic MNK critical factor; six-factor proof path retained; no production source writes"
+      }
+    },
+    {
+      "gcd": 1.96,
+      "profile": {
+        "gcd": 196,
+        "alpha": 12200,
+        "beta": 4500,
+        "gamma": 2880,
+        "duration": 120,
+        "synthetic": true,
+        "key": "196:12200:4500:2880:120",
+        "coefficientDivisor": "320",
+        "coefficients": [
+          59034000000,
+          40601250,
+          42625,
+          9
+        ],
+        "rawCoefficients": [
+          "18890880000000",
+          "12992400000",
+          "13640000",
+          "2880"
+        ],
+        "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+      },
+      "status": "optimal",
+      "optimalityProven": true,
+      "events": {
+        "models": {
+          "MNK:candidate_upper_bound_gate": {
+            "events": 1
+          },
+          "exact_damage_initial#2": {
+            "events": 12,
+            "variableCount": 687,
+            "rowCount": 389,
+            "nodes": "0",
+            "totalLpIterations": "574",
+            "elapsedMs": 362.3912999999999,
+            "status": "Optimal",
+            "completed": true
+          },
+          "exact_search_MNK": {
+            "events": 1
+          }
+        },
+        "profiles": [
+          {
+            "phase": "candidate-upper-bound-gate",
+            "job": "MNK",
+            "candidateCount": 36,
+            "trustedCanonicalEvaluator": true,
+            "enabled": false,
+            "resourceBudgetCandidateProfile": "default"
+          },
+          {
+            "phase": "highs-call-start",
+            "variables": 687,
+            "constraints": 389,
+            "nonzeros": 20019,
+            "objectiveTerms": 498,
+            "hintTerms": 687
+          },
+          {
+            "phase": "highs-solve-start",
+            "getHighsMs": 0.08609999999998763,
+            "lpSerializationMs": 3.159400000000005,
+            "modelImportMs": 9.436199999999985,
+            "lpCharacters": 324113,
+            "variables": 687,
+            "constraints": 389,
+            "nonzeros": 20019
+          },
+          {
+            "phase": "highs-solve-end",
+            "status": "Optimal",
+            "getHighsMs": 0.08609999999998763,
+            "lpSerializationMs": 3.159400000000005,
+            "modelImportMs": 9.436199999999985,
+            "nativeRunMs": 350.94309999999996,
+            "totalMs": 365.5245,
+            "lpCharacters": 324113
+          },
+          {
+            "phase": "exact-search-summary",
+            "job": "MNK",
+            "elapsedMs": 396.10860000000014,
+            "modelPreparationMs": 22.274900000000002,
+            "greedyMipStartMs": 1.5575999999999794,
+            "solverWallMs": 365.6744,
+            "otherSearchMs": 4.86200000000008,
+            "resourceBudgetCandidateCuts": 0,
+            "primaryResourceSupportsEnabled": true,
+            "mainStatResourceSupportEnabled": false,
+            "solverRuns": 1,
+            "incumbentCandidateUpperBoundCuts": 0,
+            "excludedSignatures": 1,
+            "signatureBandChecks": 1,
+            "signatureBandElapsedMs": 1.7397000000000844,
+            "signatureBandProof": true,
+            "variables": 687,
+            "constraints": 390,
+            "reachableFactorClassesRemoved": 73,
+            "reachableAttributePruningSkipped": 0,
+            "reachableWeaponFactorClassesRemoved": 0,
+            "reachableWeaponPruningSkipped": 0,
+            "maximumSurrogate": 60335978108300,
+            "memoryUsage": {
+              "rssBytes": 171782144,
+              "heapUsedBytes": 39544064
+            },
+            "conditionalResourceSupport": {
+              "candidateBands": 0,
+              "rowsAdded": 0,
+              "nonzerosAdded": 0,
+              "skipReason": "no-out-of-window-candidates"
+            }
+          }
+        ],
+        "profilesOmitted": 0,
+        "profileParseErrors": 0
+      },
+      "canonicalCompatibility": {
+        "proof": "Nonnegative cubic coefficients on w >= 0; all remaining integer factors unchanged",
+        "minimumW": 0,
+        "maximumW": 202,
+        "conservativeMaximumCrtContribution": 2817,
+        "maximumCritical": 69048904672
+      },
+      "certificateSeedMs": 3.261600000000044,
+      "certificateIncumbent": {
+        "score": {
+          "numerator": "51002823005979212743680000000000000",
+          "denominator": "4800000000000000000000000000000",
+          "approximate": 10625.58812624567,
+          "criticalFactor": 68638793250,
+          "scale": "320",
+          "actionFactor": 21964.41384,
+          "ordinaryDamage": 66.51413504062332
+        },
+        "identities": [
+          "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[4,2560],[8,146],[10,393],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+        ],
+        "foodId": 49240
+      },
+      "certificate": {
+        "strategy": "full-product-det-dht-amgm-crt-support",
+        "candidatesBefore": 36,
+        "candidatesAfter": 36,
+        "removed": 0,
+        "independentRemoved": 0,
+        "amgmRemoved": 0,
+        "independentQueries": 25,
+        "amgmQueries": 275,
+        "upperQueries": 300,
+        "crtNodes": 275,
+        "attemptedCandidateTests": 25,
+        "supportBuilds": 11,
+        "supportSegments": 90,
+        "preparedPoints": 360,
+        "budgetExhausted": false,
+        "foodRelaxation": "Independent maximum caps; no food identity removed",
+        "uniqueRelaxation": "Cross-slot unique and ring compatibility relaxed only in upper bounds",
+        "affineEnvelopeChecks": 4644,
+        "incumbentPins": 11,
+        "elapsedMs": 1.9594999999999345
+      },
+      "removedCandidates": [],
+      "certificateTotalMs": 5.289300000000026,
+      "optionalPolicy": {
+        "canonicalMarker": true,
+        "candidateUpperBoundGate": false,
+        "primaryResourceSupports": true,
+        "mainStatResourceSupport": true,
+        "candidateResourceSupportProfile": "compact-weighted",
+        "resourceBudgetCandidateProfile": "default"
+      },
+      "optionPreparationMs": 5.341499999999996,
+      "searchMs": 396.29009999999994,
+      "statistics": {
+        "elapsedMs": 396.10860000000014,
+        "modelPreparationMs": 22.274900000000002,
+        "greedyMipStartMs": 1.5575999999999794,
+        "solverWallMs": 365.6744,
+        "otherSearchMs": 4.86200000000008,
+        "resourceBudgetCandidateCuts": 0,
+        "primaryResourceSupportsEnabled": true,
+        "mainStatResourceSupportEnabled": false,
+        "solverRuns": 1,
+        "incumbentCandidateUpperBoundCuts": 0,
+        "excludedSignatures": 1,
+        "signatureBandChecks": 1,
+        "signatureBandElapsedMs": 1.7397000000000844,
+        "signatureBandProof": true,
+        "variables": 687,
+        "constraints": 390,
+        "reachableFactorClassesRemoved": 73,
+        "reachableAttributePruningSkipped": 0,
+        "reachableWeaponFactorClassesRemoved": 0,
+        "reachableWeaponPruningSkipped": 0,
+        "maximumSurrogate": 60335978108300,
+        "memoryUsage": {
+          "rssBytes": 171782144,
+          "heapUsedBytes": 39544064
+        },
+        "conditionalResourceSupport": {
+          "candidateBands": 0,
+          "rowsAdded": 0,
+          "nonzerosAdded": 0,
+          "skipReason": "no-out-of-window-candidates"
+        }
+      },
+      "verificationMs": 0.7255000000000109,
+      "result": {
+        "gcd": 1.96,
+        "score": {
+          "numerator": "51136656749554062777120000000000000",
+          "denominator": "4800000000000000000000000000000",
+          "approximate": 10653.470156157096,
+          "criticalFactor": 68638793250,
+          "scale": "320",
+          "actionFactor": 21964.41384,
+          "ordinaryDamage": 66.68867117741884
+        },
+        "identities": [
+          {
+            "slot": "head",
+            "itemId": 49613,
+            "identity": "{\"itemId\":49613,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[10,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "body",
+            "itemId": 49614,
+            "identity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "hands",
+            "itemId": 49692,
+            "identity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "legs",
+            "itemId": 49693,
+            "identity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "feet",
+            "itemId": 49617,
+            "identity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "earrings",
+            "itemId": 49639,
+            "identity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "necklace",
+            "itemId": 49721,
+            "identity": "{\"itemId\":49721,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[10,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "bracelet",
+            "itemId": 49726,
+            "identity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring",
+            "itemId": 49654,
+            "identity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring2",
+            "itemId": 49731,
+            "identity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "weapon",
+            "itemId": 51001,
+            "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+          }
+        ],
+        "foodId": 49240,
+        "vector": [
+          2717,
+          1372,
+          0,
+          1028,
+          2560,
+          0,
+          0,
+          0,
+          146,
+          0,
+          336,
+          0,
+          4481,
+          0,
+          5060
+        ],
+        "fixedGearsetInput": {
+          "jobId": "MNK",
+          "jobLevel": 100,
+          "sync": {
+            "kind": "itemLevel",
+            "value": 735
+          },
+          "foodId": 49240,
+          "gears": [
+            {
+              "id": 49613,
+              "materias": []
+            },
+            {
+              "id": 49614,
+              "materias": []
+            },
+            {
+              "id": 49692,
+              "materias": []
+            },
+            {
+              "id": 49693,
+              "materias": []
+            },
+            {
+              "id": 49617,
+              "materias": []
+            },
+            {
+              "id": 49639,
+              "materias": []
+            },
+            {
+              "id": 49721,
+              "materias": []
+            },
+            {
+              "id": 49726,
+              "materias": []
+            },
+            {
+              "id": 49654,
+              "materias": []
+            },
+            {
+              "id": 49731,
+              "materias": []
+            },
+            {
+              "id": 51001,
+              "materias": [],
+              "customStats": {
+                "DHT": 447,
+                "CRT": 447,
+                "DET": 108,
+                "SKS": 0
+              }
+            }
+          ]
+        },
+        "finalStats": {
+          "PDMG": 146,
+          "MDMG": 0,
+          "STR": 4967,
+          "CRT": 3137,
+          "DET": 1812,
+          "DHT": 1448,
+          "SKS": 756,
+          "VIT": 5500,
+          "DLY": 2560
+        },
+        "validation": {
+          "originalSlotMembership": true,
+          "originalFoodMembership": true,
+          "uniqueItems": true,
+          "completeElevenItems": true,
+          "exactRequestedGcd": true,
+          "fixedGearsetStatsMatch": true,
+          "ordinaryDamageMatch": true,
+          "researchFloatMatchesExactFraction": true
+        }
+      },
+      "elapsedMs": 402.44499999999994,
+      "hookStatistics": {
+        "sourceSha256": "3092c4defc8f86da7fd2eab56019c00122690f8ae6f0e215badfc693111d1ded",
+        "transformedSourceSha256": "f09b83631869b146f54b616b0cd261fe0183535b4636c697e5815b9994ad7e75",
+        "hookHits": 1,
+        "captureMatches": 1,
+        "criticalMatches": 1,
+        "evaluatorCreations": 6,
+        "researchEvaluatorCreations": 6,
+        "evaluatorCalls": 14266,
+        "differentFromLegacy": 14266,
+        "numericSafetyChecks": 15570,
+        "maximumCritical": 69048904672,
+        "profileCreations": {
+          "194:13040:4000:3200:120": 3,
+          "196:12200:4500:2880:120": 3
+        },
+        "profileCalls": {
+          "194:13040:4000:3200:120": 7186,
+          "196:12200:4500:2880:120": 7080
+        },
+        "activeProfile": {
+          "gcd": 196,
+          "alpha": 12200,
+          "beta": 4500,
+          "gamma": 2880,
+          "duration": 120,
+          "synthetic": true,
+          "key": "196:12200:4500:2880:120",
+          "coefficientDivisor": "320",
+          "coefficients": [
+            59034000000,
+            40601250,
+            42625,
+            9
+          ],
+          "rawCoefficients": [
+            "18890880000000",
+            "12992400000",
+            "13640000",
+            "2880"
+          ],
+          "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+        },
+        "scope": "Process-local synthetic MNK critical factor; six-factor proof path retained; no production source writes"
+      }
+    },
+    {
+      "gcd": 2,
+      "profile": {
+        "gcd": 200,
+        "alpha": 11360,
+        "beta": 5000,
+        "gamma": 2640,
+        "duration": 120,
+        "synthetic": true,
+        "key": "200:11360:5000:2640:120",
+        "coefficientDivisor": "80",
+        "coefficients": [
+          234023000000,
+          160802500,
+          158500,
+          33
+        ],
+        "rawCoefficients": [
+          "18721840000000",
+          "12864200000",
+          "12680000",
+          "2640"
+        ],
+        "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+      },
+      "status": "optimal",
+      "optimalityProven": true,
+      "events": {
+        "models": {
+          "MNK:candidate_upper_bound_gate": {
+            "events": 1
+          },
+          "exact_damage_initial#3": {
+            "events": 7,
+            "variableCount": 678,
+            "rowCount": 390,
+            "nodes": "0",
+            "totalLpIterations": "34",
+            "elapsedMs": 135.30779999999982,
+            "status": "Optimal",
+            "completed": true
+          },
+          "exact_search_MNK": {
+            "events": 1
+          }
+        },
+        "profiles": [
+          {
+            "phase": "candidate-upper-bound-gate",
+            "job": "MNK",
+            "candidateCount": 30,
+            "trustedCanonicalEvaluator": true,
+            "enabled": false,
+            "resourceBudgetCandidateProfile": "default"
+          },
+          {
+            "phase": "highs-call-start",
+            "variables": 678,
+            "constraints": 390,
+            "nonzeros": 20366,
+            "objectiveTerms": 498,
+            "hintTerms": 678
+          },
+          {
+            "phase": "highs-solve-start",
+            "getHighsMs": 0.06889999999998508,
+            "lpSerializationMs": 2.685600000000022,
+            "modelImportMs": 9.607999999999947,
+            "lpCharacters": 329674,
+            "variables": 678,
+            "constraints": 390,
+            "nonzeros": 20366
+          },
+          {
+            "phase": "highs-solve-end",
+            "status": "Optimal",
+            "getHighsMs": 0.06889999999998508,
+            "lpSerializationMs": 2.685600000000022,
+            "modelImportMs": 9.607999999999947,
+            "nativeRunMs": 123.16530000000012,
+            "totalMs": 137.95039999999995,
+            "lpCharacters": 329674
+          },
+          {
+            "phase": "exact-search-summary",
+            "job": "MNK",
+            "elapsedMs": 162.5059000000001,
+            "modelPreparationMs": 18.28740000000016,
+            "greedyMipStartMs": 0.8304999999998017,
+            "solverWallMs": 138.09410000000003,
+            "otherSearchMs": 4.483600000000024,
+            "resourceBudgetCandidateCuts": 0,
+            "primaryResourceSupportsEnabled": true,
+            "mainStatResourceSupportEnabled": false,
+            "solverRuns": 1,
+            "incumbentCandidateUpperBoundCuts": 0,
+            "excludedSignatures": 1,
+            "signatureBandChecks": 1,
+            "signatureBandElapsedMs": 0.8103000000000975,
+            "signatureBandProof": true,
+            "variables": 678,
+            "constraints": 391,
+            "reachableFactorClassesRemoved": 73,
+            "reachableAttributePruningSkipped": 0,
+            "reachableWeaponFactorClassesRemoved": 0,
+            "reachableWeaponPruningSkipped": 0,
+            "maximumSurrogate": 61727219958671,
+            "memoryUsage": {
+              "rssBytes": 177213440,
+              "heapUsedBytes": 42366064
+            },
+            "conditionalResourceSupport": {
+              "candidateBands": 0,
+              "rowsAdded": 0,
+              "nonzerosAdded": 0,
+              "skipReason": "no-out-of-window-candidates"
+            }
+          }
+        ],
+        "profilesOmitted": 0,
+        "profileParseErrors": 0
+      },
+      "canonicalCompatibility": {
+        "proof": "Nonnegative cubic coefficients on w >= 0; all remaining integer factors unchanged",
+        "minimumW": 0,
+        "maximumW": 202,
+        "conservativeMaximumCrtContribution": 2817,
+        "maximumCritical": 273244538464
+      },
+      "certificateSeedMs": 1.7229999999999563,
+      "certificateIncumbent": {
+        "score": {
+          "numerator": "51390281695139328429780000000000000",
+          "denominator": "4800000000000000000000000000000",
+          "approximate": 10706.308686487359,
+          "criticalFactor": 271651140875,
+          "scale": "80",
+          "actionFactor": 21732.09127,
+          "ordinaryDamage": 67.73588799819201
+        },
+        "identities": [
+          "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}",
+          "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+        ],
+        "foodId": 49240
+      },
+      "certificate": {
+        "strategy": "full-product-det-dht-amgm-crt-support",
+        "candidatesBefore": 36,
+        "candidatesAfter": 30,
+        "removed": 6,
+        "independentRemoved": 0,
+        "amgmRemoved": 6,
+        "independentQueries": 25,
+        "amgmQueries": 279,
+        "upperQueries": 304,
+        "crtNodes": 279,
+        "attemptedCandidateTests": 25,
+        "supportBuilds": 11,
+        "supportSegments": 90,
+        "preparedPoints": 360,
+        "budgetExhausted": false,
+        "foodRelaxation": "Independent maximum caps; no food identity removed",
+        "uniqueRelaxation": "Cross-slot unique and ring compatibility relaxed only in upper bounds",
+        "affineEnvelopeChecks": 4644,
+        "incumbentPins": 11,
+        "elapsedMs": 1.838700000000017
+      },
+      "removedCandidates": [
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 8,
+          "upperNumerator": "458669081711570949549644460071977447363746986065920000000000",
+          "upperDenominator": "714702522568251509389844864640000",
+          "incumbentProduct": "642378521189241605372250000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DHT\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[3,108],[4,2560],[8,146],[10,393],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 5,
+          "upperNumerator": "7058213176306949710703720022746284975258657800507120000000",
+          "upperDenominator": "10991136739184965185721119360000",
+          "incumbentProduct": "642378521189241605372250000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"DET\\\",447,0],[\\\"DHT\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[1,393],[3,108],[4,2560],[8,146],[10,393],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 6,
+          "upperNumerator": "4365184209108704956100245625455109518744680217820160000000",
+          "upperDenominator": "6811618920753380416139525760000",
+          "incumbentProduct": "642378521189241605372250000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",108,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,108],[3,393],[4,2560],[8,146],[10,393],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 6,
+          "upperNumerator": "4366491813906979987560508867584005096084164097064960000000",
+          "upperDenominator": "6811618920753380416139525760000",
+          "incumbentProduct": "642378521189241605372250000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",108,0],[\\\"DET\\\",447,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,108],[1,393],[4,2560],[8,146],[10,393],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 5,
+          "upperNumerator": "7056702128234781774060938738468702129368123297201920000000",
+          "upperDenominator": "10991136739184965185721119360000",
+          "incumbentProduct": "642378521189241605372250000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[1,108],[3,393],[4,2560],[8,146],[10,393],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        },
+        {
+          "slotIndex": 10,
+          "method": "det-dht-amgm-crt-support",
+          "closedLeaves": 8,
+          "upperNumerator": "458706935387172744208286450584457918830805502904320000000000",
+          "upperDenominator": "714702522568251509389844864640000",
+          "incumbentProduct": "642378521189241605372250000",
+          "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"SKS\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[4,2560],[8,146],[10,393],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}",
+          "itemId": 51001
+        }
+      ],
+      "certificateTotalMs": 3.683999999999969,
+      "optionalPolicy": {
+        "canonicalMarker": true,
+        "candidateUpperBoundGate": false,
+        "primaryResourceSupports": true,
+        "mainStatResourceSupport": true,
+        "candidateResourceSupportProfile": "compact-weighted",
+        "resourceBudgetCandidateProfile": "default"
+      },
+      "optionPreparationMs": 3.760099999999966,
+      "searchMs": 162.57899999999995,
+      "statistics": {
+        "elapsedMs": 162.5059000000001,
+        "modelPreparationMs": 18.28740000000016,
+        "greedyMipStartMs": 0.8304999999998017,
+        "solverWallMs": 138.09410000000003,
+        "otherSearchMs": 4.483600000000024,
+        "resourceBudgetCandidateCuts": 0,
+        "primaryResourceSupportsEnabled": true,
+        "mainStatResourceSupportEnabled": false,
+        "solverRuns": 1,
+        "incumbentCandidateUpperBoundCuts": 0,
+        "excludedSignatures": 1,
+        "signatureBandChecks": 1,
+        "signatureBandElapsedMs": 0.8103000000000975,
+        "signatureBandProof": true,
+        "variables": 678,
+        "constraints": 391,
+        "reachableFactorClassesRemoved": 73,
+        "reachableAttributePruningSkipped": 0,
+        "reachableWeaponFactorClassesRemoved": 0,
+        "reachableWeaponPruningSkipped": 0,
+        "maximumSurrogate": 61727219958671,
+        "memoryUsage": {
+          "rssBytes": 177213440,
+          "heapUsedBytes": 42366064
+        },
+        "conditionalResourceSupport": {
+          "candidateBands": 0,
+          "rowsAdded": 0,
+          "nonzerosAdded": 0,
+          "skipReason": "no-out-of-window-candidates"
+        }
+      },
+      "verificationMs": 0.37249999999994543,
+      "result": {
+        "gcd": 2,
+        "score": {
+          "numerator": "51390281695139328429780000000000000",
+          "denominator": "4800000000000000000000000000000",
+          "approximate": 10706.308686487359,
+          "criticalFactor": 271651140875,
+          "scale": "80",
+          "actionFactor": 21732.09127,
+          "ordinaryDamage": 67.73588799819201
+        },
+        "identities": [
+          {
+            "slot": "head",
+            "itemId": 49690,
+            "identity": "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "body",
+            "itemId": 49614,
+            "identity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "hands",
+            "itemId": 49692,
+            "identity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "legs",
+            "itemId": 49693,
+            "identity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "feet",
+            "itemId": 49617,
+            "identity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "earrings",
+            "itemId": 49639,
+            "identity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "necklace",
+            "itemId": 49644,
+            "identity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "bracelet",
+            "itemId": 49726,
+            "identity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring",
+            "itemId": 49654,
+            "identity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring2",
+            "itemId": 49731,
+            "identity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "weapon",
+            "itemId": 51001,
+            "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+          }
+        ],
+        "foodId": 49240,
+        "vector": [
+          2717,
+          1372,
+          0,
+          1364,
+          2560,
+          0,
+          0,
+          0,
+          146,
+          0,
+          0,
+          0,
+          4481,
+          0,
+          5060
+        ],
+        "fixedGearsetInput": {
+          "jobId": "MNK",
+          "jobLevel": 100,
+          "sync": {
+            "kind": "itemLevel",
+            "value": 735
+          },
+          "foodId": 49240,
+          "gears": [
+            {
+              "id": 49690,
+              "materias": []
+            },
+            {
+              "id": 49614,
+              "materias": []
+            },
+            {
+              "id": 49692,
+              "materias": []
+            },
+            {
+              "id": 49693,
+              "materias": []
+            },
+            {
+              "id": 49617,
+              "materias": []
+            },
+            {
+              "id": 49639,
+              "materias": []
+            },
+            {
+              "id": 49644,
+              "materias": []
+            },
+            {
+              "id": 49726,
+              "materias": []
+            },
+            {
+              "id": 49654,
+              "materias": []
+            },
+            {
+              "id": 49731,
+              "materias": []
+            },
+            {
+              "id": 51001,
+              "materias": [],
+              "customStats": {
+                "DHT": 447,
+                "CRT": 447,
+                "DET": 108,
+                "SKS": 0
+              }
+            }
+          ]
+        },
+        "finalStats": {
+          "PDMG": 146,
+          "MDMG": 0,
+          "STR": 4967,
+          "CRT": 3137,
+          "DET": 1812,
+          "DHT": 1784,
+          "SKS": 420,
+          "VIT": 5500,
+          "DLY": 2560
+        },
+        "validation": {
+          "originalSlotMembership": true,
+          "originalFoodMembership": true,
+          "uniqueItems": true,
+          "completeElevenItems": true,
+          "exactRequestedGcd": true,
+          "fixedGearsetStatsMatch": true,
+          "ordinaryDamageMatch": true,
+          "researchFloatMatchesExactFraction": true
+        }
+      },
+      "elapsedMs": 166.7578000000001,
+      "hookStatistics": {
+        "sourceSha256": "3092c4defc8f86da7fd2eab56019c00122690f8ae6f0e215badfc693111d1ded",
+        "transformedSourceSha256": "f09b83631869b146f54b616b0cd261fe0183535b4636c697e5815b9994ad7e75",
+        "hookHits": 1,
+        "captureMatches": 1,
+        "criticalMatches": 1,
+        "evaluatorCreations": 9,
+        "researchEvaluatorCreations": 9,
+        "evaluatorCalls": 20943,
+        "differentFromLegacy": 20943,
+        "numericSafetyChecks": 22732,
+        "maximumCritical": 273244538464,
+        "profileCreations": {
+          "194:13040:4000:3200:120": 3,
+          "196:12200:4500:2880:120": 3,
+          "200:11360:5000:2640:120": 3
+        },
+        "profileCalls": {
+          "194:13040:4000:3200:120": 7186,
+          "196:12200:4500:2880:120": 7080,
+          "200:11360:5000:2640:120": 6677
+        },
+        "activeProfile": {
+          "gcd": 200,
+          "alpha": 11360,
+          "beta": 5000,
+          "gamma": 2640,
+          "duration": 120,
+          "synthetic": true,
+          "key": "200:11360:5000:2640:120",
+          "coefficientDivisor": "80",
+          "coefficients": [
+            234023000000,
+            160802500,
+            158500,
+            33
+          ],
+          "rawCoefficients": [
+            "18721840000000",
+            "12864200000",
+            "12680000",
+            "2640"
+          ],
+          "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+        },
+        "scope": "Process-local synthetic MNK critical factor; six-factor proof path retained; no production source writes"
+      }
+    }
+  ],
+  "provenance": {
+    "node": "v26.8.1",
+    "platform": "win32",
+    "arch": "x64",
+    "highsPackageVersion": "1.15.3",
+    "cpu": "Intel(R) Core(TM) Ultra 7 265K",
+    "logicalCpuCount": 20,
+    "totalSystemMemoryBytes": 50862731264,
+    "repositoryCommit": "303877be8f57d7b5215bf9d7d97850177372f8a3",
+    "gameVersion": "2026.09.15.0000.0000",
+    "dataReferenceCommit": "8d75ef89c317401727066a28025fb4d860a92f20",
+    "binarySha256": "4436a1374320e70ab60b8915e9b71a09a55a1a716658b63b43398ba9ca51989b",
+    "runtimeSha256": "775b3285606bb26e1bbfdca0d34925f634922313064f74ef514a43c3c0a6d87e",
+    "runnerSha256": "07a00c3e86fce7587ceb68486c69f0fc79325c711c0331c16bd1af746da41928",
+    "certificateSha256": "9c5d21e5b89168f73e8100b891f026936040cc986d4006fe2d67b83dbd56ee14",
+    "supportSha256": "9b58ec373cb1093af5acc2f1bced1d99872eb26fe5569ac5f278b9e9f9774f93"
+  },
+  "candidates": {
+    "slots": [
+      {
+        "slot": "head",
+        "count": 2
+      },
+      {
+        "slot": "body",
+        "count": 2
+      },
+      {
+        "slot": "hands",
+        "count": 2
+      },
+      {
+        "slot": "legs",
+        "count": 2
+      },
+      {
+        "slot": "feet",
+        "count": 2
+      },
+      {
+        "slot": "earrings",
+        "count": 2
+      },
+      {
+        "slot": "necklace",
+        "count": 2
+      },
+      {
+        "slot": "bracelet",
+        "count": 2
+      },
+      {
+        "slot": "ring",
+        "count": 2
+      },
+      {
+        "slot": "ring2",
+        "count": 2
+      },
+      {
+        "slot": "weapon",
+        "count": 16
+      }
+    ],
+    "total": 36,
+    "foods": 17,
+    "paretoApplied": false,
+    "topKApplied": false,
+    "independentRingSlots": true
+  },
+  "profiles": [
+    {
+      "gcd": 194,
+      "alpha": 13040,
+      "beta": 4000,
+      "gamma": 3200,
+      "duration": 120,
+      "synthetic": true,
+      "key": "194:13040:4000:3200:120",
+      "coefficientDivisor": "3200",
+      "coefficients": [
+        5957500000,
+        4126250,
+        4575,
+        1
+      ],
+      "rawCoefficients": [
+        "19064000000000",
+        "13204000000",
+        "14640000",
+        "3200"
+      ],
+      "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+    },
+    {
+      "gcd": 196,
+      "alpha": 12200,
+      "beta": 4500,
+      "gamma": 2880,
+      "duration": 120,
+      "synthetic": true,
+      "key": "196:12200:4500:2880:120",
+      "coefficientDivisor": "320",
+      "coefficients": [
+        59034000000,
+        40601250,
+        42625,
+        9
+      ],
+      "rawCoefficients": [
+        "18890880000000",
+        "12992400000",
+        "13640000",
+        "2880"
+      ],
+      "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+    },
+    {
+      "gcd": 200,
+      "alpha": 11360,
+      "beta": 5000,
+      "gamma": 2640,
+      "duration": 120,
+      "synthetic": true,
+      "key": "200:11360:5000:2640:120",
+      "coefficientDivisor": "80",
+      "coefficients": [
+        234023000000,
+        160802500,
+        158500,
+        33
+      ],
+      "rawCoefficients": [
+        "18721840000000",
+        "12864200000",
+        "12680000",
+        "2640"
+      ],
+      "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+    }
+  ],
+  "candidateSha256": "a9924005c484df8fb4a4fe0414326b2d0156fe2aa204b2f62ef12a65fcf1d9d2",
+  "inputSha256": "82561e747453a7c2f13c971a2071029488b415f235c7ae173bbda790af922116",
+  "winner": {
+    "gcd": 2,
+    "score": {
+      "numerator": "51390281695139328429780000000000000",
+      "denominator": "4800000000000000000000000000000",
+      "approximate": 10706.308686487359,
+      "criticalFactor": 271651140875,
+      "scale": "80",
+      "actionFactor": 21732.09127,
+      "ordinaryDamage": 67.73588799819201
+    },
+    "identities": [
+      {
+        "slot": "head",
+        "itemId": 49690,
+        "identity": "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "body",
+        "itemId": 49614,
+        "identity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "hands",
+        "itemId": 49692,
+        "identity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "legs",
+        "itemId": 49693,
+        "identity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "feet",
+        "itemId": 49617,
+        "identity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "earrings",
+        "itemId": 49639,
+        "identity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "necklace",
+        "itemId": 49644,
+        "identity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "bracelet",
+        "itemId": 49726,
+        "identity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "ring",
+        "itemId": 49654,
+        "identity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "ring2",
+        "itemId": 49731,
+        "identity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+      },
+      {
+        "slot": "weapon",
+        "itemId": 51001,
+        "identity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+      }
+    ],
+    "foodId": 49240,
+    "vector": [
+      2717,
+      1372,
+      0,
+      1364,
+      2560,
+      0,
+      0,
+      0,
+      146,
+      0,
+      0,
+      0,
+      4481,
+      0,
+      5060
+    ],
+    "fixedGearsetInput": {
+      "jobId": "MNK",
+      "jobLevel": 100,
+      "sync": {
+        "kind": "itemLevel",
+        "value": 735
+      },
+      "foodId": 49240,
+      "gears": [
+        {
+          "id": 49690,
+          "materias": []
+        },
+        {
+          "id": 49614,
+          "materias": []
+        },
+        {
+          "id": 49692,
+          "materias": []
+        },
+        {
+          "id": 49693,
+          "materias": []
+        },
+        {
+          "id": 49617,
+          "materias": []
+        },
+        {
+          "id": 49639,
+          "materias": []
+        },
+        {
+          "id": 49644,
+          "materias": []
+        },
+        {
+          "id": 49726,
+          "materias": []
+        },
+        {
+          "id": 49654,
+          "materias": []
+        },
+        {
+          "id": 49731,
+          "materias": []
+        },
+        {
+          "id": 51001,
+          "materias": [],
+          "customStats": {
+            "DHT": 447,
+            "CRT": 447,
+            "DET": 108,
+            "SKS": 0
+          }
+        }
+      ]
+    },
+    "finalStats": {
+      "PDMG": 146,
+      "MDMG": 0,
+      "STR": 4967,
+      "CRT": 3137,
+      "DET": 1812,
+      "DHT": 1784,
+      "SKS": 420,
+      "VIT": 5500,
+      "DLY": 2560
+    },
+    "validation": {
+      "originalSlotMembership": true,
+      "originalFoodMembership": true,
+      "uniqueItems": true,
+      "completeElevenItems": true,
+      "exactRequestedGcd": true,
+      "fixedGearsetStatsMatch": true,
+      "ordinaryDamageMatch": true,
+      "researchFloatMatchesExactFraction": true
+    }
+  },
+  "hookStatistics": {
+    "sourceSha256": "3092c4defc8f86da7fd2eab56019c00122690f8ae6f0e215badfc693111d1ded",
+    "transformedSourceSha256": "f09b83631869b146f54b616b0cd261fe0183535b4636c697e5815b9994ad7e75",
+    "hookHits": 1,
+    "captureMatches": 1,
+    "criticalMatches": 1,
+    "evaluatorCreations": 9,
+    "researchEvaluatorCreations": 9,
+    "evaluatorCalls": 20943,
+    "differentFromLegacy": 20943,
+    "numericSafetyChecks": 22732,
+    "maximumCritical": 273244538464,
+    "profileCreations": {
+      "194:13040:4000:3200:120": 3,
+      "196:12200:4500:2880:120": 3,
+      "200:11360:5000:2640:120": 3
+    },
+    "profileCalls": {
+      "194:13040:4000:3200:120": 7186,
+      "196:12200:4500:2880:120": 7080,
+      "200:11360:5000:2640:120": 6677
+    },
+    "activeProfile": {
+      "gcd": 200,
+      "alpha": 11360,
+      "beta": 5000,
+      "gamma": 2640,
+      "duration": 120,
+      "synthetic": true,
+      "key": "200:11360:5000:2640:120",
+      "coefficientDivisor": "80",
+      "coefficients": [
+        234023000000,
+        160802500,
+        158500,
+        33
+      ],
+      "rawCoefficients": [
+        "18721840000000",
+        "12864200000",
+        "12680000",
+        "2640"
+      ],
+      "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+    },
+    "scope": "Process-local synthetic MNK critical factor; six-factor proof path retained; no production source writes"
+  },
+  "elapsedMs": 1412.0303,
+  "finishedAt": "2026-10-23T16:13:15.785Z",
+  "processMemoryBytes": {
+    "rss": 177242112,
+    "heapTotal": 71757824,
+    "heapUsed": 42592808,
+    "external": 9386408,
+    "arrayBuffers": 3036643
+  },
+  "processResourceUsage": {
+    "userCPUTime": 2125000,
+    "systemCPUTime": 421000,
+    "maxRSS": 187440,
+    "sharedMemorySize": 0,
+    "unsharedDataSize": 0,
+    "unsharedStackSize": 0,
+    "minorPageFault": 0,
+    "majorPageFault": 159795,
+    "swappedOut": 0,
+    "fsRead": 126,
+    "fsWrite": 29,
+    "ipcSent": 0,
+    "ipcReceived": 0,
+    "signalsCount": 0,
+    "voluntaryContextSwitches": 0,
+    "involuntaryContextSwitches": 0,
+    "maxRSSUnit": "KiB (Node/libuv ru_maxrss convention)",
+    "maxRSSScope": "OS process-lifetime high-water mark, including cold bootstrap and all completed branches; not a browser measurement"
+  }
+}

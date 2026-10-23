@@ -1,0 +1,93 @@
+[
+  {
+    "job": "BRD",
+    "config": {
+      "jobId": "BRD",
+      "minItemLevel": 770,
+      "maxItemLevel": 795,
+      "objective": "dps",
+      "excludedSources": [],
+      "forcedGear": {},
+      "foodId": 0,
+      "maxSearchMs": 300000
+    },
+    "candidates": 719,
+    "pruned": 146,
+    "changedSlotFoodCombinations": 12223,
+    "atLeastIncumbent": 19,
+    "status": "pass"
+  },
+  {
+    "job": "BLM",
+    "config": {
+      "jobId": "BLM",
+      "minItemLevel": 770,
+      "maxItemLevel": 780,
+      "objective": "damage",
+      "excludedSources": [],
+      "forcedGear": {},
+      "foodId": 0,
+      "maxSearchMs": 300000
+    },
+    "candidates": 674,
+    "pruned": 614,
+    "changedSlotFoodCombinations": 11458,
+    "atLeastIncumbent": 23,
+    "status": "pass"
+  },
+  {
+    "job": "BLM",
+    "config": {
+      "jobId": "BLM",
+      "minItemLevel": 735,
+      "maxItemLevel": 780,
+      "objective": "damage",
+      "excludedSources": [],
+      "forcedGear": {},
+      "foodId": 0,
+      "maxSearchMs": 300000
+    },
+    "candidates": 1237,
+    "pruned": 1179,
+    "changedSlotFoodCombinations": 21029,
+    "atLeastIncumbent": 15,
+    "status": "pass"
+  },
+  {
+    "job": "WAR",
+    "config": {
+      "jobId": "WAR",
+      "minItemLevel": 770,
+      "maxItemLevel": 780,
+      "objective": "damage",
+      "excludedSources": [],
+      "forcedGear": {},
+      "foodId": 0,
+      "maxSearchMs": 300000
+    },
+    "candidates": 1972,
+    "pruned": 1445,
+    "changedSlotFoodCombinations": 33524,
+    "atLeastIncumbent": 85,
+    "status": "pass"
+  },
+  {
+    "job": "WHM",
+    "config": {
+      "jobId": "WHM",
+      "minItemLevel": 290,
+      "maxItemLevel": 320,
+      "syncLevel": 320,
+      "objective": "damage",
+      "excludedSources": [],
+      "forcedGear": {},
+      "foodId": 0,
+      "maxSearchMs": 300000
+    },
+    "candidates": 1088,
+    "pruned": 157,
+    "changedSlotFoodCombinations": 18496,
+    "atLeastIncumbent": 47,
+    "status": "pass"
+  }
+]

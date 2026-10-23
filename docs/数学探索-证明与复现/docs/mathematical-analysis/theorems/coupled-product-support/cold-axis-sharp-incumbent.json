@@ -1,0 +1,850 @@
+{
+  "status": "validated feasible incumbent, NOT completed joint proof",
+  "count": 1,
+  "numerator": "28429171672764439983741820025932875000000000",
+  "denominator": "14217491431305501496989027130506000000000000",
+  "jobs": [
+    {
+      "id": "BLM",
+      "baseline": {
+        "weaponDamage": 205,
+        "mainStat": 3365,
+        "determination": 1096,
+        "tenacity": 1000,
+        "critical": 1162096,
+        "directHit": 4259,
+        "traitMultiplier": 1.3,
+        "gcdCentiseconds": 245
+      },
+      "factors": {
+        "weaponDamage": 205,
+        "mainStat": 3365,
+        "determination": 1091,
+        "tenacity": 1000,
+        "critical": 1161219,
+        "directHit": 4280,
+        "traitMultiplier": 1.3,
+        "gcdCentiseconds": 245
+      },
+      "attributes": [
+        2969,
+        1807,
+        0,
+        1420,
+        3280,
+        5684,
+        155,
+        0,
+        0,
+        0,
+        0,
+        434,
+        0,
+        0,
+        5982
+      ],
+      "selection": [
+        {
+          "itemId": 49466,
+          "itemLevel": 770,
+          "variantKey": "[[\"CRT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 54
+            },
+            {
+              "baseParamId": 1,
+              "value": 203
+            },
+            {
+              "baseParamId": 3,
+              "value": 142
+            },
+            {
+              "baseParamId": 5,
+              "value": 362
+            },
+            {
+              "baseParamId": 14,
+              "value": 359
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51176,
+          "itemLevel": 780,
+          "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 199
+            },
+            {
+              "baseParamId": 1,
+              "value": 207
+            },
+            {
+              "baseParamId": 3,
+              "value": 54
+            },
+            {
+              "baseParamId": 5,
+              "value": 382
+            },
+            {
+              "baseParamId": 14,
+              "value": 383
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51181,
+          "itemLevel": 780,
+          "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 199
+            },
+            {
+              "baseParamId": 1,
+              "value": 54
+            },
+            {
+              "baseParamId": 3,
+              "value": 207
+            },
+            {
+              "baseParamId": 5,
+              "value": 382
+            },
+            {
+              "baseParamId": 14,
+              "value": 383
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51186,
+          "itemLevel": 780,
+          "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 207
+            },
+            {
+              "baseParamId": 1,
+              "value": 199
+            },
+            {
+              "baseParamId": 3,
+              "value": 54
+            },
+            {
+              "baseParamId": 5,
+              "value": 382
+            },
+            {
+              "baseParamId": 14,
+              "value": 383
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0,
+          "ringSlotIndex": 0,
+          "isUnique": false
+        },
+        {
+          "itemId": 51186,
+          "itemLevel": 780,
+          "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 207
+            },
+            {
+              "baseParamId": 1,
+              "value": 145
+            },
+            {
+              "baseParamId": 3,
+              "value": 108
+            },
+            {
+              "baseParamId": 5,
+              "value": 382
+            },
+            {
+              "baseParamId": 14,
+              "value": 383
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0,
+          "ringSlotIndex": 1,
+          "isUnique": false
+        },
+        {
+          "itemId": 49510,
+          "itemLevel": 780,
+          "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+          "key": "0-4-5-6-11-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 412
+            },
+            {
+              "baseParamId": 4,
+              "value": 3280
+            },
+            {
+              "baseParamId": 5,
+              "value": 799
+            },
+            {
+              "baseParamId": 6,
+              "value": 155
+            },
+            {
+              "baseParamId": 11,
+              "value": 434
+            },
+            {
+              "baseParamId": 14,
+              "value": 799
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 155,
+          "DLY": 3280
+        },
+        {
+          "itemId": 51931,
+          "itemLevel": 780,
+          "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 263
+            },
+            {
+              "baseParamId": 1,
+              "value": 184
+            },
+            {
+              "baseParamId": 3,
+              "value": 108
+            },
+            {
+              "baseParamId": 5,
+              "value": 485
+            },
+            {
+              "baseParamId": 14,
+              "value": 485
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51933,
+          "itemLevel": 780,
+          "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 238
+            },
+            {
+              "baseParamId": 1,
+              "value": 263
+            },
+            {
+              "baseParamId": 3,
+              "value": 54
+            },
+            {
+              "baseParamId": 5,
+              "value": 485
+            },
+            {
+              "baseParamId": 14,
+              "value": 485
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51166,
+          "itemLevel": 780,
+          "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 263
+            },
+            {
+              "baseParamId": 1,
+              "value": 54
+            },
+            {
+              "baseParamId": 3,
+              "value": 238
+            },
+            {
+              "baseParamId": 5,
+              "value": 485
+            },
+            {
+              "baseParamId": 14,
+              "value": 485
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51934,
+          "itemLevel": 780,
+          "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 418
+            },
+            {
+              "baseParamId": 1,
+              "value": 293
+            },
+            {
+              "baseParamId": 3,
+              "value": 108
+            },
+            {
+              "baseParamId": 5,
+              "value": 770
+            },
+            {
+              "baseParamId": 14,
+              "value": 770
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51932,
+          "itemLevel": 780,
+          "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 418
+            },
+            {
+              "baseParamId": 1,
+              "value": 54
+            },
+            {
+              "baseParamId": 3,
+              "value": 347
+            },
+            {
+              "baseParamId": 5,
+              "value": 770
+            },
+            {
+              "baseParamId": 14,
+              "value": 770
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        }
+      ],
+      "food": {
+        "itemId": 49240,
+        "itemLevel": 770,
+        "key": "0-1-14",
+        "physicalKey": "{\"itemId\":49240,\"itemLevel\":770,\"stats\":[[\"CRT\",91],[\"DET\",151],[\"VIT\",297]],\"statRates\":[[\"CRT\",10],[\"DET\",10],[\"VIT\",10]]}",
+        "baseParams": [
+          {
+            "baseParamId": 0,
+            "multiplier": 1.1,
+            "maxValue": 91,
+            "baseValue": 420
+          },
+          {
+            "baseParamId": 1,
+            "multiplier": 1.1,
+            "maxValue": 151,
+            "baseValue": 440
+          },
+          {
+            "baseParamId": 14,
+            "multiplier": 1.1,
+            "maxValue": 297,
+            "baseValue": 440
+          }
+        ]
+      },
+      "ratioNumerator": "3740430437765979000000",
+      "ratioDenominator": "3741959908666844800000"
+    },
+    {
+      "id": "RDM",
+      "baseline": {
+        "weaponDamage": 205,
+        "mainStat": 3365,
+        "determination": 1091,
+        "tenacity": 1000,
+        "critical": 1162975,
+        "directHit": 4341,
+        "traitMultiplier": 1.3,
+        "gcdCentiseconds": 248
+      },
+      "factors": {
+        "weaponDamage": 205,
+        "mainStat": 3365,
+        "determination": 1091,
+        "tenacity": 1000,
+        "critical": 1162975,
+        "directHit": 4341,
+        "traitMultiplier": 1.3,
+        "gcdCentiseconds": 248
+      },
+      "attributes": [
+        2991,
+        1807,
+        0,
+        1724,
+        3440,
+        5684,
+        155,
+        0,
+        0,
+        0,
+        0,
+        108,
+        0,
+        0,
+        5982
+      ],
+      "selection": [
+        {
+          "itemId": 49466,
+          "itemLevel": 770,
+          "variantKey": "[[\"CRT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 54
+            },
+            {
+              "baseParamId": 1,
+              "value": 203
+            },
+            {
+              "baseParamId": 3,
+              "value": 142
+            },
+            {
+              "baseParamId": 5,
+              "value": 362
+            },
+            {
+              "baseParamId": 14,
+              "value": 359
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51176,
+          "itemLevel": 780,
+          "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 199
+            },
+            {
+              "baseParamId": 1,
+              "value": 207
+            },
+            {
+              "baseParamId": 3,
+              "value": 54
+            },
+            {
+              "baseParamId": 5,
+              "value": 382
+            },
+            {
+              "baseParamId": 14,
+              "value": 383
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51181,
+          "itemLevel": 780,
+          "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 199
+            },
+            {
+              "baseParamId": 1,
+              "value": 54
+            },
+            {
+              "baseParamId": 3,
+              "value": 207
+            },
+            {
+              "baseParamId": 5,
+              "value": 382
+            },
+            {
+              "baseParamId": 14,
+              "value": 383
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51186,
+          "itemLevel": 780,
+          "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 207
+            },
+            {
+              "baseParamId": 1,
+              "value": 199
+            },
+            {
+              "baseParamId": 3,
+              "value": 54
+            },
+            {
+              "baseParamId": 5,
+              "value": 382
+            },
+            {
+              "baseParamId": 14,
+              "value": 383
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0,
+          "ringSlotIndex": 0,
+          "isUnique": false
+        },
+        {
+          "itemId": 51186,
+          "itemLevel": 780,
+          "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 207
+            },
+            {
+              "baseParamId": 1,
+              "value": 145
+            },
+            {
+              "baseParamId": 3,
+              "value": 108
+            },
+            {
+              "baseParamId": 5,
+              "value": 382
+            },
+            {
+              "baseParamId": 14,
+              "value": 383
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0,
+          "ringSlotIndex": 1,
+          "isUnique": false
+        },
+        {
+          "itemId": 51124,
+          "itemLevel": 780,
+          "variantKey": "[[\"SPS\",54,12],[\"SPS\",54,12]]",
+          "key": "0-3-4-5-6-11-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 434
+            },
+            {
+              "baseParamId": 3,
+              "value": 304
+            },
+            {
+              "baseParamId": 4,
+              "value": 3440
+            },
+            {
+              "baseParamId": 5,
+              "value": 799
+            },
+            {
+              "baseParamId": 6,
+              "value": 155
+            },
+            {
+              "baseParamId": 11,
+              "value": 108
+            },
+            {
+              "baseParamId": 14,
+              "value": 799
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 155,
+          "DLY": 3440
+        },
+        {
+          "itemId": 51931,
+          "itemLevel": 780,
+          "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 263
+            },
+            {
+              "baseParamId": 1,
+              "value": 184
+            },
+            {
+              "baseParamId": 3,
+              "value": 108
+            },
+            {
+              "baseParamId": 5,
+              "value": 485
+            },
+            {
+              "baseParamId": 14,
+              "value": 485
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51933,
+          "itemLevel": 780,
+          "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 238
+            },
+            {
+              "baseParamId": 1,
+              "value": 263
+            },
+            {
+              "baseParamId": 3,
+              "value": 54
+            },
+            {
+              "baseParamId": 5,
+              "value": 485
+            },
+            {
+              "baseParamId": 14,
+              "value": 485
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51166,
+          "itemLevel": 780,
+          "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 263
+            },
+            {
+              "baseParamId": 1,
+              "value": 54
+            },
+            {
+              "baseParamId": 3,
+              "value": 238
+            },
+            {
+              "baseParamId": 5,
+              "value": 485
+            },
+            {
+              "baseParamId": 14,
+              "value": 485
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51934,
+          "itemLevel": 780,
+          "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 418
+            },
+            {
+              "baseParamId": 1,
+              "value": 293
+            },
+            {
+              "baseParamId": 3,
+              "value": 108
+            },
+            {
+              "baseParamId": 5,
+              "value": 770
+            },
+            {
+              "baseParamId": 14,
+              "value": 770
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        },
+        {
+          "itemId": 51932,
+          "itemLevel": 780,
+          "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+          "key": "0-1-3-5-14",
+          "baseParams": [
+            {
+              "baseParamId": 0,
+              "value": 418
+            },
+            {
+              "baseParamId": 1,
+              "value": 54
+            },
+            {
+              "baseParamId": 3,
+              "value": 347
+            },
+            {
+              "baseParamId": 5,
+              "value": 770
+            },
+            {
+              "baseParamId": 14,
+              "value": 770
+            }
+          ],
+          "PDMG": 0,
+          "MDMG": 0,
+          "DLY": 0
+        }
+      ],
+      "food": {
+        "itemId": 49240,
+        "itemLevel": 770,
+        "key": "0-1-14",
+        "physicalKey": "{\"itemId\":49240,\"itemLevel\":770,\"stats\":[[\"CRT\",91],[\"DET\",151],[\"VIT\",297]],\"statRates\":[[\"CRT\",10],[\"DET\",10],[\"VIT\",10]]}",
+        "baseParams": [
+          {
+            "baseParamId": 0,
+            "multiplier": 1.1,
+            "maxValue": 91,
+            "baseValue": 420
+          },
+          {
+            "baseParamId": 1,
+            "multiplier": 1.1,
+            "maxValue": 151,
+            "baseValue": 440
+          },
+          {
+            "baseParamId": 14,
+            "multiplier": 1.1,
+            "maxValue": 297,
+            "baseValue": 440
+          }
+        ]
+      },
+      "ratioNumerator": "3799477220046110625000",
+      "ratioDenominator": "3799477220046110625000"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "case": 0,
+    "sameDeletedCandidateSet": true,
+    "deleted": 588
+  },
+  {
+    "case": 1,
+    "sameDeletedCandidateSet": true,
+    "deleted": 1140
+  },
+  {
+    "case": 2,
+    "sameDeletedCandidateSet": true,
+    "deleted": 1445
+  },
+  {
+    "case": 3,
+    "sameDeletedCandidateSet": true,
+    "deleted": 158
+  }
+]

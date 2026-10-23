@@ -1,0 +1,138 @@
+[
+  {
+    "label": "BLM 770–780",
+    "kind": "control",
+    "totalMs": 4376.251654,
+    "steps": [
+      {
+        "script": "single-baseline.mjs",
+        "ms": 4375.476978
+      }
+    ],
+    "solverMs": 3946.4599119999993,
+    "sameExactObjective": true
+  },
+  {
+    "label": "BLM 770–780",
+    "kind": "pruned",
+    "totalMs": 4254.64828,
+    "steps": [
+      {
+        "script": "observe-initial.mjs",
+        "ms": 542.2267670000001
+      },
+      {
+        "script": "adaptive-amgm.mjs",
+        "ms": 422.4105900000004
+      },
+      {
+        "script": "run-generic-pruned.mjs",
+        "ms": 3289.3908569999994
+      }
+    ],
+    "solverMs": 2886.923516,
+    "sameExactObjective": true
+  },
+  {
+    "label": "BLM 735–780",
+    "kind": "control",
+    "totalMs": 10623.857444999998,
+    "steps": [
+      {
+        "script": "single-baseline.mjs",
+        "ms": 10623.365598
+      }
+    ],
+    "solverMs": 10188.443901,
+    "sameExactObjective": true
+  },
+  {
+    "label": "BLM 735–780",
+    "kind": "pruned",
+    "totalMs": 6714.880428,
+    "steps": [
+      {
+        "script": "observe-initial.mjs",
+        "ms": 654.8894839999994
+      },
+      {
+        "script": "adaptive-amgm.mjs",
+        "ms": 532.0749599999981
+      },
+      {
+        "script": "run-generic-pruned.mjs",
+        "ms": 5527.405809
+      }
+    ],
+    "solverMs": 5087.596574,
+    "sameExactObjective": true
+  },
+  {
+    "label": "WAR 770–780",
+    "kind": "control",
+    "totalMs": 6998.877230000002,
+    "steps": [
+      {
+        "script": "single-baseline.mjs",
+        "ms": 6997.534392999998
+      }
+    ],
+    "solverMs": 6539.250096000001,
+    "sameExactObjective": true
+  },
+  {
+    "label": "WAR 770–780",
+    "kind": "pruned",
+    "totalMs": 6639.6160050000035,
+    "steps": [
+      {
+        "script": "observe-initial.mjs",
+        "ms": 616.3910350000006
+      },
+      {
+        "script": "adaptive-amgm.mjs",
+        "ms": 558.5889830000015
+      },
+      {
+        "script": "run-generic-pruned.mjs",
+        "ms": 5464.007597000003
+      }
+    ],
+    "solverMs": 4989.425381999999,
+    "sameExactObjective": true
+  },
+  {
+    "label": "WHM 同步 320",
+    "kind": "control",
+    "totalMs": 14699.273164999999,
+    "steps": [
+      {
+        "script": "single-baseline.mjs",
+        "ms": 14698.696582000004
+      }
+    ],
+    "solverMs": 14032.828703000001,
+    "sameExactObjective": true
+  },
+  {
+    "label": "WHM 同步 320",
+    "kind": "pruned",
+    "totalMs": 11882.829768999996,
+    "steps": [
+      {
+        "script": "observe-initial.mjs",
+        "ms": 550.1624500000034
+      },
+      {
+        "script": "adaptive-amgm.mjs",
+        "ms": 520.525149000001
+      },
+      {
+        "script": "run-generic-pruned.mjs",
+        "ms": 10811.694737999998
+      }
+    ],
+    "solverMs": 10325.765071,
+    "sameExactObjective": true
+  }
+]

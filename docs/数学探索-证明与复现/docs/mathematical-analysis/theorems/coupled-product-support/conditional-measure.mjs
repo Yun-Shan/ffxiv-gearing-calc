@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';import {readFileSync,writeFileSync} from 'node:fs';import {performance} from 'node:perf_hooks';
+import {loadGameData,loadCanonicalEvaluator} from '../../verification/canonical-model.mjs';import {R,add,mul,sub,cmp,ceil,productPlane,combinePlane,supportInInterval,prepareSupport} from './support.mjs';
+const data=await loadGameData(),effects=await loadCanonicalEvaluator(),{prepareSearch}=await import('../../../../src/domain/optimizer/search-preparation.ts'),ctx=await import('../../../../src/domain/optimizer/context.ts');
+const baselines=JSON.parse(readFileSync(new URL('./production-baselines.json',import.meta.url)));
+const source=JSON.parse(readFileSync(new URL('../quadratic-profile-compression/visual-data.json',import.meta.url))),C=ctx.attributeIndex.get('CRT'),out=[];
+for(const [si,job,min,max,sync] of [[0,'BLM',770,780],[1,'BLM',735,780],[2,'WAR',770,780],[3,'WHM',290,320,320]]){
+ const start=performance.now(),p=prepareSearch({jobId:job,minItemLevel:min,maxItemLevel:max,...(sync?{syncLevel:sync}:{}),objective:'damage',excludedSources:[],forcedGear:{},foodId:0},{}),ev=effects.createIntegerDamageFactorEvaluator(job,p.jobLevel,ctx.attributeIndex),schema=data.jobSchemas[job],level=data.jobLevelModifiers[p.jobLevel];
+ const pools=p.slots.map(s=>s.candidates.map(c=>{if(c.resistanceWeaponAdjust)throw Error('variable custom weapon not supported by this measurement');const v=Array(ctx.attributeIds.length).fill(0);for(const b of c.baseParams)v[b.baseParamId]+=b.value;return v;}));
+ const lo=Array(ctx.attributeIds.length).fill(0),hi=lo.slice();for(const pool of pools)for(let i=0;i<lo.length;i++){lo[i]+=Math.min(...pool.map(v=>v[i]));hi[i]+=Math.max(...pool.map(v=>v[i]));}
+ const foodCaps=p.foods.map(f=>{const v=lo.map(()=>0);for(const b of f.baseParams)v[b.baseParamId]=b.maxValue;return v;});for(let i=0;i<hi.length;i++)hi[i]+=Math.max(...foodCaps.map(v=>v[i]));
+ const attack=schema.mainStat==='VIT'?'STR':schema.mainStat,weapon=['INT','MND'].includes(schema.mainStat)?'MDMG':'PDMG',ap=schema.mainStat==='VIT'?level.apTank:level.ap,bonus=Math.round((schema.partyBonus??1.05)*100);assert(Math.abs(bonus/100-(schema.partyBonus??1.05))<1e-10);
+ const basestat=Math.floor(level.main*(schema.statModifiers[attack]??100)/100)+(data.clanStats[attack]?.[0]??0);
+ const factors=[{key:'weaponDamage',index:ctx.attributeIndex.get(weapon),a:R(1),b:R(Math.floor(level.main*schema.statModifiers[attack]/1000))},{key:'mainStat',index:ctx.attributeIndex.get(attack),a:R(ap*bonus,level.main*100),b:add(R(100-ap),R(ap*bonus*basestat,level.main*100))},{key:'determination',index:ctx.attributeIndex.get('DET'),a:R(140,level.det),b:R(1000)},{key:'tenacity',index:schema.stats.includes('TEN')?ctx.attributeIndex.get('TEN'):undefined,a:R(112,level.div),b:R(1000)},{key:'directHit',index:ctx.attributeIndex.get('DHT'),a:R(550,level.div),b:R(4000)}];
+ const lowf=ev(lo),lower=factors.map(f=>BigInt(lowf[f.key])),upper=factors.map(f=>ceil(add(f.b,mul(f.a,R(f.index===undefined?0:hi[f.index])))));
+ const samples=source.single[si].samples,sampleBest=samples.reduce((a,s)=>BigInt(s.product)>a?BigInt(s.product):a,0n),winner=samples.find(s=>BigInt(s.product)===sampleBest),baseline=baselines.find(b=>b.label===source.single[si].label&&b.status==='complete'),best=BigInt(baseline.product);assert(best>=sampleBest);
+ // Reconstruct five reference factors from exact product and saved contributions.
+ const refvec=lo.map(()=>0);refvec[C]=winner.v[0];refvec[ctx.attributeIndex.get('DHT')]=winner.v[1];refvec[ctx.attributeIndex.get('DET')]=winner.v[2];
+ const ref=[BigInt(winner.v[3]),BigInt(winner.v[4]),BigInt(ev(refvec).determination),BigInt(winner.v[5]),BigInt(ev(refvec).directHit)];
+ const order=factors.map((_,i)=>i).sort((a,b)=>{const da=upper[a]-lower[a],db=upper[b]-lower[b];if(!da)return 1;if(!db)return -1;return -cmp(R(ref[a]-lower[a],da),R(ref[b]-lower[b],db));});
+ const old=JSON.parse(readFileSync(new URL('./results.json',import.meta.url))).find(x=>x.label===source.single[si].label);
+ const coords=[...new Set(factors.filter(f=>f.index!==undefined).map(f=>f.index))],marginals=new Map();
+ for(const index of coords){const bounds=[];for(const sign of [1,-1]){const gs=pools.map(pool=>pool.map(v=>[v[C],BigInt(sign*v[index])]));gs.push(foodCaps.flatMap(v=>[[0,BigInt(sign>0?v[index]:0)],[v[C],BigInt(sign>0?v[index]:0)]]));bounds.push(prepareSupport(gs));}marginals.set(index,bounds);}
+ const floor=q=>q.n/q.d-(q.n<0n&&q.n%q.d?1n:0n),bins=[];let segments=0;
+ for(const prior of old.bins){const {t,L,U}=prior,clo=lo.slice(),chi=hi.slice();for(const index of coords){const [maxcurve,mincurve]=marginals.get(index),mx=maxcurve.query(L,U),mn=mincurve.query(L,U);assert(mx&&mn);chi[index]=Math.min(chi[index],Number(floor(mx)));clo[index]=Math.max(clo[index],Number(ceil(R(-mn.n,mn.d))));assert(clo[index]<=chi[index]);}
+ const lf=ev(clo),lb=factors.map(f=>BigInt(lf[f.key])),ub=factors.map(f=>ceil(add(f.b,mul(f.a,R(f.index===undefined?0:chi[f.index])))));
+ const permutation=factors.map((_,i)=>i).sort((a,b)=>{const da=ub[a]-lb[a],db=ub[b]-lb[b];if(!da)return 1;if(!db)return -1;return -cmp(R(ref[a]-lb[a],da),R(ref[b]-lb[b],db));});
+ const lin=combinePlane(productPlane(lb,ub,permutation),factors,lo.length),score=v=>v.reduce((a,x,i)=>a+lin.coef[i]*BigInt(x),0n);const groups=pools.map(pool=>pool.map(v=>[v[C],score(v)]));groups.push(foodCaps.flatMap(v=>{const n=score(v)-lin.coef[C]*BigInt(v[C]);return [[0,n],[v[C],score(v)]];}));const support=prepareSupport(groups);segments+=support.segments;const sup=support.query(L,U);assert(sup);const cf=1000000n+BigInt(t)*BigInt(t+350),candidate=mul(R(cf,lin.den),add(R(lin.b),sup)),previous=R(prior.n,prior.d),bound=cmp(candidate,previous)<0?candidate:previous;bins.push({t,L,U,n:String(bound.n),d:String(bound.d),kept:cmp(bound,R(best))>=0,ratio:Number(bound.n)/Number(bound.d)/Number(best),previousRatio:prior.ratio});
+ }
+ const orders=[order];
+ for(const s of samples){const bin=bins.find(b=>s.v[0]>=b.L&&s.v[0]<=b.U);assert(bin&&!bin.infeasible);assert(cmp(R(bin.n,bin.d),R(s.product))>=0);}
+ const actualCRT=baseline.contributions[C],actualBin=bins.find(b=>actualCRT>=b.L&&actualCRT<=b.U);assert(actualBin.kept);
+ const result={incumbentSource:'production exact baseline (solver-trust conditional)',sampleBest:String(sampleBest),actualCRT,actualBinUpperRatio:actualBin.ratio,permutations:orders.length,supportSegments:segments,label:source.single[si].label,job,level:p.jobLevel,slices:bins.length,kept:bins.filter(b=>b.kept).length,infeasible:bins.filter(b=>b.infeasible).length,ms:performance.now()-start,order:order.map(i=>factors[i].key),minRatio:Math.min(...bins.filter(b=>b.ratio).map(b=>b.ratio)),best:String(best),bins};out.push(result);console.log({...result,bins:undefined});
+}
+writeFileSync(new URL('./conditional-results.json',import.meta.url),JSON.stringify(out,null,2));

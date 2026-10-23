@@ -1,0 +1,6543 @@
+{
+  "job": "WHM",
+  "objective": "damage",
+  "reference": "pre-MIP feasible seed",
+  "method": "piecewise concave threshold chords with tilted slot support",
+  "divisions": 2,
+  "candidates": 1088,
+  "pruned": 150,
+  "selectedChecked": 11,
+  "queries": 1244,
+  "prepMs": 113.24528199999997,
+  "queryMs": 19.595709,
+  "rows": [
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19030,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19790,
+      "variantKey": "[[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19790,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 19790,
+      "variantKey": "[[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19017,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 19469,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 19469,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 19469,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 19469,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 19469,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "hands",
+      "itemId": 19469,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19015,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 19467,
+      "variantKey": "[[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 19467,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 19467,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 19467,
+      "variantKey": "[[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 19467,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 19467,
+      "variantKey": "[[\"CRT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "head",
+      "itemId": 19467,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "feet",
+      "itemId": 17771,
+      "variantKey": "[[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 17771,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 17771,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 17771,
+      "variantKey": "[[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 17771,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 17771,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 18863,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 18863,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 18863,
+      "variantKey": "[[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 18863,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 18863,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 20853,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 20853,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 20853,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 20853,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 20853,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 20853,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19019,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19471,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19471,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19471,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19471,
+      "variantKey": "[[\"CRT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19471,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19471,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 19471,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 17768,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 17768,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 17768,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 17768,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 17768,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 24856,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 19468,
+      "variantKey": "[[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 19468,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 19468,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 19468,
+      "variantKey": "[[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 19468,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 19468,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 20852,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 20852,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 20852,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 20852,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 20852,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 20852,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19018,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19470,
+      "variantKey": "[[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19470,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19470,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19470,
+      "variantKey": "[[\"CRT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19470,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 19470,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18962,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18884,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 18884,
+      "variantKey": "[[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19196,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19196,
+      "variantKey": "[[\"CRT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19040,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19800,
+      "variantKey": "[[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19800,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 19800,
+      "variantKey": "[[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18889,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18889,
+      "variantKey": "[[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 18889,
+      "variantKey": "[[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19201,
+      "variantKey": "[[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19201,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19201,
+      "variantKey": "[[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19497,
+      "variantKey": "[[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19497,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19497,
+      "variantKey": "[[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19805,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19805,
+      "variantKey": "[[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 19805,
+      "variantKey": "[[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18967,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18889,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18889,
+      "variantKey": "[[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 18889,
+      "variantKey": "[[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19201,
+      "variantKey": "[[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19201,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19201,
+      "variantKey": "[[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19045,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19497,
+      "variantKey": "[[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19497,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19497,
+      "variantKey": "[[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19805,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19805,
+      "variantKey": "[[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 19805,
+      "variantKey": "[[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 17825,
+      "variantKey": "[[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 17825,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 17825,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 17825,
+      "variantKey": "[[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 17825,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 17825,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30076,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 30835,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18821,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18821,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18821,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18821,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18821,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19133,
+      "variantKey": "[[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19133,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19133,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19133,
+      "variantKey": "[[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19133,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19133,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 18977,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",16,6],[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19779,
+      "variantKey": "[[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19779,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19779,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19779,
+      "variantKey": "[[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19779,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19779,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19779,
+      "variantKey": "[[\"CRT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19779,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19779,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 19779,
+      "variantKey": "[[\"CRT\",16,6],[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 18957,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19191,
+      "variantKey": "[[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19191,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19191,
+      "variantKey": "[[\"CRT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 20869,
+      "variantKey": "[[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 20869,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 20869,
+      "variantKey": "[[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"SPS\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"SPS\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DHT\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",6,5],[\"CRT\",6,5],[\"DET\",16,6],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"SPS\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"SPS\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DHT\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DHT\",6,5],[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",6,5],[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",16,6],[\"DHT\",6,5],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"SPS\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19035,
+      "variantKey": "[[\"CRT\",6,5],[\"CRT\",16,6],[\"DET\",6,5],[\"DET\",16,6],[\"DHT\",6,5]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19795,
+      "variantKey": "[[\"DHT\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19795,
+      "variantKey": "[[\"DET\",16,6]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 19795,
+      "variantKey": "[[\"CRT\",16,6]]",
+      "pruned": false
+    }
+  ]
+}

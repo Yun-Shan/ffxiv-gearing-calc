@@ -1,0 +1,2959 @@
+{
+  "scope": "Complete raw real-equipment enumeration for three declared synthetic MNK profiles",
+  "completeness": "Every raw equipment Cartesian selection and food was visited; only unique, GCD and speed constraints reject pairs",
+  "config": {
+    "jobId": "MNK",
+    "minItemLevel": 790,
+    "maxItemLevel": 795,
+    "sync": {
+      "kind": "itemLevel",
+      "value": 735
+    },
+    "clanIndex": 0,
+    "gcdChoices": [
+      1.94,
+      1.96,
+      2
+    ],
+    "maximizeTenacity": false,
+    "objective": "damage",
+    "excludedSources": [],
+    "excludedGearIds": [],
+    "forcedGear": {},
+    "sharedSlots": [],
+    "foodId": 49245
+  },
+  "provenance": {
+    "runAt": "2026-10-23T16:19:36.582Z",
+    "node": "v26.8.1",
+    "repositoryCommit": "303877be8f57d7b5215bf9d7d97850177372f8a3",
+    "gameVersion": "2026.09.15.0000.0000",
+    "binarySha256": "4436a1374320e70ab60b8915e9b71a09a55a1a716658b63b43398ba9ca51989b",
+    "oracleScriptSha256": "77a3f03c861db21f3214751430a5da945cbfe47cbcbc563dca10bcfcda25250a",
+    "runtimeScriptSha256": "775b3285606bb26e1bbfdca0d34925f634922313064f74ef514a43c3c0a6d87e",
+    "candidateSha256": "89b2c0a4807dfb848526b382c5dd407895c7537b58498155712696ebde495e12",
+    "inputSha256": "6a6629bfdcb82f86748edd42207146f16e1b1ce5d3fef03cf807297bef610390"
+  },
+  "prepared": {
+    "jobLevel": 100,
+    "slots": [
+      {
+        "name": "head",
+        "count": 2
+      },
+      {
+        "name": "body",
+        "count": 2
+      },
+      {
+        "name": "hands",
+        "count": 2
+      },
+      {
+        "name": "legs",
+        "count": 2
+      },
+      {
+        "name": "feet",
+        "count": 2
+      },
+      {
+        "name": "earrings",
+        "count": 2
+      },
+      {
+        "name": "necklace",
+        "count": 2
+      },
+      {
+        "name": "bracelet",
+        "count": 2
+      },
+      {
+        "name": "ring",
+        "count": 2
+      },
+      {
+        "name": "ring2",
+        "count": 2
+      },
+      {
+        "name": "weapon",
+        "count": 16
+      }
+    ],
+    "foodIds": [
+      49245
+    ],
+    "rawPareto": false
+  },
+  "profiles": [
+    {
+      "gcd": 194,
+      "alpha": 13040,
+      "beta": 4000,
+      "gamma": 3200,
+      "duration": 120,
+      "synthetic": true,
+      "key": "194:13040:4000:3200:120",
+      "coefficientDivisor": "3200",
+      "coefficients": [
+        5957500000,
+        4126250,
+        4575,
+        1
+      ],
+      "rawCoefficients": [
+        "19064000000000",
+        "13204000000",
+        "14640000",
+        "3200"
+      ],
+      "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+    },
+    {
+      "gcd": 196,
+      "alpha": 12200,
+      "beta": 4500,
+      "gamma": 2880,
+      "duration": 120,
+      "synthetic": true,
+      "key": "196:12200:4500:2880:120",
+      "coefficientDivisor": "320",
+      "coefficients": [
+        59034000000,
+        40601250,
+        42625,
+        9
+      ],
+      "rawCoefficients": [
+        "18890880000000",
+        "12992400000",
+        "13640000",
+        "2880"
+      ],
+      "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+    },
+    {
+      "gcd": 200,
+      "alpha": 11360,
+      "beta": 5000,
+      "gamma": 2640,
+      "duration": 120,
+      "synthetic": true,
+      "key": "200:11360:5000:2640:120",
+      "coefficientDivisor": "80",
+      "coefficients": [
+        234023000000,
+        160802500,
+        158500,
+        33
+      ],
+      "rawCoefficients": [
+        "18721840000000",
+        "12864200000",
+        "12680000",
+        "2640"
+      ],
+      "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+    }
+  ],
+  "counts": {
+    "equipmentCartesian": "16384",
+    "enumeratedEquipmentSelections": 16384,
+    "rejectedUniqueEquipmentSelections": 8192,
+    "legalEquipmentSelections": 8192,
+    "legalEquipmentFoodPairs": 8192,
+    "rejectedGcdPairs": 4416,
+    "rejectedSpeedPairs": 0,
+    "scoredPairs": 3776
+  },
+  "actualGcdCounts": {
+    "189": 192,
+    "190": 576,
+    "191": 192,
+    "192": 1088,
+    "193": 672,
+    "194": 1728,
+    "195": 416,
+    "196": 1824,
+    "197": 512,
+    "198": 768,
+    "200": 224
+  },
+  "contributionRanges": {
+    "allLegal": {
+      "CRT": {
+        "min": 951,
+        "max": 2626
+      },
+      "DET": {
+        "min": 965,
+        "max": 2204
+      },
+      "DEX": {
+        "min": 0,
+        "max": 0
+      },
+      "DHT": {
+        "min": 696,
+        "max": 2042
+      },
+      "DLY": {
+        "min": 2560,
+        "max": 2560
+      },
+      "INT": {
+        "min": 0,
+        "max": 0
+      },
+      "MDMG": {
+        "min": 0,
+        "max": 0
+      },
+      "MND": {
+        "min": 0,
+        "max": 0
+      },
+      "PDMG": {
+        "min": 146,
+        "max": 146
+      },
+      "PIE": {
+        "min": 0,
+        "max": 0
+      },
+      "SKS": {
+        "min": 0,
+        "max": 1156
+      },
+      "SPS": {
+        "min": 0,
+        "max": 0
+      },
+      "STR": {
+        "min": 4481,
+        "max": 4481
+      },
+      "TEN": {
+        "min": 0,
+        "max": 0
+      },
+      "VIT": {
+        "min": 5060,
+        "max": 5060
+      }
+    },
+    "allowed": {
+      "CRT": {
+        "min": 951,
+        "max": 2626
+      },
+      "DET": {
+        "min": 965,
+        "max": 2204
+      },
+      "DEX": {
+        "min": 0,
+        "max": 0
+      },
+      "DHT": {
+        "min": 696,
+        "max": 2042
+      },
+      "DLY": {
+        "min": 2560,
+        "max": 2560
+      },
+      "INT": {
+        "min": 0,
+        "max": 0
+      },
+      "MDMG": {
+        "min": 0,
+        "max": 0
+      },
+      "MND": {
+        "min": 0,
+        "max": 0
+      },
+      "PDMG": {
+        "min": 146,
+        "max": 146
+      },
+      "PIE": {
+        "min": 0,
+        "max": 0
+      },
+      "SKS": {
+        "min": 0,
+        "max": 632
+      },
+      "SPS": {
+        "min": 0,
+        "max": 0
+      },
+      "STR": {
+        "min": 4481,
+        "max": 4481
+      },
+      "TEN": {
+        "min": 0,
+        "max": 0
+      },
+      "VIT": {
+        "min": 5060,
+        "max": 5060
+      }
+    }
+  },
+  "global": {
+    "score": {
+      "numerator": "3340286314914811621073",
+      "denominator": "312500000000000000",
+      "approximate": 10688.916207727396
+    },
+    "tiedIdentityCount": 2,
+    "tiedIdentitySha256": "b33846d4ad2bbaca10c00df55185b685d9576bd5e4cc159a68cc9b4c4a42a662",
+    "identityConvention": "Named slots; ordered ring positions; complete equipment and physical food identities",
+    "samples": [
+      {
+        "gcd": 200,
+        "profileKey": "200:11360:5000:2640:120",
+        "vector": [
+          2626,
+          1312,
+          0,
+          1515,
+          2560,
+          0,
+          0,
+          0,
+          146,
+          0,
+          0,
+          0,
+          4481,
+          0,
+          5060
+        ],
+        "contributions": {
+          "CRT": 2626,
+          "DET": 1312,
+          "DEX": 0,
+          "DHT": 1515,
+          "DLY": 2560,
+          "INT": 0,
+          "MDMG": 0,
+          "MND": 0,
+          "PDMG": 146,
+          "PIE": 0,
+          "SKS": 0,
+          "SPS": 0,
+          "STR": 4481,
+          "TEN": 0,
+          "VIT": 5060
+        },
+        "food": {
+          "itemId": 49245,
+          "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+        },
+        "slots": [
+          {
+            "slot": "body",
+            "itemId": 49614,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "bracelet",
+            "itemId": 49726,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "earrings",
+            "itemId": 49639,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "feet",
+            "itemId": 49617,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "hands",
+            "itemId": 49692,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "head",
+            "itemId": 49690,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "legs",
+            "itemId": 49693,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "necklace",
+            "itemId": 49644,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring",
+            "itemId": 49654,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring2",
+            "itemId": 49731,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "weapon",
+            "itemId": 51001,
+            "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+            "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+          }
+        ],
+        "newScore": {
+          "numerator": "3340286314914811621073",
+          "denominator": "312500000000000000",
+          "approximate": 10688.916207727396
+        },
+        "legacyDamage": {
+          "numerator": "84592879131068997",
+          "denominator": "1250000000000000",
+          "approximate": 67.6743033048552
+        },
+        "legacyDps": {
+          "numerator": "84592879131068997",
+          "denominator": "2500000000000000",
+          "approximate": 33.8371516524276
+        },
+        "independentFactors": {
+          "weaponDamage": "194",
+          "mainStat": "2671",
+          "determination": "1066",
+          "tenacity": "1000",
+          "directHit": "4299",
+          "criticalChanceNumerator": "238",
+          "criticalDamageNumerator": "1588",
+          "normalCriticalNumerator": "1139944",
+          "actionNumerator": "21606013454080"
+        }
+      },
+      {
+        "gcd": 200,
+        "profileKey": "200:11360:5000:2640:120",
+        "vector": [
+          2626,
+          1312,
+          0,
+          1515,
+          2560,
+          0,
+          0,
+          0,
+          146,
+          0,
+          0,
+          0,
+          4481,
+          0,
+          5060
+        ],
+        "contributions": {
+          "CRT": 2626,
+          "DET": 1312,
+          "DEX": 0,
+          "DHT": 1515,
+          "DLY": 2560,
+          "INT": 0,
+          "MDMG": 0,
+          "MND": 0,
+          "PDMG": 146,
+          "PIE": 0,
+          "SKS": 0,
+          "SPS": 0,
+          "STR": 4481,
+          "TEN": 0,
+          "VIT": 5060
+        },
+        "food": {
+          "itemId": 49245,
+          "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+        },
+        "slots": [
+          {
+            "slot": "body",
+            "itemId": 49614,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "bracelet",
+            "itemId": 49726,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "earrings",
+            "itemId": 49639,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "feet",
+            "itemId": 49617,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "hands",
+            "itemId": 49692,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "head",
+            "itemId": 49690,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "legs",
+            "itemId": 49693,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "necklace",
+            "itemId": 49644,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring",
+            "itemId": 49731,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring2",
+            "itemId": 49654,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "weapon",
+            "itemId": 51001,
+            "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+            "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+          }
+        ],
+        "newScore": {
+          "numerator": "3340286314914811621073",
+          "denominator": "312500000000000000",
+          "approximate": 10688.916207727396
+        },
+        "legacyDamage": {
+          "numerator": "84592879131068997",
+          "denominator": "1250000000000000",
+          "approximate": 67.6743033048552
+        },
+        "legacyDps": {
+          "numerator": "84592879131068997",
+          "denominator": "2500000000000000",
+          "approximate": 33.8371516524276
+        },
+        "independentFactors": {
+          "weaponDamage": "194",
+          "mainStat": "2671",
+          "determination": "1066",
+          "tenacity": "1000",
+          "directHit": "4299",
+          "criticalChanceNumerator": "238",
+          "criticalDamageNumerator": "1588",
+          "normalCriticalNumerator": "1139944",
+          "actionNumerator": "21606013454080"
+        }
+      }
+    ]
+  },
+  "branches": [
+    {
+      "gcd": 194,
+      "feasiblePairs": 1728,
+      "newModel": {
+        "score": {
+          "numerator": "62396296196319555163",
+          "denominator": "5859375000000000",
+          "approximate": 10648.967884171872
+        },
+        "tiedIdentityCount": 2,
+        "tiedIdentitySha256": "4c7809c9a1706a3b3a7b13ca03d4cbf0c7aac13082bfd2b1fe28c0c435d335d7",
+        "identityConvention": "Named slots; ordered ring positions; complete equipment and physical food identities",
+        "samples": [
+          {
+            "gcd": 194,
+            "profileKey": "194:13040:4000:3200:120",
+            "vector": [
+              2626,
+              965,
+              0,
+              1327,
+              2560,
+              0,
+              0,
+              0,
+              146,
+              0,
+              535,
+              0,
+              4481,
+              0,
+              5060
+            ],
+            "contributions": {
+              "CRT": 2626,
+              "DET": 965,
+              "DEX": 0,
+              "DHT": 1327,
+              "DLY": 2560,
+              "INT": 0,
+              "MDMG": 0,
+              "MND": 0,
+              "PDMG": 146,
+              "PIE": 0,
+              "SKS": 535,
+              "SPS": 0,
+              "STR": 4481,
+              "TEN": 0,
+              "VIT": 5060
+            },
+            "food": {
+              "itemId": 49245,
+              "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+            },
+            "slots": [
+              {
+                "slot": "body",
+                "itemId": 49614,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "bracelet",
+                "itemId": 49726,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "earrings",
+                "itemId": 49639,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "feet",
+                "itemId": 49694,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49694,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[10,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "hands",
+                "itemId": 49692,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "head",
+                "itemId": 49613,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49613,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[10,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "legs",
+                "itemId": 49693,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "necklace",
+                "itemId": 49644,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring",
+                "itemId": 49654,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring2",
+                "itemId": 49731,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "weapon",
+                "itemId": 51001,
+                "variantKey": "[[\"CRT\",447,0],[\"DHT\",447,0],[\"SKS\",108,0]]",
+                "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[3,393],[4,2560],[8,146],[10,108],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+              }
+            ],
+            "newScore": {
+              "numerator": "62396296196319555163",
+              "denominator": "5859375000000000",
+              "approximate": 10648.967884171872
+            },
+            "legacyDamage": {
+              "numerator": "10306089217095451",
+              "denominator": "156250000000000",
+              "approximate": 65.95897098941087
+            },
+            "legacyDps": {
+              "numerator": "106248342444283",
+              "denominator": "3125000000000",
+              "approximate": 33.99946958217056
+            },
+            "independentFactors": {
+              "weaponDamage": "194",
+              "mainStat": "2671",
+              "determination": "1048",
+              "tenacity": "1000",
+              "directHit": "4262",
+              "criticalChanceNumerator": "238",
+              "criticalDamageNumerator": "1588",
+              "normalCriticalNumerator": "1139944",
+              "actionNumerator": "22085051110400"
+            }
+          },
+          {
+            "gcd": 194,
+            "profileKey": "194:13040:4000:3200:120",
+            "vector": [
+              2626,
+              965,
+              0,
+              1327,
+              2560,
+              0,
+              0,
+              0,
+              146,
+              0,
+              535,
+              0,
+              4481,
+              0,
+              5060
+            ],
+            "contributions": {
+              "CRT": 2626,
+              "DET": 965,
+              "DEX": 0,
+              "DHT": 1327,
+              "DLY": 2560,
+              "INT": 0,
+              "MDMG": 0,
+              "MND": 0,
+              "PDMG": 146,
+              "PIE": 0,
+              "SKS": 535,
+              "SPS": 0,
+              "STR": 4481,
+              "TEN": 0,
+              "VIT": 5060
+            },
+            "food": {
+              "itemId": 49245,
+              "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+            },
+            "slots": [
+              {
+                "slot": "body",
+                "itemId": 49614,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "bracelet",
+                "itemId": 49726,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "earrings",
+                "itemId": 49639,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "feet",
+                "itemId": 49694,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49694,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[10,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "hands",
+                "itemId": 49692,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "head",
+                "itemId": 49613,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49613,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[10,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "legs",
+                "itemId": 49693,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "necklace",
+                "itemId": 49644,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring",
+                "itemId": 49731,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring2",
+                "itemId": 49654,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "weapon",
+                "itemId": 51001,
+                "variantKey": "[[\"CRT\",447,0],[\"DHT\",447,0],[\"SKS\",108,0]]",
+                "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[3,393],[4,2560],[8,146],[10,108],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+              }
+            ],
+            "newScore": {
+              "numerator": "62396296196319555163",
+              "denominator": "5859375000000000",
+              "approximate": 10648.967884171872
+            },
+            "legacyDamage": {
+              "numerator": "10306089217095451",
+              "denominator": "156250000000000",
+              "approximate": 65.95897098941087
+            },
+            "legacyDps": {
+              "numerator": "106248342444283",
+              "denominator": "3125000000000",
+              "approximate": 33.99946958217056
+            },
+            "independentFactors": {
+              "weaponDamage": "194",
+              "mainStat": "2671",
+              "determination": "1048",
+              "tenacity": "1000",
+              "directHit": "4262",
+              "criticalChanceNumerator": "238",
+              "criticalDamageNumerator": "1588",
+              "normalCriticalNumerator": "1139944",
+              "actionNumerator": "22085051110400"
+            }
+          }
+        ]
+      },
+      "legacyDamage": {
+        "score": {
+          "numerator": "41242249693047633",
+          "denominator": "625000000000000",
+          "approximate": 65.98759950887622
+        },
+        "tiedIdentityCount": 2,
+        "tiedIdentitySha256": "70baa41784bc225f3ae0bf7a53af9a5d52bd32c55ef8eb6bf7a13f1f4808a0cc",
+        "identityConvention": "Named slots; ordered ring positions; complete equipment and physical food identities",
+        "samples": [
+          {
+            "gcd": 194,
+            "profileKey": "194:13040:4000:3200:120",
+            "vector": [
+              2478,
+              1153,
+              0,
+              1287,
+              2560,
+              0,
+              0,
+              0,
+              146,
+              0,
+              535,
+              0,
+              4481,
+              0,
+              5060
+            ],
+            "contributions": {
+              "CRT": 2478,
+              "DET": 1153,
+              "DEX": 0,
+              "DHT": 1287,
+              "DLY": 2560,
+              "INT": 0,
+              "MDMG": 0,
+              "MND": 0,
+              "PDMG": 146,
+              "PIE": 0,
+              "SKS": 535,
+              "SPS": 0,
+              "STR": 4481,
+              "TEN": 0,
+              "VIT": 5060
+            },
+            "food": {
+              "itemId": 49245,
+              "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+            },
+            "slots": [
+              {
+                "slot": "body",
+                "itemId": 49614,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "bracelet",
+                "itemId": 49726,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "earrings",
+                "itemId": 49716,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49716,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[1,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "feet",
+                "itemId": 49694,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49694,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[10,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "hands",
+                "itemId": 49692,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "head",
+                "itemId": 49613,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49613,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[10,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "legs",
+                "itemId": 49693,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "necklace",
+                "itemId": 49644,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring",
+                "itemId": 49654,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring2",
+                "itemId": 49731,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "weapon",
+                "itemId": 51001,
+                "variantKey": "[[\"CRT\",447,0],[\"DHT\",447,0],[\"SKS\",108,0]]",
+                "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[3,393],[4,2560],[8,146],[10,108],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+              }
+            ],
+            "newScore": {
+              "numerator": "83114457139901842433",
+              "denominator": "7812500000000000",
+              "approximate": 10638.650513907436
+            },
+            "legacyDamage": {
+              "numerator": "41242249693047633",
+              "denominator": "625000000000000",
+              "approximate": 65.98759950887622
+            },
+            "legacyDps": {
+              "numerator": "425177831887089",
+              "denominator": "12500000000000",
+              "approximate": 34.01422655096712
+            },
+            "independentFactors": {
+              "weaponDamage": "194",
+              "mainStat": "2671",
+              "determination": "1058",
+              "tenacity": "1000",
+              "directHit": "4254",
+              "criticalChanceNumerator": "228",
+              "criticalDamageNumerator": "1578",
+              "normalCriticalNumerator": "1131784",
+              "actionNumerator": "21896212966400"
+            }
+          },
+          {
+            "gcd": 194,
+            "profileKey": "194:13040:4000:3200:120",
+            "vector": [
+              2478,
+              1153,
+              0,
+              1287,
+              2560,
+              0,
+              0,
+              0,
+              146,
+              0,
+              535,
+              0,
+              4481,
+              0,
+              5060
+            ],
+            "contributions": {
+              "CRT": 2478,
+              "DET": 1153,
+              "DEX": 0,
+              "DHT": 1287,
+              "DLY": 2560,
+              "INT": 0,
+              "MDMG": 0,
+              "MND": 0,
+              "PDMG": 146,
+              "PIE": 0,
+              "SKS": 535,
+              "SPS": 0,
+              "STR": 4481,
+              "TEN": 0,
+              "VIT": 5060
+            },
+            "food": {
+              "itemId": 49245,
+              "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+            },
+            "slots": [
+              {
+                "slot": "body",
+                "itemId": 49614,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "bracelet",
+                "itemId": 49726,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "earrings",
+                "itemId": 49716,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49716,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[1,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "feet",
+                "itemId": 49694,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49694,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[10,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "hands",
+                "itemId": 49692,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "head",
+                "itemId": 49613,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49613,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[10,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "legs",
+                "itemId": 49693,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "necklace",
+                "itemId": 49644,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring",
+                "itemId": 49731,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring2",
+                "itemId": 49654,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "weapon",
+                "itemId": 51001,
+                "variantKey": "[[\"CRT\",447,0],[\"DHT\",447,0],[\"SKS\",108,0]]",
+                "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[3,393],[4,2560],[8,146],[10,108],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+              }
+            ],
+            "newScore": {
+              "numerator": "83114457139901842433",
+              "denominator": "7812500000000000",
+              "approximate": 10638.650513907436
+            },
+            "legacyDamage": {
+              "numerator": "41242249693047633",
+              "denominator": "625000000000000",
+              "approximate": 65.98759950887622
+            },
+            "legacyDps": {
+              "numerator": "425177831887089",
+              "denominator": "12500000000000",
+              "approximate": 34.01422655096712
+            },
+            "independentFactors": {
+              "weaponDamage": "194",
+              "mainStat": "2671",
+              "determination": "1058",
+              "tenacity": "1000",
+              "directHit": "4254",
+              "criticalChanceNumerator": "228",
+              "criticalDamageNumerator": "1578",
+              "normalCriticalNumerator": "1131784",
+              "actionNumerator": "21896212966400"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "gcd": 196,
+      "feasiblePairs": 1824,
+      "newModel": {
+        "score": {
+          "numerator": "4983365291923400300581",
+          "denominator": "468750000000000000",
+          "approximate": 10631.179289436588
+        },
+        "tiedIdentityCount": 2,
+        "tiedIdentitySha256": "363c77c69fbd9c313a4262741c76ab8a600bde27ff9140c0691cbcf8d6a032ca",
+        "identityConvention": "Named slots; ordered ring positions; complete equipment and physical food identities",
+        "samples": [
+          {
+            "gcd": 196,
+            "profileKey": "196:12200:4500:2880:120",
+            "vector": [
+              2626,
+              1312,
+              0,
+              1172,
+              2560,
+              0,
+              0,
+              0,
+              146,
+              0,
+              336,
+              0,
+              4481,
+              0,
+              5060
+            ],
+            "contributions": {
+              "CRT": 2626,
+              "DET": 1312,
+              "DEX": 0,
+              "DHT": 1172,
+              "DLY": 2560,
+              "INT": 0,
+              "MDMG": 0,
+              "MND": 0,
+              "PDMG": 146,
+              "PIE": 0,
+              "SKS": 336,
+              "SPS": 0,
+              "STR": 4481,
+              "TEN": 0,
+              "VIT": 5060
+            },
+            "food": {
+              "itemId": 49245,
+              "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+            },
+            "slots": [
+              {
+                "slot": "body",
+                "itemId": 49614,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "bracelet",
+                "itemId": 49726,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "earrings",
+                "itemId": 49639,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "feet",
+                "itemId": 49617,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "hands",
+                "itemId": 49692,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "head",
+                "itemId": 49613,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49613,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[10,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "legs",
+                "itemId": 49693,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "necklace",
+                "itemId": 49721,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49721,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[10,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring",
+                "itemId": 49654,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring2",
+                "itemId": 49731,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "weapon",
+                "itemId": 51001,
+                "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+                "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+              }
+            ],
+            "newScore": {
+              "numerator": "4983365291923400300581",
+              "denominator": "468750000000000000",
+              "approximate": 10631.179289436588
+            },
+            "legacyDamage": {
+              "numerator": "83254820098523593",
+              "denominator": "1250000000000000",
+              "approximate": 66.60385607881886
+            },
+            "legacyDps": {
+              "numerator": "83254820098523593",
+              "denominator": "2450000000000000",
+              "approximate": 33.98155922388718
+            },
+            "independentFactors": {
+              "weaponDamage": "194",
+              "mainStat": "2671",
+              "determination": "1066",
+              "tenacity": "1000",
+              "directHit": "4231",
+              "criticalChanceNumerator": "238",
+              "criticalDamageNumerator": "1588",
+              "normalCriticalNumerator": "1139944",
+              "actionNumerator": "21834680015360"
+            }
+          },
+          {
+            "gcd": 196,
+            "profileKey": "196:12200:4500:2880:120",
+            "vector": [
+              2626,
+              1312,
+              0,
+              1172,
+              2560,
+              0,
+              0,
+              0,
+              146,
+              0,
+              336,
+              0,
+              4481,
+              0,
+              5060
+            ],
+            "contributions": {
+              "CRT": 2626,
+              "DET": 1312,
+              "DEX": 0,
+              "DHT": 1172,
+              "DLY": 2560,
+              "INT": 0,
+              "MDMG": 0,
+              "MND": 0,
+              "PDMG": 146,
+              "PIE": 0,
+              "SKS": 336,
+              "SPS": 0,
+              "STR": 4481,
+              "TEN": 0,
+              "VIT": 5060
+            },
+            "food": {
+              "itemId": 49245,
+              "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+            },
+            "slots": [
+              {
+                "slot": "body",
+                "itemId": 49614,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "bracelet",
+                "itemId": 49726,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "earrings",
+                "itemId": 49639,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "feet",
+                "itemId": 49617,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "hands",
+                "itemId": 49692,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "head",
+                "itemId": 49613,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49613,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[10,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "legs",
+                "itemId": 49693,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "necklace",
+                "itemId": 49721,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49721,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[10,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring",
+                "itemId": 49731,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring2",
+                "itemId": 49654,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "weapon",
+                "itemId": 51001,
+                "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+                "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+              }
+            ],
+            "newScore": {
+              "numerator": "4983365291923400300581",
+              "denominator": "468750000000000000",
+              "approximate": 10631.179289436588
+            },
+            "legacyDamage": {
+              "numerator": "83254820098523593",
+              "denominator": "1250000000000000",
+              "approximate": 66.60385607881886
+            },
+            "legacyDps": {
+              "numerator": "83254820098523593",
+              "denominator": "2450000000000000",
+              "approximate": 33.98155922388718
+            },
+            "independentFactors": {
+              "weaponDamage": "194",
+              "mainStat": "2671",
+              "determination": "1066",
+              "tenacity": "1000",
+              "directHit": "4231",
+              "criticalChanceNumerator": "238",
+              "criticalDamageNumerator": "1588",
+              "normalCriticalNumerator": "1139944",
+              "actionNumerator": "21834680015360"
+            }
+          }
+        ]
+      },
+      "legacyDamage": {
+        "score": {
+          "numerator": "83254820098523593",
+          "denominator": "1250000000000000",
+          "approximate": 66.60385607881886
+        },
+        "tiedIdentityCount": 2,
+        "tiedIdentitySha256": "363c77c69fbd9c313a4262741c76ab8a600bde27ff9140c0691cbcf8d6a032ca",
+        "identityConvention": "Named slots; ordered ring positions; complete equipment and physical food identities",
+        "samples": [
+          {
+            "gcd": 196,
+            "profileKey": "196:12200:4500:2880:120",
+            "vector": [
+              2626,
+              1312,
+              0,
+              1172,
+              2560,
+              0,
+              0,
+              0,
+              146,
+              0,
+              336,
+              0,
+              4481,
+              0,
+              5060
+            ],
+            "contributions": {
+              "CRT": 2626,
+              "DET": 1312,
+              "DEX": 0,
+              "DHT": 1172,
+              "DLY": 2560,
+              "INT": 0,
+              "MDMG": 0,
+              "MND": 0,
+              "PDMG": 146,
+              "PIE": 0,
+              "SKS": 336,
+              "SPS": 0,
+              "STR": 4481,
+              "TEN": 0,
+              "VIT": 5060
+            },
+            "food": {
+              "itemId": 49245,
+              "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+            },
+            "slots": [
+              {
+                "slot": "body",
+                "itemId": 49614,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "bracelet",
+                "itemId": 49726,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "earrings",
+                "itemId": 49639,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "feet",
+                "itemId": 49617,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "hands",
+                "itemId": 49692,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "head",
+                "itemId": 49613,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49613,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[10,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "legs",
+                "itemId": 49693,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "necklace",
+                "itemId": 49721,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49721,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[10,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring",
+                "itemId": 49654,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring2",
+                "itemId": 49731,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "weapon",
+                "itemId": 51001,
+                "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+                "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+              }
+            ],
+            "newScore": {
+              "numerator": "4983365291923400300581",
+              "denominator": "468750000000000000",
+              "approximate": 10631.179289436588
+            },
+            "legacyDamage": {
+              "numerator": "83254820098523593",
+              "denominator": "1250000000000000",
+              "approximate": 66.60385607881886
+            },
+            "legacyDps": {
+              "numerator": "83254820098523593",
+              "denominator": "2450000000000000",
+              "approximate": 33.98155922388718
+            },
+            "independentFactors": {
+              "weaponDamage": "194",
+              "mainStat": "2671",
+              "determination": "1066",
+              "tenacity": "1000",
+              "directHit": "4231",
+              "criticalChanceNumerator": "238",
+              "criticalDamageNumerator": "1588",
+              "normalCriticalNumerator": "1139944",
+              "actionNumerator": "21834680015360"
+            }
+          },
+          {
+            "gcd": 196,
+            "profileKey": "196:12200:4500:2880:120",
+            "vector": [
+              2626,
+              1312,
+              0,
+              1172,
+              2560,
+              0,
+              0,
+              0,
+              146,
+              0,
+              336,
+              0,
+              4481,
+              0,
+              5060
+            ],
+            "contributions": {
+              "CRT": 2626,
+              "DET": 1312,
+              "DEX": 0,
+              "DHT": 1172,
+              "DLY": 2560,
+              "INT": 0,
+              "MDMG": 0,
+              "MND": 0,
+              "PDMG": 146,
+              "PIE": 0,
+              "SKS": 336,
+              "SPS": 0,
+              "STR": 4481,
+              "TEN": 0,
+              "VIT": 5060
+            },
+            "food": {
+              "itemId": 49245,
+              "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+            },
+            "slots": [
+              {
+                "slot": "body",
+                "itemId": 49614,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "bracelet",
+                "itemId": 49726,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "earrings",
+                "itemId": 49639,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "feet",
+                "itemId": 49617,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "hands",
+                "itemId": 49692,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "head",
+                "itemId": 49613,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49613,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[10,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "legs",
+                "itemId": 49693,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "necklace",
+                "itemId": 49721,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49721,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[10,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring",
+                "itemId": 49731,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring2",
+                "itemId": 49654,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "weapon",
+                "itemId": 51001,
+                "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+                "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+              }
+            ],
+            "newScore": {
+              "numerator": "4983365291923400300581",
+              "denominator": "468750000000000000",
+              "approximate": 10631.179289436588
+            },
+            "legacyDamage": {
+              "numerator": "83254820098523593",
+              "denominator": "1250000000000000",
+              "approximate": 66.60385607881886
+            },
+            "legacyDps": {
+              "numerator": "83254820098523593",
+              "denominator": "2450000000000000",
+              "approximate": 33.98155922388718
+            },
+            "independentFactors": {
+              "weaponDamage": "194",
+              "mainStat": "2671",
+              "determination": "1066",
+              "tenacity": "1000",
+              "directHit": "4231",
+              "criticalChanceNumerator": "238",
+              "criticalDamageNumerator": "1588",
+              "normalCriticalNumerator": "1139944",
+              "actionNumerator": "21834680015360"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "gcd": 200,
+      "feasiblePairs": 224,
+      "newModel": {
+        "score": {
+          "numerator": "3340286314914811621073",
+          "denominator": "312500000000000000",
+          "approximate": 10688.916207727396
+        },
+        "tiedIdentityCount": 2,
+        "tiedIdentitySha256": "b33846d4ad2bbaca10c00df55185b685d9576bd5e4cc159a68cc9b4c4a42a662",
+        "identityConvention": "Named slots; ordered ring positions; complete equipment and physical food identities",
+        "samples": [
+          {
+            "gcd": 200,
+            "profileKey": "200:11360:5000:2640:120",
+            "vector": [
+              2626,
+              1312,
+              0,
+              1515,
+              2560,
+              0,
+              0,
+              0,
+              146,
+              0,
+              0,
+              0,
+              4481,
+              0,
+              5060
+            ],
+            "contributions": {
+              "CRT": 2626,
+              "DET": 1312,
+              "DEX": 0,
+              "DHT": 1515,
+              "DLY": 2560,
+              "INT": 0,
+              "MDMG": 0,
+              "MND": 0,
+              "PDMG": 146,
+              "PIE": 0,
+              "SKS": 0,
+              "SPS": 0,
+              "STR": 4481,
+              "TEN": 0,
+              "VIT": 5060
+            },
+            "food": {
+              "itemId": 49245,
+              "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+            },
+            "slots": [
+              {
+                "slot": "body",
+                "itemId": 49614,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "bracelet",
+                "itemId": 49726,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "earrings",
+                "itemId": 49639,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "feet",
+                "itemId": 49617,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "hands",
+                "itemId": 49692,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "head",
+                "itemId": 49690,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "legs",
+                "itemId": 49693,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "necklace",
+                "itemId": 49644,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring",
+                "itemId": 49654,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring2",
+                "itemId": 49731,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "weapon",
+                "itemId": 51001,
+                "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+                "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+              }
+            ],
+            "newScore": {
+              "numerator": "3340286314914811621073",
+              "denominator": "312500000000000000",
+              "approximate": 10688.916207727396
+            },
+            "legacyDamage": {
+              "numerator": "84592879131068997",
+              "denominator": "1250000000000000",
+              "approximate": 67.6743033048552
+            },
+            "legacyDps": {
+              "numerator": "84592879131068997",
+              "denominator": "2500000000000000",
+              "approximate": 33.8371516524276
+            },
+            "independentFactors": {
+              "weaponDamage": "194",
+              "mainStat": "2671",
+              "determination": "1066",
+              "tenacity": "1000",
+              "directHit": "4299",
+              "criticalChanceNumerator": "238",
+              "criticalDamageNumerator": "1588",
+              "normalCriticalNumerator": "1139944",
+              "actionNumerator": "21606013454080"
+            }
+          },
+          {
+            "gcd": 200,
+            "profileKey": "200:11360:5000:2640:120",
+            "vector": [
+              2626,
+              1312,
+              0,
+              1515,
+              2560,
+              0,
+              0,
+              0,
+              146,
+              0,
+              0,
+              0,
+              4481,
+              0,
+              5060
+            ],
+            "contributions": {
+              "CRT": 2626,
+              "DET": 1312,
+              "DEX": 0,
+              "DHT": 1515,
+              "DLY": 2560,
+              "INT": 0,
+              "MDMG": 0,
+              "MND": 0,
+              "PDMG": 146,
+              "PIE": 0,
+              "SKS": 0,
+              "SPS": 0,
+              "STR": 4481,
+              "TEN": 0,
+              "VIT": 5060
+            },
+            "food": {
+              "itemId": 49245,
+              "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+            },
+            "slots": [
+              {
+                "slot": "body",
+                "itemId": 49614,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "bracelet",
+                "itemId": 49726,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "earrings",
+                "itemId": 49639,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "feet",
+                "itemId": 49617,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "hands",
+                "itemId": 49692,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "head",
+                "itemId": 49690,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "legs",
+                "itemId": 49693,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "necklace",
+                "itemId": 49644,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring",
+                "itemId": 49731,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring2",
+                "itemId": 49654,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "weapon",
+                "itemId": 51001,
+                "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+                "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+              }
+            ],
+            "newScore": {
+              "numerator": "3340286314914811621073",
+              "denominator": "312500000000000000",
+              "approximate": 10688.916207727396
+            },
+            "legacyDamage": {
+              "numerator": "84592879131068997",
+              "denominator": "1250000000000000",
+              "approximate": 67.6743033048552
+            },
+            "legacyDps": {
+              "numerator": "84592879131068997",
+              "denominator": "2500000000000000",
+              "approximate": 33.8371516524276
+            },
+            "independentFactors": {
+              "weaponDamage": "194",
+              "mainStat": "2671",
+              "determination": "1066",
+              "tenacity": "1000",
+              "directHit": "4299",
+              "criticalChanceNumerator": "238",
+              "criticalDamageNumerator": "1588",
+              "normalCriticalNumerator": "1139944",
+              "actionNumerator": "21606013454080"
+            }
+          }
+        ]
+      },
+      "legacyDamage": {
+        "score": {
+          "numerator": "84592879131068997",
+          "denominator": "1250000000000000",
+          "approximate": 67.6743033048552
+        },
+        "tiedIdentityCount": 2,
+        "tiedIdentitySha256": "b33846d4ad2bbaca10c00df55185b685d9576bd5e4cc159a68cc9b4c4a42a662",
+        "identityConvention": "Named slots; ordered ring positions; complete equipment and physical food identities",
+        "samples": [
+          {
+            "gcd": 200,
+            "profileKey": "200:11360:5000:2640:120",
+            "vector": [
+              2626,
+              1312,
+              0,
+              1515,
+              2560,
+              0,
+              0,
+              0,
+              146,
+              0,
+              0,
+              0,
+              4481,
+              0,
+              5060
+            ],
+            "contributions": {
+              "CRT": 2626,
+              "DET": 1312,
+              "DEX": 0,
+              "DHT": 1515,
+              "DLY": 2560,
+              "INT": 0,
+              "MDMG": 0,
+              "MND": 0,
+              "PDMG": 146,
+              "PIE": 0,
+              "SKS": 0,
+              "SPS": 0,
+              "STR": 4481,
+              "TEN": 0,
+              "VIT": 5060
+            },
+            "food": {
+              "itemId": 49245,
+              "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+            },
+            "slots": [
+              {
+                "slot": "body",
+                "itemId": 49614,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "bracelet",
+                "itemId": 49726,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "earrings",
+                "itemId": 49639,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "feet",
+                "itemId": 49617,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "hands",
+                "itemId": 49692,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "head",
+                "itemId": 49690,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "legs",
+                "itemId": 49693,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "necklace",
+                "itemId": 49644,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring",
+                "itemId": 49654,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring2",
+                "itemId": 49731,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "weapon",
+                "itemId": 51001,
+                "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+                "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+              }
+            ],
+            "newScore": {
+              "numerator": "3340286314914811621073",
+              "denominator": "312500000000000000",
+              "approximate": 10688.916207727396
+            },
+            "legacyDamage": {
+              "numerator": "84592879131068997",
+              "denominator": "1250000000000000",
+              "approximate": 67.6743033048552
+            },
+            "legacyDps": {
+              "numerator": "84592879131068997",
+              "denominator": "2500000000000000",
+              "approximate": 33.8371516524276
+            },
+            "independentFactors": {
+              "weaponDamage": "194",
+              "mainStat": "2671",
+              "determination": "1066",
+              "tenacity": "1000",
+              "directHit": "4299",
+              "criticalChanceNumerator": "238",
+              "criticalDamageNumerator": "1588",
+              "normalCriticalNumerator": "1139944",
+              "actionNumerator": "21606013454080"
+            }
+          },
+          {
+            "gcd": 200,
+            "profileKey": "200:11360:5000:2640:120",
+            "vector": [
+              2626,
+              1312,
+              0,
+              1515,
+              2560,
+              0,
+              0,
+              0,
+              146,
+              0,
+              0,
+              0,
+              4481,
+              0,
+              5060
+            ],
+            "contributions": {
+              "CRT": 2626,
+              "DET": 1312,
+              "DEX": 0,
+              "DHT": 1515,
+              "DLY": 2560,
+              "INT": 0,
+              "MDMG": 0,
+              "MND": 0,
+              "PDMG": 146,
+              "PIE": 0,
+              "SKS": 0,
+              "SPS": 0,
+              "STR": 4481,
+              "TEN": 0,
+              "VIT": 5060
+            },
+            "food": {
+              "itemId": 49245,
+              "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+            },
+            "slots": [
+              {
+                "slot": "body",
+                "itemId": 49614,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "bracelet",
+                "itemId": 49726,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "earrings",
+                "itemId": 49639,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "feet",
+                "itemId": 49617,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "hands",
+                "itemId": 49692,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "head",
+                "itemId": 49690,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "legs",
+                "itemId": 49693,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "necklace",
+                "itemId": 49644,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring",
+                "itemId": 49731,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "ring2",
+                "itemId": 49654,
+                "variantKey": "[]",
+                "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+              },
+              {
+                "slot": "weapon",
+                "itemId": 51001,
+                "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+                "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+              }
+            ],
+            "newScore": {
+              "numerator": "3340286314914811621073",
+              "denominator": "312500000000000000",
+              "approximate": 10688.916207727396
+            },
+            "legacyDamage": {
+              "numerator": "84592879131068997",
+              "denominator": "1250000000000000",
+              "approximate": 67.6743033048552
+            },
+            "legacyDps": {
+              "numerator": "84592879131068997",
+              "denominator": "2500000000000000",
+              "approximate": 33.8371516524276
+            },
+            "independentFactors": {
+              "weaponDamage": "194",
+              "mainStat": "2671",
+              "determination": "1066",
+              "tenacity": "1000",
+              "directHit": "4299",
+              "criticalChanceNumerator": "238",
+              "criticalDamageNumerator": "1588",
+              "normalCriticalNumerator": "1139944",
+              "actionNumerator": "21606013454080"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "legacyDamage": {
+    "score": {
+      "numerator": "84592879131068997",
+      "denominator": "1250000000000000",
+      "approximate": 67.6743033048552
+    },
+    "tiedIdentityCount": 2,
+    "tiedIdentitySha256": "b33846d4ad2bbaca10c00df55185b685d9576bd5e4cc159a68cc9b4c4a42a662",
+    "identityConvention": "Named slots; ordered ring positions; complete equipment and physical food identities",
+    "samples": [
+      {
+        "gcd": 200,
+        "profileKey": "200:11360:5000:2640:120",
+        "vector": [
+          2626,
+          1312,
+          0,
+          1515,
+          2560,
+          0,
+          0,
+          0,
+          146,
+          0,
+          0,
+          0,
+          4481,
+          0,
+          5060
+        ],
+        "contributions": {
+          "CRT": 2626,
+          "DET": 1312,
+          "DEX": 0,
+          "DHT": 1515,
+          "DLY": 2560,
+          "INT": 0,
+          "MDMG": 0,
+          "MND": 0,
+          "PDMG": 146,
+          "PIE": 0,
+          "SKS": 0,
+          "SPS": 0,
+          "STR": 4481,
+          "TEN": 0,
+          "VIT": 5060
+        },
+        "food": {
+          "itemId": 49245,
+          "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+        },
+        "slots": [
+          {
+            "slot": "body",
+            "itemId": 49614,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "bracelet",
+            "itemId": 49726,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "earrings",
+            "itemId": 49639,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "feet",
+            "itemId": 49617,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "hands",
+            "itemId": 49692,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "head",
+            "itemId": 49690,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "legs",
+            "itemId": 49693,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "necklace",
+            "itemId": 49644,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring",
+            "itemId": 49654,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring2",
+            "itemId": 49731,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "weapon",
+            "itemId": 51001,
+            "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+            "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+          }
+        ],
+        "newScore": {
+          "numerator": "3340286314914811621073",
+          "denominator": "312500000000000000",
+          "approximate": 10688.916207727396
+        },
+        "legacyDamage": {
+          "numerator": "84592879131068997",
+          "denominator": "1250000000000000",
+          "approximate": 67.6743033048552
+        },
+        "legacyDps": {
+          "numerator": "84592879131068997",
+          "denominator": "2500000000000000",
+          "approximate": 33.8371516524276
+        },
+        "independentFactors": {
+          "weaponDamage": "194",
+          "mainStat": "2671",
+          "determination": "1066",
+          "tenacity": "1000",
+          "directHit": "4299",
+          "criticalChanceNumerator": "238",
+          "criticalDamageNumerator": "1588",
+          "normalCriticalNumerator": "1139944",
+          "actionNumerator": "21606013454080"
+        }
+      },
+      {
+        "gcd": 200,
+        "profileKey": "200:11360:5000:2640:120",
+        "vector": [
+          2626,
+          1312,
+          0,
+          1515,
+          2560,
+          0,
+          0,
+          0,
+          146,
+          0,
+          0,
+          0,
+          4481,
+          0,
+          5060
+        ],
+        "contributions": {
+          "CRT": 2626,
+          "DET": 1312,
+          "DEX": 0,
+          "DHT": 1515,
+          "DLY": 2560,
+          "INT": 0,
+          "MDMG": 0,
+          "MND": 0,
+          "PDMG": 146,
+          "PIE": 0,
+          "SKS": 0,
+          "SPS": 0,
+          "STR": 4481,
+          "TEN": 0,
+          "VIT": 5060
+        },
+        "food": {
+          "itemId": 49245,
+          "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+        },
+        "slots": [
+          {
+            "slot": "body",
+            "itemId": 49614,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "bracelet",
+            "itemId": 49726,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "earrings",
+            "itemId": 49639,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49639,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[3,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "feet",
+            "itemId": 49617,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49617,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "hands",
+            "itemId": 49692,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "head",
+            "itemId": 49690,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49690,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[3,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "legs",
+            "itemId": 49693,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "necklace",
+            "itemId": 49644,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring",
+            "itemId": 49731,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring2",
+            "itemId": 49654,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "weapon",
+            "itemId": 51001,
+            "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+            "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DET\\\",108,0],[\\\"DHT\\\",447,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[1,108],[3,393],[4,2560],[8,146],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+          }
+        ],
+        "newScore": {
+          "numerator": "3340286314914811621073",
+          "denominator": "312500000000000000",
+          "approximate": 10688.916207727396
+        },
+        "legacyDamage": {
+          "numerator": "84592879131068997",
+          "denominator": "1250000000000000",
+          "approximate": 67.6743033048552
+        },
+        "legacyDps": {
+          "numerator": "84592879131068997",
+          "denominator": "2500000000000000",
+          "approximate": 33.8371516524276
+        },
+        "independentFactors": {
+          "weaponDamage": "194",
+          "mainStat": "2671",
+          "determination": "1066",
+          "tenacity": "1000",
+          "directHit": "4299",
+          "criticalChanceNumerator": "238",
+          "criticalDamageNumerator": "1588",
+          "normalCriticalNumerator": "1139944",
+          "actionNumerator": "21606013454080"
+        }
+      }
+    ]
+  },
+  "legacyDps": {
+    "score": {
+      "numerator": "425177831887089",
+      "denominator": "12500000000000",
+      "approximate": 34.01422655096712
+    },
+    "tiedIdentityCount": 2,
+    "tiedIdentitySha256": "70baa41784bc225f3ae0bf7a53af9a5d52bd32c55ef8eb6bf7a13f1f4808a0cc",
+    "identityConvention": "Named slots; ordered ring positions; complete equipment and physical food identities",
+    "samples": [
+      {
+        "gcd": 194,
+        "profileKey": "194:13040:4000:3200:120",
+        "vector": [
+          2478,
+          1153,
+          0,
+          1287,
+          2560,
+          0,
+          0,
+          0,
+          146,
+          0,
+          535,
+          0,
+          4481,
+          0,
+          5060
+        ],
+        "contributions": {
+          "CRT": 2478,
+          "DET": 1153,
+          "DEX": 0,
+          "DHT": 1287,
+          "DLY": 2560,
+          "INT": 0,
+          "MDMG": 0,
+          "MND": 0,
+          "PDMG": 146,
+          "PIE": 0,
+          "SKS": 535,
+          "SPS": 0,
+          "STR": 4481,
+          "TEN": 0,
+          "VIT": 5060
+        },
+        "food": {
+          "itemId": 49245,
+          "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+        },
+        "slots": [
+          {
+            "slot": "body",
+            "itemId": 49614,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "bracelet",
+            "itemId": 49726,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "earrings",
+            "itemId": 49716,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49716,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[1,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "feet",
+            "itemId": 49694,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49694,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[10,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "hands",
+            "itemId": 49692,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "head",
+            "itemId": 49613,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49613,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[10,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "legs",
+            "itemId": 49693,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "necklace",
+            "itemId": 49644,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring",
+            "itemId": 49654,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring2",
+            "itemId": 49731,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "weapon",
+            "itemId": 51001,
+            "variantKey": "[[\"CRT\",447,0],[\"DHT\",447,0],[\"SKS\",108,0]]",
+            "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[3,393],[4,2560],[8,146],[10,108],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+          }
+        ],
+        "newScore": {
+          "numerator": "83114457139901842433",
+          "denominator": "7812500000000000",
+          "approximate": 10638.650513907436
+        },
+        "legacyDamage": {
+          "numerator": "41242249693047633",
+          "denominator": "625000000000000",
+          "approximate": 65.98759950887622
+        },
+        "legacyDps": {
+          "numerator": "425177831887089",
+          "denominator": "12500000000000",
+          "approximate": 34.01422655096712
+        },
+        "independentFactors": {
+          "weaponDamage": "194",
+          "mainStat": "2671",
+          "determination": "1058",
+          "tenacity": "1000",
+          "directHit": "4254",
+          "criticalChanceNumerator": "228",
+          "criticalDamageNumerator": "1578",
+          "normalCriticalNumerator": "1131784",
+          "actionNumerator": "21896212966400"
+        }
+      },
+      {
+        "gcd": 194,
+        "profileKey": "194:13040:4000:3200:120",
+        "vector": [
+          2478,
+          1153,
+          0,
+          1287,
+          2560,
+          0,
+          0,
+          0,
+          146,
+          0,
+          535,
+          0,
+          4481,
+          0,
+          5060
+        ],
+        "contributions": {
+          "CRT": 2478,
+          "DET": 1153,
+          "DEX": 0,
+          "DHT": 1287,
+          "DLY": 2560,
+          "INT": 0,
+          "MDMG": 0,
+          "MND": 0,
+          "PDMG": 146,
+          "PIE": 0,
+          "SKS": 535,
+          "SPS": 0,
+          "STR": 4481,
+          "TEN": 0,
+          "VIT": 5060
+        },
+        "food": {
+          "itemId": 49245,
+          "physicalKey": "{\"itemId\":49245,\"itemLevel\":770,\"stats\":[[\"DET\",91],[\"DHT\",151],[\"VIT\",297]],\"statRates\":[[\"DET\",10],[\"DHT\",10],[\"VIT\",10]]}"
+        },
+        "slots": [
+          {
+            "slot": "body",
+            "itemId": 49614,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49614,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[1,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "bracelet",
+            "itemId": 49726,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49726,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "earrings",
+            "itemId": 49716,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49716,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[1,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "feet",
+            "itemId": 49694,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49694,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[10,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "hands",
+            "itemId": 49692,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49692,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[1,239],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "head",
+            "itemId": 49613,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49613,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,239],[10,188],[12,381],[14,405]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "legs",
+            "itemId": 49693,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49693,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,379],[3,299],[12,605],[14,643]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "necklace",
+            "itemId": 49644,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49644,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring",
+            "itemId": 49731,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49731,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,148],[1,188],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "ring2",
+            "itemId": 49654,
+            "variantKey": "[]",
+            "candidateIdentity": "{\"itemId\":49654,\"variantKey\":\"[]\",\"itemLevel\":790,\"baseParams\":[[0,188],[3,148],[12,300],[14,319]],\"PDMG\":0,\"MDMG\":0,\"DLY\":0}"
+          },
+          {
+            "slot": "weapon",
+            "itemId": 51001,
+            "variantKey": "[[\"CRT\",447,0],[\"DHT\",447,0],[\"SKS\",108,0]]",
+            "candidateIdentity": "{\"itemId\":51001,\"variantKey\":\"[[\\\"CRT\\\",447,0],[\\\"DHT\\\",447,0],[\\\"SKS\\\",108,0]]\",\"itemLevel\":795,\"baseParams\":[[0,393],[3,393],[4,2560],[8,146],[10,108],[12,628],[14,667]],\"PDMG\":146,\"MDMG\":0,\"DLY\":2560}"
+          }
+        ],
+        "newScore": {
+          "numerator": "83114457139901842433",
+          "denominator": "7812500000000000",
+          "approximate": 10638.650513907436
+        },
+        "legacyDamage": {
+          "numerator": "41242249693047633",
+          "denominator": "625000000000000",
+          "approximate": 65.98759950887622
+        },
+        "legacyDps": {
+          "numerator": "425177831887089",
+          "denominator": "12500000000000",
+          "approximate": 34.01422655096712
+        },
+        "independentFactors": {
+          "weaponDamage": "194",
+          "mainStat": "2671",
+          "determination": "1058",
+          "tenacity": "1000",
+          "directHit": "4254",
+          "criticalChanceNumerator": "228",
+          "criticalDamageNumerator": "1578",
+          "normalCriticalNumerator": "1131784",
+          "actionNumerator": "21896212966400"
+        }
+      }
+    ]
+  },
+  "counterfactual": {
+    "newWinnerLegacyDamage": {
+      "numerator": "84592879131068997",
+      "denominator": "1250000000000000",
+      "approximate": 67.6743033048552
+    },
+    "legacyDamageWinnerNewScore": {
+      "numerator": "3340286314914811621073",
+      "denominator": "312500000000000000",
+      "approximate": 10688.916207727396
+    },
+    "strictRankingReversal": false
+  },
+  "verification": {
+    "independentBigIntFormula": true,
+    "independentFormulaUniqueVectors": 1728,
+    "independentFormulaCoveredPairs": 3776,
+    "runtimeScoreVectorCrossChecks": 1728,
+    "crossCheckGcds": [
+      194,
+      196,
+      200
+    ],
+    "crossCheckScope": "Every distinct allowed attribute vector; all remaining pairs reuse an exactly equal checked vector",
+    "fixedGearsetValidation": "Performed separately for each MIP winner in run-case; oracle retains complete original candidate identities"
+  },
+  "hookStatistics": {
+    "sourceSha256": "3092c4defc8f86da7fd2eab56019c00122690f8ae6f0e215badfc693111d1ded",
+    "transformedSourceSha256": "f09b83631869b146f54b616b0cd261fe0183535b4636c697e5815b9994ad7e75",
+    "hookHits": 1,
+    "captureMatches": 1,
+    "criticalMatches": 1,
+    "evaluatorCreations": 3,
+    "researchEvaluatorCreations": 3,
+    "evaluatorCalls": 1728,
+    "differentFromLegacy": 1728,
+    "numericSafetyChecks": 3456,
+    "maximumCritical": 270075168176,
+    "profileCreations": {
+      "196:12200:4500:2880:120": 1,
+      "194:13040:4000:3200:120": 1,
+      "200:11360:5000:2640:120": 1
+    },
+    "profileCalls": {
+      "196:12200:4500:2880:120": 816,
+      "194:13040:4000:3200:120": 816,
+      "200:11360:5000:2640:120": 96
+    },
+    "activeProfile": {
+      "gcd": 200,
+      "alpha": 11360,
+      "beta": 5000,
+      "gamma": 2640,
+      "duration": 120,
+      "synthetic": true,
+      "key": "200:11360:5000:2640:120",
+      "coefficientDivisor": "80",
+      "coefficients": [
+        234023000000,
+        160802500,
+        158500,
+        33
+      ],
+      "rawCoefficients": [
+        "18721840000000",
+        "12864200000",
+        "12680000",
+        "2640"
+      ],
+      "source": "Synthetic algebraic action profile; not an observed or recommended rotation"
+    },
+    "scope": "Process-local synthetic MNK critical factor; six-factor proof path retained; no production source writes"
+  },
+  "timing": {
+    "preparationMs": 9.225899999999996,
+    "enumerationMs": 40.52049999999997,
+    "totalMs": 305.73539999999997,
+    "meaning": "Complete enumeration oracle; no MIP invoked"
+  }
+}

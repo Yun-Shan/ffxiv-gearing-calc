@@ -1,0 +1,21 @@
+{
+  "condition": "First surrogate-product MIP returned Optimal; solver-trust conditional. This is a true-sum upper bound, NOT yet an exact optimum proof.",
+  "ratioProducts": {
+    "n": "677786112015",
+    "d": "678063260368"
+  },
+  "incumbent": {
+    "n": "1355849372383",
+    "d": "678063260368"
+  },
+  "upper": {
+    "n": "42370292886672097323589",
+    "d": "21189476886203347323589"
+  },
+  "gap": {
+    "n": "4744502784105",
+    "d": "339031630179253557177424"
+  },
+  "logScale": "1000000000000",
+  "roundingSlack": "14"
+}

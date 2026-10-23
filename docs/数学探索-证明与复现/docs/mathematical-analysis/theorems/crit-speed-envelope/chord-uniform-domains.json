@@ -1,0 +1,35 @@
+{
+  "scope": "Exact integer sufficient domain for ordinary critical formula and any k>=4 AM-GM factors; contribution coordinates, not panel stats. Derived curvature guard, not a fitted threshold.",
+  "rows": [
+    {
+      "level": 50,
+      "div": 341,
+      "maximumCritContributionForKAtLeast4": 987
+    },
+    {
+      "level": 60,
+      "div": 600,
+      "maximumCritContributionForKAtLeast4": 1736
+    },
+    {
+      "level": 70,
+      "div": 900,
+      "maximumCritContributionForKAtLeast4": 2605
+    },
+    {
+      "level": 80,
+      "div": 1300,
+      "maximumCritContributionForKAtLeast4": 3762
+    },
+    {
+      "level": 90,
+      "div": 1900,
+      "maximumCritContributionForKAtLeast4": 5499
+    },
+    {
+      "level": 100,
+      "div": 2780,
+      "maximumCritContributionForKAtLeast4": 8046
+    }
+  ]
+}

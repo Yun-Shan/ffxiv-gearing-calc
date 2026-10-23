@@ -1,0 +1,132 @@
+{
+  "scope": "Synthetic finite-domain algebra/oracle only; no real loadout, new MIP backend, combat accuracy or performance validation",
+  "provenance": {
+    "runAt": "2026-10-23T15:08:56.562Z",
+    "node": "v26.8.1",
+    "repositoryCommit": "303877be8f57d7b5215bf9d7d97850177372f8a3",
+    "gameVersion": "2026.09.15.0000.0000",
+    "binarySha256": "4436a1374320e70ab60b8915e9b71a09a55a1a716658b63b43398ba9ca51989b"
+  },
+  "profiles": [
+    {
+      "gcd": 194,
+      "A": 12000,
+      "B": 4000,
+      "normalEvents": 40,
+      "forcedEvents": 13,
+      "duration": 120
+    },
+    {
+      "gcd": 196,
+      "A": 11000,
+      "B": 4500,
+      "normalEvents": 36,
+      "forcedEvents": 15,
+      "duration": 120
+    },
+    {
+      "gcd": 200,
+      "A": 10000,
+      "B": 5000,
+      "normalEvents": 33,
+      "forcedEvents": 17,
+      "duration": 120
+    }
+  ],
+  "candidateCount": 15,
+  "branches": [
+    {
+      "id": "194:2000",
+      "gcd": 194,
+      "stats": {
+        "PDMG": 150,
+        "STR": 4000,
+        "CRT": 2000,
+        "DET": 1500,
+        "DHT": 2465,
+        "SKS": 535,
+        "TEN": 0
+      },
+      "score": {
+        "numerator": "243563204205203144169600000000",
+        "denominator": "24000000000000000000000000",
+        "approximate": 10148.466841883464
+      }
+    },
+    {
+      "id": "196:2000",
+      "gcd": 196,
+      "stats": {
+        "PDMG": 150,
+        "STR": 4000,
+        "CRT": 2000,
+        "DET": 1500,
+        "DHT": 2679,
+        "SKS": 321,
+        "TEN": 0
+      },
+      "score": {
+        "numerator": "243297780102582780801600000000",
+        "denominator": "24000000000000000000000000",
+        "approximate": 10137.407504274284
+      }
+    },
+    {
+      "id": "200:2000",
+      "gcd": 200,
+      "stats": {
+        "PDMG": 150,
+        "STR": 4000,
+        "CRT": 2000,
+        "DET": 1500,
+        "DHT": 3000,
+        "SKS": 0,
+        "TEN": 0
+      },
+      "score": {
+        "numerator": "244245722753786501743380000000",
+        "denominator": "24000000000000000000000000",
+        "approximate": 10176.905114741105
+      }
+    }
+  ],
+  "directEnumerationWinner": "200:2000",
+  "partitionWinner": "200:2000",
+  "nonseparableDeterminant": "10000000000",
+  "discardedTimeDenominatorCounterexample": {
+    "rawTotals": [
+      400,
+      300
+    ],
+    "durations": [
+      5,
+      3
+    ],
+    "rates": [
+      80,
+      100
+    ]
+  },
+  "jointNormalizationCounterexample": {
+    "globalA": {
+      "numerator": "20000",
+      "denominator": "11000",
+      "approximate": 1.8181818181818181
+    },
+    "globalB": {
+      "numerator": "20700",
+      "denominator": "11000",
+      "approximate": 1.8818181818181818
+    },
+    "wrongPerGcdA": {
+      "numerator": "18000",
+      "denominator": "9000",
+      "approximate": 2
+    },
+    "wrongPerGcdB": {
+      "numerator": "20700",
+      "denominator": "11000",
+      "approximate": 1.8818181818181818
+    }
+  }
+}

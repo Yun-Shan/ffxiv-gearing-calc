@@ -1,0 +1,29 @@
+meld-fixed/certificate cold bootstrap
+meld-fixed/certificate preparing complete raw candidates
+meld-fixed/certificate/1.94 complete exact search
+meld-fixed/certificate/1.94 profile candidate-upper-bound-gate
+meld-fixed/certificate/1.94 profile highs-call-start
+meld-fixed/certificate/1.94 profile highs-solve-start
+meld-fixed/certificate/1.94 profile highs-solve-end
+meld-fixed/certificate/1.94 HiGHS exact_damage_initial 状态=Optimal；目标=-1857814.4011230469
+meld-fixed/certificate/1.94 精确候选已核验 1 个；固定点上界=58451112951132
+meld-fixed/certificate/1.94 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+meld-fixed/certificate/1.94 profile exact-search-summary
+meld-fixed/certificate/1.96 complete exact search
+meld-fixed/certificate/1.96 profile candidate-upper-bound-gate
+meld-fixed/certificate/1.96 profile highs-call-start
+meld-fixed/certificate/1.96 profile highs-solve-start
+meld-fixed/certificate/1.96 profile highs-solve-end
+meld-fixed/certificate/1.96 HiGHS exact_damage_initial 状态=Optimal；目标=-1703023.82862854
+meld-fixed/certificate/1.96 精确候选已核验 1 个；固定点上界=60751672917859
+meld-fixed/certificate/1.96 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+meld-fixed/certificate/1.96 profile exact-search-summary
+meld-fixed/certificate/2 complete exact search
+meld-fixed/certificate/2 profile candidate-upper-bound-gate
+meld-fixed/certificate/2 profile highs-call-start
+meld-fixed/certificate/2 profile highs-solve-start
+meld-fixed/certificate/2 profile highs-solve-end
+meld-fixed/certificate/2 HiGHS exact_damage_initial 状态=Optimal；目标=-867278.6587219238
+meld-fixed/certificate/2 精确候选已核验 1 个；固定点上界=62141551098022
+meld-fixed/certificate/2 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+meld-fixed/certificate/2 profile exact-search-summary

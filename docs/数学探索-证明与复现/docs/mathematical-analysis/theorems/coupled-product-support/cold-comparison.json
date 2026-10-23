@@ -1,0 +1,25 @@
+{
+  "commit": "358a639e8d827dad7973fcb81a55d451c05ff438",
+  "scenario": "BLM 2.45 + RDM 2.48, ilvl 770–780, shared non-weapons/food, exclude custom weapons, damage",
+  "guardSeconds": 600,
+  "effectiveInternalLimit": "unlimited supported parameter, same on both runs",
+  "sequence": [
+    "product-seed",
+    "control"
+  ],
+  "productSeed": {
+    "status": "complete",
+    "elapsedMs": 229045.552166,
+    "exactNumerator": "1355849372383",
+    "exactDenominator": "678063260368",
+    "proofComplete": true
+  },
+  "control": {
+    "status": "external_timeout",
+    "exitCode": 124,
+    "lastReportedIncumbent": 1.9971423583960115,
+    "lastReportedInnerElapsedMs": 474105,
+    "proofComplete": false
+  },
+  "interpretation": "One sequential cold comparison. Control is right-censored; no exact speedup ratio. Prior interrupted run is excluded."
+}

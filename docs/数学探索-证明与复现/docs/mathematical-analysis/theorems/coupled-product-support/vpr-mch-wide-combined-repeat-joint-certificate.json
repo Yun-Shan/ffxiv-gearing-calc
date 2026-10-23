@@ -1,0 +1,54 @@
+{
+  "status": "certified necessary per-job thresholds",
+  "jointIncumbent": {
+    "n": "574004023473519946206615819939133423910400000000",
+    "d": "287035103171296668591962736201547522137600000000"
+  },
+  "targetRatio": {
+    "n": "4336",
+    "d": "4337"
+  },
+  "elapsedMs": 289.2296700000006,
+  "jobs": [
+    {
+      "job": "VPR",
+      "objective": "dps",
+      "reference": "supplied positive factor reference",
+      "status": "certified",
+      "targetRatio": {
+        "n": "4336",
+        "d": "4337"
+      },
+      "method": "adaptive concave chords with exact CRT-tier leaves",
+      "candidates": 385,
+      "pruned": 105,
+      "selectedChecked": 0,
+      "queries": 11729,
+      "leafQueries": 1147,
+      "cachedRegions": 36,
+      "prepMs": 51.473996000000625,
+      "queryMs": 113.04579200000444,
+      "addedZeroRows": 105
+    },
+    {
+      "job": "MCH",
+      "objective": "dps",
+      "reference": "supplied positive factor reference",
+      "status": "certified",
+      "targetRatio": {
+        "n": "4336",
+        "d": "4337"
+      },
+      "method": "adaptive concave chords with exact CRT-tier leaves",
+      "candidates": 369,
+      "pruned": 24,
+      "selectedChecked": 0,
+      "queries": 9746,
+      "leafQueries": 1081,
+      "cachedRegions": 58,
+      "prepMs": 50.126361999995424,
+      "queryMs": 72.50640700000804,
+      "addedZeroRows": 24
+    }
+  ]
+}

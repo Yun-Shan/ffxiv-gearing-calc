@@ -1,0 +1,138 @@
+[
+  {
+    "label": "BLM 770–780",
+    "kind": "control",
+    "totalMs": 4297.101331000001,
+    "steps": [
+      {
+        "script": "single-baseline.mjs",
+        "ms": 4296.5471609999995
+      }
+    ],
+    "solverMs": 3875.8947,
+    "sameExactObjective": true
+  },
+  {
+    "label": "BLM 770–780",
+    "kind": "pruned",
+    "totalMs": 6279.483965,
+    "steps": [
+      {
+        "script": "observe-initial.mjs",
+        "ms": 613.5043799999994
+      },
+      {
+        "script": "chord-fixed-point.mjs",
+        "ms": 419.52300599999944
+      },
+      {
+        "script": "run-generic-pruned.mjs",
+        "ms": 5245.700971000001
+      }
+    ],
+    "solverMs": 4801.948182,
+    "sameExactObjective": true
+  },
+  {
+    "label": "BLM 735–780",
+    "kind": "control",
+    "totalMs": 11178.781964999998,
+    "steps": [
+      {
+        "script": "single-baseline.mjs",
+        "ms": 11178.342604999998
+      }
+    ],
+    "solverMs": 10704.385176,
+    "sameExactObjective": true
+  },
+  {
+    "label": "BLM 735–780",
+    "kind": "pruned",
+    "totalMs": 10355.974378000003,
+    "steps": [
+      {
+        "script": "observe-initial.mjs",
+        "ms": 721.7360420000005
+      },
+      {
+        "script": "chord-fixed-point.mjs",
+        "ms": 492.44664700000067
+      },
+      {
+        "script": "run-generic-pruned.mjs",
+        "ms": 9141.111673
+      }
+    ],
+    "solverMs": 8661.453563,
+    "sameExactObjective": true
+  },
+  {
+    "label": "WAR 770–780",
+    "kind": "control",
+    "totalMs": 7445.005309999997,
+    "steps": [
+      {
+        "script": "single-baseline.mjs",
+        "ms": 7443.5299559999985
+      }
+    ],
+    "solverMs": 6976.619586,
+    "sameExactObjective": true
+  },
+  {
+    "label": "WAR 770–780",
+    "kind": "pruned",
+    "totalMs": 6193.2363019999975,
+    "steps": [
+      {
+        "script": "observe-initial.mjs",
+        "ms": 602.7526839999991
+      },
+      {
+        "script": "chord-fixed-point.mjs",
+        "ms": 492.452624000005
+      },
+      {
+        "script": "run-generic-pruned.mjs",
+        "ms": 5097.415452000001
+      }
+    ],
+    "solverMs": 4645.763413000001,
+    "sameExactObjective": true
+  },
+  {
+    "label": "WHM 同步 320",
+    "kind": "control",
+    "totalMs": 14126.236181,
+    "steps": [
+      {
+        "script": "single-baseline.mjs",
+        "ms": 14125.794488000007
+      }
+    ],
+    "solverMs": 13599.426499,
+    "sameExactObjective": true
+  },
+  {
+    "label": "WHM 同步 320",
+    "kind": "pruned",
+    "totalMs": 11121.872039000002,
+    "steps": [
+      {
+        "script": "observe-initial.mjs",
+        "ms": 575.0109830000001
+      },
+      {
+        "script": "chord-fixed-point.mjs",
+        "ms": 457.59739799999807
+      },
+      {
+        "script": "run-generic-pruned.mjs",
+        "ms": 10088.744178999994
+      }
+    ],
+    "solverMs": 9546.895012,
+    "sameExactObjective": true
+  }
+]

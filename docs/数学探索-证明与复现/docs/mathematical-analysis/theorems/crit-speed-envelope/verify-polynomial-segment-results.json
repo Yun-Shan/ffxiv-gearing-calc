@@ -1,0 +1,7 @@
+{
+  "status": "pass",
+  "segments": 1200,
+  "gridPoints": 241200,
+  "interiorMaximumBrackets": 384,
+  "scope": "General rational polynomial segment certificate checked against dense rational grids; not a production timing claim."
+}

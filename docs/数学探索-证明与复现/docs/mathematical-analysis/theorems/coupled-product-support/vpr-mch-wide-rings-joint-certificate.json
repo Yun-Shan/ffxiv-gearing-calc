@@ -1,0 +1,135 @@
+{
+  "status": "certified necessary per-job thresholds",
+  "jointIncumbent": {
+    "n": "574004023473519946206615819939133423910400000000",
+    "d": "287035103171296668591962736201547522137600000000"
+  },
+  "targetRatio": {
+    "n": "4336",
+    "d": "4337"
+  },
+  "elapsedMs": 364.4183550000016,
+  "jobs": [
+    {
+      "job": "VPR",
+      "objective": "dps",
+      "reference": "supplied positive factor reference",
+      "status": "certified",
+      "targetRatio": {
+        "n": "4336",
+        "d": "4337"
+      },
+      "method": "adaptive concave chords with exact CRT-tier leaves and unique-ring support",
+      "ringHullStats": [
+        {
+          "ringIndexes": [
+            8,
+            9
+          ],
+          "leftCandidates": 36,
+          "rightCandidates": 36,
+          "cartesianPairs": 1296,
+          "hullVertices": 6,
+          "oracleCalls": 11
+        },
+        {
+          "ringIndexes": [
+            8,
+            9
+          ],
+          "leftCandidates": 36,
+          "rightCandidates": 36,
+          "cartesianPairs": 1296,
+          "hullVertices": 6,
+          "oracleCalls": 11
+        },
+        {
+          "ringIndexes": [
+            8,
+            9
+          ],
+          "leftCandidates": 36,
+          "rightCandidates": 36,
+          "cartesianPairs": 1296,
+          "hullVertices": 7,
+          "oracleCalls": 13
+        },
+        {
+          "ringIndexes": [
+            8,
+            9
+          ],
+          "leftCandidates": 36,
+          "rightCandidates": 36,
+          "cartesianPairs": 1296,
+          "hullVertices": 8,
+          "oracleCalls": 15
+        }
+      ],
+      "candidates": 385,
+      "pruned": 123,
+      "selectedChecked": 0,
+      "queries": 11951,
+      "leafQueries": 1327,
+      "cachedRegions": 96,
+      "prepMs": 53.10850600001868,
+      "queryMs": 155.6058769999945,
+      "addedZeroRows": 123
+    },
+    {
+      "job": "MCH",
+      "objective": "dps",
+      "reference": "supplied positive factor reference",
+      "status": "certified",
+      "targetRatio": {
+        "n": "4336",
+        "d": "4337"
+      },
+      "method": "adaptive concave chords with exact CRT-tier leaves and unique-ring support",
+      "ringHullStats": [
+        {
+          "ringIndexes": [
+            9,
+            10
+          ],
+          "leftCandidates": 36,
+          "rightCandidates": 36,
+          "cartesianPairs": 1296,
+          "hullVertices": 5,
+          "oracleCalls": 9
+        },
+        {
+          "ringIndexes": [
+            9,
+            10
+          ],
+          "leftCandidates": 36,
+          "rightCandidates": 36,
+          "cartesianPairs": 1296,
+          "hullVertices": 6,
+          "oracleCalls": 11
+        },
+        {
+          "ringIndexes": [
+            9,
+            10
+          ],
+          "leftCandidates": 36,
+          "rightCandidates": 36,
+          "cartesianPairs": 1296,
+          "hullVertices": 8,
+          "oracleCalls": 15
+        }
+      ],
+      "candidates": 369,
+      "pruned": 29,
+      "selectedChecked": 0,
+      "queries": 9907,
+      "leafQueries": 1146,
+      "cachedRegions": 123,
+      "prepMs": 53.050706000009086,
+      "queryMs": 98.87099999998463,
+      "addedZeroRows": 29
+    }
+  ]
+}

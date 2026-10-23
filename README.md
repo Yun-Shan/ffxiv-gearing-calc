@@ -65,7 +65,7 @@ node docs/search-optimization/tools/run-acceptance.mjs
 
 ## 更新数据
 
-来源、回退条件和版本要求见[数据规则](docs/rules/数据规则.md)。统一命令先准备并固定参考项目 commit，再查询 MCP，在内存中校验和合并资料，直接生成最终二进制文件：
+来源、回退条件和版本要求见[数据规则](docs/rules/数据规则.md)。统一命令先准备并固定参考项目 commit，连接 MCP 后先调用 `refresh_schema`，等待明确刷新成功后才进行健康检查、Schema 和数据查询，在内存中校验和合并资料，直接生成最终二进制文件。刷新失败时停止更新并保留原 bin：
 
 ```bash
 npm run data:update
@@ -93,3 +93,4 @@ npm run data:update
 | 当前搜索模型与边界 | [联合搜索模型](docs/V3正确性与验收.md)、[条件最优性证明](docs/当前搜索算法最优性证明.md) |
 | 界面风格与交付验收 | [前端设计总览](docs/前端设计总览.md)、[工程规则](docs/rules/工程规则.md) |
 | 性能证据 | [优化总结](docs/search-optimization/搜索耗时优化总结.md)及其引用的验收记录 |
+| 职业收益模型研究（未实施） | [职业循环建模：特殊收益、多 GCD 与精确搜索](docs/research/职业循环建模/README.md) |

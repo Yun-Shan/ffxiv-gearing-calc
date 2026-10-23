@@ -1,0 +1,440 @@
+{
+  "status": "pass",
+  "scope": "Exact algebra, current formula grids and synthetic finite domains only; no real loadout, new MIP backend or performance certification",
+  "provenance": {
+    "runAt": "2026-10-23T15:40:39.637Z",
+    "node": "v26.8.1",
+    "repositoryCommit": "303877be8f57d7b5215bf9d7d97850177372f8a3",
+    "gameVersion": "2026.09.15.0000.0000",
+    "binarySha256": "4436a1374320e70ab60b8915e9b71a09a55a1a716658b63b43398ba9ca51989b",
+    "initialSeed": 831245,
+    "sourceHashes": {
+      "src/domain/search/equipped-effects.ts": "3092c4defc8f86da7fd2eab56019c00122690f8ae6f0e215badfc693111d1ded",
+      "scripts/experiments/job-model-math-transfer.mjs": "7b455a6823d980b4cb983f00361a6f7802d05ab8b890a38e531358f676c0d7e2",
+      "docs/数学探索-证明与复现/docs/mathematical-analysis/theorems/coupled-product-support/support.mjs": "9b58ec373cb1093af5acc2f1bced1d99872eb26fe5569ac5f278b9e9f9774f93"
+    }
+  },
+  "profiles": [
+    {
+      "gcd": 194,
+      "alpha": "13040",
+      "beta": "4000",
+      "gamma": "3200"
+    },
+    {
+      "gcd": 196,
+      "alpha": "12200",
+      "beta": "4500",
+      "gamma": "2880"
+    },
+    {
+      "gcd": 200,
+      "alpha": "11360",
+      "beta": "5000",
+      "gamma": "2640"
+    }
+  ],
+  "levelDomains": [
+    {
+      "level": 50,
+      "cap": 1619,
+      "div": 341
+    },
+    {
+      "level": 60,
+      "cap": 2850,
+      "div": 600
+    },
+    {
+      "level": 70,
+      "cap": 4275,
+      "div": 900
+    },
+    {
+      "level": 80,
+      "cap": 6175,
+      "div": 1300
+    },
+    {
+      "level": 90,
+      "cap": 8000,
+      "div": 1900
+    },
+    {
+      "level": 100,
+      "cap": 8000,
+      "div": 2780
+    }
+  ],
+  "formulaPoints": 92775,
+  "curvature": {
+    "randomAndProfileIntervals": 180,
+    "certifiedIntervals": 4,
+    "integerPoints": 53578,
+    "profileChecks": [
+      {
+        "gcd": 194,
+        "k": 2,
+        "tierRange": [
+          0,
+          575
+        ],
+        "low": "593350992000000000000",
+        "high": "-720562188000000000000",
+        "certified": false
+      },
+      {
+        "gcd": 194,
+        "k": 4,
+        "tierRange": [
+          0,
+          575
+        ],
+        "low": "1361047600000000000000",
+        "high": "-337954580000000000000",
+        "certified": false
+      },
+      {
+        "gcd": 194,
+        "k": 5,
+        "tierRange": [
+          0,
+          575
+        ],
+        "low": "1744895904000000000000",
+        "high": "-146650776000000000000",
+        "certified": false
+      },
+      {
+        "gcd": 196,
+        "k": 2,
+        "tierRange": [
+          0,
+          575
+        ],
+        "low": "524279039520000000000",
+        "high": "-644808275000000000000",
+        "certified": false
+      },
+      {
+        "gcd": 196,
+        "k": 4,
+        "tierRange": [
+          0,
+          575
+        ],
+        "low": "1217360536800000000000",
+        "high": "-295160325000000000000",
+        "certified": false
+      },
+      {
+        "gcd": 196,
+        "k": 5,
+        "tierRange": [
+          0,
+          575
+        ],
+        "low": "1563901285440000000000",
+        "high": "-120336350000000000000",
+        "certified": false
+      },
+      {
+        "gcd": 200,
+        "k": 2,
+        "tierRange": [
+          0,
+          575
+        ],
+        "low": "453108799880000000000",
+        "high": "-587544763937500000000",
+        "certified": false
+      },
+      {
+        "gcd": 200,
+        "k": 4,
+        "tierRange": [
+          0,
+          575
+        ],
+        "low": "1071705241400000000000",
+        "high": "-271200335312500000000",
+        "certified": false
+      },
+      {
+        "gcd": 200,
+        "k": 5,
+        "tierRange": [
+          0,
+          575
+        ],
+        "low": "1381003462160000000000",
+        "high": "-113028121000000000000",
+        "certified": false
+      }
+    ],
+    "chordCases": [
+      {
+        "gcd": 194,
+        "k": 4,
+        "supported": true,
+        "tierRange": [
+          0,
+          200
+        ],
+        "left": {
+          "n": "101874357",
+          "d": "100000000"
+        },
+        "right": {
+          "n": "97940947",
+          "d": "100000000"
+        }
+      },
+      {
+        "gcd": 194,
+        "k": 5,
+        "supported": true,
+        "tierRange": [
+          0,
+          200
+        ],
+        "left": {
+          "n": "12687087",
+          "d": "12500000"
+        },
+        "right": {
+          "n": "49174669",
+          "d": "50000000"
+        }
+      },
+      {
+        "gcd": 196,
+        "k": 4,
+        "supported": true,
+        "tierRange": [
+          0,
+          200
+        ],
+        "left": {
+          "n": "20370331",
+          "d": "20000000"
+        },
+        "right": {
+          "n": "9798049",
+          "d": "10000000"
+        }
+      },
+      {
+        "gcd": 196,
+        "k": 5,
+        "supported": true,
+        "tierRange": [
+          0,
+          200
+        ],
+        "left": {
+          "n": "101478601",
+          "d": "100000000"
+        },
+        "right": {
+          "n": "49190551",
+          "d": "50000000"
+        }
+      },
+      {
+        "gcd": 200,
+        "k": 4,
+        "supported": true,
+        "tierRange": [
+          0,
+          200
+        ],
+        "left": {
+          "n": "101839283",
+          "d": "100000000"
+        },
+        "right": {
+          "n": "98010781",
+          "d": "100000000"
+        }
+      },
+      {
+        "gcd": 200,
+        "k": 5,
+        "supported": true,
+        "tierRange": [
+          0,
+          200
+        ],
+        "left": {
+          "n": "101468739",
+          "d": "100000000"
+        },
+        "right": {
+          "n": "49202717",
+          "d": "50000000"
+        }
+      }
+    ],
+    "chordPoints": 1206,
+    "oldOrdinaryLimitCounterexample": {
+      "gcd": 194,
+      "level": 100,
+      "k": 4,
+      "oldLimit": 8046,
+      "oldLimitCurvature": {
+        "n": "-134191577116852233958400000000",
+        "d": "373301041"
+      },
+      "lastCertifiedIntegerContribution": 7092,
+      "firstFailingIntegerContribution": 7093,
+      "lastSafeCurvature": {
+        "n": "74829634275771673600000000",
+        "d": "373301041"
+      },
+      "firstUnsafeCurvature": {
+        "n": "-56169565268890342400000000",
+        "d": "373301041"
+      },
+      "scope": "Synthetic profile; exact continuous-curvature certificate range, not actual game build support"
+    },
+    "commonMultiGcdChord": {
+      "durations": [
+        "612",
+        "606",
+        "600"
+      ],
+      "k": 4,
+      "tierRange": [
+        0,
+        200
+      ],
+      "checkedRowPoints": 603,
+      "maximizingRows": [
+        200,
+        194
+      ],
+      "left": {
+        "n": "50915641",
+        "d": "50000000"
+      },
+      "right": {
+        "n": "97940947",
+        "d": "100000000"
+      },
+      "scope": "Common-domain upper relaxation only; actual GCD still selects one row"
+    }
+  },
+  "counterexamples": {
+    "invalidConcaveChord": {
+      "q": "1+x",
+      "k": 2,
+      "interval": [
+        0,
+        3
+      ],
+      "x": 1,
+      "feasibleLinearValue": "3/4",
+      "unsafeChord": "5/6"
+    },
+    "generalCubic": {
+      "q": [
+        "769",
+        "3496",
+        "1600",
+        "48000"
+      ],
+      "k": 4,
+      "h": "1-x",
+      "stationaryPoints": [
+        "1/20",
+        "1/10",
+        "1/4"
+      ],
+      "scope": "General positive cubic, not asserted representable by MNK coefficients"
+    },
+    "mnkTwoMaxima": {
+      "alpha": "1",
+      "beta": "1/4",
+      "gamma": "23/20",
+      "polynomial400q": [
+        "535",
+        "700",
+        "561",
+        "460"
+      ],
+      "h": "76487/25000-c",
+      "k": 4,
+      "derivativeTimes12500": [
+        "20450",
+        "-840793",
+        "10701030",
+        "-40250000"
+      ],
+      "sampleCoordinates": [
+        {
+          "n": "1",
+          "d": "20"
+        },
+        {
+          "n": "3",
+          "d": "50"
+        },
+        {
+          "n": "7",
+          "d": "100"
+        },
+        {
+          "n": "4",
+          "d": "25"
+        }
+      ],
+      "exactDerivativeSamples": [
+        {
+          "n": "5267",
+          "d": "40"
+        },
+        {
+          "n": "-20984",
+          "d": "125"
+        },
+        {
+          "n": "223787",
+          "d": "1000"
+        },
+        {
+          "n": "-624314",
+          "d": "125"
+        }
+      ],
+      "signs": [
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "scope": "Valid nonnegative MNK polynomial family and positive affine segment; not an observed real gear hull or validated rotation"
+    }
+  },
+  "residueElimination": {
+    "cases": 180,
+    "cappedCases": 120,
+    "infeasibleCases": 55,
+    "brutePoints": 107629,
+    "evaluations": 42474
+  },
+  "budgetProfiles": {
+    "cases": 36,
+    "brutePoints": 360620,
+    "profileQueries": 278
+  },
+  "fullProductSupport": {
+    "domains": 24,
+    "configurations": 3000,
+    "candidateChecks": 360,
+    "certifiedDeletions": 172,
+    "supportQueries": 3863,
+    "incumbent": "First full configuration, never oracle optimum",
+    "exclusions": "Every deleted candidate checked against every completion; strict inequality preserves ties"
+  }
+}

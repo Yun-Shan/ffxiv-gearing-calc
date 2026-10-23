@@ -1,0 +1,6 @@
+{
+  "status": "infrastructure_interruption",
+  "lastObservedLogElapsedMs": 226213,
+  "lastObservedRatio": 1.9903630585769196,
+  "reason": "Execution session became unknown; no process exit marker or final proof result. Excluded from performance comparison."
+}

@@ -1,0 +1,9 @@
+{
+  "commit": "358a639e8d827dad7973fcb81a55d451c05ff438",
+  "generatedDataSha256": "132ec856754a932e5abfe0a3af5e387d90581dd6548ed080420e49db53d7e431",
+  "node": "v24.19.0",
+  "highs": "1.15.3",
+  "productionSourceUnmodified": true,
+  "updatedUtc": "2026-10-23T15:03:45.964521+00:00",
+  "scope": "Research docs and in-memory experimental module hooks only. No remote write, no main-branch changes. Full search timings are same-host repeated observations, not dedicated-machine benchmark certification."
+}

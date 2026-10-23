@@ -1,0 +1,2632 @@
+{
+  "status": "complete",
+  "config": {
+    "jobId": "BRD",
+    "minItemLevel": 770,
+    "maxItemLevel": 795,
+    "objective": "dps",
+    "excludedSources": [],
+    "forcedGear": {},
+    "foodId": 0,
+    "maxSearchMs": 300000
+  },
+  "result": {
+    "calculationLevel": 100,
+    "gear": [
+      {
+        "id": 49696,
+        "slot": "body",
+        "icon": 57332,
+        "rawSlot": 4,
+        "level": 790,
+        "equipLevel": 100,
+        "roleId": 4,
+        "jobCategory": 66,
+        "stats": {
+          "DEX": 810,
+          "VIT": 908,
+          "CRT": 299,
+          "DET": 427
+        },
+        "materiaSlots": 2,
+        "jobs": [
+          "BRD",
+          "MCH",
+          "DNC"
+        ],
+        "name": "总冠军精准外套",
+        "sourceFile": "data/out/gears-recent.js",
+        "dataSources": [
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "Name",
+              "DamagePhys",
+              "DamageMag",
+              "Delayms",
+              "DefensePhys",
+              "DefenseMag",
+              "BaseParamValue[0]",
+              "BaseParamValue[1]",
+              "BaseParamValue[2]",
+              "BaseParamValue[3]",
+              "BaseParamValue[4]",
+              "BaseParamValue[5]",
+              "BaseParamValueSpecial[0]",
+              "BaseParamValueSpecial[1]",
+              "BaseParamValueSpecial[2]",
+              "BaseParamValueSpecial[3]",
+              "BaseParamValueSpecial[4]",
+              "BaseParamValueSpecial[5]",
+              "LevelEquip",
+              "ClassJobCategory",
+              "BaseParam[0]",
+              "BaseParam[1]",
+              "BaseParam[2]",
+              "BaseParam[3]",
+              "BaseParam[4]",
+              "BaseParam[5]",
+              "BaseParamSpecial[0]",
+              "BaseParamSpecial[1]",
+              "BaseParamSpecial[2]",
+              "BaseParamSpecial[3]",
+              "BaseParamSpecial[4]",
+              "BaseParamSpecial[5]",
+              "MateriaSlotCount",
+              "IsAdvancedMeldingPermitted",
+              "IsUnique",
+              "LevelItem",
+              "EquipSlotCategory",
+              "CanBeHq",
+              "Icon",
+              "Rarity",
+              "ItemAction",
+              "ItemUICategory",
+              "FilterGroup"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              49696
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "SubStatCategory"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "SubStatCategory 原值来自 get_rows Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49696
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonus"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonus 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49696
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonusParam"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonusParam 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49696
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "ClassJobCategory",
+            "fields": [
+              "PLD",
+              "WAR",
+              "DRK",
+              "GNB",
+              "WHM",
+              "SCH",
+              "AST",
+              "SGE",
+              "MNK",
+              "DRG",
+              "NIN",
+              "SAM",
+              "RPR",
+              "VPR",
+              "BRD",
+              "MCH",
+              "DNC",
+              "BLM",
+              "SMN",
+              "RDM",
+              "PCT",
+              "BLU",
+              "BST"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              66
+            ]
+          },
+          {
+            "kind": "reference",
+            "repository": "https://github.com/Asvel/ffxiv-gearing.git",
+            "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+            "importedAt": "2026-10-20T13:26:47.781Z",
+            "sourceFiles": [
+              "data/out/gears-recent.js"
+            ]
+          }
+        ],
+        "unique": true,
+        "source": "零式/重量级",
+        "melds": [
+          {
+            "stat": "CRT",
+            "value": 54,
+            "grade": 12
+          },
+          {
+            "stat": "CRT",
+            "value": 54,
+            "grade": 12
+          }
+        ],
+        "finalStats": {
+          "DEX": 810,
+          "VIT": 908,
+          "CRT": 407,
+          "DET": 427
+        }
+      },
+      {
+        "id": 49722,
+        "slot": "necklace",
+        "icon": 55109,
+        "rawSlot": 10,
+        "level": 790,
+        "equipLevel": 100,
+        "roleId": 12,
+        "jobCategory": 105,
+        "stats": {
+          "DEX": 402,
+          "VIT": 451,
+          "CRT": 148,
+          "DET": 212
+        },
+        "materiaSlots": 2,
+        "jobs": [
+          "NIN",
+          "VPR",
+          "BRD",
+          "MCH",
+          "DNC"
+        ],
+        "name": "总冠军精准项环",
+        "sourceFile": "data/out/gears-recent.js",
+        "dataSources": [
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "Name",
+              "DamagePhys",
+              "DamageMag",
+              "Delayms",
+              "DefensePhys",
+              "DefenseMag",
+              "BaseParamValue[0]",
+              "BaseParamValue[1]",
+              "BaseParamValue[2]",
+              "BaseParamValue[3]",
+              "BaseParamValue[4]",
+              "BaseParamValue[5]",
+              "BaseParamValueSpecial[0]",
+              "BaseParamValueSpecial[1]",
+              "BaseParamValueSpecial[2]",
+              "BaseParamValueSpecial[3]",
+              "BaseParamValueSpecial[4]",
+              "BaseParamValueSpecial[5]",
+              "LevelEquip",
+              "ClassJobCategory",
+              "BaseParam[0]",
+              "BaseParam[1]",
+              "BaseParam[2]",
+              "BaseParam[3]",
+              "BaseParam[4]",
+              "BaseParam[5]",
+              "BaseParamSpecial[0]",
+              "BaseParamSpecial[1]",
+              "BaseParamSpecial[2]",
+              "BaseParamSpecial[3]",
+              "BaseParamSpecial[4]",
+              "BaseParamSpecial[5]",
+              "MateriaSlotCount",
+              "IsAdvancedMeldingPermitted",
+              "IsUnique",
+              "LevelItem",
+              "EquipSlotCategory",
+              "CanBeHq",
+              "Icon",
+              "Rarity",
+              "ItemAction",
+              "ItemUICategory",
+              "FilterGroup"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              49722
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "SubStatCategory"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "SubStatCategory 原值来自 get_rows Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49722
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonus"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonus 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49722
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonusParam"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonusParam 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49722
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "ClassJobCategory",
+            "fields": [
+              "PLD",
+              "WAR",
+              "DRK",
+              "GNB",
+              "WHM",
+              "SCH",
+              "AST",
+              "SGE",
+              "MNK",
+              "DRG",
+              "NIN",
+              "SAM",
+              "RPR",
+              "VPR",
+              "BRD",
+              "MCH",
+              "DNC",
+              "BLM",
+              "SMN",
+              "RDM",
+              "PCT",
+              "BLU",
+              "BST"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              105
+            ]
+          },
+          {
+            "kind": "reference",
+            "repository": "https://github.com/Asvel/ffxiv-gearing.git",
+            "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+            "importedAt": "2026-10-20T13:26:47.781Z",
+            "sourceFiles": [
+              "data/out/gears-recent.js"
+            ]
+          }
+        ],
+        "unique": true,
+        "source": "零式/重量级",
+        "melds": [
+          {
+            "stat": "CRT",
+            "value": 54,
+            "grade": 12
+          },
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          }
+        ],
+        "finalStats": {
+          "DEX": 402,
+          "VIT": 451,
+          "CRT": 202,
+          "DET": 212,
+          "SKS": 54
+        }
+      },
+      {
+        "id": 49650,
+        "slot": "bracelet",
+        "icon": 55909,
+        "rawSlot": 11,
+        "level": 790,
+        "equipLevel": 100,
+        "roleId": 12,
+        "jobCategory": 105,
+        "stats": {
+          "DEX": 402,
+          "VIT": 451,
+          "CRT": 212,
+          "DHT": 148
+        },
+        "materiaSlots": 2,
+        "jobs": [
+          "NIN",
+          "VPR",
+          "BRD",
+          "MCH",
+          "DNC"
+        ],
+        "name": "改良型王国黄铜精准手镯",
+        "sourceFile": "data/out/gears-recent.js",
+        "dataSources": [
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "Name",
+              "DamagePhys",
+              "DamageMag",
+              "Delayms",
+              "DefensePhys",
+              "DefenseMag",
+              "BaseParamValue[0]",
+              "BaseParamValue[1]",
+              "BaseParamValue[2]",
+              "BaseParamValue[3]",
+              "BaseParamValue[4]",
+              "BaseParamValue[5]",
+              "BaseParamValueSpecial[0]",
+              "BaseParamValueSpecial[1]",
+              "BaseParamValueSpecial[2]",
+              "BaseParamValueSpecial[3]",
+              "BaseParamValueSpecial[4]",
+              "BaseParamValueSpecial[5]",
+              "LevelEquip",
+              "ClassJobCategory",
+              "BaseParam[0]",
+              "BaseParam[1]",
+              "BaseParam[2]",
+              "BaseParam[3]",
+              "BaseParam[4]",
+              "BaseParam[5]",
+              "BaseParamSpecial[0]",
+              "BaseParamSpecial[1]",
+              "BaseParamSpecial[2]",
+              "BaseParamSpecial[3]",
+              "BaseParamSpecial[4]",
+              "BaseParamSpecial[5]",
+              "MateriaSlotCount",
+              "IsAdvancedMeldingPermitted",
+              "IsUnique",
+              "LevelItem",
+              "EquipSlotCategory",
+              "CanBeHq",
+              "Icon",
+              "Rarity",
+              "ItemAction",
+              "ItemUICategory",
+              "FilterGroup"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              49650
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "SubStatCategory"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "SubStatCategory 原值来自 get_rows Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49650
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonus"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonus 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49650
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonusParam"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonusParam 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49650
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "ClassJobCategory",
+            "fields": [
+              "PLD",
+              "WAR",
+              "DRK",
+              "GNB",
+              "WHM",
+              "SCH",
+              "AST",
+              "SGE",
+              "MNK",
+              "DRG",
+              "NIN",
+              "SAM",
+              "RPR",
+              "VPR",
+              "BRD",
+              "MCH",
+              "DNC",
+              "BLM",
+              "SMN",
+              "RDM",
+              "PCT",
+              "BLU",
+              "BST"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              105
+            ]
+          },
+          {
+            "kind": "reference",
+            "repository": "https://github.com/Asvel/ffxiv-gearing.git",
+            "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+            "importedAt": "2026-10-20T13:26:47.781Z",
+            "sourceFiles": [
+              "data/out/gears-recent.js"
+            ]
+          }
+        ],
+        "unique": true,
+        "source": "点数强化/记忆",
+        "melds": [
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          },
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          }
+        ],
+        "finalStats": {
+          "DEX": 402,
+          "VIT": 451,
+          "CRT": 212,
+          "DHT": 148,
+          "SKS": 108
+        }
+      },
+      {
+        "id": 49717,
+        "slot": "earrings",
+        "icon": 55564,
+        "rawSlot": 9,
+        "level": 790,
+        "equipLevel": 100,
+        "roleId": 12,
+        "jobCategory": 105,
+        "stats": {
+          "DEX": 402,
+          "VIT": 451,
+          "CRT": 212,
+          "DET": 148
+        },
+        "materiaSlots": 2,
+        "jobs": [
+          "NIN",
+          "VPR",
+          "BRD",
+          "MCH",
+          "DNC"
+        ],
+        "name": "总冠军精准耳夹",
+        "sourceFile": "data/out/gears-recent.js",
+        "dataSources": [
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "Name",
+              "DamagePhys",
+              "DamageMag",
+              "Delayms",
+              "DefensePhys",
+              "DefenseMag",
+              "BaseParamValue[0]",
+              "BaseParamValue[1]",
+              "BaseParamValue[2]",
+              "BaseParamValue[3]",
+              "BaseParamValue[4]",
+              "BaseParamValue[5]",
+              "BaseParamValueSpecial[0]",
+              "BaseParamValueSpecial[1]",
+              "BaseParamValueSpecial[2]",
+              "BaseParamValueSpecial[3]",
+              "BaseParamValueSpecial[4]",
+              "BaseParamValueSpecial[5]",
+              "LevelEquip",
+              "ClassJobCategory",
+              "BaseParam[0]",
+              "BaseParam[1]",
+              "BaseParam[2]",
+              "BaseParam[3]",
+              "BaseParam[4]",
+              "BaseParam[5]",
+              "BaseParamSpecial[0]",
+              "BaseParamSpecial[1]",
+              "BaseParamSpecial[2]",
+              "BaseParamSpecial[3]",
+              "BaseParamSpecial[4]",
+              "BaseParamSpecial[5]",
+              "MateriaSlotCount",
+              "IsAdvancedMeldingPermitted",
+              "IsUnique",
+              "LevelItem",
+              "EquipSlotCategory",
+              "CanBeHq",
+              "Icon",
+              "Rarity",
+              "ItemAction",
+              "ItemUICategory",
+              "FilterGroup"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              49717
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "SubStatCategory"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "SubStatCategory 原值来自 get_rows Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49717
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonus"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonus 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49717
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonusParam"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonusParam 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49717
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "ClassJobCategory",
+            "fields": [
+              "PLD",
+              "WAR",
+              "DRK",
+              "GNB",
+              "WHM",
+              "SCH",
+              "AST",
+              "SGE",
+              "MNK",
+              "DRG",
+              "NIN",
+              "SAM",
+              "RPR",
+              "VPR",
+              "BRD",
+              "MCH",
+              "DNC",
+              "BLM",
+              "SMN",
+              "RDM",
+              "PCT",
+              "BLU",
+              "BST"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              105
+            ]
+          },
+          {
+            "kind": "reference",
+            "repository": "https://github.com/Asvel/ffxiv-gearing.git",
+            "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+            "importedAt": "2026-10-20T13:26:47.781Z",
+            "sourceFiles": [
+              "data/out/gears-recent.js"
+            ]
+          }
+        ],
+        "unique": true,
+        "source": "零式/重量级",
+        "melds": [
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          },
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          }
+        ],
+        "finalStats": {
+          "DEX": 402,
+          "VIT": 451,
+          "CRT": 212,
+          "DET": 148,
+          "SKS": 108
+        }
+      },
+      {
+        "id": 51004,
+        "slot": "weapon",
+        "icon": 32068,
+        "rawSlot": 13,
+        "level": 795,
+        "equipLevel": 100,
+        "roleId": 4,
+        "jobCategory": 24,
+        "stats": {
+          "DEX": 847,
+          "VIT": 943,
+          "PDMG": 158,
+          "DLY": 3040
+        },
+        "materiaSlots": 0,
+        "jobs": [
+          "BRD"
+        ],
+        "name": "幻境琴弓·秘影",
+        "sourceFile": "data/out/gears-recent.js",
+        "dataSources": [
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "Name",
+              "DamagePhys",
+              "DamageMag",
+              "Delayms",
+              "DefensePhys",
+              "DefenseMag",
+              "BaseParamValue[0]",
+              "BaseParamValue[1]",
+              "BaseParamValue[2]",
+              "BaseParamValue[3]",
+              "BaseParamValue[4]",
+              "BaseParamValue[5]",
+              "BaseParamValueSpecial[0]",
+              "BaseParamValueSpecial[1]",
+              "BaseParamValueSpecial[2]",
+              "BaseParamValueSpecial[3]",
+              "BaseParamValueSpecial[4]",
+              "BaseParamValueSpecial[5]",
+              "LevelEquip",
+              "ClassJobCategory",
+              "BaseParam[0]",
+              "BaseParam[1]",
+              "BaseParam[2]",
+              "BaseParam[3]",
+              "BaseParam[4]",
+              "BaseParam[5]",
+              "BaseParamSpecial[0]",
+              "BaseParamSpecial[1]",
+              "BaseParamSpecial[2]",
+              "BaseParamSpecial[3]",
+              "BaseParamSpecial[4]",
+              "BaseParamSpecial[5]",
+              "MateriaSlotCount",
+              "IsAdvancedMeldingPermitted",
+              "IsUnique",
+              "LevelItem",
+              "EquipSlotCategory",
+              "CanBeHq",
+              "Icon",
+              "Rarity",
+              "ItemAction",
+              "ItemUICategory",
+              "FilterGroup"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              51004
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "SubStatCategory"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3551444+00:00",
+            "note": "SubStatCategory 原值来自 get_rows Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3551444+00:00:100:50964-51071 的来源记录。",
+            "sourceId": "mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3551444+00:00:100:50964-51071",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              51004
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonus"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3551444+00:00",
+            "note": "ItemSpecialBonus 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3551444+00:00:100:50964-51071 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3551444+00:00:100:50964-51071",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              51004
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonusParam"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3551444+00:00",
+            "note": "ItemSpecialBonusParam 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3551444+00:00:100:50964-51071 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3551444+00:00:100:50964-51071",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              51004
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "ClassJobCategory",
+            "fields": [
+              "PLD",
+              "WAR",
+              "DRK",
+              "GNB",
+              "WHM",
+              "SCH",
+              "AST",
+              "SGE",
+              "MNK",
+              "DRG",
+              "NIN",
+              "SAM",
+              "RPR",
+              "VPR",
+              "BRD",
+              "MCH",
+              "DNC",
+              "BLM",
+              "SMN",
+              "RDM",
+              "PCT",
+              "BLU",
+              "BST"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              24
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "MandervilleWeaponEnhance",
+            "fields": [
+              "Materia[0]",
+              "Materia[1]",
+              "Materia[2]",
+              "Materia[3]",
+              "UpgradeItem",
+              "Image",
+              "UpgradeCost",
+              "Unknown7",
+              "MateriaBigValueIndex[0]",
+              "MateriaBigValueIndex[1]",
+              "MateriaBigValueIndex[2]",
+              "MateriaBigValueIndex[3]",
+              "MateriaSmallValueIndex[0]",
+              "MateriaSmallValueIndex[1]",
+              "MateriaSmallValueIndex[2]",
+              "MateriaSmallValueIndex[3]"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              51004
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Materia",
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              1411,
+              1410,
+              1412,
+              1413
+            ]
+          },
+          {
+            "kind": "reference",
+            "repository": "https://github.com/Asvel/ffxiv-gearing.git",
+            "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+            "importedAt": "2026-10-20T13:26:47.781Z",
+            "sourceFiles": [
+              "data/out/gears-recent.js"
+            ]
+          }
+        ],
+        "unique": true,
+        "customParameters": [
+          {
+            "materiaId": 1411,
+            "stat": "DHT",
+            "bigValueIndex": 7,
+            "smallValueIndex": 2,
+            "bigValue": 447,
+            "smallValue": 108
+          },
+          {
+            "materiaId": 1410,
+            "stat": "CRT",
+            "bigValueIndex": 7,
+            "smallValueIndex": 2,
+            "bigValue": 447,
+            "smallValue": 108
+          },
+          {
+            "materiaId": 1412,
+            "stat": "DET",
+            "bigValueIndex": 7,
+            "smallValueIndex": 2,
+            "bigValue": 447,
+            "smallValue": 108
+          },
+          {
+            "materiaId": 1413,
+            "stat": "SKS",
+            "bigValueIndex": 7,
+            "smallValueIndex": 2,
+            "bigValue": 447,
+            "smallValue": 108
+          }
+        ],
+        "source": "幻境武器",
+        "weaponDamage": 158,
+        "melds": [
+          {
+            "stat": "CRT",
+            "value": 447,
+            "grade": 0
+          },
+          {
+            "stat": "SKS",
+            "value": 447,
+            "grade": 0
+          },
+          {
+            "stat": "DHT",
+            "value": 108,
+            "grade": 0
+          }
+        ],
+        "finalStats": {
+          "DEX": 847,
+          "VIT": 943,
+          "PDMG": 158,
+          "DLY": 3040,
+          "CRT": 447,
+          "SKS": 447,
+          "DHT": 108
+        }
+      },
+      {
+        "id": 49655,
+        "slot": "ring",
+        "icon": 54762,
+        "rawSlot": 12,
+        "level": 790,
+        "equipLevel": 100,
+        "roleId": 12,
+        "jobCategory": 105,
+        "stats": {
+          "DEX": 402,
+          "VIT": 451,
+          "CRT": 148,
+          "DET": 212
+        },
+        "materiaSlots": 2,
+        "jobs": [
+          "NIN",
+          "VPR",
+          "BRD",
+          "MCH",
+          "DNC"
+        ],
+        "name": "改良型王国黄铜精准戒指",
+        "sourceFile": "data/out/gears-recent.js",
+        "dataSources": [
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "Name",
+              "DamagePhys",
+              "DamageMag",
+              "Delayms",
+              "DefensePhys",
+              "DefenseMag",
+              "BaseParamValue[0]",
+              "BaseParamValue[1]",
+              "BaseParamValue[2]",
+              "BaseParamValue[3]",
+              "BaseParamValue[4]",
+              "BaseParamValue[5]",
+              "BaseParamValueSpecial[0]",
+              "BaseParamValueSpecial[1]",
+              "BaseParamValueSpecial[2]",
+              "BaseParamValueSpecial[3]",
+              "BaseParamValueSpecial[4]",
+              "BaseParamValueSpecial[5]",
+              "LevelEquip",
+              "ClassJobCategory",
+              "BaseParam[0]",
+              "BaseParam[1]",
+              "BaseParam[2]",
+              "BaseParam[3]",
+              "BaseParam[4]",
+              "BaseParam[5]",
+              "BaseParamSpecial[0]",
+              "BaseParamSpecial[1]",
+              "BaseParamSpecial[2]",
+              "BaseParamSpecial[3]",
+              "BaseParamSpecial[4]",
+              "BaseParamSpecial[5]",
+              "MateriaSlotCount",
+              "IsAdvancedMeldingPermitted",
+              "IsUnique",
+              "LevelItem",
+              "EquipSlotCategory",
+              "CanBeHq",
+              "Icon",
+              "Rarity",
+              "ItemAction",
+              "ItemUICategory",
+              "FilterGroup"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              49655
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "SubStatCategory"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "SubStatCategory 原值来自 get_rows Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49655
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonus"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonus 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49655
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonusParam"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonusParam 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49655
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "ClassJobCategory",
+            "fields": [
+              "PLD",
+              "WAR",
+              "DRK",
+              "GNB",
+              "WHM",
+              "SCH",
+              "AST",
+              "SGE",
+              "MNK",
+              "DRG",
+              "NIN",
+              "SAM",
+              "RPR",
+              "VPR",
+              "BRD",
+              "MCH",
+              "DNC",
+              "BLM",
+              "SMN",
+              "RDM",
+              "PCT",
+              "BLU",
+              "BST"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              105
+            ]
+          },
+          {
+            "kind": "reference",
+            "repository": "https://github.com/Asvel/ffxiv-gearing.git",
+            "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+            "importedAt": "2026-10-20T13:26:47.781Z",
+            "sourceFiles": [
+              "data/out/gears-recent.js"
+            ]
+          }
+        ],
+        "unique": true,
+        "source": "点数强化/记忆",
+        "melds": [
+          {
+            "stat": "CRT",
+            "value": 54,
+            "grade": 12
+          },
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          }
+        ],
+        "finalStats": {
+          "DEX": 402,
+          "VIT": 451,
+          "CRT": 202,
+          "DET": 212,
+          "SKS": 54
+        }
+      },
+      {
+        "id": 49732,
+        "slot": "ring2",
+        "icon": 54760,
+        "rawSlot": 12,
+        "level": 790,
+        "equipLevel": 100,
+        "roleId": 12,
+        "jobCategory": 105,
+        "stats": {
+          "DEX": 402,
+          "VIT": 451,
+          "CRT": 212,
+          "DHT": 148
+        },
+        "materiaSlots": 2,
+        "jobs": [
+          "NIN",
+          "VPR",
+          "BRD",
+          "MCH",
+          "DNC"
+        ],
+        "name": "总冠军精准指环",
+        "sourceFile": "data/out/gears-recent.js",
+        "dataSources": [
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "Name",
+              "DamagePhys",
+              "DamageMag",
+              "Delayms",
+              "DefensePhys",
+              "DefenseMag",
+              "BaseParamValue[0]",
+              "BaseParamValue[1]",
+              "BaseParamValue[2]",
+              "BaseParamValue[3]",
+              "BaseParamValue[4]",
+              "BaseParamValue[5]",
+              "BaseParamValueSpecial[0]",
+              "BaseParamValueSpecial[1]",
+              "BaseParamValueSpecial[2]",
+              "BaseParamValueSpecial[3]",
+              "BaseParamValueSpecial[4]",
+              "BaseParamValueSpecial[5]",
+              "LevelEquip",
+              "ClassJobCategory",
+              "BaseParam[0]",
+              "BaseParam[1]",
+              "BaseParam[2]",
+              "BaseParam[3]",
+              "BaseParam[4]",
+              "BaseParam[5]",
+              "BaseParamSpecial[0]",
+              "BaseParamSpecial[1]",
+              "BaseParamSpecial[2]",
+              "BaseParamSpecial[3]",
+              "BaseParamSpecial[4]",
+              "BaseParamSpecial[5]",
+              "MateriaSlotCount",
+              "IsAdvancedMeldingPermitted",
+              "IsUnique",
+              "LevelItem",
+              "EquipSlotCategory",
+              "CanBeHq",
+              "Icon",
+              "Rarity",
+              "ItemAction",
+              "ItemUICategory",
+              "FilterGroup"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              49732
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "SubStatCategory"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "SubStatCategory 原值来自 get_rows Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49732
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonus"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonus 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49732
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonusParam"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonusParam 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49732
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "ClassJobCategory",
+            "fields": [
+              "PLD",
+              "WAR",
+              "DRK",
+              "GNB",
+              "WHM",
+              "SCH",
+              "AST",
+              "SGE",
+              "MNK",
+              "DRG",
+              "NIN",
+              "SAM",
+              "RPR",
+              "VPR",
+              "BRD",
+              "MCH",
+              "DNC",
+              "BLM",
+              "SMN",
+              "RDM",
+              "PCT",
+              "BLU",
+              "BST"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              105
+            ]
+          },
+          {
+            "kind": "reference",
+            "repository": "https://github.com/Asvel/ffxiv-gearing.git",
+            "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+            "importedAt": "2026-10-20T13:26:47.781Z",
+            "sourceFiles": [
+              "data/out/gears-recent.js"
+            ]
+          }
+        ],
+        "unique": true,
+        "source": "零式/重量级",
+        "melds": [
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          },
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          }
+        ],
+        "finalStats": {
+          "DEX": 402,
+          "VIT": 451,
+          "CRT": 212,
+          "DHT": 148,
+          "SKS": 108
+        }
+      },
+      {
+        "id": 49622,
+        "slot": "feet",
+        "icon": 57932,
+        "rawSlot": 8,
+        "level": 790,
+        "equipLevel": 100,
+        "roleId": 4,
+        "jobCategory": 66,
+        "stats": {
+          "DEX": 510,
+          "VIT": 572,
+          "CRT": 188,
+          "DHT": 269
+        },
+        "materiaSlots": 2,
+        "jobs": [
+          "BRD",
+          "MCH",
+          "DNC"
+        ],
+        "name": "改良型王国黄铜精准长靴",
+        "sourceFile": "data/out/gears-recent.js",
+        "dataSources": [
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "Name",
+              "DamagePhys",
+              "DamageMag",
+              "Delayms",
+              "DefensePhys",
+              "DefenseMag",
+              "BaseParamValue[0]",
+              "BaseParamValue[1]",
+              "BaseParamValue[2]",
+              "BaseParamValue[3]",
+              "BaseParamValue[4]",
+              "BaseParamValue[5]",
+              "BaseParamValueSpecial[0]",
+              "BaseParamValueSpecial[1]",
+              "BaseParamValueSpecial[2]",
+              "BaseParamValueSpecial[3]",
+              "BaseParamValueSpecial[4]",
+              "BaseParamValueSpecial[5]",
+              "LevelEquip",
+              "ClassJobCategory",
+              "BaseParam[0]",
+              "BaseParam[1]",
+              "BaseParam[2]",
+              "BaseParam[3]",
+              "BaseParam[4]",
+              "BaseParam[5]",
+              "BaseParamSpecial[0]",
+              "BaseParamSpecial[1]",
+              "BaseParamSpecial[2]",
+              "BaseParamSpecial[3]",
+              "BaseParamSpecial[4]",
+              "BaseParamSpecial[5]",
+              "MateriaSlotCount",
+              "IsAdvancedMeldingPermitted",
+              "IsUnique",
+              "LevelItem",
+              "EquipSlotCategory",
+              "CanBeHq",
+              "Icon",
+              "Rarity",
+              "ItemAction",
+              "ItemUICategory",
+              "FilterGroup"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              49622
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "SubStatCategory"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3460616+00:00",
+            "note": "SubStatCategory 原值来自 get_rows Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3460616+00:00:100:49547-49646 的来源记录。",
+            "sourceId": "mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3460616+00:00:100:49547-49646",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49622
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonus"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3460616+00:00",
+            "note": "ItemSpecialBonus 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3460616+00:00:100:49547-49646 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3460616+00:00:100:49547-49646",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49622
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonusParam"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3460616+00:00",
+            "note": "ItemSpecialBonusParam 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3460616+00:00:100:49547-49646 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3460616+00:00:100:49547-49646",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49622
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "ClassJobCategory",
+            "fields": [
+              "PLD",
+              "WAR",
+              "DRK",
+              "GNB",
+              "WHM",
+              "SCH",
+              "AST",
+              "SGE",
+              "MNK",
+              "DRG",
+              "NIN",
+              "SAM",
+              "RPR",
+              "VPR",
+              "BRD",
+              "MCH",
+              "DNC",
+              "BLM",
+              "SMN",
+              "RDM",
+              "PCT",
+              "BLU",
+              "BST"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              66
+            ]
+          },
+          {
+            "kind": "reference",
+            "repository": "https://github.com/Asvel/ffxiv-gearing.git",
+            "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+            "importedAt": "2026-10-20T13:26:47.781Z",
+            "sourceFiles": [
+              "data/out/gears-recent.js"
+            ]
+          }
+        ],
+        "unique": true,
+        "source": "点数强化/记忆",
+        "melds": [
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          },
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          }
+        ],
+        "finalStats": {
+          "DEX": 510,
+          "VIT": 572,
+          "CRT": 188,
+          "DHT": 269,
+          "SKS": 108
+        }
+      },
+      {
+        "id": 49697,
+        "slot": "hands",
+        "icon": 56415,
+        "rawSlot": 5,
+        "level": 790,
+        "equipLevel": 100,
+        "roleId": 4,
+        "jobCategory": 66,
+        "stats": {
+          "DEX": 510,
+          "VIT": 572,
+          "CRT": 269,
+          "DET": 188
+        },
+        "materiaSlots": 2,
+        "jobs": [
+          "BRD",
+          "MCH",
+          "DNC"
+        ],
+        "name": "总冠军精准手套",
+        "sourceFile": "data/out/gears-recent.js",
+        "dataSources": [
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "Name",
+              "DamagePhys",
+              "DamageMag",
+              "Delayms",
+              "DefensePhys",
+              "DefenseMag",
+              "BaseParamValue[0]",
+              "BaseParamValue[1]",
+              "BaseParamValue[2]",
+              "BaseParamValue[3]",
+              "BaseParamValue[4]",
+              "BaseParamValue[5]",
+              "BaseParamValueSpecial[0]",
+              "BaseParamValueSpecial[1]",
+              "BaseParamValueSpecial[2]",
+              "BaseParamValueSpecial[3]",
+              "BaseParamValueSpecial[4]",
+              "BaseParamValueSpecial[5]",
+              "LevelEquip",
+              "ClassJobCategory",
+              "BaseParam[0]",
+              "BaseParam[1]",
+              "BaseParam[2]",
+              "BaseParam[3]",
+              "BaseParam[4]",
+              "BaseParam[5]",
+              "BaseParamSpecial[0]",
+              "BaseParamSpecial[1]",
+              "BaseParamSpecial[2]",
+              "BaseParamSpecial[3]",
+              "BaseParamSpecial[4]",
+              "BaseParamSpecial[5]",
+              "MateriaSlotCount",
+              "IsAdvancedMeldingPermitted",
+              "IsUnique",
+              "LevelItem",
+              "EquipSlotCategory",
+              "CanBeHq",
+              "Icon",
+              "Rarity",
+              "ItemAction",
+              "ItemUICategory",
+              "FilterGroup"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              49697
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "SubStatCategory"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "SubStatCategory 原值来自 get_rows Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49697
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonus"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonus 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49697
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonusParam"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonusParam 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49697
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "ClassJobCategory",
+            "fields": [
+              "PLD",
+              "WAR",
+              "DRK",
+              "GNB",
+              "WHM",
+              "SCH",
+              "AST",
+              "SGE",
+              "MNK",
+              "DRG",
+              "NIN",
+              "SAM",
+              "RPR",
+              "VPR",
+              "BRD",
+              "MCH",
+              "DNC",
+              "BLM",
+              "SMN",
+              "RDM",
+              "PCT",
+              "BLU",
+              "BST"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              66
+            ]
+          },
+          {
+            "kind": "reference",
+            "repository": "https://github.com/Asvel/ffxiv-gearing.git",
+            "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+            "importedAt": "2026-10-20T13:26:47.781Z",
+            "sourceFiles": [
+              "data/out/gears-recent.js"
+            ]
+          }
+        ],
+        "unique": true,
+        "source": "零式/重量级",
+        "melds": [
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          },
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          }
+        ],
+        "finalStats": {
+          "DEX": 510,
+          "VIT": 572,
+          "CRT": 269,
+          "DET": 188,
+          "SKS": 108
+        }
+      },
+      {
+        "id": 49695,
+        "slot": "head",
+        "icon": 56906,
+        "rawSlot": 3,
+        "level": 790,
+        "equipLevel": 100,
+        "roleId": 4,
+        "jobCategory": 66,
+        "stats": {
+          "DEX": 510,
+          "VIT": 572,
+          "CRT": 269,
+          "SKS": 188
+        },
+        "materiaSlots": 2,
+        "jobs": [
+          "BRD",
+          "MCH",
+          "DNC"
+        ],
+        "name": "总冠军精准护目镜",
+        "sourceFile": "data/out/gears-recent.js",
+        "dataSources": [
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "Name",
+              "DamagePhys",
+              "DamageMag",
+              "Delayms",
+              "DefensePhys",
+              "DefenseMag",
+              "BaseParamValue[0]",
+              "BaseParamValue[1]",
+              "BaseParamValue[2]",
+              "BaseParamValue[3]",
+              "BaseParamValue[4]",
+              "BaseParamValue[5]",
+              "BaseParamValueSpecial[0]",
+              "BaseParamValueSpecial[1]",
+              "BaseParamValueSpecial[2]",
+              "BaseParamValueSpecial[3]",
+              "BaseParamValueSpecial[4]",
+              "BaseParamValueSpecial[5]",
+              "LevelEquip",
+              "ClassJobCategory",
+              "BaseParam[0]",
+              "BaseParam[1]",
+              "BaseParam[2]",
+              "BaseParam[3]",
+              "BaseParam[4]",
+              "BaseParam[5]",
+              "BaseParamSpecial[0]",
+              "BaseParamSpecial[1]",
+              "BaseParamSpecial[2]",
+              "BaseParamSpecial[3]",
+              "BaseParamSpecial[4]",
+              "BaseParamSpecial[5]",
+              "MateriaSlotCount",
+              "IsAdvancedMeldingPermitted",
+              "IsUnique",
+              "LevelItem",
+              "EquipSlotCategory",
+              "CanBeHq",
+              "Icon",
+              "Rarity",
+              "ItemAction",
+              "ItemUICategory",
+              "FilterGroup"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              49695
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "SubStatCategory"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "SubStatCategory 原值来自 get_rows Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49695
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonus"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonus 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49695
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonusParam"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3468121+00:00",
+            "note": "ItemSpecialBonusParam 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3468121+00:00:100:49647-50033",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49695
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "ClassJobCategory",
+            "fields": [
+              "PLD",
+              "WAR",
+              "DRK",
+              "GNB",
+              "WHM",
+              "SCH",
+              "AST",
+              "SGE",
+              "MNK",
+              "DRG",
+              "NIN",
+              "SAM",
+              "RPR",
+              "VPR",
+              "BRD",
+              "MCH",
+              "DNC",
+              "BLM",
+              "SMN",
+              "RDM",
+              "PCT",
+              "BLU",
+              "BST"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              66
+            ]
+          },
+          {
+            "kind": "reference",
+            "repository": "https://github.com/Asvel/ffxiv-gearing.git",
+            "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+            "importedAt": "2026-10-20T13:26:47.781Z",
+            "sourceFiles": [
+              "data/out/gears-recent.js"
+            ]
+          }
+        ],
+        "unique": true,
+        "source": "零式/重量级",
+        "melds": [
+          {
+            "stat": "DET",
+            "value": 54,
+            "grade": 12
+          },
+          {
+            "stat": "DET",
+            "value": 54,
+            "grade": 12
+          }
+        ],
+        "finalStats": {
+          "DEX": 510,
+          "VIT": 572,
+          "CRT": 269,
+          "SKS": 188,
+          "DET": 108
+        }
+      },
+      {
+        "id": 49621,
+        "slot": "legs",
+        "icon": 57441,
+        "rawSlot": 7,
+        "level": 790,
+        "equipLevel": 100,
+        "roleId": 4,
+        "jobCategory": 66,
+        "stats": {
+          "DEX": 810,
+          "VIT": 908,
+          "CRT": 427,
+          "DHT": 299
+        },
+        "materiaSlots": 2,
+        "jobs": [
+          "BRD",
+          "MCH",
+          "DNC"
+        ],
+        "name": "改良型王国黄铜精准束膝裤",
+        "sourceFile": "data/out/gears-recent.js",
+        "dataSources": [
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "Name",
+              "DamagePhys",
+              "DamageMag",
+              "Delayms",
+              "DefensePhys",
+              "DefenseMag",
+              "BaseParamValue[0]",
+              "BaseParamValue[1]",
+              "BaseParamValue[2]",
+              "BaseParamValue[3]",
+              "BaseParamValue[4]",
+              "BaseParamValue[5]",
+              "BaseParamValueSpecial[0]",
+              "BaseParamValueSpecial[1]",
+              "BaseParamValueSpecial[2]",
+              "BaseParamValueSpecial[3]",
+              "BaseParamValueSpecial[4]",
+              "BaseParamValueSpecial[5]",
+              "LevelEquip",
+              "ClassJobCategory",
+              "BaseParam[0]",
+              "BaseParam[1]",
+              "BaseParam[2]",
+              "BaseParam[3]",
+              "BaseParam[4]",
+              "BaseParam[5]",
+              "BaseParamSpecial[0]",
+              "BaseParamSpecial[1]",
+              "BaseParamSpecial[2]",
+              "BaseParamSpecial[3]",
+              "BaseParamSpecial[4]",
+              "BaseParamSpecial[5]",
+              "MateriaSlotCount",
+              "IsAdvancedMeldingPermitted",
+              "IsUnique",
+              "LevelItem",
+              "EquipSlotCategory",
+              "CanBeHq",
+              "Icon",
+              "Rarity",
+              "ItemAction",
+              "ItemUICategory",
+              "FilterGroup"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              49621
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "SubStatCategory"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3460616+00:00",
+            "note": "SubStatCategory 原值来自 get_rows Item 查询；值 2 到可变穿戴等级标志的映射遵循参考项目 data/convert.ts:140；完整查询范围见 provenance.sources 中 sourceId=mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3460616+00:00:100:49547-49646 的来源记录。",
+            "sourceId": "mcp:Item:SubStatCategory:get_rows:2026-10-20T13:26:47.3460616+00:00:100:49547-49646",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49621
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonus"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3460616+00:00",
+            "note": "ItemSpecialBonus 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3460616+00:00:100:49547-49646 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonus:get_rows:2026-10-20T13:26:47.3460616+00:00:100:49547-49646",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49621
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "Item",
+            "fields": [
+              "ItemSpecialBonusParam"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.3460616+00:00",
+            "note": "ItemSpecialBonusParam 原值来自同版本 get_rows Item 查询；支持的 ItemSpecialBonus ID 及其语义来自 MCP ItemSpecialBonus 行查询；完整范围见 provenance.sources 中 sourceId=mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3460616+00:00:100:49547-49646 的来源记录。",
+            "sourceId": "mcp:Item:ItemSpecialBonusParam:get_rows:2026-10-20T13:26:47.3460616+00:00:100:49547-49646",
+            "queryMethod": "get_rows",
+            "queryScope": {
+              "kind": "row-ids",
+              "returnedRows": 100
+            },
+            "rowIds": [
+              49621
+            ]
+          },
+          {
+            "kind": "mcp",
+            "server": "ffxiv-mcp-lumina",
+            "sheet": "ClassJobCategory",
+            "fields": [
+              "PLD",
+              "WAR",
+              "DRK",
+              "GNB",
+              "WHM",
+              "SCH",
+              "AST",
+              "SGE",
+              "MNK",
+              "DRG",
+              "NIN",
+              "SAM",
+              "RPR",
+              "VPR",
+              "BRD",
+              "MCH",
+              "DNC",
+              "BLM",
+              "SMN",
+              "RDM",
+              "PCT",
+              "BLU",
+              "BST"
+            ],
+            "gameVersion": "2026.10.06.0000.0000",
+            "validatedVersion": "2026.08.05.0000.0000",
+            "queriedAt": "2026-10-20T13:26:47.485Z",
+            "rowIds": [
+              66
+            ]
+          },
+          {
+            "kind": "reference",
+            "repository": "https://github.com/Asvel/ffxiv-gearing.git",
+            "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+            "importedAt": "2026-10-20T13:26:47.781Z",
+            "sourceFiles": [
+              "data/out/gears-recent.js"
+            ]
+          }
+        ],
+        "unique": true,
+        "source": "点数强化/记忆",
+        "melds": [
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          },
+          {
+            "stat": "SKS",
+            "value": 54,
+            "grade": 12
+          }
+        ],
+        "finalStats": {
+          "DEX": 810,
+          "VIT": 908,
+          "CRT": 427,
+          "DHT": 299,
+          "SKS": 108
+        }
+      }
+    ],
+    "food": {
+      "id": 49239,
+      "name": "烤干酪辣味玉米片",
+      "level": 770,
+      "stats": {
+        "VIT": 297,
+        "CRT": 151,
+        "SKS": 91
+      },
+      "statRates": {
+        "CRT": 10,
+        "VIT": 10,
+        "SKS": 10
+      },
+      "best": true,
+      "sourceFile": "data/out/foods.js",
+      "dataSources": [
+        {
+          "kind": "mcp",
+          "server": "ffxiv-mcp-lumina",
+          "sheet": "Item",
+          "fields": [
+            "Name",
+            "LevelItem",
+            "ItemAction",
+            "Icon"
+          ],
+          "rowIds": [
+            49239
+          ],
+          "gameVersion": "2026.10.06.0000.0000",
+          "validatedVersion": "2026.08.05.0000.0000",
+          "queriedAt": "2026-10-20T13:26:47.485Z"
+        },
+        {
+          "kind": "mcp",
+          "server": "ffxiv-mcp-lumina",
+          "sheet": "ItemAction",
+          "fields": [
+            "Action",
+            "Data[0]",
+            "Data[1]",
+            "Data[2]",
+            "Data[3]",
+            "Data[4]",
+            "Data[5]",
+            "Data[6]",
+            "Data[7]",
+            "Data[8]"
+          ],
+          "rowIds": [
+            2825
+          ],
+          "gameVersion": "2026.10.06.0000.0000",
+          "validatedVersion": "2026.08.05.0000.0000",
+          "queriedAt": "2026-10-20T13:26:47.485Z"
+        },
+        {
+          "kind": "mcp",
+          "server": "ffxiv-mcp-lumina",
+          "sheet": "ItemFood",
+          "fields": [
+            "Max[0]",
+            "Max[1]",
+            "Max[2]",
+            "MaxHQ[0]",
+            "MaxHQ[1]",
+            "MaxHQ[2]",
+            "BaseParam[0]",
+            "BaseParam[1]",
+            "BaseParam[2]",
+            "Value[0]",
+            "Value[1]",
+            "Value[2]",
+            "ValueHQ[0]",
+            "ValueHQ[1]",
+            "ValueHQ[2]",
+            "IsRelative[0]",
+            "IsRelative[1]",
+            "IsRelative[2]"
+          ],
+          "rowIds": [
+            48,
+            701,
+            1800
+          ],
+          "gameVersion": "2026.10.06.0000.0000",
+          "validatedVersion": "2026.08.05.0000.0000",
+          "queriedAt": "2026-10-20T13:26:47.485Z",
+          "note": "MCP 缺少 ItemFood 行：1800；其余效果字段由 MCP 提供"
+        },
+        {
+          "kind": "reference",
+          "repository": "https://github.com/Asvel/ffxiv-gearing.git",
+          "commit": "048376fb6c6c6538a482eba5f76128d985958fa0",
+          "importedAt": "2026-10-20T13:26:47.781Z",
+          "sourceFiles": [
+            "data/out/foods.js"
+          ]
+        }
+      ],
+      "icon": 24172,
+      "actualStats": {
+        "VIT": 297,
+        "CRT": 151,
+        "SKS": 91
+      },
+      "utilization": 100
+    },
+    "stats": {
+      "PDMG": 158,
+      "MDMG": 0,
+      "DEX": 6512,
+      "CRT": 3618,
+      "DET": 1735,
+      "DHT": 1392,
+      "SKS": 1902,
+      "VIT": 7467,
+      "DLY": 3040
+    },
+    "effects": {
+      "crtChance": 0.28,
+      "crtDamage": 1.63,
+      "detDamage": 1.065,
+      "dhtChance": 0.192,
+      "tenDamage": 1,
+      "tenMitigation": 0,
+      "damage": 116.17875730805758,
+      "gcd": 2.32,
+      "hp": 215712,
+      "mp": 200
+    },
+    "score": 50.07705056381793,
+    "objective": "dps",
+    "damagePerSecond": 50.07705056381793,
+    "gcdTier": 2.32,
+    "searchedCandidates": 719,
+    "durationMs": 20677.738056000002,
+    "statistics": {
+      "elapsedMs": 20677.738056000002,
+      "resourceBudgetCandidateCuts": 0,
+      "primaryResourceSupportsEnabled": false,
+      "mainStatResourceSupportEnabled": true,
+      "solverRuns": 1,
+      "incumbentCandidateUpperBoundCuts": 0,
+      "excludedSignatures": 1,
+      "signatureBandChecks": 1,
+      "signatureBandElapsedMs": 708.3480419999978,
+      "signatureBandProof": true,
+      "variables": 2174,
+      "constraints": 365,
+      "reachableFactorClassesRemoved": 95,
+      "reachableAttributePruningSkipped": 0,
+      "reachableWeaponFactorClassesRemoved": 2,
+      "reachableWeaponPruningSkipped": 0,
+      "maximumSurrogate": 44261482215790,
+      "memoryUsage": {
+        "rssBytes": 304971776,
+        "heapUsedBytes": 46104704
+      },
+      "conditionalResourceSupport": {
+        "candidateBands": 11,
+        "rowsAdded": 11,
+        "weightedRowsAdded": 0,
+        "nonzerosAdded": 14841
+      }
+    }
+  },
+  "factors": {
+    "weaponDamage": 208,
+    "mainStat": 3545,
+    "determination": 1065,
+    "tenacity": 1000,
+    "critical": 1176400,
+    "directHit": 4192,
+    "traitMultiplier": 1.2,
+    "gcdCentiseconds": 232
+  },
+  "contributions": [
+    3198,
+    1295,
+    6007,
+    972,
+    3040,
+    0,
+    0,
+    0,
+    158,
+    0,
+    1482,
+    0,
+    0,
+    0,
+    7027
+  ],
+  "exactDps": {
+    "n": "3872625243601920000000",
+    "d": "232"
+  },
+  "statuses": [
+    "HiGHS exact_damage_initial 状态=Optimal；目标=-4153303.911449398"
+  ]
+}

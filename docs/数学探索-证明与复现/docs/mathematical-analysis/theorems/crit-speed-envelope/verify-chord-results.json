@@ -1,0 +1,6 @@
+{
+  "status": "pass",
+  "cases": 5,
+  "integerCrtPoints": 12623,
+  "scope": "Exact rational check of nonlinear necessary threshold vs global chord over complete integer CRT domains; general continuous proof in README."
+}

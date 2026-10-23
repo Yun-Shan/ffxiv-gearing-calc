@@ -1,0 +1,118 @@
+[
+  {
+    "threadId": 2,
+    "job": "MCH",
+    "objective": "dps",
+    "reference": "supplied positive factor reference",
+    "status": "certified",
+    "targetRatio": {
+      "n": "1",
+      "d": "1"
+    },
+    "method": "adaptive concave chords with exact CRT-tier leaves and unique-ring support",
+    "ringHullStats": [
+      {
+        "ringIndexes": [
+          9,
+          10
+        ],
+        "leftCandidates": 42,
+        "rightCandidates": 42,
+        "cartesianPairs": 1764,
+        "hullVertices": 5,
+        "oracleCalls": 9
+      },
+      {
+        "ringIndexes": [
+          9,
+          10
+        ],
+        "leftCandidates": 42,
+        "rightCandidates": 42,
+        "cartesianPairs": 1764,
+        "hullVertices": 6,
+        "oracleCalls": 11
+      },
+      {
+        "ringIndexes": [
+          9,
+          10
+        ],
+        "leftCandidates": 42,
+        "rightCandidates": 42,
+        "cartesianPairs": 1764,
+        "hullVertices": 8,
+        "oracleCalls": 15
+      }
+    ],
+    "candidates": 381,
+    "pruned": 17,
+    "selectedChecked": 0,
+    "queries": 10256,
+    "leafQueries": 1140,
+    "cachedRegions": 83,
+    "prepMs": 72.15303299999982,
+    "queryMs": 150.25705600000015,
+    "addedZeroRows": 17,
+    "fullCertificateMs": 224.33065899999997,
+    "thresholdOrigin": "explicitly rechecked initial feasible loadout, before first MIP"
+  },
+  {
+    "threadId": 2,
+    "job": "VPR",
+    "objective": "dps",
+    "reference": "supplied positive factor reference",
+    "status": "certified",
+    "targetRatio": {
+      "n": "1",
+      "d": "1"
+    },
+    "method": "adaptive concave chords with exact CRT-tier leaves and unique-ring support",
+    "ringHullStats": [
+      {
+        "ringIndexes": [
+          8,
+          9
+        ],
+        "leftCandidates": 1,
+        "rightCandidates": 1,
+        "cartesianPairs": 1,
+        "hullVertices": 1,
+        "oracleCalls": 2
+      },
+      {
+        "ringIndexes": [
+          8,
+          9
+        ],
+        "leftCandidates": 1,
+        "rightCandidates": 1,
+        "cartesianPairs": 1,
+        "hullVertices": 1,
+        "oracleCalls": 2
+      },
+      {
+        "ringIndexes": [
+          8,
+          9
+        ],
+        "leftCandidates": 1,
+        "rightCandidates": 1,
+        "cartesianPairs": 1,
+        "hullVertices": 1,
+        "oracleCalls": 2
+      }
+    ],
+    "candidates": 237,
+    "pruned": 185,
+    "selectedChecked": 0,
+    "queries": 2176,
+    "leafQueries": 180,
+    "cachedRegions": 38,
+    "prepMs": 52.52067500000703,
+    "queryMs": 38.20515399999567,
+    "addedZeroRows": 185,
+    "fullCertificateMs": 91.64141499999096,
+    "thresholdOrigin": "explicitly rechecked initial feasible loadout, before first MIP"
+  }
+]

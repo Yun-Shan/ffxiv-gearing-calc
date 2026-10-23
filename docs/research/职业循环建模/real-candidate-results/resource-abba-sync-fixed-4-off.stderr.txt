@@ -1,0 +1,29 @@
+sync-fixed/off cold bootstrap
+sync-fixed/off preparing complete raw candidates
+sync-fixed/off/1.94 complete exact search
+sync-fixed/off/1.94 profile candidate-upper-bound-gate
+sync-fixed/off/1.94 profile highs-call-start
+sync-fixed/off/1.94 profile highs-solve-start
+sync-fixed/off/1.94 profile highs-solve-end
+sync-fixed/off/1.94 HiGHS exact_damage_initial 状态=Optimal；目标=-1653654.6578674316
+sync-fixed/off/1.94 精确候选已核验 1 个；固定点上界=58032970315140
+sync-fixed/off/1.94 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+sync-fixed/off/1.94 profile exact-search-summary
+sync-fixed/off/1.96 complete exact search
+sync-fixed/off/1.96 profile candidate-upper-bound-gate
+sync-fixed/off/1.96 profile highs-call-start
+sync-fixed/off/1.96 profile highs-solve-start
+sync-fixed/off/1.96 profile highs-solve-end
+sync-fixed/off/1.96 HiGHS exact_damage_initial 状态=Optimal；目标=-1504338.697479248
+sync-fixed/off/1.96 精确候选已核验 1 个；固定点上界=60333883558900
+sync-fixed/off/1.96 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+sync-fixed/off/1.96 profile exact-search-summary
+sync-fixed/off/2 complete exact search
+sync-fixed/off/2 profile candidate-upper-bound-gate
+sync-fixed/off/2 profile highs-call-start
+sync-fixed/off/2 profile highs-solve-start
+sync-fixed/off/2 profile highs-solve-end
+sync-fixed/off/2 HiGHS exact_damage_initial 状态=Optimal；目标=-1260365.892730713
+sync-fixed/off/2 精确候选已核验 1 个；固定点上界=61725594130227
+sync-fixed/off/2 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+sync-fixed/off/2 profile exact-search-summary

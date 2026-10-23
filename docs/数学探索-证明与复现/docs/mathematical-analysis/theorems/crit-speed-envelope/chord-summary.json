@@ -1,0 +1,90 @@
+[
+  {
+    "job": "BLM",
+    "objective": "damage",
+    "reference": "pre-MIP feasible seed",
+    "method": "global concave threshold chord",
+    "candidates": 674,
+    "pruned": 403,
+    "selectedChecked": 11,
+    "elapsedMs": 85.095439,
+    "chord": {
+      "lo": 142,
+      "hi": 3240,
+      "chordSlope": {
+        "n": "-88702573",
+        "d": "1936250000000"
+      },
+      "intercept": {
+        "n": "1589295077478781",
+        "d": "309800000000000"
+      }
+    }
+  },
+  {
+    "job": "BLM",
+    "objective": "damage",
+    "reference": "pre-MIP feasible seed",
+    "method": "global concave threshold chord",
+    "candidates": 1237,
+    "pruned": 857,
+    "selectedChecked": 11,
+    "elapsedMs": 142.10900600000002,
+    "chord": {
+      "lo": 0,
+      "hi": 3240,
+      "chordSlope": {
+        "n": "-4891634923",
+        "d": "108000000000000"
+      },
+      "intercept": {
+        "n": "32075865859",
+        "d": "6250000000"
+      }
+    }
+  },
+  {
+    "job": "WAR",
+    "objective": "damage",
+    "reference": "pre-MIP feasible seed",
+    "method": "global concave threshold chord",
+    "candidates": 1972,
+    "pruned": 1171,
+    "selectedChecked": 11,
+    "elapsedMs": 182.924373,
+    "chord": {
+      "lo": 990,
+      "hi": 3240,
+      "chordSlope": {
+        "n": "-1224208621",
+        "d": "25000000000000"
+      },
+      "intercept": {
+        "n": "15379104902919",
+        "d": "2500000000000"
+      }
+    }
+  },
+  {
+    "job": "WHM",
+    "objective": "damage",
+    "reference": "pre-MIP feasible seed",
+    "method": "global concave threshold chord",
+    "candidates": 1088,
+    "pruned": 135,
+    "selectedChecked": 11,
+    "elapsedMs": 137.31124800000003,
+    "chord": {
+      "lo": 0,
+      "hi": 1004,
+      "chordSlope": {
+        "n": "-27635050741",
+        "d": "200800000000000"
+      },
+      "intercept": {
+        "n": "50993092663",
+        "d": "10000000000"
+      }
+    }
+  }
+]

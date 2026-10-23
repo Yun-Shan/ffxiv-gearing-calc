@@ -1,0 +1,35 @@
+{
+  "jobs": [
+    {
+      "jobId": "VPR",
+      "minItemLevel": 715,
+      "maxItemLevel": 795,
+      "syncLevel": 735,
+      "objective": "dps",
+      "excludedSources": [],
+      "forcedGear": {},
+      "foodId": 0,
+      "maxSearchMs": 9007199254740991
+    },
+    {
+      "jobId": "MCH",
+      "minItemLevel": 715,
+      "maxItemLevel": 795,
+      "syncLevel": 735,
+      "objective": "dps",
+      "excludedSources": [],
+      "forcedGear": {},
+      "foodId": 0,
+      "maxSearchMs": 9007199254740991
+    }
+  ],
+  "commonSlots": [
+    "earrings",
+    "necklace",
+    "bracelet",
+    "rings"
+  ],
+  "foodStrategy": "shared",
+  "objective": "dps",
+  "maxSearchMs": 9007199254740991
+}

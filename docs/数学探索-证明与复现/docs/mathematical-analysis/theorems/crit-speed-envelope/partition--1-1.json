@@ -1,0 +1,4329 @@
+{
+  "job": "BRD",
+  "objective": "dps",
+  "reference": "pre-MIP feasible seed",
+  "method": "piecewise concave threshold chords with tilted slot support",
+  "divisions": 1,
+  "candidates": 719,
+  "pruned": 50,
+  "selectedChecked": 11,
+  "queries": 2107,
+  "prepMs": 102.58590800000002,
+  "queryMs": 23.317886999999985,
+  "rows": [
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49368,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49443,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49443,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49443,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49443,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49443,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 49443,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "body",
+      "itemId": 50869,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 50869,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 50869,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 50869,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 50869,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 50869,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51148,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51148,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51148,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51148,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51148,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51148,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51872,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51872,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51872,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51872,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51872,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 51872,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49619,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49619,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49619,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49619,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49619,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49619,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49696,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49696,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49696,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49696,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49696,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "body",
+      "itemId": 49696,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49313,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49469,
+      "variantKey": "[[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49469,
+      "variantKey": "[[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 51174,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 51174,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 51174,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 51174,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 51174,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 51174,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49645,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49645,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49645,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49645,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49645,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49645,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49722,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49722,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49722,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49722,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49722,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "necklace",
+      "itemId": 49722,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49318,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49474,
+      "variantKey": "[[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49474,
+      "variantKey": "[[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49474,
+      "variantKey": "[[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 51179,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 51179,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 51179,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 51179,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 51179,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49650,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49650,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49650,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49650,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49650,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49650,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49727,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49727,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49727,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49727,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49727,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "bracelet",
+      "itemId": 49727,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49308,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49464,
+      "variantKey": "[[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49464,
+      "variantKey": "[[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49464,
+      "variantKey": "[[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 51169,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 51169,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 51169,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 51169,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 51169,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 51169,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49640,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49640,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49640,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49640,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49640,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49640,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49717,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49717,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49717,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49717,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49717,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "earrings",
+      "itemId": 49717,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49253,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49486,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 49585,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "weapon",
+      "itemId": 50982,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",447,0],[\"DET\",447,0],[\"DHT\",108,0]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",447,0],[\"DHT\",108,0],[\"SKS\",447,0]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"DET\",447,0],[\"DHT\",108,0],[\"SKS\",447,0]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",108,0],[\"DET\",447,0],[\"DHT\",447,0]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",108,0],[\"DHT\",447,0],[\"SKS\",447,0]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",108,0],[\"DET\",447,0],[\"SKS\",447,0]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"DHT\",447,0]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"DET\",108,0],[\"DHT\",447,0],[\"SKS\",447,0]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",447,0],[\"DET\",108,0],[\"SKS\",447,0]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",447,0],[\"DHT\",447,0],[\"SKS\",108,0]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"DET\",447,0],[\"DHT\",447,0],[\"SKS\",108,0]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 51004,
+      "variantKey": "[[\"CRT\",447,0],[\"DET\",447,0],[\"SKS\",108,0]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 52303,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 52303,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 52303,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 52303,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "weapon",
+      "itemId": 52303,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49479,
+      "variantKey": "[[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49479,
+      "variantKey": "[[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49479,
+      "variantKey": "[[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49578,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49578,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49578,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49578,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49578,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 51184,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 51184,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 51184,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 51184,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 51184,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 51184,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49655,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49655,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49655,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49655,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49655,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49655,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49732,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49732,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49732,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49732,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49732,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring",
+      "itemId": 49732,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49323,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49479,
+      "variantKey": "[[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49479,
+      "variantKey": "[[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49479,
+      "variantKey": "[[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49578,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49578,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49578,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49578,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49578,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 51184,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 51184,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 51184,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 51184,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 51184,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 51184,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49655,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49655,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49655,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49655,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49655,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49655,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49732,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49732,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49732,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49732,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49732,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "ring2",
+      "itemId": 49732,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49290,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 50872,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 50872,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 50872,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 50872,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 50872,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 50872,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 51875,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 51875,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 51875,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 51875,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 51875,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 51875,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49622,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49622,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49622,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49622,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49622,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49622,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49699,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49699,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49699,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49699,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49699,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "feet",
+      "itemId": 49699,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11],[\"DHT\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"CRT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"CRT\",54,12],[\"DHT\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49288,
+      "variantKey": "[[\"CRT\",18,11],[\"CRT\",18,11],[\"CRT\",54,12],[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49444,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49444,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49444,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49444,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49444,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49444,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51149,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51149,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51149,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51149,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51149,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51149,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51873,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51873,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51873,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51873,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 51873,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49620,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49620,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49620,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49620,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49620,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49620,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49697,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49697,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49697,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49697,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49697,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "hands",
+      "itemId": 49697,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49286,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49442,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49442,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49442,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49442,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49442,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 50868,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 50868,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 50868,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 50868,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 50868,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 50868,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51147,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51147,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51147,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51147,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51147,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51871,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51871,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51871,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51871,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51871,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 51871,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49618,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49618,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49618,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49618,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49618,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49618,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49695,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49695,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49695,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49695,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49695,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "head",
+      "itemId": 49695,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"SKS\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",18,11],[\"DET\",54,12],[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"SKS\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",54,12],[\"SKS\",18,11]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49289,
+      "variantKey": "[[\"DET\",18,11],[\"DET\",54,12],[\"DET\",54,12],[\"DHT\",18,11],[\"DHT\",54,12]]",
+      "pruned": true
+    },
+    {
+      "slot": "legs",
+      "itemId": 50871,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 50871,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 50871,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 50871,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 50871,
+      "variantKey": "[[\"CRT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 50871,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 51150,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 51150,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 51150,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 51150,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 51150,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 51150,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 51874,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 51874,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 51874,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 51874,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 51874,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 51874,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49621,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49621,
+      "variantKey": "[[\"DHT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49621,
+      "variantKey": "[[\"DHT\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49621,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49621,
+      "variantKey": "[[\"DET\",54,12],[\"DHT\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49621,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49698,
+      "variantKey": "[[\"SKS\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49698,
+      "variantKey": "[[\"DET\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49698,
+      "variantKey": "[[\"DET\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49698,
+      "variantKey": "[[\"CRT\",54,12],[\"SKS\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49698,
+      "variantKey": "[[\"CRT\",54,12],[\"DET\",54,12]]",
+      "pruned": false
+    },
+    {
+      "slot": "legs",
+      "itemId": 49698,
+      "variantKey": "[[\"CRT\",54,12],[\"CRT\",54,12]]",
+      "pruned": false
+    }
+  ]
+}

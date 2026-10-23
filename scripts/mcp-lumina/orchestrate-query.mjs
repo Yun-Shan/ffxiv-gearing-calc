@@ -26,6 +26,20 @@ import {
 } from "../mcp-lumina-import.mjs";
 
 const defaultCommand = "F:\\Workspace\\VisualStudio\\ffxiv\\mcp\\mcp-ffxiv-lumina\\publish\\mcp-lumina.exe";
+
+export async function initializeMcpQuery(client) {
+  const initialization = await client.initialize();
+  const refresh = await client.callTool("refresh_schema", {});
+  if (refresh.raw?.isError || refresh.value?.refreshed !== true)
+    throw new Error(`Lumina MCP Schema 刷新失败：${refresh.value?.message ?? "refresh_schema 未确认刷新成功"}`);
+
+  const health = (await client.callTool("health", {})).value;
+  const genericQueriesAvailable = allowsGenericQueries(health);
+  if (!genericQueriesAvailable)
+    throw new Error(`Lumina MCP 通用查询不可用：${JSON.stringify(health)}`);
+  return { initialization, health, genericQueriesAvailable };
+}
+
 export async function queryMcpLumina({ upstreamRoot: upstreamRootOption, command: commandOption, concurrency: concurrencyOption } = {}) {
   const root = resolve(import.meta.dirname, "../..");
   const upstreamRoot = resolve(
@@ -62,12 +76,7 @@ export async function queryMcpLumina({ upstreamRoot: upstreamRootOption, command
   try {
     if (!(await fileExists(command)) && command.includes("\\"))
       throw new Error(`找不到 Lumina MCP 可执行文件：${command}。请设置 FFXIV_MCP_LUMINA_COMMAND。`);
-    const initialization = await client.initialize();
-    const health = (await client.callTool("health", {})).value;
-    const genericQueriesAvailable = allowsGenericQueries(health);
-    if (!genericQueriesAvailable)
-      throw new Error(`Lumina MCP 通用查询不可用：${JSON.stringify(health)}`);
-
+    const { initialization, health, genericQueriesAvailable } = await initializeMcpQuery(client);
 
     const [
       sheetInventoryResult,

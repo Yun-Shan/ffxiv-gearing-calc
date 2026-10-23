@@ -1,0 +1,13 @@
+{
+  "available": true,
+  "factors": {
+    "weaponDamage": 208,
+    "mainStat": 3545,
+    "determination": 1076,
+    "tenacity": 1000,
+    "critical": 1176400,
+    "directHit": 4235,
+    "traitMultiplier": 1.2,
+    "gcdCentiseconds": 237
+  }
+}

@@ -1,0 +1,29 @@
+meld-foods/on cold bootstrap
+meld-foods/on preparing complete raw candidates
+meld-foods/on/1.94 complete exact search
+meld-foods/on/1.94 profile candidate-upper-bound-gate
+meld-foods/on/1.94 profile highs-call-start
+meld-foods/on/1.94 profile highs-solve-start
+meld-foods/on/1.94 profile highs-solve-end
+meld-foods/on/1.94 HiGHS exact_damage_initial 状态=Optimal；目标=-2008854.6753997803
+meld-foods/on/1.94 精确候选已核验 1 个；固定点上界=58453655537240
+meld-foods/on/1.94 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+meld-foods/on/1.94 profile exact-search-summary
+meld-foods/on/1.96 complete exact search
+meld-foods/on/1.96 profile candidate-upper-bound-gate
+meld-foods/on/1.96 profile highs-call-start
+meld-foods/on/1.96 profile highs-solve-start
+meld-foods/on/1.96 profile highs-solve-end
+meld-foods/on/1.96 HiGHS exact_damage_initial 状态=Optimal；目标=-1861108.0082244873
+meld-foods/on/1.96 精确候选已核验 1 个；固定点上界=60753522184502
+meld-foods/on/1.96 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+meld-foods/on/1.96 profile exact-search-summary
+meld-foods/on/2 complete exact search
+meld-foods/on/2 profile candidate-upper-bound-gate
+meld-foods/on/2 profile highs-call-start
+meld-foods/on/2 profile highs-solve-start
+meld-foods/on/2 profile highs-solve-end
+meld-foods/on/2 HiGHS exact_damage_initial 状态=Optimal；目标=-1634678.6294555664
+meld-foods/on/2 精确候选已核验 1 个；固定点上界=62143309805374
+meld-foods/on/2 签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解
+meld-foods/on/2 profile exact-search-summary

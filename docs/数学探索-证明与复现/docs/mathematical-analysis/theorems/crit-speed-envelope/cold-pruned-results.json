@@ -1,0 +1,20 @@
+{
+  "status": "complete",
+  "steps": [
+    {
+      "script": "observe-initial.mjs",
+      "elapsedMs": 584.463023
+    },
+    {
+      "script": "full-amgm-check.mjs",
+      "elapsedMs": 660.7759269999999
+    },
+    {
+      "script": "run-pruned.mjs",
+      "elapsedMs": 19196.733835
+    }
+  ],
+  "totalMs": 20444.647131,
+  "sameExactObjective": true,
+  "scope": "Fresh observation, fresh bounds and fresh exact search; prior optimum used only for validation. Original production code unchanged."
+}

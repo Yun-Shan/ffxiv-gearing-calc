@@ -1,0 +1,252 @@
+{
+  "scope": "Synthetic sensitivity experiments; no legal loadout, rotation accuracy, modified-MIP proof or performance claim",
+  "provenance": {
+    "runAt": "2026-10-23T14:41:21.786Z",
+    "node": "v26.8.1",
+    "repositoryCommit": "303877be8f57d7b5215bf9d7d97850177372f8a3",
+    "gameVersion": "2026.09.15.0000.0000",
+    "referenceCommit": "8d75ef89c317401727066a28025fb4d860a92f20",
+    "binarySha256": "4436a1374320e70ab60b8915e9b71a09a55a1a716658b63b43398ba9ca51989b"
+  },
+  "cases": 4001,
+  "syntheticProfile": {
+    "normalWeaponskills": 75,
+    "guaranteedCriticalWeaponskills": 25,
+    "weaponskillPotency": 300,
+    "chakraSpenderPotency": 400,
+    "chakraCost": 5,
+    "procRate": 1
+  },
+  "gridOptima": {
+    "ordinary": {
+      "contributions": {
+        "PDMG": 150,
+        "STR": 4000,
+        "CRT": 3990,
+        "DET": 1500,
+        "DHT": 10,
+        "SKS": 600
+      },
+      "totalCRT": 4410,
+      "totalDHT": 430,
+      "critChance": 0.337,
+      "gcd": 1.94,
+      "scores": {
+        "ordinary": 62.900424890013525,
+        "forcedCritical": 68.71640264377295,
+        "chakra": 77.14925294069411
+      }
+    },
+    "forcedCritical": {
+      "contributions": {
+        "PDMG": 150,
+        "STR": 4000,
+        "CRT": 3990,
+        "DET": 1500,
+        "DHT": 10,
+        "SKS": 600
+      },
+      "totalCRT": 4410,
+      "totalDHT": 430,
+      "critChance": 0.337,
+      "gcd": 1.94,
+      "scores": {
+        "ordinary": 62.900424890013525,
+        "forcedCritical": 68.71640264377295,
+        "chakra": 77.14925294069411
+      }
+    },
+    "chakra": {
+      "contributions": {
+        "PDMG": 150,
+        "STR": 4000,
+        "CRT": 3990,
+        "DET": 1500,
+        "DHT": 10,
+        "SKS": 600
+      },
+      "totalCRT": 4410,
+      "totalDHT": 430,
+      "critChance": 0.337,
+      "gcd": 1.94,
+      "scores": {
+        "ordinary": 62.900424890013525,
+        "forcedCritical": 68.71640264377295,
+        "chakra": 77.14925294069411
+      }
+    }
+  },
+  "reversals": [
+    {
+      "oldMode": "ordinary",
+      "newMode": "forcedCritical",
+      "oldWinner": {
+        "contributions": {
+          "PDMG": 150,
+          "STR": 4000,
+          "CRT": 2,
+          "DET": 1500,
+          "DHT": 3998,
+          "SKS": 600
+        },
+        "totalCRT": 422,
+        "totalDHT": 4418,
+        "critChance": 0.05,
+        "gcd": 1.94,
+        "scores": {
+          "ordinary": 62.37055323675,
+          "forcedCritical": 68.1795753519375,
+          "chakra": 72.961317766755
+        }
+      },
+      "newWinner": {
+        "contributions": {
+          "PDMG": 150,
+          "STR": 4000,
+          "CRT": 28,
+          "DET": 1500,
+          "DHT": 3972,
+          "SKS": 600
+        },
+        "totalCRT": 448,
+        "totalDHT": 4392,
+        "critChance": 0.052,
+        "gcd": 1.94,
+        "scores": {
+          "ordinary": 62.36066800575315,
+          "forcedCritical": 68.18036337728674,
+          "chakra": 72.98629219159679
+        }
+      }
+    },
+    {
+      "oldMode": "forcedCritical",
+      "newMode": "chakra",
+      "oldWinner": {
+        "contributions": {
+          "PDMG": 150,
+          "STR": 4000,
+          "CRT": 0,
+          "DET": 1500,
+          "DHT": 4000,
+          "SKS": 600
+        },
+        "totalCRT": 420,
+        "totalDHT": 4420,
+        "critChance": 0.05,
+        "gcd": 1.94,
+        "scores": {
+          "ordinary": 62.383574229075,
+          "forcedCritical": 68.19380908374374,
+          "chakra": 72.9765497746395
+        }
+      },
+      "newWinner": {
+        "contributions": {
+          "PDMG": 150,
+          "STR": 4000,
+          "CRT": 14,
+          "DET": 1500,
+          "DHT": 3986,
+          "SKS": 600
+        },
+        "totalCRT": 434,
+        "totalDHT": 4406,
+        "critChance": 0.051,
+        "gcd": 1.94,
+        "scores": {
+          "ordinary": 62.372077305604606,
+          "forcedCritical": 68.18706294591722,
+          "chakra": 72.98139662147467
+        }
+      }
+    }
+  ],
+  "finiteWindow": {
+    "expectedSpenders": {
+      "numerator": "1411228552",
+      "denominator": "1073741824",
+      "approximate": 1.3143090084195137
+    },
+    "meanChakraDividedByFive": 1.75
+  },
+  "callbackOnlyMip": {
+    "vectors": [
+      [
+        160,
+        3000,
+        0,
+        1500,
+        500,
+        500,
+        0
+      ],
+      [
+        160,
+        3000,
+        50,
+        1450,
+        500,
+        500,
+        0
+      ]
+    ],
+    "chosenItemId": 1,
+    "exhaustiveForcedCriticalWinner": 2,
+    "forcedCriticalScores": [
+      58.81811863199998,
+      58.8344939088816
+    ],
+    "ordinaryExactNumerators": [
+      "1714128028704000000000",
+      "1713218527848364992000"
+    ],
+    "forcedExactNumerators": [
+      "2352724745280000000",
+      "2353379756355264000"
+    ],
+    "proofScope": "unchanged ordinary six-factor objective",
+    "signatureBandProof": true,
+    "solverRuns": 1
+  },
+  "signatureCollision": [
+    {
+      "SKS": 42,
+      "gcd": 1.99,
+      "ssDamage": 1.001,
+      "factors": {
+        "weaponDamage": 208,
+        "mainStat": 1834,
+        "determination": 1025,
+        "tenacity": 1000,
+        "critical": 1036975,
+        "directHit": 4098,
+        "traitMultiplier": 1,
+        "gcdCentiseconds": 199
+      }
+    },
+    {
+      "SKS": 43,
+      "gcd": 1.99,
+      "ssDamage": 1.002,
+      "factors": {
+        "weaponDamage": 208,
+        "mainStat": 1834,
+        "determination": 1025,
+        "tenacity": 1000,
+        "critical": 1036975,
+        "directHit": 4098,
+        "traitMultiplier": 1,
+        "gcdCentiseconds": 199
+      }
+    }
+  ],
+  "domainShape": {
+    "criticalClasses": 288,
+    "collapsedCriticalClasses": 288,
+    "directHitClasses": 792,
+    "independentClassCount": 1080,
+    "naiveCartesianClassCount": 228096,
+    "caveat": "Cartesian size illustration only; most pairs need not be reachable under the fixed budget; no timing of a new model"
+  }
+}

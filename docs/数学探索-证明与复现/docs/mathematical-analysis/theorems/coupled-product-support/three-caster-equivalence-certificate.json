@@ -1,0 +1,13 @@
+{
+  "status": "guarded equivalence quotient",
+  "jobs": [
+    "RDM",
+    "SMN"
+  ],
+  "privateWeaponFeatureCount": 71,
+  "sharedIdentities": 631,
+  "sharedFood": true,
+  "onlyIgnoredFeature": "DLY: not used by repository damage/DPS/GCD or these constraints",
+  "factorValueEqualities": 1079,
+  "preserves": "Existence of an optimum for both true normalized sum and rounded-log product; does not preserve every tied physical-identity optimum."
+}

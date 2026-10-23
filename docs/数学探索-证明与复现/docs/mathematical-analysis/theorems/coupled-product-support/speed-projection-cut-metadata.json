@@ -1,0 +1,24 @@
+{
+  "period": 18,
+  "runs": [
+    {
+      "start": 0,
+      "length": 4,
+      "mask": "131071"
+    },
+    {
+      "start": 72,
+      "length": 5,
+      "mask": "124863"
+    },
+    {
+      "start": 142,
+      "length": 1,
+      "mask": "124863"
+    }
+  ],
+  "addedBinaries": 3,
+  "addedIntegers": 1,
+  "addedRows": 4,
+  "projectedStates": 10
+}
