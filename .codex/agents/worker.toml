@@ -1,8 +1,8 @@
 name = "worker"
 description = "Implementation subagent for bounded coding tasks. Use after the relevant code path and acceptance criteria are understood."
 
-model = "gpt-6-luna"
-model_reasoning_effort = "max"
+model = "gpt-6.1-sol"
+model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 
 developer_instructions = """
