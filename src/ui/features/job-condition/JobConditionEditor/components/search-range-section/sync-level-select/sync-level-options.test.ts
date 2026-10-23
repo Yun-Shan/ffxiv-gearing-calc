@@ -3,7 +3,6 @@ import { gameData, syncTargetJobLevel } from "@/domain";
 import {
   dutyOptionCategories,
   levelOptionCategories,
-  searchMatches,
 } from "./sync-level-options";
 
 describe("sync level panel options", () => {
@@ -51,12 +50,5 @@ describe("sync level panel options", () => {
     expect(
       levelChoices.map(({ target }) => target.value).toSorted((a, b) => b - a),
     ).toEqual([...new Set(dutyItemTargets)].toSorted((a, b) => b - a));
-  });
-
-  it("searches numbers and names without requiring a category match", () => {
-    expect(searchMatches("735", "极限副本", 735)).toBe(true);
-    expect(searchMatches("极限", "极限副本", 735)).toBe(true);
-    expect(searchMatches("not found", "极限副本", 735)).toBe(false);
-    expect(searchMatches("  ", "任何条目", 735)).toBe(true);
   });
 });

@@ -20,7 +20,7 @@
 
 .panelPositioner {
   z-index: 1000;
-  width: min(480px, calc(100vw - 16px));
+  width: 380px;
 }
 
 .panel {
@@ -81,37 +81,6 @@
   clip-path: inset(50%);
 }
 
-.searchBox {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  min-height: 34px;
-  padding: 0 9px;
-  border-bottom: 1px solid #d8e2de;
-  color: #6a7d77;
-
-  &:focus-within {
-    outline: 3px solid #49a9b4;
-    outline-offset: -3px;
-  }
-}
-
-.search {
-  box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  padding: 7px 0;
-  border: 0;
-  outline: none;
-  background: transparent;
-  color: #304c48;
-  font: inherit;
-
-  &:focus {
-    outline: none;
-  }
-}
-
 .browser {
   display: grid;
   grid-template-columns: 104px minmax(0, 1fr);
@@ -150,14 +119,53 @@
   }
 }
 
+.choicesScrollArea {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.choicesViewport {
+  box-sizing: border-box;
+  height: 100%;
+  padding-right: 10px;
+  overscroll-behavior: contain;
+}
+
 .choices {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow-y: auto;
+  min-height: 100%;
   padding: 4px;
-  overscroll-behavior: contain;
+}
+
+.scrollbar {
+  width: 6px;
+  margin: 4px 2px;
+  border-radius: 3px;
+  background: #edf2ef;
+
+  &:not([data-has-overflow-y]) {
+    background: #e1e9e5;
+    pointer-events: none;
+
+    .scrollThumb {
+      display: none;
+    }
+  }
+}
+
+.scrollThumb {
+  min-height: 24px;
+  border-radius: inherit;
+  background: #8fa99f;
+
+  &:hover,
+  &:active {
+    background: #6d9187;
+  }
 }
 
 .optionGroup {
@@ -340,10 +348,6 @@
 }
 
 @media (max-width: 520px) {
-  .panelPositioner {
-    width: calc(100vw - 16px);
-  }
-
   .browser {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
@@ -359,9 +363,5 @@
 
   .category {
     flex: none;
-  }
-
-  .choices {
-    min-height: 0;
   }
 }

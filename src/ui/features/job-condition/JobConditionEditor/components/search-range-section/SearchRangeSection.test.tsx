@@ -8,6 +8,10 @@ import { SearchRangeSectionFields } from "./SearchRangeSection";
 
 let host: HTMLDivElement;
 let root: Root;
+const getAnimationsDescriptor = Object.getOwnPropertyDescriptor(
+  Element.prototype,
+  "getAnimations",
+);
 
 function Harness() {
   const [range, setRange] = useState<SearchRangeDraft>({
@@ -41,6 +45,10 @@ function currentRange() {
 }
 
 beforeEach(() => {
+  Object.defineProperty(Element.prototype, "getAnimations", {
+    configurable: true,
+    value: () => [],
+  });
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   vi.stubGlobal(
     "ResizeObserver",
@@ -59,6 +67,9 @@ afterEach(() => {
   act(() => root.unmount());
   host.remove();
   vi.unstubAllGlobals();
+  if (getAnimationsDescriptor)
+    Object.defineProperty(Element.prototype, "getAnimations", getAnimationsDescriptor);
+  else Reflect.deleteProperty(Element.prototype, "getAnimations");
 });
 
 describe("sync target selection", () => {

@@ -1,6 +1,7 @@
-import { ChevronDown, Search, TriangleAlert } from "lucide-react";
+import { ChevronDown, TriangleAlert } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { Popover } from "@base-ui/react/popover";
+import { ScrollArea } from "@base-ui/react/scroll-area";
 import {
   gameData,
   syncTargetCalculationError,
@@ -11,7 +12,6 @@ import {
   categoryFor,
   dutyOptionCategories,
   levelOptionCategories,
-  searchMatches,
   type SyncSelectionMode,
   syncTargetKey,
   syncTargetLabel,
@@ -61,7 +61,6 @@ export function SyncLevelSelect({
     String(gameData.sync.levels.at(-1)?.jobLevel ?? ""),
   );
   const [dutyCategory, setDutyCategory] = useState("0");
-  const [query, setQuery] = useState("");
   const [customInput, setCustomInput] = useState("");
   const [customError, setCustomError] = useState("");
   const [hovered, setHovered] = useState<SyncTarget>();
@@ -85,19 +84,10 @@ export function SyncLevelSelect({
   const levelOptions =
     categoryFor(levelOptionCategories, levelCategory)?.options ?? [];
   const dutyCategoryValue = categoryFor(dutyOptionCategories, dutyCategory);
-  const dutyCandidates = query.trim()
-    ? dutyOptionCategories.flatMap(({ options }) => options)
-    : (dutyCategoryValue?.options ?? []);
-  const dutyOptions = dutyCandidates.filter((option) =>
-    searchMatches(query, option.name, syncTargetLabel(option.target)),
-  );
+  const dutyOptions = dutyCategoryValue?.options ?? [];
   const showExplorationWarning =
     mode === "duty" &&
-    dutyOptionCategories.some(
-      ({ label, options }) =>
-        label === "特殊场景探索" &&
-        options.some((option) => dutyOptions.includes(option)),
-    );
+    dutyCategoryValue?.label === "特殊场景探索";
 
   const chooseLevel = (next?: SyncTarget) => {
     setHovered(undefined);
@@ -129,7 +119,6 @@ export function SyncLevelSelect({
 
   const activateMode = (next: SyncSelectionMode) => {
     setMode(next);
-    setQuery("");
     setHovered(undefined);
   };
 
@@ -166,7 +155,6 @@ export function SyncLevelSelect({
             setOpen(nextOpen);
             setHovered(undefined);
             setCustomError("");
-            setQuery("");
             setCustomInput(
               value?.kind === "itemLevel" ? String(value.value) : "",
             );
@@ -218,37 +206,11 @@ export function SyncLevelSelect({
                     按副本
                   </button>
                 </div>
-                {mode === "duty" && (
-                  <>
-                    <label
-                      className={styles.visuallyHidden}
-                      htmlFor={`${id}-search`}
-                    >
-                      搜索副本名称或品级
-                    </label>
-                    <div className={styles.searchBox}>
-                      <Search size={15} aria-hidden="true" />
-                      <input
-                        id={`${id}-search`}
-                        className={styles.search}
-                        type="search"
-                        value={query}
-                        autoComplete="off"
-                        placeholder="搜索副本名称或品级…"
-                        onChange={(event) => {
-                          setQuery(event.currentTarget.value);
-                          setHovered(undefined);
-                        }}
-                      />
-                    </div>
-                  </>
-                )}
                 <div className={styles.browser}>
                   {renderCategoryButtons(categories)}
-                  <div
+                  <ScrollArea.Root
                     ref={popupRef}
-                    className={styles.choices}
-                    aria-label={mode === "level" ? "同步品级" : "副本"}
+                    className={styles.choicesScrollArea}
                     onMouseLeave={() => setHovered(undefined)}
                     onBlurCapture={(event) => {
                       if (
@@ -259,76 +221,88 @@ export function SyncLevelSelect({
                         setHovered(undefined);
                     }}
                   >
-                    {(!query.trim() || searchMatches(query, "未启用")) && (
-                      <button
-                        type="button"
-                        className={styles.choice}
-                        aria-pressed={!value}
-                        onClick={() => chooseLevel(undefined)}
+                    <ScrollArea.Viewport
+                      className={styles.choicesViewport}
+                      aria-label={mode === "level" ? "同步品级" : "副本"}
+                    >
+                      <ScrollArea.Content
+                        className={styles.choices}
+                        style={{ minWidth: 0 }}
                       >
-                        <span>未启用</span>
-                        {!value && (
-                          <span className={styles.selectedMark}>当前</span>
+                        <button
+                          type="button"
+                          className={styles.choice}
+                          aria-pressed={!value}
+                          onClick={() => chooseLevel(undefined)}
+                        >
+                          <span>未启用</span>
+                          {!value && (
+                            <span className={styles.selectedMark}>当前</span>
+                          )}
+                        </button>
+                        {mode === "level" ? (
+                          <section className={styles.optionGroup}>
+                            {selectedCategoryId && (
+                              <SyncTargetChoice
+                                target={{
+                                  kind: "jobLevel",
+                                  value: Number(selectedCategoryId),
+                                }}
+                                selected={value}
+                                onChoose={chooseLevel}
+                                onHover={setHovered}
+                              />
+                            )}
+                            {levelOptions.map((option) => (
+                              <SyncTargetChoice
+                                key={syncTargetKey(option.target)}
+                                target={option.target}
+                                selected={value}
+                                onChoose={chooseLevel}
+                                onHover={setHovered}
+                              />
+                            ))}
+                          </section>
+                        ) : (
+                          <section className={styles.optionGroup}>
+                            {dutyOptions.map((option, index) => (
+                              <button
+                                type="button"
+                                key={`${option.name}-${index}`}
+                                className={styles.choice}
+                                aria-pressed={
+                                  syncTargetKey(value) ===
+                                  syncTargetKey(option.target)
+                                }
+                                onClick={() => chooseLevel(option.target)}
+                              >
+                                <span className={styles.dutyName}>
+                                  {option.name}
+                                </span>
+                                <span className={styles.dutyLevel}>
+                                  {option.target.kind === "jobLevel"
+                                    ? `仅同步等级 ${option.target.value}`
+                                    : option.target.value}
+                                </span>
+                              </button>
+                            ))}
+                          </section>
                         )}
-                      </button>
-                    )}
-                    {mode === "level" ? (
-                      <section className={styles.optionGroup}>
-                        {selectedCategoryId && (
-                          <SyncTargetChoice
-                            target={{
-                              kind: "jobLevel",
-                              value: Number(selectedCategoryId),
-                            }}
-                            selected={value}
-                            onChoose={chooseLevel}
-                            onHover={setHovered}
-                          />
+                        {showExplorationWarning && (
+                          <p className={styles.explorationWarning} role="note">
+                            <TriangleAlert size={14} aria-hidden="true" />
+                            <span>暂未计入特殊场景专属的属性修正效果。</span>
+                          </p>
                         )}
-                        {levelOptions.map((option) => (
-                          <SyncTargetChoice
-                            key={syncTargetKey(option.target)}
-                            target={option.target}
-                            selected={value}
-                            onChoose={chooseLevel}
-                            onHover={setHovered}
-                          />
-                        ))}
-                      </section>
-                    ) : dutyOptions.length ? (
-                      <section className={styles.optionGroup}>
-                        {dutyOptions.map((option, index) => (
-                          <button
-                            type="button"
-                            key={`${option.name}-${index}`}
-                            className={styles.choice}
-                            aria-pressed={
-                              syncTargetKey(value) ===
-                              syncTargetKey(option.target)
-                            }
-                            onClick={() => chooseLevel(option.target)}
-                          >
-                            <span className={styles.dutyName}>
-                              {option.name}
-                            </span>
-                            <span className={styles.dutyLevel}>
-                              {option.target.kind === "jobLevel"
-                                ? `仅同步等级 ${option.target.value}`
-                                : option.target.value}
-                            </span>
-                          </button>
-                        ))}
-                      </section>
-                    ) : (
-                      <p className={styles.empty}>没有匹配的副本。</p>
-                    )}
-                    {showExplorationWarning && (
-                      <p className={styles.explorationWarning} role="note">
-                        <TriangleAlert size={14} aria-hidden="true" />
-                        <span>暂未计入特殊场景专属的属性修正效果。</span>
-                      </p>
-                    )}
-                  </div>
+                      </ScrollArea.Content>
+                    </ScrollArea.Viewport>
+                    <ScrollArea.Scrollbar
+                      className={styles.scrollbar}
+                      keepMounted
+                    >
+                      <ScrollArea.Thumb className={styles.scrollThumb} />
+                    </ScrollArea.Scrollbar>
+                  </ScrollArea.Root>
                 </div>
                 <div className={styles.manualSection}>
                   <div className={styles.manualHeader}>

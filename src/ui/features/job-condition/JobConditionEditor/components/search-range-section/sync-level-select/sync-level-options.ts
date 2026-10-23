@@ -57,16 +57,6 @@ export const dutyOptionCategories: SyncOptionCategory<SyncDutyOption>[] =
     options,
   }));
 
-export function searchMatches(query: string, ...values: (string | number)[]) {
-  const normalized = query.trim().toLocaleLowerCase();
-  return (
-    !normalized ||
-    values.some((value) =>
-      String(value).toLocaleLowerCase().includes(normalized),
-    )
-  );
-}
-
 export function categoryFor<T>(
   categories: readonly SyncOptionCategory<T>[],
   selectedId: string,
