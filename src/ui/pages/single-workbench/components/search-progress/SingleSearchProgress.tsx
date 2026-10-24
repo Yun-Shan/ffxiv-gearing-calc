@@ -209,7 +209,7 @@ export function SingleSearchProgress({
           <div className={styles.modelMetricGrid}>
             {gap !== undefined && (
               <div>
-                <span>当前模型差距</span>
+                <span>与模型上界的差距</span>
                 <strong>{gap}</strong>
               </div>
             )}
