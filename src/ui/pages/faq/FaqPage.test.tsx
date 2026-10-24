@@ -39,7 +39,7 @@ describe("常见问题页", () => {
     expect(dialog?.textContent).toContain("支持与反馈");
     const issueLink = dialog?.querySelector<HTMLAnchorElement>("a");
     expect(issueLink?.textContent).toBe("Github");
-    expect(issueLink?.href).toBe("https://github.com/Yun-Shan/ffxiv-gearing-calc/issues");
+    expect(issueLink?.href).toBe("https://github.com/Yun-Shan/ffxiv-gearing-calc/issues/new/choose");
     expect(issueLink?.target).toBe("_blank");
     expect(issueLink?.querySelector("svg")).not.toBeNull();
 

@@ -1,0 +1,49 @@
+name: Bug 反馈
+description: 反馈页面、交互或搜索报错等问题。
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请说明问题及复现方法。各文本框均可上传截图；配装结果不是最优解的问题请使用对应的配装结果模板。
+  - type: textarea
+    id: problem
+    attributes:
+      label: 问题描述
+      description: 实际发生了什么？你期望发生什么？
+      placeholder: |
+        实际表现：
+        预期表现：
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: 复现步骤
+      description: 请从打开的页面开始，按顺序列出操作，并说明是否每次都能复现。
+      placeholder: |
+        1. 打开页面：
+        2. 进行操作：
+        3. 出现问题：
+        复现频率：
+    validations:
+      required: true
+  - type: textarea
+    id: browser-environment
+    attributes:
+      label: 浏览器环境
+      description: 请填写浏览器名称、完整版本及操作系统；界面问题请补充窗口尺寸和缩放比例。
+      placeholder: |
+        浏览器与完整版本：
+        操作系统及版本：
+        使用设备（电脑／手机／平板）：
+        窗口尺寸与缩放比例（界面问题）：
+    validations:
+      required: true
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: 截图、报错与补充信息
+      description: 可上传截图或粘贴报错、浏览器控制台日志。搜索相关问题请补充搜索条件及结果页数据版本（如有）。
+    validations:
+      required: false

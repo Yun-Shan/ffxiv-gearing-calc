@@ -13,7 +13,7 @@ import styles from "./FeedbackProvider.module.scss";
 const feedbackEntries: readonly { name: string; href: string; icon: ReactNode }[] = [
   {
     name: "Github",
-    href: "https://github.com/Yun-Shan/ffxiv-gearing-calc/issues",
+    href: "https://github.com/Yun-Shan/ffxiv-gearing-calc/issues/new/choose",
     // GitHub brand icon from Simple Icons (CC0): https://simpleicons.org/?q=github
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">

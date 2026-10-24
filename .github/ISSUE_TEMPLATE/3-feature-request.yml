@@ -1,0 +1,35 @@
+name: 功能请求
+description: 提出新功能或现有功能的改进建议。
+title: "[功能请求] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请说明使用场景和期望的功能。各文本框均可附上截图或参考链接。
+  - type: textarea
+    id: use-case
+    attributes:
+      label: 使用场景与需求
+      description: 在什么场景下需要这项功能？目前有哪些不便，或需要手动完成哪些操作？
+      placeholder: |
+        使用场景：
+        目前的不便：
+    validations:
+      required: true
+  - type: textarea
+    id: expected-feature
+    attributes:
+      label: 期望功能
+      description: 希望工具支持怎样的操作、提供什么结果？
+      placeholder: |
+        希望支持的操作：
+        预期结果：
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: 参考方案与补充信息
+      description: 可补充其他工具的相关功能、替代做法、参考链接或示意截图。
+    validations:
+      required: false

@@ -1,0 +1,47 @@
+name: 配装结果不是最优解
+description: 反馈符合相同搜索条件、但表现更好的配装方案。
+title: "[配装结果] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请确认更优方案符合相同搜索条件，并按同一优化指标比较。各文本框均可粘贴分享链接或上传截图。
+  - type: textarea
+    id: search-conditions
+    attributes:
+      label: 搜索条件
+      description: 请完整填写条件，或上传能看清全部条件的截图；联合搜索请包含每个职业的条件及共享设置。
+      placeholder: |
+        搜索类型（单职业／联合搜索）：
+        职业与种族：
+        装备品级范围与同步目标：
+        GCD 档位或技速／咏速范围：
+        食物与坚韧条件：
+        排除来源与排除装备：
+        强制装备及固定魔晶石／自定义参数：
+        联合搜索的共享部位与食物策略（如适用）：
+    validations:
+      required: true
+  - type: textarea
+    id: project-result
+    attributes:
+      label: 本项目结果
+      description: 请附结果页截图，或复制结果页「在配装器打开」的分享链接，并填写数据版本与相关指标。
+      placeholder: |
+        结果页数据版本：
+        伤害期望与 GCD（联合搜索请附联合指标及各职业指标）：
+        本项目结果的分享链接或截图：
+    validations:
+      required: true
+  - type: textarea
+    id: better-gearset
+    attributes:
+      label: 其他配装器中的更优方案
+      description: 请提供完整分享链接或截图，注明配装器名称及相关指标；截图应能看清装备、魔晶石、自定义参数和食物。联合搜索请提供各职业方案。
+      placeholder: |
+        配装器名称：
+        分享链接或截图：
+        伤害期望与 GCD：
+        与本项目结果的差异：
+    validations:
+      required: true
