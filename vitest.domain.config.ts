@@ -15,6 +15,8 @@ export default mergeConfig(
           // Transport and environment adapters are exercised by their own tests.
           "**/*.worker.ts",
           "src/domain/worker-client.ts",
+          "src/domain/compute-worker-factory.ts",
+          "src/domain/compute-worker-url.ts",
           "src/domain/node/**",
           "src/domain/search/highs-browser.ts",
           "src/domain/search/parallel-baseline-browser-adapter.ts",

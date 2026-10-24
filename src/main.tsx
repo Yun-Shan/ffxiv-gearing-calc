@@ -5,11 +5,14 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { App } from "./ui/app/App";
 import type {} from "./ui/app/app-shell/app-shell";
+import { scheduleComputePreload } from "./ui/services/compute-preload";
 
 const shell = window.__APP_SHELL__;
 if (!shell || (await shell.stylesReady())) {
+  let mountFailed = false;
   const root = createRoot(document.getElementById("root")!, {
     onUncaughtError(error) {
+      mountFailed = true;
       console.error(error);
       shell?.fail(error);
     },
@@ -23,4 +26,5 @@ if (!shell || (await shell.stylesReady())) {
     ),
   );
   shell?.ready();
+  if (!mountFailed) scheduleComputePreload();
 }

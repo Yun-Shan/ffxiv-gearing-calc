@@ -52,7 +52,7 @@ describe("GCD worker ItemSpecialBonus defaults", () => {
     };
     vi.stubGlobal("self", scope);
     vi.resetModules();
-    await import("./gcd-optimizer.worker.ts");
+    await import("./compute.worker.ts");
 
     const send = async (config: OptimizationConfig): Promise<number[] | undefined> => {
       const listener = onMessage;

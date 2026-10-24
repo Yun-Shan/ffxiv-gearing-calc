@@ -4,8 +4,9 @@ import { resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { installAppShell } from "./app-shell";
 
-const { renderApp } = vi.hoisted(() => ({ renderApp: vi.fn() }));
+const { renderApp, preload } = vi.hoisted(() => ({ renderApp: vi.fn(), preload: vi.fn() }));
 vi.mock("../App", () => ({ App: () => renderApp() }));
+vi.mock("../../services/compute-preload", () => ({ scheduleComputePreload: preload }));
 const markup = readFileSync(
   resolve("src/ui/app/app-shell/AppShell.html"),
   "utf8",
@@ -14,6 +15,7 @@ const markup = readFileSync(
 beforeEach(() => {
   vi.resetModules();
   renderApp.mockReset();
+  preload.mockReset();
   document.head.innerHTML = '<style id="app-shell-styles"></style>';
   document.body.innerHTML = `${markup}<div id="root" inert></div>`;
   installAppShell();
@@ -37,6 +39,7 @@ describe("真实入口的首次提交", () => {
     expect(document.getElementById("root")!.textContent).toBe("测试主页面");
     expect(document.getElementById("root")!.hasAttribute("inert")).toBe(false);
     expect(document.getElementById("app-shell")).toBeNull();
+    expect(preload).toHaveBeenCalledOnce();
   });
 
   it.each(["render", "ref", "layout", "effect"])(
@@ -68,6 +71,7 @@ describe("真实入口的首次提交", () => {
       );
       expect(document.getElementById("root")!.hasAttribute("inert")).toBe(true);
       expect(document.getElementById("root")!.childElementCount).toBe(0);
+      expect(preload).not.toHaveBeenCalled();
     },
   );
 
@@ -75,6 +79,7 @@ describe("真实入口的首次提交", () => {
     window.__APP_SHELL__!.fail(new Error("style download failed"));
     await import("../../../main");
     expect(renderApp).not.toHaveBeenCalled();
+    expect(preload).not.toHaveBeenCalled();
     expect(document.documentElement.dataset.appStartup).toBe("failed");
   });
 });

@@ -1,22 +1,8 @@
-import { findFeasibleGcdsLocally, runJointOptimizationLocally, runOptimizationLocally } from "./optimizer";
-import GcdOptimizerWorker from "./gcd-optimizer.worker.ts?worker";
-import OptimizerWorker from "./optimizer.worker.ts?worker";
-import type { JointOptimizationConfig, JointOptimizationResult, OptimizationConfig, OptimizationResult, SearchCandidateCounts, SearchOptions } from "./types";
-import type { HighsCallbackTrace, LinearMipProgress } from "./search/linear-mip.ts";
+import { createComputeWorker } from "./compute-worker-factory.ts";
+import type { JointOptimizationConfig, JointOptimizationResult, OptimizationConfig, OptimizationResult, SearchOptions } from "./types";
+import type { SearchRequest, SearchResponse, SearchValue } from "./compute-worker-protocol.ts";
 
-export type SearchRequest =
-  | { kind: "single"; config: OptimizationConfig; traceSolverCallbacks?: boolean; includeCandidateCounts?: boolean; includeSolverProgress?: boolean }
-  | { kind: "joint"; config: JointOptimizationConfig; traceSolverCallbacks?: boolean; includeCandidateCounts?: boolean; includeSolverProgress?: boolean }
-  | { kind: "gcds"; config: OptimizationConfig; traceSolverCallbacks?: boolean; includeCandidateCounts?: boolean; includeSolverProgress?: boolean };
-export type SearchValue = OptimizationResult | JointOptimizationResult | number[] | undefined;
-export type SearchResponse =
-  | { kind: "ready" }
-  | { kind: "progress"; message: string }
-  | { kind: "candidateCounts"; counts: SearchCandidateCounts }
-  | { kind: "solverProgress"; progress: LinearMipProgress }
-  | { kind: "solverCallback"; trace: HighsCallbackTrace }
-  | { kind: "result"; value: SearchValue }
-  | { kind: "error"; message: string; name: string };
+export type { SearchRequest, SearchResponse, SearchValue } from "./compute-worker-protocol.ts";
 
 export function optimizeInWorker(request: { kind: "single"; config: OptimizationConfig }, options?: SearchOptions): Promise<OptimizationResult | undefined>;
 export function optimizeInWorker(request: { kind: "joint"; config: JointOptimizationConfig }, options?: SearchOptions): Promise<JointOptimizationResult | undefined>;
@@ -25,13 +11,12 @@ export async function optimizeInWorker(request: SearchRequest, options: SearchOp
   if (options.signal?.aborted) throw cancellationError();
   const frontendRequest = withoutFrontendSearchLimit(request);
   if (typeof Worker === "undefined") {
+    const { findFeasibleGcdsLocally, runJointOptimizationLocally, runOptimizationLocally } = await import("./optimizer");
     if (frontendRequest.kind === "single") return runOptimizationLocally(frontendRequest.config, options);
     if (frontendRequest.kind === "joint") return runJointOptimizationLocally(frontendRequest.config, options);
     return findFeasibleGcdsLocally(frontendRequest.config, options);
   }
-  const worker = frontendRequest.kind === "gcds"
-    ? new GcdOptimizerWorker()
-    : new OptimizerWorker();
+  const worker = createComputeWorker();
   return new Promise((resolve, reject) => {
     let settled = false;
     let requestSent = false;

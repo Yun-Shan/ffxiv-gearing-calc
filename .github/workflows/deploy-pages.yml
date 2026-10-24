@@ -10,7 +10,7 @@ on:
       - 'package.json'
       - 'package-lock.json'
       - 'vite.config.ts'
-      - 'scripts/vite-app-shell.ts'
+      - 'scripts/vite-*.ts'
       - '.github/workflows/deploy-pages.yml'
 
 permissions:
