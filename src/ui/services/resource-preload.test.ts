@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { scheduleComputePreload } from "./compute-preload";
+import { scheduleResourcePreload } from "./resource-preload";
 
 let idle: (() => void) | undefined;
 const requestIdleCallback = vi.fn((callback: () => void) => {
@@ -15,7 +15,7 @@ const fetchResource = vi.fn(async (_url: string, _options?: RequestInit) => ({
 
 function manifest(resources: unknown) {
   const node = document.createElement("script");
-  node.id = "compute-preload-resources";
+  node.id = "app-preload-resources";
   node.type = "application/json";
   node.textContent = JSON.stringify(resources);
   document.head.append(node);
@@ -38,18 +38,24 @@ afterEach(() => {
 it("waits for idle, deduplicates URLs and consumes resources without starting a worker", async () => {
   const Worker = vi.fn();
   vi.stubGlobal("Worker", Worker);
-  manifest(["/worker.js", "/highs.js", "/highs.wasm", "/worker.js"]);
-  scheduleComputePreload();
-  scheduleComputePreload();
+  const resources = [
+    "/worker.js",
+    "/highs.js",
+    "/highs.wasm",
+    "./snapdom.js",
+    "./share-layout.css",
+    "/data.bin",
+  ];
+  manifest([...resources, "/worker.js"]);
+  scheduleResourcePreload();
+  scheduleResourcePreload();
   expect(requestIdleCallback).toHaveBeenCalledOnce();
   expect(fetchResource).not.toHaveBeenCalled();
   idle!();
-  await vi.waitFor(() => expect(readBody).toHaveBeenCalledTimes(3));
-  expect(fetchResource.mock.calls.map(([url]) => url)).toEqual([
-    new URL("/worker.js", document.baseURI).href,
-    new URL("/highs.js", document.baseURI).href,
-    new URL("/highs.wasm", document.baseURI).href,
-  ]);
+  await vi.waitFor(() => expect(readBody).toHaveBeenCalledTimes(resources.length));
+  expect(fetchResource.mock.calls.map(([url]) => url)).toEqual(
+    resources.map((url) => new URL(url, document.baseURI).href),
+  );
   expect(fetchResource).toHaveBeenCalledWith(expect.any(String), {
     cache: "force-cache",
     credentials: "same-origin",
@@ -64,7 +70,7 @@ it("skips already loaded modules and continues after speculative network failure
   );
   fetchResource.mockRejectedValueOnce(new TypeError("network failed"));
   manifest(["/shared.js", "/worker.js", "/highs.wasm"]);
-  scheduleComputePreload();
+  scheduleResourcePreload();
   idle!();
   await vi.waitFor(() => expect(readBody).toHaveBeenCalledOnce());
   expect(fetchResource).toHaveBeenCalledTimes(2);
@@ -74,7 +80,7 @@ it("falls back to a delayed background task when idle callbacks are unavailable"
   vi.useFakeTimers();
   vi.stubGlobal("requestIdleCallback", undefined);
   manifest(["/worker.js"]);
-  scheduleComputePreload();
+  scheduleResourcePreload();
   await vi.advanceTimersByTimeAsync(999);
   expect(fetchResource).not.toHaveBeenCalled();
   await vi.advanceTimersByTimeAsync(1);
@@ -82,9 +88,9 @@ it("falls back to a delayed background task when idle callbacks are unavailable"
 });
 
 it("ignores absent or invalid manifests", () => {
-  scheduleComputePreload();
+  scheduleResourcePreload();
   manifest({ invalid: true });
-  scheduleComputePreload();
+  scheduleResourcePreload();
   expect(requestIdleCallback).not.toHaveBeenCalled();
   expect(fetchResource).not.toHaveBeenCalled();
 });

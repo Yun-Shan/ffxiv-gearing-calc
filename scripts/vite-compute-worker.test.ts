@@ -92,7 +92,7 @@ describe("shared page/compute worker production build", () => {
       );
       if (html?.type !== "asset") throw new Error("Expected HTML output");
       const manifest =
-        /<script id="compute-preload-resources"[^>]*>(.*?)<\/script>/s.exec(
+        /<script id="app-preload-resources"[^>]*>(.*?)<\/script>/s.exec(
           String(html.source),
         );
       expect(manifest).not.toBeNull();
@@ -100,9 +100,37 @@ describe("shared page/compute worker production build", () => {
       expect(resources).toContain(base + worker.fileName);
       expect(resources).toContain(base + highsFile);
       expect(resources.some((url) => url.endsWith(".wasm"))).toBe(true);
+      const snapdom = chunks.find((chunk) =>
+        chunk.moduleIds.some((id) => id.includes("/node_modules/@zumer/snapdom/")),
+      )!;
+      const shareLayout = chunks.find((chunk) =>
+        chunk.moduleIds.some((id) => id.endsWith("/ResultShareLayout.tsx")),
+      )!;
+      expect(pageImports.has(snapdom.fileName)).toBe(false);
+      expect(pageImports.has(shareLayout.fileName)).toBe(false);
+      expect(reach(worker, true).has(snapdom.fileName)).toBe(false);
+      expect(resources).toContain(base + snapdom.fileName);
+      expect(resources).toContain(base + shareLayout.fileName);
+      const deferredCss = result.output.filter(
+        (entry) =>
+          entry.fileName.startsWith("assets/ResultShareLayout-") &&
+          entry.fileName.endsWith(".css"),
+      );
+      expect(deferredCss).toHaveLength(1);
+      expect(resources).toContain(base + deferredCss[0]!.fileName);
+      // Every emitted runtime resource is covered, beyond today's known imports.
+      for (const entry of result.output) {
+        if (entry.fileName === "index.html" || entry.fileName === page.fileName)
+          continue;
+        expect(resources).toContain(base + entry.fileName);
+      }
       expect(resources).not.toContain(base + page.fileName);
       expect(new Set(resources).size).toBe(resources.length);
       expect(resources.every((url) => url.startsWith(base))).toBe(true);
+      const outputUrls = new Set(
+        result.output.map((entry) => base + entry.fileName),
+      );
+      expect(resources.filter((url) => !outputUrls.has(url))).toEqual([]);
 
       const factory = chunks.find((chunk) =>
         chunk.moduleIds.some((id) => id.endsWith("/compute-worker-factory.ts")),

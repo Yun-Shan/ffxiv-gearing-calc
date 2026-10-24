@@ -6,7 +6,7 @@ import { installAppShell } from "./app-shell";
 
 const { renderApp, preload } = vi.hoisted(() => ({ renderApp: vi.fn(), preload: vi.fn() }));
 vi.mock("../App", () => ({ App: () => renderApp() }));
-vi.mock("../../services/compute-preload", () => ({ scheduleComputePreload: preload }));
+vi.mock("../../services/resource-preload", () => ({ scheduleResourcePreload: preload }));
 const markup = readFileSync(
   resolve("src/ui/app/app-shell/AppShell.html"),
   "utf8",

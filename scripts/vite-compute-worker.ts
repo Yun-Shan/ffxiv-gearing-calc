@@ -64,29 +64,36 @@ export const __vitePreload = (load, ...args) =>
             "Compute worker entry missing from the browser build",
           );
         const files = new Set<string>();
-        const visit = (chunk: OutputChunk) => {
-          if (files.has(chunk.fileName)) return;
-          files.add(chunk.fileName);
-          for (const name of [...chunk.imports, ...chunk.dynamicImports]) {
-            const dependency = bundle[name];
-            if (dependency?.type === "chunk") visit(dependency);
-          }
-          const assets = (
+        // Cover every emitted module, including page-only dynamic imports such as
+        // result sharing. The runtime skips resources already loaded by the page.
+        for (const chunk of Object.values(bundle)) {
+          if (chunk.type !== "chunk") continue;
+          if (chunk.fileName !== context.chunk?.fileName)
+            files.add(chunk.fileName);
+          const metadata = (
             chunk as OutputChunk & {
-              viteMetadata?: { importedAssets: Set<string> };
+              viteMetadata?: {
+                importedAssets: Set<string>;
+                importedCss: Set<string>;
+              };
             }
-          ).viteMetadata?.importedAssets;
-          for (const name of assets ?? [])
-            if (name.endsWith(".wasm")) files.add(name);
-        };
-        visit(worker);
+          ).viteMetadata;
+          for (const name of [
+            ...(metadata?.importedAssets ?? []),
+            ...(metadata?.importedCss ?? []),
+          ]) {
+            // Emitted chunk URLs can remain hash placeholders in Vite metadata.
+            // Their final filenames are already collected from the bundle above.
+            if (bundle[name]) files.add(name);
+          }
+        }
         // This is data only: fetching starts after a successful page mount, never
         // during HTML parsing. Dev keeps native on-demand module loading.
         return [
           {
             tag: "script",
             attrs: {
-              id: "compute-preload-resources",
+              id: "app-preload-resources",
               type: "application/json",
             },
             children: JSON.stringify(

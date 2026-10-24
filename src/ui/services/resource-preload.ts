@@ -1,6 +1,6 @@
 /** Warm production resource caches without executing modules or creating a worker. */
-export function scheduleComputePreload(): void {
-  const manifest = document.getElementById("compute-preload-resources");
+export function scheduleResourcePreload(): void {
+  const manifest = document.getElementById("app-preload-resources");
   if (!manifest || manifest.dataset.scheduled === "true") return;
   let resources: unknown;
   try {
