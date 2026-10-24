@@ -1,0 +1,23 @@
+<main id="app-shell" hidden aria-labelledby="app-shell-title">
+  <div id="app-shell-content">
+    <p id="app-shell-brand">最终幻想14 · 自动配装器</p>
+    <div
+      id="app-shell-status"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <span id="app-shell-indicator" aria-hidden="true"></span>
+      <h1 id="app-shell-title">正在加载应用…</h1>
+      <p id="app-shell-message">正在准备应用和游戏数据，请稍候。</p>
+    </div>
+    <details id="app-shell-details" hidden>
+      <summary>错误详情</summary>
+      <pre id="app-shell-error"></pre>
+    </details>
+    <button id="app-shell-reload" type="button" hidden>重新加载</button>
+  </div>
+</main>
+<script>
+  window.__APP_SHELL__.attach();
+</script>

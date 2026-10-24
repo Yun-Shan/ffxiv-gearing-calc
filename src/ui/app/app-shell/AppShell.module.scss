@@ -1,0 +1,136 @@
+@use "../../../styles/tokens" as tokens;
+
+// 此模块随 HTML 内联，用专有 ID 隔离样式，不依赖应用 CSS 的下载。
+html[data-app-startup] {
+  background: tokens.$color-surface-canvas;
+
+  body {
+    margin: 0;
+  }
+
+  #root {
+    visibility: hidden;
+  }
+}
+
+#app-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  background: tokens.$color-surface-canvas;
+  color: tokens.$color-ink;
+  font-family: system-ui, "Microsoft YaHei", sans-serif;
+  text-align: center;
+
+  &[hidden],
+  [hidden] {
+    display: none;
+  }
+}
+
+#app-shell-content {
+  width: 420px;
+  max-width: calc(100vw - 48px);
+  padding: 40px 0;
+}
+
+#app-shell-brand {
+  margin: 0 0 32px;
+  font-size: tokens.$font-size-heading;
+  font-weight: 600;
+}
+
+#app-shell-indicator {
+  display: block;
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 20px;
+  border: 3px solid tokens.$color-border-default;
+  border-top-color: tokens.$color-accent-teal;
+  border-radius: 50%;
+  animation: app-shell-spin 1s linear infinite;
+
+  html[data-app-startup="failed"] & {
+    border-color: tokens.$color-status-error;
+    color: tokens.$color-status-error;
+    font-size: tokens.$font-size-heading;
+    font-weight: 700;
+    line-height: 26px;
+    animation: none;
+  }
+}
+
+#app-shell-title {
+  margin: 0;
+  font-size: tokens.$font-size-display;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+#app-shell-message {
+  margin: 12px 0 0;
+  color: tokens.$color-muted;
+  font-size: tokens.$font-size-label;
+  line-height: 1.8;
+}
+
+#app-shell-details {
+  margin-top: 24px;
+  color: tokens.$color-muted;
+  font-size: tokens.$font-size-label;
+  line-height: 1.6;
+  text-align: left;
+
+  summary {
+    cursor: pointer;
+  }
+}
+
+#app-shell-error {
+  max-height: 160px;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid tokens.$color-border-default;
+  border-radius: 6px;
+  background: tokens.$color-neutral-white;
+  font: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+#app-shell-reload {
+  margin-top: 24px;
+  padding: 10px 24px;
+  border: 1px solid tokens.$color-accent-teal;
+  border-radius: 6px;
+  background: tokens.$color-accent-teal;
+  color: tokens.$color-neutral-white;
+  font: inherit;
+  font-size: tokens.$font-size-control;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
+
+#app-shell :focus-visible {
+  outline: 3px solid tokens.$color-accent-teal-soft;
+  outline-offset: 3px;
+}
+
+@keyframes app-shell-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app-shell-indicator {
+    animation: none;
+  }
+}

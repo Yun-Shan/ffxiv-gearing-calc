@@ -1,6 +1,7 @@
 import { configDefaults, defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { isAbsolute, relative, resolve, sep } from "node:path";
+import { appShellPlugin } from "./scripts/vite-app-shell.ts";
 
 const projectRoot = resolve(process.cwd());
 const srcRoot = resolve(projectRoot, "src");
@@ -17,7 +18,7 @@ function isWithin(root: string, path: string): boolean {
 
 export default defineConfig({
   base: process.env.PAGES_BASE_PATH ?? "/",
-  plugins: [react()],
+  plugins: [react(), appShellPlugin(projectRoot)],
   resolve: {
     alias: {
       "@": srcRoot,

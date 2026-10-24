@@ -19,7 +19,7 @@ async function loadGeneratedGameData(): Promise<GeneratedGameData> {
     const data = await decodeGeneratedData(bytes) as GeneratedGameData;
     return data;
   } catch (error) {
-    throw new Error("二进制游戏数据载入失败，请运行 npm run data:update 重新生成", {
+    throw new Error("游戏数据无法解析或校验未通过", {
       cause: error,
     });
   }

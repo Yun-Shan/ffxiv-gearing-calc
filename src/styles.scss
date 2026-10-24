@@ -1,7 +1,5 @@
 @use "@/styles/tokens" as tokens;
 
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap");
-
 :root {
   --color-text-primary: #{tokens.$color-text-primary};
   --color-text-secondary: #{tokens.$color-text-secondary};
