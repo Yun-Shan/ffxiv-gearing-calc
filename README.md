@@ -65,5 +65,5 @@
 感谢以下社区项目：
 
 - [Asvel / ffxiv-gearing](https://github.com/Asvel/ffxiv-gearing)：配装、公式与数据参考。
-- [Lumina](https://github.com/NotAdam/Lumina) / [EXDSchema](https://github.com/xivdev/EXDSchema)：游戏数据读取与字段定义。
+- [Lumina](https://github.com/NotAdam/Lumina) / [EXDSchema](https://github.com/xivdev/EXDSchema) / [mcp-ffxiv-lumina](https://github.com/MelkyWay/mcp-ffxiv-lumina)：游戏数据读取、字段定义与 MCP 查询服务。
 - [thewakingsands/xivapi-v2](https://github.com/thewakingsands/xivapi-v2)：装备与职业图标服务。

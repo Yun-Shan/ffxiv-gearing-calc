@@ -42,9 +42,13 @@ const communityProjects: readonly CommunityProject[] = [
     links: [
       { name: "Lumina", href: "https://github.com/NotAdam/Lumina" },
       { name: "EXDSchema", href: "https://github.com/xivdev/EXDSchema" },
+      {
+        name: "mcp-ffxiv-lumina",
+        href: "https://github.com/MelkyWay/mcp-ffxiv-lumina",
+      },
     ],
     description:
-      "社区解包项目，本项目通过 Lumina 读取 FFXIV 游戏内容数据（装备、职业、副本等 Sheet），数据表字段定义与核对使用 EXDSchema。",
+      "社区解包项目，本项目通过 Lumina 读取 FFXIV 游戏内容数据（装备、职业、副本等 Sheet），数据表字段定义与核对使用 EXDSchema；mcp-ffxiv-lumina 提供数据查询的 MCP 接口。",
   },
 ];
 

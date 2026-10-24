@@ -30,6 +30,7 @@ describe("关于页", () => {
       "thewakingsands/xivapi-v2",
       "Lumina",
       "EXDSchema",
+      "mcp-ffxiv-lumina",
     ]);
     expect(links.map((link) => link.href)).toEqual([
       "https://github.com/Asvel/ffxiv-gearing",
@@ -37,6 +38,7 @@ describe("关于页", () => {
       "https://github.com/thewakingsands/xivapi-v2",
       "https://github.com/NotAdam/Lumina",
       "https://github.com/xivdev/EXDSchema",
+      "https://github.com/MelkyWay/mcp-ffxiv-lumina",
     ]);
     expect(links.every((link) => link.rel.includes("noreferrer"))).toBe(true);
 
@@ -48,6 +50,9 @@ describe("关于页", () => {
       host.querySelector<HTMLAnchorElement>(`a[href="${href}"]`)!.closest("li")!;
     expect(cardOf("https://github.com/NotAdam/Lumina")).toBe(
       cardOf("https://github.com/xivdev/EXDSchema"),
+    );
+    expect(cardOf("https://github.com/NotAdam/Lumina")).toBe(
+      cardOf("https://github.com/MelkyWay/mcp-ffxiv-lumina"),
     );
 
     const text = normalizedText(host);
