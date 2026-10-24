@@ -146,7 +146,7 @@ test('generation entrypoint requires upstream source records before runtime writ
 
 test('source-rich generation validates audit shapes and preserves the output on failure', async () => {
   const payload = await sourceRichPayloadFromCurrentBin();
-  const scratch = fileURLToPath(new URL('../../artifacts/data-update-tests/', import.meta.url));
+  const scratch = fileURLToPath(new URL('../../.tmp/data-update-tests/', import.meta.url));
   await mkdir(scratch, { recursive: true });
   const directory = await mkdtemp(join(scratch, 'update-'));
   const target = join(directory, 'generated.bin');
@@ -199,7 +199,7 @@ test('source-rich generation validates audit shapes and preserves the output on 
 });
 
 test('the runtime writer rejects generation audit fields and preserves an existing file', async () => {
-  const scratch = fileURLToPath(new URL('../../artifacts/data-update-tests/', import.meta.url));
+  const scratch = fileURLToPath(new URL('../../.tmp/data-update-tests/', import.meta.url));
   await mkdir(scratch, { recursive: true });
   const directory = await mkdtemp(join(scratch, 'update-'));
   const target = join(directory, 'generated.bin');
@@ -223,7 +223,7 @@ test('the runtime writer rejects generation audit fields and preserves an existi
 test('the runtime writer verifies current final binary bytes before replacement', async () => {
   const bytes = new Uint8Array(await readFile(new URL('../../src/data/generated-data.bin', import.meta.url)));
   const data = await decodeGeneratedData(bytes);
-  const scratch = fileURLToPath(new URL('../../artifacts/data-update-tests/', import.meta.url));
+  const scratch = fileURLToPath(new URL('../../.tmp/data-update-tests/', import.meta.url));
   await mkdir(scratch, { recursive: true });
   const directory = await mkdtemp(join(scratch, 'update-'));
   const target = join(directory, 'generated.bin');

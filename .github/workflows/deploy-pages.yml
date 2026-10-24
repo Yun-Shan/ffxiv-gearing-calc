@@ -5,6 +5,12 @@ on:
     branches: [main]
     paths:
       - 'src/**'
+      - 'index.html'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.ts'
+      - '.github/workflows/deploy-pages.yml'
 
 permissions:
   contents: read
