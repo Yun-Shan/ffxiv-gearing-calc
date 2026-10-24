@@ -29,6 +29,8 @@ export default defineConfig({
     exclude: [
       ...configDefaults.exclude,
       "**/*.helper.test.*",
+      ".tmp/**",
+      "docs/search-optimization/acceptance-runs/**",
       "scripts/node-tests/**",
       "reference/**",
     ],

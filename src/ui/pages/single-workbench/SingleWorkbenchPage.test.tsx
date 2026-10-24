@@ -86,13 +86,17 @@ describe("重构后的 Single 工作流", () => {
     await support.startSearchAndSettle();
     support.click(support.buttonNamed("搜索记录"));
     await support.settleApp();
-    expect(document.body.querySelector('[role="dialog"]')).not.toBeNull();
+    const dialog = document.body.querySelector('[role="dialog"]');
+    expect(dialog).not.toBeNull();
     expect(support.optimizeMock.mock.calls[0]![1].signal.aborted).toBe(false);
-    const close = [
-      ...document.body.querySelectorAll<HTMLButtonElement>("button"),
-    ].find((x) => x.textContent === "关闭");
-    act(() => close!.click());
+    const close = dialog!.querySelector<HTMLButtonElement>(
+      'button[aria-label="关闭搜索记录"]',
+    );
+    expect(close).not.toBeNull();
+    support.click(close!);
     await support.settleApp();
+    expect(document.body.querySelector('[role="dialog"]')).toBeNull();
+    expect(support.optimizeMock.mock.calls[0]![1].signal.aborted).toBe(false);
     expect(support.host.querySelector("h1")?.textContent).toContain("正在搜索");
   });
 });
