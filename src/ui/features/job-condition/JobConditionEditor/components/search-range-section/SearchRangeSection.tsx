@@ -1,15 +1,12 @@
 import { NumberInput } from "@/ui/components/form-controls/number-input/NumberInput";
 import { gameData, type SyncTarget } from "@/domain";
 import { bounds } from "@/ui/services/app-config";
+import { syncTargetKey } from "@/ui/services/sync-selection";
 import { useJobConditionScope } from "../../../scope";
 import type { SearchRangeDraft, ValidationIssue } from "../../../types";
 import { SyncLevelSelect } from "./sync-level-select/SyncLevelSelect";
 import { ClanSelect } from "./clan-select/ClanSelect";
 import styles from "./SearchRangeSection.module.scss";
-
-function sameSyncTarget(left?: SyncTarget, right?: SyncTarget) {
-  return left?.kind === right?.kind && left?.value === right?.value;
-}
 
 function assistedMinItemLevel(target: SyncTarget): number | undefined {
   const baseline =
@@ -80,10 +77,12 @@ export function SearchRangeSectionFields({
         </div>
         <SyncLevelSelect
           value={range.sync}
+          duty={range.syncDuty}
           disabled={readOnly}
-          onChange={(target) => {
-            if (sameSyncTarget(range.sync, target)) return;
-            const assisted = target && assistedMinItemLevel(target);
+          onChange={(target, syncDuty) => {
+            const sameTarget = syncTargetKey(range.sync) === syncTargetKey(target);
+            if (sameTarget && range.syncDuty === syncDuty) return;
+            const assisted = !sameTarget && target ? assistedMinItemLevel(target) : undefined;
             onChange({
               ...range,
               minItemLevel:
@@ -91,6 +90,7 @@ export function SearchRangeSectionFields({
                   ? range.minItemLevel
                   : Math.min(range.minItemLevel, assisted),
               sync: target,
+              syncDuty,
             });
           }}
         />

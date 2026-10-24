@@ -186,10 +186,7 @@ export function JointWorkbenchAside() {
         <SidePanel.Section>
           <h2>共享条件</h2>
           <SideRows
-            rows={jointSharedSummaryRows(
-              phase.snapshot.config,
-              phase.result.commonFood?.name,
-            ).map(row => row.label === "共享部位"
+            rows={jointSharedSummaryRows(phase.snapshot.config).map(row => row.label === "共享部位"
               ? { ...row, value: formatSharedSlots(phase.snapshot.config.commonSlots) }
               : row)}
           />

@@ -1,4 +1,4 @@
-import type { OptimizationConfig } from "@/domain";
+import type { UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
 import type { FoodDraft, GcdDraft, JobConditionDraft } from "./types";
 
 export function createInitialJobConditionRuntime() {
@@ -28,6 +28,7 @@ export function jobConditionDraftFromConfig(
       minItemLevel: config.minItemLevel,
       maxItemLevel: config.maxItemLevel,
       sync: config.sync,
+      syncDuty: config.syncDuty,
       clanIndex: config.clanIndex ?? 0,
     },
     gcd,

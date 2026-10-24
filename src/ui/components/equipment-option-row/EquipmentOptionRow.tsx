@@ -2,12 +2,12 @@ import type { ReactNode } from "react";
 import { Check } from "lucide-react";
 import type { GearSlot } from "@/domain";
 import { gearSlotLabels } from "@/ui/services/labels";
-import { EquipmentIcon } from "@/ui/components/equipment-icon/EquipmentIcon";
+import { GameIcon } from "@/ui/components/game-icon/GameIcon";
 import styles from "./EquipmentOptionRow.module.scss";
 
 export function EquipmentOptionRow({
   slot,
-  iconId,
+  itemId,
   name,
   level,
   source,
@@ -18,7 +18,7 @@ export function EquipmentOptionRow({
   iconInName = false,
 }: {
   slot: GearSlot;
-  iconId?: number;
+  itemId?: number;
   name: string;
   level: number;
   source?: string;
@@ -40,9 +40,9 @@ export function EquipmentOptionRow({
           {slot === "ring" || slot === "ring2" ? "戒指" : gearSlotLabels[slot]}
         </span>
       </span>
-      {!iconInName && <EquipmentIcon iconId={iconId} />}
+      {!iconInName && <GameIcon itemId={itemId} />}
       <span className={styles.name}>
-        {iconInName && <EquipmentIcon iconId={iconId} />}
+        {iconInName && <GameIcon itemId={itemId} />}
         <span>
           {name}
           {nameSuffix}

@@ -1,8 +1,8 @@
 import type {
   JobId,
-  JointOptimizationConfig,
   JointOptimizationResult,
 } from "@/domain";
+import type { UiJointOptimizationConfig as JointOptimizationConfig } from "@/ui/services/search-config";
 import type { JointSearchProgressState } from "./joint-workbench-progress-types";
 import type {
   FoodDraft,

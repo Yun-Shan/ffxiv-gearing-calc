@@ -1,0 +1,24 @@
+.layout {
+  display: grid;
+  // 主列 1134px 配合 6px 指标间距，四栏和五栏均为整像素等宽。
+  grid-template-columns: minmax(0, 1fr) 244px;
+  grid-template-rows: 33px 40px minmax(0, 1fr);
+  gap: 8px 10px;
+  box-sizing: border-box;
+  width: 1400px;
+  height: 640px;
+  padding: 6px;
+  background: #ffffff;
+  color: #26323b;
+  font-family: "Noto Sans SC", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+
+  > :not(.summary) {
+    grid-column: 1;
+  }
+}
+.summary {
+  grid-column: 2;
+  grid-row: 1 / -1;
+}

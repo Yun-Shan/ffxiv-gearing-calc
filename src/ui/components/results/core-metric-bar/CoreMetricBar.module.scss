@@ -79,8 +79,13 @@
     background: tokens.$color-accent-teal;
     color: tokens.$color-neutral-white;
 
-    &:hover {
+    &:hover:not(:disabled) {
       filter: brightness(1.15);
+    }
+
+    &:disabled {
+      cursor: wait;
+      opacity: 0.6;
     }
 
     &:focus-visible {
@@ -88,6 +93,9 @@
       outline-offset: 2px;
     }
   }
+}
+.shareButton {
+  margin-inline-end: auto;
 }
 .compact {
   gap: 8px;

@@ -13,8 +13,8 @@ const getAnimationsDescriptor = Object.getOwnPropertyDescriptor(
   "getAnimations",
 );
 
-function Harness() {
-  const [range, setRange] = useState<SearchRangeDraft>({
+function Harness({ initialRange }: { initialRange?: SearchRangeDraft } = {}) {
+  const [range, setRange] = useState<SearchRangeDraft>(initialRange ?? {
     minItemLevel: 700,
     maxItemLevel: 795,
     sync: undefined,
@@ -73,9 +73,42 @@ afterEach(() => {
 });
 
 describe("sync target selection", () => {
+  it("retains the clicked duty even at the same target and clears it on a numeric selection without reapplying assistance", async () => {
+    const group = gameData.sync.groups.find(({ options }) => options.some((option, index) =>
+      option.target.kind === "itemLevel" && option.target.value < 700 && options.slice(index + 1).some((other) =>
+        other.name !== option.name && other.target.kind === option.target.kind && other.target.value === option.target.value,
+      ),
+    ))!;
+    const first = group.options.find((option) => option.target.kind === "itemLevel" && option.target.value < 700 && group.options.some((other) =>
+      other.name !== option.name && other.target.kind === option.target.kind && other.target.value === option.target.value,
+    ))!;
+    const second = group.options.find((option) => option.name !== first.name && option.target.kind === first.target.kind && option.target.value === first.target.value)!;
+    act(() => root.render(<Harness initialRange={{ minItemLevel: 700, maxItemLevel: 795, sync: first.target, clanIndex: 0 }} />));
+    const trigger = [...host.querySelectorAll<HTMLButtonElement>("button")].find((button) => button.textContent === `品级 ${first.target.value}`)!;
+    const button = (text: string) => [...document.querySelectorAll<HTMLButtonElement>('[aria-label="同步设置"] button')].find((item) => item.textContent === text)!;
+    await click(trigger);
+    await click(button("按副本"));
+    await click(button(group.name));
+    await click(button(`${first.name}${first.target.value}`));
+    expect(currentRange()).toMatchObject({ sync: first.target, syncDuty: first.name, minItemLevel: 700 });
+    expect(trigger.textContent).toBe(`${first.name}(品级${first.target.value})`);
+    await click(trigger);
+    await click(button(`${second.name}${second.target.value}`));
+    expect(currentRange()).toMatchObject({ sync: second.target, syncDuty: second.name, minItemLevel: 700 });
+    await click(trigger);
+    expect(button(`${first.name}${first.target.value}`).getAttribute("aria-pressed")).toBe("false");
+    expect(button(`${second.name}${second.target.value}`).getAttribute("aria-pressed")).toBe("true");
+    await click(button("按品级"));
+    await click(button("应用"));
+    expect(currentRange().syncDuty).toBeUndefined();
+    expect(currentRange().minItemLevel).toBe(700);
+    expect(trigger.textContent).toBe(`品级 ${first.target.value}`);
+  });
+
   it("commits a level-only target and assists the minimum item level from ParamGrow", async () => {
     act(() => root.render(<Harness />));
-    await click(getTrigger());
+    const trigger = getTrigger();
+    await click(trigger);
 
     const level = 90;
     const category = [
@@ -88,6 +121,7 @@ describe("sync target selection", () => {
     await click(levelTarget);
 
     expect(currentRange().sync).toEqual({ kind: "jobLevel", value: level });
+    expect(trigger.textContent).toBe(`${level}级`);
     const defaultItemLevel = gameData.sync.levels.find(
       (entry) => entry.jobLevel === level,
     )!.defaultItemLevel;

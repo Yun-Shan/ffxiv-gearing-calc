@@ -4,9 +4,8 @@ import { Select } from "@base-ui/react/select";
 import { useId, useRef, useState } from "react";
 import type { Stats } from "@/domain";
 import { FormField } from "@/ui/components/form-controls/form-field/FormField";
-import { EquipmentIcon } from "@/ui/components/equipment-icon/EquipmentIcon";
+import { GameIcon } from "@/ui/components/game-icon/GameIcon";
 import { statName } from "@/ui/services/labels";
-import { itemIconId } from "@/ui/services/icons";
 import { foodOptionsFor } from "@/ui/services/app-config";
 import type { FoodDraft } from "../../../types";
 import styles from "./FoodSelect.module.scss";
@@ -40,7 +39,7 @@ function FoodOptionContent({
       {item.id === 0 ? (
         <span className={styles.autoIcon} aria-hidden="true" />
       ) : (
-        <EquipmentIcon iconId={itemIconId(item.id)} className={styles.icon} />
+        <GameIcon itemId={item.id} className={styles.icon} />
       )}
       <span className={styles.name}>{item.name}</span>
       {item.level !== undefined && (

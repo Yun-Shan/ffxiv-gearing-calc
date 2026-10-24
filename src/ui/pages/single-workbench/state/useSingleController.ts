@@ -5,9 +5,9 @@ import {
   type JobId,
   type GearSlot,
   type MeldedGear,
-  type OptimizationConfig,
   type OptimizationResult,
 } from "@/domain";
+import { optimizationConfigForDomain, type UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
 import { currentDataVersion, makeConfig } from "@/ui/services/app-config";
 import {
   replaceSearchHistoryResult,
@@ -197,7 +197,7 @@ export function useSingleController() {
       );
     }
     try {
-      const result = await optimize(snapshot, {
+      const result = await optimize(freezeSnapshot(optimizationConfigForDomain(snapshot)), {
         signal: controller.signal,
         onProgress: (message) =>
           changeProgress((p) => ({

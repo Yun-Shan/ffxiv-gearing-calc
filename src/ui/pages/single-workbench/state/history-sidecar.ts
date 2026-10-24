@@ -1,4 +1,5 @@
-import type { OptimizationConfig, OptimizationResult } from "@/domain";
+import type { OptimizationResult } from "@/domain";
+import type { UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
 import {
   saveCompletedSearchHistory,
   replaceSearchHistoryResult,

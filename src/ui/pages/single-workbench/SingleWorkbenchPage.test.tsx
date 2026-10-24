@@ -165,7 +165,7 @@ describe("坚韧策略与通用输入", () => {
     await support.settleApp();
     expect(support.host.textContent).not.toContain("组合约束");
     expect(support.host.textContent).toContain("请选择单一策略");
-    expect(support.host.textContent).toContain("2,300");
+    expect(support.host.querySelector("aside")?.textContent).toContain("最低坚韧值2300");
     expect(support.host.textContent).toContain("12%");
     expect(support.buttonNamed("开始搜索").disabled).toBe(true);
     await chooseTankStrategy("最大化减伤百分比");

@@ -41,7 +41,7 @@ function RegularMateriaSlots({
 }: ForcedMateriaSlotsProps) {
   // Gear records are decoded again by some parent catalogs; identity is stable within the data snapshot.
   const prepared = useMemo(
-    () => prepareEquipmentMateria(gear, config),
+    () => prepareEquipmentMateria(gear, { jobId: config.jobId, sync: config.sync }),
     [gear.id, config.jobId, config.sync?.kind, config.sync?.value],
   );
   const melds =

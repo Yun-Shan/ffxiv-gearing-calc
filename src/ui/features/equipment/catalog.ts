@@ -1,6 +1,7 @@
 import { gearOptionsFor, slotsForJob } from "@/domain";
 import type { Gear, GearSlot, OptimizationConfig } from "@/domain";
 import type { EquipmentGearCatalog } from "./types";
+import { optimizationConfigForDomain } from "@/ui/services/search-config";
 
 /** Uses the existing domain candidate API; no gear eligibility rules are duplicated here. */
 export function domainGearOptionsForConfig(
@@ -8,7 +9,7 @@ export function domainGearOptionsForConfig(
   slots: readonly GearSlot[] = slotsForJob(config.jobId),
 ): Gear[] {
   const unrestrictedConfig: OptimizationConfig = {
-    ...config,
+    ...optimizationConfigForDomain(config),
     excludedSources: [],
     excludedGearIds: [],
     forcedGear: {},

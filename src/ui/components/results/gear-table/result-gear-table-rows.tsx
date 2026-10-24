@@ -197,7 +197,7 @@ export function buildResultGearTableRows(
   options: ResultGearTableOptions = {},
 ): GearTableRow[] {
   // Sync only annotates the rows; numerical values remain the saved result snapshot.
-  const sync = { jobLevel: result.calculationLevel ?? calculationJobLevelFor(config), sync: config.sync };
+  const sync = { jobLevel: result.calculationLevel ?? calculationJobLevelFor({ jobId: config.jobId, sync: config.sync }), sync: config.sync };
   const rows: GearTableRow[] = [];
   for (const slot of displaySlots) {
     const gear = result.gear.find((candidate) => candidate.slot === slot);

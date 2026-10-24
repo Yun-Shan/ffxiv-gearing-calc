@@ -14,11 +14,11 @@ import {
   slotsForJob,
   type GearSlot,
   type JobId,
-  type JointOptimizationConfig,
   type JointOptimizationResult,
-  type OptimizationConfig,
   type OptimizationResult,
 } from "@/domain";
+import type { UiJointOptimizationConfig as JointOptimizationConfig, UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
+import { syncSummaryLabel } from "@/ui/services/sync-selection";
 import {
   deriveWorkbenchValidation,
   gcdAnalysisInputFromConfig,
@@ -213,10 +213,7 @@ export function effectiveConfigRows(
 }
 
 /** Read frozen facts without restoring an editable draft or validating old inputs. */
-export function jointSharedSummaryRows(
-  config: JointOptimizationConfig,
-  foodName?: string,
-) {
+export function jointSharedSummaryRows(config: JointOptimizationConfig) {
   const first = config.jobs[0]!;
   const sharedEquipment = {
     ...first,
@@ -243,12 +240,7 @@ export function jointSharedSummaryRows(
     },
     {
       label: "同步目标",
-      value:
-        first.sync === undefined
-          ? "未启用"
-          : first.sync.kind === "jobLevel"
-            ? `仅同步等级 ${first.sync.value}`
-            : String(first.sync.value),
+      value: syncSummaryLabel(first.sync, first.syncDuty),
     },
     {
       label: "共享部位",
@@ -262,7 +254,7 @@ export function jointSharedSummaryRows(
       value: config.foodStrategy === "shared" ? "所有职业共用" : "各职业独立",
     },
     ...(config.foodStrategy === "shared"
-      ? [{ label: "共享食物", value: foodName ?? formatFood(first.foodId) }]
+      ? [{ label: "共享食物", value: formatFood(first.foodId) }]
       : []),
     ...equipmentRestrictionRows(sharedEquipment),
   ];

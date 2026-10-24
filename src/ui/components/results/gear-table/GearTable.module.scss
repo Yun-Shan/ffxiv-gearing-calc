@@ -50,6 +50,28 @@
   clip-path: inset(50%);
 }
 
+.image {
+  flex: none;
+  height: 100%;
+  max-height: none;
+  container-type: inline-size;
+  contain-intrinsic-block-size: none;
+  overflow: visible;
+
+  .table {
+    height: 100%;
+    grid-template-columns:
+      max-content max-content max-content max-content 1fr
+      repeat(var(--gear-stat-count), max-content);
+    grid-template-rows: var(--gear-header-height) minmax(0, 1fr);
+    font-size: 13px;
+  }
+
+  .table tbody {
+    grid-auto-rows: minmax(34px, 1fr);
+  }
+}
+
 .header {
   height: 100%;
   background: tokens.$color-surface-subtle;

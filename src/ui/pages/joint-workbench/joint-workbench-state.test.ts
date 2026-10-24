@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { foods } from "@/domain";
+import { foods, gameData } from "@/domain";
 import { makeConfig } from "@/ui/services/app-config";
 import {
   effectiveConfigRows,
@@ -16,6 +16,21 @@ import {
 } from "./joint-workbench-state";
 
 describe("joint search range", () => {
+  it("saves the selected duty for every job and restores it in the shared range and all summaries", () => {
+    const duty = gameData.sync.groups.flatMap(({ options }) => options).find(({ target }) => target.kind === "itemLevel")!;
+    const draft = createJointWorkbenchDraft(["PLD", "WAR"]);
+    draft.shared.range = { ...draft.shared.range, sync: duty.target, syncDuty: duty.name };
+    const config = compileJointWorkbenchDraft(draft, createJointWorkbenchRuntime(draft.jobs));
+    expect(config.jobs.every((job) => job.syncDuty === duty.name)).toBe(true);
+    const expectedRow = { label: "同步目标", value: `${duty.name}(品级${duty.target.value})` };
+    expect(jointSharedSummaryRows(config)).toContainEqual(expectedRow);
+    for (const job of config.jobs) {
+      expect(jointJobSummaryRows(draft, job)).toContainEqual(expectedRow);
+      expect(effectiveConfigRows(job)).toContainEqual(expectedRow);
+    }
+    expect(jointWorkbenchDraftFromConfig(config).shared.range).toMatchObject({ sync: duty.target, syncDuty: duty.name });
+  });
+
   it("selects shared slots by job gear group", () => {
     const draft = createJointWorkbenchDraft(["RDM", "BLM"]);
     expect(draft.shared.equipment.commonSlots).not.toContain("weapon");
@@ -139,7 +154,7 @@ describe("jointWorkbenchDraftFromConfig", () => {
     );
     expect(
       jointJobSummaryRows(draft, config.jobs[0]!).map((row) => row.label),
-    ).not.toContain("最低坚韧");
+    ).not.toContain("坚韧约束");
     expect(jointSharedSummaryRows(config)).toEqual(
       expect.arrayContaining([
         { label: "来源排除", value: "测试来源" },
@@ -153,7 +168,7 @@ describe("jointWorkbenchDraftFromConfig", () => {
     });
     expect(
       effectiveConfigRows(makeConfig("PLD")).map((row) => row.label),
-    ).toContain("最低坚韧");
+    ).toContain("坚韧约束");
   });
 
   it("keeps both shared ring markers and effective equipment restrictions", () => {

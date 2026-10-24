@@ -1,5 +1,6 @@
 import { speedAttributeLabel } from "@/ui/services/labels";
 import { clanLabel } from "@/ui/services/clans";
+import { syncSummaryLabel } from "@/ui/services/sync-selection";
 import {
   foods,
   jobSchemas,
@@ -48,7 +49,7 @@ export function conditionRows(
   jobId: JobId,
   calculationLevel?: number,
 ) {
-  return [
+  const rows = [
     {
       label: "种族",
       value: clanLabel(draft.range.clanIndex),
@@ -59,11 +60,7 @@ export function conditionRows(
     },
     {
       label: "同步目标",
-      value: draft.range.sync
-        ? draft.range.sync.kind === "jobLevel"
-          ? `仅同步等级 ${draft.range.sync.value}`
-          : String(draft.range.sync.value)
-        : "未启用",
+      value: syncSummaryLabel(draft.range.sync, draft.range.syncDuty),
     },
     {
       label: "公式等级",
@@ -74,27 +71,21 @@ export function conditionRows(
     },
     { label: "GCD", value: formatDraftGcd(draft, jobId) },
     { label: "食物", value: formatDraftFood(draft.food) },
-    {
-      label: "最低坚韧",
+  ];
+  if (jobSchemas[jobId].role === "tank") {
+    rows.push({
+      label: "坚韧约束",
       value:
-        draft.tank.minimumTenacity === undefined
-          ? "未设置"
-          : draft.tank.minimumTenacity.toLocaleString("zh-CN"),
-    },
-    {
-      label: "最低减伤",
-      value:
-        draft.tank.minimumDamageReductionPercent === undefined
-          ? "未设置"
-          : draft.tank.minimumDamageReductionPercent + "%",
-    },
-    {
-      label: "坚韧目标",
-      value: draft.tank.maximizeTenacity ? "尽可能提高" : "未启用",
-    },
-  ].filter(
-    (row) =>
-      jobSchemas[jobId].role === "tank" ||
-      !["最低坚韧", "最低减伤", "坚韧目标"].includes(row.label),
-  );
+        [
+          draft.tank.minimumTenacity !== undefined &&
+            `最低坚韧值${draft.tank.minimumTenacity}`,
+          draft.tank.minimumDamageReductionPercent !== undefined &&
+            `最低减伤${draft.tank.minimumDamageReductionPercent}%`,
+          draft.tank.maximizeTenacity && "最大化减伤百分比",
+        ]
+          .filter(Boolean)
+          .join("、") || "未设置",
+    });
+  }
+  return rows;
 }

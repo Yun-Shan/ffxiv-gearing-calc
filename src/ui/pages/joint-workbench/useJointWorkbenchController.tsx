@@ -3,11 +3,10 @@ import {
   jobSchemas,
   optimizeJoint,
   type JobId,
-  type JointOptimizationConfig,
   type JointOptimizationResult,
-  type OptimizationConfig,
   type SearchOptions,
 } from "@/domain";
+import { jointConfigForDomain, type UiJointOptimizationConfig as JointOptimizationConfig, type UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
 import type { JointJobSelectionState } from "@/ui/components/job-selection/JobSelection";
 import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
 import { gcdAnalysisInputFromConfig, gcdAnalysisKey } from "@/ui/features/job-condition";
@@ -332,7 +331,7 @@ export function useJointWorkbenchController() {
 
     let searchPromise: Promise<JointOptimizationResult | undefined>;
     try {
-      searchPromise = optimizeJoint(config, {
+      searchPromise = optimizeJoint(freezeJointConfig(jointConfigForDomain(config)), {
         signal: controller.signal,
         onProgress,
         onCandidateCounts,

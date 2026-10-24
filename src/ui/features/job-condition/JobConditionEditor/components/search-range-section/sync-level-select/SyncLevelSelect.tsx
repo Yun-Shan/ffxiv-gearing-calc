@@ -8,13 +8,13 @@ import {
   type SyncTarget,
 } from "@/domain";
 import { FormField } from "@/ui/components/form-controls/form-field/FormField";
+import { syncTargetKey, syncTargetLabel } from "@/ui/services/sync-selection";
 import {
   categoryFor,
   dutyOptionCategories,
   levelOptionCategories,
   type SyncSelectionMode,
-  syncTargetKey,
-  syncTargetLabel,
+  syncOptionLabel,
 } from "./sync-level-options";
 import styles from "./SyncLevelSelect.module.scss";
 
@@ -39,7 +39,7 @@ function SyncTargetChoice({
       onFocus={() => onHover(target)}
       onClick={() => onChoose(target)}
     >
-      <span>{syncTargetLabel(target)}</span>
+      <span>{syncOptionLabel(target)}</span>
       {isSelected && <span className={styles.selectedMark}>当前</span>}
     </button>
   );
@@ -47,20 +47,26 @@ function SyncTargetChoice({
 
 export function SyncLevelSelect({
   value,
+  duty,
   disabled,
   onChange,
 }: {
   value?: SyncTarget;
+  duty?: string;
   disabled: boolean;
-  onChange(value?: SyncTarget): void;
+  onChange(value?: SyncTarget, duty?: string): void;
 }) {
   const id = useId();
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<SyncSelectionMode>("level");
+  const [mode, setMode] = useState<SyncSelectionMode>(duty ? "duty" : "level");
   const [levelCategory, setLevelCategory] = useState(() =>
     String(gameData.sync.levels.at(-1)?.jobLevel ?? ""),
   );
-  const [dutyCategory, setDutyCategory] = useState("0");
+  const [dutyCategory, setDutyCategory] = useState(() =>
+    dutyOptionCategories.find(({ options }) => options.some((option) =>
+      option.name === duty && syncTargetKey(option.target) === syncTargetKey(value),
+    ))?.id ?? "0",
+  );
   const [customInput, setCustomInput] = useState("");
   const [customError, setCustomError] = useState("");
   const [hovered, setHovered] = useState<SyncTarget>();
@@ -71,7 +77,7 @@ export function SyncLevelSelect({
     mode === "level"
       ? (categoryFor(levelOptionCategories, levelCategory)?.id ?? "")
       : (categoryFor(dutyOptionCategories, dutyCategory)?.id ?? "");
-  const selectedLabel = syncTargetLabel(value);
+  const selectedLabel = syncTargetLabel(value, duty);
   const optionsByTarget = gameData.sync.groups.flatMap(
     ({ options }) => options,
   );
@@ -89,11 +95,12 @@ export function SyncLevelSelect({
     mode === "duty" &&
     dutyCategoryValue?.label === "特殊场景探索";
 
-  const chooseLevel = (next?: SyncTarget) => {
+  const chooseLevel = (next?: SyncTarget, nextDuty?: string) => {
     setHovered(undefined);
     setCustomError("");
     setCustomInput(next?.kind === "itemLevel" ? String(next.value) : "");
-    if (syncTargetKey(next) !== syncTargetKey(value)) onChange(next);
+    if (syncTargetKey(next) !== syncTargetKey(value) || nextDuty !== duty)
+      onChange(next, nextDuty);
     setOpen(false);
   };
 
@@ -271,10 +278,10 @@ export function SyncLevelSelect({
                                 key={`${option.name}-${index}`}
                                 className={styles.choice}
                                 aria-pressed={
-                                  syncTargetKey(value) ===
+                                  duty === option.name && syncTargetKey(value) ===
                                   syncTargetKey(option.target)
                                 }
-                                onClick={() => chooseLevel(option.target)}
+                                onClick={() => chooseLevel(option.target, option.name)}
                               >
                                 <span className={styles.dutyName}>
                                   {option.name}
@@ -389,7 +396,7 @@ export function SyncLevelSelect({
               finalFocus={false}
             >
               <strong className={styles.tooltipTitle}>
-                {syncTargetLabel(hovered)}
+                {syncOptionLabel(hovered)}
               </strong>
               <ul className={styles.list}>
                 {optionsByTarget

@@ -22,7 +22,6 @@ import {
 import { LabeledSelect } from "@/ui/components/form-controls/labeled-select/LabeledSelect";
 import { EquipmentSelect } from "@/ui/components/equipment-select/EquipmentSelect";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
-import { itemIconId } from "@/ui/services/icons";
 import styles from "./EquipmentEditor.module.scss";
 import { ForcedEquipmentRow } from "./components/forced-equipment-row/ForcedEquipmentRow";
 import { ForcedGearImport } from "./components/forced-gear-import/ForcedGearImport";
@@ -423,7 +422,7 @@ function ExcludedGearEditor() {
               {gear ? (
                 <EquipmentOptionRow
                   slot={gear.slot}
-                  iconId={itemIconId(gear.id)}
+                  itemId={gear.id}
                   name={gear.name}
                   level={gear.level}
                   source={gear.source}

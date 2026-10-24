@@ -1,5 +1,5 @@
 import { resultReferenceUrl } from "@/ui/services/reference-gearset-share";
-import { jobIconUrl } from "@/ui/services/icons";
+import { GameIcon } from "@/ui/components/game-icon/GameIcon";
 import { useEffect, useRef } from "react";
 import { Tabs } from "@base-ui/react/tabs";
 import {
@@ -72,6 +72,7 @@ import type {
 import styles from "./JointWorkbench.module.scss";
 
 import {
+  effectiveConfigRows,
   objectiveLabel,
   resultSummaryRows,
   sharedGearRows,
@@ -253,6 +254,12 @@ function JobTab({
   return (
     <div className={styles.jobResult}>
       <CoreMetricBar
+        shareData={{
+          jobId,
+          effects: jobResult.effects,
+          rows,
+          summaryRows: effectiveConfigRows(config, jobResult.calculationLevel),
+        }}
         objective={config.objective}
         entries={jobMetricEntries(jobId, result).map(entry => ({ ...entry, clanIndex: config.clanIndex, referenceUrl: resultReferenceUrl(jobResult, config) }))}
         showTenacity={jobSchemas[jobId].role === "tank"}
@@ -359,11 +366,7 @@ export function ConditionsMain({
           <Tabs.Tab value="shared">共享设置</Tabs.Tab>
           {draft.jobs.map((jobId) => (
             <Tabs.Tab key={jobId} value={jobId}>
-              <img
-                src={jobIconUrl(jobId)}
-                alt=""
-                aria-hidden="true"
-              />
+              <GameIcon jobId={jobId} className={styles.jobIcon} />
               {jobSchemas[jobId].name}
             </Tabs.Tab>
           ))}
@@ -566,11 +569,7 @@ export function ResultMain({
               data-value={jobId}
               key={jobId}
             >
-              <img
-                src={jobIconUrl(jobId)}
-                alt={jobId}
-                aria-hidden="true"
-              />
+              <GameIcon jobId={jobId} className={styles.jobIcon} />
               {jobSchemas[jobId].name}
             </Tabs.Tab>
           ))}

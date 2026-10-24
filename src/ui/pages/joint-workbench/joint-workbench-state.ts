@@ -7,9 +7,8 @@ import {
   type ForcedGearMap,
   type ForcedGearValue,
   type JobId,
-  type JointOptimizationConfig,
-  type OptimizationConfig,
 } from "@/domain";
+import type { UiJointOptimizationConfig as JointOptimizationConfig, UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
 import {
   createJobConditionRuntime,
   jobConditionDraftFromConfig,
@@ -34,6 +33,7 @@ function searchRangeDraftFromConfig(config: OptimizationConfig): SearchRangeDraf
     minItemLevel: config.minItemLevel,
     maxItemLevel: config.maxItemLevel,
     sync: config.sync,
+    syncDuty: config.syncDuty,
     clanIndex: config.clanIndex ?? 0,
   };
 }

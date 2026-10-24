@@ -14,7 +14,7 @@ import {
   formatFood,
 } from "@/ui/features/job-condition/summary";
 import styles from "./HistoryRecord.module.scss";
-import { jobIconUrl } from "@/ui/services/icons";
+import { GameIcon } from "@/ui/components/game-icon/GameIcon";
 import { clanLabel } from "@/ui/services/clans.ts";
 import { tankGroup } from '@/ui/components/job-selection/JobSelection.tsx';
 
@@ -195,12 +195,7 @@ function HistoryRecordFrame({
         <div className={styles.jobIdentities}>
           {jobs.map((jobId) => (
             <div key={jobId} className={styles.jobIdentity}>
-              <img
-                className={styles.icon}
-                src={jobIconUrl(jobId)}
-                alt={jobId}
-                aria-hidden="true"
-              />
+              <GameIcon jobId={jobId} className={styles.icon} />
               <strong className={styles.job}>{jobSchemas[jobId].name}</strong>
             </div>
           ))}

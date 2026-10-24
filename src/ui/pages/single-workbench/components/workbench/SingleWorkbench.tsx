@@ -18,6 +18,7 @@ import { JobConditionEditor } from "@/ui/features/job-condition/JobConditionEdit
 import {
   useGcdAnalysisController,
   gcdAnalysisKey,
+  gcdAnalysisInputFromConfig,
 } from "@/ui/features/job-condition/gcd-analysis";
 import { analyzeFeasibleGcds } from "@/ui/features/job-condition/analyze-feasible-gcds";
 import { deriveWorkbenchValidation } from "@/ui/features/job-condition/validation";
@@ -30,7 +31,10 @@ import {
   singleDraftFromConfig,
   type SingleDraft,
 } from "../../state/useSingleController";
-import { ResultGearTable } from "@/ui/components/results/gear-table/GearTable";
+import {
+  GearTable,
+  buildResultGearTableRows,
+} from "@/ui/components/results/gear-table/GearTable";
 import {
   CoreMetricBar,
   buildResultMetricEntry,
@@ -38,35 +42,25 @@ import {
 import { SingleEquipmentRestrictions } from "../equipment/SingleEquipmentRestrictions";
 import styles from "./SingleWorkbench.module.scss";
 
-function Summary({ draft }: { draft: SingleDraft }) {
-  const rows = conditionRows(draft.condition, draft.jobId).filter((row) =>
-    [
-      "种族",
-      "装备品级",
-      "同步目标",
-      "GCD",
-      "食物",
-      ...(jobSchemas[draft.jobId].role === "tank"
-        ? ["最低坚韧", "最低减伤", "坚韧目标"]
-        : []),
-    ].includes(row.label),
+function summaryRows(draft: SingleDraft) {
+  const rows = conditionRows(draft.condition, draft.jobId).filter(
+    ({ label }) => label !== "公式等级",
   );
+  return [
+    ...rows,
+    { label: "来源排除", value: `${draft.equipment.excludedSources.length} 项` },
+    { label: "装备排除", value: `${draft.equipment.excludedGearIds?.length ?? 0} 项` },
+    { label: "强制装备", value: `${Object.keys(draft.equipment.forcedGear).length} 项` },
+  ];
+}
+function Summary({ draft }: { draft: SingleDraft }) {
   return (
     <SidePanel.Rows>
-      {rows.map((row) => (
+      {summaryRows(draft).map((row) => (
         <SidePanel.Row key={row.label} label={row.label}>
           {row.value}
         </SidePanel.Row>
       ))}
-      <SidePanel.Row label="来源排除">
-        {draft.equipment.excludedSources.length} 项
-      </SidePanel.Row>
-      <SidePanel.Row label="装备排除">
-        {draft.equipment.excludedGearIds?.length ?? 0} 项
-      </SidePanel.Row>
-      <SidePanel.Row label="强制装备">
-        {Object.keys(draft.equipment.forcedGear).length} 项
-      </SidePanel.Row>
     </SidePanel.Rows>
   );
 }
@@ -82,7 +76,7 @@ function useSingleWorkbenchValue() {
         : singleDraftFromConfig(state.snapshot);
   const config = draft ? compileSingleDraft(draft) : undefined;
   const analysis = useGcdAnalysisController({
-    input: state.phase === "conditions" ? config : undefined,
+    input: state.phase === "conditions" && config ? gcdAnalysisInputFromConfig(config) : undefined,
     analyze: analyzeFeasibleGcds,
   });
   const runtime = { gcdAnalysis: analysis };
@@ -151,6 +145,12 @@ function useWorkbench() {
 export function SingleWorkbenchMain() {
   const { controller, state, title, runtime, validation, historyProps } =
     useWorkbench();
+  const resultRows =
+    state.phase === "result"
+      ? buildResultGearTableRows(state.result, state.snapshot, {
+          onReplacementSelect: state.snapshot.sync ? controller.replace : undefined,
+        })
+      : [];
   return (
     <>
       <header className={styles.heading}>
@@ -210,19 +210,17 @@ export function SingleWorkbenchMain() {
       {state.phase === "result" && (
         <>
           <CoreMetricBar
+            shareData={{
+              jobId: state.snapshot.jobId,
+              effects: state.result.effects,
+              rows: resultRows,
+              summaryRows: summaryRows(singleDraftFromConfig(state.snapshot)),
+            }}
             entries={[{ ...buildResultMetricEntry(state.result), clanIndex: state.snapshot.clanIndex, referenceUrl: resultReferenceUrl(state.result, state.snapshot) }]}
             objective={state.snapshot.objective ?? "dps"}
             showTenacity={jobSchemas[state.snapshot.jobId].role === "tank"}
           />
-          <ResultGearTable
-            result={state.result}
-            config={state.snapshot}
-            onReplacementSelect={
-              state.snapshot.sync !== undefined
-                ? controller.replace
-                : undefined
-            }
-          />
+          <GearTable rows={resultRows} jobId={state.snapshot.jobId} />
         </>
       )}
     </>

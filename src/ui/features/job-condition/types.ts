@@ -1,9 +1,11 @@
-import type { JobId, OptimizationConfig, SyncTarget } from "@/domain";
+import type { JobId, SyncTarget } from "@/domain";
+import type { UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
 
 export interface SearchRangeDraft {
   minItemLevel: number;
   maxItemLevel: number;
   sync?: SyncTarget;
+  syncDuty?: string;
   /** 族群基础属性索引；默认 0（人族·中原之民）。 */
   clanIndex: number;
 }
@@ -75,6 +77,7 @@ export interface CompiledJobCondition {
     | "minItemLevel"
     | "maxItemLevel"
     | "sync"
+    | "syncDuty"
     | "clanIndex"
     | "gcdTarget"
     | "gcdChoices"

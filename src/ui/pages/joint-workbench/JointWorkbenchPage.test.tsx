@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest";
 import * as testSupport from "@/test-utils/workbench.helper.test";
-import { foods, jobSchemas } from "@/domain";
+import { foods, gameData, jobSchemas } from "@/domain";
 import {
   saveCompletedSearchHistory,
 } from "@/ui/services/search-history";
@@ -60,6 +60,37 @@ async function waitForGcdValidation(): Promise<void> {
 }
 
 describe("联合工作台", () => {
+  it("保存实际点击的副本名，联合搜索与 GCD 输入仍只使用原同步目标", async () => {
+    await enterConditions();
+    const group = gameData.sync.groups.find(({ options }) => options.some(({ target }) => target.kind === "itemLevel"))!;
+    const duty = group.options.find(({ target }) => target.kind === "itemLevel")!;
+    testSupport.optimizeJointMock.mockResolvedValue(testSupport.sampleJointResult(testSupport.testJointConfig(["RDM", "BLM"])));
+    testSupport.click(testSupport.buttonNamed("未启用"));
+    await testSupport.settleApp();
+    const popupButton = (text: string) => [...document.querySelectorAll<HTMLButtonElement>('[aria-label="同步设置"] button')].find((button) => normalizedText(button) === text)!;
+    testSupport.click(popupButton("按副本"));
+    await testSupport.settleApp();
+    testSupport.click(popupButton(group.name));
+    await testSupport.settleApp();
+    const display = `${duty.name}(品级${duty.target.value})`;
+    testSupport.click(popupButton(`${duty.name}${duty.target.value}`));
+    await waitForGcdValidation();
+    expect(testSupport.host.querySelector("aside")?.textContent).toContain(display);
+    const gcdInputs = testSupport.findFeasibleGcdsMock.mock.calls.map(([input]) => input);
+    expect(gcdInputs.some((input) => input.sync?.value === duty.target.value)).toBe(true);
+    expect(gcdInputs.every((input) => !Object.hasOwn(input, "syncDuty"))).toBe(true);
+    await testSupport.startSearchAndSettle();
+    const input = testSupport.optimizeJointMock.mock.calls[0]![0];
+    expect(input.jobs.every((job: object) => !Object.hasOwn(job, "syncDuty"))).toBe(true);
+    expect(input.jobs.every((job: { sync: unknown }) => JSON.stringify(job.sync) === JSON.stringify(duty.target))).toBe(true);
+    const saved = vi.mocked(saveCompletedSearchHistory).mock.calls.at(-1)![0];
+    expect(saved.kind === "joint" && saved.config.jobs.every((job) => job.syncDuty === duty.name)).toBe(true);
+    expect(testSupport.host.querySelector("aside")?.textContent).toContain(display);
+    testSupport.click(testSupport.buttonNamed("调整条件"));
+    await testSupport.settleApp();
+    expect(testSupport.buttonNamed(display)).toBeDefined();
+  });
+
   it("返回职业选择位于主内容页头，点击后回到职业选择", async () => {
     await enterConditions();
     const button = testSupport.buttonNamed("返回职业选择");
@@ -254,6 +285,22 @@ describe("联合工作台", () => {
     expect(
       foodSection()!.querySelector('button[role="combobox"]')?.textContent,
     ).toContain(foods[1]!.name);
+  });
+
+  it.each([0, foods[0]!.id])("共享结果右栏保留食物条件 %s，装备表显示实际食物", async (foodId) => {
+    const config = testSupport.testJointConfig(["RDM", "BLM"]);
+    for (const job of config.jobs) job.foodId = foodId;
+    testSupport.seedCompletedJointHistory(config);
+    const result = testSupport.historyStore.records[0]!.result as ReturnType<typeof testSupport.sampleJointResult>;
+    result.commonFood = foods[0]!;
+    testSupport.navigateToJoint();
+    await testSupport.settleApp();
+    testSupport.click(historyAction(historyRecord("赤魔法师", "查看结果"), "查看结果"));
+    await testSupport.settleApp();
+
+    const label = [...testSupport.host.querySelectorAll("aside span")].find((item) => item.textContent === "共享食物");
+    expect(label?.nextElementSibling?.textContent).toBe(foodId === 0 ? "自动选择" : foods[0]!.name);
+    expect(testSupport.host.querySelector('section[aria-label="共享装备"]')?.textContent).toContain(foods[0]!.name);
   });
 
   it("结果可查看；编辑不因数据版本不同而要求确认", async () => {

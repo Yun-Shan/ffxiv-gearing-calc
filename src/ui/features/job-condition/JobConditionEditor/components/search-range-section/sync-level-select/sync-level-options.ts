@@ -4,6 +4,7 @@ import {
   type SyncDutyOption,
   type SyncTarget,
 } from "@/domain";
+import { syncTargetLabel } from "@/ui/services/sync-selection";
 
 export type SyncSelectionMode = "level" | "duty";
 
@@ -17,15 +18,10 @@ export interface SyncOptionCategory<T> {
   options: T[];
 }
 
-export function syncTargetKey(target?: SyncTarget): string {
-  return target ? `${target.kind}:${target.value}` : "disabled";
-}
-
-export function syncTargetLabel(target?: SyncTarget): string {
-  if (!target) return "未启用";
-  return target.kind === "jobLevel"
+export function syncOptionLabel(target?: SyncTarget): string {
+  return target?.kind === "jobLevel"
     ? `仅同步等级 ${target.value}`
-    : `品级 ${target.value}`;
+    : syncTargetLabel(target);
 }
 
 const dutyOptions: SyncDutyOption[] = gameData.sync.groups.flatMap(

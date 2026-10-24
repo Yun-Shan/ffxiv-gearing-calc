@@ -1,4 +1,3 @@
-import type { OptimizationConfig } from "@/domain";
 import type {
   CompiledJobCondition,
   GcdDraft,
@@ -24,6 +23,7 @@ export function compileJobCondition(
     minItemLevel: draft.range.minItemLevel,
     maxItemLevel: draft.range.maxItemLevel,
     sync: draft.range.sync,
+    syncDuty: draft.range.syncDuty,
     clanIndex: draft.range.clanIndex,
     gcdTarget: undefined,
     gcdChoices: draft.gcd.mode === "tiers" ? [...draft.gcd.tiers] : undefined,
@@ -37,7 +37,7 @@ export function compileJobCondition(
       draft.food.mode === "specific"
         ? draft.food.foodId
         : (context.autoFoodId ?? 0),
-  } satisfies Partial<OptimizationConfig> as CompiledJobCondition["config"];
+  };
 
   return { config, levelResolution: "domain" };
 }

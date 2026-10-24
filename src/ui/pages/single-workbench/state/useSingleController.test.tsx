@@ -25,7 +25,7 @@ import {
   useSingleController,
 } from "./useSingleController";
 import { makeConfig } from "@/ui/services/app-config";
-import { gears, type OptimizationResult, type MeldedGear } from "@/domain";
+import { gears, gameData, type OptimizationResult, type MeldedGear } from "@/domain";
 import { type OptimizationResultWithEquivalentGear } from "@/ui/components/results/gear-table/GearTable";
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -66,6 +66,22 @@ afterEach(() => {
   host.remove();
 });
 describe("Single run ownership and nonblocking history", () => {
+  it("retains the selected duty in the snapshot and saved conditions while projecting the domain input", async () => {
+    const duty = gameData.sync.groups.flatMap(({ options }) => options).find(({ target }) => target.kind === "itemLevel")!;
+    mocks.optimize.mockResolvedValue({ score: 1 });
+    act(() => controller.choose("PLD"));
+    act(() => controller.updateDraft(singleDraftFromConfig({ ...makeConfig("PLD"), sync: duty.target, syncDuty: duty.name })));
+    await act(async () => { await controller.start(() => ({ valid: true })); });
+    const input = mocks.optimize.mock.calls[0]![0];
+    expect(Object.isFrozen(input)).toBe(true);
+    expect(input.sync).toEqual(duty.target);
+    expect(input).not.toHaveProperty("syncDuty");
+    expect(mocks.start).toHaveBeenCalledWith(expect.objectContaining({ config: expect.objectContaining({ syncDuty: duty.name, sync: duty.target }) }));
+    expect(controller.state.phase === "result" && controller.state.snapshot.syncDuty).toBe(duty.name);
+    await act(async () => { await controller.edit(); });
+    expect(controller.state.phase === "conditions" && controller.state.draft.condition.range.syncDuty).toBe(duty.name);
+  });
+
   it("restores structured force values into an editable detached draft", () => {
     const forcedValue = {
       id: gears.find((gear) => gear.slot === "head")!.id,

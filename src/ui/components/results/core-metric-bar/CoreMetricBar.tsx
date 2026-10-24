@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Link } from "lucide-react";
 import type { Effects, OptimizationResult } from "@/domain";
 import styles from "./CoreMetricBar.module.scss";
+import { ShareResultButton } from "./components/share-result-button/ShareResultButton";
+import type { ResultShareData } from "../result-share-layout/types";
 
 export interface CoreMetricDifference {
   absolute: number;
@@ -36,6 +38,7 @@ export interface CoreMetricBarProps {
   entries: readonly CoreMetricEntry[];
   showTenacity: boolean;
   compact?: boolean;
+  shareData?: ResultShareData;
 }
 
 export function buildResultMetricEntry(
@@ -136,6 +139,7 @@ export function CoreMetricBar({
   entries,
   showTenacity,
   compact = false,
+  shareData,
 }: CoreMetricBarProps) {
   const showLabels = compact || entries.length > 1;
   function metric(
@@ -222,6 +226,12 @@ export function CoreMetricBar({
         {metric("生命值", (entry) => entry.hp.toFixed(0))}
         {divider}
         <div className={styles.openActions}>
+          {shareData && (
+            <ShareResultButton
+              data={shareData}
+              className={`${styles.openLink} ${styles.shareButton}`}
+            />
+          )}
           {entries.map(
             (entry) =>
               entry.referenceUrl && (

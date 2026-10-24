@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from "vitest";
-import { gears, foods, type OptimizationResult } from "@/domain";
+import { gears, foods, gameData, type OptimizationResult } from "@/domain";
 import { makeConfig } from "./app-config";
 import {
   createSearchHistory,
@@ -533,6 +533,23 @@ describe("completed-only history", () => {
     });
     expect(different.id).not.toBe(first.id);
     expect(stored.size).toBe(2);
+  });
+
+  it("persists the clicked duty in completed snapshots without changing the sync target", async () => {
+    vi.resetModules();
+    const service = await import("./search-history");
+    fakeDatabase();
+    const duty = gameData.sync.groups.flatMap(({ options }) => options).find(({ target }) => target.kind === "itemLevel")!;
+    const record = await service.saveCompletedSearchHistory({
+      kind: "single",
+      config: { ...makeConfig("SAM"), sync: duty.target, syncDuty: duty.name },
+      result: fixtureResult(),
+      startedAtISO: "2026-10-24T00:00:00.000Z",
+      finishedAtISO: "2026-10-24T00:00:01.000Z",
+    });
+    const restored = await service.getSearchHistoryRecord(record.id);
+    expect(restored?.config).toMatchObject({ sync: duty.target, syncDuty: duty.name });
+    expect(() => service.validateSearchHistoryRecord({ ...record, config: { ...record.config, syncDuty: 123 } })).toThrow();
   });
 
   it("omits legacy unsuccessful records from history without rewriting stored data", async () => {

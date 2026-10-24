@@ -1,8 +1,7 @@
 import { jobSchemas, type JobId } from "@/domain";
-import { EquipmentIcon } from "@/ui/components/equipment-icon/EquipmentIcon";
+import { GameIcon } from "@/ui/components/game-icon/GameIcon";
 import { SyncIcon } from "@/ui/components/sync-icon/SyncIcon";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
-import { itemIconId } from "@/ui/services/icons";
 import { useState, type CSSProperties } from "react";
 import { Popover } from "@base-ui/react/popover";
 import { statName, statValue, gearSlotLabels } from "@/ui/services/labels";
@@ -107,7 +106,7 @@ function ReplacementPopover({
                       name={replacement.name}
                       level={replacement.level}
                       source={replacement.source}
-                      iconId={itemIconId(replacement.itemId)}
+                      itemId={replacement.itemId}
                       selected={replacement.replacementSelected}
                       nameSuffix={
                         replacement.replacementDisabled ? (
@@ -173,9 +172,11 @@ function StatCells({
 export function GearTableView({
   rows,
   jobId,
+  presentation = "interactive",
 }: {
   rows: readonly GearTableRow[];
   jobId: JobId;
+  presentation?: "interactive" | "image";
 }) {
   const job = jobSchemas[jobId];
   const statColumns = [
@@ -188,18 +189,21 @@ export function GearTableView({
     "VIT",
   ];
 
-  const hasReplacements = rows.some(
-    (row) =>
-      isGearRow(row) &&
-      (row.replacements?.length ?? 0) > 1 &&
-      row.onReplacementSelect !== undefined,
-  );
+  const hasReplacements =
+    presentation === "interactive" &&
+    rows.some(
+      (row) =>
+        isGearRow(row) &&
+        (row.replacements?.length ?? 0) > 1 &&
+        row.onReplacementSelect !== undefined,
+    );
   return (
     <div
-      className={styles.wrap}
+      className={`${styles.wrap} ${presentation === "image" ? styles.image : ""}`}
       style={
         {
           "--gear-row-count": rows.length,
+          "--gear-stat-count": statColumns.length,
           "--gear-columns": `max-content max-content ${hasReplacements ? "max-content " : ""}max-content max-content minmax(10em, 1fr) ${statColumns.length ? `repeat(${statColumns.length}, max-content)` : "max-content"}`,
         } as CSSProperties
       }
@@ -246,20 +250,25 @@ export function GearTableView({
                 <td>
                   {item.kind === "summary" ? null : (
                     <div className={styles.itemCell}>
-                      <EquipmentIcon
-                        iconId={itemIconId(item.itemId)}
+                      <GameIcon
+                        itemId={item.itemId}
                         className={styles.equipmentIcon}
+                        loading={presentation === "image" ? "eager" : undefined}
                       />
                       <div className={styles.itemText}>
-                        <ItemName
-                          name={item.name}
-                          itemId={item.itemId}
-                          className={
-                            item.kind === "food"
-                              ? styles.foodName
-                              : styles.itemName
-                          }
-                        />
+                        {presentation === "image" ? (
+                          <strong
+                            className={item.kind === "food" ? styles.foodName : styles.itemName}
+                          >
+                            {item.name}
+                          </strong>
+                        ) : (
+                          <ItemName
+                            name={item.name}
+                            itemId={item.itemId}
+                            className={item.kind === "food" ? styles.foodName : styles.itemName}
+                          />
+                        )}
                         {gearRow?.item.weaponPerformance && (
                           <small className={styles.weaponPerformance}>
                             {gearRow.item.weaponPerformance}

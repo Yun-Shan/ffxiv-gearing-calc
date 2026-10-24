@@ -8,17 +8,16 @@ import type {
   Gear,
   GearSlot,
   JobId,
-  JointOptimizationConfig,
   JointOptimizationResult,
   MeldedGear,
   Materia,
-  OptimizationConfig,
   OptimizationResult,
   ResultGear,
   Stat,
   Stats,
   SyncTarget,
 } from "@/domain";
+import type { UiJointOptimizationConfig as JointOptimizationConfig, UiOptimizationConfig as OptimizationConfig } from "./search-config";
 
 const DATABASE_NAME = "ffxiv-gearing-calc";
 const DATABASE_VERSION = 1;
@@ -476,6 +475,8 @@ function validateOptimizationConfig(
   return (
     !Object.hasOwn(value, "syncLevel") &&
     validSync &&
+    (value.syncDuty === undefined ||
+      (sync !== undefined && typeof value.syncDuty === "string" && value.syncDuty.length > 0)) &&
     isJobId(value.jobId) &&
     isFiniteNumber(value.minItemLevel) &&
     isFiniteNumber(value.maxItemLevel) &&

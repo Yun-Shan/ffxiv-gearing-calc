@@ -5,7 +5,6 @@ import type {
   GearSlot,
 } from "@/domain";
 import { EquipmentOptionRow } from "@/ui/components/equipment-option-row/EquipmentOptionRow";
-import { itemIconId } from "@/ui/services/icons";
 import { ForcedMateriaSlots } from "../forced-materia-slots/ForcedMateriaSlots";
 import styles from "../../EquipmentEditor.module.scss";
 
@@ -32,7 +31,7 @@ export function ForcedEquipmentRow({
         className={styles.forcedEquipmentRow}
         iconInName
         slot={slot}
-        iconId={itemIconId(gear.id)}
+        itemId={gear.id}
         name={gear.name}
         level={gear.level}
         source={gear.source}
