@@ -41,16 +41,3 @@ export function searchMessageText(message: string): string {
     .replace(/NaN/g, "无效数值")
     .replace(/Infinity/g, "无穷值");
 }
-
-export function searchProgressText(message: string): string {
-  if (message.includes("基线")) {
-    const jobId = jobIds.find((id) => new RegExp(`\\b${id}\\b`).test(message));
-    return `正在计算${jobId ? jobSchemas[jobId].name : "各职业"}的单独最优配装…`;
-  }
-  if (message.includes("候选准备完成")) return "候选准备完成，正在求解配装…";
-  if (message.includes("还原并复核")) return "正在还原并复核结果…";
-  if (message.includes("最高坚韧")) return "正在优化最高坚韧方案…";
-  if (message.includes("GCD") || message.includes("档位")) return searchMessageText(message);
-  if (message.includes("incumbent")) return "已找到候选配装，正在确认最优结果…";
-  return "正在核验候选配装与约束…";
-}

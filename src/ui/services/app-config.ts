@@ -8,7 +8,6 @@ import {
   type JobId,
   type OptimizationConfig,
 } from "@/domain";
-import type { SingleGcdMode } from "./types";
 
 export type CommonSlot = GearSlot;
 
@@ -64,13 +63,4 @@ export function makeConfig(jobId: JobId): OptimizationConfig {
     sharedSlots: [],
     foodId: 0,
   };
-}
-
-export function singleGcdModeForConfig(
-  config: OptimizationConfig,
-): SingleGcdMode {
-  if (config.speedMin !== undefined || config.speedMax !== undefined)
-    return "speed";
-  if (config.gcdChoices !== undefined) return "tiers";
-  return "any";
 }

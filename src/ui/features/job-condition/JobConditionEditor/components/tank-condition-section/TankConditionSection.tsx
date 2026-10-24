@@ -45,9 +45,9 @@ export function TankConditionSection() {
           disabled={readOnly}
           options={[
             { value: "any", label: "不限" },
-            { value: "tenacity", label: "最低坚韧" },
-            { value: "reduction", label: "最低减伤" },
-            { value: "maximize", label: "最大化坚韧" },
+            { value: "maximize", label: "最大化减伤百分比" },
+            { value: "reduction", label: "最低减伤百分比" },
+            { value: "tenacity", label: "最低坚韧数值" },
           ]}
           onChange={(value) => {
             const next = value as Strategy;

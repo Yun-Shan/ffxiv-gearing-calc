@@ -52,9 +52,9 @@
 }
 
 .strategy {
-  width: tokens.$condition-strategy-width;
-  min-width: tokens.$condition-strategy-width;
-  max-width: tokens.$condition-strategy-width;
+  width: var(--condition-strategy-width, #{tokens.$condition-strategy-width});
+  min-width: var(--condition-strategy-width, #{tokens.$condition-strategy-width});
+  max-width: var(--condition-strategy-width, #{tokens.$condition-strategy-width});
 }
 
 .strategyLabel {

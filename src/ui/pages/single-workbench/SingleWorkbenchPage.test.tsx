@@ -164,7 +164,7 @@ describe("坚韧策略与通用输入", () => {
     expect(support.host.textContent).toContain("2,300");
     expect(support.host.textContent).toContain("12%");
     expect(support.buttonNamed("开始搜索").disabled).toBe(true);
-    await chooseTankStrategy("最大化坚韧");
+    await chooseTankStrategy("最大化减伤百分比");
     expect(support.host.textContent).not.toContain("最低坚韧值");
     expect(support.host.textContent).not.toContain("最低减伤比例");
     await support.settleApp(220);
@@ -177,14 +177,14 @@ describe("坚韧策略与通用输入", () => {
   });
   it("最低值策略空值与越界值无效，切换不限清除约束", async () => {
     support.chooseJob("PLD");
-    await chooseTankStrategy("最低减伤");
+    await chooseTankStrategy("最低减伤百分比");
     support.inputValue("最低减伤比例", "101");
     await support.settleApp();
     expect(support.buttonNamed("开始搜索").disabled).toBe(true);
     support.inputValue("最低减伤比例", "");
     await support.settleApp();
     expect(support.host.textContent).toContain("请输入最低减伤比例");
-    await chooseTankStrategy("最低坚韧");
+    await chooseTankStrategy("最低坚韧数值");
     support.inputValue("最低坚韧值", "-1");
     await support.settleApp();
     expect(support.buttonNamed("开始搜索").disabled).toBe(true);

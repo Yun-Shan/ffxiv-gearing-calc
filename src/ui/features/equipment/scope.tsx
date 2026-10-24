@@ -105,8 +105,6 @@ export function useExcludedSources() {
     sourceOptions: value.catalog.sourceOptions ?? [],
     setSources: (sources: string[]) =>
       value.dispatch({ type: "set-source-exclusions", sources }),
-    add: (source: string) =>
-      value.dispatch({ type: "add-source-exclusion", source }),
     remove: (source: string) =>
       value.dispatch({ type: "remove-source-exclusion", source }),
   };

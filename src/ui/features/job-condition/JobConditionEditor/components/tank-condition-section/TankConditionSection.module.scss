@@ -1,4 +1,5 @@
 .section {
+  --condition-strategy-width: 160px;
   display: grid;
   grid-template-columns: 72px minmax(0, 1fr);
   gap: 4px;
