@@ -1,6 +1,7 @@
 import { access, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { loadLocalEnv, requireLocalEnv } from "../local-env.mjs";
 import { allowsGenericQueries } from "../mcp-query-validation.mjs";
 import { createMcpQueryHelpers } from "./query-helpers.mjs";
 import { McpClient } from "./transport.mjs";
@@ -25,13 +26,13 @@ import {
   supportedJobIds,
 } from "../mcp-lumina-import.mjs";
 
-const defaultCommand = "F:\\Workspace\\VisualStudio\\ffxiv\\mcp\\mcp-ffxiv-lumina\\publish\\mcp-lumina.exe";
 export async function queryMcpLumina({ upstreamRoot: upstreamRootOption, command: commandOption, concurrency: concurrencyOption } = {}) {
+  loadLocalEnv();
   const root = resolve(import.meta.dirname, "../..");
   const upstreamRoot = resolve(
     upstreamRootOption ?? process.env.FFXIV_GEARING_ROOT ?? resolve(root, "reference", "ffxiv-gearing"),
   );
-  const command = commandOption ?? process.env.FFXIV_MCP_LUMINA_COMMAND ?? defaultCommand;
+  const command = commandOption ?? requireLocalEnv("FFXIV_MCP_LUMINA_COMMAND");
   const concurrency = Math.max(1, Number(concurrencyOption ?? process.env.FFXIV_MCP_LUMINA_CONCURRENCY ?? 4));
   const supportedJobs = supportedJobIds;
   const fields = (values) => values.join(",");
@@ -58,10 +59,10 @@ export async function queryMcpLumina({ upstreamRoot: upstreamRootOption, command
 
   const { queryRows, queryAllRows, validateResistanceWeaponAdjustRows, describeQuery, validateSyncLevelSchema, searchClassJobs } = createMcpQueryHelpers({ concurrency });
 
+  if ((command.includes("/") || command.includes("\\")) && !(await fileExists(command)))
+    throw new Error(`找不到 Lumina MCP 可执行文件：${command}。请在 local.env 或环境变量中设置 FFXIV_MCP_LUMINA_COMMAND。`);
   const client = new McpClient({ command, cwd: root, environment: process.env });
   try {
-    if (!(await fileExists(command)) && command.includes("\\"))
-      throw new Error(`找不到 Lumina MCP 可执行文件：${command}。请设置 FFXIV_MCP_LUMINA_COMMAND。`);
     const initialization = await client.initialize();
     const health = (await client.callTool("health", {})).value;
     const genericQueriesAvailable = allowsGenericQueries(health);

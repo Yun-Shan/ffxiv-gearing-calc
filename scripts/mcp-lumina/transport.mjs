@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { requireLocalEnv } from "../local-env.mjs";
 
 export function parseJsonRpcBuffer(state) {
   const messages = [];
@@ -32,9 +33,9 @@ export class McpClient {
       stdio: ["pipe", "pipe", "inherit"],
       env: {
         ...environment,
-        McpLumina__GamePath: process.env.McpLumina__GamePath ?? "F:\\Game\\FF14\\最终幻想XIV",
-        McpLumina__LanguageDefault: process.env.McpLumina__LanguageDefault ?? "chs",
-        McpLumina__SchemaPath: process.env.McpLumina__SchemaPath ?? "F:\\Workspace\\VisualStudio\\ffxiv\\mcp\\EXDSchema",
+        McpLumina__GamePath: requireLocalEnv("McpLumina__GamePath", environment),
+        McpLumina__LanguageDefault: environment.McpLumina__LanguageDefault ?? "chs",
+        McpLumina__SchemaPath: requireLocalEnv("McpLumina__SchemaPath", environment),
       },
     });
     this.process.on("error", (error) => {

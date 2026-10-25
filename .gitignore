@@ -6,6 +6,8 @@ coverage/
 /.tmp/
 
 reference/
+
+# Machine-specific paths; use local.env.example as the shared template.
 local.env
 
 # Local environment and generated logs

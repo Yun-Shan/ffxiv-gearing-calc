@@ -1,5 +1,6 @@
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { loadLocalEnv, requireLocalEnv } from "./local-env.mjs";
 import { supportedJobIds } from "./mcp-lumina-import.mjs";
 import { queryMcpLumina } from "./query-mcp-lumina.mjs";
 import { validateMcpQueryResult } from "./data-update/mcp-snapshot.mjs";
@@ -15,9 +16,7 @@ import {
 } from "./data-update/upstream-reference.mjs";
 
 const root = resolve(import.meta.dirname, "..");
-const defaultUpstreamRoot = resolve(
-  process.env.FFXIV_GEARING_ROOT ?? resolve(root, "reference", "ffxiv-gearing"),
-);
+const defaultUpstreamRoot = resolve(root, "reference", "ffxiv-gearing");
 const defaultOutputPath = resolve(root, "src", "data", "generated-data.bin");
 const supportedJobs = supportedJobIds;
 
@@ -48,10 +47,14 @@ function rejectObsoleteDataUpdateInputs(args = process.argv.slice(2)) {
 }
 
 export async function updateData({ upstreamRoot: upstreamRootOption, outputPath: outputPathOption } = {}) {
+  loadLocalEnv();
   rejectObsoleteDataUpdateInputs(arguments.length === 0 ? process.argv.slice(2) : []);
+  // Fail before cloning/pulling the reference checkout when local setup is absent.
+  for (const name of ["FFXIV_MCP_LUMINA_COMMAND", "McpLumina__GamePath", "McpLumina__SchemaPath"])
+    requireLocalEnv(name);
   const context = {
     root,
-    upstreamRoot: resolve(upstreamRootOption ?? defaultUpstreamRoot),
+    upstreamRoot: resolve(upstreamRootOption ?? process.env.FFXIV_GEARING_ROOT ?? defaultUpstreamRoot),
     outputPath: resolve(outputPathOption ?? defaultOutputPath),
     repository: referenceRepository,
     importedAt: new Date().toISOString(),
