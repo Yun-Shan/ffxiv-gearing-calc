@@ -24,8 +24,8 @@ export type JointLoadoutV3Options = {
   /** 对严格劣于其他共享首饰对的候选执行范围有限且不损害证明能力的内部剪枝。 */
   sharedAccessoryPairDominance?: boolean;
   foodStrategy: "shared" | "independent";
-  /** 默认为原始伤害；DPS 使用精确的乘积与 GCD 分数。 */
-  objective?: "damage" | "dps";
+  /** DPS 使用精确的乘积与 GCD 分数。 */
+  objective: "damage" | "dps";
   /** 可选的墙钟时间预算，供测试和验收运行使用，最多为 235 秒。 */
   maxSearchMs?: number;
   /** 为受限内部 MIP 结果提供先进先出缓存，默认最多 2048 项。 */

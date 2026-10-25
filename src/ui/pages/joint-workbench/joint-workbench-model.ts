@@ -9,7 +9,6 @@ import { freezeSnapshot } from "@/ui/services/snapshots/freeze-snapshot";
 import { buildGearTableGearItem } from "@/ui/components/results/gear-table/result-gear-table-rows";
 import {
   gears,
-  calculationJobLevelFor,
   jobSchemas,
   slotsForJob,
   type GearSlot,
@@ -58,7 +57,7 @@ export function freezeJointConfig(
 }
 
 export function objectiveLabel(
-  objective: "damage" | "dps" | undefined,
+  objective: "damage" | "dps",
 ): string {
   return objective === "damage" ? "每威力伤害期望" : "每秒每威力伤害期望";
 }
@@ -79,11 +78,7 @@ export function sharedIssues(draft: JointWorkbenchDraft): ValidationIssue[] {
   return [
     ...rangeIssues,
     ...draft.shared.equipment.commonSlots
-      .filter((slot) =>
-        slot === "rings"
-          ? !(validSlots.has("ring") && validSlots.has("ring2"))
-          : !validSlots.has(slot),
-      )
+      .filter((slot) => !validSlots.has(slot))
       .map((slot) => ({
         code: "shared.slot.unsupported",
         message:
@@ -132,12 +127,13 @@ export function parseJointProgressStats(
     ["upperBoundPrunes", /上界剪枝[=:：]\s*([\d,]+)/],
     ["innerMipSolves", /内层 MIP[=:：]\s*([\d,]+)/],
     ["parentResultReuses", /父结果复用[=:：]\s*([\d,]+)/],
-    ["elapsedMs", /耗时[=:：]\s*([\d,.]+)\s*ms/],
   ];
   for (const [key, pattern] of patterns) {
     const value = parseNumber(pattern);
     if (value !== undefined) stats[key] = value;
   }
+  const elapsed = /耗时[=:：]\s*([^\s;；]+)\s*ms/.exec(message);
+  if (elapsed) stats.elapsedMs = Number(elapsed[1]!.replaceAll(",", ""));
   const objectiveLabel =
     /归一化目标\s*[=:：]\s*(\d+\s*\/\s*\d+|[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)(?=\s*[;；]|$)/.exec(
       message,
@@ -163,7 +159,7 @@ export function equipmentRestrictionRows(config: OptimizationConfig) {
   return [
     {
       label: "来源排除",
-      value: config.excludedSources.length
+      value: config.excludedSources?.length
         ? config.excludedSources.join("、")
         : "未设置",
     },
@@ -173,7 +169,7 @@ export function equipmentRestrictionRows(config: OptimizationConfig) {
     },
     {
       label: "强制装备",
-      value: String(Object.keys(config.forcedGear).length) + " 项",
+      value: String(Object.keys(config.forcedGear ?? {}).length) + " 项",
     },
   ];
 }
@@ -217,14 +213,12 @@ export function jointSharedSummaryRows(config: JointOptimizationConfig) {
   const first = config.jobs[0]!;
   const sharedEquipment = {
     ...first,
-    excludedSources: [
-      ...new Set(config.jobs.flatMap((job) => job.excludedSources)),
-    ],
+    excludedSources: [...(first.excludedSources ?? [])],
     excludedGearIds: (first.excludedGearIds ?? []).filter((id) =>
       config.jobs.every((job) => job.excludedGearIds?.includes(id)),
     ),
     forcedGear: Object.fromEntries(
-      Object.entries(first.forcedGear).filter(([slot]) =>
+      Object.entries(first.forcedGear ?? {}).filter(([slot]) =>
         isSlotShared(slot as GearSlot, config.commonSlots),
       ),
     ),
@@ -232,7 +226,7 @@ export function jointSharedSummaryRows(config: JointOptimizationConfig) {
   return [
     {
       label: "种族",
-      value: clanLabel(first.clanIndex ?? 0),
+      value: clanLabel(first.clanIndex),
     },
     {
       label: "装备品级",
@@ -268,9 +262,7 @@ export function sharedGearRows(
   const calculated = job && result.jobResults[job.jobId];
   const sync = calculated
     ? {
-        jobLevel:
-          calculated.calculationLevel ??
-          calculationJobLevelFor({ jobId: job.jobId, sync: job.sync }),
+        jobLevel: calculated.calculationLevel,
         sync: job.sync,
       }
     : undefined;
@@ -278,14 +270,7 @@ export function sharedGearRows(
     (items ?? []).map((gear, index) => ({
       key:
         "shared-" + commonSlot + "-" + gear.slot + "-" + gear.id + "-" + index,
-      slotLabel:
-        commonSlot === "rings"
-          ? index === 0
-            ? "戒指 1"
-            : "戒指 2"
-          : commonGearSlotLabels[
-              commonSlot as keyof typeof commonGearSlotLabels
-            ],
+      slotLabel: commonGearSlotLabels[commonSlot as keyof typeof commonGearSlotLabels],
       item: buildGearTableGearItem(gear, gear.slot, sync),
       marker: "共享",
     })),

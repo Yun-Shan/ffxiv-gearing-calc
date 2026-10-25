@@ -279,7 +279,7 @@ test("callback telemetry normalizes large counts and omits malformed numeric fie
   }
   expect(events).toContainEqual(
     expect.objectContaining({
-      elapsedMs: 500,
+      elapsedMs: 1200,
       objectiveValue: 6,
       bestBound: 8,
       gap: 0.25,

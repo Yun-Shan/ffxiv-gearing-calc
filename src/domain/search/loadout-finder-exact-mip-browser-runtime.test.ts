@@ -42,6 +42,7 @@ test("exact MIP dispatches to the browser HiGHS loader when the Node runtime mar
       DLY: 0,
     };
     const options: ExactMipOptions = {
+      clanIndex: 0,
       job: "RDM",
       jobLevel: 100,
       attributeIds,

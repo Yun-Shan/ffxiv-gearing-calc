@@ -12,6 +12,7 @@ import type { JobId, OptimizationConfig } from "./types";
 
 function lowLevelForcedConfig(jobId: JobId, foodId: number): OptimizationConfig {
   const config: OptimizationConfig = {
+    clanIndex: 0,
     jobId,
     sync: { kind: "jobLevel", value: 50 },
     minItemLevel: 90,
@@ -110,6 +111,8 @@ describe("optimizer public adapter final boundaries", () => {
       expect(jobSchemas.RPR.mainStat).toBe("STR");
     }
     const jobConfig = (jobId: JobId): OptimizationConfig => ({
+      clanIndex: 0,
+      objective: "damage",
       jobId,
       minItemLevel: 15,
       maxItemLevel: 20,
@@ -120,6 +123,7 @@ describe("optimizer public adapter final boundaries", () => {
     });
 
     await expect(runJointOptimizationLocally({
+      objective: "damage",
       jobs: [jobConfig(firstJob), jobConfig(secondJob)],
       commonSlots: [],
       foodStrategy: "independent",
@@ -163,50 +167,18 @@ describe("optimizer public adapter final boundaries", () => {
       minTenacity: baseline!.stats.TEN!,
     };
     expect(findFeasibleGcdsLocally(exactBounds)).toEqual([baseline!.effects.gcd]);
-    expect(findFeasibleGcdsLocally({
+    expect(() => findFeasibleGcdsLocally({
       ...exactBounds,
       speedMin: baseline!.stats.SKS! + 1,
-    })).toEqual([]);
-    expect(findFeasibleGcdsLocally({
+    })).toThrow("战斗速度范围无效");
+    expect(() => findFeasibleGcdsLocally({
       ...exactBounds,
       speedMax: baseline!.stats.SKS! - 1,
-    })).toEqual([]);
+    })).toThrow("战斗速度范围无效");
     expect(findFeasibleGcdsLocally({
       ...exactBounds,
       minTenacity: baseline!.stats.TEN! + 1,
     })).toEqual([]);
   });
 
-  it("treats toughnessMin as the minTenacity alias and rejects it for a healer", async () => {
-    const tankFood = foods.find((food) => (food.stats.TEN ?? 0) > 0);
-    expect(tankFood).toBeDefined();
-    const tankConfig = lowLevelForcedConfig("PLD", tankFood!.id);
-    const baseline = await runOptimizationLocally(tankConfig);
-    expect(baseline).toBeDefined();
-    const tenacity = baseline!.stats.TEN!;
-    const aliasConfig = { ...tankConfig, toughnessMin: tenacity };
-    const explicitConfig = { ...tankConfig, minTenacity: tenacity };
-
-    expect(findFeasibleGcdsLocally(aliasConfig)).toEqual([baseline!.effects.gcd]);
-    expect(findFeasibleGcdsLocally(explicitConfig)).toEqual([baseline!.effects.gcd]);
-
-    const aliasResult = await runOptimizationLocally(aliasConfig);
-    const explicitResult = await runOptimizationLocally(explicitConfig);
-    expect(aliasResult).toBeDefined();
-    expect(explicitResult).toBeDefined();
-    expect(aliasResult!.stats).toEqual(explicitResult!.stats);
-    expect(aliasResult!.effects).toEqual(explicitResult!.effects);
-    expect(aliasResult!.score).toBe(explicitResult!.score);
-    await expect(runOptimizationLocally({
-      ...aliasConfig,
-      toughnessMin: tenacity + 1,
-    })).resolves.toBeUndefined();
-
-    const healerFood = foods.find((food) => (food.stats.PIE ?? 0) > 0);
-    expect(healerFood).toBeDefined();
-    await expect(runOptimizationLocally({
-      ...lowLevelForcedConfig("WHM", healerFood!.id),
-      toughnessMin: 1,
-    })).rejects.toThrow("职业 WHM 不使用坚韧属性");
-  });
 });

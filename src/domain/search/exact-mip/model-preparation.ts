@@ -146,7 +146,7 @@ export async function prepareExactMipModel(
     options.job,
     options.jobLevel,
     options.statIndexes,
-    options.clanIndex ?? 0,
+    options.clanIndex,
   );
   const zeroFactors = factorEvaluator(new Array<number>(options.attributeIds.length).fill(0));
   if (zeroFactors === undefined) throw new Error(`职业 ${options.job} 没有整数伤害因子公式`);
@@ -315,9 +315,7 @@ export async function prepareExactMipModel(
     }
   }
 
-  const useDps = options.objective === undefined
-    ? options.constraints?.gcd === undefined
-    : options.objective === "dps";
+  const useDps = options.objective === "dps";
   const gcdGroup = groups.find((group) => group.name === "gcd")!;
   if (!useDps) {
     for (const factorClass of gcdGroup.classes) factorClass.q = 0;

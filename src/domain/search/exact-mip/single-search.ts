@@ -35,12 +35,16 @@ import { foodForResult } from "./result-decoding.ts";
 import { getAttributeVector } from "./attributes.ts";
 import { betterFactors } from "./factor-model.ts";
 import { getMemoryUsageSnapshot } from "../memory-usage.ts";
+import { assertClanIndex } from "../../clans.ts";
 
 export async function findBestLoadoutExactMip(
   options: ExactMipOptions,
 ): Promise<ExactMipResult | undefined> {
   const startedAt = performance.now();
   throwIfCancelled(options.isCancelled);
+  assertClanIndex(options.clanIndex);
+  if (options.objective !== "damage" && options.objective !== "dps")
+    throw new TypeError("搜索目标必须为 damage 或 dps");
   const maxSearchMs = options.maxSearchMs;
   if (maxSearchMs !== undefined && (!Number.isFinite(maxSearchMs) || maxSearchMs <= 0)) {
     throw new RangeError("maxSearchMs 必须是正有限值");
@@ -90,9 +94,7 @@ export async function findBestLoadoutExactMip(
     if (initialModel === undefined) return undefined;
     const initialBuildMs = performance.now() - modelPreparationStartedAt;
     const greedyStartedAt = performance.now();
-    const candidateUseDps = options.objective === undefined
-      ? options.constraints?.gcd === undefined
-      : options.objective === "dps";
+    const candidateUseDps = options.objective === "dps";
     const candidateGreedyStart = greedyMipStart(
       options,
       initialModel,
@@ -114,7 +116,7 @@ export async function findBestLoadoutExactMip(
         pruning = pruneCandidatesByIncumbentUpperBound(
           options,
           initialModel,
-          createIntegerDamageFactorEvaluator(options.job, options.jobLevel, options.statIndexes, options.clanIndex ?? 0),
+          createIntegerDamageFactorEvaluator(options.job, options.jobLevel, options.statIndexes, options.clanIndex),
           candidateUseDps,
           candidateGreedyStart,
           boundDeadline,

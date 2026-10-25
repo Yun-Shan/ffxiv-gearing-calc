@@ -190,6 +190,7 @@ function exhaustive(
 
 function exactMipOptions(overrides: Partial<ExactMipOptions> = {}): ExactMipOptions {
   return {
+    clanIndex: 0,
     job: "RDM",
     jobLevel: 100,
     attributeIds,
@@ -198,7 +199,7 @@ function exactMipOptions(overrides: Partial<ExactMipOptions> = {}): ExactMipOpti
     foods,
     equipmentAttributeExtractor,
     evaluationFunction: evaluate,
-    objective: "damage",
+    objective: "damage" as const,
     ...overrides,
   };
 }
@@ -213,13 +214,14 @@ function canonicalOptions(overrides: Partial<ExactMipOptions> = {}): ExactMipOpt
     };
   }));
   return markCanonicalEvaluatorCandidateUpperBound({
+    clanIndex: 0,
     job: "RDM",
     jobLevel: 100,
     attributeIds,
     statIndexes,
     foods,
     evaluationFunction: evaluate,
-    objective: "damage",
+    objective: "damage" as const,
     maxSearchMs: 20_000,
     ...overrides,
     slots: canonicalSlots,
@@ -450,7 +452,7 @@ test("canonical candidate upper bound preserves the optimum across multiple GCDs
       ],
     ],
     foods: [foods[0]!],
-    objective: "dps",
+    objective: "dps" as const,
     constraints: { gcdChoices: [targetGcd, otherGcd], speedMin: speed, speedMax: speed },
     speedAttributeId: 5,
     gcdToSpeedRange: (gcd) => equippedSpeedRangeForGcd("RDM", 100, gcd),
@@ -458,7 +460,7 @@ test("canonical candidate upper bound preserves the optimum across multiple GCDs
   const oracleOptions = canonicalOptions({
     slots: rawSlots,
     foods: [foods[0]!],
-    objective: "dps",
+    objective: "dps" as const,
     constraints: { gcdChoices: [targetGcd, otherGcd], speedMin: speed, speedMax: speed },
     speedAttributeId: 5,
     gcdToSpeedRange: (gcd) => equippedSpeedRangeForGcd("RDM", 100, gcd),
@@ -643,6 +645,8 @@ test("exact MIP matches exhaustive v2-style DPS and food evaluation", async () =
   const expected = exhaustive();
   assert.ok(expected);
   const result = await findBestLoadoutExactMip({
+    clanIndex: 0,
+    objective: "dps" as const,
     job: "RDM" as Job,
     jobLevel: 100 as JobLevel,
     attributeIds,
@@ -693,7 +697,7 @@ test("exact MIP enforces unique ring item IDs across meld variants and permits o
       [ringCandidate(uniqueB, 1, true), ringCandidate(weakB, 1, false)],
     ],
     foods: [foods[0]!],
-    objective: "damage",
+    objective: "damage" as const,
     maxSearchMs: 20_000,
   }));
   assert.ok(uniqueResult);
@@ -710,7 +714,7 @@ test("exact MIP enforces unique ring item IDs across meld variants and permits o
       [ringCandidate(ordinaryB, 1, false), ringCandidate(weakB, 1, false)],
     ],
     foods: [foods[0]!],
-    objective: "damage",
+    objective: "damage" as const,
     maxSearchMs: 20_000,
   }));
   assert.ok(ordinaryResult);
@@ -765,7 +769,7 @@ test("ring Pareto frontiers preserve a weaker unique ring needed to pair with th
   const result = await findBestLoadoutExactMip(exactMipOptions({
     slots: [[weapon], optimizedFirstSlot, oppositeSlot],
     foods: [foods[0]!],
-    objective: "damage",
+    objective: "damage" as const,
     maxSearchMs: 20_000,
   }));
 
@@ -794,7 +798,7 @@ test("exact MIP removes symmetric ring-slot assignments while keeping the exact 
   const options = exactMipOptions({
     slots: [[weapon], [secondRing0, firstRing0], [firstRing1, secondRing1]],
     foods: [foods[0]!],
-    objective: "damage",
+    objective: "damage" as const,
     maxSearchMs: 20_000,
   });
   Reflect.deleteProperty(options, "equipmentAttributeExtractor");
@@ -932,7 +936,7 @@ test("parallel baseline worker preserves solver-side unique ring markers in seri
       slots: [[workerWeapon], [firstRing], [secondRing]],
       equipmentAttributeExtractor: undefined,
       foods: [foods[0]!],
-      objective: "damage",
+      objective: "damage" as const,
       maxSearchMs: 20_000,
     })], {
       remainingMs: () => 20_000,
@@ -971,7 +975,7 @@ test("exact MIP falls back to complete factor classes when reachable-value work 
     result = await findBestLoadoutExactMip(exactMipOptions({
       slots: wideSlots,
       foods: manyFoods,
-      objective: "damage",
+      objective: "damage" as const,
       maxSearchMs: 30_000,
       onSolverProgress: (event) => progressEvents.push(event),
     }));
@@ -999,6 +1003,8 @@ test("exact MIP honors fixed GCD and lexicographic maximum toughness", async () 
   assert.ok(expected);
   assert.ok("maximum" in expected);
   const result = await findBestLoadoutExactMip({
+    clanIndex: 0,
+    objective: "dps" as const,
     job: "RDM" as Job,
     jobLevel: 100 as JobLevel,
     attributeIds,
@@ -1022,6 +1028,8 @@ test("exact MIP honors fixed GCD and lexicographic maximum toughness", async () 
 test("exact MIP worker returns its result through structured clone", async () => {
   const worker = new Worker(new URL("scripts/node-tests/exact-mip-worker.mjs", `file:///${process.cwd().replaceAll("\\", "/")}/`), {
     workerData: {
+      clanIndex: 0,
+      objective: "dps" as const,
       generatedDataBinary: globalThis.__FFXIV_GENERATED_DATA_BINARY__,
       job: "RDM",
       jobLevel: 100,
@@ -1060,6 +1068,8 @@ test("exact MIP rejects a job absent from generated game data", async () => {
   const evaluate = createDamageGcdVectorEvaluator(unsupportedJob, jobLevel, statIndexes, maximums);
   assert.throws(() => evaluate([]), /未知职业/);
   await assert.rejects(findBestLoadoutExactMip({
+    clanIndex: 0,
+    objective: "dps" as const,
     job: unsupportedJob,
     jobLevel,
     attributeIds,
@@ -1124,6 +1134,8 @@ test("exact MIP preserves BLU INT-based weapon damage", async () => {
   let result: Awaited<ReturnType<typeof findBestLoadoutExactMip>>;
   try {
     result = await findBestLoadoutExactMip({
+      clanIndex: 0,
+      objective: "dps" as const,
       job: "BLU" as Job,
       jobLevel,
       attributeIds,
@@ -1192,7 +1204,7 @@ test("exact MIP prunes unreachable non-BLU weapon classes with food modifiers an
     result = await findBestLoadoutExactMip(exactMipOptions({
       slots: weaponSlots,
       foods: [weaponFood],
-      objective: "damage",
+      objective: "damage" as const,
       onSolverProgress: (event) => progressEvents.push(event),
     }));
   } finally {
@@ -1245,7 +1257,7 @@ test("duplicate food weapon modifiers skip the whole weapon reachability axis", 
   try {
     result = await findBestLoadoutExactMip(exactMipOptions({
       foods: [duplicateWeaponFood],
-      objective: "damage",
+      objective: "damage" as const,
       onSolverProgress: (event) => progressEvents.push(event),
     }));
   } finally {
@@ -1272,7 +1284,7 @@ test("food percentages include base attributes before truncation and caps", asyn
   const offsetFoods = foods.map(item => ({ ...item, baseParams: item.baseParams.map(param => ({ ...param, baseValue: 420 })) }));
   const candidates = slots[0]!.flatMap(first => slots[1]!.flatMap(second => offsetFoods.map(food => ({ selection: [first, second], food, score: product([first, second], food) }))));
   const expected = candidates.reduce((best, candidate) => candidate.score > best.score ? candidate : best);
-  const result = await findBestLoadoutExactMip({ job: "RDM", jobLevel: 100, attributeIds, statIndexes, slots, foods: offsetFoods, equipmentAttributeExtractor, evaluationFunction: evaluate, objective: "damage" });
+  const result = await findBestLoadoutExactMip({ clanIndex: 0, job: "RDM", jobLevel: 100, attributeIds, statIndexes, slots, foods: offsetFoods, equipmentAttributeExtractor, evaluationFunction: evaluate, objective: "damage" as const });
   assert.ok(result);
   assert.equal(product(result.selection, result.food!), expected.score);
   assert.equal(result.damage, evaluate(attributesFor(result.selection, result.food!))!.damage);
@@ -1325,7 +1337,7 @@ test("joint factor MIP rejects a shared slot with no common physical equipment",
     sharedFood: false,
     equipmentIdentity: (item) => String(item.itemId),
     foodIdentity: (item) => String(item.itemId),
-    objective: "damage",
+    objective: "damage" as const,
     maxSearchMs: 20_000,
   });
 
@@ -1363,6 +1375,7 @@ test("exact MIP submits a complete capped-food and multiple-GCD start, then matc
   let result: Awaited<ReturnType<typeof findBestLoadoutExactMip>>;
   try {
     result = await findBestLoadoutExactMip({
+      clanIndex: 0,
       job: "RDM" as Job,
       jobLevel: 100 as JobLevel,
       attributeIds,
@@ -1375,7 +1388,7 @@ test("exact MIP submits a complete capped-food and multiple-GCD start, then matc
       equipmentAttributeExtractor,
       evaluationFunction: evaluate,
       gcdToSpeedRange: (gcd) => equippedSpeedRangeForGcd("RDM", 100, gcd),
-      objective: "dps",
+      objective: "dps" as const,
       onSolverProgress: (event) => progressEvents.push(event),
     });
   } finally {
@@ -1436,6 +1449,8 @@ test("exact MIP submits a complete capped-food and multiple-GCD start, then matc
 
 test("exact MIP rejects cancelled work and returns no solution for empty or unsupported GCD choices", async () => {
   const common = {
+    clanIndex: 0,
+    objective: "dps" as const,
     job: "RDM" as Job,
     jobLevel: 100 as JobLevel,
     attributeIds,
@@ -1798,7 +1813,7 @@ test("conditional resource support remains conservative for BLU main-stat weapon
     foods: [],
     evaluationFunction: createDamageGcdVectorEvaluator("BLU", jobLevel, statIndexes),
     candidateItemLevelRanges: [{ min: 775, max: 795 }],
-    objective: "dps",
+    objective: "dps" as const,
   });
   const result = await findBestLoadoutExactMip(options);
   assert.ok(result);

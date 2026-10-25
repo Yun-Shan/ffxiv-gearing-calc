@@ -16,6 +16,8 @@ import { resolveImportedGearset } from "./fixed-gearset-import";
 
 function configFor(weaponId?: number): OptimizationConfig {
   const config: OptimizationConfig = {
+    clanIndex: 0,
+    objective: "damage",
     jobId: "SAM",
     minItemLevel: weaponId ? 1 : 780,
     maxItemLevel: 795,
@@ -37,7 +39,7 @@ function configFor(weaponId?: number): OptimizationConfig {
             ((slot !== "ring" && slot !== "ring2") || !rings.has(g.id)),
       );
     if (!candidate) throw new Error(`Missing real fixture: ${slot}`);
-    config.forcedGear[slot] = candidate.id;
+    config.forcedGear![slot] = candidate.id;
     if (slot === "ring" || slot === "ring2") rings.add(candidate.id);
   }
   return config;
@@ -49,7 +51,7 @@ describe("fixed gearset import adapter", () => {
     async (id) => {
       expect(gears.some((gear) => gear.id === id)).toBe(false);
       const config = configFor();
-      const complete = Object.values(config.forcedGear).map((gearId) => ({
+      const complete = Object.values(config.forcedGear ?? {}).map((gearId) => ({
         id: gearId as number,
         materias: [],
       }));
@@ -78,7 +80,7 @@ describe("fixed gearset import adapter", () => {
       const config = configFor();
       config.minItemLevel = 1;
       config.sync = { kind: "itemLevel", value: 665 };
-      config.forcedGear[item.slot] = item.id;
+      config.forcedGear![item.slot] = item.id;
       const result = (await runOptimizationLocally(config))!;
       expect(result.calculationLevel).toBe(90);
       const originalMelds = structuredClone(result.gear.map((g) => g.melds));

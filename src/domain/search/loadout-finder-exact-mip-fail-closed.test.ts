@@ -57,7 +57,12 @@ import type { ExactMipOptions } from "./loadout-finder-exact-mip.ts";
 import type { Stat } from "../types.ts";
 
 const attributeIds = [-1, 1, 2, 3, 4, 5, 6];
+test.each(["clanIndex", "objective"])("requires explicit %s before solving", async (field) => {
+  await assert.rejects(findBestLoadoutExactMip({ ...options, [field]: undefined } as unknown as ExactMipOptions));
+});
+
 const options: ExactMipOptions = {
+  clanIndex: 0,
   job: "RDM",
   jobLevel: 100,
   attributeIds,

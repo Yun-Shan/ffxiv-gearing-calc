@@ -77,5 +77,4 @@ export type JointWorkbenchPhase =
       phase: "result";
       snapshot: JointOptimizationSnapshot;
       result: JointOptimizationResult;
-      durationMs: number;
     };

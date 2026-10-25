@@ -2,7 +2,7 @@ import { calculationJobLevelFor } from "../../gear-options.ts";
 import { jobSchemas } from "../../jobs.ts";
 import { capGearStatsAtLevel, concretizeGearStats, effectiveGearSyncLevel } from "../../rules.ts";
 import { equipmentIdentity } from "../../search/equipment-identity.ts";
-import { applyItemSpecialBonus } from "../../item-special-bonus.ts";
+import { applyItemSpecialBonus, enabledItemSpecialBonusesForJob } from "../../item-special-bonus.ts";
 import { filterStatsForJob } from "../../job-stats.ts";
 import { customParameterMelds, fixedCustomEquipmentMelds } from "../../custom-gear-parameters.ts";
 import type { ForcedGearValue, Gear, GearSlot, JobSchema, Materia, MeldedGear, OptimizationConfig, Stat, Stats, SyncTarget } from "../../types.ts";
@@ -15,6 +15,7 @@ export function forcedValueForSlot(
   config: OptimizationConfig,
   slot: GearSlot,
 ): ForcedGearValue | undefined {
+  if (config.forcedGear === undefined) return undefined;
   if (
     typeof config.forcedGear !== "object" ||
     config.forcedGear === null ||
@@ -130,7 +131,7 @@ export function makeGearCandidates(
     options = regularMateriaMelds(resolvedGear, config.jobId, config, syncJobLevel);
   }
   const candidates = new Map<string, GearCandidate>();
-  const enabledItemSpecialBonuses = config.enabledItemSpecialBonuses ?? [];
+  const enabledItemSpecialBonuses = enabledItemSpecialBonusesForJob(config.jobId);
   for (const melds of options) {
     // Custom parameters are absolute equipment stats, not materia contributions:
     // apply them over the base gear and only apply the gear sync cap when active.

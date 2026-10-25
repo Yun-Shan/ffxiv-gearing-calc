@@ -24,6 +24,8 @@ vi.mock("../node/parallel-baseline-node-adapter.ts", () => ({
 import { createParallelBaselineExecutor } from "./parallel-baseline-executor.ts";
 
 const task: ExactMipOptions = {
+  clanIndex: 0,
+  objective: "dps",
   job: "RDM",
   jobLevel: 100,
   attributeIds: [],
@@ -140,6 +142,7 @@ function exactOptionsForWorker(): ExactMipOptions {
     ],
   };
   return markCanonicalEvaluatorCandidateUpperBound({
+    clanIndex: 0,
     job: "RDM",
     jobLevel: 100,
     attributeIds: testAttributeIds,

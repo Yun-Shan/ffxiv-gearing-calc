@@ -165,7 +165,7 @@ export function SingleWorkbenchMain() {
                   : `${title} · 配装结果`}
           </h1>
         {state.phase === "result" && (
-          <span className={styles.durationBadge}>耗时 {(state.durationMs / 1000).toFixed(1)} 秒</span>
+          <span className={styles.durationBadge}>耗时 {(state.result.statistics.elapsedMs / 1000).toFixed(1)} 秒</span>
         )}
         </div>
         {(state.phase === "conditions" || state.phase === "result") && (
@@ -217,7 +217,7 @@ export function SingleWorkbenchMain() {
               summaryRows: summaryRows(singleDraftFromConfig(state.snapshot)),
             }}
             entries={[{ ...buildResultMetricEntry(state.result), clanIndex: state.snapshot.clanIndex, referenceUrl: resultReferenceUrl(state.result, state.snapshot) }]}
-            objective={state.snapshot.objective ?? "dps"}
+            objective={state.snapshot.objective}
             showTenacity={jobSchemas[state.snapshot.jobId].role === "tank"}
           />
           <GearTable rows={resultRows} jobId={state.snapshot.jobId} />

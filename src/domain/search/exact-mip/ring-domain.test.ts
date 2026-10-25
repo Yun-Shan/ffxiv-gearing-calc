@@ -60,6 +60,8 @@ function fixture() {
       traitMultiplier: 1,
     },
     options: {
+      clanIndex: 0,
+      objective: "dps",
       job: "RDM",
       jobLevel: 100,
       attributeIds: [1, 2],

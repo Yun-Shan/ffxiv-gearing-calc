@@ -14,6 +14,8 @@ import type { GearCandidate } from "./context";
 import { attachEquivalentGear } from "./equivalent-gear";
 
 const config: OptimizationConfig = {
+  clanIndex: 0,
+  objective: "damage",
   jobId: "SAM",
   minItemLevel: 1,
   maxItemLevel: 795,
@@ -46,6 +48,7 @@ function gear(
 }
 function result(gear: MeldedGear[]): OptimizationResult {
   return {
+    calculationLevel: 100,
     gear,
     food: {
       id: 1,
@@ -63,7 +66,7 @@ function result(gear: MeldedGear[]): OptimizationResult {
     objective: "damage",
     gcdTier: 2.5,
     searchedCandidates: 1,
-    durationMs: 1,
+    statistics: { elapsedMs: 1 },
   };
 }
 function pool(

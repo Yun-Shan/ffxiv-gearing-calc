@@ -32,7 +32,6 @@ interface ActiveJointRun {
   controller: AbortController;
   config: JointOptimizationConfig;
   snapshot: JointRunSnapshot;
-  startedAt: number;
   startedAtISO: string;
   uiOwned: boolean;
   settled: boolean;
@@ -201,23 +200,19 @@ export function useJointWorkbenchController() {
   ) {
     if (run.settled) return;
     run.settled = true;
-    const finishedAt = Date.now();
-    const finishedAtISO = new Date(finishedAt).toISOString();
-    const durationMs = Math.max(0, finishedAt - run.startedAt);
     if (!ownsRun(run)) return;
     const snapshot: JointRunSnapshot = {
       ...run.snapshot,
     };
     if (outcome.status === "completed" && !run.controller.signal.aborted) {
       setResultTab("shared");
-      transition({ phase: "result", snapshot, result: outcome.result, durationMs });
+      transition({ phase: "result", snapshot, result: outcome.result });
       void saveCompletedSearchHistory({
         kind: "joint",
         config: run.config,
         result: outcome.result,
         dataVersion: snapshot.dataVersion,
         startedAtISO: run.startedAtISO,
-        finishedAtISO,
       }).then((record) => {
         const latest = phaseRef.current;
         if (latest.phase === "result" && latest.snapshot.config === run.config) {
@@ -276,7 +271,6 @@ export function useJointWorkbenchController() {
       controller,
       config,
       snapshot,
-      startedAt,
       startedAtISO,
       uiOwned: true,
       settled: false,
@@ -358,12 +352,6 @@ export function useJointWorkbenchController() {
     run.controller.abort();
   }
 
-  function historyResultDuration(record: SearchHistoryRecord): number {
-    const started = Date.parse(record.startedAtISO);
-    const finished = Date.parse(record.finishedAtISO);
-    return Number.isFinite(started) && Number.isFinite(finished) ? Math.max(0, finished - started) : 0;
-  }
-
   async function navigateFromHistory(record: SearchHistoryRecord, action: "config" | "result") {
     if (record.kind !== "joint") return;
     const beforeConfirm = phaseRef.current;
@@ -417,7 +405,6 @@ export function useJointWorkbenchController() {
         historyId: record.id,
       },
       result: record.result,
-      durationMs: historyResultDuration(record),
     });
   }
 

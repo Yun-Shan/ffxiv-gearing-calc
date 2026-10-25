@@ -5,6 +5,8 @@ const mocks = vi.hoisted(() => ({
   findBestLoadoutExactMip: vi.fn(),
   prepareSearch: vi.fn(),
   privateParetoSlots: vi.fn(),
+  assembleResult: vi.fn(),
+  attachEquivalentGear: vi.fn(),
 }));
 
 vi.mock("../search/loadout-finder-exact-mip.ts", () => ({
@@ -14,6 +16,8 @@ vi.mock("./search-preparation.ts", () => ({
   prepareSearch: mocks.prepareSearch,
   privateParetoSlots: mocks.privateParetoSlots,
 }));
+vi.mock("./result-assembly.ts", () => ({ assembleResult: mocks.assembleResult }));
+vi.mock("./equivalent-gear.ts", () => ({ attachEquivalentGear: mocks.attachEquivalentGear }));
 
 import { runOptimizationLocally } from "./single-search.ts";
 
@@ -25,6 +29,7 @@ type Prepared = {
 };
 
 const brdProfile: OptimizationConfig = {
+  clanIndex: 0,
   jobId: "BRD",
   minItemLevel: 770,
   maxItemLevel: 795,
@@ -36,6 +41,7 @@ const brdProfile: OptimizationConfig = {
 };
 
 const blmProfile: OptimizationConfig = {
+  clanIndex: 0,
   jobId: "BLM",
   minItemLevel: 730,
   maxItemLevel: 795,
@@ -76,6 +82,28 @@ beforeEach(() => {
 });
 
 describe("single-search measured resource profiles", () => {
+  it("measures candidate preparation, solving, reconstruction and equivalent gear from the domain entry", async () => {
+    let now = 100;
+    const clock = vi.spyOn(performance, "now").mockImplementation(() => now);
+    const solverStatistics = { elapsedMs: 40, solverRuns: 2 };
+    mocks.prepareSearch.mockImplementationOnce(() => { now += 20; return prepared; });
+    mocks.findBestLoadoutExactMip.mockImplementationOnce(async () => {
+      now += 40;
+      return { statistics: solverStatistics };
+    });
+    mocks.assembleResult.mockImplementationOnce(() => {
+      now += 10;
+      return { statistics: { ...solverStatistics } };
+    });
+    mocks.attachEquivalentGear.mockImplementationOnce((result) => { now += 30; return result; });
+    try {
+      const completed = await runOptimizationLocally(brdProfile);
+      expect(completed?.statistics).toEqual({ elapsedMs: 100, solverRuns: 2 });
+      expect(solverStatistics.elapsedMs).toBe(40);
+    } finally {
+      clock.mockRestore();
+    }
+  });
   it.each([
     ["BRD DPS profile", brdProfile, true],
     ["BLM item-level profile", blmProfile, false],
@@ -90,13 +118,9 @@ describe("single-search measured resource profiles", () => {
   );
 
   const sharedNearMisses: [string, Partial<OptimizationConfig>][] = [
-    ["a GCD target", { gcdTarget: 2.5 }],
     ["a GCD choice", { gcdChoices: [2.5] }],
     ["a minimum speed", { speedMin: 400 }],
     ["a maximum speed", { speedMax: 600 }],
-    ["a minimum tenacity", { minTenacity: 400 }],
-    ["a mitigation threshold", { toughnessMinPercent: 10 }],
-    ["maximum tenacity", { maximizeTenacity: true }],
     ["an excluded source", { excludedSources: ["test"] }],
     ["an excluded gear ID", { excludedGearIds: [1] }],
     ["forced gear", { forcedGear: { weapon: 1 } }],

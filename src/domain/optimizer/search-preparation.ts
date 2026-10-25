@@ -22,7 +22,7 @@ import type {
   Stats,
 } from "../types.ts";
 import { calculationJobLevelFor } from "../gear-options.ts";
-import { withDomainItemSpecialBonusDefaults } from "../item-special-bonus.ts";
+import { normalizeOptimizationConfig } from "../config-validation.ts";
 import {
   attributeIds,
   attributeIndex,
@@ -49,7 +49,7 @@ function makeExactOptions(
 ): ExactMipOptions {
   const jobId = config.jobId;
   const schema = jobSchemas[jobId];
-  const clanIndex = config.clanIndex ?? 0;
+  const clanIndex = config.clanIndex;
   const speedStat = getSpeedStat(schema);
   const toughnessAttributeId = schema.stats.includes("TEN")
     ? attributeIndex.get("TEN")
@@ -59,7 +59,6 @@ function makeExactOptions(
     throw new Error(`职业 ${jobId} 缺少 ${speedStat} 搜索坐标`);
   const baseStats = calculateBaseStats(schema, jobLevel, clanIndex);
   const constraints = {
-    ...(config.gcdTarget !== undefined ? { gcd: config.gcdTarget } : {}),
     ...(config.gcdChoices !== undefined
       ? { gcdChoices: config.gcdChoices }
       : {}),
@@ -69,11 +68,11 @@ function makeExactOptions(
     ...(config.speedMax !== undefined
       ? { speedMax: config.speedMax - (baseStats[speedStat] ?? 0) }
       : {}),
-    ...((config.minTenacity ?? config.toughnessMin) !== undefined
+    ...(config.minTenacity !== undefined
       ? {
           toughMin: Math.max(
             0,
-            (config.minTenacity ?? config.toughnessMin ?? 0) -
+            config.minTenacity! -
               (baseStats.TEN ?? 0),
           ),
         }
@@ -109,7 +108,6 @@ function makeExactOptions(
     }, []);
   const usesToughness =
     config.minTenacity !== undefined ||
-    config.toughnessMin !== undefined ||
     config.toughnessMinPercent !== undefined ||
     config.maximizeTenacity;
   if (usesToughness && toughnessAttributeId === undefined) {
@@ -145,7 +143,7 @@ function makeExactOptions(
         ? undefined
         : { damage: effects.damage, gcd: effects.gcd };
     },
-    objective: config.objective ?? "damage",
+    objective: config.objective,
     ...(config.maxSearchMs !== undefined
       ? { maxSearchMs: config.maxSearchMs }
       : {}),
@@ -174,15 +172,8 @@ export function prepareSearch(
   paretoSlots?: ReadonlySet<string>,
   paretoIndependentRings = false,
 ): PreparedSearch {
-  config = withDomainItemSpecialBonusDefaults(config);
+  config = normalizeOptimizationConfig(config);
   throwIfAborted(options.signal);
-  if (
-    !Number.isSafeInteger(config.minItemLevel) ||
-    !Number.isSafeInteger(config.maxItemLevel) ||
-    config.minItemLevel > config.maxItemLevel
-  ) {
-    throw new RangeError("装备品级范围无效");
-  }
   const jobLevel = calculationJobLevelFor(config);
   const gearsByIdentity = new Map<string, MeldedGear>();
   const candidatePoolsResult = candidatePools(
@@ -227,8 +218,8 @@ export function prepareSearch(
     jobId: config.jobId,
     jobLevel,
     jobSchema: jobSchemas[config.jobId],
-    clanIndex: config.clanIndex ?? 0,
-    objective: config.objective ?? "damage",
+    clanIndex: config.clanIndex,
+    objective: config.objective,
     slots,
     foods: solverFoods,
     gearsByIdentity,

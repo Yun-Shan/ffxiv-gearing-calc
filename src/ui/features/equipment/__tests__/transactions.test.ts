@@ -57,7 +57,7 @@ function jointState(
 const txOptions = {
   lookup,
   jobSlots,
-  sharedSlots: ["head", "ring"] as GearSlot[],
+
 };
 
 describe("equipment scope transactions", () => {
@@ -261,8 +261,8 @@ describe("equipment scope transactions", () => {
       },
       lookup,
     );
-    expect(accepted.state.forcedGear.ring).toEqual(uniqueMateriaForce);
-    expect(accepted.state.forcedGear.ring).not.toBe(uniqueMateriaForce);
+    expect(accepted.state.forcedGear!.ring).toEqual(uniqueMateriaForce);
+    expect(accepted.state.forcedGear!.ring).not.toBe(uniqueMateriaForce);
     expect(accepted.state.excludedSources).toEqual([]);
     expect(accepted.state.excludedGearIds).toEqual([]);
     const excluded = applySingleEquipmentAction(
@@ -303,8 +303,8 @@ describe("equipment scope transactions", () => {
       txOptions,
     );
     expect(sharedResult.accepted).toBe(true);
-    expect(sharedResult.state.shared.forcedGear.head).toEqual(sharedValue);
-    expect(sharedResult.state.shared.forcedGear.head).not.toBe(sharedValue);
+    expect(sharedResult.state.shared.forcedGear!.head).toEqual(sharedValue);
+    expect(sharedResult.state.shared.forcedGear!.head).not.toBe(sharedValue);
 
     const privateValue = {
       id: 3,
@@ -322,7 +322,7 @@ describe("equipment scope transactions", () => {
       txOptions,
     );
     expect(privateResult.accepted).toBe(true);
-    expect(privateResult.state.jobs.RDM?.forcedGear.ring2).toEqual(
+    expect(privateResult.state.jobs.RDM?.forcedGear!.ring2).toEqual(
       privateValue,
     );
   });
@@ -357,7 +357,7 @@ describe("equipment scope transactions", () => {
     (sharedSlot) => {
       const privateSlot = sharedSlot === "ring" ? "ring2" : "ring";
       const state = jointState({ commonSlots: [sharedSlot] });
-      state.shared.forcedGear[sharedSlot] = 4;
+      state.shared.forcedGear![sharedSlot] = 4;
       const jobResult = applyJointEquipmentAction(
         state,
         { kind: "joint-job", jobId: "RDM" },
@@ -372,7 +372,7 @@ describe("equipment scope transactions", () => {
       expect(jobResult.state).toBe(state);
 
       const reverse = jointState({ commonSlots: [sharedSlot] });
-      reverse.jobs.GNB!.forcedGear[privateSlot] = 4;
+      reverse.jobs.GNB!.forcedGear![privateSlot] = 4;
       const sharedResult = applyJointEquipmentAction(
         reverse,
         { kind: "joint-shared" },
@@ -389,8 +389,8 @@ describe("equipment scope transactions", () => {
   );
 
   it("checks both shared rings and both private rings without forbidding the same unique ring on different jobs", () => {
-    const shared = jointState({ commonSlots: ["rings"] });
-    shared.shared.forcedGear.ring = 4;
+    const shared = jointState({ commonSlots: ["ring", "ring2"] });
+    shared.shared.forcedGear!.ring = 4;
     expect(
       applyJointEquipmentAction(
         shared,
@@ -400,7 +400,7 @@ describe("equipment scope transactions", () => {
       ).accepted,
     ).toBe(false);
     const privateState = jointState({ commonSlots: [] });
-    privateState.jobs.RDM!.forcedGear.ring = 4;
+    privateState.jobs.RDM!.forcedGear!.ring = 4;
     expect(
       applyJointEquipmentAction(
         privateState,
@@ -554,7 +554,7 @@ describe("equipment scope transactions", () => {
     );
     expect(excluded.accepted).toBe(true);
     expect(excluded.state.jobs.RDM?.excludedGearIds).toEqual([3]);
-    const privateless = updateJointSharedSlots(excluded.state, ["rings"], {
+    const privateless = updateJointSharedSlots(excluded.state, ["ring", "ring2"], {
       lookup,
       jobSlots,
     });
@@ -578,13 +578,13 @@ describe("equipment scope transactions", () => {
       },
       jobs: { RDM: { excludedGearIds: [], forcedGear: { ring2: 3 } } },
     });
-    const allShared = updateJointSharedSlots(state, ["head", "rings"], {
+    const allShared = updateJointSharedSlots(state, ["head", "ring", "ring2"], {
       lookup,
       jobSlots,
     });
     expect(allShared.shared.forcedGear).toEqual({ head: 2 });
     expect(allShared.jobs.RDM?.forcedGear).toEqual({});
-    const headPrivate = updateJointSharedSlots(allShared, ["rings"], {
+    const headPrivate = updateJointSharedSlots(allShared, ["ring", "ring2"], {
       lookup,
       jobSlots,
     });
@@ -596,7 +596,7 @@ describe("equipment scope transactions", () => {
       allowedForcedGearSlots(
         { kind: "joint-shared" },
         ["head", "ring", "ring2"],
-        ["head", "rings"],
+        ["head", "ring", "ring2"],
       ),
     ).toEqual(["head", "ring", "ring2"]);
     expect(
@@ -613,7 +613,7 @@ describe("equipment scope transactions", () => {
       original,
       { kind: "joint-shared" },
       { type: "set-force", slot: "head", gearId: 1 },
-      { ...txOptions, sharedSlots: [] },
+      { ...txOptions, },
     );
     expect(result.accepted).toBe(false);
     expect(result.reason).toBe("not-shared");

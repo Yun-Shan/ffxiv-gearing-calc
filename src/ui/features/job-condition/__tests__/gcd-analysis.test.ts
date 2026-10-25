@@ -4,6 +4,7 @@ import { gcdAnalysisInputFromConfig, gcdAnalysisKey } from "../gcd-analysis";
 import type { OptimizationConfig } from "@/domain";
 
 const input: GcdAnalysisInput = {
+  clanIndex: 0,
   jobId: "RDM",
   minItemLevel: 700,
   maxItemLevel: 795,
@@ -11,7 +12,6 @@ const input: GcdAnalysisInput = {
   speedMax: 600,
   sync: undefined,
   minTenacity: undefined,
-  toughnessMin: undefined,
   toughnessMinPercent: undefined,
   maximizeTenacity: false,
   excludedSources: ["B", "A"],
@@ -35,6 +35,7 @@ describe("GCD analysis input identity", () => {
 
   it("projects only declared feasibility inputs from the execution config", () => {
     const config = {
+      clanIndex: 0,
       jobId: "RDM",
       minItemLevel: 700,
       maxItemLevel: 795,

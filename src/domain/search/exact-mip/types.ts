@@ -91,8 +91,8 @@ export type ExactMipResult = LoadoutSearchResult & {
 export type ExactMipOptions = {
   job: JobId;
   jobLevel: JobLevel;
-  /** 族群基础属性索引；未提供时使用 0（人族·中原之民）。 */
-  clanIndex?: number;
+  /** 族群基础属性索引。 */
+  clanIndex: number;
   attributeIds: readonly number[];
   statIndexes: ReadonlyMap<Stat, number>;
   slots: readonly (readonly EquipInfo[])[];
@@ -106,8 +106,8 @@ export type ExactMipOptions = {
   evaluationFunction: (
     attributes: readonly number[],
   ) => { damage: number; gcd: number } | undefined;
-  /** 默认按不固定 GCD 的 DPS 搜索，以保持原有搜索行为。 */
-  objective?: "damage" | "dps";
+  /** 当前请求明确指定的搜索目标。 */
+  objective: "damage" | "dps";
   /** 仅用于强化精确 MIP 资源松弛的内部区间。 */
   candidateItemLevelRanges?: readonly { min: number; max: number }[];
   /** V3 内部策略：根据品级先验构造条件约束行的数量。 */

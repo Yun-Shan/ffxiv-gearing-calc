@@ -3,9 +3,7 @@ import type { SearchRequest, SearchResponse } from "./worker-client.ts";
 import type { OptimizationConfig } from "./types.ts";
 
 const calculatorMock = vi.hoisted(() => ({
-  calculateFeasibleGcdTiers: vi.fn((config: { enabledItemSpecialBonuses?: number[] }) =>
-    config.enabledItemSpecialBonuses ?? [],
-  ),
+  calculateFeasibleGcdTiers: vi.fn(() => [2.5]),
 }));
 
 vi.mock("./gcd-tier-calculator.ts", () => calculatorMock);
@@ -20,28 +18,27 @@ interface WorkerScopeMock {
 
 function configFor(
   jobId: OptimizationConfig["jobId"],
-  enabledItemSpecialBonuses: number[],
 ): OptimizationConfig {
   return {
+    clanIndex: 0,
+    objective: "damage",
     jobId,
     minItemLevel: 0,
     maxItemLevel: 9999,
     maximizeTenacity: false,
-    excludedSources: [],
-    forcedGear: {},
     foodId: 0,
-    enabledItemSpecialBonuses,
+
   };
 }
 
-describe("GCD worker ItemSpecialBonus defaults", () => {
+describe("GCD worker configuration", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.resetModules();
     calculatorMock.calculateFeasibleGcdTiers.mockClear();
   });
 
-  it("overrides caller settings for Beastmaster and non-Beastmaster requests", async () => {
+  it("supplies empty equipment restrictions for requests that omit them", async () => {
     const responses: SearchResponse[] = [];
     let onMessage: ((event: MessageEvent<SearchRequest>) => void | Promise<void>) | undefined;
     const scope: WorkerScopeMock = {
@@ -65,17 +62,17 @@ describe("GCD worker ItemSpecialBonus defaults", () => {
         : undefined;
     };
 
-    expect(await send(configFor("BST", []))).toEqual([11]);
-    expect(await send(configFor("PLD", [11]))).toEqual([]);
+    expect(await send(configFor("BST"))).toEqual([2.5]);
+    expect(await send(configFor("PLD"))).toEqual([2.5]);
     expect(calculatorMock.calculateFeasibleGcdTiers).toHaveBeenNthCalledWith(
       1,
-      expect.objectContaining({ jobId: "BST", enabledItemSpecialBonuses: [11] }),
+      expect.objectContaining({ jobId: "BST", excludedSources: [], excludedGearIds: [], forcedGear: {} }),
       expect.any(Object),
       expect.any(Object),
     );
     expect(calculatorMock.calculateFeasibleGcdTiers).toHaveBeenNthCalledWith(
       2,
-      expect.objectContaining({ jobId: "PLD", enabledItemSpecialBonuses: [] }),
+      expect.objectContaining({ jobId: "PLD", excludedSources: [], excludedGearIds: [], forcedGear: {} }),
       expect.any(Object),
       expect.any(Object),
     );

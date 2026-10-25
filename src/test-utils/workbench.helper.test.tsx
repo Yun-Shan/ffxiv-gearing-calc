@@ -17,7 +17,6 @@ type MockHistoryRecord = {
     | "failed"
     | "interrupted";
   startedAtISO: string;
-  finishedAtISO?: string;
   error?: string;
   result?: unknown;
 };
@@ -47,7 +46,6 @@ vi.mock("@/ui/services/search-history", () => ({
       config: unknown;
       dataVersion: string;
       startedAtISO: string;
-      finishedAtISO: string;
       result: unknown;
     }) => {
       historyStore.nextId += 1;
@@ -302,7 +300,7 @@ export function sampleResult(): OptimizationResult {
     damagePerSecond: 1,
     gcdTier: 0,
     searchedCandidates: 1,
-    durationMs: 1,
+    statistics: { elapsedMs: 1 },
   };
 }
 
@@ -414,6 +412,7 @@ export function navigateToJoint(): void {
 export function testJobConfig(jobId: JobId): OptimizationConfig {
   const job = jobSchemas[jobId];
   return {
+    clanIndex: 0,
     jobId,
     minItemLevel: job.defaultItemLevel?.[0] ?? 1,
     maxItemLevel: job.defaultItemLevel?.[1] ?? 999,
@@ -421,7 +420,7 @@ export function testJobConfig(jobId: JobId): OptimizationConfig {
     objective: "damage",
     excludedSources: [],
     forcedGear: {},
-    sharedSlots: [],
+
     foodId: 0,
   };
 }
@@ -485,7 +484,6 @@ export function seedCompletedJointHistory(
     dataVersion: currentDataVersion(),
     status: "completed",
     startedAtISO,
-    finishedAtISO: new Date(Date.parse(startedAtISO) + 1_000).toISOString(),
     result: structuredClone(sampleJointResult(config)),
   });
 }

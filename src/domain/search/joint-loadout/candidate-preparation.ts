@@ -35,7 +35,7 @@ export function prepareCandidates(
       job,
       solverSlots: job.options.slots,
       indexByName,
-      factorEvaluator: createIntegerDamageFactorEvaluator(job.options.job, job.options.jobLevel, job.options.statIndexes, job.options.clanIndex ?? 0),
+      factorEvaluator: createIntegerDamageFactorEvaluator(job.options.job, job.options.jobLevel, job.options.statIndexes, job.options.clanIndex),
       attributeIndexes,
       equipAttributes: new WeakMap(),
       optimum: undefined as unknown as ExactMipResult,

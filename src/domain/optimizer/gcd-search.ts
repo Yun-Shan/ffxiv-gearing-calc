@@ -5,13 +5,13 @@ import {
   slotsForJob,
 } from "../gear-options.ts";
 import type { OptimizationConfig, SearchOptions } from "../types.ts";
-import { withDomainItemSpecialBonusDefaults } from "../item-special-bonus.ts";
+import { normalizeOptimizationConfig } from "../config-validation.ts";
 
 export function findFeasibleGcdsLocally(
   config: OptimizationConfig,
   options: SearchOptions = {},
 ): number[] {
-  config = withDomainItemSpecialBonusDefaults(config);
+  config = normalizeOptimizationConfig(config);
   return calculateFeasibleGcdTiers(config, options, {
     getJobLevel: calculationJobLevelFor,
     gearOptionsFor,

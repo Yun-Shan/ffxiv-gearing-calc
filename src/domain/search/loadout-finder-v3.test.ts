@@ -330,6 +330,8 @@ function makeJob(
     id: job,
     slotNames,
     options: {
+      clanIndex: 0,
+      objective: "dps" as const,
       job: job as Job,
       jobLevel: level,
       attributeIds,
@@ -904,6 +906,7 @@ async function runJoint(
   } = {},
 ) {
   return findBestJointLoadoutV3({
+    objective: "damage" as const,
     jobs: jobs.map(({ id, slotNames, options }) => ({
       id,
       slotNames,
@@ -964,6 +967,7 @@ async function capturePrunedRings(
 
   let prunedSlots: readonly (readonly EquipInfo[])[] | undefined;
   const result = await findBestJointLoadoutV3({
+    objective: "damage" as const,
     jobs: [{ id: base.id, slotNames: base.slotNames, options: jobOptions }],
     commonSlots: [],
     foodStrategy: "independent",
@@ -1087,6 +1091,7 @@ test("small shared-gear domains are estimated before selecting exact warm starts
   assert.ok(expected);
   const progress: string[] = [];
   const result = await findBestJointLoadoutV3({
+    objective: "damage" as const,
     jobs: jobs.map(({ id, slotNames, options }) => ({ id, slotNames, options })),
     commonSlots,
     foodStrategy: "independent",
@@ -1126,6 +1131,7 @@ test("a single shared assignment is proved with exact per-job solves instead of 
 
   const callbackModels: string[] = [];
   const actual = await findBestJointLoadoutV3({
+    objective: "damage" as const,
     jobs: jobs.map(({ id, slotNames, options }) => ({ id, slotNames, options })),
     commonSlots: ["ring"],
     foodStrategy: "independent",
@@ -1173,6 +1179,7 @@ test("fixed shared assignments solve independent job bounds in one parallel batc
   let actual: JointLoadoutV3Result | undefined;
   try {
     actual = await findBestJointLoadoutV3({
+      objective: "damage" as const,
       jobs: jobs.map(({ id, slotNames, options }) => ({ id, slotNames, options })),
       commonSlots: ["ring"],
       foodStrategy: "independent",
@@ -1222,6 +1229,7 @@ test("large shared warm starts batch independent constrained job solves", async 
   let actual: JointLoadoutV3Result | undefined;
   try {
     actual = await findBestJointLoadoutV3({
+      objective: "damage" as const,
       jobs: inputJobs.map(({ id, slotNames, options }) => ({ id, slotNames, options })),
       commonSlots: ["ring", "head"],
       foodStrategy: "independent",
@@ -1270,6 +1278,7 @@ test("V3 stops a seed batch as soon as a completed seed proves the global ceilin
   const stoppedAt: number[] = [];
   let cancelled = false;
   const run = (onProgress?: (message: string) => void) => findBestJointLoadoutV3({
+    objective: "damage" as const,
     jobs,
     commonSlots: ["ring"],
     foodStrategy: "independent",
@@ -1649,7 +1658,7 @@ test("V3 DPS objective matches exact exhaustive normalized DPS for no-GCD shared
       const expected = oracle(jobs, ["ring"], strategy, "dps");
       assert.ok(expected);
       const result = await runJoint(jobs, ["ring"], strategy, {
-        objective: "dps",
+        objective: "dps" as const,
       });
       assertMatchesOracle(result, expected, jobs, ["ring"], strategy, "dps");
     }
@@ -1705,7 +1714,7 @@ test("V3 keeps a PCT union of exact GCD choices through shared-equipment DPS opt
     "fixture should have feasible gear at both PCT GCD ranges",
   );
   const result = await runJoint(jobs, ["ring", "head"], "shared", {
-    objective: "dps",
+    objective: "dps" as const,
   });
   assertMatchesOracle(
     result,
@@ -1810,7 +1819,7 @@ test("V3 excludes a higher-damage forbidden middle GCD and intersects speed boun
   const expected = oracle(jobs, commonSlots, "shared", "damage");
   assert.ok(expected);
   const result = await runJoint(jobs, commonSlots, "shared", {
-    objective: "damage",
+    objective: "damage" as const,
   });
   assertMatchesOracle(result, expected, jobs, commonSlots, "shared", "damage");
   const selectedPct = result!.jobResults.PCT!;
@@ -1828,7 +1837,7 @@ test("V3 excludes a higher-damage forbidden middle GCD and intersects speed boun
   const only248Expected = oracle(only248Jobs, commonSlots, "shared", "damage");
   assert.ok(only248Expected);
   const only248Result = await runJoint(only248Jobs, commonSlots, "shared", {
-    objective: "damage",
+    objective: "damage" as const,
   });
   assertMatchesOracle(
     only248Result,
@@ -1860,7 +1869,7 @@ test("V3 excludes a higher-damage forbidden middle GCD and intersects speed boun
   );
   assert.equal(
     await runJoint(forbiddenOnlyJobs, commonSlots, "shared", {
-      objective: "damage",
+      objective: "damage" as const,
     }),
     undefined,
   );
@@ -2059,6 +2068,7 @@ test("V3 observes cancellation requested by the baseline progress callback", asy
 
   await assert.rejects(
     findBestJointLoadoutV3({
+      objective: "damage" as const,
       jobs: [{ id: job.id, slotNames: job.slotNames, options: job.options }],
       commonSlots: [],
       foodStrategy: "independent",
@@ -2072,7 +2082,7 @@ test("V3 observes cancellation requested by the baseline progress callback", asy
 
 test("V3 rejects malformed search inputs before accepting a proof", async () => {
   const job = makeJob("RDM");
-  const valid = { jobs: [job], commonSlots: [] as string[], foodStrategy: "independent" as const };
+  const valid = { objective: "damage" as const, jobs: [job], commonSlots: [] as string[], foodStrategy: "independent" as const };
   for (const patch of [
     { maxSearchMs: 0 },
     { maxSearchMs: Infinity },

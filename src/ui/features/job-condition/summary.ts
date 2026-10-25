@@ -77,11 +77,11 @@ export function conditionRows(
       label: "坚韧约束",
       value:
         [
-          draft.tank.minimumTenacity !== undefined &&
+          draft.tank.strategy === "tenacity" && draft.tank.minimumTenacity !== undefined &&
             `最低坚韧值${draft.tank.minimumTenacity}`,
-          draft.tank.minimumDamageReductionPercent !== undefined &&
+          draft.tank.strategy === "reduction" && draft.tank.minimumDamageReductionPercent !== undefined &&
             `最低减伤${draft.tank.minimumDamageReductionPercent}%`,
-          draft.tank.maximizeTenacity && "最大化减伤百分比",
+          draft.tank.strategy === "maximize" && "最大化减伤百分比",
         ]
           .filter(Boolean)
           .join("、") || "未设置",

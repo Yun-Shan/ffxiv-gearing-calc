@@ -7,6 +7,8 @@ import { attributeIndex } from "./context.ts";
 import { prepareSearch } from "./search-preparation.ts";
 
 const baseConfig: OptimizationConfig = {
+  clanIndex: 0,
+  objective: "damage",
   jobId: "SAM",
   minItemLevel: 0,
   maxItemLevel: 0,

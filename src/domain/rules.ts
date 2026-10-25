@@ -117,7 +117,7 @@ export function calculateEffects({
   job,
   level,
   weaponDamage,
-  clanIndex = defaultClanIndex,
+  clanIndex,
 }: CalculationInput): Effects {
   const levelMod = levelModifierFor(level);
   const attackModifier = job.statModifiers[job.mainStat];
@@ -192,7 +192,7 @@ export function calculateGcdTier(
   job: JobSchema,
   level = 100,
 ): number {
-  return calculateEffects({ stats, job, level, weaponDamage: 100 }).gcd;
+  return calculateEffects({ stats, job, level, weaponDamage: 100, clanIndex: 0 }).gcd;
 }
 
 export function getSpeedStat(job: JobSchema): "SKS" | "SPS" {

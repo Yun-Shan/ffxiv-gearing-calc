@@ -153,12 +153,11 @@ export function assembleResult(
     damagePerSecond,
     gcdTier: effects.gcd,
     searchedCandidates: prepared.searchedCandidates,
-    durationMs: result.statistics.elapsedMs,
     ...(result.maximumToughness !== undefined
       ? {
           maximumTenacity: result.maximumToughness + (baseStats.TEN ?? 0),
         }
       : {}),
-    statistics: result.statistics,
+    statistics: { ...result.statistics },
   };
 }

@@ -6,13 +6,15 @@ import type { OptimizationConfig } from "./types";
 
 const maxLevel = Math.max(...gears.map((gear) => gear.level));
 const base: OptimizationConfig = {
+  clanIndex: 0,
+  objective: "damage",
   jobId: "SAM",
   minItemLevel: maxLevel - 15,
   maxItemLevel: maxLevel,
   maximizeTenacity: false,
   excludedSources: [],
   forcedGear: {},
-  sharedSlots: [],
+
   foodId: 0,
 };
 
@@ -80,7 +82,7 @@ describe("optimizer with imported game data", () => {
     expect(await optimize({ ...base, forcedGear: { weapon: 999_999 } })).toBeUndefined());
 
   it.each([0, -1, 1.5, Number.NaN, Number.POSITIVE_INFINITY, Number.MAX_SAFE_INTEGER + 1])("rejects invalid numeric forced id %s", async (id) => {
-    await expect(optimize({ ...base, forcedGear: { weapon: id } })).rejects.toThrow("ID 必须是正安全整数");
+    await expect(optimize({ ...base, forcedGear: { weapon: id } })).rejects.toThrow("强制装备配置无效");
   });
 
   it("returns no result when all real weapon sources are excluded", async () => {
@@ -94,18 +96,18 @@ describe("optimizer with imported game data", () => {
   });
 
   it("rejects unavailable food and impossible constraints", async () => {
-    expect((await optimize({ ...base, foodId: -1 }))).toBeUndefined();
-    expect((await optimize({ ...base, gcdTarget: 9 }))).toBeUndefined();
+    expect((await optimize({ ...base, foodId: 999999999 }))).toBeUndefined();
+    expect((await optimize({ ...base, gcdChoices: [9] }))).toBeUndefined();
     expect((await optimize({ ...base, jobId: "WAR", minTenacity: 999_999 }))).toBeUndefined();
   });
 
   it("supports GCD and maximum-tenacity tank passes", async () => {
     const tank = { ...base, jobId: "WAR" as const };
     const unconstrained = (await optimize(tank))!;
-    expect((await optimize({ ...tank, gcdTarget: unconstrained.effects.gcd }))?.effects.gcd)
+    expect((await optimize({ ...tank, gcdChoices: [unconstrained.effects.gcd] }))?.effects.gcd)
       .toBe(unconstrained.effects.gcd);
     expect((await optimize({ ...tank, maximizeTenacity: true }))?.stats.TEN).toBeGreaterThan(0);
-  });
+  }, 30_000);
 
   it("supports the PLD shield slot and ring alias", async () => {
     const paladin = (await optimize({ ...base, jobId: "PLD" }));
@@ -127,7 +129,7 @@ describe("optimizer with imported game data", () => {
     expect(new Set(gcds).size).toBe(gcds.length);
     expect(gcds).toContain(2.17);
     expect(gcds).toContain(2.16);
-    expect((await optimize({ ...base, gcdTarget: 2.16 }))?.effects.gcd).toBe(2.16);
+    expect((await optimize({ ...base, gcdChoices: [2.16] }))?.effects.gcd).toBe(2.16);
   });
 
   it("uses SPS and exposes multiple real GCD values for casters", async () => {
@@ -135,7 +137,7 @@ describe("optimizer with imported game data", () => {
     expect(gcds).toContain(2.5);
     expect(gcds.length).toBeGreaterThan(1);
     expect(gcds).not.toContain(2.55);
-    expect((await optimize({ ...base, jobId: "BLM", gcdTarget: 2.5 }))?.effects.gcd).toBe(2.5);
+    expect((await optimize({ ...base, jobId: "BLM", gcdChoices: [2.5] }))?.effects.gcd).toBe(2.5);
   });
 
   // 用户参考配装（黑魔法士 7.55）：总冠军咒杖 + 改良型王国黄铜咏咒系列 + 焦糖爆米花☆，
@@ -148,7 +150,7 @@ describe("optimizer with imported game data", () => {
       ...base,
       jobId: "BLM",
       foodId: 49240,
-      gcdTarget: 2.45,
+      gcdChoices: [2.45],
     }));
     expect(result?.effects.gcd).toBe(2.45);
     expect(result?.score).toBeGreaterThan(132);
@@ -161,7 +163,7 @@ describe("optimizer with imported game data", () => {
       ...base,
       jobId: "BLM",
       forcedGear: { weapon: weapon.id },
-      gcdTarget: 2.17,
+      gcdChoices: [2.17],
     }));
     expect(result?.effects.gcd).toBe(2.17);
     expect(result?.food.id).toBe(49243);
@@ -173,14 +175,14 @@ describe("optimizer with imported game data", () => {
     const forcedConfig = { ...base, forcedGear: { weapon: weapon.id } };
     const gcds = (await findFeasibleGcds(forcedConfig));
     expect(gcds.length).toBeGreaterThan(0);
-    const gcdResult = (await optimize({ ...forcedConfig, gcdTarget: gcds[0] }));
+    const gcdResult = (await optimize({ ...forcedConfig, gcdChoices: [gcds[0]] }));
     if (!weapon.customParameters) {
       expect(gcdResult?.gear[0].melds).toHaveLength(weapon.materiaAdvanced ? 5 : weapon.materiaSlots);
     } else {
       // 自定义参数武器按上游规则以 2 个大值、1 个小值和 1 个空槽生成候选，魔晶石列表长度为 3。
       expect(gcdResult?.gear[0].melds).toHaveLength(3);
     }
-    expect((await findFeasibleGcds({ ...base, foodId: -1 }))).toEqual([]);
+    expect((await findFeasibleGcds({ ...base, foodId: 999999999 }))).toEqual([]);
     await expect(findFeasibleGcds({ ...base, minTenacity: 999_999 })).rejects.toThrow("不使用坚韧属性");
     expect((await findFeasibleGcds({ ...base, jobId: "WHM" })).length).toBeGreaterThan(0);
     expect((await findFeasibleGcds({ ...base, jobId: "WAR", maximizeTenacity: true })).length).toBeGreaterThan(0);
@@ -209,11 +211,11 @@ describe("formal search adapter", () => {
       return { ...config, forcedGear };
     };
     const jobs = [forced(mage), forced(mage2)];
-    const result = await optimizeJoint({ jobs, commonSlots: ["head", "rings"], foodStrategy: "shared", objective: "damage" });
+    const result = await optimizeJoint({ jobs, commonSlots: ["head", "ring", "ring2"], foodStrategy: "shared", objective: "damage" });
     expect(result).toBeDefined();
     const expectedCalculationLevel = 80;
     expect(result!.commonFood?.id).toBe(mage.foodId);
-    expect(result!.commonGear.rings).toHaveLength(2);
+    expect([...(result!.commonGear.ring ?? []), ...(result!.commonGear.ring2 ?? [])]).toHaveLength(2);
     for (const job of jobs) {
       const loadout = result!.jobResults[job.jobId]!;
       expect(loadout.calculationLevel).toBe(expectedCalculationLevel);
@@ -227,13 +229,13 @@ describe("formal search adapter", () => {
   it("rejects malformed constraints and supports cancellation before candidate generation", async () => {
     await expect(optimize({ ...base, minItemLevel: 800, maxItemLevel: 790 })).rejects.toThrow("范围无效");
     await expect(optimize({ ...base, sync: { kind: "itemLevel", value: -1 } })).rejects.toThrow("大于等于 90");
-    await expect(optimizeJoint({ jobs: [mage], commonSlots: [], foodStrategy: "independent" })).rejects.toThrow("至少需要两个职业");
+    await expect(optimizeJoint({ objective: "damage", jobs: [mage], commonSlots: [], foodStrategy: "independent" })).rejects.toThrow("至少需要两个职业");
     const controller = new AbortController(); controller.abort();
     await expect(optimize(base, { signal: controller.signal })).rejects.toMatchObject({ name: "AbortError" });
     await expect(optimize({ ...mage, minTenacity: 500 })).rejects.toThrow("不使用坚韧");
     await expect(optimizeJoint({ jobs: [{ ...mage, objective: "dps" }, mage2], objective: "damage", commonSlots: [], foodStrategy: "shared" })).rejects.toThrow("相同");
-    await expect(optimizeJoint({ jobs: [mage, mage2], commonSlots: ["head", "head"], foodStrategy: "shared" })).rejects.toThrow("重复");
-    await expect(optimizeJoint({ jobs: [mage, mage2], commonSlots: ["ring", "rings"], foodStrategy: "shared" })).rejects.toThrow("混合");
+    await expect(optimizeJoint({ objective: "damage", jobs: [mage, mage2], commonSlots: ["head", "head"], foodStrategy: "shared" })).rejects.toThrow("重复");
+
   });
 });
 

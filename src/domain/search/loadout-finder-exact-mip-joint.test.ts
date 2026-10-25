@@ -182,6 +182,7 @@ function makeJob(
     speedAttributeId,
     evaluateFactors,
     options: {
+      clanIndex: 0,
       job: job as Job,
       jobLevel,
       attributeIds,

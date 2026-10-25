@@ -28,11 +28,7 @@ export function JointJobEquipmentRestrictions({
     const allSlots = sharedSlotsForJobs([jobId]);
     const privateSlots = allSlots.filter(
       (slot) =>
-        !equipment.commonSlots.includes(slot) &&
-        !(
-          equipment.commonSlots.includes("rings") &&
-          (slot === "ring" || slot === "ring2")
-        ),
+        !equipment.commonSlots.includes(slot),
     );
     const allOptions = domainGearOptionsForConfig(config, privateSlots);
     const forceGearOptions = Object.fromEntries(

@@ -89,6 +89,8 @@ function makeJob(
     id: job,
     slotNames: ["ring", "head"],
     options: {
+      clanIndex: 0,
+      objective: "dps",
       job: job as Job,
       jobLevel: 100 as JobLevel,
       attributeIds,

@@ -58,7 +58,7 @@ export function gearOptionsFor(config: OptimizationConfig, slot: GearSlot): Gear
       gear.slot === actualSlot &&
       gear.equipLevel <= characterLevel &&
       !excluded.has(gear.id) &&
-      isGearUsable(gear, job, minItemLevel, maxItemLevel, config.excludedSources)
+      isGearUsable(gear, job, minItemLevel, maxItemLevel, config.excludedSources ?? [])
     ) candidates.push(gear);
   }
   return candidates;

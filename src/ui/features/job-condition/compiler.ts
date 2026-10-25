@@ -25,13 +25,18 @@ export function compileJobCondition(
     sync: draft.range.sync,
     syncDuty: draft.range.syncDuty,
     clanIndex: draft.range.clanIndex,
-    gcdTarget: undefined,
     gcdChoices: draft.gcd.mode === "tiers" ? [...draft.gcd.tiers] : undefined,
     speedMin: draft.gcd.mode === "speed" ? draft.gcd.min : undefined,
     speedMax: draft.gcd.mode === "speed" ? draft.gcd.max : undefined,
-    minTenacity: draft.tank.minimumTenacity,
-    toughnessMinPercent: draft.tank.minimumDamageReductionPercent,
-    maximizeTenacity: draft.tank.maximizeTenacity,
+    minTenacity:
+      draft.tank.strategy === "tenacity"
+        ? draft.tank.minimumTenacity
+        : undefined,
+    toughnessMinPercent:
+      draft.tank.strategy === "reduction"
+        ? draft.tank.minimumDamageReductionPercent
+        : undefined,
+    maximizeTenacity: draft.tank.strategy === "maximize",
     objective: deriveJobObjective(draft.gcd, context.feasibleGcds),
     foodId:
       draft.food.mode === "specific"
@@ -39,11 +44,11 @@ export function compileJobCondition(
         : (context.autoFoodId ?? 0),
   };
 
-  return { config, levelResolution: "domain" };
+  return { config };
 }
 
 export function normalizeJointObjective<
-  T extends { objective?: "damage" | "dps" },
+  T extends { objective: "damage" | "dps" },
 >(jobs: readonly T[]): { objective: "damage" | "dps"; jobs: T[] } {
   const objective = jobs.every((job) => job.objective === "damage")
     ? "damage"

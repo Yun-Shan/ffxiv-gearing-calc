@@ -506,14 +506,12 @@ export function ProgressMain({
 export function ResultMain({
   config,
   result,
-  durationMs,
   selectedTab,
   setSelectedTab,
   onReturnSelection,
 }: {
   config: JointOptimizationConfig;
   result: JointOptimizationResult;
-  durationMs: number;
   selectedTab: string;
   setSelectedTab(value: string): void;
   onReturnSelection(): void;
@@ -541,7 +539,7 @@ export function ResultMain({
       <header className={styles.resultHeading}>
         <div className={styles.titleRow}>
           <h1 id="joint-result-title">联合配装结果</h1>
-          <span className={styles.durationBadge}>耗时 {(Math.max(0, durationMs) / 1000).toFixed(1)} 秒</span>
+          <span className={styles.durationBadge}>耗时 {(result.statistics.elapsedMs / 1000).toFixed(1)} 秒</span>
         </div>
         <button className={styles.returnButton} type="button" onClick={onReturnSelection}>重新选择职业</button>
       </header>
@@ -643,7 +641,6 @@ export function JointWorkbenchMain() {
       <ResultMain
         config={phase.snapshot.config}
         result={phase.result}
-        durationMs={phase.durationMs}
         selectedTab={controller.resultTab}
         setSelectedTab={controller.setResultTab}
         onReturnSelection={controller.returnToSelection}

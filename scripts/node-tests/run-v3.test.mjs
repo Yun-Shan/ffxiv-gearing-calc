@@ -41,61 +41,29 @@ test("V3 config defaults use the standard jobs, supported shared slots, and 235-
   assert.deepEqual(config.jobs, ["RDM", "BLM"]);
   assert.deepEqual(config.commonSlots, [
     "head", "body", "hands", "legs", "feet", "earrings", "necklace",
-    "bracelet", "rings",
+    "bracelet", "ring", "ring2",
   ]);
   assert.equal(config.foodStrategy, "shared");
   assert.equal(config.objective, "damage");
   assert.equal(config.maxSearchMs, 235_000);
   assert.deepEqual(config.jobConfigs.map(({ jobId, minItemLevel, maxItemLevel }) => [
     jobId, minItemLevel, maxItemLevel,
-  ]), [["RDM", 700, 790], ["BLM", 710, 790]]);
+  ]), [["RDM", 700, 790], ["BLM", 700, 790]]);
   assert.deepEqual(config.jobConfigs.map(({ maximizeTenacity }) => maximizeTenacity), [false, false]);
 });
 
-test("V3 config accepts legacy aliases and gives primary environment names precedence", () => {
-  const aliasConfig = parse({
-    COMMON_SLOTS: "mainhand,gloves,ears,neck,wrists,Finger",
-    FOOD_STRATEGY: "independent",
-    OBJECTIVE: "dps",
-    TIMEOUT_MS: "123",
-  });
-  assert.deepEqual(aliasConfig.commonSlots, ["weapon", "hands", "earrings", "necklace", "bracelet", "rings"]);
-  assert.equal(aliasConfig.foodStrategy, "independent");
-  assert.equal(aliasConfig.objective, "dps");
-  assert.equal(aliasConfig.maxSearchMs, 123);
-
-  const primaryConfig = parse({
-    DATA_TEST_COMMON_SLOTS: "Head",
-    COMMON_SLOTS: "none",
-    DATA_TEST_FOOD_STRATEGY: "shared",
-    FOOD_STRATEGY: "independent",
-    DATA_TEST_OBJECTIVE: "damage",
-    OBJECTIVE: "dps",
-    DATA_TEST_V3_TIMEOUT_MS: "1",
-    TIMEOUT_MS: "invalid",
-  });
-  assert.deepEqual(primaryConfig.commonSlots, ["head"]);
-  assert.equal(primaryConfig.foodStrategy, "shared");
-  assert.equal(primaryConfig.objective, "damage");
-  assert.equal(primaryConfig.maxSearchMs, 1);
-});
-
-test("V3 config canonicalizes slot aliases and rejects duplicate, unsupported, and unavailable slots", () => {
-  assert.deepEqual(parse({ DATA_TEST_COMMON_SLOTS: "ring1,ring2" }).commonSlots, ["ring", "ring2"]);
-  assert.throws(() => parse({ DATA_TEST_COMMON_SLOTS: "mainhand,weapon" }), /重复项/);
-  assert.throws(() => parse({ DATA_TEST_COMMON_SLOTS: "finger,rings" }), /重复项/);
+test("V3 config accepts concrete shared slots and rejects duplicate or unsupported slots", () => {
+  assert.deepEqual(parse({ DATA_TEST_COMMON_SLOTS: "ring,ring2" }).commonSlots, ["ring", "ring2"]);
+  assert.throws(() => parse({ DATA_TEST_COMMON_SLOTS: "head,head" }), /重复项/);
   assert.throws(() => parse({ DATA_TEST_COMMON_SLOTS: "waist" }), /不支持的共享槽位/);
-  assert.throws(() => parse({ DATA_TEST_COMMON_SLOTS: "offhand" }), /不是所有职业都可用/);
+  assert.throws(() => parse({ DATA_TEST_COMMON_SLOTS: "offhand" }), /不支持的共享槽位/);
   assert.deepEqual(parse({ DATA_TEST_COMMON_SLOTS: "none" }).commonSlots, []);
 });
 
-test("V3 config rejects invalid jobs and normalized duplicate or unsupported constraints", () => {
+test("V3 config rejects invalid jobs and unsupported constraints", () => {
   assert.throws(() => parse({ DATA_TEST_JOBS: "RDM" }), /至少两个/);
   assert.throws(() => parse({ DATA_TEST_JOBS: "RDM,RDM" }), /不重复/);
   assert.throws(() => parse({ DATA_TEST_JOBS: "RDM,NOPE" }), /不支持的职业缩写/);
-  assert.throws(() => parse({
-    DATA_TEST_JOB_CONSTRAINTS: JSON.stringify({ RDM: { gcd: 2.45, gcdTarget: 2.5 } }),
-  }), /约束重复指定了 gcdTarget/);
   assert.throws(() => parse({
     DATA_TEST_JOB_CONSTRAINTS: JSON.stringify({ RDM: { unknownLimit: 1 } }),
   }), /约束字段不受支持/);
@@ -104,31 +72,22 @@ test("V3 config rejects invalid jobs and normalized duplicate or unsupported con
   }), /无重复的正有限数字数组/);
 });
 
-test("per-job constraints override global values while retaining other global constraints", () => {
+test("per-job constraints override global values with current domain field names", () => {
   const config = parse({
-    DATA_TEST_GCD: "2.50",
-    DATA_TEST_SPEED_MIN: "400",
+    DATA_TEST_GCD_CHOICES: "[2.5]",
     DATA_TEST_MAX_TOUGHNESS: "false",
     DATA_TEST_JOB_CONSTRAINTS: JSON.stringify({
-      RDM: { gcd: 2.45, speedMin: 510, toughMin: 100 },
-      BLM: { gcdChoices: [2.45, 2.5], maxToughnessMode: true },
+      RDM: { gcdChoices: [2.45] },
+      BLM: { gcdChoices: [2.45, 2.5] },
     }),
   });
-  assert.deepEqual(config.globalConstraints, {
-    gcdTarget: 2.5,
-    speedMin: 400,
-    maximizeTenacity: false,
-  });
+  assert.deepEqual(config.globalConstraints, { gcdChoices: [2.5], maximizeTenacity: false });
   assert.deepEqual(config.jobConfigs.map((job) => ({
-    jobId: job.jobId,
-    gcdTarget: job.gcdTarget,
-    gcdChoices: job.gcdChoices,
-    speedMin: job.speedMin,
-    toughnessMin: job.toughnessMin,
-    maximizeTenacity: job.maximizeTenacity,
+    jobId: job.jobId, gcdChoices: job.gcdChoices, clanIndex: job.clanIndex,
+    objective: job.objective, maximizeTenacity: job.maximizeTenacity,
   })), [
-    { jobId: "RDM", gcdTarget: 2.45, gcdChoices: undefined, speedMin: 510, toughnessMin: 100, maximizeTenacity: false },
-    { jobId: "BLM", gcdTarget: 2.5, gcdChoices: [2.45, 2.5], speedMin: 400, toughnessMin: undefined, maximizeTenacity: true },
+    { jobId: "RDM", gcdChoices: [2.45], clanIndex: 0, objective: "damage", maximizeTenacity: false },
+    { jobId: "BLM", gcdChoices: [2.45, 2.5], clanIndex: 0, objective: "damage", maximizeTenacity: false },
   ]);
 });
 
@@ -179,7 +138,7 @@ const makeOptimization = (job, gear) => ({
   score: 12345,
   stats: { CRT: 1500, DET: 1400 },
   maximumTenacity: 0,
-  durationMs: 321,
+  statistics: { elapsedMs: 321 },
   searchedCandidates: 876,
   food: { id: 3001, name: "Test food", level: 790, stats: { CRT: 90 } },
   gear: [gear],
@@ -196,7 +155,7 @@ test("V3 report retains complete proof/statistics, requested job and equipment o
     objective: "damage",
     value: 2.125,
     commonFood: { id: 3001, name: "Test food", level: 790, stats: { CRT: 90 } },
-    commonGear: { head: [head], rings: [ringA, ringB] },
+    commonGear: { head: [head], ring: [ringA], ring2: [ringB] },
     jobResults: { BLM: joint, RDM: null },
     optima: { BLM: solo, RDM: null },
     proof: {
@@ -207,6 +166,7 @@ test("V3 report retains complete proof/statistics, requested job and equipment o
       nested: { checkedSignatures: 44, bound: "tight" },
     },
     statistics: {
+      elapsedMs: 9.6,
       exploredNodes: 120,
       solverCalls: 7,
       prunedByBound: 32,
@@ -216,7 +176,6 @@ test("V3 report retains complete proof/statistics, requested job and equipment o
   };
   const output = buildV3Output(result, ["BLM", "RDM"], {
     maxSearchMs: MAX_SEARCH_MS,
-    elapsedMs: 9.6,
     peakRssBytes: 1_234_567,
   });
 
@@ -226,8 +185,8 @@ test("V3 report retains complete proof/statistics, requested job and equipment o
   ]);
   assert.equal(output.objective, "damage");
   assert.equal(output.normalizedJointValue, 2.125);
-  assert.deepEqual(Object.keys(output.commonEquipment), ["头部", "戒指对"]);
-  assert.deepEqual(output.commonEquipment["戒指对"].map(({ itemId }) => itemId), [1002, 1003]);
+  assert.deepEqual(Object.keys(output.commonEquipment), ["头部", "戒指1", "戒指2"]);
+  assert.deepEqual([...output.commonEquipment["戒指1"], ...output.commonEquipment["戒指2"]].map(({ itemId }) => itemId), [1002, 1003]);
   assert.deepEqual(Object.keys(output.jobs), ["BLM", "RDM"]);
   assert.deepEqual(Object.keys(output.jobs.BLM), ["joint", "soloOptimum"]);
   assert.deepEqual(output.jobs.BLM.joint, {
@@ -238,7 +197,7 @@ test("V3 report retains complete proof/statistics, requested job and equipment o
     objectiveScore: 12345,
     totalAttributes: { CRT: 1500, DET: 1400 },
     maximumTenacity: 0,
-    durationMs: 321,
+    statistics: { elapsedMs: 321 },
     searchedCandidates: 876,
     food: { itemId: 3001, name: "Test food", itemLevel: 790, attributes: { CRT: 90 } },
     equipment: [{
@@ -255,7 +214,6 @@ test("V3 report retains complete proof/statistics, requested job and equipment o
   assert.deepEqual(output.proof, result.proof);
   assert.deepEqual(output.statistics, result.statistics);
   assert.deepEqual(output.runtime, {
-    elapsedMs: 10,
     peakRssBytes: 1_234_567,
     rssLimitBytes: MAX_RSS_BYTES,
     timeoutMs: 235_000,
@@ -266,7 +224,6 @@ test("V3 report retains complete proof/statistics, requested job and equipment o
 
   const unlimitedOutput = buildV3Output(result, ["BLM", "RDM"], {
     maxSearchMs: UNLIMITED_SEARCH_MS,
-    elapsedMs: 10,
     peakRssBytes: 1_234_567,
   });
   assert.equal(unlimitedOutput.statistics.timeLimitMs, "unlimited");

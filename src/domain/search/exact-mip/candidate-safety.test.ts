@@ -47,6 +47,7 @@ function equipment(itemId: number, level: number, values: number[]): EquipInfo {
 }
 function fixture(): ExactMipOptions {
   return markCanonicalEvaluatorCandidateUpperBound({
+    clanIndex: 0,
     job: "RDM",
     jobLevel: 100,
     attributeIds: ids,

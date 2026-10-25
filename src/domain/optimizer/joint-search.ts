@@ -1,4 +1,3 @@
-import { jobSchemas } from "../jobs.ts";
 import { createParallelBaselineExecutor } from "../search/parallel-baseline-executor.ts";
 import {
   candidateResourceSupportProfileForSearch,
@@ -33,94 +32,45 @@ import {
   type PreparedSearch,
   type SolverGear,
 } from "./context.ts";
-import { withDomainItemSpecialBonusDefaults } from "../item-special-bonus.ts";
-import { assertForcedGearValue, forcedGearEqual } from "../types.ts";
+import { assertJointOptimizationConfig, normalizeOptimizationConfig } from "../config-validation.ts";
 
-function normalizedCommonSlots(commonSlots: readonly CommonGearSlot[]): {
+function normalizedCommonSlots(commonSlots: readonly CommonGearSlot[], independentRings: boolean): {
   slots: string[];
   projections: SharedSlotProjection[];
 } {
-  if (new Set(commonSlots).size !== commonSlots.length) {
-    throw new RangeError("共享槽位列表包含重复项");
-  }
-  const hasSingleRing =
-    commonSlots.includes("ring") || commonSlots.includes("ring2");
-  const hasRingPair = commonSlots.includes("rings");
-  if (hasSingleRing && hasRingPair) {
-    throw new RangeError("共享戒指时请选择戒指1、戒指2或戒指对，不要混合选择");
-  }
   const slots = [...commonSlots];
   const projections: SharedSlotProjection[] = [];
   for (const slot of commonSlots) {
-    if (slot === "ring")
+    if (!independentRings && slot === "ring")
       projections.push({ commonSlot: slot, slotName: "rings", ringIndex: 0 });
-    if (slot === "ring2")
+    if (!independentRings && slot === "ring2")
       projections.push({ commonSlot: slot, slotName: "rings", ringIndex: 1 });
   }
   return { slots, projections };
 }
 
 export async function runJointOptimizationLocally(
-  config: JointOptimizationConfig,
+  input: JointOptimizationConfig,
   options: SearchOptions = {},
 ): Promise<JointOptimizationResult | undefined> {
-  config = {
-    ...config,
-    jobs: config.jobs.map(withDomainItemSpecialBonusDefaults),
-  };
+  const startedAt = performance.now();
+  assertJointOptimizationConfig(input);
+  const config = { ...input, jobs: input.jobs.map(normalizeOptimizationConfig) };
   throwIfAborted(options.signal);
-  if (config.jobs.length < 2)
-    throw new RangeError("多职业联合搜索至少需要两个职业");
-  const roleLabels = {
-    tank: "防护",
-    healer: "治疗",
-    str: "力量 DPS",
-    dex: "灵巧 DPS",
-    int: "智力 DPS",
-  } as const;
-  const jobGroups = config.jobs.map(({ jobId }) => ({
-    jobId,
-    group: jobSchemas[jobId].role,
-  }));
-  if (new Set(jobGroups.map(({ group }) => group)).size > 1) {
-    const jobs = jobGroups
-      .map(({ jobId, group }) => `${jobId}=${roleLabels[group]}`)
-      .join("、");
-    throw new RangeError(
-      `多职业联合搜索只接受同组职业（防护、治疗或同主属性 DPS）：${jobs}`,
-    );
-  }
-  const objective = config.objective ?? config.jobs[0]?.objective ?? "damage";
-  if (
-    config.jobs.some(
-      (job) => job.objective !== undefined && job.objective !== objective,
-    )
-  ) {
-    throw new RangeError("联合搜索中所有职业必须使用相同的 damage 或 dps 目标");
-  }
-  const sharedSlots = normalizedCommonSlots(config.commonSlots);
-  for (const slot of config.commonSlots.flatMap((name): GearSlot[] => name === "rings" ? ["ring", "ring2"] : [name])) {
-    const values = config.jobs.map((job) => job.forcedGear[slot]);
-    values.forEach((value) => assertForcedGearValue(value));
-    if (values.some((value) => typeof value === "object" && "melds" in value) &&
-        values.some((value) => !forcedGearEqual(value, values[0]))) {
-      throw new RangeError(`共享槽位 ${slot} 的逐孔强制配置必须在所有职业中一致`);
-    }
-  }
-  const hasSharedRing = config.commonSlots.some(
-    (slot) => slot === "rings" || slot === "ring" || slot === "ring2",
-  );
+  const objective = config.objective;
+  const hasSharedRing = config.commonSlots.some((slot) => slot === "ring" || slot === "ring2");
   const factorizedSharedRingPair =
-    config.commonSlots.includes("rings") &&
+    config.commonSlots.includes("ring") && config.commonSlots.includes("ring2") &&
     config.jobs.every(
       (job) =>
         job.forcedGear.ring === undefined && job.forcedGear.ring2 === undefined,
     );
+  const sharedSlots = normalizedCommonSlots(config.commonSlots, factorizedSharedRingPair);
   const vprMchNarrowSharedSlots: readonly CommonGearSlot[] = [
     "bracelet",
     "earrings",
     "necklace",
-    "rings",
+    "ring", "ring2",
   ];
   const isVprMchNarrowSharedDps =
     objective === "dps" &&
@@ -142,12 +92,10 @@ export async function runJointOptimizationLocally(
     ) &&
     config.jobs.every(
       (job) =>
-        job.gcdTarget === undefined &&
         (job.gcdChoices?.length ?? 0) === 0 &&
         job.speedMin === undefined &&
         job.speedMax === undefined &&
         job.minTenacity === undefined &&
-        job.toughnessMin === undefined &&
         job.toughnessMinPercent === undefined &&
         !job.maximizeTenacity &&
         job.excludedSources.length === 0 &&
@@ -159,7 +107,7 @@ export async function runJointOptimizationLocally(
     "bracelet",
     "earrings",
     "necklace",
-    "rings",
+    "ring", "ring2",
   ];
   const isCanonicalSharedWideDpsFor = (jobIds: readonly JobId[]) =>
     objective === "dps" &&
@@ -181,12 +129,10 @@ export async function runJointOptimizationLocally(
     ) &&
     config.jobs.every(
       (job) =>
-        job.gcdTarget === undefined &&
         (job.gcdChoices?.length ?? 0) === 0 &&
         job.speedMin === undefined &&
         job.speedMax === undefined &&
         job.minTenacity === undefined &&
-        job.toughnessMin === undefined &&
         job.toughnessMinPercent === undefined &&
         !job.maximizeTenacity &&
         job.excludedSources.length === 0 &&
@@ -211,7 +157,7 @@ export async function runJointOptimizationLocally(
     "bracelet",
     "earrings",
     "necklace",
-    "rings",
+    "ring", "ring2",
   ];
   const isSharedAccessoryPairDominanceEligible =
     objective === "dps" &&
@@ -223,12 +169,10 @@ export async function runJointOptimizationLocally(
     ) &&
     config.jobs.every(
       (job) =>
-        job.gcdTarget === undefined &&
         (job.gcdChoices?.length ?? 0) === 0 &&
         job.speedMin === undefined &&
         job.speedMax === undefined &&
         job.minTenacity === undefined &&
-        job.toughnessMin === undefined &&
         job.toughnessMinPercent === undefined &&
         !job.maximizeTenacity &&
         job.excludedSources.length === 0 &&
@@ -417,10 +361,8 @@ export async function runJointOptimizationLocally(
     if (slotName === "rings") {
       if (!isRingPairEquipInfo(equipment))
         throw new Error("联合结果缺少共享戒指对");
-      commonGear.rings = [
-        candidateGearFromInfo(equipment.ringEquips[0], "ring", prepared),
-        candidateGearFromInfo(equipment.ringEquips[1], "ring2", prepared),
-      ];
+      commonGear.ring = [candidateGearFromInfo(equipment.ringEquips[0], "ring", prepared)];
+      commonGear.ring2 = [candidateGearFromInfo(equipment.ringEquips[1], "ring2", prepared)];
     } else if (slotName === "ring" || slotName === "ring2") {
       const candidate = candidateGearFromInfo(equipment, slotName, prepared);
       if (factorizedSharedRingPair) {
@@ -439,7 +381,8 @@ export async function runJointOptimizationLocally(
     if (ring === undefined || ring2 === undefined) {
       throw new Error("联合结果缺少共享戒指对");
     }
-    commonGear.rings = [ring, ring2];
+    commonGear.ring = [ring];
+    commonGear.ring2 = [ring2];
   }
   const firstResult = Object.values(result.jobResults)[0];
   const firstPrepared = preparedByJob.values().next().value as
@@ -448,7 +391,7 @@ export async function runJointOptimizationLocally(
     config.foodStrategy === "shared" && firstResult && firstPrepared
       ? resultFood(firstResult, firstPrepared)
       : undefined;
-  return {
+  const completed = {
     jobResults: convertByJob(result.jobResults),
     optima: convertByJob(result.optima),
     commonGear,
@@ -456,6 +399,13 @@ export async function runJointOptimizationLocally(
     objective,
     value: result.value,
     proof: result.proof,
-    statistics: result.statistics,
+    statistics: { ...result.statistics },
   };
+  const jobResults = [...Object.values(completed.jobResults), ...Object.values(completed.optima)];
+  const elapsedMs = performance.now() - startedAt;
+  completed.statistics.elapsedMs = elapsedMs;
+  for (const jobResult of jobResults) {
+    jobResult.statistics = { ...jobResult.statistics, elapsedMs };
+  }
+  return completed;
 }

@@ -347,6 +347,7 @@ export function calculateFixedGearset(input: FixedGearsetInput): FixedGearsetRes
   const stats = applyFood(unbuffedStats, applicableFood.stats, applicableFood.statRates);
   const weaponStat = job.mainStat === "INT" || job.mainStat === "MND" ? "MDMG" : "PDMG";
   const effects = calculateEffects({
+    clanIndex: 0,
     stats,
     job,
     level: calculationLevel,

@@ -42,7 +42,6 @@ export function runInWorker(config, maxSearchMs, startedAt, dataBinary, dependen
       clearIntervalTimer(memoryMonitor);
       clearTimeoutTimer(timeWatchdog);
       const reason = error instanceof Error ? error : new Error(String(error));
-      reason.elapsedMs = Math.round(clock.now() - startedAt);
       reason.peakRssBytes = Math.max(peakRssBytes, samplePeakRss());
       if (worker) {
         void worker.terminate().then(

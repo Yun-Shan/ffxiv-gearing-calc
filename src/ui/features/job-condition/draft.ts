@@ -1,11 +1,9 @@
 import type { UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
 import type { FoodDraft, GcdDraft, JobConditionDraft } from "./types";
 
-export function createInitialJobConditionRuntime() {
+export function createJobConditionRuntime() {
   return { gcdAnalysis: { status: "idle" as const } };
 }
-
-export const createJobConditionRuntime = createInitialJobConditionRuntime;
 
 export function jobConditionDraftFromConfig(
   config: OptimizationConfig,
@@ -15,9 +13,7 @@ export function jobConditionDraftFromConfig(
       ? { mode: "speed", min: config.speedMin, max: config.speedMax }
       : config.gcdChoices !== undefined
         ? { mode: "tiers", tiers: [...config.gcdChoices] }
-        : config.gcdTarget !== undefined
-          ? { mode: "tiers", tiers: [config.gcdTarget] }
-          : { mode: "any" };
+        : { mode: "any" };
   const food: FoodDraft =
     config.foodId === 0
       ? { mode: "auto" }
@@ -29,21 +25,18 @@ export function jobConditionDraftFromConfig(
       maxItemLevel: config.maxItemLevel,
       sync: config.sync,
       syncDuty: config.syncDuty,
-      clanIndex: config.clanIndex ?? 0,
+      clanIndex: config.clanIndex,
     },
     gcd,
     food,
-    tank: {
-      minimumTenacity: config.minTenacity,
-      minimumDamageReductionPercent: config.toughnessMinPercent,
-      maximizeTenacity: config.maximizeTenacity,
-    },
+    tank:
+      config.minTenacity !== undefined
+        ? { strategy: "tenacity", minimumTenacity: config.minTenacity }
+        : config.toughnessMinPercent !== undefined
+          ? {
+              strategy: "reduction",
+              minimumDamageReductionPercent: config.toughnessMinPercent,
+            }
+          : { strategy: config.maximizeTenacity ? "maximize" : "any" },
   };
-}
-
-/** Values that only existed in the editing session are intentionally normalized away. */
-export function normalizeCompiledDraft(
-  config: OptimizationConfig,
-): JobConditionDraft {
-  return jobConditionDraftFromConfig(config);
 }

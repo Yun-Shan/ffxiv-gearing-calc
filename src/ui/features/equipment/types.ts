@@ -1,5 +1,6 @@
 import type {
   ForcedGearMap,
+  EquipmentRestrictions,
   ForcedGearValue,
   Gear,
   GearSlot,
@@ -12,24 +13,15 @@ export type EquipmentScope =
   | { kind: "joint-job"; jobId: JobId };
 
 export type EquipmentType = Exclude<GearSlot, "ring2"> | "ring";
-export type JointCommonSlot = GearSlot | "rings";
+export type JointCommonSlot = GearSlot;
 
-export interface SingleEquipmentDraft {
-  excludedSources: string[];
-  excludedGearIds: number[];
-  forcedGear: ForcedGearMap;
-}
-
-export interface JointSharedEquipmentDraft {
-  excludedSources: string[];
-  excludedGearIds: number[];
-  forcedGear: ForcedGearMap;
-}
-
-export interface JointJobEquipmentDraft {
-  excludedGearIds: number[];
-  forcedGear: ForcedGearMap;
-}
+/** Editors materialize the optional request fields as empty collections. */
+export type SingleEquipmentDraft = Required<EquipmentRestrictions>;
+export type JointSharedEquipmentDraft = SingleEquipmentDraft;
+export type JointJobEquipmentDraft = Pick<
+  SingleEquipmentDraft,
+  "excludedGearIds" | "forcedGear"
+>;
 
 export interface JointEquipmentDraft {
   commonSlots: JointCommonSlot[];

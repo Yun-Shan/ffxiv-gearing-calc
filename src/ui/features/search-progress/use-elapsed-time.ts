@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 export function formatElapsedTime(startedAt: number, now: number): string {
-  const totalSeconds = Number.isFinite(startedAt) ? Math.max(0, Math.floor((now - startedAt) / 1000)) : 0;
+  const totalSeconds = Math.floor((now - startedAt) / 1000);
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;

@@ -102,7 +102,7 @@ export function attachEquivalentGear(
   const gear = result.gear.map((selected) => {
     throwIfAborted(options.signal);
     const slot = selected.slot;
-    if (config.forcedGear[slot] !== undefined) return selected;
+    if (config.forcedGear?.[slot] !== undefined) return selected;
     const physicalSlot: GearSlot = slot === "ring2" ? "ring" : slot;
     const signature = effectKey(selected);
     let keys = cache.get(signature);

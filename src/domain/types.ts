@@ -221,8 +221,8 @@ export interface CalculationInput {
   job: JobSchema;
   level: number;
   weaponDamage: number;
-  /** 族群基础属性索引；未提供时使用人族·中原之民。 */
-  clanIndex?: number;
+  /** 族群基础属性索引。 */
+  clanIndex: number;
 }
 
 export interface Effects {
@@ -245,30 +245,27 @@ export interface MeldedGear extends Gear {
   finalStats: Stats;
 }
 
-export interface OptimizationConfig {
+export interface EquipmentRestrictions {
+  excludedSources?: string[];
+  excludedGearIds?: number[];
+  forcedGear?: ForcedGearMap;
+}
+
+export interface OptimizationConfig extends EquipmentRestrictions {
   jobId: JobId;
   minItemLevel: number;
   maxItemLevel: number;
   /** 不启用、仅同步等级或同步到指定品级。 */
   sync?: SyncTarget;
-  /** 底层搜索允许按此列表启用装备的 ItemSpecialBonus。领域入口暂按职业覆盖此值。 */
-  enabledItemSpecialBonuses?: number[];
-  /** 族群基础属性索引；未提供时使用 0（人族·中原之民）。 */
-  clanIndex?: number;
-  gcdTarget?: number;
+  /** 族群基础属性索引。 */
+  clanIndex: number;
   gcdChoices?: number[];
   speedMin?: number;
   speedMax?: number;
   minTenacity?: number;
-  /** 基础属性、装备和食物合并后的最低坚韧值。 */
-  toughnessMin?: number;
   toughnessMinPercent?: number;
   maximizeTenacity: boolean;
-  objective?: "damage" | "dps";
-  excludedSources: string[];
-  excludedGearIds?: number[];
-  forcedGear: ForcedGearMap;
-  sharedSlots?: GearSlot[];
+  objective: "damage" | "dps";
   foodId: number;
   /** 仅供测试和验收设置的执行时限；前端工作线程请求会忽略此字段。 */
   maxSearchMs?: number;
@@ -338,7 +335,7 @@ export function cloneForcedGearValue(
 }
 
 /** Clone a complete force map without retaining mutable values or undefined entries. */
-export function cloneForcedGearMap(force: ForcedGearMap): ForcedGearMap {
+export function cloneForcedGearMap(force: ForcedGearMap = {}): ForcedGearMap {
   return Object.fromEntries(
     Object.entries(force).flatMap(([slot, value]) => {
       const copy = cloneForcedGearValue(value);
@@ -385,13 +382,13 @@ export function forcedGearEqual(
   return false;
 }
 
-export type CommonGearSlot = GearSlot | "rings";
+export type CommonGearSlot = GearSlot;
 
 export interface JointOptimizationConfig {
   jobs: OptimizationConfig[];
   commonSlots: CommonGearSlot[];
   foodStrategy: "shared" | "independent";
-  objective?: "damage" | "dps";
+  objective: "damage" | "dps";
   /** 仅供测试和验收设置的执行时限；前端工作线程请求会忽略此字段。 */
   maxSearchMs?: number;
   cacheLimit?: number;
@@ -423,7 +420,7 @@ export interface ResultGear extends MeldedGear {
 
 export interface OptimizationResult {
   /** 用于基础属性、食物、伤害和 GCD 计算的职业等级。 */
-  calculationLevel?: number;
+  calculationLevel: number;
   gear: ResultGear[];
   equivalentGear?: Record<string, readonly MeldedGear[]>;
   food: FoodResult;
@@ -434,9 +431,11 @@ export interface OptimizationResult {
   damagePerSecond: number;
   gcdTier: number;
   searchedCandidates: number;
-  durationMs: number;
   maximumTenacity?: number;
-  statistics?: object;
+  statistics: {
+    /** 从领域搜索入口到完整结果返回的耗时，单位为毫秒。 */
+    elapsedMs: number;
+  };
 }
 
 export interface JointOptimizationResult {
@@ -457,6 +456,7 @@ export interface JointOptimizationResult {
     terminationReason: string;
   };
   statistics: {
+    /** 从领域搜索入口到完整结果返回的耗时，单位为毫秒。 */
     elapsedMs: number;
     timeLimitMs?: number;
     outerNodes: number;

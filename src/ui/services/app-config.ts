@@ -26,7 +26,6 @@ export function foodOptionsFor(foodId?: number) {
     ? [selected, ...availableFoods]
     : availableFoods;
 }
-export const defaultJobLevel = 100;
 
 export const defaultCommonSlots: CommonSlot[] = [
   "head",
@@ -49,8 +48,7 @@ export function makeConfig(jobId: JobId): OptimizationConfig {
       Math.max(bounds[0], bounds[1] - 15),
     maxItemLevel: jobSchemas[jobId].defaultItemLevel?.[1] ?? bounds[1],
     sync: undefined,
-    gcdTarget: undefined,
-    gcdChoices: [],
+    clanIndex: 0,
     speedMin: undefined,
     speedMax: undefined,
     minTenacity: undefined,
@@ -60,7 +58,6 @@ export function makeConfig(jobId: JobId): OptimizationConfig {
     excludedSources: [],
     excludedGearIds: [],
     forcedGear: {},
-    sharedSlots: [],
     foodId: 0,
   };
 }

@@ -160,6 +160,8 @@ describe("calculateFixedGearset", () => {
         (base[secondaryStat] ?? 0) + 17,
       );
       const candidateBody = makeGearCandidates(body, "body", {
+        clanIndex: 0,
+        objective: "damage",
         jobId,
         minItemLevel: 0,
         maxItemLevel: 9999,
@@ -167,7 +169,7 @@ describe("calculateFixedGearset", () => {
         excludedSources: [],
         forcedGear: {},
         foodId: input.foodId,
-        enabledItemSpecialBonuses: [11],
+
       }, new Map())[0]!.gear;
       expect(selectedBody.finalStats).toEqual(candidateBody.finalStats);
     } finally {

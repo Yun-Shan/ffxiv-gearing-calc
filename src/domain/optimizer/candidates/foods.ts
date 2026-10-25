@@ -52,7 +52,7 @@ export function createFoodInfo(
   jobLevel: number,
 ): SolverFood {
   const schema = jobSchemas[config.jobId];
-  const baseStats = calculateBaseStats(schema, jobLevel, config.clanIndex ?? 0);
+  const baseStats = calculateBaseStats(schema, jobLevel, config.clanIndex);
   const applicableFood = foodStatsForJob(food, config.jobId);
   const baseParams = Object.entries(applicableFood.stats)
     .flatMap(([key, maxValue]) => {

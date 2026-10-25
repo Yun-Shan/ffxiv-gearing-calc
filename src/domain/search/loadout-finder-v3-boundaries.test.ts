@@ -89,6 +89,8 @@ function makeJob(
     id: job,
     slotNames,
     options: {
+      clanIndex: 0,
+      objective: "dps",
       job: job as Job,
       jobLevel: 100 as JobLevel,
       attributeIds,
@@ -358,10 +360,10 @@ test("shared food requires a physical intersection when one job has no food choi
     makeJob("SAM", ["ring"], [[samRing]], [samFood]),
   ];
 
-  const shared = await findBestJointLoadoutV3({ jobs, commonSlots: [], foodStrategy: "shared" });
+  const shared = await findBestJointLoadoutV3({ objective: "damage", jobs, commonSlots: [], foodStrategy: "shared" });
   assert.equal(shared, undefined, "shared food must fail when the physical food intersection is empty");
 
-  const independent = await findBestJointLoadoutV3({ jobs, commonSlots: [], foodStrategy: "independent" });
+  const independent = await findBestJointLoadoutV3({ objective: "damage", jobs, commonSlots: [], foodStrategy: "independent" });
   assert.ok(independent);
   assert.equal(independent.proof.complete, true);
   assert.equal(independent.jobResults.RDM!.food, undefined);
@@ -385,6 +387,7 @@ test("a one-entry V3 cache preserves the exhaustive result during conflict recur
   const expectedProduct = productFor("RDM", [tenacityRing]);
 
   const result = await findBestJointLoadoutV3({
+    objective: "damage",
     jobs: [active, inactive],
     commonSlots: ["ring"],
     foodStrategy: "independent",
@@ -435,6 +438,7 @@ test("V3 applies the public toughness percentage threshold and caps the search b
   );
 
   const result = await findBestJointLoadoutV3({
+    objective: "damage",
     jobs: [job],
     commonSlots: [],
     foodStrategy: "independent",
@@ -463,6 +467,7 @@ test("effect-equivalent physical foods retain the baseline-preferred shared iden
   const expected = exhaustiveJointValue(jobs, ["ring"], "shared");
 
   const result = await findBestJointLoadoutV3({
+    objective: "damage",
     jobs,
     commonSlots: ["ring"],
     foodStrategy: "shared",
@@ -502,6 +507,7 @@ test("equal shared equipment metrics keep the identity preferred by the solo bas
   const expected = exhaustiveJointValue(jobs, ["ring"], "shared");
 
   const result = await findBestJointLoadoutV3({
+    objective: "damage",
     jobs,
     commonSlots: ["ring"],
     foodStrategy: "shared",
@@ -558,6 +564,7 @@ test("GCD and speedMax constraints preserve a lower-speed shared candidate durin
     ];
     const expected = exhaustiveJointValue(jobs, ["ring"], "shared");
     const result = await findBestJointLoadoutV3({
+      objective: "damage",
       jobs,
       commonSlots: ["ring"],
       foodStrategy: "shared",

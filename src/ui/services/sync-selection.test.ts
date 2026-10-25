@@ -57,6 +57,7 @@ describe("selected sync duty provenance", () => {
     expect(optimizationConfigForDomain(config)).toEqual(numericConfig);
     expect(optimizationConfigForDomain(config)).not.toHaveProperty("syncDuty");
     const joint = {
+      objective: "damage" as const,
       jobs: [config],
       commonSlots: [],
       foodStrategy: "shared" as const,

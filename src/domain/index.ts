@@ -1,5 +1,6 @@
 export * from "./data";
 export * from "./clans";
+export * from "./config-validation";
 export * from "./jobs";
 export * from "./optimizer";
 export * from "./rules";

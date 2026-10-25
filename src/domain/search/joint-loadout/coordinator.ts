@@ -66,7 +66,7 @@ export async function findBestJointLoadoutV3(
   const remainingTimeLimit = () =>
     timeLimitMs === undefined ? undefined : Math.floor(deadline - performance.now());
   const remainingWorkerTimeLimit = () => remainingTimeLimit() ?? Number.MAX_SAFE_INTEGER;
-  const objective = options.objective ?? "damage";
+  const objective = options.objective;
   if (objective !== "damage" && objective !== "dps") {
     throw new RangeError("V3 objective 必须是 damage 或 dps");
   }

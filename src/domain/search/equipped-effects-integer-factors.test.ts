@@ -92,7 +92,7 @@ test("search factors and displayed formulas agree for every supported job", () =
     for (const level of [50, 60, 70, 80, 90, 100].filter(level => level <= (schema.maxJobLevel ?? 100))) {
       const contribution = Object.fromEntries(names.filter(stat => stat !== "TEN" || schema.role === "tank").map(stat => [stat, stat === "PDMG" || stat === "MDMG" ? 158 : schema.id === "BLU" && stat === "INT" ? 1000 : 1700]));
       const effects = equippedEffects(schema.id, level, contribution)!;
-      const display = calculateEffects({ job: schema, level, stats: addStats(calculateBaseStats(schema, level), contribution), weaponDamage: 158 });
+      const display = calculateEffects({ clanIndex: 0, job: schema, level, stats: addStats(calculateBaseStats(schema, level), contribution), weaponDamage: 158 });
       const { ssDamage, ...commonEffects } = effects;
       assert.deepEqual(display, commonEffects);
       const factors = createIntegerDamageFactorEvaluator(schema.id, level, indexes)(vector(contribution))!;
@@ -137,7 +137,7 @@ test("tank STR main preserves legacy AP, HP, and integer damage factors", () => 
   const contributionVector = vector(contributions);
   const factors = createIntegerDamageFactorEvaluator(job.id, level, indexes)(contributionVector)!;
   const equipped = equippedEffects(job.id, level, contributions)!;
-  const displayed = calculateEffects({ stats, job, level, weaponDamage: stats.PDMG! });
+  const displayed = calculateEffects({ clanIndex: 0, stats, job, level, weaponDamage: stats.PDMG! });
   const floor = (value: number) => Math.trunc(value + 1e-7);
   const expectedMainFactor = floor(
     (levelMod.apTank * (floor(stats.STR! * (job.partyBonus ?? 1.05)) - levelMod.main)) /

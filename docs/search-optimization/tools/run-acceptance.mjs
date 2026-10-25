@@ -6,7 +6,6 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { StringDecoder } from "node:string_decoder";
-import { performance } from "node:perf_hooks";
 import { decodeGeneratedData } from "../../../src/data/binary/decode.ts";
 import { compareHistoricalTiming, evaluateOptimizationTarget } from "./timing-acceptance.mjs";
 
@@ -40,7 +39,7 @@ process.on("SIGINT", () => handleRunnerSignal("SIGINT"));
 process.on("SIGTERM", () => handleRunnerSignal("SIGTERM"));
 
 const ALL_NON_WEAPON_SLOTS = [
-  "head", "body", "hands", "legs", "feet", "earrings", "necklace", "bracelet", "rings",
+  "head", "body", "hands", "legs", "feet", "earrings", "necklace", "bracelet", "ring", "ring2",
 ];
 
 function savedSoloThresholds(recordId, scores, matchingRecordCounts, historyRunId = "20261009T165822206Z", sourceFilename = "result.json") {
@@ -110,18 +109,6 @@ const CASES = [
     historyMs: 8010, historyLabel: "本轮全场景验收完整证明",
     nineRound: { minMs: 11299, averageMs: 12003, maxMs: 12426 },
     historySource: "docs/search-optimization/搜索耗时优化总结.md",
-    commonSlots: ["earrings", "necklace", "bracelet", "rings"], foodStrategy: "shared",
-    strategyTags: ["joint", "joint-2", "job-count-2", "sync", "shared-equipment", "shared-food", "objective-dps"],
-  },
-  {
-    id: "rpr-sam-sync735-rings-split-dps",
-    title: "RPR+SAM，同步 735，730–795，共享饰品并显式分槽共享 ring/ring2、食物，DPS",
-    jobs: ["RPR", "SAM"], minItemLevel: 730, maxItemLevel: 795, syncLevel: 735,
-    objective: "dps", expectedRatio: { numerator: "2", denominator: "1" },
-    soloObjectiveScoreThresholds: savedSoloThresholds("rpr-sam-sync735-rings-split-dps", { RPR: 28.645899062799366, SAM: 32.661898805812505 }, { RPR: 4, SAM: 4 }),
-    historyMs: 8714, historyLabel: "本轮全场景验收完整证明",
-    nineRound: { minMs: 10982, averageMs: 11592, maxMs: 12045 },
-    historySource: "docs/search-optimization/搜索耗时优化总结.md",
     commonSlots: ["earrings", "necklace", "bracelet", "ring", "ring2"], foodStrategy: "shared",
     strategyTags: ["joint", "joint-2", "job-count-2", "sync", "shared-equipment", "shared-food", "objective-dps"],
   },
@@ -130,7 +117,7 @@ const CASES = [
     title: "RDM+PCT，同步 735，730–795，共享防具与常规饰品、食物，受 GCD 约束，DPS",
     jobs: ["RDM", "PCT"], minItemLevel: 730, maxItemLevel: 795, syncLevel: 735,
     objective: "dps", expectedRatio: { numerator: "2", denominator: "1" },
-    jobConstraints: { RDM: { gcd: 2.48 }, PCT: { gcdChoices: [2.48, 2.5] } },
+    jobConstraints: { RDM: { gcdChoices: [2.48] }, PCT: { gcdChoices: [2.48, 2.5] } },
     soloObjectiveScoreThresholds: savedSoloThresholds("rdm-pct-sync735-gcd-shared-armor-dps", { RDM: 36.769120086402275, PCT: 36.769120086402275 }, { RDM: 4, PCT: 4 }),
     historyMs: 4789, historyLabel: "当前项目最快",
     nineRound: { minMs: 5893, averageMs: 6319, maxMs: 6597 },
@@ -147,7 +134,7 @@ const CASES = [
     historyMs: 35671, historyLabel: "本轮全场景验收完整证明",
     nineRound: { minMs: 54129, averageMs: 58434, maxMs: 60498 },
     historySource: "docs/search-optimization/搜索耗时优化总结.md",
-    commonSlots: ["earrings", "necklace", "bracelet", "rings"], foodStrategy: "shared",
+    commonSlots: ["earrings", "necklace", "bracelet", "ring", "ring2"], foodStrategy: "shared",
     strategyTags: ["joint", "joint-2", "job-count-2", "sync", "shared-equipment", "shared-food", "objective-dps"],
   },
   {
@@ -159,7 +146,7 @@ const CASES = [
     historyMs: 62765, historyLabel: "本轮全场景验收完整证明",
     nineRound: { minMs: 114703, averageMs: 116078, maxMs: 119181 },
     historySource: "docs/search-optimization/搜索耗时优化总结.md",
-    commonSlots: ["earrings", "necklace", "bracelet", "rings"], foodStrategy: "shared",
+    commonSlots: ["earrings", "necklace", "bracelet", "ring", "ring2"], foodStrategy: "shared",
     strategyTags: ["joint", "joint-2", "job-count-2", "sync", "wide-range", "shared-equipment", "shared-food", "objective-dps", "stress"],
   },
   {
@@ -167,7 +154,7 @@ const CASES = [
     title: "RDM+BLM+PCT，同步 735，730–795，共享非武器装备与食物、受 GCD 约束，DPS",
     jobs: ["RDM", "BLM", "PCT"], minItemLevel: 730, maxItemLevel: 795, syncLevel: 735,
     objective: "dps", expectedRatio: { numerator: "3", denominator: "1" },
-    jobConstraints: { RDM: { gcd: 2.48 }, BLM: { gcdChoices: [2.48, 2.5] }, PCT: { gcdChoices: [2.48, 2.5] } },
+    jobConstraints: { RDM: { gcdChoices: [2.48] }, BLM: { gcdChoices: [2.48, 2.5] }, PCT: { gcdChoices: [2.48, 2.5] } },
     soloObjectiveScoreThresholds: savedSoloThresholds("rdm-blm-pct-sync735-gcd-shared-all-dps", { RDM: 36.769120086402275, BLM: 36.769120086402275, PCT: 36.769120086402275 }, { RDM: 6, BLM: 6, PCT: 6 }),
     historyMs: 5783, historyLabel: "历史最快",
     nineRound: { minMs: 8572, averageMs: 8838, maxMs: 9366 },
@@ -207,7 +194,7 @@ const CASES = [
     historyMs: 85205, historyLabel: "当前项目最快完整证明",
     nineRound: { minMs: 104913, averageMs: 111464, maxMs: 115853 },
     historySource: "docs/search-optimization/耗时优化记录.7z",
-    commonSlots: ["earrings", "necklace", "bracelet", "rings"], foodStrategy: "shared",
+    commonSlots: ["earrings", "necklace", "bracelet", "ring", "ring2"], foodStrategy: "shared",
     strategyTags: ["joint", "joint-4", "job-count-4", "sync", "wide-range", "shared-equipment", "shared-food", "objective-dps", "stress"],
   },
   {
@@ -231,7 +218,7 @@ const CASES = [
     historyMs: 84577, historyLabel: "本轮全场景验收完整证明",
     nineRound: { minMs: 99495, averageMs: 104295, maxMs: 107112 },
     historySource: "docs/search-optimization/搜索耗时优化总结.md",
-    commonSlots: ["earrings", "necklace", "bracelet", "rings"], foodStrategy: "shared",
+    commonSlots: ["earrings", "necklace", "bracelet", "ring", "ring2"], foodStrategy: "shared",
     strategyTags: ["joint", "joint-5", "job-count-5", "sync", "wide-range", "shared-equipment", "shared-food", "objective-dps", "stress"],
   },
   {
@@ -296,7 +283,7 @@ function sha256(buffer) {
 function printUsage() {
   console.log(`用法：node docs/search-optimization/tools/run-acceptance.mjs [选项]
 
-默认按列表顺序运行全部 18 个有效速度验收条件。选项：
+默认按列表顺序运行全部 ${CASES.length} 个有效速度验收条件。选项：
   --list                                  只列场景，不运行
   --case ID1,ID2                          只运行指定场景（可重复）
   --job-count N                           只运行包含 N 个职业的场景
@@ -607,9 +594,8 @@ function childEnvironment(caseItem, timeoutMs) {
     if (name.startsWith("DATA_TEST_")) delete env[name];
   }
   for (const name of [
-    "DATA_TEST_GCD", "DATA_TEST_SPEED_MIN", "DATA_TEST_SPEED_MAX", "DATA_TEST_TOUGH_PERCENT",
-    "DATA_TEST_TOUGH_MIN", "DATA_TEST_MAX_TOUGHNESS", "DATA_TEST_GCD_CHOICES",
-    "COMMON_SLOTS", "FOOD_STRATEGY", "OBJECTIVE", "TIMEOUT_MS", "JOB_CONSTRAINTS",
+    "DATA_TEST_SPEED_MIN", "DATA_TEST_SPEED_MAX", "DATA_TEST_TOUGH_PERCENT",
+    "DATA_TEST_MIN_TENACITY", "DATA_TEST_MAX_TOUGHNESS", "DATA_TEST_GCD_CHOICES",
   ]) delete env[name];
   if (caseItem.jobs.length === 1) {
     env.DATA_TEST_SINGLE_JOB = caseItem.jobs[0];
@@ -737,7 +723,7 @@ class SolverProfileParser {
 function isResultObject(value) {
   if (value === null || typeof value !== "object") return false;
   if (value.proof?.complete === true && value.normalizedJointValue && value.statistics) return true;
-  return value.proof && value.result && value.search && value.scenario;
+  return value.proof && value.result && value.statistics && value.scenario;
 }
 
 async function runChild(caseItem, runDir, timeoutMs, inputIntegrityBaseline) {
@@ -858,7 +844,6 @@ async function runChild(caseItem, runDir, timeoutMs, inputIntegrityBaseline) {
       scenario: caseConfig,
       startedAt: before.checkedAt,
       finishedAt: after.checkedAt,
-      elapsedWallMs: null,
       childStarted: false,
       childExitCode: null,
       childSignal: null,
@@ -894,7 +879,6 @@ async function runChild(caseItem, runDir, timeoutMs, inputIntegrityBaseline) {
   const parser = new ResultJsonParser();
   const profileParser = new SolverProfileParser();
   const start = new Date().toISOString();
-  const startedAt = performance.now();
   let child;
   try {
     child = spawn(process.execPath, childArgs, {
@@ -935,7 +919,6 @@ async function runChild(caseItem, runDir, timeoutMs, inputIntegrityBaseline) {
   }
   parser.finish();
   profileParser.finish();
-  const elapsedWallMs = Math.round(performance.now() - startedAt);
   const after = await captureRuntimeInputHashes();
   const afterChangedPaths = diffInputHashes(inputIntegrityBaseline, after);
   runtimeInputIntegrity.after = after;
@@ -996,7 +979,6 @@ async function runChild(caseItem, runDir, timeoutMs, inputIntegrityBaseline) {
     scenario: caseConfig,
     startedAt: start,
     finishedAt: new Date().toISOString(),
-    elapsedWallMs,
     childStarted: true,
     childExitCode: exit.code,
     childSignal: exit.signal,
@@ -1056,9 +1038,7 @@ function summarizeSoloObjectiveScores(caseItem, result) {
 }
 
 function measuredSearchTime(result) {
-  if (!result) return null;
-  const value = result.search?.elapsedMs ?? result.runtime?.elapsedMs ?? result.statistics?.elapsedMs;
-  return Number.isFinite(value) ? value : null;
+  return result ? result.statistics.elapsedMs : null;
 }
 
 function exactRatioAtLeast(actual, minimum) {
@@ -1177,7 +1157,7 @@ function describeStrategy(caseItem, result, solverProfiles = []) {
     })),
     solverProfileEventCount: solverProfiles.length,
     solverProfiles,
-    observedSearchStatistics: result?.statistics ?? result?.search ?? null,
+    observedSearchStatistics: result?.statistics ?? null,
     sourceSnapshotDirectory: "../../strategy-snapshot",
   };
 }
@@ -1211,7 +1191,7 @@ function summarizeOutcomes(cases) {
 }
 
 function formatSeconds(milliseconds) {
-  return Number.isFinite(milliseconds) ? `${(milliseconds / 1_000).toFixed(2)}s` : "未完成";
+  return milliseconds === null ? "未完成" : `${(milliseconds / 1_000).toFixed(2)}s`;
 }
 
 function formatCaseProgress(record, index, total) {
@@ -1240,6 +1220,7 @@ function renderMarkdown(suite) {
     `- 优化时限：${TARGET_MS_PER_JOB / 1_000} 秒 × 职业数；达标 ${outcomes.optimizationTarget.met}，超时 ${outcomes.optimizationTarget.missed}，未完成 ${outcomes.optimizationTarget.incomplete}。`,
     `- 历史耗时：优化成功 ${history.optimized}；优化成功（提示）${history["optimized-with-warning"]}；耗时无影响 ${history["no-impact"]}；劣化 ${history.regression}；无法比较 ${history.unavailable}。`,
     `- 结果与证明：合法 ${outcomes.resultPassed}/${outcomes.cases}；综合通过 ${outcomes.accepted}/${outcomes.cases}。低于历史结果门槛、证明不完整或输入完整性失败均判为非法。`,
+    "- 计时范围：领域搜索入口至完整结果返回前，直接读取 statistics.elapsedMs；旧历史基准保留原计时范围，跨口径分类仅作参考。",
     "- 历史分类：不慢于历史最快为“优化成功”；高于历史最快但低于九轮均值为“优化成功（提示）”；不低于均值且不超过九轮最大值为“耗时无影响”；高于九轮最大值为“劣化”。",
     `- 环境：Node ${suite.runtime.node.version}（${suite.runtime.platform}/${suite.runtime.architecture}）；CPU ${suite.runtime.cpu.model ?? "unknown"}。中断：${suite.interrupted ? suite.interruptionSignal ?? "是" : "否"}。`,
     "",
@@ -1274,7 +1255,8 @@ async function main() {
   delete dataSnapshot.sourceBytes;
   const inputIntegrityBaseline = makeInputIntegrityBaseline(strategySources, dataSnapshot);
   const suite = {
-    schemaVersion: 5,
+    schemaVersion: 6,
+    timingScope: "domain-search-entry-to-result",
     runId: run.name,
     runDirectory: path.relative(ROOT, run.path).split(path.sep).join("/"),
     startedAt,

@@ -1,10 +1,8 @@
 import stableStringify from "fast-json-stable-stringify";
-import { assertForcedGearValue, clanCount, jobSchemas, syncTargetCalculationError } from "@/domain";
+import { jobSchemas } from "@/domain";
 import type {
-  CommonGearSlot,
   Effects,
   Food,
-  ForcedGearValue,
   Gear,
   GearSlot,
   JobId,
@@ -15,9 +13,9 @@ import type {
   ResultGear,
   Stat,
   Stats,
-  SyncTarget,
 } from "@/domain";
 import type { UiJointOptimizationConfig as JointOptimizationConfig, UiOptimizationConfig as OptimizationConfig } from "./search-config";
+import { uiJointOptimizationConfigError, uiOptimizationConfigError } from "./search-config";
 
 const DATABASE_NAME = "ffxiv-gearing-calc";
 const DATABASE_VERSION = 1;
@@ -62,7 +60,6 @@ const GEAR_SLOT_IDS = new Set<GearSlot>([
   "ring",
   "ring2",
 ]);
-const COMMON_SLOT_IDS = new Set<CommonGearSlot>([...GEAR_SLOT_IDS, "rings"]);
 const EFFECT_FIELDS: readonly (keyof Effects)[] = [
   "crtChance",
   "crtDamage",
@@ -88,7 +85,6 @@ export type SearchHistoryStatus =
 interface SearchHistoryBase {
   id: string;
   startedAtISO: string;
-  finishedAtISO?: string;
   dataVersion?: string;
   status: SearchHistoryStatus;
   error?: string;
@@ -110,14 +106,12 @@ type StoredSearchHistoryRecord =
 export type SearchHistoryRecord =
   | (SearchHistoryBase & {
       status: "completed";
-      finishedAtISO: string;
       kind: "single";
       config: OptimizationConfig;
       result: OptimizationResult;
     })
   | (SearchHistoryBase & {
       status: "completed";
-      finishedAtISO: string;
       kind: "joint";
       config: JointOptimizationConfig;
       result: JointOptimizationResult;
@@ -140,7 +134,7 @@ export type CompletedSearchHistoryInput = (
       config: JointOptimizationConfig;
       result: JointOptimizationResult;
     }
-) & { dataVersion?: string; startedAtISO: string; finishedAtISO: string };
+) & { dataVersion?: string; startedAtISO: string };
 
 export type FinishSearchHistoryInput =
   | {
@@ -285,19 +279,6 @@ function isStats(value: unknown): value is Stats {
       ([stat, amount]) => STAT_IDS.has(stat as Stat) && isFiniteNumber(amount),
     )
   );
-}
-
-function isForcedGearValue(value: unknown): value is ForcedGearValue {
-  try {
-    assertForcedGearValue(value);
-  } catch {
-    return false;
-  }
-  if (typeof value === "number") return true;
-  if (value === undefined) return false;
-  return "melds" in value
-    ? value.melds.every((meld) => meld === null || isMateria(meld))
-    : isStats(value.customStats);
 }
 
 function isFood(value: unknown): value is Food {
@@ -464,96 +445,12 @@ function hasValidReplacementGroups(
   });
 }
 
-function validateOptimizationConfig(
-  value: unknown,
-): value is OptimizationConfig {
-  if (!isObject(value)) return false;
-  const sync = value.sync;
-  const validSync = sync === undefined || (
-    syncTargetCalculationError(sync as SyncTarget) === undefined
-  );
-  return (
-    !Object.hasOwn(value, "syncLevel") &&
-    validSync &&
-    (value.syncDuty === undefined ||
-      (sync !== undefined && typeof value.syncDuty === "string" && value.syncDuty.length > 0)) &&
-    isJobId(value.jobId) &&
-    isFiniteNumber(value.minItemLevel) &&
-    isFiniteNumber(value.maxItemLevel) &&
-    typeof value.maximizeTenacity === "boolean" &&
-    Array.isArray(value.excludedSources) &&
-    value.excludedSources.every((item) => typeof item === "string") &&
-    isObject(value.forcedGear) &&
-    Object.entries(value.forcedGear).every(
-      ([slot, forcedValue]) =>
-        GEAR_SLOT_IDS.has(slot as GearSlot) &&
-        (forcedValue === undefined || isForcedGearValue(forcedValue)),
-    ) &&
-    isFiniteNumber(value.foodId) &&
-    (value.clanIndex === undefined ||
-      (isFiniteNumber(value.clanIndex) &&
-        Number.isSafeInteger(value.clanIndex) &&
-        value.clanIndex >= 0 &&
-        value.clanIndex < clanCount)) &&
-    (value.gcdTarget === undefined || isFiniteNumber(value.gcdTarget)) &&
-    (value.gcdChoices === undefined ||
-      (Array.isArray(value.gcdChoices) &&
-        value.gcdChoices.every(isFiniteNumber))) &&
-    (value.speedMin === undefined || isFiniteNumber(value.speedMin)) &&
-    (value.speedMax === undefined || isFiniteNumber(value.speedMax)) &&
-    (value.minTenacity === undefined || isFiniteNumber(value.minTenacity)) &&
-    (value.toughnessMin === undefined || isFiniteNumber(value.toughnessMin)) &&
-    (value.toughnessMinPercent === undefined ||
-      isFiniteNumber(value.toughnessMinPercent)) &&
-    (value.objective === "damage" || value.objective === "dps") &&
-    (value.excludedGearIds === undefined ||
-      (Array.isArray(value.excludedGearIds) &&
-        value.excludedGearIds.every(isSafeInteger))) &&
-    (value.sharedSlots === undefined ||
-      (Array.isArray(value.sharedSlots) &&
-        value.sharedSlots.every(
-          (slot) =>
-            typeof slot === "string" && GEAR_SLOT_IDS.has(slot as GearSlot),
-        ))) &&
-    (value.maxSearchMs === undefined || isFiniteNumber(value.maxSearchMs))
-  );
-}
-
 function validateSingleConfig(value: unknown): value is OptimizationConfig {
-  return (
-    validateOptimizationConfig(value) &&
-    value.gcdTarget === undefined &&
-    !(
-      value.gcdChoices !== undefined &&
-      (value.speedMin !== undefined || value.speedMax !== undefined)
-    )
-  );
-}
-
-function supportsResultLevel(
-  config: OptimizationConfig,
-  calculationLevel: number,
-): boolean {
-  return isSafeInteger(calculationLevel) && calculationLevel > 0;
+  return uiOptimizationConfigError(value) === undefined;
 }
 
 function validateJointConfig(value: unknown): value is JointOptimizationConfig {
-  if (!isObject(value)) return false;
-  return (
-    Array.isArray(value.jobs) &&
-    value.jobs.length >= 2 &&
-    value.jobs.every(validateOptimizationConfig) &&
-    new Set(value.jobs.map((job) => (job as OptimizationConfig).jobId)).size ===
-      value.jobs.length &&
-    Array.isArray(value.commonSlots) &&
-    value.commonSlots.every(
-      (item) => typeof item === "string" && GEAR_SLOT_IDS.has(item as GearSlot),
-    ) &&
-    (value.foodStrategy === "shared" || value.foodStrategy === "independent") &&
-    (value.objective === "damage" || value.objective === "dps") &&
-    (value.maxSearchMs === undefined || isFiniteNumber(value.maxSearchMs)) &&
-    (value.cacheLimit === undefined || isFiniteNumber(value.cacheLimit))
-  );
+  return uiJointOptimizationConfigError(value) === undefined;
 }
 
 function validateSingleResult(value: unknown): value is OptimizationResult {
@@ -566,7 +463,7 @@ function validateSingleResult(value: unknown): value is OptimizationResult {
         ? value.equivalentGear
         : undefined;
   return (
-    isSafeInteger(value.calculationLevel) &&
+    isSafeInteger(value.calculationLevel) && value.calculationLevel > 0 &&
     Array.isArray(value.gear) &&
     value.gear.every(isResultGear) &&
     groups !== undefined &&
@@ -580,15 +477,13 @@ function validateSingleResult(value: unknown): value is OptimizationResult {
     isFiniteNumber(value.damagePerSecond) &&
     isFiniteNumber(value.gcdTier) &&
     isFiniteNumber(value.searchedCandidates) &&
-    isFiniteNumber(value.durationMs) &&
     (value.maximumTenacity === undefined ||
       isFiniteNumber(value.maximumTenacity)) &&
-    (value.statistics === undefined || isObject(value.statistics))
+    isObject(value.statistics)
   );
 }
 
 const JOINT_STATISTIC_FIELDS = [
-  "elapsedMs",
   "outerNodes",
   "completeNodes",
   "upperBoundPrunes",
@@ -622,12 +517,12 @@ function isCommonGearMap(value: unknown): boolean {
   if (!isObject(value)) return false;
   return Object.entries(value).every(([slot, gear]) => {
     if (
-      !COMMON_SLOT_IDS.has(slot as CommonGearSlot) ||
+      !GEAR_SLOT_IDS.has(slot as GearSlot) ||
       !Array.isArray(gear) ||
       !gear.every(isMeldedGear)
     )
       return false;
-    return slot === "rings" ? gear.length === 2 : gear.length === 1;
+    return gear.length === 1;
   });
 }
 
@@ -678,10 +573,6 @@ function validateRecord(value: unknown): StoredSearchHistoryRecord {
   assert(value.kind === "single" || value.kind === "joint", "职业类型无效。");
   assert(isIsoDate(value.startedAtISO), "开始时间不是有效 ISO 日期。");
   assert(
-    value.finishedAtISO === undefined || isIsoDate(value.finishedAtISO),
-    "结束时间不是有效 ISO 日期。",
-  );
-  assert(
     value.status === "running" ||
       value.status === "completed" ||
       value.status === "cancelled" ||
@@ -689,12 +580,6 @@ function validateRecord(value: unknown): StoredSearchHistoryRecord {
       value.status === "failed" ||
       value.status === "interrupted",
     "搜索状态无效。",
-  );
-  assert(
-    value.status === "running"
-      ? value.finishedAtISO === undefined
-      : isIsoDate(value.finishedAtISO),
-    "搜索结束时间与状态不匹配。",
   );
   assert(
     value.error === undefined || typeof value.error === "string",
@@ -711,10 +596,6 @@ function validateRecord(value: unknown): StoredSearchHistoryRecord {
         validateSingleResult(value.result),
         "单职业成功结果缺少必要字段或类型错误。",
       );
-      assert(
-        supportsResultLevel(value.config, value.result.calculationLevel!),
-        "成功记录的职业等级不受当前数据支持。",
-      );
     }
   } else {
     assert(
@@ -725,21 +606,6 @@ function validateRecord(value: unknown): StoredSearchHistoryRecord {
       assert(
         validateJointResult(value.result, value.config),
         "联合成功结果缺少必要字段或类型错误。",
-      );
-      const result = value.result as JointOptimizationResult;
-      assert(
-        value.config.jobs.every(
-          (job) =>
-            supportsResultLevel(
-              job,
-              result.jobResults[job.jobId]!.calculationLevel!,
-            ) &&
-            supportsResultLevel(
-              job,
-              result.optima[job.jobId]!.calculationLevel!,
-            ),
-        ),
-        "成功记录中有职业等级不受当前数据支持。",
       );
     }
   }
@@ -950,7 +816,7 @@ export async function listSearchHistory(
 
 async function updateSearchHistoryRecord(
   id: string,
-  update: FinishSearchHistoryInput & { finishedAtISO?: string },
+  update: FinishSearchHistoryInput,
 ): Promise<StoredSearchHistoryRecord> {
   const database = await openDatabase();
   return new Promise<StoredSearchHistoryRecord>((resolve, reject) => {
@@ -1005,7 +871,6 @@ async function updateSearchHistoryRecord(
           const next = {
             ...existing,
             status: update.status,
-            finishedAtISO: update.finishedAtISO ?? new Date().toISOString(),
             result: update.status === "completed" ? update.result : undefined,
             error:
               update.status === "failed" || update.status === "interrupted"
@@ -1044,7 +909,7 @@ async function updateSearchHistoryRecord(
 
 export function updateSearchHistory(
   id: string,
-  update: FinishSearchHistoryInput & { finishedAtISO?: string },
+  update: FinishSearchHistoryInput,
 ): Promise<StoredSearchHistoryRecord> {
   const previous = resultWriteQueues.get(id) ?? Promise.resolve();
   const operation = previous

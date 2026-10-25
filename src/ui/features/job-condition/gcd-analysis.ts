@@ -18,12 +18,11 @@ export function gcdAnalysisInputFromConfig(
     speedMin: config.speedMin,
     speedMax: config.speedMax,
     sync: config.sync,
-    clanIndex: config.clanIndex ?? 0,
+    clanIndex: config.clanIndex,
     minTenacity: config.minTenacity,
-    toughnessMin: config.toughnessMin,
     toughnessMinPercent: config.toughnessMinPercent,
     maximizeTenacity: config.maximizeTenacity,
-    excludedSources: [...config.excludedSources],
+    excludedSources: [...(config.excludedSources ?? [])],
     excludedGearIds: config.excludedGearIds
       ? [...config.excludedGearIds]
       : undefined,
@@ -40,15 +39,14 @@ export function gcdAnalysisKey(input: GcdAnalysisInput): string {
     speedMin: input.speedMin,
     speedMax: input.speedMax,
     sync: input.sync,
-    clanIndex: input.clanIndex ?? 0,
+    clanIndex: input.clanIndex,
     minTenacity: input.minTenacity,
-    toughnessMin: input.toughnessMin,
     toughnessMinPercent: input.toughnessMinPercent,
     maximizeTenacity: input.maximizeTenacity,
-    excludedSources: [...input.excludedSources].sort(),
+    excludedSources: [...(input.excludedSources ?? [])].sort(),
     excludedGearIds: [...(input.excludedGearIds ?? [])].sort((a, b) => a - b),
     forcedGear: Object.fromEntries(
-      Object.entries(input.forcedGear).sort(([left], [right]) =>
+      Object.entries(input.forcedGear ?? {}).sort(([left], [right]) =>
         left.localeCompare(right),
       ),
     ),

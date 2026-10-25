@@ -45,7 +45,6 @@ export function candidatePools(
   const speedStat = getSpeedStat(jobSchemas[jobId]);
   const paretoStats = paretoAttributeStats(jobId);
   const preserveSpeed =
-    config.gcdTarget !== undefined ||
     (config.gcdChoices?.length ?? 0) > 0 ||
     config.speedMax !== undefined;
   const speedCoordinate = preserveSpeed

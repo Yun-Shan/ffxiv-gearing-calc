@@ -5,13 +5,15 @@ import type { OptimizationConfig } from "./types.ts";
 describe("candidate generation Pareto filtering", () => {
   it("drops dominated private gear variants without lowering the exact optimum", async () => {
     const config: OptimizationConfig = {
+      clanIndex: 0,
+      objective: "damage",
       jobId: "WHM",
       minItemLevel: 730,
       maxItemLevel: 740,
       maximizeTenacity: false,
       excludedSources: [],
       forcedGear: {},
-      sharedSlots: [],
+
       foodId: 49240,
       maxSearchMs: 10_000,
     };
@@ -43,7 +45,7 @@ describe("candidate generation Pareto filtering", () => {
           .filter((gear) => !allowedHeadIds.includes(gear.id))
           .map((gear) => gear.id),
       };
-      if (allowedHeadIds.length === 1) searchConfig.forcedGear.head = allowedHeadIds[0]!;
+      if (allowedHeadIds.length === 1) searchConfig.forcedGear!.head = allowedHeadIds[0]!;
       let headCandidateCount: number | undefined;
       const result = await runOptimizationLocally(searchConfig, {
         onCandidateCounts: ({ slots }) => {

@@ -1,14 +1,10 @@
-import type { JobId, SyncTarget } from "@/domain";
+import type { JobId } from "@/domain";
 import type { UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
 
-export interface SearchRangeDraft {
-  minItemLevel: number;
-  maxItemLevel: number;
-  sync?: SyncTarget;
-  syncDuty?: string;
-  /** 族群基础属性索引；默认 0（人族·中原之民）。 */
-  clanIndex: number;
-}
+export type SearchRangeDraft = Pick<
+  OptimizationConfig,
+  "minItemLevel" | "maxItemLevel" | "sync" | "syncDuty" | "clanIndex"
+>;
 
 export type GcdDraft =
   | { mode: "any" }
@@ -19,13 +15,12 @@ export type FoodDraft = { mode: "auto" } | { mode: "specific"; foodId: number };
 
 export type TankStrategy = "any" | "tenacity" | "reduction" | "maximize";
 
-export interface TankConditionDraft {
-  /** Editor strategy belongs to the draft, never to a domain request. */
-  strategy?: TankStrategy;
-  minimumTenacity?: number;
-  minimumDamageReductionPercent?: number;
-  maximizeTenacity: boolean;
-}
+/** Empty numeric input is an editing state; the strategy itself is always explicit. */
+export type TankConditionDraft =
+  | { strategy: "any" }
+  | { strategy: "tenacity"; minimumTenacity?: number }
+  | { strategy: "reduction"; minimumDamageReductionPercent?: number }
+  | { strategy: "maximize" };
 
 export interface JobConditionDraft {
   range: SearchRangeDraft;
@@ -55,7 +50,6 @@ export type GcdAnalysisInput = Pick<
   | "sync"
   | "clanIndex"
   | "minTenacity"
-  | "toughnessMin"
   | "toughnessMinPercent"
   | "maximizeTenacity"
   | "excludedSources"
@@ -79,7 +73,6 @@ export interface CompiledJobCondition {
     | "sync"
     | "syncDuty"
     | "clanIndex"
-    | "gcdTarget"
     | "gcdChoices"
     | "speedMin"
     | "speedMax"
@@ -89,7 +82,6 @@ export interface CompiledJobCondition {
     | "objective"
     | "foodId"
   >;
-  levelResolution: "domain";
 }
 
 export type ValidationStatus = "valid" | "invalid" | "pending";

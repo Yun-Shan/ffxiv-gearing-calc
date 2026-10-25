@@ -48,6 +48,10 @@ function gcdValidation(
 ): SectionValidation {
   const issues: ValidationIssue[] = [];
   if (gcd.mode === "tiers") {
+    if (gcd.tiers.some((tier) => !Number.isFinite(tier) || tier <= 0) ||
+        new Set(gcd.tiers).size !== gcd.tiers.length) {
+      issues.push(issue("gcd.tiers.invalid", "GCD 档位必须是无重复的正有限数值。", "gcd", "tiers"));
+    }
     if (gcd.tiers.length === 0) {
       issues.push(
         issue(
@@ -83,21 +87,21 @@ function gcdValidation(
         issue("gcd.speed.required", `请至少填写一个${speedLabel}边界。`, "gcd"),
       );
     }
-    if (gcd.min !== undefined && !Number.isFinite(gcd.min)) {
+    if (gcd.min !== undefined && (!Number.isFinite(gcd.min) || gcd.min < 0)) {
       issues.push(
         issue(
           "gcd.speed.min.finite",
-          `最低${speedLabel}必须是有限数值。`,
+          `最低${speedLabel}必须是非负有限数值。`,
           "gcd",
           "min",
         ),
       );
     }
-    if (gcd.max !== undefined && !Number.isFinite(gcd.max)) {
+    if (gcd.max !== undefined && (!Number.isFinite(gcd.max) || gcd.max < 0)) {
       issues.push(
         issue(
           "gcd.speed.max.finite",
-          `最高${speedLabel}必须是有限数值。`,
+          `最高${speedLabel}必须是非负有限数值。`,
           "gcd",
           "max",
         ),
@@ -140,11 +144,11 @@ export function validateSearchRangeDraft(
 ): SectionValidation {
   const rangeIssues: ValidationIssue[] = [];
   if (
-    !Number.isFinite(range.minItemLevel) ||
-    !Number.isFinite(range.maxItemLevel)
+    !Number.isSafeInteger(range.minItemLevel) ||
+    !Number.isSafeInteger(range.maxItemLevel)
   ) {
     rangeIssues.push(
-      issue("range.finite", "装备品级范围必须是有限数值。", ...pathPrefix),
+      issue("range.finite", "装备品级范围必须是安全整数。", ...pathPrefix),
     );
   }
   if (range.minItemLevel > range.maxItemLevel) {
@@ -193,20 +197,6 @@ export function validateJobConditionDraft(
   );
   const tankIssues: ValidationIssue[] = [];
   if (
-    Number(draft.tank.minimumTenacity !== undefined) +
-      Number(draft.tank.minimumDamageReductionPercent !== undefined) +
-      Number(draft.tank.maximizeTenacity) >
-    1
-  ) {
-    tankIssues.push(
-      issue(
-        "tank.strategy.single",
-        "历史条件包含多个坚韧约束，请选择单一策略。",
-        "tank",
-      ),
-    );
-  }
-  if (
     draft.tank.strategy === "tenacity" &&
     draft.tank.minimumTenacity === undefined
   ) {
@@ -232,8 +222,8 @@ export function validateJobConditionDraft(
       ),
     );
   }
-  const minimum = draft.tank.minimumTenacity;
-  const reduction = draft.tank.minimumDamageReductionPercent;
+  const minimum = draft.tank.strategy === "tenacity" ? draft.tank.minimumTenacity : undefined;
+  const reduction = draft.tank.strategy === "reduction" ? draft.tank.minimumDamageReductionPercent : undefined;
   if (minimum !== undefined && (!Number.isFinite(minimum) || minimum < 0)) {
     tankIssues.push(
       issue(

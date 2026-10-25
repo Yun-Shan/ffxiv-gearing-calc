@@ -27,6 +27,8 @@ const maxItemLevel = Math.max(...gears.map((gear) => gear.level));
 
 function configFor(jobId: JobId, calculationLevel?: number): OptimizationConfig {
   return {
+    clanIndex: 0,
+    objective: "damage",
     jobId,
     sync: calculationLevel !== undefined && calculationLevel < 100
       ? { kind: "jobLevel", value: calculationLevel }
@@ -36,7 +38,7 @@ function configFor(jobId: JobId, calculationLevel?: number): OptimizationConfig 
     maximizeTenacity: false,
     excludedSources: [],
     forcedGear: {},
-    sharedSlots: [],
+
     foodId: 0,
   };
 }
@@ -87,6 +89,7 @@ function expectResultUsesLevel(result: NonNullable<Awaited<ReturnType<typeof run
     ? "MDMG"
     : "PDMG";
   expect(result.effects).toEqual(calculateEffects({
+    clanIndex: 0,
     stats: expectedStats,
     job,
     level,
@@ -291,7 +294,7 @@ describe("optimizer runtime boundaries", () => {
         ...config,
         speedMin: 0,
         speedMax: Number.MAX_SAFE_INTEGER,
-        ...(jobId === "PLD" ? { maximizeTenacity: true, toughnessMinPercent: 0 } : {}),
+        ...(jobId === "PLD" ? { maximizeTenacity: true } : {}),
       });
       expect(gcds.length, `${jobId} should have an attainable GCD`).toBeGreaterThan(0);
       expect(gcds.every(Number.isFinite)).toBe(true);
@@ -303,7 +306,7 @@ describe("optimizer runtime boundaries", () => {
     const customWeapon = gearOptionsFor(base, "weapon")
       .find((item) => item.customParameters?.length === 4)!;
     const config = forceOnePerSlot(base, customWeapon.id);
-    const selectedItems = Object.values(config.forcedGear)
+    const selectedItems = Object.values(config.forcedGear ?? {})
       .map((id) => gears.find((item) => item.id === id)!)
       .filter(Boolean);
     const minimumSelectedLevel = Math.min(...selectedItems.map((item) => item.level));

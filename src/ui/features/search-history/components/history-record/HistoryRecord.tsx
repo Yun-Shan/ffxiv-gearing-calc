@@ -33,14 +33,12 @@ function jointSharedEquipmentConfig(
   const first = config.jobs[0]!;
   return {
     ...first,
-    excludedSources: [
-      ...new Set(config.jobs.flatMap((job) => job.excludedSources)),
-    ],
+    excludedSources: [...(first.excludedSources ?? [])],
     excludedGearIds: (first.excludedGearIds ?? []).filter((id) =>
       config.jobs.every((job) => job.excludedGearIds?.includes(id)),
     ),
     forcedGear: Object.fromEntries(
-      Object.entries(first.forcedGear).filter(([slot]) =>
+      Object.entries(first.forcedGear ?? {}).filter(([slot]) =>
         isSlotShared(slot as GearSlot, config.commonSlots),
       ),
     ),
@@ -50,7 +48,7 @@ function jointSharedEquipmentConfig(
 function equipmentRestrictionCondition(config: OptimizationConfig): Condition {
   return {
     label: "装备限制",
-    value: `来源排除 ${config.excludedSources.length} 项 · 装备排除 ${config.excludedGearIds?.length ?? 0} 件 · 装备强制 ${Object.keys(config.forcedGear).length} 件`,
+    value: `来源排除 ${(config.excludedSources?.length ?? 0)} 项 · 装备排除 ${config.excludedGearIds?.length ?? 0} 件 · 装备强制 ${Object.keys(config.forcedGear ?? {}).length} 件`,
   };
 }
 
@@ -122,7 +120,7 @@ function JointHistoryRecord(
       label: "优化指标",
       value: objective === "damage" ? "每威力期望伤害" : "每秒每威力期望伤害",
     },
-    { label: "种族", value: clanLabel(firstJob.clanIndex ?? 0) },
+    { label: "种族", value: clanLabel(firstJob.clanIndex) },
     {
       label: "装备品级",
       value: `${firstJob.minItemLevel}–${firstJob.maxItemLevel}`,
@@ -174,11 +172,7 @@ function HistoryRecordFrame({
   conditions: Condition[];
   objective: "damage" | "dps";
 }) {
-  const duration =
-    Math.max(
-      0,
-      Date.parse(record.finishedAtISO) - Date.parse(record.startedAtISO),
-    ) / 1000;
+  const duration = record.result.statistics.elapsedMs / 1000;
   const started = new Date(record.startedAtISO);
   const timestamp = `${started.getFullYear()}-${String(started.getMonth() + 1).padStart(2, "0")}-${String(started.getDate()).padStart(2, "0")} ${String(started.getHours()).padStart(2, "0")}:${String(started.getMinutes()).padStart(2, "0")}`;
   return (

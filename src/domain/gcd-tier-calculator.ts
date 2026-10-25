@@ -1,6 +1,6 @@
 import { foods, gameData, searchFoods } from "./data.ts";
-import { assertClanIndex } from "./clans.ts";
-import { itemSpecialBonusAdditions } from "./item-special-bonus.ts";
+import { assertOptimizationConfig } from "./config-validation.ts";
+import { enabledItemSpecialBonusesForJob, itemSpecialBonusAdditions } from "./item-special-bonus.ts";
 import { jobSchemas } from "./jobs.ts";
 import {
   applyFood,
@@ -86,14 +86,7 @@ function abortIfNeeded(signal?: AbortSignal): void {
 }
 
 function validateConfig(config: OptimizationConfig): void {
-  if (
-    !Number.isSafeInteger(config.minItemLevel) ||
-    !Number.isSafeInteger(config.maxItemLevel) ||
-    config.minItemLevel > config.maxItemLevel
-  ) {
-    throw new RangeError("装备品级范围无效");
-  }
-  if (config.clanIndex !== undefined) assertClanIndex(config.clanIndex);
+  assertOptimizationConfig(config);
 }
 
 function forcedGearSignature(value: ForcedGearValue | undefined): string {
@@ -410,7 +403,7 @@ function gearProfiles(
     itemSpecialBonusAdditions(
       resolvedGear,
       job,
-      config.enabledItemSpecialBonuses ?? [],
+      enabledItemSpecialBonusesForJob(config.jobId),
     ),
     speedStat,
   );
@@ -524,7 +517,7 @@ export function calculateFeasibleGcdTiers(
   const candidatePools = new Map<GearSlot, Gear[]>();
   const emptySlots: GearSlot[] = [];
   const eligiblePoolForSlot = (slot: GearSlot, pool: Gear[]): Gear[] => {
-    const forcedValue: unknown = config.forcedGear[slot];
+    const forcedValue: unknown = config.forcedGear?.[slot];
     try {
       assertForcedGearValue(forcedValue);
     } catch (error) {
@@ -555,19 +548,18 @@ export function calculateFeasibleGcdTiers(
   }
   const usesTenacity =
     config.minTenacity !== undefined ||
-    config.toughnessMin !== undefined ||
     config.toughnessMinPercent !== undefined ||
     config.maximizeTenacity;
   if (usesTenacity && !job.stats.includes("TEN")) {
     throw new RangeError("职业 " + config.jobId + " 不使用坚韧属性");
   }
 
-  const clanIndex = config.clanIndex ?? 0;
+  const clanIndex = config.clanIndex;
   const baseStats = calculateBaseStats(job, jobLevel, clanIndex);
   const baseSpeed = baseStats[speedStat] ?? 0;
   const baseTenacity = baseStats.TEN ?? 0;
   const minimumTenacity = Math.max(
-    Math.max(0, (config.minTenacity ?? config.toughnessMin ?? 0) - baseTenacity),
+    Math.max(0, (config.minTenacity ?? 0) - baseTenacity),
     config.toughnessMinPercent === undefined
       ? 0
       : equippedToughnessForMitigationPercent(
@@ -584,7 +576,7 @@ export function calculateFeasibleGcdTiers(
 
   const profilesByGearSlotAndRestriction = new Map<string, Map<number, number>>();
   const profilesForGear = (gear: Gear, slot: GearSlot): Map<number, number> => {
-    const forcedValue = config.forcedGear[slot];
+    const forcedValue = config.forcedGear?.[slot];
     const cacheKey = JSON.stringify([
       gear.id,
       slot,

@@ -36,13 +36,15 @@ import { runJointOptimizationLocally } from "./joint-search.ts";
 
 function configFor(jobId: JobId = "SAM"): OptimizationConfig {
   return {
+    clanIndex: 0,
+    objective: "damage",
     jobId,
     minItemLevel: 0,
     maxItemLevel: 9999,
     maximizeTenacity: false,
     excludedSources: [],
     forcedGear: {},
-    sharedSlots: [],
+
     foodId: 0,
   };
 }
@@ -647,12 +649,13 @@ describe("forced materia candidate generation", () => {
 
   it("rejects inconsistent shared hole settings before searching", async () => {
     await expect(runJointOptimizationLocally({
+      objective: "damage",
       jobs: [configFor("WAR"), {
         ...configFor("PLD"),
         forcedGear: { body: { id: 123, melds: [null] } },
       }],
       commonSlots: ["body"], foodStrategy: "shared",
-    })).rejects.toThrow("逐孔强制配置必须在所有职业中一致");
+    })).rejects.toThrow("强制配置必须在所有职业中一致");
   });
 
   it("preserves absolute fixed Resistance stats above an ordinary materia cap", () => {

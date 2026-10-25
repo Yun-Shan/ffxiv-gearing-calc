@@ -5,13 +5,14 @@ import type { OptimizationConfig } from "./types";
 
 const maxLevel = Math.max(...gears.map((gear) => gear.level));
 const base: OptimizationConfig = {
+  clanIndex: 0,
   jobId: "SAM",
   minItemLevel: maxLevel - 15,
   maxItemLevel: maxLevel,
   maximizeTenacity: false,
   excludedSources: [],
   forcedGear: {},
-  sharedSlots: [],
+
   foodId: 0,
   objective: "damage",
 };

@@ -235,6 +235,7 @@ describe("联合工作台", () => {
 
   it("共享食物策略下的职业摘要与禁用编辑器显示同一食物，切回独立时保留各自选择", async () => {
     const config = testSupport.testJointConfig(["RDM", "BLM"]);
+    config.foodStrategy = "independent";
     config.jobs[0]!.foodId = foods[0]!.id;
     config.jobs[1]!.foodId = foods[1]!.id;
     testSupport.seedCompletedJointHistory(config);
@@ -255,6 +256,17 @@ describe("联合工作台", () => {
     expect(record.textContent).not.toContain("坚韧减伤");
     expect(record.textContent).not.toContain("每秒每威力期望伤害");
     testSupport.click(historyAction(record, "编辑条件"));
+    await testSupport.settleApp();
+
+    testSupport.click(testSupport.buttonNamed("共享设置"));
+    const sharedStrategyLabel = [...testSupport.host.querySelectorAll("label")].find(
+      (label) => label.textContent === "食物策略",
+    )!;
+    testSupport.click(document.getElementById(sharedStrategyLabel.htmlFor) as HTMLButtonElement);
+    await testSupport.settleApp();
+    const sharedOption = [...document.body.querySelectorAll<HTMLElement>('[role="option"]')]
+      .find((option) => option.textContent?.trim() === "全职业共用")!;
+    testSupport.click(sharedOption as HTMLButtonElement);
     await testSupport.settleApp();
 
     testSupport.click(testSupport.buttonNamed(jobSchemas.BLM.name));
@@ -331,8 +343,8 @@ describe("联合工作台", () => {
   it("历史共享装备冲突时保留正在进行的搜索并提示恢复失败", async () => {
     const conflictingConfig = testSupport.testJointConfig(["PLD", "WAR"]);
     conflictingConfig.commonSlots = ["head"];
-    conflictingConfig.jobs[0]!.forcedGear.head = 12345;
-    conflictingConfig.jobs[1]!.forcedGear.head = 67890;
+    conflictingConfig.jobs[0]!.forcedGear!.head = 12345;
+    conflictingConfig.jobs[1]!.forcedGear!.head = 67890;
     testSupport.seedCompletedJointHistory(conflictingConfig);
     testSupport.mockDelayedAbortableJointSearch();
     await enterConditions();
@@ -371,8 +383,8 @@ describe("联合工作台", () => {
   it("调整条件遇到共享装备冲突时保留结果并提示恢复失败", async () => {
     const conflictingConfig = testSupport.testJointConfig(["RDM", "BLM"]);
     conflictingConfig.commonSlots = ["head"];
-    conflictingConfig.jobs[0]!.forcedGear.head = 12345;
-    conflictingConfig.jobs[1]!.forcedGear.head = 67890;
+    conflictingConfig.jobs[0]!.forcedGear!.head = 12345;
+    conflictingConfig.jobs[1]!.forcedGear!.head = 67890;
     testSupport.seedCompletedJointHistory(conflictingConfig);
     testSupport.historyStore.records[0]!.dataVersion = "old-game-version";
     testSupport.navigateToJoint();
@@ -393,11 +405,11 @@ describe("联合工作台", () => {
     expect(document.body.textContent).toContain("历史条件无法恢复");
   });
 
-  it("结果耗时与历史记录使用相同的开始和结束时间", async () => {
+  it.each([12345, -1234])("结果与历史直接使用领域统计耗时 %s", async (elapsedMs) => {
     const config = testSupport.testJointConfig(["RDM", "BLM"]);
-    testSupport.optimizeJointMock.mockResolvedValue(
-      testSupport.sampleJointResult(config),
-    );
+    const result = testSupport.sampleJointResult(config);
+    result.statistics.elapsedMs = elapsedMs;
+    testSupport.optimizeJointMock.mockResolvedValue(result);
     await enterConditions();
     await waitForGcdValidation();
     let nowCall = 0;
@@ -408,23 +420,14 @@ describe("联合工作台", () => {
       await testSupport.startSearchAndSettle();
       await testSupport.settleApp();
 
-      const startedAtISO = vi
-        .mocked(saveCompletedSearchHistory)
-        .mock.calls.at(-1)?.[0].startedAtISO;
-      const finishedAtISO = vi
-        .mocked(saveCompletedSearchHistory)
-        .mock.calls.at(-1)?.[0].finishedAtISO;
-      const displayedDuration = /耗时\s+([\d.]+)\s*秒/.exec(
+      const saved = vi.mocked(saveCompletedSearchHistory).mock.calls.at(-1)?.[0];
+      const displayedDuration = /耗时\s+(-?[\d.]+)\s*秒/.exec(
         testSupport.host.textContent ?? "",
       )?.[1];
-      expect(startedAtISO).toBeDefined();
-      expect(finishedAtISO).toBeDefined();
-      expect(displayedDuration).toBeDefined();
-      const recordedDurationSeconds =
-        (Date.parse(finishedAtISO!) - Date.parse(startedAtISO!)) / 1000;
-      expect(Number(recordedDurationSeconds.toFixed(1))).toBe(
-        Number(displayedDuration),
-      );
+      expect(saved?.startedAtISO).toBeDefined();
+      expect(saved?.result.statistics.elapsedMs).toBe(elapsedMs);
+      expect(displayedDuration).toBe((elapsedMs / 1000).toFixed(1));
+      expect(Object.keys(saved!).sort()).toEqual(["config", "dataVersion", "kind", "result", "startedAtISO"]);
     } finally {
       nowSpy.mockRestore();
     }
@@ -490,9 +493,7 @@ describe("联合工作台", () => {
     expect(
       vi.mocked(saveCompletedSearchHistory).mock.calls.at(-1)?.[0].startedAtISO,
     ).toBeTypeOf("string");
-    expect(
-      vi.mocked(saveCompletedSearchHistory).mock.calls[0]?.[0].finishedAtISO,
-    ).toBeTypeOf("string");
+    expect(vi.mocked(saveCompletedSearchHistory).mock.calls.at(-1)?.[0].result.statistics.elapsedMs).toBe(1);
   });
 
   it.each(["no-result", "failed"])("联合搜索 %s 不新增历史", async (outcome) => {

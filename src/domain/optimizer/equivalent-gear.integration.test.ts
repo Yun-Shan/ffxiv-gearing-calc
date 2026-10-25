@@ -10,6 +10,8 @@ import { attachEquivalentGear } from "./equivalent-gear";
 
 function fixed(jobId: JobId, weaponId?: number): OptimizationConfig {
   const config: OptimizationConfig = {
+    clanIndex: 0,
+    objective: "damage",
     jobId,
     minItemLevel: 780,
     maxItemLevel: 795,
@@ -35,7 +37,7 @@ function fixed(jobId: JobId, weaponId?: number): OptimizationConfig {
               ((slot !== "ring" && slot !== "ring2") || !rings.has(g.id)),
           );
     if (!item) throw new Error(`no real fixture for ${slot}`);
-    config.forcedGear[slot] = item.id;
+    config.forcedGear![slot] = item.id;
     if (slot === "ring" || slot === "ring2") rings.add(item.id);
   }
   return config;
@@ -67,6 +69,8 @@ describe("real synced single replacement results", () => {
     const ring = gears.find((gear) => gear.id === 35241)!;
     expect(ring.unique).toBe(false);
     const config: OptimizationConfig = {
+      clanIndex: 0,
+      objective: "damage",
       jobId: "SAM", minItemLevel: 600, maxItemLevel: 600, sync: { kind: "itemLevel", value: 665 },
       maximizeTenacity: false, excludedSources: [], foodId: 0,
       forcedGear: { ring2: { id: ring.id, melds: [null, null] } },
@@ -86,9 +90,9 @@ describe("real synced single replacement results", () => {
   });
   it("returns complete legal groups, preserves selected plans and observes exclusions / locks", async () => {
     const config = fixed("PLD");
-    delete config.forcedGear.head;
-    delete config.forcedGear.ring;
-    delete config.forcedGear.ring2;
+    delete config.forcedGear!.head;
+    delete config.forcedGear!.ring;
+    delete config.forcedGear!.ring2;
     const excluded = gearOptionsFor(config, "head")[0]!;
     config.excludedGearIds = [excluded.id];
     const result = (await runOptimizationLocally(config))!;
@@ -104,8 +108,8 @@ describe("real synced single replacement results", () => {
       ).toBe(true);
       const allowed = gearOptionsFor(config, selected.slot).filter(
         (g) =>
-          config.forcedGear[selected.slot] === undefined ||
-          g.id === config.forcedGear[selected.slot],
+          config.forcedGear![selected.slot] === undefined ||
+          g.id === config.forcedGear![selected.slot],
       );
       for (const candidate of alternatives) {
         expect(allowed.some((g) => g.id === candidate.id)).toBe(true);

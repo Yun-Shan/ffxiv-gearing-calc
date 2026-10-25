@@ -49,6 +49,7 @@ describe.skipIf(process.env.FFXIV_DOMAIN_REAL_CASES !== "1")(
         const result = await runJointOptimizationLocally(
           {
             jobs: scenario.jobs.map((jobId) => ({
+              clanIndex: 0,
               jobId,
               minItemLevel: scenario.minimum,
               maxItemLevel: 795,
@@ -59,7 +60,7 @@ describe.skipIf(process.env.FFXIV_DOMAIN_REAL_CASES !== "1")(
               forcedGear: {},
               foodId: 0,
             })),
-            commonSlots: ["earrings", "necklace", "bracelet", "rings"],
+            commonSlots: ["earrings", "necklace", "bracelet", "ring", "ring2"],
             foodStrategy: "shared",
             objective: "dps",
           },

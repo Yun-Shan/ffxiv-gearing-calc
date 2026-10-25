@@ -4,33 +4,36 @@ import type { TankConditionDraft, TankStrategy } from "../../../types";
 import { LabeledSelect } from "@/ui/components/form-controls/labeled-select/LabeledSelect";
 import { NumberInput } from "@/ui/components/form-controls/number-input/NumberInput";
 import styles from "./TankConditionSection.module.scss";
-type Strategy = TankStrategy;
-function strategyFor(tank: TankConditionDraft): Strategy | "" {
-  const count =
-    Number(tank.minimumTenacity !== undefined) +
-    Number(tank.minimumDamageReductionPercent !== undefined) +
-    Number(tank.maximizeTenacity);
-  if (count > 1) return "";
-  if (tank.minimumTenacity !== undefined) return "tenacity";
-  if (tank.minimumDamageReductionPercent !== undefined) return "reduction";
-  return tank.maximizeTenacity ? "maximize" : "any";
+function selectStrategy(
+  strategy: TankStrategy,
+  current: TankConditionDraft,
+): TankConditionDraft {
+  switch (strategy) {
+    case "tenacity":
+      return {
+        strategy,
+        minimumTenacity:
+          current.strategy === strategy ? current.minimumTenacity : 0,
+      };
+    case "reduction":
+      return {
+        strategy,
+        minimumDamageReductionPercent:
+          current.strategy === strategy
+            ? current.minimumDamageReductionPercent
+            : 0,
+      };
+    default:
+      return { strategy };
+  }
 }
 export function TankConditionSection() {
   const { jobId, draft, updateDraft, validation, readOnly } =
     useJobConditionScope();
-  const strategy = draft.tank.strategy ?? strategyFor(draft.tank);
   if (jobSchemas[jobId].role !== "tank") return null;
   const tank = draft.tank;
-  function update(patch: Partial<TankConditionDraft>) {
-    updateDraft((current) => ({
-      ...current,
-      tank: {
-        ...current.tank,
-        strategy:
-          current.tank.strategy ?? (strategyFor(current.tank) || undefined),
-        ...patch,
-      },
-    }));
+  function update(tank: TankConditionDraft) {
+    updateDraft((current) => ({ ...current, tank }));
   }
   return (
     <section className={styles.section} aria-label="坚韧条件">
@@ -40,8 +43,7 @@ export function TankConditionSection() {
           controlSize="strategy"
           label="坚韧策略"
           layout="inline"
-          value={strategy || null}
-          placeholder="请选择单一策略"
+          value={tank.strategy}
           disabled={readOnly}
           options={[
             { value: "any", label: "不限" },
@@ -50,25 +52,13 @@ export function TankConditionSection() {
             { value: "tenacity", label: "最低坚韧数值" },
           ]}
           onChange={(value) => {
-            const next = value as Strategy;
             updateDraft((current) => ({
               ...current,
-              tank: {
-                strategy: next,
-                minimumTenacity:
-                  next === "tenacity"
-                    ? (current.tank.minimumTenacity ?? 0)
-                    : undefined,
-                minimumDamageReductionPercent:
-                  next === "reduction"
-                    ? (current.tank.minimumDamageReductionPercent ?? 0)
-                    : undefined,
-                maximizeTenacity: next === "maximize",
-              },
+              tank: selectStrategy(value as TankStrategy, current.tank),
             }));
           }}
         />
-        {strategy === "tenacity" && (
+        {tank.strategy === "tenacity" && (
           <NumberInput
             minDigits={8}
             label="最低坚韧值"
@@ -76,11 +66,14 @@ export function TankConditionSection() {
             value={tank.minimumTenacity}
             disabled={readOnly}
             onChange={(value) =>
-              update({ minimumTenacity: value ?? undefined })
+              update({
+                strategy: "tenacity",
+                minimumTenacity: value ?? undefined,
+              })
             }
           />
         )}
-        {strategy === "reduction" && (
+        {tank.strategy === "reduction" && (
           <NumberInput
             minDigits={8}
             label="最低减伤比例"
@@ -91,7 +84,10 @@ export function TankConditionSection() {
             value={tank.minimumDamageReductionPercent}
             disabled={readOnly}
             onChange={(value) =>
-              update({ minimumDamageReductionPercent: value ?? undefined })
+              update({
+                strategy: "reduction",
+                minimumDamageReductionPercent: value ?? undefined,
+              })
             }
           />
         )}

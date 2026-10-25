@@ -91,6 +91,7 @@ const slots: EquipInfo[][] = [
 
 function exactOptions(overrides: Partial<ExactMipOptions> = {}): ExactMipOptions {
   return {
+    clanIndex: 0,
     job: "RDM" as Job,
     jobLevel,
     attributeIds,

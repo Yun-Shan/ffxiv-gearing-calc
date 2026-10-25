@@ -9,7 +9,6 @@ export const analyzeFeasibleGcds: AnalyzeFeasibleGcds = (
   findFeasibleGcds(
     {
       ...input,
-      gcdTarget: undefined,
       gcdChoices: undefined,
       speedMin: input.speedMin,
       speedMax: input.speedMax,

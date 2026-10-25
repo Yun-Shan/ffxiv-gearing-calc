@@ -18,6 +18,8 @@ function fixture() {
     })),
   });
   const options: ExactMipOptions = {
+    clanIndex: 0,
+    objective: "dps",
     job: "RDM",
     jobLevel: 100,
     attributeIds: [1, 2, 3],

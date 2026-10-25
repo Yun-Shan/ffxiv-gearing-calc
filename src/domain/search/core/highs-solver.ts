@@ -310,10 +310,6 @@ export async function solveIntegerModel(
       const value = data[name];
       return typeof value === "number" && Number.isFinite(value) ? value : undefined;
     };
-    const runningTime = numeric("running_time");
-    const elapsedMs = runningTime === undefined
-      ? performance.now() - startedAt
-      : runningTime * 1000;
     const primalBound = numeric("mip_primal_bound") ?? numeric("objective_function_value");
     const nodes = nonNegativeCount(data.mip_node_count);
     const totalLpIterations = nonNegativeCount(data.mip_total_lp_iterations);
@@ -321,7 +317,7 @@ export async function solveIntegerModel(
       backend: "HiGHS",
       model: request.name,
       kind,
-      elapsedMs: Number.isFinite(elapsedMs) ? elapsedMs : performance.now() - startedAt,
+      elapsedMs: performance.now() - startedAt,
       ...(primalBound === undefined ? {} : { objectiveValue: primalBound }),
       ...(numeric("mip_dual_bound") === undefined ? {} : { bestBound: numeric("mip_dual_bound") }),
       ...(numeric("mip_gap") === undefined ? {} : { gap: numeric("mip_gap") }),

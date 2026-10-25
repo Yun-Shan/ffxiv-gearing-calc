@@ -58,9 +58,7 @@ export function SharedSlotsSection({
         value={available.filter(
           (slot) =>
             shareable.has(slot) &&
-            (equipment.commonSlots.includes(slot) ||
-              (equipment.commonSlots.includes("rings") &&
-                (slot === "ring" || slot === "ring2"))),
+            equipment.commonSlots.includes(slot),
         )}
         onValueChange={(values) =>
           onChange({

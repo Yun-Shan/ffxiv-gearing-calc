@@ -19,6 +19,7 @@ describe("joint search range", () => {
   it("saves the selected duty for every job and restores it in the shared range and all summaries", () => {
     const duty = gameData.sync.groups.flatMap(({ options }) => options).find(({ target }) => target.kind === "itemLevel")!;
     const draft = createJointWorkbenchDraft(["PLD", "WAR"]);
+    for (const condition of Object.values(draft.conditions)) condition.gcd = { mode: "any" };
     draft.shared.range = { ...draft.shared.range, sync: duty.target, syncDuty: duty.name };
     const config = compileJointWorkbenchDraft(draft, createJointWorkbenchRuntime(draft.jobs));
     expect(config.jobs.every((job) => job.syncDuty === duty.name)).toBe(true);
@@ -33,6 +34,7 @@ describe("joint search range", () => {
 
   it("selects shared slots by job gear group", () => {
     const draft = createJointWorkbenchDraft(["RDM", "BLM"]);
+    for (const condition of Object.values(draft.conditions)) condition.gcd = { mode: "any" };
     expect(draft.shared.equipment.commonSlots).not.toContain("weapon");
     expect(draft.shared.equipment.commonSlots).toContain("body");
     expect(draft.shared.equipment.commonSlots).toContain("ring");
@@ -42,9 +44,7 @@ describe("joint search range", () => {
       createJointWorkbenchRuntime(draft.jobs),
     );
     config.commonSlots.push("weapon");
-    expect(
-      jointWorkbenchDraftFromConfig(config).shared.equipment.commonSlots,
-    ).not.toContain("weapon");
+    expect(() => jointWorkbenchDraftFromConfig(config)).toThrow("共享槽位配置无效");
   });
 
   it("shares only accessories across armor subgroups", () => {
@@ -115,11 +115,12 @@ describe("joint search range", () => {
     const second = makeConfig("BLM");
     expect(() =>
       jointWorkbenchDraftFromConfig({
+        objective: "damage",
         jobs: [first, second],
         commonSlots: [],
         foodStrategy: "shared",
       }),
-    ).toThrow("搜索范围不同");
+    ).toThrow("装备品级范围、同步目标和族群必须一致");
   });
 });
 
@@ -138,6 +139,7 @@ describe("jointWorkbenchDraftFromConfig", () => {
       forcedGear: { head: 456 },
     };
     const draft = jointWorkbenchDraftFromConfig({
+      objective: "damage",
       jobs: [first, second],
       commonSlots: ["head"],
       foodStrategy: "shared",
@@ -180,16 +182,16 @@ describe("jointWorkbenchDraftFromConfig", () => {
     };
     const second = { ...makeConfig("WAR"), excludedSources: ["零式/重量级"] };
     const draft = jointWorkbenchDraftFromConfig({
+      objective: "damage",
       jobs: [first, second],
-      commonSlots: ["rings"],
+      commonSlots: ["ring", "ring2"],
       foodStrategy: "shared",
     });
     const config = compileJointWorkbenchDraft(
       draft,
       createJointWorkbenchRuntime(draft.jobs),
     );
-    for (const job of config.jobs)
-      expect(job.sharedSlots).toEqual(["ring", "ring2"]);
+    expect(config.commonSlots).toEqual(["ring", "ring2"]);
     expect(effectiveConfigRows(config.jobs[0]!)).toEqual(
       expect.arrayContaining([
         { label: "来源排除", value: "零式/重量级" },
@@ -197,42 +199,6 @@ describe("jointWorkbenchDraftFromConfig", () => {
         { label: "强制装备", value: "1 项" },
       ]),
     );
-  });
-
-  it("restores a shared-slot force when only one job stores the force", () => {
-    const first = makeConfig("PLD");
-    const second = makeConfig("WAR");
-    first.forcedGear = { ...first.forcedGear, head: 12345 };
-
-    const draft = jointWorkbenchDraftFromConfig({
-      jobs: [first, second],
-      commonSlots: ["head"],
-      foodStrategy: "shared",
-    });
-
-    expect(draft.shared.equipment.shared.forcedGear.head).toBe(12345);
-    expect(draft.shared.equipment.jobs.PLD?.forcedGear.head).toBeUndefined();
-    expect(draft.shared.equipment.jobs.WAR?.forcedGear.head).toBeUndefined();
-    expect(
-      compileJointWorkbenchDraft(
-        draft,
-        createJointWorkbenchRuntime(draft.jobs),
-      ).jobs.map((job) => job.forcedGear.head),
-    ).toEqual([12345, 12345]);
-  });
-
-  it("restores a shared force from a single-job legacy snapshot", () => {
-    const job = makeConfig("PLD");
-    job.forcedGear = { ...job.forcedGear, head: 67890 };
-
-    const draft = jointWorkbenchDraftFromConfig({
-      jobs: [job],
-      commonSlots: ["head"],
-      foodStrategy: "shared",
-    });
-
-    expect(draft.shared.equipment.shared.forcedGear.head).toBe(67890);
-    expect(draft.shared.equipment.jobs.PLD?.forcedGear.head).toBeUndefined();
   });
 
   it("restores copied structured forces as shared only when their full values match", () => {
@@ -249,28 +215,30 @@ describe("jointWorkbenchDraftFromConfig", () => {
     };
 
     const draft = jointWorkbenchDraftFromConfig({
+      objective: "damage",
       jobs: [first, second],
       commonSlots: ["head"],
       foodStrategy: "shared",
     });
-    expect(draft.shared.equipment.shared.forcedGear.head).toEqual(sharedValue);
-    expect(draft.shared.equipment.jobs.PLD?.forcedGear.head).toBeUndefined();
-    expect(draft.shared.equipment.jobs.WAR?.forcedGear.head).toBeUndefined();
+    expect(draft.shared.equipment.shared.forcedGear!.head).toEqual(sharedValue);
+    expect(draft.shared.equipment.jobs.PLD?.forcedGear!.head).toBeUndefined();
+    expect(draft.shared.equipment.jobs.WAR?.forcedGear!.head).toBeUndefined();
     expect(
       compileJointWorkbenchDraft(
         draft,
         createJointWorkbenchRuntime(draft.jobs),
-      ).jobs.map((job) => job.forcedGear.head),
+      ).jobs.map((job) => job.forcedGear!.head),
     ).toEqual([sharedValue, sharedValue]);
 
-    second.forcedGear.head = { ...sharedValue, melds: [null, null] };
+    second.forcedGear!.head = { ...sharedValue, melds: [null, null] };
     expect(() =>
       jointWorkbenchDraftFromConfig({
+        objective: "damage",
         jobs: [first, second],
         commonSlots: ["head"],
         foodStrategy: "shared",
       }),
-    ).toThrow("多个不同强制装备");
+    ).toThrow("强制配置必须在所有职业中一致");
   });
 
   it("rejects conflicting forces on a shared slot", () => {
@@ -281,11 +249,12 @@ describe("jointWorkbenchDraftFromConfig", () => {
 
     expect(() =>
       jointWorkbenchDraftFromConfig({
+        objective: "damage",
         jobs: [first, second],
         commonSlots: ["head"],
         foodStrategy: "shared",
       }),
-    ).toThrow("多个不同强制装备");
+    ).toThrow("强制配置必须在所有职业中一致");
   });
 });
 

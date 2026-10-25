@@ -97,6 +97,8 @@ export function contextFor(
       id,
       slotNames: names,
       options: {
+        clanIndex: 0,
+        objective: "dps",
         job: "SAM",
         jobLevel: 100,
         attributeIds: [1, 2, 3, 4, 5, 6, 7],
@@ -153,6 +155,7 @@ export function optionsFor(
   contexts: readonly JobContext[],
 ): JointLoadoutV3Options {
   return {
+    objective: "damage",
     jobs: contexts.map((context) => context.job),
     commonSlots: ["body"],
     foodStrategy: "independent",

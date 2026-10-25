@@ -40,6 +40,7 @@ describe("job stat applicability", () => {
     expect(totals).toEqual(base);
 
     const effects = calculateEffects({
+      clanIndex: 0,
       stats: totals,
       job: jobSchemas.BST,
       level: 50,
@@ -50,6 +51,7 @@ describe("job stat applicability", () => {
 
   it("still applies tenacity for jobs whose schema includes it", () => {
     const effects = calculateEffects({
+      clanIndex: 0,
       stats: {
         STR: 100,
         CRT: 100,
@@ -70,6 +72,7 @@ describe("job stat applicability", () => {
 
   it("keeps optimization and fixed-gearset results on the same applicable stats", async () => {
     const result = await runOptimizationLocally({
+      clanIndex: 0,
       jobId: "BST",
       minItemLevel: 130,
       maxItemLevel: 135,
@@ -78,7 +81,7 @@ describe("job stat applicability", () => {
       excludedSources: [],
       excludedGearIds: [],
       forcedGear: {},
-      sharedSlots: [],
+
       foodId: 0,
     });
     expect(result).toBeDefined();

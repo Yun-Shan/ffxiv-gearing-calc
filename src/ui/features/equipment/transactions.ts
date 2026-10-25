@@ -25,10 +25,7 @@ export function isSlotShared(
   slot: GearSlot,
   commonSlots: readonly JointCommonSlot[],
 ): boolean {
-  return (
-    commonSlots.includes(slot) ||
-    ((slot === "ring" || slot === "ring2") && commonSlots.includes("rings"))
-  );
+  return commonSlots.includes(slot);
 }
 
 export function hasPrivatePositionForType(
@@ -268,7 +265,6 @@ export function applyJointEquipmentAction(
   options: {
     lookup: GearLookup;
     jobSlots: Readonly<Partial<Record<JobId, readonly GearSlot[]>>>;
-    sharedSlots?: readonly GearSlot[];
   },
 ): EquipmentActionResult<JointEquipmentDraft> {
   if (action.type === "import-forces") {

@@ -38,7 +38,7 @@ async function main() {
       itemLevelRange: [config.minItemLevel, config.maxItemLevel],
       ...(config.sync === undefined ? {} : { sync: config.sync }),
       constraints: Object.fromEntries(Object.entries(config).filter(([name]) => [
-        "gcdTarget", "gcdChoices", "speedMin", "speedMax", "toughnessMin",
+        "gcdChoices", "speedMin", "speedMax", "minTenacity",
         "toughnessMinPercent", "maximizeTenacity",
       ].includes(name))),
     })),
@@ -68,11 +68,10 @@ async function main() {
     startedAt,
     generatedDataBytes,
   );
-  const elapsedMs = performance.now() - startedAt;
 
   if (!result) {
     console.log(
-      `搜索完成但没有满足全部约束的联合配装（${elapsedMs.toFixed(0)}ms，峰值 RSS ${peakRssBytes} 字节）。`,
+      `搜索完成但没有满足全部约束的联合配装（峰值 RSS ${peakRssBytes} 字节）。`,
     );
     process.exitCode = 2;
     return;
@@ -80,11 +79,10 @@ async function main() {
 
   const output = buildV3Output(result, jobs, {
     maxSearchMs,
-    elapsedMs,
     peakRssBytes,
   });
   const digest = digestV3Output(output);
-  console.log(`联合搜索完成（${elapsedMs.toFixed(0)}ms）。`);
+  console.log(`联合搜索完成（${result.statistics.elapsedMs.toFixed(0)}ms）。`);
   console.log(JSON.stringify(output, null, 2));
   console.log(`结果 SHA-256：${digest}`);
 }
@@ -92,8 +90,8 @@ async function main() {
 main().catch((error) => {
   const message = error instanceof Error ? error.stack ?? error.message : String(error);
   console.error(`Node 多职业验收失败：${message}`);
-  if (error instanceof Error && error.elapsedMs !== undefined) {
-    console.error(`已停止：${error.elapsedMs}ms，峰值 RSS ${error.peakRssBytes} 字节；未报告成功。`);
+  if (error instanceof Error && error.peakRssBytes !== undefined) {
+    console.error(`已停止：峰值 RSS ${error.peakRssBytes} 字节；未报告成功。`);
   }
   process.exitCode = 1;
 });

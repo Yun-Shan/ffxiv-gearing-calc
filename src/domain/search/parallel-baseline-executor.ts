@@ -46,8 +46,8 @@ export type SerializedFoodColumns = {
 export type SerializedBaselineOptions = {
   job: ExactMipOptions["job"];
   jobLevel: number;
-  /** 族群基础属性索引；未提供时使用 0（人族·中原之民）。 */
-  clanIndex?: number;
+  /** 族群基础属性索引。 */
+  clanIndex: number;
   attributeIds: readonly number[];
   statIndexes: readonly (readonly [Stat, number])[];
   slots: SerializedEquipmentColumns;
@@ -55,7 +55,7 @@ export type SerializedBaselineOptions = {
   constraints?: ExactMipOptions["constraints"];
   speedAttributeId?: number;
   toughnessAttributeId?: number;
-  objective?: ExactMipOptions["objective"];
+  objective: ExactMipOptions["objective"];
   candidateItemLevelRanges?: ExactMipOptions["candidateItemLevelRanges"];
   candidateResourceSupportProfile?: ExactMipOptions["candidateResourceSupportProfile"];
   resourceBudgetCandidateProfile?: ExactMipOptions["resourceBudgetCandidateProfile"];
@@ -271,7 +271,7 @@ function serializedOptions(
   return {
     job: options.job,
     jobLevel: options.jobLevel,
-    clanIndex: options.clanIndex ?? 0,
+    clanIndex: options.clanIndex,
     attributeIds,
     statIndexes: [...options.statIndexes],
     slots: {
@@ -296,7 +296,7 @@ function serializedOptions(
     ...(options.constraints === undefined ? {} : { constraints: options.constraints }),
     ...(options.speedAttributeId === undefined ? {} : { speedAttributeId: options.speedAttributeId }),
     ...(options.toughnessAttributeId === undefined ? {} : { toughnessAttributeId: options.toughnessAttributeId }),
-    ...(options.objective === undefined ? {} : { objective: options.objective }),
+    objective: options.objective,
     ...(options.candidateItemLevelRanges === undefined
       ? {}
       : { candidateItemLevelRanges: options.candidateItemLevelRanges }),

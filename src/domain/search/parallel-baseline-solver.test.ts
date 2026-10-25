@@ -12,6 +12,8 @@ vi.mock("./loadout-finder-exact-mip.ts", () => ({
 
 function serializedTask(): SerializedBaselineOptions {
   return {
+    clanIndex: 0,
+    objective: "dps",
     job: "VPR",
     jobLevel: 100,
     attributeIds: [],

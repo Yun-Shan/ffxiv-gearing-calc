@@ -32,6 +32,8 @@ class ControlledWorker extends EventTarget {
 }
 
 const singleConfig: OptimizationConfig = {
+  clanIndex: 0,
+  objective: "damage",
   jobId: "SAM",
   minItemLevel: 1,
   maxItemLevel: 1,
@@ -123,6 +125,7 @@ describe("frontend worker search timing", () => {
       {
         kind: "joint",
         config: {
+          objective: "damage",
           jobs: [{ ...singleConfig, maxSearchMs: 1 }],
           commonSlots: [],
           foodStrategy: "shared",

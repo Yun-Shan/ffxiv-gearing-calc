@@ -55,6 +55,8 @@ function fixture(objective: "damage" | "dps" = "damage") {
       slotNames: ["head"],
       baseline: { ...baseline },
       options: {
+        clanIndex: 0,
+        objective: "dps",
         job: "RDM",
         jobLevel: 100,
         attributeIds: [1],

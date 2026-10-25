@@ -5,22 +5,14 @@ import { conditionRows } from "../summary";
 import type { TankConditionDraft } from "../types";
 
 describe("tank condition summary", () => {
-  it.each<[Partial<TankConditionDraft>, string]>([
-    [{}, "未设置"],
-    [{ minimumTenacity: 2300 }, "最低坚韧值2300"],
-    [{ minimumDamageReductionPercent: 5.5 }, "最低减伤5.5%"],
-    [{ maximizeTenacity: true }, "最大化减伤百分比"],
-    [
-      {
-        minimumTenacity: 2300,
-        minimumDamageReductionPercent: 5,
-        maximizeTenacity: true,
-      },
-      "最低坚韧值2300、最低减伤5%、最大化减伤百分比",
-    ],
+  it.each<[TankConditionDraft, string]>([
+    [{ strategy: "any" }, "未设置"],
+    [{ strategy: "tenacity", minimumTenacity: 2300 }, "最低坚韧值2300"],
+    [{ strategy: "reduction", minimumDamageReductionPercent: 5.5 }, "最低减伤5.5%"],
+    [{ strategy: "maximize" }, "最大化减伤百分比"],
   ])("summarizes the actual active constraints %j", (tank, expected) => {
     const draft = jobConditionDraftFromConfig(makeConfig("PLD"));
-    draft.tank = { maximizeTenacity: false, ...tank };
+    draft.tank = tank;
     const rows = conditionRows(draft, "PLD");
     expect(rows.filter(({ label }) => label === "坚韧约束")).toEqual([
       { label: "坚韧约束", value: expected },

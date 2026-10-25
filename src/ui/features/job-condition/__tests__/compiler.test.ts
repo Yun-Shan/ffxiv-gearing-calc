@@ -5,18 +5,19 @@ import {
   deriveJobObjective,
   normalizeJointObjective,
 } from "../compiler";
-import { jobConditionDraftFromConfig, normalizeCompiledDraft } from "../draft";
+import { jobConditionDraftFromConfig } from "../draft";
 import type { JobConditionDraft } from "../types";
 
 function config(
   overrides: Partial<OptimizationConfig> = {},
 ): OptimizationConfig {
   return {
+    clanIndex: 0,
     jobId: "PLD",
     minItemLevel: 700,
     maxItemLevel: 795,
     sync: undefined,
-    gcdTarget: undefined,
+
     gcdChoices: undefined,
     speedMin: undefined,
     speedMax: undefined,
@@ -27,7 +28,7 @@ function config(
     excludedSources: [],
     excludedGearIds: [],
     forcedGear: {},
-    sharedSlots: [],
+
     foodId: 0,
     ...overrides,
   };
@@ -42,11 +43,7 @@ const draft: JobConditionDraft = {
   },
   gcd: { mode: "speed", min: 400, max: 500 },
   food: { mode: "specific", foodId: 123 },
-  tank: {
-    minimumTenacity: 2300,
-    minimumDamageReductionPercent: undefined,
-    maximizeTenacity: false,
-  },
+  tank: { strategy: "tenacity", minimumTenacity: 2300 },
 };
 
 describe("job condition draft compiler", () => {
@@ -59,6 +56,7 @@ describe("job condition draft compiler", () => {
     expect(compiled.config).not.toHaveProperty("jobLevel");
     expect(compiled).toEqual({
       config: expect.objectContaining({
+        clanIndex: 0,
         jobId: "PLD",
         minItemLevel: 735,
         maxItemLevel: 795,
@@ -70,7 +68,6 @@ describe("job condition draft compiler", () => {
         minTenacity: 2300,
         maximizeTenacity: false,
       }),
-      levelResolution: "domain",
     });
   });
 
@@ -94,7 +91,6 @@ describe("job condition draft compiler", () => {
       foodId: 55,
     });
     const draftValue = jobConditionDraftFromConfig(configValue);
-    expect(normalizeCompiledDraft(configValue)).toEqual(draftValue);
     expect(draftValue).toMatchObject({
       range: { sync: { kind: "itemLevel", value: 735 } },
       gcd: { mode: "tiers", tiers: [2.5] },

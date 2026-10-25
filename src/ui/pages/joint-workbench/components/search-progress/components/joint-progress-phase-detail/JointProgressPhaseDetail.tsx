@@ -15,7 +15,7 @@ function formatCount(value: number): string {
 }
 
 function formatDuration(milliseconds: number | undefined): string | undefined {
-  if (milliseconds === undefined || !Number.isFinite(milliseconds) || milliseconds < 0) return undefined;
+  if (milliseconds === undefined) return undefined;
   return milliseconds >= 1000
     ? (milliseconds / 1000).toFixed(1) + " 秒"
     : Math.round(milliseconds) + " 毫秒";
@@ -159,7 +159,7 @@ function getJointMetrics(stats: JointSearchStats): Metric[] {
     { label: "当前最好值", value: stats.incumbent },
     { label: "联合搜索耗时", value: stats.elapsedMs },
   ].filter((metric): metric is { label: string; value: number } =>
-    metric.value !== undefined && Number.isFinite(metric.value),
+    metric.value !== undefined && (metric.label === "联合搜索耗时" || Number.isFinite(metric.value)),
   );
 
   return metrics.map(({ label, value }) => ({

@@ -78,6 +78,7 @@ function makeConfig() {
   return {
     config: {
       jobId,
+      clanIndex: 0,
       minItemLevel,
       maxItemLevel,
       ...(sync === undefined ? {} : { sync }),
@@ -108,7 +109,6 @@ function runInWorker(config, maxSearchMs, startedAt) {
     const stopWithError = (error) => {
       if (settled) return;
       const reason = error instanceof Error ? error : new Error(String(error));
-      reason.elapsedMs = Math.round(performance.now() - startedAt);
       reason.peakRssBytes = Math.max(peakRssBytes, processPeakRssBytes());
       finish(() => {
         if (worker) void worker.terminate().then(() => reject(reason), () => reject(reason));
@@ -176,8 +176,8 @@ function runInWorker(config, maxSearchMs, startedAt) {
   });
 }
 
-function summarizeResult(config, result, solverStatuses, elapsedMs, peakRssBytes) {
-  const statistics = result.statistics ?? {};
+function summarizeResult(config, result, solverStatuses, peakRssBytes) {
+  const statistics = result.statistics;
   const signatureBandProof = statistics.signatureBandProof === true;
   const exactBandInfeasibilityProof = solverStatuses.some(({ phase, status }) =>
     phase === "exact_damage_band_feasibility" && status === "Infeasible");
@@ -224,17 +224,11 @@ function summarizeResult(config, result, solverStatuses, elapsedMs, peakRssBytes
         materia: gear.melds.map(({ stat, value, grade }) => ({ stat, value, grade })),
       })),
     },
-    search: {
-      elapsedMs: Math.round(elapsedMs),
-      solverElapsedMs: result.durationMs,
+    statistics: {
+      ...statistics,
       searchedCandidates: result.searchedCandidates,
-      modelPreparationMs: statistics.modelPreparationMs,
-      solverWallMs: statistics.solverWallMs,
-      variables: statistics.variables,
-      constraints: statistics.constraints,
-      candidateUpperBound: statistics.candidateUpperBound,
-      conditionalResourceSupport: statistics.conditionalResourceSupport,
-      memoryUsage: statistics.memoryUsage,
+    },
+    runtime: {
       peakRssBytes,
       rssLimitBytes: MAX_RSS_BYTES,
     },
@@ -259,15 +253,14 @@ async function main() {
 
   const startedAt = performance.now();
   const { result, solverStatuses, peakRssBytes } = await runInWorker(config, maxSearchMs, startedAt);
-  const elapsedMs = performance.now() - startedAt;
   if (!result) {
-    console.log(`没有满足全部约束的配装（${Math.round(elapsedMs)}ms；峰值 RSS ${peakRssBytes} 字节）。`);
+    console.log(`没有满足全部约束的配装（峰值 RSS ${peakRssBytes} 字节）。`);
     process.exitCode = 2;
     return;
   }
 
-  const output = summarizeResult(config, result, solverStatuses, elapsedMs, peakRssBytes);
-  console.log(`搜索完成（${Math.round(elapsedMs)}ms；最优性证明=${output.proof.complete}；方法=${output.proof.method}）。`);
+  const output = summarizeResult(config, result, solverStatuses, peakRssBytes);
+  console.log(`搜索完成（${result.statistics.elapsedMs.toFixed(0)}ms；最优性证明=${output.proof.complete}；方法=${output.proof.method}）。`);
   console.log(JSON.stringify(output, null, 2));
   if (!output.proof.complete) {
     throw new Error("搜索结果没有对应的完整签名带或精确 MIP 不可行性证明");
@@ -276,8 +269,8 @@ async function main() {
 
 main().catch((error) => {
   console.error(`Node 单职业验收失败：${error instanceof Error ? error.stack ?? error.message : String(error)}`);
-  if (error instanceof Error && error.elapsedMs !== undefined) {
-    console.error(`已停止：${error.elapsedMs}ms，峰值 RSS ${error.peakRssBytes} 字节；未报告成功。`);
+  if (error instanceof Error && error.peakRssBytes !== undefined) {
+    console.error(`已停止：峰值 RSS ${error.peakRssBytes} 字节；未报告成功。`);
   }
   process.exitCode = 1;
 });

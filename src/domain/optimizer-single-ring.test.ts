@@ -17,6 +17,8 @@ const separateRingId = 33437;
 
 function configFor(jobId: OptimizationConfig["jobId"]): OptimizationConfig {
   return {
+    clanIndex: 0,
+    objective: "damage",
     jobId,
     minItemLevel: 500,
     maxItemLevel: 520,
@@ -24,7 +26,7 @@ function configFor(jobId: OptimizationConfig["jobId"]): OptimizationConfig {
     maximizeTenacity: false,
     excludedSources: [],
     forcedGear: {},
-    sharedSlots: [],
+
     foodId: 49240,
     maxSearchMs: 15_000,
   };
@@ -110,7 +112,7 @@ describe("joint search with independently shared ring slots", () => {
     const candidateSlots = new Map<string, string[]>();
     const result = await optimizeJoint({
       jobs: configs,
-      commonSlots: ["body", "rings"],
+      commonSlots: ["body", "ring", "ring2"],
       foodStrategy: "shared",
       objective: "damage",
       maxSearchMs: 15_000,
@@ -128,13 +130,13 @@ describe("joint search with independently shared ring slots", () => {
       expect(slots).toContain("ring2");
       expect(slots).not.toContain("rings");
     }
-    expect(result!.commonGear.rings).toHaveLength(2);
+    expect([...(result!.commonGear.ring ?? []), ...(result!.commonGear.ring2 ?? [])]).toHaveLength(2);
     expect(result!.commonGear.body?.map((gear) => gear.id)).toEqual([sharedBody!.id]);
-    expect(result!.commonGear.rings!.map((gear) => gear.id).sort()).toEqual(
+    expect([...(result!.commonGear.ring ?? []), ...(result!.commonGear.ring2 ?? [])].map((gear) => gear.id).sort()).toEqual(
       [sharedUniqueRingId, weakRingId].sort(),
     );
-    expect(result!.commonGear).not.toHaveProperty("ring");
-    expect(result!.commonGear).not.toHaveProperty("ring2");
+    expect(result!.commonGear.ring).toHaveLength(1);
+    expect(result!.commonGear.ring2).toHaveLength(1);
     for (const config of configs) {
       const equippedRings = result!.jobResults[config.jobId]!.gear
         .filter((gear) => gear.slot === "ring" || gear.slot === "ring2");

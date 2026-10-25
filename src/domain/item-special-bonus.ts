@@ -1,20 +1,10 @@
-import type { Gear, JobId, JobSchema, OptimizationConfig, Stat, Stats } from "./types.ts";
+import type { Gear, JobId, JobSchema, Stat, Stats } from "./types.ts";
 
 const beastmasterItemSpecialBonuses = [11] as const;
 
-/** Entry-point defaults currently enable the supported bonus only for Beastmaster. */
+/** The supported bonus is enabled only for Beastmaster. */
 export function enabledItemSpecialBonusesForJob(jobId: JobId): number[] {
   return jobId === "BST" ? [...beastmasterItemSpecialBonuses] : [];
-}
-
-/** Ignore caller-provided settings until per-search configuration is exposed. */
-export function withDomainItemSpecialBonusDefaults<T extends OptimizationConfig>(
-  config: T,
-): T {
-  return {
-    ...config,
-    enabledItemSpecialBonuses: enabledItemSpecialBonusesForJob(config.jobId),
-  };
 }
 
 /**

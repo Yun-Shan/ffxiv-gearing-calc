@@ -17,10 +17,31 @@ const validDraft: JobConditionDraft = {
   },
   gcd: { mode: "any" },
   food: { mode: "auto" },
-  tank: { maximizeTenacity: false },
+  tank: { strategy: "any" },
 };
 
 describe("job condition validation snapshot", () => {
+  it.each([
+    { strategy: "tenacity" as const },
+    { strategy: "reduction" as const },
+    { strategy: "tenacity" as const, minimumTenacity: -1 },
+    { strategy: "reduction" as const, minimumDamageReductionPercent: 101 },
+  ])("keeps incomplete or invalid selected tank strategies out of a runnable request %j", (tank) => {
+    expect(validateJobConditionDraft({ ...validDraft, tank }, {
+      gcdAnalysis: { status: "ready", key: "test", feasibleTiers: [2.5] },
+    }, { jobId: "PLD" }).status).toBe("invalid");
+  });
+
+  it.each([
+    { mode: "tiers" as const, tiers: [2.5, 2.5] },
+    { mode: "tiers" as const, tiers: [Number.NaN] },
+    { mode: "speed" as const, min: -1 },
+    { mode: "speed" as const, max: -1 },
+  ])("uses the domain's GCD input rules %j", (gcd) => {
+    expect(validateJobConditionDraft({ ...validDraft, gcd }, {
+      gcdAnalysis: { status: "ready", key: "test", feasibleTiers: [2.5] },
+    }).status).toBe("invalid");
+  });
   it("rejects synchronized levels without exact formula and stat-cap support", () => {
     const mappedLevel = gameData.sync.groups
       .flatMap(({ options }) => options)

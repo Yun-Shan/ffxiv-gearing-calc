@@ -51,9 +51,10 @@ check("above the nine-round maximum is degradation", () => {
   assert.equal(result.passed, false);
 });
 
-check("missing or inconsistent historical data is not silently accepted", () => {
-  assert.equal(compareHistoricalTiming({ actualMs: 4_500, ...history, nineRoundMaxMs: undefined }).status, "unavailable");
-  assert.equal(compareHistoricalTiming({ actualMs: 4_500, ...history, nineRoundMinMs: 5_100 }).status, "unavailable");
+check("elapsed values are used directly without validation", () => {
+  assert.equal(evaluateOptimizationTarget(-1, 60_000).actualMs, -1);
+  assert.equal(compareHistoricalTiming({ actualMs: -1, ...history }).actualMs, -1);
+  assert.equal(compareHistoricalTiming({ actualMs: null, ...history }).status, "unavailable");
 });
 
 check("historical labels remain short", () => {

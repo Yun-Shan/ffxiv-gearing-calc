@@ -3,7 +3,6 @@ import { gameData, gears } from "./data.ts";
 import {
   applyItemSpecialBonus,
   itemSpecialBonusAdditions,
-  withDomainItemSpecialBonusDefaults,
 } from "./item-special-bonus.ts";
 import { jobSchemas } from "./jobs.ts";
 import { makeGearCandidates } from "./optimizer/equipment-candidates.ts";
@@ -33,10 +32,11 @@ function bonusGear(): Gear {
 }
 
 function config(
-  enabledItemSpecialBonuses: number[],
   jobId: JobId = "BST",
 ): OptimizationConfig {
   return {
+    clanIndex: 0,
+    objective: "damage",
     jobId,
     minItemLevel: 0,
     maxItemLevel: 9999,
@@ -44,7 +44,7 @@ function config(
     excludedSources: [],
     forcedGear: {},
     foodId: 0,
-    enabledItemSpecialBonuses,
+
   };
 }
 
@@ -91,10 +91,9 @@ describe("ItemSpecialBonus gear stats", () => {
     expect(capped).toEqual({ STR: 30, DHT: 12 });
   });
 
-  it("applies the configured list once after sync caps and materia caps", () => {
+  it("applies the job bonus once after sync caps and materia caps", () => {
     const gear = bonusGear();
-    const enabledConfig = config([11]);
-    const disabledConfig = config([]);
+    const enabledConfig = config();
     const enabled = makeGearCandidates(
       gear,
       gear.slot,
@@ -102,9 +101,9 @@ describe("ItemSpecialBonus gear stats", () => {
       new Map(),
     )[0]!.gear;
     const disabled = makeGearCandidates(
-      gear,
+      { ...gear, itemSpecialBonus: undefined },
       gear.slot,
-      disabledConfig,
+      enabledConfig,
       new Map(),
     )[0]!.gear;
     const repeated = makeGearCandidates(
@@ -134,7 +133,7 @@ describe("ItemSpecialBonus gear stats", () => {
     const syncedGear: Gear = {
       ...template,
       id: 999_999_992,
-      jobs: ["SAM"],
+      jobs: ["BST"],
       stats: { STR: 5_000 },
       specialStats: { STR: 5_000 },
       itemSpecialBonus: 11,
@@ -146,12 +145,12 @@ describe("ItemSpecialBonus gear stats", () => {
     const synced = makeGearCandidates(
       syncedGear,
       syncedGear.slot,
-      { ...config([11], "SAM"), sync: { kind: "jobLevel", value: 80 } },
+      { ...config("BST"), sync: { kind: "itemLevel", value: syncLevel } },
       new Map(),
     )[0]!.gear;
     const cappedBase = capGearStatsAtLevel(
       syncedGear,
-      concretizeGearStats(syncedGear.stats, jobSchemas.SAM),
+      concretizeGearStats(syncedGear.stats, jobSchemas.BST),
       syncLevel,
     ).STR!;
 
@@ -172,7 +171,7 @@ describe("ItemSpecialBonus gear stats", () => {
     const capGear: Gear = {
       ...template,
       id: 999_999_993,
-      jobs: ["SAM"],
+      jobs: ["BST"],
       stats: { CRT: cap - 10 },
       specialStats: { CRT: 10 },
       itemSpecialBonus: 11,
@@ -184,7 +183,7 @@ describe("ItemSpecialBonus gear stats", () => {
     const candidates = makeGearCandidates(
       capGear,
       capGear.slot,
-      config([11], "SAM"),
+      config("BST"),
       new Map(),
     );
     expect(candidates.length).toBeGreaterThan(0);
@@ -199,16 +198,4 @@ describe("ItemSpecialBonus gear stats", () => {
     }
   });
 
-  it("overrides caller settings with the current per-job domain defaults", () => {
-    const configured = config([99]);
-    const beastmaster = withDomainItemSpecialBonusDefaults(configured);
-    const warrior = withDomainItemSpecialBonusDefaults({
-      ...configured,
-      jobId: "WAR",
-    });
-
-    expect(beastmaster.enabledItemSpecialBonuses).toEqual([11]);
-    expect(warrior.enabledItemSpecialBonuses).toEqual([]);
-    expect(configured.enabledItemSpecialBonuses).toEqual([99]);
-  });
 });

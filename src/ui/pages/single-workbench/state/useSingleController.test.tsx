@@ -93,14 +93,14 @@ describe("Single run ownership and nonblocking history", () => {
     };
     const draft = singleDraftFromConfig(config);
 
-    expect(draft.equipment.forcedGear.head).toEqual(forcedValue);
-    expect(draft.equipment.forcedGear.head).not.toBe(forcedValue);
+    expect(draft.equipment.forcedGear!.head).toEqual(forcedValue);
+    expect(draft.equipment.forcedGear!.head).not.toBe(forcedValue);
     if (
-      draft.equipment.forcedGear.head !== undefined &&
-      typeof draft.equipment.forcedGear.head !== "number" &&
-      "melds" in draft.equipment.forcedGear.head
+      draft.equipment.forcedGear!.head !== undefined &&
+      typeof draft.equipment.forcedGear!.head !== "number" &&
+      "melds" in draft.equipment.forcedGear!.head
     )
-      expect(draft.equipment.forcedGear.head.melds).not.toBe(forcedValue.melds);
+      expect(draft.equipment.forcedGear!.head.melds).not.toBe(forcedValue.melds);
   });
 
   it("starts and settles without waiting for history; binds a late id only to its own result", async () => {
@@ -132,7 +132,7 @@ describe("Single run ownership and nonblocking history", () => {
       controller.state.phase === "result" && controller.state.historyId,
     ).toBe("late");
     expect(mocks.start).toHaveBeenCalledWith(
-      expect.objectContaining({ result, finishedAtISO: expect.any(String) }),
+      expect.objectContaining({ result, startedAtISO: expect.any(String) }),
     );
   });
   it("storage failure never suppresses a valid search result", async () => {
@@ -199,7 +199,7 @@ describe("Single run ownership and nonblocking history", () => {
     },
   );
   it("old-version completed snapshots load without recomputation", async () => {
-    const result = { score: 3 } as OptimizationResult;
+    const result = { score: 3, statistics: { elapsedMs: 2345 } } as OptimizationResult;
     await act(async () => {
       await controller.loadResult({
         id: "old",
@@ -209,12 +209,11 @@ describe("Single run ownership and nonblocking history", () => {
         result,
         dataVersion: "old",
         startedAtISO: "2026-01-01T00:00:00.000Z",
-        finishedAtISO: "2026-01-01T00:00:02.000Z",
       });
     });
     expect(
-      controller.state.phase === "result" && controller.state.durationMs,
-    ).toBe(2000);
+      controller.state.phase === "result" && controller.state.result.statistics.elapsedMs,
+    ).toBe(2345);
     expect(mocks.optimize).not.toHaveBeenCalled();
   });
   it("rechecks latest validation before starting", async () => {

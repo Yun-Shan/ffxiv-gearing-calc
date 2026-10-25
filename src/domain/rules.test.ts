@@ -44,6 +44,7 @@ describe("stat rules", () => {
     expect(applyFood({}, { DET: 70 }, {}).DET).toBe(0));
   it("calculates positive combat effects", () => {
     const effects = calculateEffects({
+      clanIndex: 0,
       stats,
       job,
       level: 100,
@@ -55,6 +56,7 @@ describe("stat rules", () => {
   });
   it("reproduces the known 7.55 SAM reference set", () => {
     const effects = calculateEffects({
+      clanIndex: 0,
       stats: { STR: 6501, CRT: 3605, DET: 2533, DHT: 1847, SKS: 420, VIT: 7467 },
       job: jobSchemas.SAM,
       level: 100,
@@ -65,6 +67,7 @@ describe("stat rules", () => {
   });
   it("reproduces the known 7.55 BLM 2.45 GCD damage expectation", () => {
     const effects = calculateEffects({
+      clanIndex: 0,
       stats: { INT: 6516, CRT: 3602, DET: 2287, DHT: 1837, SPS: 787, VIT: 6795 },
       job: jobSchemas.BLM,
       level: 100,
@@ -83,7 +86,7 @@ describe("stat rules", () => {
     expect(calculateBaseStats({ ...jobSchemas.SAM, stats: ["PDMG"] }, 100).PDMG).toBe(0);
   });
   it("rejects unknown levels without substituting another level", () =>
-    expect(() => calculateEffects({ stats, job, level: 999, weaponDamage: 100 })).toThrow("不支持的职业等级"));
+    expect(() => calculateEffects({ clanIndex: 0, stats, job, level: 999, weaponDamage: 100 })).toThrow("不支持的职业等级"));
   it("uses the job-specific secondary speed stat", () =>
     expect(
       calculateGcdTier({ SPS: 2100 }, jobSchemas.BLM),
@@ -97,6 +100,7 @@ describe("stat rules", () => {
     ).toBeGreaterThan(0);
     expect(
       calculateEffects({
+        clanIndex: 0,
         stats: { ...stats, VIT: 3500, TEN: 2200 },
         job: jobSchemas.WAR,
         level: 100,

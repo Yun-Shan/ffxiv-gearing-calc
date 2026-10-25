@@ -8,6 +8,8 @@ test("real BLU default-level search accepts an unrestricted zero-materia weapon"
   const defaultItemLevel = gameData.jobSchemas.BLU.defaultItemLevel;
   assert.ok(defaultItemLevel);
   const base: OptimizationConfig = {
+    clanIndex: 0,
+    objective: "damage",
     jobId: "BLU",
     minItemLevel: defaultItemLevel[0],
     maxItemLevel: defaultItemLevel[1],

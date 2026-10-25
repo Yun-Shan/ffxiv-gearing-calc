@@ -86,6 +86,7 @@ function makeJob(
     slotNames: ["weapon", "ring"],
     factors,
     options: {
+      clanIndex: 0,
       job: job as Job,
       jobLevel,
       attributeIds,

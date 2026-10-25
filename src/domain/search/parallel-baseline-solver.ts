@@ -117,7 +117,7 @@ export async function solveSerializedBaseline(
   callbacks: BaselineWorkerCallbacks,
 ): Promise<SerializedBaselineResult | undefined> {
   const statIndexes = new Map(request.statIndexes);
-  const clanIndex = request.clanIndex ?? 0;
+  const clanIndex = request.clanIndex;
   const slots = decodeEquipmentColumns(request.slots);
   const foods = decodeFoodColumns(request.foods);
   const exactOptions: ExactMipOptions = {
@@ -142,7 +142,7 @@ export async function solveSerializedBaseline(
       const effects = equippedEffects(request.job, request.jobLevel, contributions, clanIndex);
       return effects === undefined ? undefined : { damage: effects.damage, gcd: effects.gcd };
     },
-    ...(request.objective === undefined ? {} : { objective: request.objective }),
+    objective: request.objective,
     ...(request.candidateItemLevelRanges === undefined
       ? {}
       : { candidateItemLevelRanges: request.candidateItemLevelRanges }),

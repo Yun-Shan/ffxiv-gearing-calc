@@ -22,7 +22,6 @@ export const commonGearSlotLabels: Record<CommonGearSlot, string> = {
   ...gearSlotLabels,
   ring: "戒指 1",
   ring2: "戒指 2",
-  rings: "两个戒指",
 };
 
 const sharedSlotLabels: Record<CommonGearSlot, string> = {
@@ -38,7 +37,6 @@ const sharedSlotLabels: Record<CommonGearSlot, string> = {
   bracelet: "腕",
   ring: "戒",
   ring2: "戒",
-  rings: "戒",
 };
 
 export function formatSharedSlots(slots: readonly CommonGearSlot[]): string {

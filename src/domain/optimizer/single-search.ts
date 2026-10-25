@@ -8,13 +8,14 @@ import type {
 import { privateParetoSlots, prepareSearch } from "./search-preparation.ts";
 import { assembleResult } from "./result-assembly.ts";
 import { throwIfAborted } from "./context.ts";
-import { withDomainItemSpecialBonusDefaults } from "../item-special-bonus.ts";
+import { normalizeOptimizationConfig } from "../config-validation.ts";
 
 export async function runOptimizationLocally(
-  config: OptimizationConfig,
+  input: OptimizationConfig,
   options: SearchOptions = {},
 ): Promise<OptimizationResult | undefined> {
-  config = withDomainItemSpecialBonusDefaults(config);
+  const startedAt = performance.now();
+  const config = normalizeOptimizationConfig(input);
   const prepared = prepareSearch(
     config,
     options,
@@ -29,12 +30,10 @@ export async function runOptimizationLocally(
     config.maxItemLevel === 795 &&
     config.sync === undefined &&
     config.objective === "dps" &&
-    config.gcdTarget === undefined &&
     (config.gcdChoices?.length ?? 0) === 0 &&
     config.speedMin === undefined &&
     config.speedMax === undefined &&
     config.minTenacity === undefined &&
-    config.toughnessMin === undefined &&
     config.toughnessMinPercent === undefined &&
     !config.maximizeTenacity &&
     config.excludedSources.length === 0 &&
@@ -51,12 +50,10 @@ export async function runOptimizationLocally(
     config.maxItemLevel === 795 &&
     config.sync?.kind === "itemLevel" && config.sync.value === 735 &&
     config.objective === "damage" &&
-    config.gcdTarget === undefined &&
     (config.gcdChoices?.length ?? 0) === 0 &&
     config.speedMin === undefined &&
     config.speedMax === undefined &&
     config.minTenacity === undefined &&
-    config.toughnessMin === undefined &&
     config.toughnessMinPercent === undefined &&
     !config.maximizeTenacity &&
     config.excludedSources.length === 0 &&
@@ -79,7 +76,8 @@ export async function runOptimizationLocally(
   const result = await findBestLoadoutExactMip(prepared.options);
   throwIfAborted(options.signal);
   options.onProgress?.("求解完成，正在还原并复核结果");
-  return result === undefined
-    ? undefined
-    : attachEquivalentGear(assembleResult(result, config, prepared), config, options);
+  if (result === undefined) return undefined;
+  const completed = attachEquivalentGear(assembleResult(result, config, prepared), config, options);
+  completed.statistics.elapsedMs = performance.now() - startedAt;
+  return completed;
 }

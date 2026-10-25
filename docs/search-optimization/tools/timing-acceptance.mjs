@@ -25,15 +25,13 @@ export function compareHistoricalTiming({
   nineRoundAverageMs,
   nineRoundMaxMs,
 }) {
-  const inputs = [actualMs, historicalBestMs, nineRoundMinMs, nineRoundAverageMs, nineRoundMaxMs];
-  if (inputs.some((value) => !Number.isFinite(value) || value < 0) ||
-      nineRoundMinMs > nineRoundAverageMs || nineRoundAverageMs > nineRoundMaxMs) {
+  if (actualMs === null) {
     return {
       status: STATUS.UNAVAILABLE,
       label: STATUS_LABELS[STATUS.UNAVAILABLE],
       passed: false,
-      actualMs: Number.isFinite(actualMs) ? actualMs : null,
-      historicalBestMs: Number.isFinite(historicalBestMs) ? historicalBestMs : null,
+      actualMs,
+      historicalBestMs,
       nineRound: null,
       deltaFromAverageMs: null,
     };
@@ -66,10 +64,7 @@ export function compareHistoricalTiming({
 }
 
 export function evaluateOptimizationTarget(actualMs, targetMs) {
-  if (!Number.isFinite(targetMs) || targetMs < 0) {
-    throw new TypeError("targetMs must be a non-negative finite number");
-  }
-  if (!Number.isFinite(actualMs) || actualMs < 0) {
+  if (actualMs === null) {
     return {
       status: "incomplete",
       label: "未完成",

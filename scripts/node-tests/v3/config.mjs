@@ -2,36 +2,12 @@ import { MAX_SEARCH_MS, UNLIMITED_SEARCH_MS } from "./limits.mjs";
 
 const DEFAULT_JOBS = ["RDM", "BLM"];
 
-const slotAliases = new Map([
-  ["weapon", "weapon"], ["mainhand", "weapon"],
-  ["offhand", "offhand"],
-  ["head", "head"],
-  ["body", "body"],
-  ["hands", "hands"], ["gloves", "hands"],
-  ["legs", "legs"],
-  ["feet", "feet"],
-  ["earrings", "earrings"], ["ears", "earrings"],
-  ["necklace", "necklace"], ["neck", "necklace"],
-  ["bracelet", "bracelet"], ["wrists", "bracelet"],
-  ["ring", "ring"], ["ring1", "ring"],
-  ["ring2", "ring2"],
-  ["rings", "rings"], ["finger", "rings"],
+const sharedSlots = new Set([
+  "head", "body", "hands", "legs", "feet", "earrings", "necklace", "bracelet", "ring", "ring2",
 ]);
-
-const constraintAliases = new Map([
-  ["gcd", "gcdTarget"], ["gcdTarget", "gcdTarget"],
-  ["gcdChoices", "gcdChoices"],
-  ["speedMin", "speedMin"], ["speedMax", "speedMax"],
-  ["toughMin", "toughnessMin"], ["minTenacity", "toughnessMin"],
-  ["toughnessMin", "toughnessMin"],
-  ["toughnessMinPercent", "toughnessMinPercent"],
-  ["maxToughnessMode", "maximizeTenacity"],
-  ["maximizeTenacity", "maximizeTenacity"],
+const constraintNames = new Set([
+  "gcdChoices", "speedMin", "speedMax", "minTenacity", "toughnessMinPercent", "maximizeTenacity",
 ]);
-
-function readEnvironment(env, primaryName, aliasName, defaultValue) {
-  return env[primaryName] ?? env[aliasName] ?? defaultValue;
-}
 
 function parseJobs(env, jobSchemas) {
   const jobs = (env.DATA_TEST_JOBS ?? DEFAULT_JOBS.join(","))
@@ -50,35 +26,27 @@ function parseJobs(env, jobSchemas) {
 }
 
 function canonicalCommonSlots(env, jobs, slotsForJob) {
-  const raw = readEnvironment(
-    env,
-    "DATA_TEST_COMMON_SLOTS",
-    "COMMON_SLOTS",
-    undefined,
-  );
+  const raw = env.DATA_TEST_COMMON_SLOTS;
   const supportedByAll = (slot) => jobs.every((job) => {
     const slots = slotsForJob(job);
-    return slot === "rings"
-      ? slots.includes("ring") && slots.includes("ring2")
-      : slots.includes(slot);
+    return slots.includes(slot);
   });
 
   if (raw === undefined || raw.trim() === "") {
     return [
       "head", "body", "hands", "legs", "feet", "earrings", "necklace",
-      "bracelet", "rings",
+      "bracelet", "ring", "ring2",
     ].filter(supportedByAll);
   }
   if (raw.trim().toLowerCase() === "none") return [];
 
   const slots = raw.split(",").map((value) => {
     const normalized = value.trim().toLowerCase();
-    const slot = slotAliases.get(normalized);
-    if (!slot) throw new Error(`不支持的共享槽位：${value.trim()}`);
-    return slot;
+    if (!sharedSlots.has(normalized)) throw new Error(`不支持的共享槽位：${value.trim()}`);
+    return normalized;
   });
   if (new Set(slots).size !== slots.length) {
-    throw new Error("共享槽位列表包含重复项（含同义名称）");
+    throw new Error("共享槽位列表包含重复项");
   }
   for (const slot of slots) {
     const missingJobs = jobs.filter((job) => !supportedByAllForJob(slot, job, slotsForJob));
@@ -91,9 +59,7 @@ function canonicalCommonSlots(env, jobs, slotsForJob) {
 
 function supportedByAllForJob(slot, job, slotsForJob) {
   const slots = slotsForJob(job);
-  return slot === "rings"
-    ? slots.includes("ring") && slots.includes("ring2")
-    : slots.includes(slot);
+  return slots.includes(slot);
 }
 
 function parseConstraintObject(job, value) {
@@ -102,19 +68,15 @@ function parseConstraintObject(job, value) {
   }
   const normalized = {};
   for (const [name, rawValue] of Object.entries(value)) {
-    const configName = constraintAliases.get(name);
-    if (!configName) throw new Error(`${job} 的约束字段不受支持：${name}`);
-    if (Object.hasOwn(normalized, configName)) {
-      throw new Error(`${job} 的约束重复指定了 ${configName}`);
-    }
-    if (configName === "maximizeTenacity") {
+    if (!constraintNames.has(name)) throw new Error(`${job} 的约束字段不受支持：${name}`);
+    if (name === "maximizeTenacity") {
       if (typeof rawValue !== "boolean") {
         throw new Error(`${job}.${name} 必须是布尔值`);
       }
-      normalized[configName] = rawValue;
+      normalized[name] = rawValue;
       continue;
     }
-    if (configName === "gcdChoices") {
+    if (name === "gcdChoices") {
       if (
         !Array.isArray(rawValue) ||
         rawValue.length === 0 ||
@@ -123,27 +85,19 @@ function parseConstraintObject(job, value) {
       ) {
         throw new Error(`${job}.gcdChoices 必须是无重复的正有限数字数组`);
       }
-      normalized[configName] = rawValue;
+      normalized[name] = rawValue;
       continue;
     }
     if (typeof rawValue !== "number" || !Number.isFinite(rawValue)) {
       throw new Error(`${job}.${name} 必须是有限数字`);
     }
-    if (configName === "gcdTarget" && rawValue <= 0) {
-      throw new Error(`${job}.${name} 必须大于 0`);
-    }
-    normalized[configName] = rawValue;
+    normalized[name] = rawValue;
   }
   return normalized;
 }
 
 function parseJobConstraints(env, jobs) {
-  const raw = readEnvironment(
-    env,
-    "DATA_TEST_JOB_CONSTRAINTS",
-    "JOB_CONSTRAINTS",
-    "{}",
-  );
+  const raw = env.DATA_TEST_JOB_CONSTRAINTS ?? "{}";
   let parsed;
   try {
     parsed = JSON.parse(raw);
@@ -166,23 +120,19 @@ function parseJobConstraints(env, jobs) {
 function parseGlobalConstraintEnvironment(env) {
   const result = {};
   const numericEnvironments = [
-    ["DATA_TEST_GCD", "gcdTarget"],
     ["DATA_TEST_SPEED_MIN", "speedMin"],
     ["DATA_TEST_SPEED_MAX", "speedMax"],
     ["DATA_TEST_TOUGH_PERCENT", "toughnessMinPercent"],
-    ["DATA_TEST_TOUGH_MIN", "toughnessMin"],
+    ["DATA_TEST_MIN_TENACITY", "minTenacity"],
   ];
-  for (const [environmentName, configName] of numericEnvironments) {
+  for (const [environmentName, name] of numericEnvironments) {
     const raw = env[environmentName];
     if (raw === undefined || raw.trim() === "") continue;
     const value = Number(raw);
     if (!Number.isFinite(value)) {
       throw new Error(`${environmentName} 必须是有限数字`);
     }
-    if (configName === "gcdTarget" && value <= 0) {
-      throw new Error(`${environmentName} 必须大于 0`);
-    }
-    result[configName] = value;
+    result[name] = value;
   }
 
   if (env.DATA_TEST_GCD_CHOICES?.trim()) {
@@ -205,12 +155,7 @@ function parseGlobalConstraintEnvironment(env) {
 }
 
 function parseFoodStrategy(env) {
-  const strategy = readEnvironment(
-    env,
-    "DATA_TEST_FOOD_STRATEGY",
-    "FOOD_STRATEGY",
-    "shared",
-  );
+  const strategy = env.DATA_TEST_FOOD_STRATEGY ?? "shared";
   if (strategy !== "shared" && strategy !== "independent") {
     throw new Error("DATA_TEST_FOOD_STRATEGY 必须是 shared 或 independent");
   }
@@ -218,12 +163,7 @@ function parseFoodStrategy(env) {
 }
 
 function parseObjective(env) {
-  const objective = readEnvironment(
-    env,
-    "DATA_TEST_OBJECTIVE",
-    "OBJECTIVE",
-    "damage",
-  );
+  const objective = env.DATA_TEST_OBJECTIVE ?? "damage";
   if (objective !== "damage" && objective !== "dps") {
     throw new Error("DATA_TEST_OBJECTIVE 必须是 damage 或 dps");
   }
@@ -231,12 +171,7 @@ function parseObjective(env) {
 }
 
 function parseTimeout(env) {
-  const raw = readEnvironment(
-    env,
-    "DATA_TEST_V3_TIMEOUT_MS",
-    "TIMEOUT_MS",
-    String(MAX_SEARCH_MS),
-  );
+  const raw = env.DATA_TEST_V3_TIMEOUT_MS ?? String(MAX_SEARCH_MS);
   if (raw.trim().toLowerCase() === "unlimited") return UNLIMITED_SEARCH_MS;
   const timeout = Number(raw);
   if (!Number.isSafeInteger(timeout) || timeout <= 0 || timeout > MAX_SEARCH_MS) {
@@ -283,13 +218,15 @@ export function parseV3Config({ env, jobSchemas, slotsForJob, syncLevels }) {
     if (!schema?.defaultItemLevel || schema.defaultItemLevel.length !== 2) {
       throw new Error(`职业 ${jobId} 缺少默认装备品级范围`);
     }
-    const minItemLevel = minimumItemLevel ?? schema.defaultItemLevel[0];
-    const maxItemLevel = maximumItemLevel ?? schema.defaultItemLevel[1];
+    const minItemLevel = minimumItemLevel ?? jobSchemas[jobs[0]].defaultItemLevel[0];
+    const maxItemLevel = maximumItemLevel ?? jobSchemas[jobs[0]].defaultItemLevel[1];
     if (minItemLevel > maxItemLevel) {
       throw new Error(`装备品级范围无效：${minItemLevel}–${maxItemLevel}`);
     }
     return {
       jobId,
+      clanIndex: 0,
+      objective,
       minItemLevel,
       maxItemLevel,
       ...(sync === undefined ? {} : { sync }),

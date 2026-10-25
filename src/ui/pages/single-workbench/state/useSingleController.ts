@@ -20,7 +20,7 @@ import {
 import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
 import { freezeSnapshot } from "@/ui/services/snapshots/freeze-snapshot";
 import { gearSlotLabels } from "@/ui/services/labels";
-import { startHistorySidecar, historyDuration } from "./history-sidecar";
+import { startHistorySidecar } from "./history-sidecar";
 import type { SingleSearchProgressState } from "../components/search-progress/SingleSearchProgress";
 import { compileJobCondition } from "@/ui/features/job-condition/compiler";
 import { jobConditionDraftFromConfig } from "@/ui/features/job-condition/draft";
@@ -46,7 +46,6 @@ export type SingleState =
       phase: "result";
       snapshot: OptimizationConfig;
       result: OptimizationResult;
-      durationMs: number;
       dataVersion: string;
       historyId?: string;
     };
@@ -55,7 +54,7 @@ export function singleDraftFromConfig(config: OptimizationConfig): SingleDraft {
     jobId: config.jobId,
     condition: jobConditionDraftFromConfig(config),
     equipment: {
-      excludedSources: [...config.excludedSources],
+      excludedSources: [...(config.excludedSources ?? [])],
       excludedGearIds: [...(config.excludedGearIds ?? [])],
       forcedGear: cloneForcedGearMap(config.forcedGear),
     },
@@ -127,7 +126,6 @@ export function useSingleController() {
         phase: "result",
         snapshot: record.config,
         result: record.result,
-        durationMs: historyDuration(record),
         dataVersion: record.dataVersion ?? "未记录",
         historyId: record.id,
       });
@@ -245,20 +243,18 @@ export function useSingleController() {
             },
           })),
       });
-      const settledAt = Date.now();
       if (!owns()) return;
       if (result && !controller.signal.aborted) {
         const next: SingleState = {
           phase: "result",
           snapshot,
           result,
-          durationMs: settledAt - startedAt,
           dataVersion,
           historyId,
         };
         current.current = next;
         setState(next);
-        finish(result, settledAt);
+        finish(result);
       } else {
         const next: SingleState = {
           phase: "conditions",
@@ -320,11 +316,11 @@ export function useSingleController() {
     start,
     replace,
     cancel: () => active.current?.abort(),
-    choose: (jobId: JobId) =>
-      navigate({
-        phase: "conditions",
-        draft: singleDraftFromConfig(makeConfig(jobId)),
-      }),
+    choose: (jobId: JobId) => {
+      const draft = singleDraftFromConfig(makeConfig(jobId));
+      draft.condition.gcd = { mode: "tiers", tiers: [] };
+      navigate({ phase: "conditions", draft });
+    },
     selection: () => navigate({ phase: "selection" }),
     edit: async () => {
       const s = current.current;

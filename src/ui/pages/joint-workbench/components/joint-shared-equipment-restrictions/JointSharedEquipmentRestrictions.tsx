@@ -19,14 +19,6 @@ import type {
 import { sharedSlotsForJobs } from "../shared-slots-section/SharedSlotsSection";
 import styles from "./JointSharedEquipmentRestrictions.module.scss";
 
-function actualSlots(
-  commonSlots: JointEquipmentDraft["commonSlots"],
-): GearSlot[] {
-  return commonSlots.flatMap((slot) =>
-    slot === "rings" ? ["ring" as const, "ring2" as const] : [slot],
-  );
-}
-
 export function JointSharedEquipmentRestrictions({
   jobs,
   configs,
@@ -39,7 +31,7 @@ export function JointSharedEquipmentRestrictions({
   onAction(action: EquipmentAction): void;
 }) {
   const catalog = useMemo(() => {
-    const commonSlots = actualSlots(equipment.commonSlots);
+    const commonSlots = equipment.commonSlots;
     const availableSlots = sharedSlotsForJobs(jobs);
     const forceSlots = commonSlots.filter((slot) =>
       availableSlots.includes(slot),

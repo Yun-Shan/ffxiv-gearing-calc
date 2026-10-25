@@ -1,14 +1,12 @@
 import { shareableSlotsForJobs } from "./shared-slot-options";
 import {
-  cloneForcedGearValue,
   cloneForcedGearMap,
   forcedGearEqual,
   type GearSlot,
-  type ForcedGearMap,
-  type ForcedGearValue,
   type JobId,
 } from "@/domain";
 import type { UiJointOptimizationConfig as JointOptimizationConfig, UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
+import { assertUiJointOptimizationConfig } from "@/ui/services/search-config";
 import {
   createJobConditionRuntime,
   jobConditionDraftFromConfig,
@@ -34,18 +32,8 @@ function searchRangeDraftFromConfig(config: OptimizationConfig): SearchRangeDraf
     maxItemLevel: config.maxItemLevel,
     sync: config.sync,
     syncDuty: config.syncDuty,
-    clanIndex: config.clanIndex ?? 0,
+    clanIndex: config.clanIndex,
   };
-}
-
-function sameSearchRange(left: OptimizationConfig, right: OptimizationConfig): boolean {
-  return (
-    left.minItemLevel === right.minItemLevel &&
-    left.maxItemLevel === right.maxItemLevel &&
-    left.sync?.kind === right.sync?.kind &&
-    left.sync?.value === right.sync?.value &&
-    (left.clanIndex ?? 0) === (right.clanIndex ?? 0)
-  );
 }
 
 /** 联合职业条件只保留 gcd/food/tank；搜索范围统一放在共享条件。 */
@@ -69,7 +57,9 @@ export function createJointWorkbenchDraft(jobs: readonly JobId[]): JointWorkbenc
 
   return {
     jobs: [...jobs],
-    conditions: Object.fromEntries(jobs.map((jobId) => [jobId, jointJobConditionFromConfig(configs[jobId]!)])) as Record<JobId, JointJobConditionDraft>,
+    conditions: Object.fromEntries(jobs.map((jobId): [JobId, JointJobConditionDraft] => [jobId, {
+      ...jointJobConditionFromConfig(configs[jobId]!), gcd: { mode: "tiers", tiers: [] },
+    }])) as Record<JobId, JointJobConditionDraft>,
     shared: {
       range: searchRangeDraftFromConfig(firstConfig),
       foodStrategy: "shared",
@@ -80,49 +70,30 @@ export function createJointWorkbenchDraft(jobs: readonly JobId[]): JointWorkbenc
 }
 
 export function jointWorkbenchDraftFromConfig(config: JointOptimizationConfig): JointWorkbenchDraft {
+  assertUiJointOptimizationConfig(config);
   const firstConfig = config.jobs[0]!;
-  if (!config.jobs.every((job) => sameSearchRange(job, firstConfig))) {
-    throw new Error("历史条件中多个职业的搜索范围不同，无法恢复为共享搜索范围。");
-  }
   const conditions = Object.fromEntries(config.jobs.map((job) => [job.jobId, jointJobConditionFromConfig(job)])) as Record<JobId, JointJobConditionDraft>;
-  // The current Joint draft owns source exclusions globally. Legacy snapshots
-  // stored them per job, so preserve every previously excluded source when
-  // adapting a snapshot into the new, broader scope.
-  const sharedSources = [...new Set(config.jobs.flatMap((job) => job.excludedSources))];
-  const sharedGearIds = config.jobs.length > 0
-    ? config.jobs[0]!.excludedGearIds?.filter((id) => config.jobs.every((job) => job.excludedGearIds?.includes(id))) ?? []
-    : [];
-  const commonGearSlots = new Set<GearSlot>(config.commonSlots.flatMap((slot) =>
-    slot === "rings" ? ["ring", "ring2"] : [slot],
+  const sharedSources = [...(firstConfig.excludedSources ?? [])];
+  const sharedGearIds = firstConfig.excludedGearIds?.filter((id) =>
+    config.jobs.every((job) => job.excludedGearIds?.includes(id))) ?? [];
+  const commonGearSlots = new Set<GearSlot>(config.commonSlots);
+  const sharedForcedGear = cloneForcedGearMap(Object.fromEntries(
+    config.commonSlots.map((slot) => [slot, firstConfig.forcedGear?.[slot]]),
   ));
-  const sharedForcedGear: ForcedGearMap = {};
-  for (const slot of commonGearSlots) {
-    const forcedValues = config.jobs
-      .map((job) => job.forcedGear[slot])
-      .filter((value): value is ForcedGearValue => value !== undefined);
-    const [forcedValue] = forcedValues;
-    if (forcedValues.some((value) => !forcedGearEqual(forcedValue, value))) {
-      throw new Error(`历史快照的共享部位 ${slot} 包含多个不同强制装备，无法安全恢复。`);
-    }
-    const copy = cloneForcedGearValue(forcedValue);
-    if (copy !== undefined) sharedForcedGear[slot] = copy;
-  }
   const equipment: JointEquipmentDraft = {
-    commonSlots: config.commonSlots.filter(slot => slot === "rings"
-      ? shareableSlotsForJobs(config.jobs.map(job => job.jobId)).includes("ring")
-      : shareableSlotsForJobs(config.jobs.map(job => job.jobId)).includes(slot)),
+    commonSlots: [...config.commonSlots],
     shared: { excludedSources: sharedSources, excludedGearIds: sharedGearIds, forcedGear: sharedForcedGear },
     jobs: Object.fromEntries(config.jobs.map((job) => {
       const excludedGearIds = (job.excludedGearIds ?? []).filter((id) => !sharedGearIds.includes(id));
       const forcedGear = cloneForcedGearMap(Object.fromEntries(
-        Object.entries(job.forcedGear).filter(([slot, value]) =>
+        Object.entries(job.forcedGear ?? {}).filter(([slot, value]) =>
           value !== undefined && !(commonGearSlots.has(slot as GearSlot) && forcedGearEqual(sharedForcedGear[slot as GearSlot], value)),
         ),
       ));
       return [job.jobId, { excludedGearIds, forcedGear }];
     })),
   };
-  const firstFoodId = config.jobs[0]?.foodId ?? 0;
+  const firstFoodId = firstConfig.foodId;
 
   return {
     jobs: config.jobs.map((job) => job.jobId),
@@ -204,7 +175,6 @@ export function compileJointWorkbenchDraft(
       excludedSources: [...draft.shared.equipment.shared.excludedSources],
       excludedGearIds: [...excludedGearIds],
       forcedGear,
-      sharedSlots: [...draft.shared.equipment.commonSlots].flatMap((slot): GearSlot[] => slot === "rings" ? ["ring", "ring2"] : [slot]),
     } satisfies OptimizationConfig;
   });
   const normalized = normalizeJointObjective(compiledJobs);

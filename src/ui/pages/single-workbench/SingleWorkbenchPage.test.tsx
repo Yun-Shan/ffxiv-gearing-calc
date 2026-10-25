@@ -4,6 +4,19 @@ import { act } from "react";
 import { describe, expect, it } from "vitest";
 import * as support from "@/test-utils/workbench.helper.test";
 describe("重构后的 Single 工作流", () => {
+  it.each([12345, -1234])("结果与历史直接显示领域统计耗时 %s", async (elapsedMs) => {
+    const result = support.sampleResult();
+    result.statistics.elapsedMs = elapsedMs;
+    support.optimizeMock.mockResolvedValue(result);
+    support.chooseJob("SAM");
+    await support.settleApp(220);
+    await support.selectFirstGcdTierIfEmpty();
+    await support.startSearchAndSettle();
+    expect(support.host.textContent).toContain(`耗时 ${(elapsedMs / 1000).toFixed(1)} 秒`);
+    support.click(support.buttonNamed("重新选择职业"));
+    await support.settleApp();
+    expect(support.host.textContent).toContain(`${(elapsedMs / 1000).toFixed(1)} 秒`);
+  });
   it("候选不足时只提示没有可行档位，不同时要求选择档位", async () => {
     support.findFeasibleGcdsMock.mockResolvedValue([]);
     support.chooseJob("PLD");
@@ -148,8 +161,6 @@ describe("坚韧策略与通用输入", () => {
       config: {
         ...makeConfig("PLD"),
         minTenacity: 2300,
-        toughnessMinPercent: 12,
-        maximizeTenacity: true,
       },
       dataVersion: currentDataVersion,
       status: "completed",
@@ -163,11 +174,8 @@ describe("坚韧策略与通用输入", () => {
     ].find((el) => el.textContent === "编辑条件")!;
     support.click(edit);
     await support.settleApp();
-    expect(support.host.textContent).not.toContain("组合约束");
-    expect(support.host.textContent).toContain("请选择单一策略");
     expect(support.host.querySelector("aside")?.textContent).toContain("最低坚韧值2300");
-    expect(support.host.textContent).toContain("12%");
-    expect(support.buttonNamed("开始搜索").disabled).toBe(true);
+    expect(support.textField("最低坚韧值").value).toBe("2300");
     await chooseTankStrategy("最大化减伤百分比");
     expect(support.host.textContent).not.toContain("最低坚韧值");
     expect(support.host.textContent).not.toContain("最低减伤比例");

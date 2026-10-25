@@ -116,7 +116,7 @@ function fixtureResult(): OptimizationResult {
     damagePerSecond: 40,
     gcdTier: 2.5,
     searchedCandidates: 1,
-    durationMs: 1,
+    statistics: { elapsedMs: 1 },
   };
 }
 describe("history result write ordering", () => {
@@ -128,8 +128,7 @@ describe("history result write ordering", () => {
       actualStats: { DET: 12 },
       utilization: 40,
     };
-    const start = "2026-10-16T00:00:00.000Z",
-      finish = "2026-10-16T00:00:01.250Z";
+    const start = "2026-10-16T00:00:00.000Z";
     const record = await createSearchHistory({
       kind: "single",
       config: makeConfig("SAM"),
@@ -148,7 +147,6 @@ describe("history result write ordering", () => {
       finishSearchHistory(record.id, {
         status: "completed",
         result: original,
-        finishedAtISO: finish,
       }),
       replaceSearchHistoryResult(record.id, first),
       replaceSearchHistoryResult(record.id, last),
@@ -164,7 +162,7 @@ describe("history result write ordering", () => {
       saved?.result && "food" in saved.result && saved.result.food.utilization,
     ).toBe(40);
     expect(saved?.startedAtISO).toBe(start);
-    expect(saved?.finishedAtISO).toBe(finish);
+    expect(saved?.result?.statistics.elapsedMs).toBe(original.statistics.elapsedMs);
     expect(saved?.dataVersion).toBe("snapshot-version");
     expect(saved?.config).toEqual(record.config);
   });
@@ -250,7 +248,6 @@ describe("history result write ordering", () => {
       equivalentGear: completeGroups,
     };
     const startedAtISO = "2026-10-17T03:00:00.000Z";
-    const finishedAtISO = "2026-10-17T03:00:01.500Z";
     const record = await createSearchHistory({
       kind: "single",
       config: makeConfig("SAM"),
@@ -260,7 +257,6 @@ describe("history result write ordering", () => {
     await finishSearchHistory(record.id, {
       status: "completed",
       result: original,
-      finishedAtISO,
     });
 
     const firstRead = await getSearchHistoryRecord(record.id);
@@ -334,10 +330,10 @@ describe("history result write ordering", () => {
       damagePerSecond: original.damagePerSecond,
       gcdTier: original.gcdTier,
       searchedCandidates: original.searchedCandidates,
-      durationMs: original.durationMs,
+      statistics: original.statistics,
     });
     expect(secondRead.startedAtISO).toBe(startedAtISO);
-    expect(secondRead.finishedAtISO).toBe(finishedAtISO);
+    expect(secondRead.result.statistics.elapsedMs).toBe(original.statistics.elapsedMs);
     expect(secondRead.dataVersion).toBe("replacement-group-snapshot");
     expect(secondRead.config).toEqual(record.config);
   });
@@ -357,7 +353,6 @@ describe("history list tolerates individual invalid payloads", () => {
     await service.finishSearchHistory(first.id, {
       status: "completed",
       result: fixtureResult(),
-      finishedAtISO: "2026-10-18T00:00:01.000Z",
     });
     const second = await service.createSearchHistory({
       kind: "single",
@@ -368,7 +363,6 @@ describe("history list tolerates individual invalid payloads", () => {
     await service.finishSearchHistory(second.id, {
       status: "completed",
       result: fixtureResult(),
-      finishedAtISO: "2026-10-18T00:00:03.000Z",
     });
     const obsolete = {
       ...(await service.getSearchHistoryRecord(first.id)),
@@ -423,7 +417,6 @@ describe("completed-only history", () => {
       config: makeConfig("SAM"),
       result: fixtureResult(),
       startedAtISO: "2026-10-19T00:00:00.000Z",
-      finishedAtISO: "2026-10-19T00:00:01.000Z",
     };
     const first = await service.saveCompletedSearchHistory(input);
     const second = await service.saveCompletedSearchHistory({ ...input, dataVersion: "display-only" });
@@ -461,7 +454,6 @@ describe("completed-only history", () => {
         result: fixtureResult(),
         dataVersion: "snapshot-version",
         startedAtISO: "2026-10-19T00:00:00.000Z",
-        finishedAtISO: "2026-10-19T00:00:02.000Z",
       };
       const pending = service.saveCompletedSearchHistory(input);
       expect(stored.size).toBe(0);
@@ -504,7 +496,6 @@ describe("completed-only history", () => {
       result: fixtureResult(),
       dataVersion: "first",
       startedAtISO: "2026-10-19T00:00:00.000Z",
-      finishedAtISO: "2026-10-19T00:00:01.000Z",
     };
     const first = await service.saveCompletedSearchHistory(input);
     stored.set(first.id, { ...first, error: "旧字段", legacyField: true });
@@ -515,9 +506,8 @@ describe("completed-only history", () => {
       ...input,
       config: reordered,
       dataVersion: "second",
-      result: { ...input.result, durationMs: 42 },
+      result: { ...input.result, statistics: { ...input.result.statistics, elapsedMs: 42 } },
       startedAtISO: "2026-10-19T00:00:01.000Z",
-      finishedAtISO: "2026-10-19T00:00:02.000Z",
     });
     expect(first.id).toMatch(/^[a-f0-9]{64}$/);
     expect(second.id).toBe(first.id);
@@ -526,7 +516,7 @@ describe("completed-only history", () => {
     expect(stored.get(first.id)).not.toHaveProperty("error");
     expect(stored.get(first.id)).not.toHaveProperty("legacyField");
     expect(await service.listSearchHistory()).toEqual([second]);
-    expect(second.kind === "single" && second.result.durationMs).toBe(42);
+    expect(second.kind === "single" && second.result.statistics.elapsedMs).toBe(42);
     const different = await service.saveCompletedSearchHistory({
       ...input,
       config: { ...config, minItemLevel: config.minItemLevel + 1 },
@@ -545,7 +535,6 @@ describe("completed-only history", () => {
       config: { ...makeConfig("SAM"), sync: duty.target, syncDuty: duty.name },
       result: fixtureResult(),
       startedAtISO: "2026-10-24T00:00:00.000Z",
-      finishedAtISO: "2026-10-24T00:00:01.000Z",
     });
     const restored = await service.getSearchHistoryRecord(record.id);
     expect(restored?.config).toMatchObject({ sync: duty.target, syncDuty: duty.name });

@@ -55,15 +55,16 @@ describe("rules runtime boundaries", () => {
     const stats = { STR: 2500, SKS: 600 };
 
     expect(
-      calculateEffects({ stats, job, level: 70, weaponDamage: 100 }).gcd,
+      calculateEffects({ clanIndex: 0, stats, job, level: 70, weaponDamage: 100 }).gcd,
     ).toBe(
-      calculateEffects({ stats, job: withoutGcdModifier, level: 70, weaponDamage: 100 }).gcd,
+      calculateEffects({ clanIndex: 0, stats, job: withoutGcdModifier, level: 70, weaponDamage: 100 }).gcd,
     );
   });
 
   it("fails closed when required level, attack, or HP modifiers are unavailable", () => {
     const sam = jobSchemas.SAM;
     const input = {
+      clanIndex: 0,
       stats: { STR: 3000, VIT: 3000, CRT: 2000, DET: 2000 },
       job: sam,
       level: 100,
@@ -85,6 +86,7 @@ describe("rules runtime boundaries", () => {
   it("uses real Blue Mage intelligence and rejects an impossible negative contribution", () => {
     const base = calculateBaseStats(jobSchemas.BLU, 80);
     const effects = calculateEffects({
+      clanIndex: 0,
       stats: { ...base, CRT: 1000, DHT: 1000 },
       job: jobSchemas.BLU,
       level: 80,
@@ -95,6 +97,7 @@ describe("rules runtime boundaries", () => {
     expect(Number.isFinite(effects.damage)).toBe(true);
     expect(effects.damage).toBeGreaterThan(0);
     expect(() => calculateEffects({
+      clanIndex: 0,
       stats: { CRT: 1000, DHT: 1000 },
       job: jobSchemas.BLU,
       level: 80,

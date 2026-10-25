@@ -41,6 +41,8 @@ import { runJointOptimizationLocally } from "./joint-search.ts";
 
 function job(jobId: JobId, overrides: Partial<OptimizationConfig> = {}): OptimizationConfig {
   return {
+    clanIndex: 0,
+    objective: "damage",
     jobId,
     minItemLevel: 1,
     maxItemLevel: 999,
@@ -58,7 +60,7 @@ function jointConfig(
   objective: "damage" | "dps" = "damage",
 ): Parameters<typeof runJointOptimizationLocally>[0] {
   return {
-    jobs,
+    jobs: jobs.map((job) => ({ ...job, objective })),
     commonSlots,
     foodStrategy: "independent",
     objective,
@@ -157,7 +159,7 @@ describe("joint search result validation", () => {
   it("marks the exact shared-accessory-pair DPS path when all eligibility conditions hold", async () => {
     const config = jointConfig(
       [job("MCH"), job("VPR")],
-      ["rings", "bracelet", "earrings", "necklace"],
+      ["ring", "ring2", "bracelet", "earrings", "necklace"],
       "dps",
     );
     config.foodStrategy = "shared";
@@ -170,7 +172,7 @@ describe("joint search result validation", () => {
     const optimized = await runJointOptimizationLocally(config, options);
 
     expect(optimized?.value.approximate).toBe(1);
-    expect(optimized?.commonGear.rings).toEqual([
+    expect([...(optimized?.commonGear.ring ?? []), ...(optimized?.commonGear.ring2 ?? [])]).toEqual([
       { equipment: {}, slot: "ring" },
       { equipment: {}, slot: "ring2" },
     ]);
@@ -207,28 +209,59 @@ describe("joint search result validation", () => {
         job("RDM", { forcedGear: { ring: 100 } }),
         job("BLM", { forcedGear: { ring: 100 } }),
       ],
-      ["rings", "head"],
+      ["ring", "ring2", "head"],
     );
     config.foodStrategy = "shared";
 
     const optimized = await runJointOptimizationLocally(config);
 
     expect(optimized?.commonGear).toEqual({
-      rings: [
-        { equipment: { id: 1 }, slot: "ring" },
-        { equipment: { id: 2 }, slot: "ring2" },
-      ],
+      ring: [{ equipment: { id: 1 }, slot: "ring" }],
+      ring2: [{ equipment: { id: 2 }, slot: "ring2" }],
       head: [{ equipment: { id: 3 }, slot: "head" }],
     });
     expect(optimized?.commonFood).toEqual({ id: 49240 });
-    expect(optimized?.jobResults.RDM).toEqual({
+    expect(optimized?.jobResults.RDM).toMatchObject({
       jobId: "RDM",
       exactResult: { score: "result" },
     });
-    expect(optimized?.optima.BLM).toEqual({
+    expect(optimized?.optima.BLM).toMatchObject({
       jobId: "BLM",
       exactResult: { score: "optimum" },
     });
+  });
+
+  it("publishes one domain duration including preparation, solving, disposal and all result reconstruction", async () => {
+    let now = 100;
+    const clock = vi.spyOn(performance, "now").mockImplementation(() => now);
+    const solverStatistics = { elapsedMs: 40 };
+    mocks.prepareSearch.mockImplementation((config: OptimizationConfig) => {
+      now += 10;
+      return { foods: [{}], options: { slots: [[]] }, slots: [{ name: "weapon", candidates: [{}] }], jobId: config.jobId };
+    });
+    mocks.createParallelBaselineExecutor.mockResolvedValueOnce({ dispose: async () => { now += 80; } });
+    mocks.findBestJointLoadoutV3.mockImplementationOnce(async () => {
+      now += 40;
+      return result({
+        jobResults: { RDM: {}, BLM: {} },
+        optima: { RDM: {}, BLM: {} },
+        statistics: solverStatistics,
+      });
+    });
+    mocks.assembleResult.mockImplementation(() => {
+      now += 10;
+      return { statistics: { elapsedMs: 1 } };
+    });
+    try {
+      const completed = await runJointOptimizationLocally(jointConfig([job("RDM"), job("BLM")]));
+      expect(completed?.statistics.elapsedMs).toBe(180);
+      for (const result of [...Object.values(completed!.jobResults), ...Object.values(completed!.optima)]) {
+        expect(result.statistics.elapsedMs).toBe(180);
+      }
+      expect(solverStatistics.elapsedMs).toBe(40);
+    } finally {
+      clock.mockRestore();
+    }
   });
 
   it("reports cancellation through the solver callback and rejects a cancelled result", async () => {
@@ -259,7 +292,7 @@ describe("joint search result validation", () => {
         maxItemLevel,
         sync: { kind: "itemLevel", value: 735 },
       })),
-      ["rings", "bracelet", "earrings", "necklace"],
+      ["ring", "ring2", "bracelet", "earrings", "necklace"],
       "dps",
     );
     config.foodStrategy = "shared";
@@ -288,7 +321,7 @@ describe("joint search result validation", () => {
 
     await expect(
       runJointOptimizationLocally(
-        jointConfig([job("RDM"), job("BLM")], ["rings"]),
+        jointConfig([job("RDM"), job("BLM")], ["ring", "ring2"]),
       ),
     ).rejects.toThrow("联合结果缺少共享戒指对");
   });
@@ -300,7 +333,7 @@ describe("joint search result validation", () => {
 
     await expect(
       runJointOptimizationLocally(
-        jointConfig([job("RDM"), job("BLM")], ["rings"]),
+        jointConfig([job("RDM"), job("BLM")], ["ring", "ring2"]),
       ),
     ).rejects.toThrow("联合结果缺少共享戒指对");
   });

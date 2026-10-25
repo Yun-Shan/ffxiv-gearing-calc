@@ -13,6 +13,7 @@ import { validateSearchHistoryRecord } from "./search-history";
 
 function config(jobId: JobId): OptimizationConfig {
   return {
+    clanIndex: 0,
     jobId,
     minItemLevel: 700,
     maxItemLevel: 800,
@@ -47,7 +48,7 @@ function result(): OptimizationResult {
     damagePerSecond: 0.4,
     gcdTier: 2.5,
     searchedCandidates: 1,
-    durationMs: 1,
+    statistics: { elapsedMs: 1 },
   };
 }
 
@@ -56,7 +57,6 @@ function completedSingleRecord() {
     id: "history-single-test",
     kind: "single",
     startedAtISO: "2026-10-03T09:00:00.000Z",
-    finishedAtISO: "2026-10-03T09:00:01.000Z",
     dataVersion: "test-version",
     config: config("SAM"),
     status: "completed",
@@ -111,6 +111,14 @@ function jointConfig(): JointOptimizationConfig {
 }
 
 describe("搜索历史记录结构校验", () => {
+  it.each([-100, NaN, Infinity])("preserves elapsed value %s without validation", (elapsedMs) => {
+    const single = completedSingleRecord();
+    single.result.statistics.elapsedMs = elapsedMs;
+    expect(validateSearchHistoryRecord(single).result.statistics.elapsedMs).toBe(elapsedMs);
+    const joint = { ...single, kind: "joint", config: jointConfig(), result: jointResult(["RDM", "BLM"]) };
+    joint.result.statistics.elapsedMs = elapsedMs;
+    expect(validateSearchHistoryRecord(joint).result.statistics.elapsedMs).toBe(elapsedMs);
+  });
   it("does not require version metadata to read a completed record", () => {
     const { dataVersion: _version, ...withoutVersion } = completedSingleRecord();
     expect(validateSearchHistoryRecord(withoutVersion).kind).toBe("single");
@@ -118,7 +126,7 @@ describe("搜索历史记录结构校验", () => {
   });
   it("rejects unfinished records at the consumer validation boundary", () => {
     const valid = completedSingleRecord();
-    expect(() => validateSearchHistoryRecord({ ...valid, status: "running", finishedAtISO: undefined, result: undefined })).toThrow("历史记录必须包含成功完成的结果");
+    expect(() => validateSearchHistoryRecord({ ...valid, status: "running", result: undefined })).toThrow("历史记录必须包含成功完成的结果");
     expect(() => validateSearchHistoryRecord({ ...valid, result: undefined })).toThrow("结果缺少必要字段");
   });
   it("接受带有实际职业ID和完整单职业结果的记录", () => {
@@ -153,11 +161,7 @@ describe("搜索历史记录结构校验", () => {
     current.result = { ...result(), calculationLevel: 80 };
     expect(validateSearchHistoryRecord(current).kind).toBe("single");
 
-    const missingCalculationLevel = completedSingleRecord();
-    missingCalculationLevel.result = {
-      ...result(),
-      calculationLevel: undefined,
-    };
+    const missingCalculationLevel = { ...completedSingleRecord(), result: { ...result(), calculationLevel: undefined } };
     expect(() => validateSearchHistoryRecord(missingCalculationLevel)).toThrow(
       /结果缺少必要字段/,
     );
@@ -340,7 +344,6 @@ describe("搜索历史记录结构校验", () => {
       id: "history-joint-test",
       kind: "joint",
       startedAtISO: "2026-10-03T09:00:00.000Z",
-      finishedAtISO: "2026-10-03T09:00:01.000Z",
       dataVersion: "test-version",
       config: configValue,
       status: "completed",
@@ -377,7 +380,6 @@ describe("搜索历史记录结构校验", () => {
       id: "history-joint-unbounded-test",
       kind: "joint",
       startedAtISO: "2026-10-03T09:00:00.000Z",
-      finishedAtISO: "2026-10-03T09:00:01.000Z",
       dataVersion: "test-version",
       config: configValue,
       status: "completed",

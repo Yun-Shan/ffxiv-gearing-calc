@@ -26,7 +26,7 @@ function Harness({
     },
     gcd: { mode: "tiers", tiers: initialTiers },
     food: { mode: "auto" },
-    tank: { maximizeTenacity: false },
+    tank: { strategy: "any" },
   });
   return (
     <JobConditionScopeProvider

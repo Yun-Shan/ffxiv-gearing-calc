@@ -37,6 +37,8 @@ function config(
   overrides: Partial<OptimizationConfig> = {},
 ): OptimizationConfig {
   return {
+    clanIndex: 0,
+    objective: "damage",
     jobId: "SAM",
     minItemLevel: 1,
     maxItemLevel: 795,

@@ -26,6 +26,7 @@ const forcedGear: OptimizationConfig["forcedGear"] = {
 };
 
 const config: OptimizationConfig = {
+  clanIndex: 0,
   jobId: "WAR",
   minItemLevel: 663,
   maxItemLevel: 663,
@@ -34,9 +35,8 @@ const config: OptimizationConfig = {
   objective: "damage",
   excludedSources: [],
   forcedGear,
-  sharedSlots: [],
+
   foodId: 0,
-  gcdChoices: [],
 };
 
 function fixedMateria(itemId: number, stat: "CRT" | "SKS"): ForcedGearValue {
@@ -213,7 +213,7 @@ describe("sync GCD query", () => {
         ...forcedGear,
         head: { id: "invalid" } as unknown as ForcedGearValue,
       },
-    })).toThrow(/槽位 head 的强制装备配置无效/);
+    })).toThrow(/强制装备配置无效/);
   });
 
   it("rejects tenacity constraints for a job that does not use tenacity", () => {
@@ -334,7 +334,7 @@ describe("sync GCD query", () => {
     const specialGear = {
       ...plainGear,
       id: source.id + 1_000_000,
-      itemSpecialBonus: 77,
+      itemSpecialBonus: 11,
       specialStats: { SKS: 50, TEN: 5 },
     };
     const ringGear = (id: number, tenacity: number) => ({
@@ -372,25 +372,34 @@ describe("sync GCD query", () => {
       maxItemLevel: 795,
       forcedGear: {},
       maximizeTenacity: true,
-      enabledItemSpecialBonuses: [77],
+
     };
     const withSpecialBonus = calculateFeasibleGcdTiers(
       specialConfig,
       {},
       dependencies,
     );
-    const withoutSpecialBonus = calculateFeasibleGcdTiers(
-      { ...specialConfig, enabledItemSpecialBonuses: undefined },
+    const repeated = calculateFeasibleGcdTiers(
+      specialConfig,
       {},
       dependencies,
     );
     expect(withSpecialBonus.length).toBeGreaterThan(0);
-    expect(withSpecialBonus).not.toEqual(withoutSpecialBonus);
+    expect(withSpecialBonus).toEqual(repeated);
+    const beastmasterConfig = { ...specialConfig, jobId: "BST" as const, maximizeTenacity: false };
+    const beastmasterBonus = calculateFeasibleGcdTiers(beastmasterConfig, {}, dependencies);
+    const beastmasterPlain = calculateFeasibleGcdTiers(beastmasterConfig, {}, {
+      ...dependencies,
+      gearOptionsFor: (input: OptimizationConfig, slot: GearSlot) =>
+        dependencies.gearOptionsFor(input, slot).map((gear) => ({ ...gear, itemSpecialBonus: undefined })),
+    });
+    expect(beastmasterBonus).not.toEqual(beastmasterPlain);
   }, 120_000);
 });
 
 describe("GCD query without available slot candidates", () => {
   const beastmaster: OptimizationConfig = {
+    clanIndex: 0,
     jobId: "BST",
     minItemLevel: 130,
     maxItemLevel: 135,
@@ -399,9 +408,8 @@ describe("GCD query without available slot candidates", () => {
     excludedSources: [],
     excludedGearIds: [],
     forcedGear: {},
-    sharedSlots: [],
+
     foodId: 0,
-    gcdChoices: [],
   };
 
   it("reports the slots that have no candidates when a source exclusion empties them", () => {

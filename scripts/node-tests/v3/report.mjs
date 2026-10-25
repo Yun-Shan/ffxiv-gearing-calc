@@ -14,7 +14,6 @@ const slotLabels = {
   bracelet: "手镯",
   ring: "戒指1",
   ring2: "戒指2",
-  rings: "戒指对",
 };
 
 export function summarizeGear(gear) {
@@ -48,7 +47,7 @@ export function summarizeOptimization(job, result) {
     objectiveScore: result.score,
     totalAttributes: result.stats,
     maximumTenacity: result.maximumTenacity,
-    durationMs: result.durationMs,
+    statistics: result.statistics,
     searchedCandidates: result.searchedCandidates,
     food: summarizeFood(result.food),
     equipment: result.gear.map(summarizeGear),
@@ -80,14 +79,12 @@ export function summarizeJointResult(result, jobs) {
 
 export function buildV3Output(result, jobs, {
   maxSearchMs,
-  elapsedMs,
   peakRssBytes,
   rssLimitBytes = MAX_RSS_BYTES,
 }) {
   const output = summarizeJointResult(result, jobs);
   if (maxSearchMs === UNLIMITED_SEARCH_MS) output.statistics.timeLimitMs = "unlimited";
   output.runtime = {
-    elapsedMs: Math.round(elapsedMs),
     peakRssBytes,
     rssLimitBytes,
     timeoutMs: maxSearchMs === UNLIMITED_SEARCH_MS ? "unlimited" : maxSearchMs,

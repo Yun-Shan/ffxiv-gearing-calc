@@ -17,6 +17,7 @@ try {
     workerData.jobLevel,
     statIndexes,
     workerData.maxContributions,
+    workerData.clanIndex,
   );
   const attributeIndex = new Map(
     workerData.attributeIds.map((id, index) => [id, index]),
@@ -30,6 +31,8 @@ try {
   const result = await findBestLoadoutExactMip({
     job: workerData.job,
     jobLevel: workerData.jobLevel,
+    clanIndex: workerData.clanIndex,
+    objective: workerData.objective,
     attributeIds: workerData.attributeIds,
     statIndexes,
     slots: workerData.slots,
@@ -38,12 +41,13 @@ try {
     speedAttributeId: workerData.speedAttributeId,
     toughnessAttributeId: workerData.toughnessAttributeId,
     gcdToSpeedRange: (gcd) =>
-      equippedSpeedRangeForGcd(workerData.job, workerData.jobLevel, gcd),
+      equippedSpeedRangeForGcd(workerData.job, workerData.jobLevel, gcd, workerData.clanIndex),
     toughnessPercentToMinimum: (percentage) =>
       equippedToughnessForMitigationPercent(
         workerData.job,
         workerData.jobLevel,
         percentage,
+        workerData.clanIndex,
       ),
     equipmentAttributeExtractor,
     evaluationFunction,

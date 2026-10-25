@@ -12,6 +12,7 @@ const calculationLevel = calculationJobLevelFor({ jobId: "WAR", sync });
 
 function syncConfig(jobId: OptimizationConfig["jobId"]): OptimizationConfig {
   return {
+    clanIndex: 0,
     jobId,
     minItemLevel: 640,
     maxItemLevel: 665,
@@ -20,7 +21,7 @@ function syncConfig(jobId: OptimizationConfig["jobId"]): OptimizationConfig {
     objective: "damage",
     excludedSources: [],
     forcedGear: {},
-    sharedSlots: [],
+
     foodId: 0,
   };
 }

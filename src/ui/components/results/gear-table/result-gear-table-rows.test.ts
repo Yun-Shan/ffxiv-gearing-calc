@@ -70,7 +70,7 @@ function result(): OptimizationResultWithEquivalentGear {
     damagePerSecond: 800,
     gcdTier: 0,
     searchedCandidates: 1,
-    durationMs: 100,
+    statistics: { elapsedMs: 100 },
     equivalentGear: { "weapon-group": [selected, replacement, another] },
   };
 }
@@ -132,7 +132,7 @@ describe("Result GearTable adapter", () => {
       1, 2, 3,
     ]);
     expect(after.stats).toBe(before.stats);
-    expect(after.durationMs).toBe(before.durationMs);
+    expect(after.statistics.elapsedMs).toBe(before.statistics.elapsedMs);
     const row = buildResultGearTableRows(
       after,
       { jobId: "PLD" } as OptimizationConfig,
