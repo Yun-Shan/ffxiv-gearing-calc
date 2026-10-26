@@ -39,7 +39,14 @@ vi.mock("@/domain", async (importOriginal) => ({
   findFeasibleGcds: testMocks.findFeasibleGcdsMock,
 }));
 
-vi.mock("@/ui/services/search-history", () => ({
+vi.mock("@/ui/services/search-history", async (original) => ({
+  ...(await original<typeof import("@/ui/services/search-history")>()),
+  replaceSearchHistoryGearIfCurrent: vi.fn(async (link, gear) => {
+    const record = historyStore.records.find(record => record.id === link.id);
+    if (!record?.result || record.kind !== "single") return undefined;
+    record.result = { ...record.result as object, gear: structuredClone(gear) };
+    return link;
+  }),
   saveCompletedSearchHistory: vi.fn(
     async (input: {
       kind: "single" | "joint";
@@ -74,7 +81,7 @@ vi.mock("@/ui/services/search-history", () => ({
   ),
 }));
 
-import { App } from "../ui/app/App";
+import { App, createAppRouter, type AppRouter } from "../ui/app/App";
 import {
   defaultDataVersion,
   foods,
@@ -90,6 +97,7 @@ import {
 
 export let host: HTMLDivElement;
 let root: Root;
+let appRouter: AppRouter;
 
 beforeEach(async () => {
   optimizeMock.mockReset();
@@ -100,17 +108,20 @@ beforeEach(async () => {
   historyStore.nextId = 0;
   host = document.createElement("div");
   document.body.append(host);
-  window.history.replaceState(null, "", "#/single");
+  window.history.replaceState(null, "", "/single");
+  appRouter = createAppRouter({ restore: false });
+  await appRouter.load();
   root = createRoot(host);
   (
     globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }
   ).IS_REACT_ACT_ENVIRONMENT = true;
-  act(() => root.render(<App />));
+  act(() => root.render(<App router={appRouter} />));
   await settleApp();
 });
 
 afterEach(() => {
   act(() => root.unmount());
+  appRouter.history.destroy();
   host.remove();
 });
 
@@ -392,20 +403,21 @@ export function summaryRowValue(label: string): string {
   return normalizedText(row.querySelector("strong") ?? row);
 }
 
-export function remountApp(hash = "#/single"): void {
+export function remountApp(path = "/single"): void {
   act(() => root.unmount());
+  appRouter.history.destroy();
   host.remove();
   host = document.createElement("div");
   document.body.append(host);
-  window.history.replaceState(null, "", hash);
+  window.history.replaceState(null, "", path);
+  appRouter = createAppRouter({ restore: false });
   root = createRoot(host);
-  act(() => root.render(<App />));
+  act(() => root.render(<App router={appRouter} />));
 }
 
 export function navigateToJoint(): void {
   act(() => {
-    window.history.replaceState(null, "", "#/joint");
-    window.dispatchEvent(new Event("hashchange"));
+    void appRouter.navigate({ to: "/joint", search: {} });
   });
 }
 

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import {
   jobSchemas,
   optimizeJoint,
@@ -22,6 +22,10 @@ import type { FoodDraft, JointEditorTarget, JointJobConditionDraftChange, JointW
 import { deriveJointValidation, freezeJointConfig, gearById, jobSelectionSlots, parseJointProgressStats } from "./joint-workbench-model";
 import type { JointSearchPhase, JointSearchProgressJob, JointSearchProgressState } from "./joint-workbench-progress-types";
 
+import type { WorkbenchRouting, WorkbenchTransitionIntent } from "@/ui/services/workbench-routing";
+import type { WorkbenchSession } from "@/ui/services/workbench-session";
+import { freezeSnapshot } from "@/ui/services/snapshots/freeze-snapshot";
+
 type JointRunSnapshot = {
   config: JointOptimizationConfig;
   dataVersion: string;
@@ -37,23 +41,74 @@ interface ActiveJointRun {
   uiOwned: boolean;
   settled: boolean;
 }
-export function useJointWorkbenchController(initialResult?: JointWorkbenchResult) {
+export function jointStateFromResult(value: JointWorkbenchResult): JointWorkbenchPhase {
+  return { phase: "result", snapshot: { config: freezeJointConfig(value.config), dataVersion: value.dataVersion }, result: freezeSnapshot(value.result) };
+}
+export function jointStateFromSession(session: Extract<WorkbenchSession, { mode: "joint" }>): JointWorkbenchPhase {
+  return session.phase === "conditions"
+    ? { phase: "conditions", draft: structuredClone(session.draft), runtime: createJointWorkbenchRuntime(session.draft.jobs) }
+    : jointStateFromResult(session.value);
+}
+export function jointSessionFromState(state: JointWorkbenchPhase): WorkbenchSession | undefined {
+  if (state.phase === "conditions") return { mode: "joint", phase: "conditions", draft: state.draft };
+  if (state.phase !== "result") return undefined;
+  return { mode: "joint", phase: "result", value: { mode: "joint", config: state.snapshot.config, result: state.result, dataVersion: state.snapshot.dataVersion } };
+}
+export function useJointWorkbenchController(routing?: WorkbenchRouting<JointWorkbenchPhase>) {
   const { notify, confirm } = useFeedback();
-  const [phase, setPhase] = useState<JointWorkbenchPhase>(() => initialResult ? { phase: "result", snapshot: { config: freezeJointConfig(initialResult.config), dataVersion: initialResult.dataVersion }, result: initialResult.result } : { phase: "selection" });
+  const [phase, setPhase] = useState<JointWorkbenchPhase>(() => routing?.initialState ?? { phase: "selection" });
   const phaseRef = useRef<JointWorkbenchPhase>(phase);
   const runRef = useRef<ActiveJointRun | undefined>(undefined);
   const runSequence = useRef(0);
+  const intent = useRef(0);
+  const pendingConfirmation = useRef<AbortController | undefined>(undefined);
+  const mounted = useRef(true);
   const [selectionState, setSelectionState] = useState<JointJobSelectionState>();
-  const [selectedJobs, setSelectedJobs] = useState<JobId[]>(() => initialResult?.config.jobs.map(c => c.jobId) ?? []);
+  const [selectedJobs, setSelectedJobs] = useState<JobId[]>(() => phase.phase === "conditions" ? [...phase.draft.jobs] : phase.phase === "selection" ? [] : phase.snapshot.config.jobs.map(c => c.jobId));
   const [editorTarget, setEditorTarget] = useState<JointEditorTarget>("shared");
   const [resultTab, setResultTab] = useState("shared");
   const [historyOpen, setHistoryOpen] = useState(false);
   const [cancelPending, setCancelPending] = useState(false);
 
-  function transition(next: JointWorkbenchPhase) {
+  function transition(next: JointWorkbenchPhase, action: WorkbenchTransitionIntent = "update") {
     phaseRef.current = next;
     setPhase(next);
+    routing?.publish(next, action);
   }
+
+  function cancelConfirmation() {
+    const controller = pendingConfirmation.current;
+    pendingConfirmation.current = undefined;
+    controller?.abort();
+  }
+  function revoke() {
+    ++intent.current;
+    cancelConfirmation();
+    const run = runRef.current;
+    if (run) {
+      run.uiOwned = false;
+      runRef.current = undefined;
+      run.controller.abort();
+    }
+  }
+  function navigate(next: JointWorkbenchPhase) {
+    revoke();
+    transition(next, "push");
+  }
+  useLayoutEffect(() => routing?.attach({
+    enter(next, reset) {
+      revoke();
+      phaseRef.current = next;
+      setPhase(next);
+      setHistoryOpen(false);
+      setCancelPending(false);
+      setEditorTarget("shared");
+      setResultTab("shared");
+      setSelectedJobs(next.phase === "conditions" ? [...next.draft.jobs] : next.phase === "selection" ? [] : next.snapshot.config.jobs.map(job => job.jobId));
+      if (reset || next.phase === "selection") setSelectionState(undefined);
+    },
+    leave: revoke,
+  }), [routing]);
 
   const currentConfig = phase.phase === "conditions"
     ? compileJointWorkbenchDraft(phase.draft, phase.runtime)
@@ -67,7 +122,7 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
     const runtime = createJointWorkbenchRuntime(jobs);
     setSelectedJobs([...jobs]);
     setEditorTarget("shared");
-    transition({ phase: "conditions", draft, runtime });
+    navigate({ phase: "conditions", draft, runtime });
   }
 
   function updateCondition(jobId: JobId, change: JointJobConditionDraftChange) {
@@ -75,6 +130,7 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
     if (current.phase !== "conditions") return;
     const oldDraft = current.draft.conditions[jobId];
     if (!oldDraft) return;
+    ++intent.current;
     const nextCondition = typeof change === "function" ? change(oldDraft) : change;
     transition({
       ...current,
@@ -88,6 +144,7 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
   function updateSharedDraft(change: (draft: JointWorkbenchDraft) => JointWorkbenchDraft) {
     const current = phaseRef.current;
     if (current.phase !== "conditions") return;
+    ++intent.current;
     transition({ ...current, draft: change(current.draft) });
   }
 
@@ -177,7 +234,7 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
   }
 
   function ownsRun(run: ActiveJointRun): boolean {
-    return run.uiOwned && runRef.current === run;
+    return mounted.current && run.uiOwned && runRef.current === run;
   }
 
   function updateProgress(run: ActiveJointRun, update: (progress: JointSearchProgressState) => JointSearchProgressState) {
@@ -188,11 +245,13 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
   }
 
   function restoreFreshConditions(run: ActiveJointRun) {
+    ++intent.current;
+    cancelConfirmation();
     const draft = jointWorkbenchDraftFromConfig(run.config);
     const runtime = createJointWorkbenchRuntime(draft.jobs);
     setSelectedJobs([...draft.jobs]);
     setEditorTarget("shared");
-    transition({ phase: "conditions", draft, runtime });
+    transition({ phase: "conditions", draft, runtime }, "return");
   }
 
   function settleRun(
@@ -207,7 +266,9 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
     };
     if (outcome.status === "completed" && !run.controller.signal.aborted) {
       setResultTab("shared");
-      transition({ phase: "result", snapshot, result: outcome.result });
+      const ownership = ++intent.current;
+      cancelConfirmation();
+      transition({ phase: "result", snapshot, result: outcome.result }, "replace");
       void saveCompletedSearchHistory({
         kind: "joint",
         config: run.config,
@@ -216,10 +277,11 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
         startedAtISO: run.startedAtISO,
       }).then((record) => {
         const latest = phaseRef.current;
-        if (latest.phase === "result" && latest.snapshot.config === run.config) {
+        if (mounted.current && intent.current === ownership && latest.phase === "result" && latest.snapshot.config === run.config) {
           transition({ ...latest, snapshot: { ...latest.snapshot, historyId: record.id } });
         }
       }).catch((error: unknown) => {
+        if (!mounted.current || intent.current !== ownership) return;
         notify("联合搜索已完成，但本地记录保存失败：" + searchMessageText(error instanceof Error ? error.message : String(error)), "warning");
       });
     } else {
@@ -248,6 +310,7 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
       return;
     }
 
+    revoke();
     const config = freezeJointConfig(compileJointWorkbenchDraft(current.draft, current.runtime));
     const startedAt = Date.now();
     const startedAtISO = new Date(startedAt).toISOString();
@@ -278,7 +341,7 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
     };
     runRef.current = run;
     setCancelPending(false);
-    transition({ phase: "progress", snapshot, progress, startedAt });
+    transition({ phase: "progress", snapshot, progress, startedAt }, "push");
 
     const onProgress = (message: string) => {
       if (!ownsRun(run) || controller.signal.aborted) return;
@@ -349,22 +412,35 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
   function cancelSearch() {
     const run = runRef.current;
     if (!run || !ownsRun(run)) return;
+    ++intent.current;
+    cancelConfirmation();
     setCancelPending(true);
     run.controller.abort();
   }
 
   async function navigateFromHistory(record: SearchHistoryRecord, action: "config" | "result") {
     if (record.kind !== "joint") return;
+    cancelConfirmation();
+    const ownership = ++intent.current;
     const beforeConfirm = phaseRef.current;
     const activeSearch = beforeConfirm.phase === "progress";
     if (activeSearch) {
-      const accepted = await confirm({
-        title: "载入历史记录",
-        description: "继续后会取消当前联合搜索，并载入所选历史记录。",
-      });
-      if (!accepted) return;
+      const request = new AbortController();
+      pendingConfirmation.current = request;
+      let accepted: boolean;
+      try {
+        accepted = await confirm({
+          title: "载入历史记录",
+          description: "继续后会取消当前联合搜索，并载入所选历史记录。",
+          signal: request.signal,
+        });
+      } finally {
+        if (pendingConfirmation.current === request) pendingConfirmation.current = undefined;
+      }
+      if (!accepted || !mounted.current || intent.current !== ownership) return;
     }
 
+    if (!mounted.current || intent.current !== ownership) return;
     let restoredDraft: JointWorkbenchDraft | undefined;
     if (action === "config") {
       try {
@@ -375,15 +451,6 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
       }
     }
 
-    const current = phaseRef.current;
-    if (current.phase === "progress") {
-      const activeRun = runRef.current;
-      if (activeRun) {
-        activeRun.uiOwned = false;
-        runRef.current = undefined;
-        activeRun.controller.abort();
-      }
-    }
     setHistoryOpen(false);
     setCancelPending(false);
 
@@ -392,12 +459,12 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
       const runtime = createJointWorkbenchRuntime(draft.jobs);
       setSelectedJobs([...draft.jobs]);
       setEditorTarget("shared");
-      transition({ phase: "conditions", draft, runtime });
+      navigate({ phase: "conditions", draft, runtime });
       return;
     }
     setSelectedJobs(record.config.jobs.map((job) => job.jobId));
     setResultTab("shared");
-    transition({
+    navigate({
       phase: "result",
       snapshot: {
         config: freezeJointConfig(record.config),
@@ -423,20 +490,16 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
     }
     setSelectedJobs([...draft.jobs]);
     setEditorTarget("shared");
-    transition({
+    navigate({
       phase: "conditions",
       draft,
       runtime: createJointWorkbenchRuntime(draft.jobs),
     });
   }
 
-  useEffect(() => () => {
-    const run = runRef.current;
-    if (run) {
-      run.uiOwned = false;
-      runRef.current = undefined;
-      run.controller.abort();
-    }
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; revoke(); };
   }, []);
 
   const historyProps = {
@@ -466,7 +529,10 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
       if (selectionState?.valid) openConditions(selectionState.jobs);
     },
     returnToSelection() {
-      transition({ phase: "selection" });
+      setHistoryOpen(false);
+      setSelectionState(undefined);
+      setSelectedJobs([]);
+      navigate({ phase: "selection" });
     },
     updateCondition,
     updateSharedRange(range: SearchRangeDraft) {
@@ -499,8 +565,8 @@ export function useJointWorkbenchController(initialResult?: JointWorkbenchResult
 export type JointWorkbenchController = ReturnType<typeof useJointWorkbenchController>;
 const JointWorkbenchContext = createContext<JointWorkbenchController | undefined>(undefined);
 
-export function JointWorkbenchProvider({ children, initialResult }: { children: ReactNode; initialResult?: JointWorkbenchResult }) {
-  const value = useJointWorkbenchController(initialResult);
+export function JointWorkbenchProvider({ children, routing }: { children: ReactNode; routing?: WorkbenchRouting<JointWorkbenchPhase> }) {
+  const value = useJointWorkbenchController(routing);
   return <JointWorkbenchContext.Provider value={value}>{children}</JointWorkbenchContext.Provider>;
 }
 

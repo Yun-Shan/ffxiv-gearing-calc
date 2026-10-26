@@ -24,7 +24,11 @@ const feedbackEntries: readonly { name: string; href: string; icon: ReactNode }[
 ];
 
 
-type Confirmation = { title: string; description: string };
+type Confirmation = { title: string; description: string; signal?: AbortSignal };
+type PendingConfirmation = Confirmation & {
+  resolve(value: boolean): void;
+  cleanup(): void;
+};
 type Feedback = {
   openProblemFeedback(): void;
   openAdvancedSettings(): void;
@@ -41,13 +45,17 @@ function FeedbackContent({ children }: { children: ReactNode }) {
   const problemFeedbackTrigger = useRef<HTMLElement | null>(null);
   const [advancedSettingsOpen, setAdvancedSettingsOpen] = useState(false);
   const advancedTrigger = useRef<HTMLElement | null>(null);
-  const [confirmation, setConfirmation] = useState<Confirmation>();
-  const resolve = useRef<((value: boolean) => void) | undefined>(undefined);
-  useEffect(() => () => resolve.current?.(false), []);
-  function finish(value: boolean) {
-    resolve.current?.(value);
-    resolve.current = undefined;
-    setConfirmation(undefined);
+  const [confirmation, setConfirmation] = useState<PendingConfirmation>();
+  const pending = useRef<PendingConfirmation | undefined>(undefined);
+  useEffect(() => () => {
+    if (pending.current) finish(false, pending.current, false);
+  }, []);
+  function finish(value: boolean, request: PendingConfirmation | undefined, update = true) {
+    if (!request || pending.current !== request) return;
+    pending.current = undefined;
+    request.cleanup();
+    request.resolve(value);
+    if (update) setConfirmation(current => current === request ? undefined : current);
   }
   return (
     <Context.Provider
@@ -65,10 +73,18 @@ function FeedbackContent({ children }: { children: ReactNode }) {
           manager.add({ title: message, type });
         },
         confirm: (options) => {
-          resolve.current?.(false);
-          setConfirmation(options);
+          if (options.signal?.aborted) return Promise.resolve(false);
+          finish(false, pending.current);
           return new Promise<boolean>((done) => {
-            resolve.current = done;
+            const request: PendingConfirmation = {
+              ...options,
+              resolve: done,
+              cleanup: () => options.signal?.removeEventListener("abort", cancel),
+            };
+            function cancel() { finish(false, request); }
+            pending.current = request;
+            options.signal?.addEventListener("abort", cancel, { once: true });
+            setConfirmation(request);
           });
         },
       }}
@@ -120,7 +136,7 @@ function FeedbackContent({ children }: { children: ReactNode }) {
       <Dialog.Root
         open={!!confirmation}
         onOpenChange={(open) => {
-          if (!open) finish(false);
+          if (!open) finish(false, confirmation);
         }}
       >
         <Dialog.Portal>
@@ -131,8 +147,8 @@ function FeedbackContent({ children }: { children: ReactNode }) {
             </Dialog.Title>
             <Dialog.Description>{confirmation?.description}</Dialog.Description>
             <div className={styles.actions}>
-              <button onClick={() => finish(false)}>取消</button>
-              <button onClick={() => finish(true)}>确认</button>
+              <button onClick={() => finish(false, confirmation)}>取消</button>
+              <button onClick={() => finish(true, confirmation)}>确认</button>
             </div>
           </Dialog.Popup>
         </Dialog.Portal>

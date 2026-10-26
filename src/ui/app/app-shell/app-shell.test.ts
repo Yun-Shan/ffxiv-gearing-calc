@@ -101,6 +101,8 @@ describe("HTML 启动外壳", () => {
     expect(document.getElementById("app-shell-error")!.textContent).toContain(
       "应用脚本加载失败",
     );
+    expect(document.getElementById("app-shell-details")!.hidden).toBe(false);
+    expect(document.querySelector("#app-shell details")).toBeNull();
     expect(document.getElementById("app-shell-reload")!.hidden).toBe(false);
   });
 

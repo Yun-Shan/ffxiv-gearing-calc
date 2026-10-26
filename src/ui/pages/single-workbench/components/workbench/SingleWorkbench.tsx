@@ -30,6 +30,7 @@ import {
   compileSingleDraft,
   singleDraftFromConfig,
   type SingleDraft,
+  type SingleState,
 } from "../../state/useSingleController";
 import {
   GearTable,
@@ -41,7 +42,7 @@ import {
 } from "@/ui/components/results/core-metric-bar/CoreMetricBar";
 import { SingleEquipmentRestrictions } from "../equipment/SingleEquipmentRestrictions";
 import styles from "./SingleWorkbench.module.scss";
-import type { SingleWorkbenchResult } from "@/ui/services/workbench-result";
+import type { WorkbenchRouting } from "@/ui/services/workbench-routing";
 
 function summaryRows(draft: SingleDraft) {
   const rows = conditionRows(draft.condition, draft.jobId).filter(
@@ -65,10 +66,10 @@ function Summary({ draft }: { draft: SingleDraft }) {
     </SidePanel.Rows>
   );
 }
-function useSingleWorkbenchValue(initialResult?: SingleWorkbenchResult) {
-  const controller = useSingleController(initialResult);
-  const { state } = controller;
+function useSingleWorkbenchValue(routing?: WorkbenchRouting<SingleState>) {
   const [historyOpen, setHistoryOpen] = useState(false);
+  const controller = useSingleController(routing, () => setHistoryOpen(false));
+  const { state } = controller;
   const draft =
     state.phase === "conditions"
       ? state.draft
@@ -134,8 +135,8 @@ function useSingleWorkbenchValue(initialResult?: SingleWorkbenchResult) {
 const Context = createContext<
   ReturnType<typeof useSingleWorkbenchValue> | undefined
 >(undefined);
-export function SingleWorkbenchProvider({ children, initialResult }: { children: ReactNode; initialResult?: SingleWorkbenchResult }) {
-  const value = useSingleWorkbenchValue(initialResult);
+export function SingleWorkbenchProvider({ children, routing }: { children: ReactNode; routing?: WorkbenchRouting<SingleState> }) {
+  const value = useSingleWorkbenchValue(routing);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 function useWorkbench() {

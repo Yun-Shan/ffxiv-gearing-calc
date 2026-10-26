@@ -80,23 +80,21 @@ html[data-app-startup] {
 
 #app-shell-details {
   margin-top: 24px;
-  color: tokens.$color-muted;
+  color: tokens.$color-text-secondary;
   font-size: tokens.$font-size-label;
   line-height: 1.6;
   text-align: left;
-
-  summary {
-    cursor: pointer;
-  }
 }
 
 #app-shell-error {
+  box-sizing: border-box;
+  margin: 0;
   max-height: 160px;
   overflow: auto;
   padding: 12px;
   border: 1px solid tokens.$color-border-default;
   border-radius: 6px;
-  background: tokens.$color-neutral-white;
+  background: tokens.$color-surface-subtle;
   font: inherit;
   white-space: pre-wrap;
   overflow-wrap: anywhere;

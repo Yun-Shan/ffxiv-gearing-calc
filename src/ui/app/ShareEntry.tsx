@@ -6,9 +6,10 @@ import {
   workbenchResultFromShare,
 } from "@/ui/services/share-link";
 import type { WorkbenchResult } from "@/ui/services/workbench-result";
-import { navigateTo } from "@/ui/services/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { WorkbenchLayout } from "@/ui/components/workbench-layout/WorkbenchLayout";
 import { SidePanel } from "@/ui/components/side-panel/SidePanel";
+import { ShareErrorPage } from "./components/share-error-page/ShareErrorPage";
 
 /** App keys this boundary by token; resolve the input before mounting a workbench. */
 export function ShareEntry({
@@ -18,6 +19,7 @@ export function ShareEntry({
   token: string;
   onReady(result: WorkbenchResult): void;
 }) {
+  const navigate = useNavigate();
   const [state, setState] = useState<{
     pending: boolean;
     view?: ShareView;
@@ -57,7 +59,7 @@ export function ShareEntry({
 
   const view = state.view;
   const returnToSearch = () =>
-    navigateTo(view?.document.mode === "joint" ? "/joint" : "/single");
+    void navigate({ to: view?.document.mode === "joint" ? "/joint" : "/single", search: {} });
   function ignoreUnknownSources() {
     if (!view || state.pending) return;
     const document = structuredClone(view.document);
@@ -68,6 +70,15 @@ export function ShareEntry({
     }
     void restore({ document }, view);
   }
+  if (state.error !== undefined)
+    return (
+      <ShareErrorPage
+        error={state.error}
+        onReturnHome={() =>
+          void navigate({ to: "/", search: {}, hash: "", replace: true })
+        }
+      />
+    );
   return (
     <WorkbenchLayout
       breadcrumbs={["分享链接"]}
@@ -82,13 +93,7 @@ export function ShareEntry({
             <p>
               忽略这些条件后，可进入工作台查看配装、调整条件或重新搜索。其他条件和原选中配装保持不变。
             </p>
-            {state.error && <p role="alert">{state.error}</p>}
             {state.pending && <p role="status">正在恢复结果…</p>}
-          </section>
-        ) : state.error ? (
-          <section>
-            <h1>无效的分享链接</h1>
-            <p role="alert">{state.error}</p>
           </section>
         ) : (
           <p role="status">正在恢复分享结果…</p>

@@ -1,7 +1,8 @@
 import { Dialog } from '@base-ui/react/dialog';
 import { type MouseEvent, useState } from 'react';
 import { Breadcrumbs } from '@/ui/components/breadcrumbs/Breadcrumbs';
-import { navigateTo, routeHref } from '@/ui/services/navigation';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { isPlainNavigation } from '@/ui/services/navigation';
 import styles from './LaboratoryPage.module.scss';
 
 type LabNoticeType = 'warning' | 'info';
@@ -12,7 +13,7 @@ interface LabNotice {
 }
 
 interface LabTool {
-  href: string;
+  href: '/joint' | '/gear-comparison';
   title: string;
   summary: string;
   details: string;
@@ -43,29 +44,30 @@ function Card({
   details,
   onOpen,
 }: {
-  href: string;
+  href: '/joint' | '/gear-comparison';
   title: string;
   summary: string;
   details: string;
   onOpen(event: MouseEvent<HTMLAnchorElement>): void;
 }) {
   return (
-    <a href={routeHref(href)} className={styles.card} onClick={onOpen}>
+    <Link to={href} search={{}} className={styles.card} onClick={onOpen}>
       <strong className={styles.cardTitle}>{title}</strong>
       <span className={styles.cardSummary}>{summary}</span>
       <span className={styles.cardDetails}>{details}</span>
-    </a>
+    </Link>
   );
 }
 
 export function LaboratoryPage() {
+  const navigate = useNavigate();
   const [pendingTool, setPendingTool] = useState<LabTool>();
 
   function confirmNavigation() {
     if (!pendingTool) return;
     const href = pendingTool.href;
     setPendingTool(undefined);
-    navigateTo(href);
+    void navigate({ to: href, search: {} });
   }
 
   return (
@@ -86,11 +88,9 @@ export function LaboratoryPage() {
             summary={tool.summary}
             details={tool.details}
             onOpen={(event) => {
-              event.preventDefault();
-              if (tool.notices.length > 0) {
+              if (tool.notices.length > 0 && isPlainNavigation(event, event.currentTarget.target)) {
+                event.preventDefault();
                 setPendingTool(tool);
-              } else {
-                navigateTo(tool.href);
               }
             }}
           />

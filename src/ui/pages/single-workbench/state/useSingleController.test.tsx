@@ -13,15 +13,17 @@ vi.mock("@/domain", async (original) => ({
   ...(await original<typeof import("@/domain")>()),
   optimize: mocks.optimize,
 }));
-vi.mock("@/ui/services/search-history", () => ({
+vi.mock("@/ui/services/search-history", async (original) => ({
+  ...(await original<typeof import("@/ui/services/search-history")>()),
   saveCompletedSearchHistory: mocks.start,
-  replaceSearchHistoryResult: mocks.replace,
+  replaceSearchHistoryGearIfCurrent: mocks.replace,
 }));
 vi.mock("@/ui/components/feedback/FeedbackProvider", () => ({
   useFeedback: () => ({ notify: mocks.notify, confirm: mocks.confirm }),
 }));
 import {
   singleDraftFromConfig,
+  singleStateFromResult,
   useSingleController,
 } from "./useSingleController";
 import { makeConfig } from "@/ui/services/app-config";
@@ -30,7 +32,6 @@ import { type OptimizationResultWithEquivalentGear } from "@/ui/components/resul
 import fixtures from "@/share/__fixtures__/real-search.json";
 import { restoreShare } from "@/share/restore";
 import { workbenchResultFromShare } from "@/ui/services/share-link";
-import type { SingleWorkbenchResult } from "@/ui/services/workbench-result";
 function deferred<T>() {
   let resolve!: (value: T) => void;
   let reject!: (value: unknown) => void;
@@ -43,8 +44,8 @@ function deferred<T>() {
 let root: Root,
   host: HTMLDivElement,
   controller: ReturnType<typeof useSingleController>;
-function Harness({ initialResult }: { initialResult?: SingleWorkbenchResult }) {
-  controller = useSingleController(initialResult);
+function Harness({ routing }: { routing?: Parameters<typeof useSingleController>[0] }) {
+  controller = useSingleController(routing);
   return null;
 }
 async function flush() {
@@ -76,7 +77,7 @@ describe("Single run ownership and nonblocking history", () => {
     if (initialResult.mode !== "single") throw new Error("Expected single result");
     act(() => root.unmount());
     root = createRoot(host);
-    act(() => root.render(<Harness initialResult={initialResult} />));
+    act(() => root.render(<Harness routing={{ initialState: singleStateFromResult(initialResult), attach: () => () => {}, publish: () => {} }} />));
     expect(controller.state.phase).toBe("result");
     expect(controller.state.phase === "result" && Object.isFrozen(controller.state.snapshot)).toBe(true);
     expect(controller.state.phase === "result" && controller.state.snapshot).not.toBe(initialResult.config);
@@ -301,8 +302,8 @@ describe("Single run ownership and nonblocking history", () => {
         controller.state.result.gear[0]?.name,
     ).toBe("test replacement C");
     expect(mocks.replace).toHaveBeenLastCalledWith(
-      "late-replacement",
-      expect.objectContaining({ gear: [c] }),
+      expect.objectContaining({ id: "late-replacement" }),
+      [c],
     );
   });
 });

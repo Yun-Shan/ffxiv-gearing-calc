@@ -6,7 +6,9 @@ import fixtures from "@/share/__fixtures__/real-search.json";
 import { restoreDocument, restoreShare } from "@/share/restore";
 import type { ShareDocument, ShareView } from "@/share/types";
 import type { ShareWorkerRequest } from "@/share/worker-protocol";
-import { App } from "./App";
+import { createBrowserHistory } from "@tanstack/react-router";
+import { readWorkbenchSession } from "@/ui/services/workbench-session";
+import { App, createAppRouter } from "./App";
 
 const tasks = vi.hoisted(() => ({
   requests: [] as {
@@ -17,6 +19,7 @@ const tasks = vi.hoisted(() => ({
   }[],
   optimize: vi.fn(),
   optimizeJoint: vi.fn(),
+  gcd: vi.fn(),
   saveHistory: vi.fn(),
   replaceHistory: vi.fn(),
 }));
@@ -33,22 +36,27 @@ vi.mock("@/domain", async (original) => ({
   ...(await original<typeof import("@/domain")>()),
   optimize: tasks.optimize,
   optimizeJoint: tasks.optimizeJoint,
+  findFeasibleGcds: tasks.gcd,
 }));
 vi.mock("@/ui/services/search-history", async (original) => ({
   ...(await original<typeof import("@/ui/services/search-history")>()),
   saveCompletedSearchHistory: tasks.saveHistory,
-  replaceSearchHistoryResult: tasks.replaceHistory,
+  replaceSearchHistoryGearIfCurrent: tasks.replaceHistory,
 }));
 const joint = fixtures.find((f) => f.label === "caster-shared")!;
 const single = fixtures.find((f) => f.label === "brd-open")!;
 let root: Root, host: HTMLDivElement;
+let router: ReturnType<typeof createAppRouter> | undefined;
 beforeEach(() => {
+  window.sessionStorage.clear();
   tasks.requests = [];
-  tasks.optimize.mockClear();
-  tasks.optimizeJoint.mockClear();
-  tasks.saveHistory.mockClear();
-  tasks.replaceHistory.mockClear();
+  tasks.optimize.mockReset();
+  tasks.optimizeJoint.mockReset();
+  tasks.saveHistory.mockReset();
+  tasks.replaceHistory.mockReset();
+  tasks.gcd.mockReset().mockResolvedValue([2.5, 2.48]);
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+  vi.spyOn(window, "scrollTo").mockImplementation(() => {});
   window.history.replaceState(null, "", `/?s=${joint.binary}`);
   host = document.createElement("div");
   document.body.append(host);
@@ -56,8 +64,11 @@ beforeEach(() => {
 });
 afterEach(() => {
   act(() => root.unmount());
+  router?.history.destroy();
+  router = undefined;
   host.remove();
   window.history.replaceState(null, "", "/");
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
 const button = (label: string) =>
@@ -66,13 +77,57 @@ const nav = (label: string) =>
   [...host.querySelectorAll('nav[aria-label="主导航"] a')].find(
     (a) => a.textContent === label,
   )!;
-const resolve = async (index: number, token: string) =>
-  act(async () => tasks.requests[index].resolve(restoreShare(token)));
-function navigate(url: string) {
-  act(() => {
-    window.history.pushState(null, "", url);
-    window.dispatchEvent(new PopStateEvent("popstate"));
+async function waitForNavigation(assertion: () => void) {
+  await vi.waitFor(async () => {
+    await act(async () => {
+      await new Promise((done) => window.setTimeout(done, 0));
+    });
+    expect(router!.state.status).toBe("idle");
+    assertion();
+  }, { timeout: 3000 });
+}
+async function resolve(index: number, token: string) {
+  const request = tasks.requests[index];
+  const wasAborted = request.signal.aborted;
+  const view = restoreShare(token);
+  await act(async () => request.resolve(view));
+  if (!wasAborted)
+    await waitForNavigation(() =>
+      expect(router!.state.location.pathname).toBe(`/${view.document.mode}/result`),
+    );
+}
+async function traverse(direction: "back" | "forward", assertion: () => void) {
+  act(() => router!.history[direction]());
+  await waitForNavigation(assertion);
+}
+async function mount(strict = false, restore = false) {
+  router = createAppRouter({ history: createBrowserHistory(), restore });
+  await act(async () => {
+    await router!.load();
+    root.render(
+      strict ? (
+        <StrictMode>
+          <App router={router!} />
+        </StrictMode>
+      ) : (
+        <App router={router!} />
+      ),
+    );
   });
+}
+async function navigate(url: string) {
+  const target = new URL(url, window.location.origin);
+  await act(async () => {
+    await router!.navigate({
+      to: target.pathname as "/",
+      search: Object.fromEntries(target.searchParams),
+    });
+  });
+}
+function expectSharedResult(mode: "single" | "joint", token: string) {
+  expect(window.location.pathname).toBe("/");
+  expect(new URLSearchParams(window.location.search).get("s")).toBe(token);
+  expect(router!.state.location.pathname).toBe(`/${mode}/result`);
 }
 function noSearchOrHistory() {
   expect(tasks.optimize).not.toHaveBeenCalled();
@@ -100,11 +155,13 @@ describe("share input at the application entry", () => {
     async ({ fixture, path, title, navigation }) => {
       window.history.replaceState(null, "", `/?s=${fixture.binary}`);
       const depth = window.history.length;
-      act(() => root.render(<App />));
+      await mount();
       expect(host.textContent).toContain("正在恢复分享结果");
       await resolve(0, fixture.binary);
-      expect(window.location.pathname).toBe(path);
-      expect(window.location.search).toBe("");
+      expectSharedResult(
+        path === "/single" ? "single" : "joint",
+        fixture.binary,
+      );
       expect(window.history.length).toBe(depth);
       expect(nav(navigation).getAttribute("aria-current")).toBe(
         path === "/single" ? "page" : null,
@@ -119,6 +176,8 @@ describe("share input at the application entry", () => {
       noSearchOrHistory();
       await act(async () => button("调整条件").click());
       expect(host.textContent).toContain("开始搜索");
+      expect(window.location.pathname).toBe(`${path}/conditions`);
+      expect(window.location.search).toBe("");
       noSearchOrHistory();
     },
   );
@@ -128,7 +187,7 @@ describe("share input at the application entry", () => {
       "known-source",
       { unknownSourceId: 9999 },
     ];
-    act(() => root.render(<App />));
+    await mount();
     await act(async () => tasks.requests[0].resolve(restoreDocument(document)));
     expect(host.textContent).toContain("未知来源（9999）");
     expect(window.location.search).toContain("s=");
@@ -145,40 +204,46 @@ describe("share input at the application entry", () => {
     await act(async () =>
       tasks.requests[1].resolve(restoreDocument(next.document)),
     );
-    expect(window.location.pathname).toBe("/single");
-    expect(window.location.search).toBe("");
+    expectSharedResult("single", joint.binary);
     expect(host.querySelector("h1")?.textContent).toBe("吟游诗人 · 配装结果");
     noSearchOrHistory();
     expect(document.configs[0].excludedSources).toHaveLength(2);
   });
   it("shows invalid synchronization at entry without mounting a result workbench", async () => {
-    act(() => root.render(<App />));
+    await mount();
     await act(async () =>
       tasks.requests[0].reject(new Error("无效的分享链接：未知同步副本 999")),
     );
-    expect(host.querySelector("h1")?.textContent).toBe("无效的分享链接");
-    expect(host.textContent).toContain("未知同步副本 999");
+    expect(host.querySelector("h1")?.textContent).toBe("分享链接恢复失败");
+    expect(host.querySelector("main[data-share-error] pre")?.textContent).toContain(
+      "未知同步副本 999",
+    );
+    expect(host.querySelector("main[data-share-error]")).not.toBeNull();
+    expect(host.querySelector("details")).toBeNull();
+    expect(button("重新加载")).toBeUndefined();
+    expect(button("返回搜索")).toBeUndefined();
     expect(host.querySelector("table")).toBeNull();
     noSearchOrHistory();
-    act(() => button("返回搜索").click());
+    await act(async () => button("返回首页").click());
+    expect(window.location.pathname).toBe("/");
     expect(window.location.search).toBe("");
     expect(host.querySelector("h1")?.textContent).toBe("选择职业");
   });
   it("discards a prior token even when its cancelled worker completes late", async () => {
-    act(() => root.render(<App />));
-    navigate(`/?s=${single.binary}`);
+    await mount();
+    await navigate(`/?s=${single.binary}`);
     expect(tasks.requests[0].signal.aborted).toBe(true);
     await resolve(0, joint.binary);
     expect(host.textContent).toContain("正在恢复分享结果");
     expect(window.location.search).toContain(single.binary);
     await resolve(1, single.binary);
-    expect(window.location.pathname).toBe("/single");
+    expectSharedResult("single", single.binary);
     expect(host.querySelector("h1")?.textContent).toBe("吟游诗人 · 配装结果");
     noSearchOrHistory();
   });
   it("does not overwrite ordinary navigation when a worker returns late", async () => {
-    act(() => root.render(<App />));
-    navigate("/about");
+    await mount();
+    await navigate("/about");
     expect(tasks.requests[0].signal.aborted).toBe(true);
     await resolve(0, joint.binary);
     expect(window.location.pathname).toBe("/about");
@@ -186,23 +251,145 @@ describe("share input at the application entry", () => {
     noSearchOrHistory();
   });
   it("handles StrictMode cleanup and does not reimport after leaving the workbench", async () => {
-    act(() =>
-      root.render(
-        <StrictMode>
-          <App />
-        </StrictMode>,
-      ),
-    );
+    await mount(true);
     expect(tasks.requests).toHaveLength(2);
     expect(tasks.requests[0].signal.aborted).toBe(true);
     await resolve(0, joint.binary);
     expect(window.location.search).toContain("s=");
     await resolve(1, joint.binary);
-    expect(window.location.pathname).toBe("/joint");
-    navigate("/about");
-    navigate("/joint");
+    expectSharedResult("joint", joint.binary);
+    await navigate("/about");
+    await navigate("/joint");
     expect(host.querySelector("h1")?.textContent).not.toBe("联合配装结果");
     expect(tasks.requests).toHaveLength(2);
     noSearchOrHistory();
+  });
+  it("preserves all visible query values while masking the internal result route", async () => {
+    const query = `?s=${single.binary}&campaign=001&tag=first&tag=second&empty=`;
+    window.history.replaceState(null, "", `/${query}`);
+    await mount();
+    await resolve(0, single.binary);
+    expectSharedResult("single", single.binary);
+    expect(window.location.search).toBe(query);
+    expect(new URLSearchParams(window.location.search).getAll("tag")).toEqual([
+      "first",
+      "second",
+    ]);
+    noSearchOrHistory();
+  });
+  it("decodes the visible token again on refresh ahead of the saved workbench result", async () => {
+    await mount();
+    await resolve(0, joint.binary);
+    expectSharedResult("joint", joint.binary);
+    expect(window.sessionStorage.length).toBeGreaterThan(0);
+    act(() => root.unmount());
+    router!.history.destroy();
+    // A fresh document retains the address bar and sessionStorage, without the
+    // prior router's in-memory controller or internal mask state.
+    window.history.replaceState(null, "", `/?s=${single.binary}`);
+    root = createRoot(host);
+    await mount(false, true);
+    expect(tasks.requests).toHaveLength(2);
+    expect(tasks.requests[1].input).toMatchObject({ token: single.binary });
+    expect(host.textContent).toContain("正在恢复分享结果");
+    await resolve(1, single.binary);
+    expectSharedResult("single", single.binary);
+    expect(host.querySelector("h1")?.textContent).toBe("吟游诗人 · 配装结果");
+    noSearchOrHistory();
+  });
+  it("returns through browser history to the original token rather than a later result", async () => {
+    await mount();
+    await resolve(0, joint.binary);
+    await navigate("/about");
+    await navigate(`/?s=${single.binary}`);
+    await resolve(1, single.binary);
+    expectSharedResult("single", single.binary);
+    await traverse("back", () =>
+      expect(host.querySelector("h1")?.textContent).toBe("关于自动配装器"),
+    );
+    await traverse("back", () => expect(tasks.requests).toHaveLength(3));
+    expect(tasks.requests[2].input).toMatchObject({ token: joint.binary });
+    await resolve(2, joint.binary);
+    expectSharedResult("joint", joint.binary);
+    expect(host.querySelector("h1")?.textContent).toBe("联合配装结果");
+    noSearchOrHistory();
+  });
+  it("keeps edited Draft B after re-decoding share A behind a later ordinary search B", async () => {
+    window.history.replaceState(null, "", `/?s=${single.binary}`);
+    await mount();
+    await resolve(0, single.binary);
+    const shareA = readWorkbenchSession().session;
+    expect(shareA).toMatchObject({ mode: "single", phase: "result" });
+    if (shareA?.mode !== "single" || shareA.phase !== "result")
+      throw new Error("Expected validated single share A");
+    const resultB = {
+      ...structuredClone(shareA.value.result),
+      searchedCandidates: 1,
+      statistics: { elapsedMs: 1250 },
+    };
+    // The original real loadout remains legal when lowering only the minimum
+    // item level. Different timings make A and the ordinary result B visible.
+    tasks.optimize.mockResolvedValue(resultB);
+    tasks.saveHistory.mockImplementation(async (input) => ({
+      ...structuredClone(input),
+      id: "ordinary-search-b",
+      status: "completed",
+    }));
+    await act(async () => button("调整条件").click());
+    const minimum = () => {
+      const label = [...host.querySelectorAll("label")].find(
+        (item) => item.textContent === "最低装备品级",
+      );
+      return label!.control as HTMLInputElement;
+    };
+    const edited = shareA.value.config.minItemLevel - 1;
+    await act(async () => {
+      const input = minimum();
+      input.focus();
+      Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        "value",
+      )!.set!.call(input, String(edited));
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+      input.blur();
+      await new Promise((done) => window.setTimeout(done, 230));
+    });
+    expect(readWorkbenchSession().session).toMatchObject({
+      phase: "conditions",
+      draft: { condition: { range: { minItemLevel: edited } } },
+    });
+    expect(button("开始搜索").disabled).toBe(false);
+    await act(async () => button("开始搜索").click());
+    expect(tasks.optimize).toHaveBeenCalledTimes(1);
+    expect(tasks.optimize.mock.calls[0][0].minItemLevel).toBe(edited);
+    expect(tasks.saveHistory).toHaveBeenCalledTimes(1);
+    expect(window.location.pathname).toBe("/single/result");
+    expect(window.location.search).toBe("");
+    expect(host.textContent).toContain("耗时 1.3 秒");
+    await traverse("back", () =>
+      expect(router!.state.location.pathname).toBe("/single/conditions"),
+    );
+    expect(minimum().value).toBe(String(edited));
+    await traverse("back", () => expect(tasks.requests).toHaveLength(2));
+    expect(tasks.requests[1].input).toEqual({ token: single.binary });
+    expect(host.textContent).toContain("正在恢复分享结果");
+    await resolve(1, single.binary);
+    expectSharedResult("single", single.binary);
+    expect(host.querySelector("h1")?.textContent).toBe("吟游诗人 · 配装结果");
+    expect(host.textContent).toContain("耗时 14.3 秒");
+    expect(host.textContent).not.toContain("耗时 1.3 秒");
+    expect(readWorkbenchSession().session).toEqual(shareA);
+    await traverse("forward", () =>
+      expect(router!.state.location.pathname).toBe("/single/conditions"),
+    );
+    expect(minimum().value).toBe(String(edited));
+    expect(readWorkbenchSession().session).toMatchObject({
+      phase: "conditions",
+      draft: { condition: { range: { minItemLevel: edited } } },
+    });
+    expect(tasks.optimize).toHaveBeenCalledTimes(1);
+    expect(tasks.saveHistory).toHaveBeenCalledTimes(1);
+    expect(tasks.requests).toHaveLength(2);
   });
 });

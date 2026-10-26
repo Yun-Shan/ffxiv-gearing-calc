@@ -5,6 +5,7 @@ import type { ShareInput } from "@/share/types";
 import { shareUrl } from "@/share/codec";
 import { projectShareInput } from "@/share/projection";
 import { copyShareUrl } from "@/ui/services/share-link";
+import { applicationBase } from "@/ui/services/application-base";
 
 export function ShareLinkButton({
   data,
@@ -33,7 +34,7 @@ export function ShareLinkButton({
       await copyShareUrl(
         shareUrl(
           projectShareInput(data),
-          window.location.href,
+          new URL(applicationBase(), window.location.origin).href,
         ),
       );
       notify("分享链接已复制到剪贴板", "success");

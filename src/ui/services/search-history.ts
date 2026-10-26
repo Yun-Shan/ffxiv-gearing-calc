@@ -16,6 +16,7 @@ import type {
 } from "@/domain";
 import type { UiJointOptimizationConfig as JointOptimizationConfig, UiOptimizationConfig as OptimizationConfig } from "./search-config";
 import { uiJointOptimizationConfigError, uiOptimizationConfigError } from "./search-config";
+import type { JointResultView, ResultView } from "./workbench-result";
 
 const DATABASE_NAME = "ffxiv-gearing-calc";
 const DATABASE_VERSION = 1;
@@ -89,7 +90,6 @@ interface SearchHistoryBase {
   status: SearchHistoryStatus;
   error?: string;
 }
-
 type StoredSearchHistoryRecord =
   | (SearchHistoryBase & {
       kind: "single";
@@ -453,7 +453,7 @@ function validateJointConfig(value: unknown): value is JointOptimizationConfig {
   return uiJointOptimizationConfigError(value) === undefined;
 }
 
-function validateSingleResult(value: unknown): value is OptimizationResult {
+function validateSinglePresentation(value: unknown): value is ResultView {
   if (!isObject(value)) return false;
   const effects = value.effects;
   const groups =
@@ -476,11 +476,20 @@ function validateSingleResult(value: unknown): value is OptimizationResult {
     (value.objective === "damage" || value.objective === "dps") &&
     isFiniteNumber(value.damagePerSecond) &&
     isFiniteNumber(value.gcdTier) &&
-    isFiniteNumber(value.searchedCandidates) &&
-    (value.maximumTenacity === undefined ||
-      isFiniteNumber(value.maximumTenacity)) &&
     isObject(value.statistics)
   );
+}
+
+/** Session/share presentation requires elapsed time; historical elapsed values stay untouched. */
+export function validateResultView(value: unknown): value is ResultView {
+  return validateSinglePresentation(value) && isFiniteNumber(value.statistics.elapsedMs);
+}
+
+function validateSingleResult(value: unknown): value is OptimizationResult {
+  return validateSinglePresentation(value) &&
+    isFiniteNumber((value as OptimizationResult).searchedCandidates) &&
+    ((value as OptimizationResult).maximumTenacity === undefined ||
+      isFiniteNumber((value as OptimizationResult).maximumTenacity));
 }
 
 const JOINT_STATISTIC_FIELDS = [
@@ -524,6 +533,23 @@ function isCommonGearMap(value: unknown): boolean {
       return false;
     return gear.length === 1;
   });
+}
+
+export function validateJointResultView(
+  value: unknown,
+  requiredJobs: readonly JobId[],
+): value is JointResultView {
+  if (!isObject(value)) return false;
+  const jobMap = (map: unknown, validate: (entry: unknown) => boolean) =>
+    isObject(map) && Object.keys(map).length === requiredJobs.length &&
+    requiredJobs.every((jobId) => Object.hasOwn(map, jobId) && validate(map[jobId]));
+  return jobMap(value.jobResults, validateResultView) &&
+    jobMap(value.optima, (entry) => isObject(entry) && isFiniteNumber(entry.score)) &&
+    isCommonGearMap(value.commonGear) &&
+    (value.commonFood === undefined || isFood(value.commonFood)) &&
+    (value.objective === "damage" || value.objective === "dps") &&
+    isObject(value.value) && isFiniteNumber(value.value.approximate) &&
+    isObject(value.statistics) && isFiniteNumber(value.statistics.elapsedMs);
 }
 
 function validateJointResult(
@@ -926,57 +952,83 @@ export function updateSearchHistory(
 export const finishSearchHistory = updateSearchHistory;
 
 const resultWriteQueues = new Map<string, Promise<unknown>>();
-/** Completed snapshots preserve their original conditions, times and data version. */
-export function replaceSearchHistoryResult(
-  id: string,
-  result: OptimizationResult,
-): Promise<void> {
-  const previous = resultWriteQueues.get(id) ?? Promise.resolve();
-  const operation = previous
-    .catch(() => undefined)
-    .then(async () => {
-      const database = await openDatabase();
-      await new Promise<void>((resolve, reject) => {
-        const transaction = database.transaction(STORE_NAME, "readwrite");
+
+export interface HistoryReplacementLink {
+  id: string;
+  startedAtISO: string;
+  dataVersion?: string;
+  configSignature: string;
+  resultSignature: string;
+}
+
+export function historyReplacementLink(record: SearchHistoryRecord): HistoryReplacementLink {
+  return {
+    id: record.id,
+    startedAtISO: record.startedAtISO,
+    dataVersion: record.dataVersion,
+    configSignature: stableStringify(record.config),
+    resultSignature: stableStringify(record.result),
+  };
+}
+
+/** Compare and change in one transaction: a config hash can belong to a newer run. */
+export async function replaceSearchHistoryGearIfCurrent(
+  link: HistoryReplacementLink,
+  gear: ResultView["gear"],
+): Promise<HistoryReplacementLink | undefined> {
+  // Capture caller-owned data before waiting on earlier writes.
+  const expected = { ...link };
+  const replacement = structuredClone(gear);
+  const previous = resultWriteQueues.get(expected.id) ?? Promise.resolve();
+  const operation = previous.catch(() => undefined).then(async () => {
+    const database = await openDatabase();
+    return new Promise<HistoryReplacementLink | undefined>((resolve, reject) => {
+      let transaction: IDBTransaction | undefined;
+      let nextLink: HistoryReplacementLink | undefined;
+      let settled = false;
+      const fail = (cause: unknown) => {
+        if (settled) return;
+        settled = true;
+        reject(storageError("更新", cause));
+        try { transaction?.abort(); } catch { /* already settled */ }
+      };
+      try {
+        transaction = database.transaction(STORE_NAME, "readwrite");
         const store = transaction.objectStore(STORE_NAME);
-        const read = store.get(id);
-        const fail = (cause: unknown) => {
-          reject(storageError("更新", cause));
-          try {
-            transaction.abort();
-          } catch {
-            /* settled */
-          }
-        };
+        const read = store.get(expected.id);
         read.onerror = () => fail(read.error);
         read.onsuccess = () => {
           try {
+            if (read.result === undefined) return;
             const record = validateRecord(read.result);
-            assert(
-              record.kind === "single" && record.status === "completed",
-              "只有单职业已完成结果可以更新等价表示。",
-            );
-            assert(validateSingleResult(result), "替换结果结构无效。");
-            store.put(validateRecord({ ...record, result }));
-          } catch (error) {
-            fail(error);
-          }
+            if (!isCompletedRecord(record) || record.kind !== "single") return;
+            const actual = historyReplacementLink(record);
+            if (actual.id !== expected.id || actual.startedAtISO !== expected.startedAtISO ||
+              actual.dataVersion !== expected.dataVersion ||
+              actual.configSignature !== expected.configSignature ||
+              actual.resultSignature !== expected.resultSignature) return;
+            const next = validateSearchHistoryRecord({
+              ...record, result: { ...record.result, gear: replacement },
+            });
+            const write = store.put(next);
+            write.onerror = () => fail(write.error);
+            nextLink = historyReplacementLink(next);
+          } catch (error) { fail(error); }
         };
-        transaction.onerror = () =>
-          reject(storageError("更新", transaction.error));
-        transaction.onabort = () =>
-          reject(storageError("更新", transaction.error));
+        transaction.onerror = () => fail(transaction?.error);
+        transaction.onabort = () => fail(transaction?.error);
         transaction.oncomplete = () => {
-          window.dispatchEvent(new Event("search-history-changed"));
-          resolve();
+          if (settled) return;
+          settled = true;
+          if (nextLink) window.dispatchEvent(new Event("search-history-changed"));
+          resolve(nextLink);
         };
-      });
+      } catch (error) { fail(error); }
     });
-  resultWriteQueues.set(id, operation);
-  void operation
-    .finally(() => {
-      if (resultWriteQueues.get(id) === operation) resultWriteQueues.delete(id);
-    })
-    .catch(() => undefined);
+  });
+  resultWriteQueues.set(expected.id, operation);
+  void operation.finally(() => {
+    if (resultWriteQueues.get(expected.id) === operation) resultWriteQueues.delete(expected.id);
+  }).catch(() => undefined);
   return operation;
 }

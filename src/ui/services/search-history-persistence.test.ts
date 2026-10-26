@@ -6,19 +6,22 @@ import {
   createSearchHistory,
   finishSearchHistory,
   getSearchHistoryRecord,
-  replaceSearchHistoryResult,
+  historyReplacementLink,
+  replaceSearchHistoryGearIfCurrent,
+  saveCompletedSearchHistory,
 } from "./search-history";
 import {
   equivalentGearKey,
   replaceEquivalentGear,
 } from "@/ui/components/results/gear-table/result-gear-table-rows";
 /** Tiny asynchronous IDB transport fixture: no game logic or search results are calculated here. */
-function fakeDatabase() {
+function fakeDatabase(onTransaction?: (mode: IDBTransactionMode) => void) {
   const records = new Map<string, unknown>();
   const database = {
     objectStoreNames: { contains: () => true },
     close() {},
-    transaction() {
+    transaction(_storeName: string, mode: IDBTransactionMode) {
+      onTransaction?.(mode);
       let pending = 0,
         aborted = false;
       const transaction: {
@@ -129,9 +132,10 @@ describe("history result write ordering", () => {
       utilization: 40,
     };
     const start = "2026-10-16T00:00:00.000Z";
-    const record = await createSearchHistory({
+    const record = await saveCompletedSearchHistory({
       kind: "single",
       config: makeConfig("SAM"),
+      result: original,
       dataVersion: "snapshot-version",
       startedAtISO: start,
     });
@@ -143,15 +147,21 @@ describe("history result write ordering", () => {
       ...original,
       gear: original.gear.map((x) => ({ ...x, name: "equivalent B" })),
     };
-    await Promise.all([
-      finishSearchHistory(record.id, {
-        status: "completed",
-        result: original,
-      }),
-      replaceSearchHistoryResult(record.id, first),
-      replaceSearchHistoryResult(record.id, last),
-    ]);
+    const firstLink = await replaceSearchHistoryGearIfCurrent(
+      historyReplacementLink(record),
+      first.gear,
+    );
+    expect(firstLink).toBeDefined();
+    const nextLink = await replaceSearchHistoryGearIfCurrent(
+      firstLink!,
+      last.gear,
+    );
+    expect(nextLink).toBeDefined();
     const saved = await getSearchHistoryRecord(record.id);
+    expect(saved).toEqual({
+      ...record,
+      result: { ...record.result, gear: last.gear },
+    });
     expect(
       saved?.result && "gear" in saved.result && saved.result.gear[0]?.name,
     ).toBe("equivalent B");
@@ -167,7 +177,7 @@ describe("history result write ordering", () => {
     expect(saved?.config).toEqual(record.config);
   });
 
-  it("round-trips complete replacement groups through a real result replacement", async () => {
+  it("round-trips complete replacement groups through a gear-only history replacement", async () => {
     fakeDatabase();
     const base = fixtureResult();
     const weapon = base.gear[0]!;
@@ -248,15 +258,12 @@ describe("history result write ordering", () => {
       equivalentGear: completeGroups,
     };
     const startedAtISO = "2026-10-17T03:00:00.000Z";
-    const record = await createSearchHistory({
+    const record = await saveCompletedSearchHistory({
       kind: "single",
       config: makeConfig("SAM"),
+      result: original,
       dataVersion: "replacement-group-snapshot",
       startedAtISO,
-    });
-    await finishSearchHistory(record.id, {
-      status: "completed",
-      result: original,
     });
 
     const firstRead = await getSearchHistoryRecord(record.id);
@@ -274,12 +281,20 @@ describe("history result write ordering", () => {
       "weapon",
       equivalentGearKey(replacementB),
     );
-    await replaceSearchHistoryResult(record.id, changed);
+    const nextLink = await replaceSearchHistoryGearIfCurrent(
+      historyReplacementLink(record),
+      changed.gear,
+    );
+    expect(nextLink).toBeDefined();
 
     const secondRead = await getSearchHistoryRecord(record.id);
     expect(secondRead?.kind).toBe("single");
     if (secondRead?.kind !== "single" || !secondRead.result)
       throw new Error("无法读取替换后的单职业记录。");
+    expect(secondRead).toEqual({
+      ...record,
+      result: { ...record.result, gear: changed.gear },
+    });
     expect(secondRead.result.gear[0]).toMatchObject({
       id: replacementB.id,
       slot: "weapon",
@@ -569,5 +584,110 @@ describe("completed-only history", () => {
     expect(await service.listSearchHistory()).toEqual([]);
     expect(stored.size).toBe(5);
     expect(await service.getSearchHistoryRecord(running.id)).toEqual(running);
+  });
+});
+
+describe("history gear compare-and-swap", () => {
+  async function setup() {
+    vi.resetModules();
+    const service = await import("./search-history");
+    const modes: IDBTransactionMode[] = [];
+    const stored = fakeDatabase((mode) => modes.push(mode));
+    const input = {
+      kind: "single" as const,
+      config: makeConfig("SAM"),
+      result: { ...fixtureResult(), searchedCandidates: 876, maximumTenacity: 1600, equivalentGear: { weapons: fixtureResult().gear } },
+      dataVersion: "full-result-version",
+      startedAtISO: "2026-10-26T01:00:00.000Z",
+    };
+    const record = await service.saveCompletedSearchHistory(input);
+    modes.length = 0;
+    return { service, stored, modes, input, record, link: service.historyReplacementLink(record) };
+  }
+
+  it("compares and updates in one readwrite transaction, preserving complete solver metadata", async () => {
+    const { service, stored, modes, record, link } = await setup();
+    if (record.kind !== "single") throw new Error("single fixture required");
+    const gear = record.result.gear.map((entry) => ({ ...entry, name: "chosen equivalent" }));
+    const next = await service.replaceSearchHistoryGearIfCurrent(link, gear);
+    expect(modes).toEqual(["readwrite"]);
+    const saved = stored.get(record.id);
+    expect(saved).toEqual({ ...record, result: { ...record.result, gear } });
+    expect(saved).toMatchObject({ result: {
+      searchedCandidates: 876, maximumTenacity: 1600, statistics: record.result.statistics,
+      equivalentGear: record.result.equivalentGear,
+    } });
+    expect(next).toEqual(service.historyReplacementLink(saved as typeof record));
+    expect(next?.resultSignature).not.toBe(link.resultSignature);
+  });
+
+  it("rejects another run at the same config ID, even when its complete result is identical", async () => {
+    const { service, stored, input, record, link } = await setup();
+    const newRun = await service.saveCompletedSearchHistory({ ...input, startedAtISO: "2026-10-26T01:01:00.000Z" });
+    expect(newRun.id).toBe(record.id);
+    expect(await service.replaceSearchHistoryGearIfCurrent(link, [])).toBeUndefined();
+    expect(stored.get(record.id)).toEqual(newRun);
+  });
+
+  it.each(["config", "result", "dataVersion"] as const)("rejects a changed complete %s at the same ID and timestamp", async (field) => {
+    const { service, stored, record, link } = await setup();
+    const changed = structuredClone(record);
+    if (changed.kind !== "single") throw new Error("single fixture required");
+    if (field === "config") changed.config = { ...changed.config, minItemLevel: changed.config.minItemLevel + 1 };
+    if (field === "result") changed.result.statistics.elapsedMs += 1;
+    if (field === "dataVersion") changed.dataVersion = "new-version";
+    // Models a different tab writing before this transaction obtains the record.
+    stored.set(record.id, changed);
+    expect(await service.replaceSearchHistoryGearIfCurrent(link, [])).toBeUndefined();
+    expect(stored.get(record.id)).toEqual(changed);
+  });
+
+  it("rejects stale same-record replacements and allows the returned link to advance", async () => {
+    const { service, stored, record, link } = await setup();
+    if (record.kind !== "single") throw new Error("single fixture required");
+    const firstGear = record.result.gear.map((entry) => ({ ...entry, name: "first" }));
+    const secondGear = record.result.gear.map((entry) => ({ ...entry, name: "second" }));
+    const [firstLink, staleLink] = await Promise.all([
+      service.replaceSearchHistoryGearIfCurrent(link, firstGear),
+      service.replaceSearchHistoryGearIfCurrent(link, secondGear),
+    ]);
+    expect(firstLink).toBeDefined();
+    expect(staleLink).toBeUndefined();
+    expect(stored.get(record.id)).toEqual({ ...record, result: { ...record.result, gear: firstGear } });
+    const secondLink = await service.replaceSearchHistoryGearIfCurrent(firstLink!, secondGear);
+    expect(secondLink).toBeDefined();
+    expect(stored.get(record.id)).toEqual({ ...record, result: { ...record.result, gear: secondGear } });
+  });
+
+  it("compares complete signatures independently of object key order", async () => {
+    const { service, stored, record, link } = await setup();
+    const reordered = {
+      ...record,
+      config: Object.fromEntries(Object.entries(record.config).reverse()),
+      result: Object.fromEntries(Object.entries(record.result).reverse()),
+    };
+    stored.set(record.id, reordered);
+    expect(await service.replaceSearchHistoryGearIfCurrent(link, [])).toBeDefined();
+    expect(stored.get(record.id)).toEqual({ ...record, result: { ...record.result, gear: [] } });
+  });
+
+  it("captures queued input and detaches missing records without creating them", async () => {
+    const { service, stored, record, link } = await setup();
+    if (record.kind !== "single") throw new Error("single fixture required");
+    const gear = record.result.gear.map((entry) => ({ ...entry, name: "captured" }));
+    const pending = service.replaceSearchHistoryGearIfCurrent(link, gear);
+    gear[0]!.name = "mutated later";
+    link.startedAtISO = "2026-10-26T02:00:00.000Z";
+    expect(await pending).toBeDefined();
+    expect(stored.get(record.id)).toMatchObject({ result: { gear: [{ name: "captured" }] } });
+    stored.delete(record.id);
+    expect(await service.replaceSearchHistoryGearIfCurrent(link, [])).toBeUndefined();
+    expect(stored.size).toBe(0);
+  });
+
+  it("rejects malformed gear without writing a partial result", async () => {
+    const { service, stored, record, link } = await setup();
+    await expect(service.replaceSearchHistoryGearIfCurrent(link, [{}] as OptimizationResult["gear"])).rejects.toThrow();
+    expect(stored.get(record.id)).toEqual(record);
   });
 });

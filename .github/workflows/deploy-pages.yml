@@ -34,10 +34,9 @@ jobs:
         uses: actions/configure-pages@v6
       - run: npm ci
       - name: Build
-        env:
-          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
-          VITE_PAGES: 'true'
         run: npm run build
+      - name: Prepare Pages fallback
+        run: cp dist/index.html dist/404.html
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist

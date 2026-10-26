@@ -1,0 +1,91 @@
+@use "../../../../styles/tokens" as tokens;
+
+.page {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  place-items: center;
+  overflow: auto;
+  background: tokens.$color-surface-canvas;
+  color: tokens.$color-ink;
+  font-family: system-ui, "Microsoft YaHei", sans-serif;
+  text-align: center;
+}
+
+.content {
+  width: 420px;
+  max-width: calc(100vw - 48px);
+  padding: 40px 0;
+}
+
+.brand {
+  margin: 0 0 32px;
+  font-size: tokens.$font-size-heading;
+  font-weight: 600;
+}
+
+.indicator {
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 20px;
+  border: 3px solid tokens.$color-status-error;
+  border-radius: 50%;
+  color: tokens.$color-status-error;
+  font-size: tokens.$font-size-heading;
+  font-weight: 700;
+  line-height: 26px;
+}
+
+.title {
+  margin: 0;
+  font-size: tokens.$font-size-display;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.message {
+  margin: 12px 0 0;
+  color: tokens.$color-muted;
+  font-size: tokens.$font-size-label;
+  line-height: 1.8;
+}
+
+.error {
+  margin: 24px 0 0;
+  max-height: 160px;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid tokens.$color-border-default;
+  border-radius: 6px;
+  background: tokens.$color-surface-subtle;
+  color: tokens.$color-text-secondary;
+  font: inherit;
+  font-size: tokens.$font-size-label;
+  line-height: 1.6;
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.action {
+  margin-top: 24px;
+  padding: 10px 24px;
+  border: 1px solid tokens.$color-accent-teal;
+  border-radius: 6px;
+  background: tokens.$color-accent-teal;
+  color: tokens.$color-neutral-white;
+  font: inherit;
+  font-size: tokens.$font-size-control;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
+
+.page :focus-visible {
+  outline: 3px solid tokens.$color-accent-teal-soft;
+  outline-offset: 3px;
+}

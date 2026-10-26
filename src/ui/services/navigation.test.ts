@@ -1,35 +1,26 @@
 // @vitest-environment jsdom
-import { afterEach, expect, it, vi } from "vitest";
-import { navigateTo, routeHref, subscribeNavigation } from "./navigation";
+import { expect, it } from "vitest";
+import { isPlainNavigation } from "./navigation";
 
-afterEach(() => {
-  vi.unstubAllEnvs();
-  window.history.replaceState(null, "", "/");
-});
-
-it("keeps root-hosted navigation paths", () => {
-  vi.stubEnv("BASE_URL", "/");
-  vi.stubEnv("VITE_PAGES", "false");
-  expect(routeHref("/lab")).toBe("/lab");
-});
-
-it("uses hash links on Pages with a custom domain", () => {
-  vi.stubEnv("BASE_URL", "/");
-  vi.stubEnv("VITE_PAGES", "true");
-  expect(routeHref("/lab")).toBe("/#/lab");
-});
-
-it("preserves the Pages entry path and notifies navigation listeners", () => {
-  vi.stubEnv("BASE_URL", "/ffxiv-gearing-calc/");
-  window.history.replaceState(null, "", "/ffxiv-gearing-calc/");
-  const listener = vi.fn();
-  const unsubscribe = subscribeNavigation(listener);
-  try {
-    navigateTo("/gear-comparison");
-    expect(window.location.pathname).toBe("/ffxiv-gearing-calc/");
-    expect(window.location.hash).toBe("#/gear-comparison");
-    expect(listener).toHaveBeenCalledOnce();
-  } finally {
-    unsubscribe();
-  }
+it("runs reset actions only for ordinary current-tab anchor clicks", () => {
+  const click = {
+    button: 0,
+    defaultPrevented: false,
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    altKey: false,
+  };
+  expect(isPlainNavigation(click)).toBe(true);
+  expect(isPlainNavigation(click, "_self")).toBe(true);
+  for (const key of [
+    "ctrlKey",
+    "metaKey",
+    "shiftKey",
+    "altKey",
+    "defaultPrevented",
+  ] as const)
+    expect(isPlainNavigation({ ...click, [key]: true })).toBe(false);
+  expect(isPlainNavigation({ ...click, button: 1 })).toBe(false);
+  expect(isPlainNavigation(click, "_blank")).toBe(false);
 });

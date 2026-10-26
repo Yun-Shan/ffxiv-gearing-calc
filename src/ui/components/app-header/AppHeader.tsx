@@ -1,5 +1,7 @@
 import styles from "./AppHeader.module.scss";
-import { routeHref } from "@/ui/services/navigation";
+import { Link, useRouter } from "@tanstack/react-router";
+import { isPlainNavigation } from "@/ui/services/navigation";
+import { applicationBase } from "@/ui/services/application-base";
 import { FeedbackEntryButton } from "@/ui/components/feedback/components/feedback-entry-button/FeedbackEntryButton";
 
 export type AppPage =
@@ -12,7 +14,7 @@ export type AppPage =
 
 interface NavItem {
   page: AppPage;
-  href: string;
+  href: "/single" | "/lab" | "/faq" | "/about";
   label: string;
 }
 
@@ -33,15 +35,20 @@ function NavLinks({
   items: readonly NavItem[];
   page: AppPage;
 }) {
+  const router = useRouter();
   return items.map((item) => (
-    <a
+    <Link
       key={item.page}
-      href={routeHref(item.href)}
+      to={item.href}
+      search={{}}
+      onClick={event => {
+        if (item.page === "single" && isPlainNavigation(event, event.currentTarget.target)) router.options.context.workflow.reset("single");
+      }}
       className={`${styles.navLink} ${page === item.page ? styles.active : ""}`}
       aria-current={page === item.page ? "page" : undefined}
     >
       {item.label}
-    </a>
+    </Link>
   ));
 }
 
@@ -49,7 +56,7 @@ export function AppHeader({ page }: { page: AppPage }) {
   return (
     <header className={styles.header}>
       <div className={styles.brand}>
-        <img className={styles.mark} src={`${import.meta.env.BASE_URL}icons/logo-128.png`} alt="" />
+        <img className={styles.mark} src={`${applicationBase()}icons/logo-128.png`} alt="" />
         <div className={styles.name}>
           <span>最终幻想14</span>
           <span>自动配装器</span>
