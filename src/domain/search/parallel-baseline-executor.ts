@@ -59,8 +59,6 @@ export type SerializedBaselineOptions = {
   candidateItemLevelRanges?: ExactMipOptions["candidateItemLevelRanges"];
   candidateResourceSupportProfile?: ExactMipOptions["candidateResourceSupportProfile"];
   resourceBudgetCandidateProfile?: ExactMipOptions["resourceBudgetCandidateProfile"];
-  primaryResourceSupports?: true;
-  mainStatResourceSupport?: true;
   enableCanonicalEvaluatorCandidateUpperBound?: true;
   maxSearchMs: number;
 };
@@ -306,8 +304,6 @@ function serializedOptions(
     ...(options.resourceBudgetCandidateProfile === undefined
       ? {}
       : { resourceBudgetCandidateProfile: options.resourceBudgetCandidateProfile }),
-    ...(options.primaryResourceSupports === true ? { primaryResourceSupports: true as const } : {}),
-    ...(options.mainStatResourceSupport === true ? { mainStatResourceSupport: true as const } : {}),
     ...(hasCanonicalEvaluatorCandidateUpperBound(options)
       ? { enableCanonicalEvaluatorCandidateUpperBound: true as const }
       : {}),

@@ -1122,7 +1122,6 @@ function describeStrategy(caseItem, result, solverProfiles = []) {
         variables: profile.variables ?? null,
         constraints: profile.constraints ?? null,
         primaryResourceSupportsEnabled: profile.primaryResourceSupportsEnabled ?? false,
-        mainStatResourceSupportEnabled: profile.mainStatResourceSupportEnabled ?? false,
         candidateUpperBound: profile.candidateUpperBound ?? null,
         conditionalResourceSupport: profile.conditionalResourceSupport ?? null,
       });

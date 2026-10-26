@@ -24,8 +24,6 @@ function baselineFor(
         timeLimitMs: 1000,
         cancellationRequested: () => false,
         baselineConcurrency: 2,
-        usePrimaryResourceSupportBaselinePolicy: false,
-        addMainStatResourceSupportToBaselines: false,
       }),
   };
 }

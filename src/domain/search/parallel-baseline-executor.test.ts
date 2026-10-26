@@ -417,12 +417,9 @@ test("compact baseline columns preserve internal resource-support policy", async
     await executor([{
       ...task,
       candidateResourceSupportProfile: "disabled",
-      mainStatResourceSupport: true,
     }], control);
     assert.equal(postedRequest?.options.candidateResourceSupportProfile, "disabled",
       "the job-count policy must survive compact baseline serialization");
-    assert.equal(postedRequest?.options.mainStatResourceSupport, true,
-      "the targeted main-stat baseline policy must survive worker serialization");
   } finally {
     await executor.dispose?.();
   }

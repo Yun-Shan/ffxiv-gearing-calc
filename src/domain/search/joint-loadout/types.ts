@@ -21,8 +21,6 @@ export type JointLoadoutV3Options = {
   factorizedSharedRingPair?: boolean;
   /** 精确模型的内部调优选项；省略时沿用默认的比值配对剪枝。 */
   ratioUpperPairPolicy?: "default" | "disabled";
-  /** 对严格劣于其他共享首饰对的候选执行范围有限且不损害证明能力的内部剪枝。 */
-  sharedAccessoryPairDominance?: boolean;
   foodStrategy: "shared" | "independent";
   /** DPS 使用精确的乘积与 GCD 分数。 */
   objective: "damage" | "dps";

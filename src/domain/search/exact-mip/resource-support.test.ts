@@ -132,31 +132,10 @@ test("zero factor minima add no artificial constraints", () => {
   expect(f.model.rows).toEqual(before);
 });
 
-test("weighted overflow retains valid unweighted cuts and never emits an unsafe coefficient", () => {
-  for (const location of ["equipment", "food", "factor"] as const) {
-    const f = fixture();
-    f.options.candidateResourceSupportProfile = "compact-weighted";
-    if (location === "equipment")
-      f.model.equipmentAttributes[0]![0]![0] = Math.floor(
-        Number.MAX_SAFE_INTEGER / 4,
-      );
-    if (location === "food")
-      f.food[0]![0] = Math.floor(Number.MAX_SAFE_INTEGER / 4);
-    if (location === "factor")
-      f.groups[0]!.classes[1]!.min = Math.floor(Number.MAX_SAFE_INTEGER / 4);
-    const before = f.model.rows.length;
-    expect(run(f)).toMatchObject({ rowsAdded: 1, weightedRowsAdded: 0 });
-    for (const row of f.model.rows.slice(before)) {
-      expect(Number.isSafeInteger(row.rhs)).toBe(true);
-      expect([...row.terms.values()].every(Number.isSafeInteger)).toBe(true);
-    }
-  }
-});
-
 test("BLU weapon resources subtract the largest possible main-stat weapon addition", () => {
   const f = fixture();
   f.options.job = "BLU";
-  f.options.candidateResourceSupportProfile = "compact-weighted";
+  f.options.candidateResourceSupportProfile = "compact";
   f.groups[0]!.classes[0]!.auxiliary = 3;
   f.groups[0]!.classes[1]!.auxiliary = 5;
   f.groups[1]!.name = "weapon";
@@ -165,7 +144,7 @@ test("BLU weapon resources subtract the largest possible main-stat weapon additi
     ["weapon", 1],
   ]);
   const before = f.model.rows.length;
-  expect(run(f)).toMatchObject({ rowsAdded: 1, weightedRowsAdded: 1 });
+  expect(run(f)).toMatchObject({ rowsAdded: 1 });
   for (const row of f.model.rows.slice(before)) {
     expect(row.terms.has("det_low")).toBe(false);
     expect(row.terms.get("det_high")).toBe(1);

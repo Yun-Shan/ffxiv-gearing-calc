@@ -175,8 +175,6 @@ describe("parallel executor transport boundaries", () => {
       toughnessAttributeId: 7,
       candidateResourceSupportProfile: "compact",
       resourceBudgetCandidateProfile: "default",
-      primaryResourceSupports: true,
-      mainStatResourceSupport: true,
       objective: "dps",
       onProgress: progress,
       onSolverProgress: solverProgress,
@@ -190,8 +188,6 @@ describe("parallel executor transport boundaries", () => {
           objective: "dps",
           candidateResourceSupportProfile: "compact",
           resourceBudgetCandidateProfile: "default",
-          primaryResourceSupports: true,
-          mainStatResourceSupport: true,
         });
         expect([...request.options.slots.ringSlotKinds]).toEqual([2]);
         expect([...request.options.slots.uniqueKinds]).toEqual([3]);

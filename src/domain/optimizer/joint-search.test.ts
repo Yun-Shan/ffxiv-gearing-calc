@@ -4,25 +4,15 @@ import type { CommonGearSlot, JobId, OptimizationConfig } from "../types.ts";
 const mocks = vi.hoisted(() => ({
   assembleResult: vi.fn(),
   candidateGearFromInfo: vi.fn(),
-  candidateResourceSupportProfileForSearch: vi.fn(),
   createParallelBaselineExecutor: vi.fn(),
   findBestJointLoadoutV3: vi.fn(),
-  markSharedAccessoryPairDominancePath: vi.fn(),
   prepareSearch: vi.fn(),
   privateParetoSlots: vi.fn(),
-  resourceBudgetCandidateProfileForSearch: vi.fn(),
   resultFood: vi.fn(),
 }));
 
 vi.mock("../search/parallel-baseline-executor.ts", () => ({
   createParallelBaselineExecutor: mocks.createParallelBaselineExecutor,
-}));
-vi.mock("../search/candidate-resource-support-policy.ts", () => ({
-  candidateResourceSupportProfileForSearch: mocks.candidateResourceSupportProfileForSearch,
-  resourceBudgetCandidateProfileForSearch: mocks.resourceBudgetCandidateProfileForSearch,
-}));
-vi.mock("../search/shared-accessory-pair-dominance-policy.ts", () => ({
-  markSharedAccessoryPairDominancePath: mocks.markSharedAccessoryPairDominancePath,
 }));
 vi.mock("../search/loadout-finder-v3.ts", () => ({
   findBestJointLoadoutV3: mocks.findBestJointLoadoutV3,
@@ -106,9 +96,6 @@ describe("joint search result validation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.createParallelBaselineExecutor.mockResolvedValue({ dispose: vi.fn() });
-    mocks.candidateResourceSupportProfileForSearch.mockReturnValue(undefined);
-    mocks.resourceBudgetCandidateProfileForSearch.mockReturnValue(undefined);
-    mocks.markSharedAccessoryPairDominancePath.mockImplementation((options) => options);
     mocks.candidateGearFromInfo.mockImplementation((equipment, slot) => ({
       equipment,
       slot,
@@ -125,38 +112,7 @@ describe("joint search result validation", () => {
     mocks.privateParetoSlots.mockReturnValue([]);
   });
 
-  it.each([
-    { kind: "jobLevel", value: 90 },
-    { kind: "itemLevel", value: 680 },
-  ] as const)("passes the %o sync target into both shared candidate profiles", async (sync) => {
-    const config = jointConfig([
-      job("MCH", { sync }),
-      job("VPR", { sync }),
-    ]);
-
-    await runJointOptimizationLocally(config);
-
-    const expectedJobs = [
-      {
-        jobId: "MCH",
-        minItemLevel: 90,
-        maxItemLevel: 999,
-        sync,
-      },
-      {
-        jobId: "VPR",
-        minItemLevel: 90,
-        maxItemLevel: 999,
-        sync,
-      },
-    ];
-    expect(mocks.resourceBudgetCandidateProfileForSearch.mock.calls[0]?.[0].jobs)
-      .toEqual(expectedJobs);
-    expect(mocks.candidateResourceSupportProfileForSearch.mock.calls[0]?.[0].jobs)
-      .toEqual(expectedJobs);
-  });
-
-  it("marks the exact shared-accessory-pair DPS path when all eligibility conditions hold", async () => {
+  it("passes shared gear, objective and callbacks to the joint solver", async () => {
     const config = jointConfig(
       [job("MCH"), job("VPR")],
       ["ring", "ring2", "bracelet", "earrings", "necklace"],
@@ -176,7 +132,6 @@ describe("joint search result validation", () => {
       { equipment: {}, slot: "ring" },
       { equipment: {}, slot: "ring2" },
     ]);
-    expect(mocks.markSharedAccessoryPairDominancePath).toHaveBeenCalledOnce();
     const solverOptions = mocks.findBestJointLoadoutV3.mock.calls[0]?.[0];
     expect(solverOptions).toMatchObject({
       commonSlots: ["ring", "ring2", "bracelet", "earrings", "necklace"],
@@ -281,7 +236,7 @@ describe("joint search result validation", () => {
     ).rejects.toMatchObject({ name: "AbortError" });
   });
 
-  it.each(sharedWideScenarios)("keeps the weaker pair relaxation disabled for $label", async ({
+  it.each(sharedWideScenarios)("uses the default relaxation for $label", async ({
     jobIds,
     minItemLevel,
     maxItemLevel,
@@ -300,8 +255,7 @@ describe("joint search result validation", () => {
     await runJointOptimizationLocally(config);
 
     expect(mocks.findBestJointLoadoutV3.mock.calls[0]?.[0].ratioUpperPairPolicy)
-      .toBe("disabled");
-    expect(mocks.markSharedAccessoryPairDominancePath).toHaveBeenCalledOnce();
+      .toBeUndefined();
   });
 
   it("fails closed when the solver returns an unknown job", async () => {

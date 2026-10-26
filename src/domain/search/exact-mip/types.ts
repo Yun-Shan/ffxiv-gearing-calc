@@ -71,14 +71,11 @@ export type ExactMipSearchStatistics = {
   };
   resourceBudgetCandidateCuts?: number;
   primaryResourceSupportsEnabled?: boolean;
-  mainStatResourceSupportEnabled?: boolean;
   incumbentCandidateUpperBoundCuts?: number;
   conditionalResourceSupport?: {
     candidateBands: number;
     rowsAdded: number;
-    weightedRowsAdded?: number;
     nonzerosAdded: number;
-    weightedResourceWeights?: Readonly<Record<string, number>>;
     skipReason?: "disabled-by-policy" | "no-out-of-window-candidates" | "no-strictly-tighter-bands" | "ring-pair-candidates" | "model-budget";
   };
 };
@@ -114,10 +111,6 @@ export type ExactMipOptions = {
   candidateResourceSupportProfile?: CandidateResourceSupportProfile;
   /** 在此前测量过的精确候选上界档位中进行内部选择。 */
   resourceBudgetCandidateProfile?: ResourceBudgetCandidateProfile;
-  /** V3 基线内部策略；添加隐含的主属性或加权资源不等式。 */
-  primaryResourceSupports?: boolean;
-  /** V3 内部策略；仅添加主属性资源不等式。 */
-  mainStatResourceSupport?: boolean;
   maxSearchMs?: number;
   onProgress?: (message: string) => void;
   onSolverProgress?: (event: LinearMipProgress) => void;

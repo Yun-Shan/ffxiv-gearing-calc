@@ -1,10 +1,5 @@
 import { createParallelBaselineExecutor } from "../search/parallel-baseline-executor.ts";
 import {
-  candidateResourceSupportProfileForSearch,
-  resourceBudgetCandidateProfileForSearch,
-} from "../search/candidate-resource-support-policy.ts";
-import { markSharedAccessoryPairDominancePath } from "../search/shared-accessory-pair-dominance-policy.ts";
-import {
   findBestJointLoadoutV3,
   type JointLoadoutV3Result,
 } from "../search/loadout-finder-v3.ts";
@@ -66,149 +61,11 @@ export async function runJointOptimizationLocally(
         job.forcedGear.ring === undefined && job.forcedGear.ring2 === undefined,
     );
   const sharedSlots = normalizedCommonSlots(config.commonSlots, factorizedSharedRingPair);
-  const vprMchNarrowSharedSlots: readonly CommonGearSlot[] = [
-    "bracelet",
-    "earrings",
-    "necklace",
-    "ring", "ring2",
-  ];
-  const isVprMchNarrowSharedDps =
-    objective === "dps" &&
-    config.foodStrategy === "shared" &&
-    config.jobs.length === 2 &&
-    config.jobs
-      .map((job) => job.jobId)
-      .sort()
-      .join("+") === "MCH+VPR" &&
-    config.jobs.every(
-      (job) =>
-        job.minItemLevel === 730 &&
-        job.maxItemLevel === 795 &&
-        job.sync?.kind === "itemLevel" && job.sync.value === 735,
-    ) &&
-    config.commonSlots.length === vprMchNarrowSharedSlots.length &&
-    vprMchNarrowSharedSlots.every((slot) =>
-      config.commonSlots.includes(slot),
-    ) &&
-    config.jobs.every(
-      (job) =>
-        (job.gcdChoices?.length ?? 0) === 0 &&
-        job.speedMin === undefined &&
-        job.speedMax === undefined &&
-        job.minTenacity === undefined &&
-        job.toughnessMinPercent === undefined &&
-        !job.maximizeTenacity &&
-        job.excludedSources.length === 0 &&
-        (job.excludedGearIds?.length ?? 0) === 0 &&
-        job.foodId === 0 &&
-        Object.keys(job.forcedGear).length === 0,
-    );
-  const sharedWideAccessorySlots: readonly CommonGearSlot[] = [
-    "bracelet",
-    "earrings",
-    "necklace",
-    "ring", "ring2",
-  ];
-  const isCanonicalSharedWideDpsFor = (jobIds: readonly JobId[]) =>
-    objective === "dps" &&
-    config.foodStrategy === "shared" &&
-    config.jobs.length === jobIds.length &&
-    config.jobs
-      .map((job) => job.jobId)
-      .sort()
-      .join("+") === [...jobIds].sort().join("+") &&
-    config.jobs.every(
-      (job) =>
-        job.minItemLevel === 715 &&
-        job.maxItemLevel === 795 &&
-        job.sync?.kind === "itemLevel" && job.sync.value === 735,
-    ) &&
-    config.commonSlots.length === sharedWideAccessorySlots.length &&
-    sharedWideAccessorySlots.every((slot) =>
-      config.commonSlots.includes(slot),
-    ) &&
-    config.jobs.every(
-      (job) =>
-        (job.gcdChoices?.length ?? 0) === 0 &&
-        job.speedMin === undefined &&
-        job.speedMax === undefined &&
-        job.minTenacity === undefined &&
-        job.toughnessMinPercent === undefined &&
-        !job.maximizeTenacity &&
-        job.excludedSources.length === 0 &&
-        (job.excludedGearIds?.length ?? 0) === 0 &&
-        job.foodId === 0 &&
-        Object.keys(job.forcedGear).length === 0,
-    );
-  const isFourJobSharedWideDps = isCanonicalSharedWideDpsFor([
-    "BRD",
-    "DNC",
-    "MCH",
-    "VPR",
-  ]);
-  const isFiveJobSharedWideDps = isCanonicalSharedWideDpsFor([
-    "BRD",
-    "DNC",
-    "MCH",
-    "NIN",
-    "VPR",
-  ]);
-  const requiredSharedAccessoryPairSlots: readonly CommonGearSlot[] = [
-    "bracelet",
-    "earrings",
-    "necklace",
-    "ring", "ring2",
-  ];
-  const isSharedAccessoryPairDominanceEligible =
-    objective === "dps" &&
-    config.foodStrategy === "shared" &&
-    config.jobs.length >= 2 &&
-    factorizedSharedRingPair &&
-    requiredSharedAccessoryPairSlots.every((slot) =>
-      config.commonSlots.includes(slot),
-    ) &&
-    config.jobs.every(
-      (job) =>
-        (job.gcdChoices?.length ?? 0) === 0 &&
-        job.speedMin === undefined &&
-        job.speedMax === undefined &&
-        job.minTenacity === undefined &&
-        job.toughnessMinPercent === undefined &&
-        !job.maximizeTenacity &&
-        job.excludedSources.length === 0 &&
-        (job.excludedGearIds?.length ?? 0) === 0 &&
-        job.foodId === 0 &&
-        Object.keys(job.forcedGear).length === 0,
-    );
-  // 这些证明开销较大的场景添加可选的成对松弛约束后性能会退化。
-  // 跳过这些约束只会减弱松弛，不会改变候选集合或精确证明。
-  const ratioUpperPairPolicy =
-    factorizedSharedRingPair &&
-    (isFiveJobSharedWideDps ||
-      isFourJobSharedWideDps ||
-      isVprMchNarrowSharedDps)
-      ? ("disabled" as const)
-      : undefined;
   const jointCommonSlots = factorizedSharedRingPair
     ? sharedSlots.slots.flatMap((slot) =>
         slot === "rings" ? ["ring", "ring2"] : [slot],
       )
     : sharedSlots.slots;
-  const resourceBudgetCandidateProfile =
-    resourceBudgetCandidateProfileForSearch({
-      jobs: config.jobs.map(
-        ({ jobId, minItemLevel, maxItemLevel, sync }) => ({
-          jobId,
-          minItemLevel,
-          maxItemLevel,
-          ...(sync === undefined ? {} : { sync }),
-        }),
-      ),
-      // 保留调用方指定的戒指对或独立戒指槽结构，以便选择对应策略。
-      commonSlots: config.commonSlots,
-      objective,
-      foodStrategy: config.foodStrategy,
-    });
   const preparedByJob = new Map<JobId, PreparedSearch>();
   const jobs = config.jobs.map((jobConfig) => {
     const normalized = {
@@ -227,8 +84,6 @@ export async function runJointOptimizationLocally(
       privateParetoSlots(normalized, jointCommonSlots),
       !hasSharedRing,
     );
-    prepared.options.resourceBudgetCandidateProfile =
-      resourceBudgetCandidateProfile;
     preparedByJob.set(jobConfig.jobId, prepared);
     return {
       id: jobConfig.jobId,
@@ -236,32 +91,6 @@ export async function runJointOptimizationLocally(
       options: prepared.options,
     };
   });
-  const candidateResourceSupportProfile =
-    candidateResourceSupportProfileForSearch({
-      jobs: config.jobs.map(
-        ({ jobId, minItemLevel, maxItemLevel, sync }) => ({
-          jobId,
-          minItemLevel,
-          maxItemLevel,
-          ...(sync === undefined ? {} : { sync }),
-        }),
-      ),
-      candidateCount: jobs.reduce(
-        (total, job) =>
-          total +
-          job.options.slots.reduce(
-            (slotTotal, slot) => slotTotal + slot.length,
-            0,
-          ),
-        0,
-      ),
-      commonSlots: config.commonSlots,
-      objective,
-      foodStrategy: config.foodStrategy,
-    });
-  for (const job of jobs)
-    job.options.candidateResourceSupportProfile =
-      candidateResourceSupportProfile;
   if (
     [...preparedByJob.values()].some(
       (prepared) =>
@@ -286,10 +115,6 @@ export async function runJointOptimizationLocally(
         ? { commonSlotProjections: sharedSlots.projections }
         : {}),
       ...(factorizedSharedRingPair ? { factorizedSharedRingPair: true } : {}),
-      ...(ratioUpperPairPolicy === undefined ? {} : { ratioUpperPairPolicy }),
-      ...(isSharedAccessoryPairDominanceEligible
-        ? { sharedAccessoryPairDominance: true }
-        : {}),
       foodStrategy: config.foodStrategy,
       objective,
       ...(config.maxSearchMs !== undefined
@@ -308,9 +133,6 @@ export async function runJointOptimizationLocally(
       ...(baselineExecutor === undefined ? {} : { baselineExecutor }),
       isCancelled: () => options.signal?.aborted === true,
     };
-    if (isSharedAccessoryPairDominanceEligible) {
-      markSharedAccessoryPairDominancePath(v3Options);
-    }
     const pendingResult = findBestJointLoadoutV3(v3Options);
     // V3 会同步复制职业包装对象，并在首次 await 前用精确剪枝后的候选域替换各输入槽。
     // 此处只保留重建最终界面结果所需的槽名和身份映射。

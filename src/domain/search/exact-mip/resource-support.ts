@@ -46,9 +46,7 @@ export function factorResourceWeightVectors(
 export type ConditionalResourceSupportStats = {
   candidateBands: number;
   rowsAdded: number;
-  weightedRowsAdded?: number;
   nonzerosAdded: number;
-  weightedResourceWeights?: Readonly<Record<string, number>>;
   skipReason?: "disabled-by-policy" | "no-out-of-window-candidates" | "no-strictly-tighter-bands" | "ring-pair-candidates" | "model-budget";
 };
 
@@ -178,7 +176,7 @@ export function addCandidateLevelConditionalResourceSupports(
 
   const pendingRows: { name: string; terms: Map<string, number>; sense: "<="; rhs: number }[] = [];
   let nonzerosAdded = 0;
-  const maxThresholdsPerSlot = profile === "compact" || profile === "compact-weighted"
+  const maxThresholdsPerSlot = profile === "compact"
     ? MAX_COMPACT_RESOURCE_THRESHOLDS_PER_SLOT
     : MAX_CONDITIONAL_BANDS_PER_SLOT;
   for (let slotIndex = 0; slotIndex < outsidePriorCandidatesBySlot.length; slotIndex++) {
@@ -226,125 +224,14 @@ export function addCandidateLevelConditionalResourceSupports(
     }
   }
 
-  // 早期四职业未同步证明快照会将均匀支撑行与一个非负因子斜率方向配合使用。
-  // 加权行仍由精确装备资源预算蕴含，只用于强化 HiGHS 的松弛模型。
-  let weightedRowsAdded = 0;
-  let selectedWeightedResourceWeights: Readonly<Record<string, number>> | undefined;
-  if (profile === "compact-weighted") {
-    const resourceAxisNames = resourceAxes.map(([name]) => name);
-    const mainAxisIndex = resourceAxisNames.indexOf("main");
-    const weightedResourceWeights = factorResourceWeightVectors(groups, resourceAxisNames).at(-1);
-    if (weightedResourceWeights !== undefined && mainAxisIndex >= 0 &&
-      weightedResourceWeights[mainAxisIndex]! > 0) {
-      const weightedResourceForVector = (vector: readonly number[]): number | undefined => {
-        let total = 0;
-        for (let index = 0; index < resourceAxes.length; index++) {
-          const weight = weightedResourceWeights[index]!;
-          const value = vector[resourceAxes[index]![1]];
-          if (!Number.isSafeInteger(weight) || weight < 0 || !Number.isSafeInteger(value) || value! < 0 ||
-            value! > Math.floor((Number.MAX_SAFE_INTEGER - total) / Math.max(1, weight))) return undefined;
-          total += value! * weight;
-        }
-        return total;
-      };
-      const weightedResourcesBySlot = model.equipmentAttributes.map((vectors) =>
-        vectors.map(weightedResourceForVector));
-      if (weightedResourcesBySlot.every((resources) => resources.length > 0 &&
-        resources.every((resource) => resource !== undefined))) {
-        const weightedSlotMaximums = weightedResourcesBySlot.map((resources) =>
-          (resources as number[]).reduce((maximum, value) => Math.max(maximum, value), Number.NEGATIVE_INFINITY));
-        const weightedFoodMaximum = foodMaximumBonuses.reduce((maximum, bonuses) => {
-          let total = 0;
-          for (let index = 0; index < resourceAxes.length; index++) {
-            const weight = weightedResourceWeights[index]!;
-            const value = bonuses[resourceAxes[index]![1]];
-            if (!Number.isSafeInteger(value) || value! < 0 ||
-              value! > Math.floor((Number.MAX_SAFE_INTEGER - total) / Math.max(1, weight))) return Number.NaN;
-            total += value! * weight;
-          }
-          return Math.max(maximum, total);
-        }, 0);
-        const weightedGearMaximum = weightedSlotMaximums.reduce((total, value) => total + value, 0);
-        const weightedGlobalBudget = weightedGearMaximum + weightedFoodMaximum;
-        const maximumWeightedBluWeaponAddition = options.job === "BLU"
-          ? Math.max(0, ...(groups.find((group) => group.name === "main")?.classes
-            .map((factorClass) => factorClass.auxiliary ?? 0) ?? [0]))
-          : 0;
-        const weightedResourceTerms = new Map<string, number>();
-        let validWeightedTerms = Number.isSafeInteger(weightedGlobalBudget) && weightedGlobalBudget >= 0;
-        for (let axisIndex = 0; axisIndex < resourceAxes.length && validWeightedTerms; axisIndex++) {
-          const [name, , group] = resourceAxes[axisIndex]!;
-          const weight = weightedResourceWeights[axisIndex]!;
-          if (weight === 0) continue;
-          for (const factorClass of group.classes) {
-            if (!Number.isSafeInteger(factorClass.min) || factorClass.min < 0 ||
-              factorClass.min > Math.floor(Number.MAX_SAFE_INTEGER / weight)) {
-              validWeightedTerms = false;
-              break;
-            }
-            const minimum = name === "weapon"
-              ? Math.max(0, factorClass.min - maximumWeightedBluWeaponAddition)
-              : factorClass.min;
-            addTerm(weightedResourceTerms, factorClass.variable, minimum * weight);
-          }
-        }
-        if (validWeightedTerms && weightedResourceTerms.size > 0) {
-          const weightedPendingRows: typeof pendingRows = [];
-          let weightedNonzeros = 0;
-          for (let slotIndex = 0; slotIndex < outsidePriorCandidatesBySlot.length; slotIndex++) {
-            const slotMaximum = weightedSlotMaximums[slotIndex]!;
-            const outsideCandidates = outsidePriorCandidatesBySlot[slotIndex]!;
-            const resources = weightedResourcesBySlot[slotIndex]! as number[];
-            const thresholds = [...new Set(outsideCandidates
-              .map((candidateIndex) => resources[candidateIndex]!)
-              .filter((resource) => resource < slotMaximum))].sort((left, right) => left - right);
-            if (thresholds.length === 0) continue;
-            const resourceThreshold = thresholds.at(-1)!;
-            const relaxation = slotMaximum - resourceThreshold;
-            if (!Number.isSafeInteger(relaxation) || relaxation < 0) {
-              validWeightedTerms = false;
-              break;
-            }
-            const activationVariables = outsideCandidates.flatMap((candidateIndex) =>
-              resources[candidateIndex]! <= resourceThreshold
-                ? [model.slotVariables[slotIndex]![candidateIndex]!]
-                : []);
-            if (activationVariables.length === 0) continue;
-            const terms = new Map(weightedResourceTerms);
-            for (const variable of activationVariables) addTerm(terms, variable, relaxation);
-            weightedNonzeros += terms.size;
-            weightedPendingRows.push({
-              name: `factor_resource_weighted_level_${slotIndex}`,
-              terms,
-              sense: "<=",
-              rhs: weightedGlobalBudget,
-            });
-          }
-          if (validWeightedTerms && pendingRows.length + weightedPendingRows.length <= MAX_CONDITIONAL_RESOURCE_ROWS &&
-            nonzerosAdded + weightedNonzeros <= MAX_CONDITIONAL_RESOURCE_NONZEROS) {
-            pendingRows.push(...weightedPendingRows);
-            nonzerosAdded += weightedNonzeros;
-            weightedRowsAdded = weightedPendingRows.length;
-            if (weightedRowsAdded > 0) {
-              selectedWeightedResourceWeights = Object.fromEntries(resourceAxisNames.map((name, index) =>
-                [name, weightedResourceWeights[index]!]));
-            }
-          }
-        }
-      }
-    }
-  }
-
   for (const row of pendingRows) {
     // 选择窗口外且低于此资源阈值的候选，会收紧全局预算。
     addRows(model.rows, row.name, row.terms, row.sense, row.rhs);
   }
   return {
     candidateBands,
-    rowsAdded: pendingRows.length - weightedRowsAdded,
-    weightedRowsAdded,
+    rowsAdded: pendingRows.length,
     nonzerosAdded,
-    ...(selectedWeightedResourceWeights === undefined ? {} : { weightedResourceWeights: selectedWeightedResourceWeights }),
     ...(pendingRows.length === 0 ? { skipReason: "no-strictly-tighter-bands" as const } : {}),
   };
 }

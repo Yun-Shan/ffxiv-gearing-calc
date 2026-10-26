@@ -28,8 +28,6 @@ export type JointSearchOptions = {
   canonicalSharedRingPair?: boolean;
   /** 默认为当前精确松弛；禁用时跳过可选的配对上界约束行。 */
   ratioUpperPairPolicy?: "default" | "disabled";
-  /** 精确优化器内部路径；仅添加严格且替换安全的首饰对支配约束行。 */
-  sharedAccessoryPairDominance?: boolean;
   initialResults?: readonly ExactMipResult[];
   maxSearchMs?: number;
   onProgress?: (message: string) => void;

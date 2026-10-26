@@ -97,10 +97,8 @@ test("worker preserves solver policies, constraints and callback context", async
     speedAttributeId: 3,
     toughnessAttributeId: 2,
     objective: "dps",
-    candidateResourceSupportProfile: "compact-weighted",
+    candidateResourceSupportProfile: "compact",
     resourceBudgetCandidateProfile: "weighted",
-    primaryResourceSupports: true,
-    mainStatResourceSupport: true,
     enableCanonicalEvaluatorCandidateUpperBound: true,
   };
   const callbacks = {
@@ -112,10 +110,8 @@ test("worker preserves solver policies, constraints and callback context", async
   const options = solver.mock.calls[0]![0];
   assert.deepEqual(options.constraints, task.constraints);
   assert.equal(options.clanIndex, 1);
-  assert.equal(options.candidateResourceSupportProfile, "compact-weighted");
+  assert.equal(options.candidateResourceSupportProfile, "compact");
   assert.equal(options.resourceBudgetCandidateProfile, "weighted");
-  assert.equal(options.primaryResourceSupports, true);
-  assert.equal(options.mainStatResourceSupport, true);
   assert.equal(hasCanonicalEvaluatorCandidateUpperBound(options), true);
   assert.equal(options.onProgress, callbacks.onProgress);
   assert.equal(options.onSolverProgress, callbacks.onSolverProgress);

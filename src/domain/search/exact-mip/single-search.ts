@@ -60,9 +60,7 @@ export async function findBestLoadoutExactMip(
     options,
     canonicalCandidateUpperBoundTrusted,
   );
-  const primaryResourceSupportsEnabled = candidateUpperBoundEnabled || options.primaryResourceSupports === true;
-  const mainStatResourceSupportEnabled = !primaryResourceSupportsEnabled &&
-    options.mainStatResourceSupport === true;
+  const primaryResourceSupportsEnabled = candidateUpperBoundEnabled;
   if (isProfileTimingEnabled() && options.onSolverProgress !== undefined) {
     options.onSolverProgress({
       backend: "HiGHS",
@@ -145,7 +143,6 @@ export async function findBestLoadoutExactMip(
       // 在较宽的规范基线中保留更强的主属性和加权资源支撑约束。
       primaryResourceSupportsEnabled,
       modelOptions === options ? initialModel : undefined,
-      mainStatResourceSupportEnabled,
     );
     const fullPreparationMs = performance.now() - fullPreparationStartedAt;
     modelPreparationMs = initialBuildMs + candidateBoundMs + fullPreparationMs;
@@ -169,8 +166,6 @@ export async function findBestLoadoutExactMip(
     prepared = await prepareExactMipModel(
       options,
       primaryResourceSupportsEnabled,
-      undefined,
-      mainStatResourceSupportEnabled,
     );
     modelPreparationMs = performance.now() - ordinaryPreparationStartedAt;
   }
@@ -566,7 +561,6 @@ export async function findBestLoadoutExactMip(
       ...(resourceBudgetCandidateBound === undefined ? {} : { resourceBudgetCandidateBound }),
       resourceBudgetCandidateCuts: resourceBudgetCandidateUpperBoundCuts.size,
       primaryResourceSupportsEnabled: prepared!.primaryResourceSupportsEnabled,
-      mainStatResourceSupportEnabled: prepared!.mainStatResourceSupportEnabled,
       solverRuns,
       incumbentCandidateUpperBoundCuts: incumbentCandidateUpperBoundCuts.size,
       excludedSignatures: excludedSignatures.length,

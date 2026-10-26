@@ -354,7 +354,7 @@ test("exact canonical MIP matches enumeration with capped base-value food", asyn
   assert.equal(exactFactorProduct(actualFactors), exactFactorProduct(expected.factors));
 });
 
-test("primary-resource support inequalities strengthen the canonical proof without changing its optimum", async () => {
+test("canonical candidate bounds automatically retain primary-resource support inequalities", async () => {
   const options = canonicalOptions({
     slots: [
       [
@@ -371,38 +371,20 @@ test("primary-resource support inequalities strengthen the canonical proof witho
   const expected = exhaustiveCanonical(options);
   assert.ok(expected);
   const lean = await findBestLoadoutExactMip(options);
-  const strengthened = await findBestLoadoutExactMip({ ...options, primaryResourceSupports: true });
-  assert.ok(lean);
-  assert.ok(strengthened);
-  const leanFactors = evaluateFactors(canonicalAttributes(lean.selection, lean.food));
-  const strengthenedFactors = evaluateFactors(canonicalAttributes(strengthened.selection, strengthened.food));
-  assert.ok(leanFactors);
-  assert.ok(strengthenedFactors);
-  assert.equal(exactFactorProduct(leanFactors), exactFactorProduct(expected.factors));
-  assert.equal(exactFactorProduct(strengthenedFactors), exactFactorProduct(expected.factors));
-  assert.equal(strengthened.statistics.primaryResourceSupportsEnabled, true);
-  assert.ok(strengthened.statistics.constraints > lean.statistics.constraints,
-    "the selected strategy adds only implied support rows to the exact model");
-});
-
-test("main-stat-only resource support preserves the canonical optimum", async () => {
-  const options = canonicalOptions({
+  const weak = equipment(8352, 90, { 1: 200, 2: 100, 3: 90, 4: 70, 5: 30, 6: 30 });
+  const expandedOptions = canonicalOptions({
+    ...options,
     slots: [
       [
-        equipment(8370, 180, { 1: 700, 2: 500, 3: 330, 4: 210, 5: 140, 6: 120 }),
-        equipment(8371, 120, { 1: 420, 2: 250, 3: 180, 4: 110, 5: 70, 6: 60 }),
+        ...options.slots[0]!,
+        ...Array.from({ length: 1_996 }, (_, index) => ({
+          ...weak, itemId: 835_200 + index, key: `weak-${index}`,
+        })),
       ],
-      [
-        equipment(8380, 0, { 1: 620, 2: 410, 3: 300, 4: 190, 5: 120, 6: 100 }),
-        equipment(8381, 0, { 1: 400, 2: 220, 3: 160, 4: 90, 5: 50, 6: 40 }),
-      ],
+      options.slots[1]!,
     ],
-    foods: [candidateBoundFood],
   });
-  const expected = exhaustiveCanonical(options);
-  assert.ok(expected);
-  const lean = await findBestLoadoutExactMip(options);
-  const strengthened = await findBestLoadoutExactMip({ ...options, mainStatResourceSupport: true });
+  const strengthened = await findBestLoadoutExactMip(expandedOptions);
   assert.ok(lean);
   assert.ok(strengthened);
   const leanFactors = evaluateFactors(canonicalAttributes(lean.selection, lean.food));
@@ -411,10 +393,11 @@ test("main-stat-only resource support preserves the canonical optimum", async ()
   assert.ok(strengthenedFactors);
   assert.equal(exactFactorProduct(leanFactors), exactFactorProduct(expected.factors));
   assert.equal(exactFactorProduct(strengthenedFactors), exactFactorProduct(expected.factors));
-  assert.equal(strengthened.statistics.mainStatResourceSupportEnabled, true);
-  assert.equal(strengthened.statistics.primaryResourceSupportsEnabled, false);
-  assert.equal(strengthened.statistics.constraints, lean.statistics.constraints + 1,
-    "the strategy adds only the main-stat resource inequality");
+  assert.equal(lean.statistics.primaryResourceSupportsEnabled, false);
+  assert.equal(strengthened.statistics.primaryResourceSupportsEnabled, true);
+  assert.equal(strengthened.statistics.candidateUpperBound?.candidatesBefore, 2_000);
+  assert.ok(strengthened.statistics.candidateUpperBound!.candidatesAfter < 2_000,
+    "dominated copies exercise the generic bound before the full exact proof");
 });
 
 test("canonical candidate upper bound preserves the optimum across multiple GCDs and exact speed bounds", async () => {

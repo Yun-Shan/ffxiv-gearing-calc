@@ -115,6 +115,23 @@ describe("candidate resource-budget upper bounds", () => {
     },
   );
 
+  test("default budgets depend on attributes and work limits across item levels", () => {
+    const { options, run } = fixture();
+    options.resourceBudgetCandidateProfile = "default";
+    const bounds = [90, 729, 730, 795, 999].map((itemLevel) => {
+      for (const slot of options.slots) for (const equipment of slot) {
+        equipment.itemLevel = itemLevel;
+      }
+      const result = run({ includeAll: true })!;
+      expect(result.additionalBudgetCount).toBeGreaterThan(0);
+      return {
+        queries: result.queryBudgets.map(({ weights, attributes }) => ({ weights, attributes })),
+        bySlot: result.bySlot.map((slot) => [...slot.values()]),
+      };
+    });
+    for (const bound of bounds) expect(bound).toEqual(bounds[0]);
+  });
+
   test("weighted food caps and unpriced groups remain safe", () => {
     const { options, groups, run } = fixture();
     options.foods = [

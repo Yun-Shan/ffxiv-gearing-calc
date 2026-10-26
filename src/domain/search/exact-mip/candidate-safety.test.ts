@@ -136,7 +136,7 @@ test("incumbent candidate pruning retains every exact optimum in a complete smal
   ).toBeUndefined();
 });
 
-test.each(["balanced", "compact", "compact-weighted"] as const)(
+test.each(["balanced", "compact"] as const)(
   "%s resource rows preserve every feasible assignment",
   async (profile) => {
     const options = fixture();

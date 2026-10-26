@@ -354,9 +354,7 @@ export function prepareResourceBudgetCandidateBounds(
   };
   const additionalBudgets: WeightedCandidateBudget[] = [];
   let supportCount = budget.supportCount;
-  const hasCandidatesBelow730 = options.slots.some((slot) => slot.some((equipment) =>
-    Number.isSafeInteger(equipment.itemLevel) && equipment.itemLevel! < 730));
-  if (profile === "weighted" || (profile === "default" && hasCandidatesBelow730)) {
+  if (profile !== "uniform-only") {
     const axes = resourceAxes.map(([name]) => name);
     const allOnes = axes.map(() => 1);
     const priceVectors = [

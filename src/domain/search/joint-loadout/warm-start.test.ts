@@ -15,86 +15,34 @@ function seedFor(
   context: JobContext,
   overrides: Partial<JointLoadoutV3Options> = {},
   projections = new Map<string, SharedSlotProjection>(),
-  enabled = true,
 ) {
   return createSeedResults({
     options: { ...optionsFor([context]), ...overrides },
     contexts: [context],
     commonSlotProjections: projections,
-    objective: "damage",
-    enableSharedMateriaCompensation: enabled,
-    assertWithinBudget: () => {},
   });
 }
 
-describe("seed feasibility and exact attribute restoration", () => {
-  test.each([1, 2])(
-    "restores the original raw vector with %i private materia variants",
-    (privateSlots) => {
-      const originalShared = equip(1, [100, 3000, 400]);
-      const projectedShared = equip(2, [100, 3000, 200]);
-      const privateOriginals = Array.from({ length: privateSlots }, (_, i) =>
-        equip(10 + i, [0, 0, 0], { variantKey: "empty" }),
-      );
-      const privateAlternatives = privateOriginals.map((item) =>
-        equip(item.itemId, [0, 0, 200 / privateSlots], {
-          variantKey: "critical-meld",
-        }),
-      );
-      const context = contextFor(
-        [
-          [originalShared, projectedShared],
-          ...privateOriginals.map((item, i) => [item, privateAlternatives[i]!]),
-        ],
-        ["body", ...privateOriginals.map((_, i) => `private${i}`)],
-      );
-      const fixed = new Map([["body", choice([context], projectedShared)]]);
-      const originalSelection = [...context.optimum.selection];
-      const seed = seedFor(context)(fixed, undefined, true)!;
-      expect(seed[0]!.selection).toEqual([
-        projectedShared,
-        ...privateAlternatives,
-      ]);
-      expect(buildRawAttributes(context, seed[0]!.selection)).toEqual(
-        buildRawAttributes(context, originalSelection),
-      );
-      expect(seed[0]!.damage).toBe(context.optimum.damage);
-      expect(context.optimum.selection).toEqual(originalSelection);
-      expect(
-        seedFor(context, {}, new Map(), false)(fixed, undefined, true)![0]!
-          .selection,
-      ).toEqual([projectedShared, ...privateOriginals]);
-    },
-  );
-
-  test("compensation never substitutes another item or a fixed shared slot", () => {
-    const original = equip(1, [100, 3000, 400]);
-    const projected = equip(2, [100, 3000, 200]);
-    const privateOriginal = equip(3, [0, 0, 0]);
-    const wrongItem = equip(4, [0, 0, 200]);
+describe("seed feasibility and shared-choice reconstruction", () => {
+  test("reconstructs shared choices and preserves the original private choices", () => {
+    const originalShared = equip(1, [100, 3000, 400]);
+    const projectedShared = equip(2, [100, 3000, 200]);
+    const privateOriginal = equip(3, [0, 0, 0], { variantKey: "empty" });
+    const privateAlternative = equip(3, [0, 0, 200], { variantKey: "critical-meld" });
     const context = contextFor(
-      [
-        [original, projected],
-        [privateOriginal, wrongItem],
-      ],
+      [[originalShared, projectedShared], [privateOriginal, privateAlternative]],
       ["body", "head"],
     );
-    const fixed = new Map([["body", choice([context], projected)]]);
-    expect(seedFor(context)(fixed, undefined, true)![0]!.selection).toEqual([
-      projected,
-      privateOriginal,
-    ]);
-    const oversized = Array.from({ length: 129 }, (_, i) =>
-      equip(3, [0, 0, 200 + i], { variantKey: String(i) }),
-    );
-    context.solverSlots = [
-      context.solverSlots[0]!,
-      [privateOriginal, ...oversized],
-    ];
-    expect(seedFor(context)(fixed, undefined, true)![0]!.selection).toEqual([
-      projected,
-      privateOriginal,
-    ]);
+    const originalSelection = [...context.optimum.selection];
+    const seed = seedFor(context)(
+      new Map([["body", choice([context], projectedShared)]]),
+      undefined,
+    )!;
+    expect(seed[0]!.selection).toEqual([projectedShared, privateOriginal]);
+    const attributes = buildRawAttributes(context, seed[0]!.selection);
+    expect(attributes).toEqual([100, 3000, 200, 0, 0, 0, 0]);
+    expect(seed[0]!.damage).toBe(context.job.options.evaluationFunction(attributes)!.damage);
+    expect(context.optimum.selection).toEqual(originalSelection);
   });
 
   test.each([

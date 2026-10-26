@@ -136,7 +136,6 @@ export async function prepareExactMipModel(
   options: ExactMipOptions,
   addPrimaryResourceSupports = false,
   prebuiltModel?: NonNullable<ReturnType<typeof buildLinearAttributeModel>>,
-  addMainStatResourceSupport = false,
 ) {
   throwIfCancelled(options.isCancelled);
   const model = prebuiltModel ?? buildLinearAttributeModel(options);
@@ -357,17 +356,6 @@ export async function prepareExactMipModel(
     }
     addRows(model.rows, `factor_resource_${mask}`, terms, "<=", maximum);
   }
-  if (addMainStatResourceSupport && !addPrimaryResourceSupports) {
-    const gearMaximum = model.equipmentAttributes.reduce((total, slot) => total + Math.max(...slot.map((candidate) =>
-      candidate[mainAttribute]!)), 0);
-    const foodMaximum = Math.max(0, ...foodMaximumBonuses.map((bonuses) => bonuses[mainAttribute]!));
-    const maximum = gearMaximum + foodMaximum;
-    if (Number.isSafeInteger(maximum)) {
-      const terms = new Map<string, number>();
-      for (const entry of mainFactorGroup.classes) addTerm(terms, entry.variable, entry.min);
-      addRows(model.rows, "factor_resource_main", terms, "<=", maximum);
-    }
-  }
   const weightedResourceVectors = addPrimaryResourceSupports
     ? factorResourceWeightVectors(groups, resourceAxes.map(([name]) => name))
     : [];
@@ -408,6 +396,5 @@ export async function prepareExactMipModel(
     mainAttribute, weaponAttribute, detAttribute, tenAttribute, crtAttribute, dhtAttribute, speedAttribute,
     reachableFactorClassesRemoved, reachableAttributePruningSkipped,
     reachableWeaponFactorClassesRemoved, reachableWeaponPruningSkipped, conditionalResourceSupport,
-    primaryResourceSupportsEnabled: addPrimaryResourceSupports,
-    mainStatResourceSupportEnabled: addMainStatResourceSupport && !addPrimaryResourceSupports };
+    primaryResourceSupportsEnabled: addPrimaryResourceSupports };
 }

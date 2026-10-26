@@ -1,6 +1,5 @@
 import { findBestLoadoutExactMip, type ExactMipOptions, type ExactMipResult } from "../loadout-finder-exact-mip.ts";
 import { inheritCanonicalEvaluatorCandidateUpperBound } from "../exact-mip-candidate-upper-bound.ts";
-import { shouldUseMainStatResourceSupportForBaselineJob } from "../candidate-resource-support-policy.ts";
 import type { JobContext, JointLoadoutV3Options, MutableStatistics } from "./types.ts";
 import { canonicalBaselineDamageAttributes, dedupeEquivalentBaselineRingCandidates, pruneInnerSlots } from "./candidate-dominance.ts";
 import { factorsForResult, integerDamageProduct } from "./score.ts";
@@ -10,8 +9,7 @@ import { minimumTimeLimit } from "./job-options.ts";
 export async function solveBaselines({
   options, contexts, preserveCommonSlotIndexes, objective, mutable,
   assertWithinBudget, remainingTimeLimit, remainingWorkerTimeLimit, timeLimitMs,
-  cancellationRequested, baselineConcurrency, usePrimaryResourceSupportBaselinePolicy,
-  addMainStatResourceSupportToBaselines,
+  cancellationRequested, baselineConcurrency,
 }: {
   options: JointLoadoutV3Options;
   contexts: readonly JobContext[];
@@ -24,8 +22,6 @@ export async function solveBaselines({
   timeLimitMs: number | undefined;
   cancellationRequested: () => boolean;
   baselineConcurrency: number;
-  usePrimaryResourceSupportBaselinePolicy: boolean;
-  addMainStatResourceSupportToBaselines: boolean;
 }): Promise<boolean> {
   assertWithinBudget("单职业最优基线");
   const baselineTasks: ExactMipOptions[] = [];
@@ -87,19 +83,6 @@ export async function solveBaselines({
       ...context.job.options,
       slots: baselineSlots,
       objective,
-      // 为 MCH 保留经测量的支撑约束行；VPR 的基线保持精简，
-      // 以减少并行模型的工作量，同时不改变候选集合。
-      ...(context.job.id === "MCH" && usePrimaryResourceSupportBaselinePolicy
-        ? { primaryResourceSupports: true }
-        : {}),
-      ...(addMainStatResourceSupportToBaselines && shouldUseMainStatResourceSupportForBaselineJob(
-        options.jobs.map(({ id }) => id),
-        context.job.id,
-        options.commonSlots,
-        objective,
-        options.foodStrategy,
-        options.factorizedSharedRingPair,
-      ) ? { mainStatResourceSupport: true } : {}),
       ...(baselineTaskTimeLimit === undefined ? {} : { maxSearchMs: baselineTaskTimeLimit }),
       isCancelled: cancellationRequested,
       onProgress: options.onProgress === undefined

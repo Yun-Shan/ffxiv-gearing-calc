@@ -1,18 +1,12 @@
 import { findBestJointFactorMip, type ExactMipResult } from "../loadout-finder-exact-mip.ts";
 import { inheritCanonicalEvaluatorCandidateUpperBound } from "../exact-mip-candidate-upper-bound.ts";
-import { hasSharedAccessoryPairDominancePath, markSharedAccessoryPairDominancePath } from "../shared-accessory-pair-dominance-policy.ts";
 import type { EquipInfo, FoodInfo } from "../types.ts";
 import { equipmentIdentity } from "../equipment-identity.ts";
 import { getMemoryUsageSnapshot } from "../memory-usage.ts";
 import { throwIfCancelled } from "../cancellation.ts";
 import type { HighsCallbackTrace, LinearMipProgress } from "../linear-mip.ts";
 import { baselineWorkerLimit } from "../baseline-worker-policy.ts";
-import {
-  candidateResourceSupportProfile as chooseCandidateResourceSupportProfile,
-  shouldUseMainStatResourceSupportForBaseline,
-  shouldUsePrimaryResourceSupportsForBaseline,
-  shouldUseSharedMateriaCompensation,
-} from "../candidate-resource-support-policy.ts";
+import { candidateResourceSupportProfile as chooseCandidateResourceSupportProfile } from "../candidate-resource-support-policy.ts";
 import type { CommonChoice, FoodChoice, JobContext, JointLoadoutJobResultV3, JointLoadoutV3Options, JointLoadoutV3Result, MutableStatistics, Rational } from "./types.ts";
 import { commonSlotIdentity, commonSlotIndex, equipmentForCommonSlot, projectEquipment } from "./shared-equipment.ts";
 import { compareRational, createExactScorer, factorsForResult, integerDamageProduct, rational } from "./score.ts";
@@ -36,7 +30,6 @@ export async function findBestJointLoadoutV3(
   const inputCandidateCount = options.jobs.reduce((total, job) => total +
     job.options.slots.reduce((slotTotal, slot) => slotTotal + slot.length, 0), 0);
   const candidateSupportProfile = chooseCandidateResourceSupportProfile(options.jobs.length, inputCandidateCount);
-  const sharedAccessoryPairDominanceTrusted = hasSharedAccessoryPairDominancePath(options);
   // V3 领域自行持有职业包装对象，以便精确剪枝能释放完整候选数组，
   // 同时不修改调用方提供的对象。
   const ownedOptions: JointLoadoutV3Options = {
@@ -49,9 +42,7 @@ export async function findBestJointLoadoutV3(
       }),
     })),
   };
-  options = sharedAccessoryPairDominanceTrusted
-    ? markSharedAccessoryPairDominancePath(ownedOptions)
-    : ownedOptions;
+  options = ownedOptions;
   const startedAt = performance.now();
   const requestedMs = options.maxSearchMs;
   if (requestedMs !== undefined && (!Number.isFinite(requestedMs) || requestedMs <= 0)) {
@@ -70,29 +61,6 @@ export async function findBestJointLoadoutV3(
   if (objective !== "damage" && objective !== "dps") {
     throw new RangeError("V3 objective 必须是 damage 或 dps");
   }
-  const usePrimaryResourceSupportBaselinePolicy = shouldUsePrimaryResourceSupportsForBaseline(
-    options.jobs.map(({ id, options: jobOptions }) => ({
-      jobId: id,
-      candidateItemLevelRanges: jobOptions.candidateItemLevelRanges,
-    })),
-    options.commonSlots,
-    objective,
-    options.foodStrategy,
-  );
-  const addMainStatResourceSupportToBaselines = shouldUseMainStatResourceSupportForBaseline(
-    options.jobs.map(({ id }) => id),
-    options.commonSlots,
-    objective,
-    options.foodStrategy,
-    options.factorizedSharedRingPair,
-  ) && !usePrimaryResourceSupportBaselinePolicy;
-  const enableSharedMateriaCompensation = shouldUseSharedMateriaCompensation(
-    options.jobs.map(({ id }) => id),
-    options.commonSlots,
-    objective,
-    options.foodStrategy,
-    options.factorizedSharedRingPair,
-  );
   if (options.foodStrategy !== "shared" && options.foodStrategy !== "independent") {
     throw new RangeError("V3 foodStrategy 必须是 shared 或 independent");
   }
@@ -134,8 +102,7 @@ export async function findBestJointLoadoutV3(
   if (!await solveBaselines({
     options, contexts, preserveCommonSlotIndexes, objective, mutable,
     assertWithinBudget, remainingTimeLimit, remainingWorkerTimeLimit, timeLimitMs,
-    cancellationRequested, baselineConcurrency, usePrimaryResourceSupportBaselinePolicy,
-    addMainStatResourceSupportToBaselines,
+    cancellationRequested, baselineConcurrency,
   })) return undefined;
 
   if (options.factorizedSharedRingPair) {
@@ -259,8 +226,7 @@ export async function findBestJointLoadoutV3(
   };
 
   const seedResultsFor = createSeedResults({
-    options, contexts, commonSlotProjections, objective,
-    enableSharedMateriaCompensation, assertWithinBudget,
+    options, contexts, commonSlotProjections,
   });
   const scoreSeed = (
     fixed: ReadonlyMap<string, CommonChoice>,
@@ -357,7 +323,7 @@ export async function findBestJointLoadoutV3(
       for (const seed of seedCandidates) {
         if (stopAtProvenCeiling) break;
         mutable.outerNodes++;
-        const directResults = seedResultsFor(seed.fixed, seed.foodChoice, true);
+        const directResults = seedResultsFor(seed.fixed, seed.foodChoice);
         if (directResults !== undefined) updateBest(exactScore(directResults), directResults);
         if (!stopAtProvenCeiling) {
           const candidateResults = await refineSeedJobs(
@@ -380,7 +346,7 @@ export async function findBestJointLoadoutV3(
       const useDirectJointWarmStart = contexts.length >= 4;
       if (useDirectJointWarmStart) {
         for (const seed of seedCandidates.slice(0, seedLimit)) {
-          const directResults = seedResultsFor(seed.fixed, seed.foodChoice, true);
+          const directResults = seedResultsFor(seed.fixed, seed.foodChoice);
           if (directResults !== undefined) {
             updateBest(exactScore(directResults), directResults);
             const weakestJobs = contexts.map((context, index) => {
@@ -423,7 +389,7 @@ export async function findBestJointLoadoutV3(
           directResults: ExactMipResult[] | undefined;
         }[] = [];
         for (const seed of seedCandidates.slice(0, seedLimit)) {
-          const directResults = seedResultsFor(seed.fixed, seed.foodChoice, true);
+          const directResults = seedResultsFor(seed.fixed, seed.foodChoice);
           if (directResults !== undefined) updateBest(exactScore(directResults), directResults);
           seedsToRefine.push({ seed, directResults });
           if (stopAtProvenCeiling) break;
@@ -493,9 +459,6 @@ export async function findBestJointLoadoutV3(
       ...(options.ratioUpperPairPolicy === undefined
         ? {}
         : { ratioUpperPairPolicy: options.ratioUpperPairPolicy }),
-      ...(options.sharedAccessoryPairDominance === true
-        ? { sharedAccessoryPairDominance: true }
-        : {}),
       ...(initialResults.length === contexts.length ? { initialResults } : {}),
       maxSearchMs: remainingMs,
       ...(onSolverProgress === undefined ? {} : {
@@ -507,10 +470,6 @@ export async function findBestJointLoadoutV3(
       ...(options.onProgress === undefined ? {} : { onProgress: options.onProgress }),
       isCancelled: cancellationRequested,
     };
-    if (options.sharedAccessoryPairDominance === true &&
-      hasSharedAccessoryPairDominancePath(options)) {
-      markSharedAccessoryPairDominancePath(jointOptions);
-    }
     const joint = stopAtProvenCeiling || exactSharedDomainProof
       ? undefined
       : await findBestJointFactorMip(jointOptions);

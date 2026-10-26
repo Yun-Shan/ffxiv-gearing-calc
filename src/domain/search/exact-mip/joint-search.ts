@@ -16,12 +16,8 @@ import { prepareJointCandidateBounds } from "./joint-candidate-bounds.ts";
 import { assembleJointRatioEnvelope } from "./joint-ratio-envelope.ts";
 import { createJointCandidateProofs } from "./joint-candidate-proofs.ts";
 import { createJointSharedBounds } from "./joint-shared-bounds.ts";
-import { prepareJointAccessoryDominance } from "./joint-accessory-dominance.ts";
 import { createJointFactorCuts } from "./joint-factor-cuts.ts";
 import type { ExactMipResult } from "./types.ts";
-import { canUseSharedAccessoryPairDominance } from "../shared-accessory-pair-dominance-policy.ts";
-import { hasSharedAccessoryPairDominancePath } from "../shared-accessory-pair-dominance-policy.ts";
-import { hasCanonicalEvaluatorCandidateUpperBound } from "../exact-mip-candidate-upper-bound.ts";
 import { throwIfCancelled } from "../cancellation.ts";
 import { emitProfileEvent } from "../core/diagnostics.ts";
 import { getMemoryUsageSnapshot } from "../memory-usage.ts";
@@ -50,31 +46,8 @@ export async function findBestJointFactorMip(
   const isCancelled =
     options.isCancelled ??
     (() => options.jobs.some((job) => job.options.isCancelled?.() === true));
-  const sharedAccessoryPairDominanceEnabled =
-    canUseSharedAccessoryPairDominance({
-      trustedPolicyPath: hasSharedAccessoryPairDominancePath(options),
-      requested: options.sharedAccessoryPairDominance === true,
-      jobs: options.jobs.map(({ id, options: jobOptions }) => ({
-        id,
-        job: jobOptions.job,
-        objective: jobOptions.objective,
-        hasCanonicalEvaluator:
-          hasCanonicalEvaluatorCandidateUpperBound(jobOptions),
-        hasCustomAttributeExtractor:
-          jobOptions.equipmentAttributeExtractor !== undefined,
-        hasConstraints: Object.values(jobOptions.constraints ?? {}).some(
-          (value) => value !== undefined,
-        ),
-      })),
-      commonSlots: options.commonSlots,
-      hasCommonSlotProjections:
-        (options.commonSlotProjections?.length ?? 0) > 0,
-      sharedFood: options.sharedFood,
-      objective: options.objective,
-      canonicalSharedRingPair: options.canonicalSharedRingPair === true,
-    });
   const identity = prepareJointIdentity(options);
-  const { projections, originalSelectionIdentity } = identity;
+  const { originalSelectionIdentity } = identity;
   const preparation = await prepareJointJobs(options, identity, isCancelled);
   if (preparation === undefined) return undefined;
   const {
@@ -124,7 +97,7 @@ export async function findBestJointFactorMip(
     ratioUpperBoundPairCutCount,
     ratioUpperBoundPairPreprocessingWork,
   } = ratioEnvelope;
-  // 延迟读取候选证明谓词，保留共享上界、支配预处理和证明缓存的原初始化顺序。
+  // 延迟读取候选证明谓词，保留共享上界与证明缓存的初始化顺序。
   const sharedBounds = createJointSharedBounds(
     options,
     preparedJobs,
@@ -136,25 +109,6 @@ export async function findBestJointFactorMip(
     },
     { jointPreprocessingBudgetBaseMs, isCancelled, jointTimeLimitReached },
   );
-  const accessoryDominance = prepareJointAccessoryDominance(
-    sharedAccessoryPairDominanceEnabled,
-    preparedJobs,
-    assembled,
-    projections,
-    jointPreprocessingBudgetBaseMs,
-    isCancelled,
-  );
-  const {
-    sharedAccessoryPairDominanceCandidateCount,
-    sharedAccessoryPairDominanceComparisons,
-    sharedAccessoryPairDominanceCuts,
-    sharedAccessoryPairDominancePreprocessingMs,
-    sharedAccessoryPairDominanceMaximumCuts,
-    sharedAccessoryPairDominanceMaximumComparisons,
-    sharedAccessoryPairDominancePreprocessingBudgetMs,
-    sharedAccessoryPairDominanceLimitReached,
-    sharedAccessoryPairDominanceCandidateUpperBound,
-  } = accessoryDominance;
   const factorCuts = createJointFactorCuts(
     options,
     preparedJobs,
@@ -258,22 +212,6 @@ export async function findBestJointFactorMip(
         ratioUpperBoundPairCuts: ratioUpperBoundPairCutCount,
         ratioUpperBoundPairPreprocessingWork,
         ratioUpperBoundPairPolicy: options.ratioUpperPairPolicy ?? "default",
-        sharedAccessoryPairDominancePolicy: sharedAccessoryPairDominanceEnabled
-          ? "strict-with-safe-replacement"
-          : "disabled",
-        sharedAccessoryPairDominanceCandidateUpperBound:
-          sharedAccessoryPairDominanceCandidateUpperBound.toString(),
-        sharedAccessoryPairDominanceCandidates:
-          sharedAccessoryPairDominanceCandidateCount,
-        sharedAccessoryPairDominanceComparisons,
-        sharedAccessoryPairDominanceCuts,
-        sharedAccessoryPairDominanceMaximumCuts,
-        sharedAccessoryPairDominanceMaximumComparisons,
-        sharedAccessoryPairDominancePreprocessingMs,
-        sharedAccessoryPairDominancePreprocessingBudgetMs,
-        sharedAccessoryPairDominanceLimitReached: Number(
-          sharedAccessoryPairDominanceLimitReached,
-        ),
         sharedPairCandidateUpperBound:
           sharedBounds.sharedPairCandidateUpperBound.toString(),
         sharedPairCandidateCount: sharedBounds.sharedPairCandidateCount,
@@ -581,22 +519,6 @@ export async function findBestJointFactorMip(
     ratioUpperBoundPairCuts: ratioUpperBoundPairCutCount,
     ratioUpperBoundPairPreprocessingWork,
     ratioUpperBoundPairPolicy: options.ratioUpperPairPolicy ?? "default",
-    sharedAccessoryPairDominancePolicy: sharedAccessoryPairDominanceEnabled
-      ? "strict-with-safe-replacement"
-      : "disabled",
-    sharedAccessoryPairDominanceCandidateUpperBound:
-      sharedAccessoryPairDominanceCandidateUpperBound.toString(),
-    sharedAccessoryPairDominanceCandidates:
-      sharedAccessoryPairDominanceCandidateCount,
-    sharedAccessoryPairDominanceComparisons,
-    sharedAccessoryPairDominanceCuts,
-    sharedAccessoryPairDominanceMaximumCuts,
-    sharedAccessoryPairDominanceMaximumComparisons,
-    sharedAccessoryPairDominancePreprocessingMs,
-    sharedAccessoryPairDominancePreprocessingBudgetMs,
-    sharedAccessoryPairDominanceLimitReached: Number(
-      sharedAccessoryPairDominanceLimitReached,
-    ),
     sharedAssignmentPrefixSearchUsed: Number(
       sharedBounds.sharedAssignmentPrefixSearchUsed,
     ),

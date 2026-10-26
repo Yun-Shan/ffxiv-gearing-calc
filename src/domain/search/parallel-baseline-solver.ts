@@ -152,8 +152,6 @@ export async function solveSerializedBaseline(
     ...(request.resourceBudgetCandidateProfile === undefined
       ? {}
       : { resourceBudgetCandidateProfile: request.resourceBudgetCandidateProfile }),
-    ...(request.primaryResourceSupports === true ? { primaryResourceSupports: true as const } : {}),
-    ...(request.mainStatResourceSupport === true ? { mainStatResourceSupport: true as const } : {}),
     ...(request.enableCanonicalEvaluatorCandidateUpperBound === true
       ? { enableCanonicalEvaluatorCandidateUpperBound: true as const }
       : {}),

@@ -55,23 +55,9 @@ const blmProfile: OptimizationConfig = {
 
 let prepared: Prepared;
 
-function config(
-  profile: OptimizationConfig,
-  overrides: Partial<OptimizationConfig> = {},
-): OptimizationConfig {
-  return { ...profile, ...overrides };
-}
-
-async function run(profile: OptimizationConfig): Promise<void> {
-  await runOptimizationLocally(profile);
-}
-
 beforeEach(() => {
   prepared = {
-    options: {
-      candidateResourceSupportProfile: "full",
-      mainStatResourceSupport: false,
-    },
+    options: { candidateResourceSupportProfile: "balanced" },
     slots: [{ candidates: [{}] }],
     foods: [{}],
     searchedCandidates: 1,
@@ -81,7 +67,7 @@ beforeEach(() => {
   mocks.findBestLoadoutExactMip.mockResolvedValue(undefined);
 });
 
-describe("single-search measured resource profiles", () => {
+describe("single-search coordination", () => {
   it("measures candidate preparation, solving, reconstruction and equivalent gear from the domain entry", async () => {
     let now = 100;
     const clock = vi.spyOn(performance, "now").mockImplementation(() => now);
@@ -104,75 +90,13 @@ describe("single-search measured resource profiles", () => {
       clock.mockRestore();
     }
   });
-  it.each([
-    ["BRD DPS profile", brdProfile, true],
-    ["BLM item-level profile", blmProfile, false],
-  ] as const)(
-    "enables the compact profile only for the exact %s",
-    async (_label, profile, mainStat) => {
-      await run(profile);
+  it.each([brdProfile, blmProfile])("uses prepared solver options for $jobId", async (profile) => {
+    const originalOptions = structuredClone(prepared.options);
+    await runOptimizationLocally(profile);
 
-      expect(prepared.options.candidateResourceSupportProfile).toBe("compact");
-      expect(prepared.options.mainStatResourceSupport).toBe(mainStat);
-    },
-  );
-
-  const sharedNearMisses: [string, Partial<OptimizationConfig>][] = [
-    ["a GCD choice", { gcdChoices: [2.5] }],
-    ["a minimum speed", { speedMin: 400 }],
-    ["a maximum speed", { speedMax: 600 }],
-    ["an excluded source", { excludedSources: ["test"] }],
-    ["an excluded gear ID", { excludedGearIds: [1] }],
-    ["forced gear", { forcedGear: { weapon: 1 } }],
-    ["selected food", { foodId: 1 }],
-  ];
-
-  it.each(sharedNearMisses)(
-    "keeps the %s configuration on the full profile",
-    async (_label, overrides) => {
-      await run(config(brdProfile, overrides));
-      expect(prepared.options.candidateResourceSupportProfile).toBe("full");
-      expect(prepared.options.mainStatResourceSupport).toBe(false);
-
-      prepared.options.candidateResourceSupportProfile = "full";
-      prepared.options.mainStatResourceSupport = false;
-      await run(config(blmProfile, overrides));
-      expect(prepared.options.candidateResourceSupportProfile).toBe("full");
-      expect(prepared.options.mainStatResourceSupport).toBe(false);
-    },
-  );
-
-  it.each([
-    ["another job", { jobId: "MCH" }],
-    ["a lower minimum item level", { minItemLevel: 769 }],
-    ["a higher maximum item level", { maxItemLevel: 796 }],
-    ["an active sync target", { sync: { kind: "jobLevel", value: 90 } }],
-    ["the damage objective", { objective: "damage" }],
-  ] as const)(
-    "does not use the BRD profile for %s",
-    async (_label, overrides) => {
-      await run(config(brdProfile, overrides));
-      expect(prepared.options.candidateResourceSupportProfile).toBe("full");
-      expect(prepared.options.mainStatResourceSupport).toBe(false);
-    },
-  );
-
-  it.each([
-    ["another job", { jobId: "MCH" }],
-    ["a lower minimum item level", { minItemLevel: 729 }],
-    ["a higher maximum item level", { maxItemLevel: 796 }],
-    ["no sync target", { sync: undefined }],
-    ["a job-level target", { sync: { kind: "jobLevel", value: 80 } }],
-    ["another item-level target", { sync: { kind: "itemLevel", value: 736 } }],
-    ["the DPS objective", { objective: "dps" }],
-  ] as const)(
-    "does not use the BLM profile for %s",
-    async (_label, overrides) => {
-      await run(config(blmProfile, overrides));
-      expect(prepared.options.candidateResourceSupportProfile).toBe("full");
-      expect(prepared.options.mainStatResourceSupport).toBe(false);
-    },
-  );
+    expect(mocks.findBestLoadoutExactMip).toHaveBeenCalledWith(prepared.options);
+    expect(prepared.options).toEqual(originalOptions);
+  });
 
   it("returns before solving when prepared gear or food candidates are empty", async () => {
     prepared.slots = [{ candidates: [] }];
