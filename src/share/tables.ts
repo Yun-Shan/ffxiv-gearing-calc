@@ -52,26 +52,25 @@ export function writeSource(w: Writer, source: ShareSource): void {
   if (typeof source !== "string") {
     check(isUnknownSource(source));
     uint(source.unknownSourceId);
-    check(source.unknownSourceId < 2 ** 52);
-    w.u(2 * source.unknownSourceId);
+    check(source.unknownSourceId < Number.MAX_SAFE_INTEGER);
+    w.u(source.unknownSourceId + 1);
     return;
   }
   const id = sourceIds.get(source);
   if (id !== undefined) {
-    w.u(2 * id);
+    w.u(id + 1);
     return;
   }
   const bytes = new TextEncoder().encode(source);
-  w.u(1);
+  w.u(0);
   w.u(bytes.length);
   w.append(bytes);
 }
 export function readSource(r: Reader): ShareSource {
   const tag = r.u();
-  if (tag === 1) {
+  if (tag === 0) {
     const count = r.count(r.remaining);
     return new TextDecoder("utf-8", { fatal: true }).decode(r.take(count));
   }
-  check(tag % 2 === 0, "来源保留码");
-  return sourceById(tag / 2);
+  return sourceById(tag - 1);
 }

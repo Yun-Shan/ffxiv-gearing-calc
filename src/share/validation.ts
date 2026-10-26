@@ -68,7 +68,8 @@ export function validateConfigs(
     for (const source of c.excludedSources ?? [])
       check(
         typeof source === "string" ||
-          (isUnknownSource(source) && source.unknownSourceId < 2 ** 52),
+          (isUnknownSource(source) &&
+            source.unknownSourceId < Number.MAX_SAFE_INTEGER),
         "来源字段无效",
       );
     for (const key of ["speedMin", "speedMax", "minTenacity"] as const)

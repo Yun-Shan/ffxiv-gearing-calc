@@ -157,7 +157,7 @@ describe("missing catalog references", () => {
       expect(encodeShareBinary(view.document)).toEqual(bytes);
     },
   );
-  it("uses source and duty zero without a sentinel offset", () => {
+  it("keeps source and duty identities zero based after decoding", () => {
     expect(sourceById(0)).toBe(
       gameData.gearSources[gameData.shareTables.sourceRefs[0]],
     );
@@ -174,6 +174,7 @@ describe("missing catalog references", () => {
       excludedSources: [sourceById(0)],
     });
     const decoded = documentFromToken(shareUrl(doc).slice(SHARE_PREFIX.length));
+    expect(decoded.configs[0].excludedSources).toEqual([sourceById(0)]);
     expect(decoded.configs[0].syncDuty).toBe(option.name);
     expect(decoded.configs[0].sync).toEqual(option.target);
   });
@@ -194,6 +195,22 @@ describe("missing catalog references", () => {
       restoreDocument(sample("nin-sync90")).results[0].stats,
     );
     expect(shareUrl(view.document)).toBe(url);
+  });
+  it("preserves the largest source identity and rejects ID + 1 overflow", () => {
+    const doc = sample("nin-sync90");
+    doc.configs[0].excludedSources = [
+      { unknownSourceId: Number.MAX_SAFE_INTEGER - 1 },
+    ];
+    const bytes = encodeShareBinary(doc);
+    const decoded = decodeShareBinary(bytes);
+    expect(decoded.configs[0].excludedSources).toEqual(
+      doc.configs[0].excludedSources,
+    );
+    expect(encodeShareBinary(decoded)).toEqual(bytes);
+    doc.configs[0].excludedSources = [
+      { unknownSourceId: Number.MAX_SAFE_INTEGER },
+    ];
+    expect(() => encodeShareBinary(doc)).toThrow(/来源/);
   });
   it("rejects an unresolved duty even with unknown sources", () => {
     const doc = sample("blm-sync"),
