@@ -1,0 +1,72 @@
+[
+  {
+    "label": "blm-sync-duty-15",
+    "sourceLabel": "blm-sync",
+    "kind": "duty-metadata-only",
+    "duty": {
+      "id": 10,
+      "name": "光暗未来绝境战",
+      "target": {
+        "kind": "itemLevel",
+        "value": 735
+      }
+    },
+    "binary": "AQAi0tACBgYsTAZMTAYMTAYMLAYMDJgLAAo-CgWyC8kTAQGJFI8KAhbnhBcBABkA2gVBGAoAAYYwAA"
+  },
+  {
+    "label": "blm-sync-duty-31",
+    "sourceLabel": "blm-sync",
+    "kind": "duty-metadata-only",
+    "duty": {
+      "id": 9,
+      "name": "暗黑之云诛灭战",
+      "target": {
+        "kind": "itemLevel",
+        "value": 735
+      }
+    },
+    "binary": "AQAi0tACBgYsTAZMTAYMTAYMLAYMDJgLAAo-CgWyC8kTAQGJFI8KAhbnhBcBABkA2gVBGAkAAYYwAA"
+  },
+  {
+    "label": "pld-low-sync-duty-18",
+    "sourceLabel": "pld-low-sync",
+    "kind": "duty-metadata-only",
+    "duty": {
+      "id": 21,
+      "name": "亚历山大绝境战",
+      "target": {
+        "kind": "itemLevel",
+        "value": 475
+      }
+    },
+    "binary": "AQCdCeHHAQYGSGgGSEg-SEhHR0cCaPArMIMBgwEY8AsjNC8LACf_BsIDAS6iHAIw6hURAhbK8H0BABMAwgNVGRUA_bgBAA"
+  },
+  {
+    "label": "whm-level90-duty-9",
+    "sourceLabel": "whm-level90",
+    "kind": "duty-metadata-only",
+    "duty": {
+      "id": 14,
+      "name": "零式万魔殿",
+      "target": {
+        "kind": "jobLevel",
+        "value": 90
+      }
+    },
+    "binary": "AQCcAce5AgMGCooGioqVCgACCw8zDgXDBdNNAgIGabABABgDigWRARkOAJVHAA"
+  },
+  {
+    "label": "dex-tradeoff-duty-31",
+    "sourceLabel": "dex-tradeoff",
+    "kind": "duty-metadata-only",
+    "duty": {
+      "id": 9,
+      "name": "暗黑之云诛灭战",
+      "target": {
+        "kind": "itemLevel",
+        "value": 735
+      }
+    },
+    "binary": "QQCbBNDQAgUGbGwGTEwGTGwGLGyWEQAKPgoF7B4BAQEBAQEBAo4SmQwIAgMsiWEDqwIAKQDaBUEZCQABBB_ADz9AjTCfas0TMcNmFP4jMQEA"
+  }
+]

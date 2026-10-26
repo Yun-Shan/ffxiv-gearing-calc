@@ -160,7 +160,7 @@ describe("sync GCD query", () => {
     const query = (allocation: number): OptimizationConfig => ({
       ...config,
       sync: undefined,
-      minItemLevel: 1,
+      minItemLevel: 90,
       maxItemLevel: 795,
       forcedGear: {
         ...forcedGear,
@@ -220,7 +220,7 @@ describe("sync GCD query", () => {
     expect(() => findFeasibleGcdsLocally({
       ...config,
       jobId: "BLM",
-      minItemLevel: 1,
+      minItemLevel: 90,
       maxItemLevel: 795,
       forcedGear: {},
       minTenacity: 1,
@@ -254,7 +254,7 @@ describe("sync GCD query", () => {
     const automaticConfig = {
       ...config,
       sync: undefined,
-      minItemLevel: 1,
+      minItemLevel: 90,
       maxItemLevel: 795,
     };
     const resistanceTiers = findFeasibleGcdsLocally({
@@ -282,7 +282,7 @@ describe("sync GCD query", () => {
     const automaticConfig = {
       ...config,
       sync: undefined,
-      minItemLevel: 1,
+      minItemLevel: 90,
       maxItemLevel: 795,
     };
 
@@ -368,7 +368,7 @@ describe("sync GCD query", () => {
     const specialConfig = {
       ...config,
       sync: undefined,
-      minItemLevel: 1,
+      minItemLevel: 90,
       maxItemLevel: 795,
       forcedGear: {},
       maximizeTenacity: true,
@@ -433,7 +433,7 @@ describe("GCD query without available slot candidates", () => {
   it("still returns tiers when the exclusions leave every slot with candidates", () => {
     const tiers = findFeasibleGcdsLocally({
       ...beastmaster,
-      minItemLevel: 0,
+      minItemLevel: 90,
       excludedSources: ["斗兽奇弈"],
     });
     expect(tiers.length).toBeGreaterThan(0);

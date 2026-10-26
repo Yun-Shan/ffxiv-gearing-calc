@@ -75,7 +75,7 @@ export interface ReferenceGearset {
  * Food is encoded as a regular gear entry, as supported by Asvel's format.
  */
 export function resultReferenceUrl(
-  result: OptimizationResult,
+  result: Pick<OptimizationResult, "calculationLevel" | "gear" | "food">,
   config: OptimizationConfig,
 ): string | undefined {
   const calculationLevel = result.calculationLevel;

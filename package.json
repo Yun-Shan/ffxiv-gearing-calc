@@ -14,7 +14,7 @@
     "data:format": "node scripts/describe-binary-format.mjs",
     "data:format:check": "node scripts/describe-binary-format.mjs --check",
     "data:benchmark": "node --expose-gc scripts/benchmark-data-binary.mjs",
-    "test:data": "node --test --test-concurrency=2 scripts/node-tests/local-env.test.mjs scripts/node-tests/mcp-query-validation.test.mjs scripts/node-tests/mcp-query-presets.test.mjs scripts/node-tests/mcp-lumina-query.test.mjs scripts/node-tests/mcp-weapon-damage.test.mjs scripts/node-tests/gear-catalog-policy.test.mjs scripts/node-tests/sync-level-duties.test.mjs scripts/node-tests/bin-ui-metadata.test.mjs scripts/node-tests/data-update.test.mjs scripts/node-tests/data-update-modules.test.mjs && vitest run src/data/binary/codec.test.ts",
+    "test:data": "node --test --test-concurrency=2 scripts/node-tests/local-env.test.mjs scripts/node-tests/mcp-query-validation.test.mjs scripts/node-tests/mcp-query-presets.test.mjs scripts/node-tests/mcp-lumina-query.test.mjs scripts/node-tests/mcp-weapon-damage.test.mjs scripts/node-tests/gear-catalog-policy.test.mjs scripts/node-tests/sync-level-duties.test.mjs scripts/node-tests/bin-ui-metadata.test.mjs scripts/node-tests/data-update.test.mjs scripts/node-tests/data-update-modules.test.mjs scripts/node-tests/share-tables.test.mjs && vitest run src/data/binary",
     "test:v3:runner": "node --test scripts/node-tests/run-v3.test.mjs",
     "data:test:v3": "node --max-old-space-size=2560 --experimental-strip-types scripts/node-tests/run-v3.mjs"
   },

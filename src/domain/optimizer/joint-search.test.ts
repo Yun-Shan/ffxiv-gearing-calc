@@ -44,7 +44,7 @@ function job(jobId: JobId, overrides: Partial<OptimizationConfig> = {}): Optimiz
     clanIndex: 0,
     objective: "damage",
     jobId,
-    minItemLevel: 1,
+    minItemLevel: 90,
     maxItemLevel: 999,
     maximizeTenacity: false,
     excludedSources: [],
@@ -139,13 +139,13 @@ describe("joint search result validation", () => {
     const expectedJobs = [
       {
         jobId: "MCH",
-        minItemLevel: 1,
+        minItemLevel: 90,
         maxItemLevel: 999,
         sync,
       },
       {
         jobId: "VPR",
-        minItemLevel: 1,
+        minItemLevel: 90,
         maxItemLevel: 999,
         sync,
       },

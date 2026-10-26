@@ -21,7 +21,7 @@ function fixed(jobId: JobId, weaponId?: number): OptimizationConfig {
     forcedGear: {},
     foodId: 0,
   };
-  if (weaponId !== undefined) config.minItemLevel = 1;
+  if (weaponId !== undefined) config.minItemLevel = 90;
   const rings = new Set<number>();
   for (const slot of slotsForJob(jobId)) {
     const pool = gearOptionsFor(config, slot).toSorted(

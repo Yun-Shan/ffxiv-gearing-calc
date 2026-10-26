@@ -2,6 +2,39 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createMcpQueryHelpers } from "../mcp-lumina/query-helpers.mjs";
 import { parseJsonRpcBuffer } from "../mcp-lumina/transport.mjs";
+import { initializeMcpQuery } from "../mcp-lumina/orchestrate-query.mjs";
+
+test("data query refreshes EXDSchema successfully before health or any data reads", async () => {
+  const calls = [];
+  const client = {
+    initialize: async () => calls.push("initialize"),
+    callTool: async name => { calls.push(name); return { value: name === "refresh_schema" ? { refreshed: true } : { status: "ok", gameVersion: "fixture-version", validatedVersion: "fixture-version", schemaAvailable: true, warnings: [] } }; },
+  };
+  await initializeMcpQuery(client);
+  assert.deepEqual(calls, ["initialize", "refresh_schema", "health"]);
+  for (const refresh of [undefined, {}, { refreshed: false }, { refreshed: "true" }, { refreshed: 1 }]) {
+    calls.length = 0;
+    client.callTool = async name => { calls.push(name); return { value: refresh }; };
+    await assert.rejects(initializeMcpQuery(client), /刷新未成功/);
+    assert.deepEqual(calls, ["initialize", "refresh_schema"]);
+  }
+});
+
+test("a refresh tool error or transport failure stops before health even with a success payload", async () => {
+  for (const failure of ["tool", "transport"]) {
+    const calls = [];
+    const client = {
+      initialize: async () => calls.push("initialize"),
+      callTool: async name => {
+        calls.push(name);
+        if (failure === "transport") throw new Error("refresh transport failure");
+        return { value: { refreshed: true }, raw: { isError: true } };
+      },
+    };
+    await assert.rejects(initializeMcpQuery(client), /刷新未成功|transport failure/);
+    assert.deepEqual(calls, ["initialize", "refresh_schema"]);
+  }
+});
 
 test("JSON-RPC parser buffers Content-Length frames and newline messages", () => {
   const state = { buffer: "" };

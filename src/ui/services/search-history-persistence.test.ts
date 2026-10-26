@@ -356,7 +356,7 @@ describe("history list tolerates individual invalid payloads", () => {
     });
     const second = await service.createSearchHistory({
       kind: "single",
-      config: { ...makeConfig("SAM"), minItemLevel: 10 },
+      config: { ...makeConfig("SAM"), minItemLevel: 100 },
       dataVersion: "test",
       startedAtISO: "2026-10-18T00:00:02.000Z",
     });
@@ -558,7 +558,7 @@ describe("completed-only history", () => {
     ] as const).entries()) {
       const record = await service.createSearchHistory({
         kind: "single",
-        config: { ...makeConfig("SAM"), minItemLevel: index + 1 },
+        config: { ...makeConfig("SAM"), minItemLevel: 90 + index },
         dataVersion: "test",
       });
       await service.finishSearchHistory(

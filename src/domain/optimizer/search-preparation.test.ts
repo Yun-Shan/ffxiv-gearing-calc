@@ -10,8 +10,8 @@ const baseConfig: OptimizationConfig = {
   clanIndex: 0,
   objective: "damage",
   jobId: "SAM",
-  minItemLevel: 0,
-  maxItemLevel: 0,
+  minItemLevel: 90,
+  maxItemLevel: 90,
   maximizeTenacity: false,
   excludedSources: [],
   forcedGear: {},
@@ -24,7 +24,7 @@ describe("search preparation edge cases", () => {
     const prepared = prepareSearch(
       {
         ...baseConfig,
-        minItemLevel: 0,
+        minItemLevel: 90,
         maxItemLevel: 800,
         sync: { kind: "jobLevel", value: 90 },
       },

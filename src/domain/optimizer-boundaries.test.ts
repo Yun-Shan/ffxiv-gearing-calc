@@ -33,7 +33,7 @@ function configFor(jobId: JobId, calculationLevel?: number): OptimizationConfig 
     sync: calculationLevel !== undefined && calculationLevel < 100
       ? { kind: "jobLevel", value: calculationLevel }
       : undefined,
-    minItemLevel: 0,
+    minItemLevel: 90,
     maxItemLevel,
     maximizeTenacity: false,
     excludedSources: [],
@@ -246,7 +246,7 @@ describe("optimizer runtime boundaries", () => {
   it("keeps formula level at the job cap for real level-89 and level-99 candidates", async () => {
     const level89Selection = forceOnePerSlot({
       ...configFor("SAM", 100),
-      minItemLevel: 0,
+      minItemLevel: 90,
       maxItemLevel: 548,
     });
     const level89Config = { ...level89Selection, maxItemLevel: 690 };
@@ -257,7 +257,7 @@ describe("optimizer runtime boundaries", () => {
 
     const level99Selection = forceOnePerSlot({
       ...configFor("SAM", 100),
-      minItemLevel: 0,
+      minItemLevel: 90,
       maxItemLevel: 678,
     });
     const level99Config = { ...level99Selection, maxItemLevel };

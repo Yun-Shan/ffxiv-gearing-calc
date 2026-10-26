@@ -23,7 +23,7 @@ function configFor(
     clanIndex: 0,
     objective: "damage",
     jobId,
-    minItemLevel: 0,
+    minItemLevel: 90,
     maxItemLevel: 9999,
     maximizeTenacity: false,
     foodId: 0,

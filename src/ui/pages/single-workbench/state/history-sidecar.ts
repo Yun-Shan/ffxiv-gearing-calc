@@ -12,7 +12,6 @@ export function startHistorySidecar(
   dataVersion: string,
   startedAt: number,
   warn: (message: string) => void,
-  onId: (id: string) => void,
 ) {
   let saved: Promise<SearchHistoryRecord | undefined> =
     Promise.resolve(undefined);
@@ -28,15 +27,10 @@ export function startHistorySidecar(
       dataVersion,
       startedAtISO: new Date(startedAt).toISOString(),
       result,
-    })
-      .then((record) => {
-        onId(record.id);
-        return record;
-      })
-      .catch((error: unknown) => {
-        warning(error);
-        return undefined;
-      });
+    }).catch((error: unknown) => {
+      warning(error);
+      return undefined;
+    });
     writes = saved;
   };
   const replace = (result: OptimizationResult) => {
@@ -47,4 +41,3 @@ export function startHistorySidecar(
   };
   return Object.assign(settle, { replace });
 }
-export type SingleRunOutcome = { result?: OptimizationResult; error?: unknown };

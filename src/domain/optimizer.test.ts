@@ -97,7 +97,7 @@ describe("optimizer with imported game data", () => {
 
   it("rejects unavailable food and impossible constraints", async () => {
     expect((await optimize({ ...base, foodId: 999999999 }))).toBeUndefined();
-    expect((await optimize({ ...base, gcdChoices: [9] }))).toBeUndefined();
+    await expect(optimize({ ...base, gcdChoices: [9] })).rejects.toThrow(/GCD/);
     expect((await optimize({ ...base, jobId: "WAR", minTenacity: 999_999 }))).toBeUndefined();
   });
 

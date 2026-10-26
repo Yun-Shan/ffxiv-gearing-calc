@@ -1,3 +1,6 @@
+import { ShareResultButton } from "@/ui/components/results/core-metric-bar/components/share-result-button/ShareResultButton";
+import type { ShareInput } from "@/share/types";
+import type { JointResultView } from "@/ui/services/workbench-result";
 import { resultReferenceUrl } from "@/ui/services/reference-gearset-share";
 import { GameIcon } from "@/ui/components/game-icon/GameIcon";
 import { useEffect, useRef } from "react";
@@ -6,7 +9,6 @@ import {
   jobSchemas,
   type JobId,
   type JointOptimizationConfig,
-  type JointOptimizationResult,
   type OptimizationConfig,
 } from "@/domain";
 import {
@@ -82,7 +84,7 @@ function SharedResultContent({
   result,
 }: {
   config: JointOptimizationConfig;
-  result: JointOptimizationResult;
+  result: JointResultView;
 }) {
   const summaries = resultSummaryRows(config, result);
   const rows = sharedGearRows(result, config);
@@ -149,13 +151,14 @@ function SharedResultContent({
 
 function jobMetricEntries(
   jobId: JobId,
-  result: JointOptimizationResult,
+  result: JointResultView,
 ): ReturnType<typeof buildResultMetricEntry>[] {
   const joint = result.jobResults[jobId];
   return joint
     ? [buildResultMetricEntry(joint, "joint-" + jobId, "联合配装")]
     : [];
 }
+
 
 function JointGcdRuntime({
   runtimeState,
@@ -235,25 +238,25 @@ function JobTab({
   jobId,
   config,
   result,
+  linkShareData,
 }: {
   commonSlots: JointOptimizationConfig["commonSlots"];
   jobId: JobId;
   config: OptimizationConfig;
-  result: JointOptimizationResult;
+  result: JointResultView;
+  linkShareData: ShareInput;
 }) {
   const jobResult = result.jobResults[jobId];
   if (!jobResult) return <p>结果没有包含该职业的配装明细。</p>;
   const rows = buildResultGearTableRows(jobResult, config).map((row) => {
-    if (
-      row.item.kind !== "gear" ||
-      !isSlotShared(row.item.slot, commonSlots)
-    )
+    if (row.item.kind !== "gear" || !isSlotShared(row.item.slot, commonSlots))
       return row;
     return { ...row, marker: "共享" };
   });
   return (
     <div className={styles.jobResult}>
       <CoreMetricBar
+        linkShareData={linkShareData}
         shareData={{
           jobId,
           effects: jobResult.effects,
@@ -261,13 +264,18 @@ function JobTab({
           summaryRows: effectiveConfigRows(config, jobResult.calculationLevel),
         }}
         objective={config.objective}
-        entries={jobMetricEntries(jobId, result).map(entry => ({ ...entry, clanIndex: config.clanIndex, referenceUrl: resultReferenceUrl(jobResult, config) }))}
+        entries={jobMetricEntries(jobId, result).map((entry) => ({
+          ...entry,
+          clanIndex: config.clanIndex,
+          referenceUrl: resultReferenceUrl(jobResult, config),
+        }))}
         showTenacity={jobSchemas[jobId].role === "tank"}
       />
       <GearTable rows={rows} jobId={jobId} />
     </div>
   );
 }
+
 
 export function SelectionMain({
   selectedJobs,
@@ -506,12 +514,14 @@ export function ProgressMain({
 export function ResultMain({
   config,
   result,
+  dataVersion,
   selectedTab,
   setSelectedTab,
   onReturnSelection,
 }: {
   config: JointOptimizationConfig;
-  result: JointOptimizationResult;
+  result: JointResultView;
+  dataVersion: string;
   selectedTab: string;
   setSelectedTab(value: string): void;
   onReturnSelection(): void;
@@ -534,14 +544,52 @@ export function ResultMain({
     else if (selectedEnd > visibleEnd)
       list.scrollTo({ left: selectedEnd - list.clientWidth });
   }, [selectedTab]);
+  const linkShareData: ShareInput = {
+    mode: "joint",
+    config,
+    results: config.jobs.map((c) => result.jobResults[c.jobId]!),
+    baselines: config.jobs.map((c) => result.optima[c.jobId]!.score),
+    jointValue: result.value.approximate,
+    dataVersion,
+    elapsedMs: result.statistics.elapsedMs,
+  };
   return (
     <section className={styles.resultMain} aria-labelledby="joint-result-title">
       <header className={styles.resultHeading}>
         <div className={styles.titleRow}>
           <h1 id="joint-result-title">联合配装结果</h1>
-          <span className={styles.durationBadge}>耗时 {(result.statistics.elapsedMs / 1000).toFixed(1)} 秒</span>
+          <span className={styles.durationBadge}>
+            耗时 {(result.statistics.elapsedMs / 1000).toFixed(1)} 秒
+          </span>
+          {selectedTab === "shared" && (
+            <ShareResultButton
+              className={styles.returnButton}
+              linkData={linkShareData}
+              images={config.jobs.map((c) => ({
+                label: jobSchemas[c.jobId].name,
+                data: {
+                  jobId: c.jobId,
+                  effects: result.jobResults[c.jobId]!.effects,
+                  rows: buildResultGearTableRows(
+                    result.jobResults[c.jobId]!,
+                    c,
+                  ),
+                  summaryRows: effectiveConfigRows(
+                    c,
+                    result.jobResults[c.jobId]!.calculationLevel,
+                  ),
+                },
+              }))}
+            />
+          )}
         </div>
-        <button className={styles.returnButton} type="button" onClick={onReturnSelection}>重新选择职业</button>
+        <button
+          className={styles.returnButton}
+          type="button"
+          onClick={onReturnSelection}
+        >
+          重新选择职业
+        </button>
       </header>
       <Tabs.Root
         value={selectedTab}
@@ -573,7 +621,10 @@ export function ResultMain({
           ))}
         </Tabs.List>
         <Tabs.Panel className={styles.resultPanel} value="shared">
-          <SharedResultContent config={config} result={result} />
+          <SharedResultContent
+            config={config}
+            result={result}
+          />
         </Tabs.Panel>
         {config.jobs.map(({ jobId }) => (
           <Tabs.Panel className={styles.resultPanel} value={jobId} key={jobId}>
@@ -585,6 +636,7 @@ export function ResultMain({
                 makeConfig(jobId)
               }
               result={result}
+              linkShareData={linkShareData}
             />
           </Tabs.Panel>
         ))}
@@ -641,6 +693,7 @@ export function JointWorkbenchMain() {
       <ResultMain
         config={phase.snapshot.config}
         result={phase.result}
+        dataVersion={phase.snapshot.dataVersion}
         selectedTab={controller.resultTab}
         setSelectedTab={controller.setResultTab}
         onReturnSelection={controller.returnToSelection}

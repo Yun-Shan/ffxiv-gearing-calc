@@ -87,21 +87,21 @@ function gcdValidation(
         issue("gcd.speed.required", `请至少填写一个${speedLabel}边界。`, "gcd"),
       );
     }
-    if (gcd.min !== undefined && (!Number.isFinite(gcd.min) || gcd.min < 0)) {
+    if (gcd.min !== undefined && (!Number.isSafeInteger(gcd.min) || gcd.min < 0)) {
       issues.push(
         issue(
           "gcd.speed.min.finite",
-          `最低${speedLabel}必须是非负有限数值。`,
+          `最低${speedLabel}必须是非负安全整数。`,
           "gcd",
           "min",
         ),
       );
     }
-    if (gcd.max !== undefined && (!Number.isFinite(gcd.max) || gcd.max < 0)) {
+    if (gcd.max !== undefined && (!Number.isSafeInteger(gcd.max) || gcd.max < 0)) {
       issues.push(
         issue(
           "gcd.speed.max.finite",
-          `最高${speedLabel}必须是非负有限数值。`,
+          `最高${speedLabel}必须是非负安全整数。`,
           "gcd",
           "max",
         ),
@@ -151,6 +151,7 @@ export function validateSearchRangeDraft(
       issue("range.finite", "装备品级范围必须是安全整数。", ...pathPrefix),
     );
   }
+  if (range.minItemLevel < 90) rangeIssues.push(issue("range.minimum", "最低装备品级不能低于90。", ...pathPrefix, "minItemLevel"));
   if (range.minItemLevel > range.maxItemLevel) {
     rangeIssues.push(
       issue("range.order", "最低装备品级不能高于最高装备品级。", ...pathPrefix),
@@ -224,11 +225,11 @@ export function validateJobConditionDraft(
   }
   const minimum = draft.tank.strategy === "tenacity" ? draft.tank.minimumTenacity : undefined;
   const reduction = draft.tank.strategy === "reduction" ? draft.tank.minimumDamageReductionPercent : undefined;
-  if (minimum !== undefined && (!Number.isFinite(minimum) || minimum < 0)) {
+  if (minimum !== undefined && (!Number.isSafeInteger(minimum) || minimum < 0)) {
     tankIssues.push(
       issue(
         "tank.minimum.invalid",
-        "最低坚韧值必须是大于等于零的有限数值。",
+        "最低坚韧值必须是非负安全整数。",
         "tank",
         "minimumTenacity",
       ),
@@ -236,12 +237,12 @@ export function validateJobConditionDraft(
   }
   if (
     reduction !== undefined &&
-    (!Number.isFinite(reduction) || reduction < 0 || reduction > 100)
+    (!Number.isFinite(reduction) || reduction < 0 || reduction > 100 || Math.round(reduction * 10) / 10 !== reduction)
   ) {
     tankIssues.push(
       issue(
         "tank.reduction.invalid",
-        "最低减伤比例必须在 0 到 100 之间。",
+        "最低减伤比例必须在 0 到 100 之间，最多一位小数。",
         "tank",
         "minimumDamageReductionPercent",
       ),

@@ -63,13 +63,13 @@ export async function updateData({ upstreamRoot: upstreamRootOption, outputPath:
   const queryResult = await queryMcpLumina({ upstreamRoot: context.upstreamRoot });
   const mcpSnapshot = validateMcpQueryResult(queryResult);
   const built = await createPayload(mcpSnapshot, context);
-  const generated = await buildGeneratedData(built.payload, { outputPath: context.outputPath });
-  console.log(`剔除 ${built.excludedGearCounts.belowLevelAndItemLevel} 件同时满足穿戴等级低于 50 且品级低于 90 的装备，另剔除 ${built.excludedGearCounts.referenceSources} 件参考来源包含古董系列或军票的装备。`);
+  const generated = await buildGeneratedData(built.payload, { outputPath: context.outputPath, dutyMaxIds: built.dutyMaxIds });
+  console.log(`剔除 ${built.excludedGearCounts.belowLevelAndItemLevel} 件同时满足穿戴等级低于 50 且品级低于 90 的装备，另剔除 ${built.excludedGearCounts.referenceSources} 件参考来源命中排除规则的装备。`);
   console.log(
     `Imported ${generated.gearCount} gears, ${built.payload.foods.length} foods and ${supportedJobs.length} jobs from ${context.commit.slice(0, 12)}. ${built.mcpSummary}`,
   );
   console.log(`Generated ${context.outputPath} (${generated.bytes.byteLength} bytes); physical groups: ${JSON.stringify(generated.physicalGroupCounts)}; main-stat indexes: ${JSON.stringify(generated.mainStatIndexCounts)} (${generated.mainStatIndexBytes} bytes); binary sections: ${JSON.stringify(generated.sectionSizes)}.`);
-  return { payload: built.payload, generated, outputPath: context.outputPath };
+  return { payload: built.payload, dutyMaxIds: built.dutyMaxIds, generated, outputPath: context.outputPath };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href)

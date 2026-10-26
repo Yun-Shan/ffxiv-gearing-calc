@@ -2,6 +2,7 @@
 export function referenceGearSource(gear) {
   if (gear.obsolete === true) return "已废弃";
   const source = gear.source;
+  if (source?.startsWith("生产制作/")) return "生产制作";
   if (source?.endsWith("→雇员探险")) return "雇员探险";
   if (source === "点数/哲学→无限城古迹、日影地修炼所、野营地") return "迷宫挑战/无限城古迹、日影地修炼所、野营地";
   if (source?.endsWith("→诗学") || source?.endsWith("/诗学")) return "点数/诗学";
@@ -11,9 +12,17 @@ export function referenceGearSource(gear) {
   return source;
 }
 
+const excludedReferenceSourcePrefixes = [
+  "狼印战绩", "成就", "金碟币", "制作特定道具兑换", "采集特定道具兑换",
+];
+
 /** Match the original reference label before obsolete-source remapping. */
 export function excludeReferenceGearSource(gear) {
-  return gear.source?.includes("古董系列") === true || gear.source?.includes("军票") === true;
+  return gear.source?.includes("古董系列") === true ||
+    gear.source?.includes("军票") === true ||
+    excludedReferenceSourcePrefixes.some(
+      (prefix) => gear.source?.startsWith(prefix),
+    );
 }
 
 /** Keep either threshold boundary, using the final normalized game levels. */

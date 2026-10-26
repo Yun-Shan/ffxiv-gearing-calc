@@ -8,7 +8,7 @@ import { buildGeneratedData, projectRuntimeData, writeRuntimeGeneratedData } fro
 import { decodeGeneratedData } from '../../src/data/binary/decode.ts';
 
 const runtimeKeys = new Set(['gearIndexesByMainStat', 'gearLevelByRecordIndex', 'gearMinLevel', 'gearMaxLevel',
-  'gearStatNames', 'gearPhysicalGroupRanges', 'getGearAtRecordIndex', 'getGearById']);
+  'gearStatNames', 'gearPhysicalGroupRanges', 'getGearAtRecordIndex', 'getGearById', 'gearSources']);
 
 function mcpSource(sheet, fields, rowIds, gameVersion) {
   return {

@@ -27,6 +27,10 @@ import {
 import { makeConfig } from "@/ui/services/app-config";
 import { gears, gameData, type OptimizationResult, type MeldedGear } from "@/domain";
 import { type OptimizationResultWithEquivalentGear } from "@/ui/components/results/gear-table/GearTable";
+import fixtures from "@/share/__fixtures__/real-search.json";
+import { restoreShare } from "@/share/restore";
+import { workbenchResultFromShare } from "@/ui/services/share-link";
+import type { SingleWorkbenchResult } from "@/ui/services/workbench-result";
 function deferred<T>() {
   let resolve!: (value: T) => void;
   let reject!: (value: unknown) => void;
@@ -39,8 +43,8 @@ function deferred<T>() {
 let root: Root,
   host: HTMLDivElement,
   controller: ReturnType<typeof useSingleController>;
-function Harness() {
-  controller = useSingleController();
+function Harness({ initialResult }: { initialResult?: SingleWorkbenchResult }) {
+  controller = useSingleController(initialResult);
   return null;
 }
 async function flush() {
@@ -66,6 +70,25 @@ afterEach(() => {
   host.remove();
 });
 describe("Single run ownership and nonblocking history", () => {
+  it("accepts a display result and replaces its gear without creating or updating history", async () => {
+    const fixture = fixtures.find(item => item.label === "nin-sync90")!;
+    const initialResult = workbenchResultFromShare(restoreShare(fixture.binary));
+    if (initialResult.mode !== "single") throw new Error("Expected single result");
+    act(() => root.unmount());
+    root = createRoot(host);
+    act(() => root.render(<Harness initialResult={initialResult} />));
+    expect(controller.state.phase).toBe("result");
+    expect(controller.state.phase === "result" && Object.isFrozen(controller.state.snapshot)).toBe(true);
+    expect(controller.state.phase === "result" && controller.state.snapshot).not.toBe(initialResult.config);
+    const selected = initialResult.result.gear.find(gear => gear.slot === "head")!;
+    const replacement = initialResult.result.equivalentGear![selected.replacementGroupKey!]!.find(gear => gear.id !== selected.id)!;
+    act(() => controller.replace("head", replacement));
+    expect(controller.state.phase === "result" && controller.state.result.gear.find(gear => gear.slot === "head")?.id).toBe(replacement.id);
+    expect(initialResult.result.gear.find(gear => gear.slot === "head")?.id).toBe(selected.id);
+    expect(mocks.optimize).not.toHaveBeenCalled(); expect(mocks.start).not.toHaveBeenCalled(); expect(mocks.replace).not.toHaveBeenCalled();
+    await act(async () => controller.edit());
+    expect(controller.state.phase === "conditions" && controller.state.draft.condition.range.sync).toEqual(initialResult.config.sync);
+  });
   it("retains the selected duty in the snapshot and saved conditions while projecting the domain input", async () => {
     const duty = gameData.sync.groups.flatMap(({ options }) => options).find(({ target }) => target.kind === "itemLevel")!;
     mocks.optimize.mockResolvedValue({ score: 1 });
@@ -103,7 +126,7 @@ describe("Single run ownership and nonblocking history", () => {
       expect(draft.equipment.forcedGear!.head.melds).not.toBe(forcedValue.melds);
   });
 
-  it("starts and settles without waiting for history; binds a late id only to its own result", async () => {
+  it("starts and settles without waiting for history; retains the result after a late save", async () => {
     const storage = deferred<{ id: string }>(),
       search = deferred<OptimizationResult | undefined>();
     mocks.start.mockReturnValue(storage.promise);
@@ -129,8 +152,8 @@ describe("Single run ownership and nonblocking history", () => {
       await Promise.resolve();
     });
     expect(
-      controller.state.phase === "result" && controller.state.historyId,
-    ).toBe("late");
+      controller.state.phase === "result" && controller.state.result,
+    ).toBe(result);
     expect(mocks.start).toHaveBeenCalledWith(
       expect.objectContaining({ result, startedAtISO: expect.any(String) }),
     );

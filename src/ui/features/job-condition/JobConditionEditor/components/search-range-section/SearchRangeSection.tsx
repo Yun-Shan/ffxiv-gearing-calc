@@ -16,7 +16,7 @@ function assistedMinItemLevel(target: SyncTarget): number | undefined {
           ?.defaultItemLevel;
   return baseline === undefined
     ? undefined
-    : Math.floor((baseline - 10) / 10) * 10;
+    : Math.max(90, Math.floor((baseline - 10) / 10) * 10);
 }
 
 export function SearchRangeSectionFields({
@@ -50,7 +50,7 @@ export function SearchRangeSectionFields({
             hideLabel
             label="最低装备品级"
             debounceMs={1500}
-            min={bounds[0]}
+            min={Math.max(90, bounds[0])}
             max={bounds[1]}
             value={range.minItemLevel}
             disabled={readOnly}
@@ -65,7 +65,7 @@ export function SearchRangeSectionFields({
             hideLabel
             label="最高装备品级"
             debounceMs={1500}
-            min={bounds[0]}
+            min={Math.max(90, bounds[0])}
             max={bounds[1]}
             value={range.maxItemLevel}
             disabled={readOnly}

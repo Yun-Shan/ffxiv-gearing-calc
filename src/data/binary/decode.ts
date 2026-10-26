@@ -17,6 +17,7 @@ import {
 } from "./shared/timing.ts";
 import type { DecodedGeneratedData } from "./types.ts";
 import type { JobId } from "../../domain/types.ts";
+import { readShareTables } from "./sections/share-tables/codec.ts";
 
 export async function decodeGeneratedData(
   input: Uint8Array | ArrayBuffer,
@@ -47,5 +48,8 @@ export async function decodeGeneratedData(
   );
   reportTiming(onTiming, "gearCatalogDirectoryAndIndexesMs", catalogStart);
   reportTiming(onTiming, "initializationTotalMs", start);
-  return { ...data, ...catalog };
+  const shareTables = readShareTables(sections.get(11)!, catalog.gearSources.length,
+    data.sync.groups.reduce((n, group) => n + group.options.length, 0));
+  if (!shareTables.dataVersions.includes(data.version)) throw new Error("分享版本表缺少当前数据版本");
+  return { ...data, ...catalog, shareTables };
 }

@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { randomUUID } from "node:crypto";
 import { encodeGeneratedData } from "../../src/data/binary/encode.ts";
 import { decodeGeneratedData } from "../../src/data/binary/decode.ts";
+import { prepareShareTables, defaultShareIdentityPath } from "./share-tables.mjs";
 
 const defaultOutputPath = resolve(import.meta.dirname, "..", "..", "src", "data", "generated-data.bin");
 
@@ -39,8 +40,11 @@ function assertRuntimeDataHasNoGenerationAudit(payload) {
 }
 
 /** Write an already validated runtime payload; this boundary does not validate upstream sources. */
-export async function writeRuntimeGeneratedData(payload, { outputPath: targetPath = defaultOutputPath } = {}) {
+export async function writeRuntimeGeneratedData(payload, { outputPath: targetPath = defaultOutputPath, identityPath = defaultShareIdentityPath, dutyMaxIds } = {}) {
   assertRuntimeDataHasNoGenerationAudit(payload);
+  // Re-encoding an existing decoded bin preserves its explicit reference tables.
+  const prepared = payload.shareTables ? { payload, persist: async () => {} } : await prepareShareTables(payload, identityPath, dutyMaxIds);
+  payload = prepared.payload;
   await mkdir(resolve(targetPath, ".."), { recursive: true });
   const generated = await encodeGeneratedData(payload);
   const temporaryPath = `${targetPath}.tmp-${process.pid}-${randomUUID()}`;
@@ -75,12 +79,16 @@ export async function writeRuntimeGeneratedData(payload, { outputPath: targetPat
       gearStatNames,
       getGearAtRecordIndex,
       getGearById,
+      gearSources,
       ...decodedPayload
     } = decoded;
     const reencoded = await encodeGeneratedData(decodedPayload);
     if (reencoded.bytes.byteLength !== verifiedBytes.byteLength ||
         reencoded.bytes.some((byte, index) => byte !== verifiedBytes[index]))
       throw new Error("生成二进制解码后重新编码与临时文件内容不一致");
+    // Publish the matching identity ledger before its runtime indexes. Pending
+    // IDs are rebuilt from the committed baseline on the next generation.
+    await prepared.persist();
     await rename(temporaryPath, targetPath);
   } catch (error) {
     await unlink(temporaryPath).catch(() => {});

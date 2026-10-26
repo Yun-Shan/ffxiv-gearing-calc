@@ -41,6 +41,7 @@ import {
 } from "@/ui/components/results/core-metric-bar/CoreMetricBar";
 import { SingleEquipmentRestrictions } from "../equipment/SingleEquipmentRestrictions";
 import styles from "./SingleWorkbench.module.scss";
+import type { SingleWorkbenchResult } from "@/ui/services/workbench-result";
 
 function summaryRows(draft: SingleDraft) {
   const rows = conditionRows(draft.condition, draft.jobId).filter(
@@ -64,8 +65,8 @@ function Summary({ draft }: { draft: SingleDraft }) {
     </SidePanel.Rows>
   );
 }
-function useSingleWorkbenchValue() {
-  const controller = useSingleController();
+function useSingleWorkbenchValue(initialResult?: SingleWorkbenchResult) {
+  const controller = useSingleController(initialResult);
   const { state } = controller;
   const [historyOpen, setHistoryOpen] = useState(false);
   const draft =
@@ -74,13 +75,13 @@ function useSingleWorkbenchValue() {
       : state.phase === "selection"
         ? undefined
         : singleDraftFromConfig(state.snapshot);
-  const config = draft ? compileSingleDraft(draft) : undefined;
+  const config = state.phase === "conditions" ? compileSingleDraft(state.draft) : undefined;
   const analysis = useGcdAnalysisController({
     input: state.phase === "conditions" && config ? gcdAnalysisInputFromConfig(config) : undefined,
     analyze: analyzeFeasibleGcds,
   });
   const runtime = { gcdAnalysis: analysis };
-  const validation = draft
+  const validation = state.phase === "conditions" && draft
     ? deriveWorkbenchValidation({
         jobs: [
           {
@@ -133,8 +134,8 @@ function useSingleWorkbenchValue() {
 const Context = createContext<
   ReturnType<typeof useSingleWorkbenchValue> | undefined
 >(undefined);
-export function SingleWorkbenchProvider({ children }: { children: ReactNode }) {
-  const value = useSingleWorkbenchValue();
+export function SingleWorkbenchProvider({ children, initialResult }: { children: ReactNode; initialResult?: SingleWorkbenchResult }) {
+  const value = useSingleWorkbenchValue(initialResult);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 function useWorkbench() {
@@ -143,7 +144,7 @@ function useWorkbench() {
   return value;
 }
 export function SingleWorkbenchMain() {
-  const { controller, state, title, runtime, validation, historyProps } =
+  const { controller, state, title, draft, runtime, validation, historyProps } =
     useWorkbench();
   const resultRows =
     state.phase === "result"
@@ -210,11 +211,12 @@ export function SingleWorkbenchMain() {
       {state.phase === "result" && (
         <>
           <CoreMetricBar
+            linkShareData={{ mode: "single", config: state.snapshot, results: [state.result], dataVersion: state.dataVersion, elapsedMs: state.result.statistics.elapsedMs }}
             shareData={{
               jobId: state.snapshot.jobId,
               effects: state.result.effects,
               rows: resultRows,
-              summaryRows: summaryRows(singleDraftFromConfig(state.snapshot)),
+              summaryRows: summaryRows(draft!),
             }}
             entries={[{ ...buildResultMetricEntry(state.result), clanIndex: state.snapshot.clanIndex, referenceUrl: resultReferenceUrl(state.result, state.snapshot) }]}
             objective={state.snapshot.objective}

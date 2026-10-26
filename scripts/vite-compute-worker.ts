@@ -10,6 +10,8 @@ export function computeWorkerPlugin(projectRoot: string): Plugin {
   const workerEntry = normalizePath(
     resolve(projectRoot, "src/domain/compute.worker.ts"),
   );
+  const shareUrlModule = normalizePath(resolve(projectRoot, "src/share/worker-url.ts"));
+  const shareWorkerEntry = normalizePath(resolve(projectRoot, "src/share/share.worker.ts"));
   let building = false;
   let base = "/";
 
@@ -21,13 +23,14 @@ export function computeWorkerPlugin(projectRoot: string): Plugin {
       base = config.base;
     },
     load(id) {
-      if (!building || normalizePath(id) !== urlModule) return;
+      if (!building || ![urlModule, shareUrlModule].includes(normalizePath(id))) return;
+      const share = normalizePath(id) === shareUrlModule;
       const reference = this.emitFile({
         type: "chunk",
-        id: workerEntry,
-        name: "compute.worker",
+        id: share ? shareWorkerEntry : workerEntry,
+        name: share ? "share.worker" : "compute.worker",
       });
-      return `export const computeWorkerUrl = import.meta.ROLLDOWN_FILE_URL_${reference};`;
+      return `export const ${share ? "shareWorkerUrl" : "computeWorkerUrl"} = import.meta.ROLLDOWN_FILE_URL_${reference};`;
     },
     transform(code, id) {
       if (!building || id !== "\0vite/preload-helper.js") return;

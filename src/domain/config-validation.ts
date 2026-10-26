@@ -74,6 +74,9 @@ function isFiniteNumber(value: unknown): value is number {
 function isNonnegativeNumber(value: unknown): value is number {
   return isFiniteNumber(value) && value >= 0;
 }
+function isNonnegativeInteger(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value >= 0 && !Object.is(value, -0);
+}
 
 function isPositiveInteger(value: unknown): value is number {
   return typeof value === "number" && Number.isSafeInteger(value) && value > 0;
@@ -127,6 +130,7 @@ export function optimizationConfigError(value: unknown): string | undefined {
   if (
     !Number.isSafeInteger(value.minItemLevel) ||
     !Number.isSafeInteger(value.maxItemLevel) ||
+    (value.minItemLevel as number) < 90 ||
     (value.minItemLevel as number) > (value.maxItemLevel as number)
   )
     return "装备品级范围无效";
@@ -145,13 +149,13 @@ export function optimizationConfigError(value: unknown): string | undefined {
     value.gcdChoices !== undefined &&
     (!Array.isArray(value.gcdChoices) ||
       value.gcdChoices.length === 0 ||
-      !value.gcdChoices.every((gcd) => isFiniteNumber(gcd) && gcd > 0) ||
+      !value.gcdChoices.every((gcd) => isFiniteNumber(gcd) && gcd > 0 && gcd <= 2.5 && Math.round(gcd * 100) / 100 === gcd) ||
       new Set(value.gcdChoices).size !== value.gcdChoices.length)
   )
     return "GCD 档位必须是无重复的正有限数值";
   if (
-    (value.speedMin !== undefined && !isNonnegativeNumber(value.speedMin)) ||
-    (value.speedMax !== undefined && !isNonnegativeNumber(value.speedMax)) ||
+    (value.speedMin !== undefined && !isNonnegativeInteger(value.speedMin)) ||
+    (value.speedMax !== undefined && !isNonnegativeInteger(value.speedMax)) ||
     (value.speedMin !== undefined &&
       value.speedMax !== undefined &&
       (value.speedMin as number) > (value.speedMax as number))
@@ -165,10 +169,11 @@ export function optimizationConfigError(value: unknown): string | undefined {
   if (
     typeof value.maximizeTenacity !== "boolean" ||
     (value.minTenacity !== undefined &&
-      !isNonnegativeNumber(value.minTenacity)) ||
+      !isNonnegativeInteger(value.minTenacity)) ||
     (value.toughnessMinPercent !== undefined &&
       (!isNonnegativeNumber(value.toughnessMinPercent) ||
-        value.toughnessMinPercent > 100))
+        value.toughnessMinPercent > 100 ||
+        Math.round(value.toughnessMinPercent * 10) / 10 !== value.toughnessMinPercent))
   )
     return "坚韧条件无效";
   if (

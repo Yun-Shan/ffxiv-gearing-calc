@@ -1,6 +1,6 @@
 import { effectiveGearSyncLevel } from "../../rules.ts";
 import type { Gear, JobId, Materia, OptimizationConfig, SyncTarget } from "../../types.ts";
-import { forcedMateriaCapacity, forcedAllowedMateriaStats, highestMateriaGrade, materiaAllowedAtPosition, materiaAttributeStats, materiaForGrade, statCapAtLevel } from "./materia-rules.ts";
+import { validateForcedRegularMateria, forcedMateriaCapacity, forcedAllowedMateriaStats, highestMateriaGrade, materiaAllowedAtPosition, materiaAttributeStats, materiaForGrade, statCapAtLevel } from "./materia-rules.ts";
 
 function* countCombinations(
   attributeCount: number,
@@ -36,34 +36,8 @@ export function forcedRegularMateriaMelds(
   sync: SyncTarget | undefined,
   requested: readonly (Materia | null)[],
 ): Materia[][] {
-  if (gear.customParameters !== undefined || gear.resistanceWeaponAdjust !== undefined) {
-    throw new RangeError(`自定义参数装备 ${gear.id} 不能使用普通魔晶石锁定`);
-  }
-  const capacity = forcedMateriaCapacity(gear);
-  if (requested.length !== capacity) {
-    throw new RangeError(`装备 ${gear.id} 的强制魔晶石数组长度必须是 ${capacity}`);
-  }
-  const allowedStats = new Set(forcedAllowedMateriaStats(jobId));
-  const fixed = Array.from({ length: requested.length }, (_, index) => {
-    const meld = requested[index];
-    if (meld === null) return null;
-    if (typeof meld !== "object" || Array.isArray(meld)) {
-      throw new TypeError(`装备 ${gear.id} 的第 ${index + 1} 个强制魔晶石数据无效`);
-    }
-    if (Object.keys(meld).some((key) => !["stat", "value", "grade", "slotIndex"].includes(key))) {
-      throw new TypeError(`装备 ${gear.id} 的第 ${index + 1} 个强制魔晶石包含未知字段`);
-    }
-    if (!allowedStats.has(meld.stat)) {
-      throw new RangeError(`职业 ${jobId} 不能镶嵌 ${String(meld.stat)} 属性魔晶石`);
-    }
-    if (meld.slotIndex !== undefined && meld.slotIndex !== index) {
-      throw new RangeError(`装备 ${gear.id} 的第 ${index + 1} 个魔晶石位置与 slotIndex 不一致`);
-    }
-    if (!materiaAllowedAtPosition(gear, index, meld)) {
-      throw new RangeError(`装备 ${gear.id} 的第 ${index + 1} 个魔晶石等级或属性值不合法`);
-    }
-    return { ...meld, slotIndex: index };
-  });
+  const fixed = validateForcedRegularMateria(gear, jobId, requested);
+  const capacity = fixed.length;
 
   // Sync disables regular materia effects, but retain and validate stored locks so a
   // later unsynced run can apply them without losing their physical positions.

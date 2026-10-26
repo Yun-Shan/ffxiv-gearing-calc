@@ -13,6 +13,7 @@ import { SECTION_NAMES, type SectionName } from "./schema.ts";
 import { validateGameDataMetadata } from "./validate.ts";
 import { fail } from "./shared/bytes.ts";
 import type { GeneratedDataInput } from "./types.ts";
+import { writeShareTables } from "./sections/share-tables/codec.ts";
 
 export async function encodeGeneratedData(payload: GeneratedDataInput) {
   validateGameDataMetadata(payload, "运行时快照");
@@ -36,6 +37,7 @@ export async function encodeGeneratedData(payload: GeneratedDataInput) {
     "jobLevelModifiers",
     "bluMdmgAdditions",
     "gears",
+    "shareTables",
   ]);
   for (const key of Object.keys(payload))
     if (!allowed.has(key)) fail(`运行时快照含未定义字段 ${key}`);
@@ -64,6 +66,11 @@ export async function encodeGeneratedData(payload: GeneratedDataInput) {
       }),
     ],
     [10, catalog.bytes],
+    [11, writeShareTables(payload.shareTables ?? {
+      sourceRefs: catalog.sources.map((_, i) => i),
+      dutyRefs: payload.sync.groups.flatMap(group => group.options).map((_, i) => i),
+      dataVersions: [payload.version],
+    }, catalog.sources.length, payload.sync.groups.reduce((n, group) => n + group.options.length, 0))],
   ]);
   return {
     bytes: writeContainer(sections),

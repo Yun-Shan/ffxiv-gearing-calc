@@ -37,6 +37,7 @@ import {
 export interface EncodedGearCatalog {
   bytes: Uint8Array;
   gears: GeneratedGear[];
+  sources: string[];
   groupCounts: Record<MainStat, number>;
   mainStatIndexBytes: number;
   gearPhysicalGroupRanges: Record<PhysicalGearGroup, GearPhysicalGroupRange>;
@@ -277,6 +278,7 @@ export function encodeGearCatalog(
   return {
     bytes: writer.finish(),
     gears,
+    sources,
     groupCounts,
     gearPhysicalGroupRanges,
     mainStatIndexBytes: Object.values(groupCounts).reduce((sum, count) => sum + count, 0) * indexWidth,

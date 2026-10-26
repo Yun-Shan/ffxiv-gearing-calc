@@ -1,7 +1,7 @@
 import type {
   JobId,
-  JointOptimizationResult,
 } from "@/domain";
+import type { JointResultView } from "@/ui/services/workbench-result";
 import type { UiJointOptimizationConfig as JointOptimizationConfig } from "@/ui/services/search-config";
 import type { JointSearchProgressState } from "./joint-workbench-progress-types";
 import type {
@@ -76,5 +76,5 @@ export type JointWorkbenchPhase =
   | {
       phase: "result";
       snapshot: JointOptimizationSnapshot;
-      result: JointOptimizationResult;
+      result: JointResultView;
     };

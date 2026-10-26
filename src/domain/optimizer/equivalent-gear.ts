@@ -75,11 +75,11 @@ function matchingCandidate(
 }
 
 /** Presentation alternatives are collected after solving, from the original legal pool before Pareto pruning. */
-export function attachEquivalentGear(
-  result: OptimizationResult,
+export function attachEquivalentGear<T extends Pick<OptimizationResult, "gear" | "equivalentGear">>(
+  result: T,
   config: OptimizationConfig,
   options: SearchOptions = {},
-): OptimizationResult {
+): T {
   if (config.sync === undefined) return result;
   const groups: Record<string, readonly MeldedGear[]> = {};
   const groupKeys = new Map<string, string>();

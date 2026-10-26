@@ -351,16 +351,16 @@ describe("format 13 wire schema", () => {
   });
 });
 
-describe("format 13 container integrity", () => {
-  it("writes the version 13 header and an exact ten-section directory", () => {
+describe("format 14 container integrity", () => {
+  it("writes the version 14 header and an exact eleven-section directory", () => {
     const bytes = makeContainer();
     const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 
-    expect(FORMAT_VERSION).toBe(13);
+    expect(FORMAT_VERSION).toBe(14);
     expect(view.getUint16(8, true)).toBe(FORMAT_VERSION);
-    expect(view.getUint16(12, true)).toBe(10);
+    expect(view.getUint16(12, true)).toBe(11);
     expect(view.getUint16(14, true)).toBe(HEADER_BYTES);
-    expect(readContainer(bytes).size).toBe(10);
+    expect(readContainer(bytes).size).toBe(11);
     for (const [index, id] of SECTION_IDS.entries())
       expect(view.getUint16(16 + index * DIRECTORY_ENTRY_BYTES, true)).toBe(id);
   });
@@ -547,7 +547,7 @@ describe("generated snapshot codec", () => {
     const { recordCount, mainStatReferenceOffset, mainStatReferenceWidth } =
       locateGearCatalogTestOffsets(gearCatalog);
     const directoryEntry =
-      16 + (SECTION_IDS.length - 1) * DIRECTORY_ENTRY_BYTES;
+      16 + SECTION_IDS.indexOf(10) * DIRECTORY_ENTRY_BYTES;
     const containerView = new DataView(
       encoded.bytes.buffer,
       encoded.bytes.byteOffset,

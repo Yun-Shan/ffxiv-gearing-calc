@@ -15,6 +15,7 @@ import { applyJointEquipmentAction, updateJointSharedSlots } from "@/ui/features
 import type { EquipmentAction, JointEquipmentDraft } from "@/ui/features/equipment";
 import { saveCompletedSearchHistory, type SearchHistoryRecord } from "@/ui/services/search-history";
 import { currentDataVersion, makeConfig } from "@/ui/services/app-config";
+import type { JointWorkbenchResult } from "@/ui/services/workbench-result";
 import { searchMessageText } from "@/ui/services/search-message";
 import { compileJointWorkbenchDraft, createJointWorkbenchDraft, createJointWorkbenchRuntime, jointWorkbenchDraftFromConfig } from "./joint-workbench-state";
 import type { FoodDraft, JointEditorTarget, JointJobConditionDraftChange, JointWorkbenchDraft, JointWorkbenchPhase, JointWorkbenchRuntime, SearchRangeDraft } from "./joint-workbench-types";
@@ -36,14 +37,14 @@ interface ActiveJointRun {
   uiOwned: boolean;
   settled: boolean;
 }
-export function useJointWorkbenchController() {
+export function useJointWorkbenchController(initialResult?: JointWorkbenchResult) {
   const { notify, confirm } = useFeedback();
-  const [phase, setPhase] = useState<JointWorkbenchPhase>({ phase: "selection" });
+  const [phase, setPhase] = useState<JointWorkbenchPhase>(() => initialResult ? { phase: "result", snapshot: { config: freezeJointConfig(initialResult.config), dataVersion: initialResult.dataVersion }, result: initialResult.result } : { phase: "selection" });
   const phaseRef = useRef<JointWorkbenchPhase>(phase);
   const runRef = useRef<ActiveJointRun | undefined>(undefined);
   const runSequence = useRef(0);
   const [selectionState, setSelectionState] = useState<JointJobSelectionState>();
-  const [selectedJobs, setSelectedJobs] = useState<JobId[]>([]);
+  const [selectedJobs, setSelectedJobs] = useState<JobId[]>(() => initialResult?.config.jobs.map(c => c.jobId) ?? []);
   const [editorTarget, setEditorTarget] = useState<JointEditorTarget>("shared");
   const [resultTab, setResultTab] = useState("shared");
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -498,8 +499,8 @@ export function useJointWorkbenchController() {
 export type JointWorkbenchController = ReturnType<typeof useJointWorkbenchController>;
 const JointWorkbenchContext = createContext<JointWorkbenchController | undefined>(undefined);
 
-export function JointWorkbenchProvider({ children }: { children: ReactNode }) {
-  const value = useJointWorkbenchController();
+export function JointWorkbenchProvider({ children, initialResult }: { children: ReactNode; initialResult?: JointWorkbenchResult }) {
+  const value = useJointWorkbenchController(initialResult);
   return <JointWorkbenchContext.Provider value={value}>{children}</JointWorkbenchContext.Provider>;
 }
 

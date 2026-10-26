@@ -26,6 +26,17 @@ import {
   supportedJobIds,
 } from "../mcp-lumina-import.mjs";
 
+export async function initializeMcpQuery(client) {
+  const initialization = await client.initialize();
+  const refresh = await client.callTool("refresh_schema", {});
+  if (refresh.raw?.isError || refresh.value?.refreshed !== true)
+    throw new Error("Lumina EXDSchema 刷新未成功，拒绝查询数据");
+  const health = (await client.callTool("health", {})).value;
+  const genericQueriesAvailable = allowsGenericQueries(health);
+  if (!genericQueriesAvailable) throw new Error(`Lumina MCP 通用查询不可用：${JSON.stringify(health)}`);
+  return { initialization, health, genericQueriesAvailable };
+}
+
 export async function queryMcpLumina({ upstreamRoot: upstreamRootOption, command: commandOption, concurrency: concurrencyOption } = {}) {
   loadLocalEnv();
   const root = resolve(import.meta.dirname, "../..");
@@ -63,11 +74,7 @@ export async function queryMcpLumina({ upstreamRoot: upstreamRootOption, command
     throw new Error(`找不到 Lumina MCP 可执行文件：${command}。请在 local.env 或环境变量中设置 FFXIV_MCP_LUMINA_COMMAND。`);
   const client = new McpClient({ command, cwd: root, environment: process.env });
   try {
-    const initialization = await client.initialize();
-    const health = (await client.callTool("health", {})).value;
-    const genericQueriesAvailable = allowsGenericQueries(health);
-    if (!genericQueriesAvailable)
-      throw new Error(`Lumina MCP 通用查询不可用：${JSON.stringify(health)}`);
+    const { initialization, health, genericQueriesAvailable } = await initializeMcpQuery(client);
 
 
     const [

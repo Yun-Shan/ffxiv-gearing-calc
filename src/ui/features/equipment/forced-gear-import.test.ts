@@ -129,9 +129,9 @@ describe("prepare forced gear import", () => {
   });
 
   it("silently ignores incompatible gear in an out-of-scope slot", () => {
-    const restrictedRing = gears.find(
+    const restrictedBody = gears.find(
       (gear) =>
-        gear.slot === "ring" &&
+        gear.slot === "body" &&
         gear.jobs.includes("PLD") &&
         !gear.jobs.includes("WAR"),
     );
@@ -141,11 +141,11 @@ describe("prepare forced gear import", () => {
         gear.jobs.includes("PLD") &&
         gear.jobs.includes("WAR"),
     );
-    if (!restrictedRing || !head) {
-      throw new Error("Missing restricted ring and shared head fixtures");
+    if (!restrictedBody || !head) {
+      throw new Error("Missing restricted body and shared head fixtures");
     }
     const result = prepareForcedGearImport(
-      link("PLD", [{ gear: restrictedRing }, { gear: head }]),
+      link("PLD", [{ gear: restrictedBody }, { gear: head }]),
       {
         ...options("PLD", ["head"], [head]),
         allowedJobs: ["PLD", "WAR"],

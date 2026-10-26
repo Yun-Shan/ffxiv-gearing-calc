@@ -88,7 +88,7 @@ export async function createPayload(mcpSnapshot, context) {
     commit: context.commit,
     importedAt: context.importedAt,
     sourceFiles: referenceSourceFiles,
-    note: "参考装备 obsolete=true 的来源统一映射为已废弃；否则以→诗学或/诗学结尾映射为点数/诗学，以→战利品、→兵团、→同盟结尾分别映射为怪物狩猎战利品、兵团徽章、同盟徽章。以→雇员探险结尾映射为雇员探险；完整来源点数/哲学→无限城古迹、日影地修炼所、野营地映射为迷宫挑战/无限城古迹、日影地修炼所、野营地。其余保留原始来源。生成目录排除原始来源包含古董系列或军票的装备，此判断先于来源映射。",
+    note: "参考装备 obsolete=true 的来源统一映射为已废弃；否则所有生产制作/开头的来源统一映射为生产制作，再处理后缀规则：以→诗学或/诗学结尾映射为点数/诗学，以→战利品、→兵团、→同盟结尾分别映射为怪物狩猎战利品、兵团徽章、同盟徽章。以→雇员探险结尾映射为雇员探险；完整来源点数/哲学→无限城古迹、日影地修炼所、野营地映射为迷宫挑战/无限城古迹、日影地修炼所、野营地。其余保留原始来源。生成目录排除原始来源包含古董系列或军票、或以狼印战绩、成就、金碟币、制作特定道具兑换、采集特定道具兑换为前缀的装备，此判断先于来源映射。",
   };
   let foods = rawFoods.filter((food) => food.slot === -1).map((food) => normalizeFood(food, context));
   let effectiveLevelCaps = levelCaps;
@@ -115,7 +115,8 @@ export async function createPayload(mcpSnapshot, context) {
       .map(Number)
       .filter((level) => Number.isSafeInteger(level) && level >= 50)
       .sort((left, right) => left - right);
-    effectiveSyncData = syncDataFromSnapshot(mcpSnapshot, effectiveLevelCaps, supportedSyncLevels);
+    const { dutyMaxIds, ...syncData } = syncDataFromSnapshot(mcpSnapshot, effectiveLevelCaps, supportedSyncLevels);
+    effectiveSyncData = syncData;
     const classJobRowIds = Object.values(mcpSnapshot.queryPlan.classJobIds).map(Number);
     const syncLevelQuery = mcpSnapshot.queries.find((query) =>
       query.method === "list_rows" && query.sheet === "ContentFinderCondition",
@@ -248,5 +249,5 @@ export async function createPayload(mcpSnapshot, context) {
     jobSchemas: normalizedJobSchemas,
     jobLevelModifiers: constants.jobLevelModifiers,
   };
-  return { payload, mcpSummary, excludedGearCounts };
+  return { payload, dutyMaxIds, mcpSummary, excludedGearCounts };
 }

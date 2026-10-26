@@ -12,6 +12,19 @@ test("source exclusions match original reference substrings even for obsolete ge
   }
 });
 
+test("catalog excludes all five source prefixes before source normalization", () => {
+  for (const prefix of ["狼印战绩", "成就", "金碟币", "制作特定道具兑换", "采集特定道具兑换"]) {
+    for (const source of [prefix, `${prefix}/装备`, `${prefix}/装备/其他`, `${prefix}→诗学`]) {
+      assert.equal(excludeReferenceGearSource({ source }), true);
+      assert.equal(excludeReferenceGearSource({ source, obsolete: true }), true);
+    }
+    assert.equal(excludeReferenceGearSource({ source: `其他/${prefix}` }), false);
+  }
+  for (const source of ["生产制作", "制作装强化", "怪物狩猎战利品", "职业任务", undefined]) {
+    assert.equal(excludeReferenceGearSource({ source }), false);
+  }
+});
+
 test("obsolete overrides any reference source, including a missing source", () => {
   assert.equal(referenceGearSource({ obsolete: true, source: "旧来源" }), "已废弃");
   assert.equal(referenceGearSource({ obsolete: true }), "已废弃");
@@ -32,6 +45,16 @@ test("reference source suffixes normalize currencies without rewriting unrelated
   ]) {
     assert.equal(referenceGearSource({ source }), expected);
     assert.equal(referenceGearSource({ source, obsolete: true }), "已废弃");
+  }
+});
+
+test("all crafting subcategories collapse before suffix mappings while obsolete still wins", () => {
+  for (const source of ["生产制作/", "生产制作/海德林武器", "生产制作/古武素材/其他", "生产制作/诗学", "生产制作/其他→雇员探险"]) {
+    assert.equal(referenceGearSource({ source }), "生产制作");
+    assert.equal(referenceGearSource({ source, obsolete: true }), "已废弃");
+  }
+  for (const source of ["生产制作", "其他/生产制作/武器", "生产制作武器"]) {
+    assert.equal(referenceGearSource({ source }), source);
   }
 });
 

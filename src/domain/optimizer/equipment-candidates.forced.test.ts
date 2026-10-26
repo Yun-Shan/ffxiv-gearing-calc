@@ -39,7 +39,7 @@ function configFor(jobId: JobId = "SAM"): OptimizationConfig {
     clanIndex: 0,
     objective: "damage",
     jobId,
-    minItemLevel: 0,
+    minItemLevel: 90,
     maxItemLevel: 9999,
     maximizeTenacity: false,
     excludedSources: [],

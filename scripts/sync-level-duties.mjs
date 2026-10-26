@@ -54,6 +54,8 @@ function targetKey(target) {
   return `${target.kind}:${target.value}`;
 }
 
+export const dutyIdentityKey = duty => JSON.stringify([duty.name, duty.target.kind, duty.target.value]);
+
 function firstWord(name) {
   return name.split(" ", 1)[0];
 }
@@ -233,5 +235,9 @@ export function syncDataFromSnapshot(snapshot, levelCaps, supportedSyncLevels) {
         throw new Error(`同步副本 ${option.name} 的目标类型无效`);
     }
   }
-  return { levels, groups: orderedGroups };
+  return {
+    levels,
+    groups: orderedGroups,
+    dutyMaxIds: new Map([...categories.values()].map(entry => [dutyIdentityKey(entry.option), entry.representativeId])),
+  };
 }

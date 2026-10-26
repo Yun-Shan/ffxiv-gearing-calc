@@ -45,6 +45,7 @@ type GearCatalogData = Pick<
   | "gearPhysicalGroupRanges"
   | "getGearAtRecordIndex"
   | "getGearById"
+  | "gearSources"
 >;
 
 interface GearGroupDescriptor {
@@ -304,6 +305,7 @@ export function decodeGearCatalog(
 
   return {
     gears,
+    gearSources: Array.from({ length: sourceStrings.length }, (_, i) => sourceStrings.get(i)),
     gearIndexesByMainStat,
     getGearAtRecordIndex,
     getGearById(id) {

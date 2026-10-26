@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { syncDataFromSnapshot } from "../sync-level-duties.mjs";
+import { syncDataFromSnapshot, dutyIdentityKey } from "../sync-level-duties.mjs";
 
 const version = "fixture-version";
 const cfcFields = [
@@ -134,6 +134,7 @@ test("sync projection derives thresholds and filters, merges, groups, and sorts 
     ["高难讨伐", "itemLevel", 100],
   ]);
   const raids = generated.groups.find((group) => group.name === "大型任务").options;
+  assert.equal(generated.dutyMaxIds.get(dutyIdentityKey(raids.find(option => option.name === "Arcadion" && option.target.value === 250))), 11);
   assert.deepEqual(raids.map((option) => [option.name, option.target.value]), [
     ["Another", 250], ["Arcadion", 260], ["Arcadion", 250],
   ]);

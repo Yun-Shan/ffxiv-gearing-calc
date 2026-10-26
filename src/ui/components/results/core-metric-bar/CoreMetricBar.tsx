@@ -5,6 +5,7 @@ import type { Effects, OptimizationResult } from "@/domain";
 import styles from "./CoreMetricBar.module.scss";
 import { ShareResultButton } from "./components/share-result-button/ShareResultButton";
 import type { ResultShareData } from "../result-share-layout/types";
+import type { ShareInput } from "@/share/types";
 
 export interface CoreMetricDifference {
   absolute: number;
@@ -39,6 +40,7 @@ export interface CoreMetricBarProps {
   showTenacity: boolean;
   compact?: boolean;
   shareData?: ResultShareData;
+  linkShareData?: ShareInput;
 }
 
 export function buildResultMetricEntry(
@@ -140,6 +142,7 @@ export function CoreMetricBar({
   showTenacity,
   compact = false,
   shareData,
+  linkShareData,
 }: CoreMetricBarProps) {
   const showLabels = compact || entries.length > 1;
   function metric(
@@ -226,9 +229,10 @@ export function CoreMetricBar({
         {metric("生命值", (entry) => entry.hp.toFixed(0))}
         {divider}
         <div className={styles.openActions}>
-          {shareData && (
+          {(shareData || linkShareData) && (
             <ShareResultButton
               data={shareData}
+              linkData={linkShareData}
               className={`${styles.openLink} ${styles.shareButton}`}
             />
           )}

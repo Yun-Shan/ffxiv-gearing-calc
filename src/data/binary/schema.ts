@@ -1,7 +1,7 @@
 import { wire } from "./shared/schema.ts";
 
 export const MAGIC = new TextEncoder().encode("FFXIVGDB");
-export const FORMAT_VERSION = 13;
+export const FORMAT_VERSION = 14;
 export const SECTION_NAMES = [
   "METADATA",
   "JOBS",
@@ -13,6 +13,7 @@ export const SECTION_NAMES = [
   "CHARACTER_STATS",
   "LEVEL_FORMULAS",
   "GEAR_CATALOG",
+  "SHARE_TABLES",
 ] as const;
 export type SectionName = (typeof SECTION_NAMES)[number];
 export const SECTION_IDS = SECTION_NAMES.map((_, index) => index + 1);

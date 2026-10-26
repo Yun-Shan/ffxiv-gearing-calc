@@ -13,6 +13,7 @@ import { GearTableView } from "./GearTableView";
 import type { GearTableGearItem, GearTableRow } from "./types";
 
 export type OptimizationResultWithEquivalentGear = OptimizationResult;
+type ResultGearView = Pick<OptimizationResult, "calculationLevel" | "gear" | "equivalentGear" | "food" | "stats">;
 
 export interface ResultGearTableOptions {
   onReplacementSelect?: (slot: GearSlot, replacement: MeldedGear) => void;
@@ -145,7 +146,7 @@ function gearItem(
 type ResultGear = OptimizationResultWithEquivalentGear["gear"][number];
 
 function replacementCandidates(
-  result: OptimizationResultWithEquivalentGear,
+  result: ResultGearView,
   gear: ResultGear,
 ): MeldedGear[] {
   const byKey = new Map<string, MeldedGear>();
@@ -166,7 +167,7 @@ function replacementCandidates(
 }
 
 function conflictingUniqueRing(
-  result: OptimizationResultWithEquivalentGear,
+  result: ResultGearView,
   slot: GearSlot,
   candidate: MeldedGear,
 ): boolean {
@@ -191,7 +192,7 @@ export { gearItem as buildGearTableGearItem };
  * The table itself has no access to search configs or domain objects.
  */
 export function buildResultGearTableRows(
-  result: OptimizationResultWithEquivalentGear,
+  result: ResultGearView,
   config: OptimizationConfig,
   options: ResultGearTableOptions = {},
 ): GearTableRow[] {
@@ -270,11 +271,11 @@ export function buildResultGearTableRows(
  * Updates one selected equivalent item while preserving complete replacement
  * groups and search metadata.
  */
-export function replaceEquivalentGear(
-  result: OptimizationResultWithEquivalentGear,
+export function replaceEquivalentGear<T extends ResultGearView>(
+  result: T,
   slot: GearSlot,
   replacementKey: string,
-): OptimizationResultWithEquivalentGear {
+): T {
   const current = result.gear.find((gear) => gear.slot === slot);
   const replacements = current
     ? replacementCandidates(result, current)
@@ -308,7 +309,7 @@ export function ResultGearTable({
   config,
   onReplacementSelect,
 }: {
-  result: OptimizationResultWithEquivalentGear;
+  result: ResultGearView;
   config: OptimizationConfig;
   onReplacementSelect?: (slot: GearSlot, replacement: MeldedGear) => void;
 }) {

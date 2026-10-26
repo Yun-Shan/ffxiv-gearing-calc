@@ -16,6 +16,12 @@ export type MateriaTable = Partial<Record<Materia["stat"], number[]>>;
 export type GearPhysicalGroup =
   "VIT" | "STR" | "DEX" | "MND" | "INT" | "SHARED";
 
+export interface ShareTables {
+  sourceRefs: number[];
+  dutyRefs: number[];
+  dataVersions: string[];
+}
+
 export interface GeneratedGameData {
   version: string;
   provenance: DataProvenance;
@@ -23,6 +29,9 @@ export interface GeneratedGameData {
   foods: GeneratedFood[];
   jobs: Record<JobId, GeneratedJob>;
   sync: SyncData;
+  shareTables: ShareTables;
+  /** Original GEAR_CATALOG pool, in its encoded order. */
+  gearSources: readonly string[];
   materias: MateriaTable;
   materiaGradeRequiredLevels: number[];
   materiaGradeIsRestricted: boolean[];
@@ -66,5 +75,7 @@ export type GeneratedDataInput = Omit<
   | "gearPhysicalGroupRanges"
   | "getGearAtRecordIndex"
   | "getGearById"
->;
+  | "gearSources"
+  | "shareTables"
+> & { shareTables?: ShareTables };
 export type DecodedGeneratedData = GeneratedGameData;

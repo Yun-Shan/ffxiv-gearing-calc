@@ -27,8 +27,10 @@ describe("shared page/compute worker production build", () => {
       const workers = chunks.filter((chunk) =>
         chunk.facadeModuleId?.endsWith(".worker.ts"),
       );
-      expect(workers).toHaveLength(1);
-      const worker = workers[0]!;
+      expect(workers).toHaveLength(2);
+      const worker = workers.find(chunk => chunk.facadeModuleId?.endsWith("/compute.worker.ts"))!;
+      const shareWorker = workers.find(chunk => chunk.facadeModuleId?.endsWith("/share.worker.ts"))!;
+      expect(shareWorker).toBeDefined();
       expect(worker.facadeModuleId).toMatch(/\/compute\.worker\.ts$/);
 
       const owners = new Map<string, string[]>();
@@ -59,11 +61,13 @@ describe("shared page/compute worker production build", () => {
       };
       const pageImports = reach(page);
       const workerImports = reach(worker);
+      const shareImports = reach(shareWorker);
       const dataOwner = [...owners].find(([id]) =>
         id.endsWith("/src/domain/data.ts"),
       )![1][0]!;
       expect(pageImports.has(dataOwner)).toBe(true);
       expect(workerImports.has(dataOwner)).toBe(true);
+      expect(shareImports.has(dataOwner)).toBe(true);
       expect(pageImports.has(worker.fileName)).toBe(false);
       const workerModules = chunks
         .filter((chunk) => workerImports.has(chunk.fileName))
@@ -73,6 +77,9 @@ describe("shared page/compute worker production build", () => {
           /\/src\/ui\/|\/node_modules\/(?:react|react-dom)\//.test(id),
         ),
       ).toBe(false);
+      const shareModules = chunks.filter(chunk => shareImports.has(chunk.fileName)).flatMap(chunk => chunk.moduleIds);
+      expect(shareModules.filter(id => /\/src\/ui\/|\/node_modules\/(?:react|react-dom)\//.test(id))).toEqual([]);
+      expect(shareModules.filter(id => /(?:single-search|joint-search|gcd-search|linear-mip|exact-mip)\.ts$/.test(id))).toEqual([]);
 
       const highsOwners = [...owners].filter(([id]) =>
         id.endsWith("/node_modules/highs/build/highs.mjs"),
@@ -81,6 +88,8 @@ describe("shared page/compute worker production build", () => {
       const highsFile = highsOwners[0]![1][0]!;
       expect(pageImports.has(highsFile)).toBe(false);
       expect(workerImports.has(highsFile)).toBe(false);
+      expect(shareImports.has(highsFile)).toBe(false);
+      expect(reach(shareWorker, true).has(highsFile)).toBe(false);
       expect(reach(page, true).has(highsFile)).toBe(true);
       expect(reach(worker, true).has(highsFile)).toBe(true);
       expect(

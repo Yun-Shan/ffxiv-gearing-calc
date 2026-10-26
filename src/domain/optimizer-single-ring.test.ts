@@ -101,7 +101,7 @@ describe("joint search with independently shared ring slots", () => {
     expect(gears.find((gear) => gear.id === weakRingId)?.unique).toBe(false);
 
     const ringConfigs = (["WHM", "AST", "SGE", "SCH"] as const).map((jobId) =>
-      unforcedMageConfig(jobId, [sharedUniqueRingId, weakRingId], 1));
+      unforcedMageConfig(jobId, [sharedUniqueRingId, weakRingId], 90));
     const sharedBody = gearOptionsFor(ringConfigs[0]!, "body").find((candidate) =>
       ringConfigs.every((config) => gearOptionsFor(config, "body").some((gear) => gear.id === candidate.id)));
     expect(sharedBody).toBeDefined();
@@ -308,7 +308,7 @@ describe("character equipment level", () => {
     const config = {
       ...configFor("RDM"),
       sync: { kind: "jobLevel" as const, value: 50 },
-      minItemLevel: 1,
+      minItemLevel: 90,
       maxItemLevel: 999,
     };
     const eligible = gearOptionsFor(config, "ring");

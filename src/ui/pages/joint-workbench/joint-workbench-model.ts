@@ -1,3 +1,4 @@
+import type { JointResultView } from "@/ui/services/workbench-result";
 import { isSlotShared } from "@/ui/features/equipment";
 import { conditionRows, formatFood } from "@/ui/features/job-condition/summary";
 export {
@@ -13,7 +14,6 @@ import {
   slotsForJob,
   type GearSlot,
   type JobId,
-  type JointOptimizationResult,
   type OptimizationResult,
 } from "@/domain";
 import type { UiJointOptimizationConfig as JointOptimizationConfig, UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
@@ -255,7 +255,7 @@ export function jointSharedSummaryRows(config: JointOptimizationConfig) {
 }
 
 export function sharedGearRows(
-  result: JointOptimizationResult,
+  result: JointResultView,
   config: JointOptimizationConfig,
 ): GearTableRow[] {
   const job = config.jobs[0];
@@ -278,8 +278,8 @@ export function sharedGearRows(
 }
 
 export function retentionPercent(
-  joint: OptimizationResult | undefined,
-  baseline: OptimizationResult | undefined,
+  joint: Pick<OptimizationResult, "score"> | undefined,
+  baseline: Pick<OptimizationResult, "score"> | undefined,
 ): string {
   if (
     !joint ||
@@ -294,7 +294,7 @@ export function retentionPercent(
 
 export function resultSummaryRows(
   config: JointOptimizationConfig,
-  result: JointOptimizationResult,
+  result: JointResultView,
 ) {
   return config.jobs.map(({ jobId }) => ({
     jobId,

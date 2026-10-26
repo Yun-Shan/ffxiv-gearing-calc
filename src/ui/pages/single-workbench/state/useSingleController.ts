@@ -5,7 +5,6 @@ import {
   type JobId,
   type GearSlot,
   type MeldedGear,
-  type OptimizationResult,
 } from "@/domain";
 import { optimizationConfigForDomain, type UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
 import { currentDataVersion, makeConfig } from "@/ui/services/app-config";
@@ -26,6 +25,7 @@ import { compileJobCondition } from "@/ui/features/job-condition/compiler";
 import { jobConditionDraftFromConfig } from "@/ui/features/job-condition/draft";
 import type { SingleEquipmentDraft } from "@/ui/features/equipment/types";
 import type { JobConditionDraft } from "@/ui/features/job-condition/types";
+import type { ResultView, SingleWorkbenchResult } from "@/ui/services/workbench-result";
 
 export interface SingleDraft {
   jobId: JobId;
@@ -45,9 +45,9 @@ export type SingleState =
   | {
       phase: "result";
       snapshot: OptimizationConfig;
-      result: OptimizationResult;
+      result: ResultView;
       dataVersion: string;
-      historyId?: string;
+      persistReplacement?(gear: ResultView["gear"]): void;
     };
 export function singleDraftFromConfig(config: OptimizationConfig): SingleDraft {
   return {
@@ -73,18 +73,11 @@ export function compileSingleDraft(
     ...draft.equipment,
   };
 }
-export function useSingleController() {
-  const [state, setState] = useState<SingleState>({ phase: "selection" });
+export function useSingleController(initialResult?: SingleWorkbenchResult) {
+  const [state, setState] = useState<SingleState>(() => initialResult ? { phase: "result", snapshot: freezeSnapshot(initialResult.config), result: initialResult.result, dataVersion: initialResult.dataVersion } : { phase: "selection" });
   const current = useRef(state);
   current.current = state;
   const active = useRef<AbortController | undefined>(undefined);
-  const persistence = useRef<
-    | {
-        snapshot: OptimizationConfig;
-        sidecar: ReturnType<typeof startHistorySidecar>;
-      }
-    | undefined
-  >(undefined);
   const mounted = useRef(true);
   const feedback = useFeedback();
   const messages = useRef(feedback);
@@ -127,7 +120,11 @@ export function useSingleController() {
         snapshot: record.config,
         result: record.result,
         dataVersion: record.dataVersion ?? "未记录",
-        historyId: record.id,
+        persistReplacement: gear => {
+          void replaceSearchHistoryResult(record.id, { ...record.result, gear }).catch(error =>
+            messages.current.notify(`搜索记录更新失败：${error instanceof Error ? error.message : String(error)}`, "warning"),
+          );
+        },
       });
     else if (!result)
       navigate({
@@ -151,7 +148,6 @@ export function useSingleController() {
     const startedAt = Date.now(),
       dataVersion = currentDataVersion;
     const owns = () => mounted.current && active.current === controller;
-    let historyId: string | undefined;
     const finish = startHistorySidecar(
       snapshot,
       dataVersion,
@@ -159,18 +155,8 @@ export function useSingleController() {
       (message) => {
         if (mounted.current) messages.current.notify(message, "warning");
       },
-      (id) => {
-        historyId = id;
-        if (!mounted.current) return;
-        setState((current) =>
-          current.phase === "result" && current.snapshot === snapshot
-            ? { ...current, historyId: id }
-            : current,
-        );
-      },
     );
 
-    persistence.current = { snapshot, sidecar: finish };
     const progress: SingleSearchProgressState = {
       phase: "prepare",
       startedAt,
@@ -250,7 +236,7 @@ export function useSingleController() {
           snapshot,
           result,
           dataVersion,
-          historyId,
+          persistReplacement: gear => finish.replace({ ...result, gear }),
         };
         current.current = next;
         setState(next);
@@ -300,15 +286,7 @@ export function useSingleController() {
     const next: SingleState = { ...value, result };
     current.current = next;
     setState(next);
-    if (persistence.current?.snapshot === value.snapshot)
-      persistence.current.sidecar.replace(result);
-    else if (value.historyId)
-      void replaceSearchHistoryResult(value.historyId, result).catch((error) =>
-        messages.current.notify(
-          `搜索记录更新失败：${error instanceof Error ? error.message : String(error)}`,
-          "warning",
-        ),
-      );
+    value.persistReplacement?.(result.gear);
   }
   return {
     state,
