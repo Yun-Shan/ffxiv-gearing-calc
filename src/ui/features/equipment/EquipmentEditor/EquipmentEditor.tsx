@@ -16,6 +16,7 @@ import {
   forcedGearId,
   type EquipmentMateriaConfig,
   type ForcedGearValue,
+  type Gear,
   type GearSlot,
   type JobId,
 } from "@/domain";
@@ -27,6 +28,10 @@ import { ForcedEquipmentRow } from "./components/forced-equipment-row/ForcedEqui
 import { ForcedGearImport } from "./components/forced-gear-import/ForcedGearImport";
 
 const sourceOrder = (a: string, b: string) => a.localeCompare(b, "zh-CN");
+const equipmentOrder = (
+  a: Pick<Gear, "level" | "id">,
+  b: Pick<Gear, "level" | "id">,
+) => b.level - a.level || b.id - a.id;
 
 function EquipmentCountBadge({ count }: { count: number }) {
   return (
@@ -36,36 +41,54 @@ function EquipmentCountBadge({ count }: { count: number }) {
   );
 }
 
-interface SourceNode {
+interface SourceSummary {
+  count: number;
+  level: number;
+  id: number;
+}
+
+interface SourceNode extends SourceSummary {
   path: string;
   label: string;
   sources: string[];
-  count: number;
   children: SourceNode[];
 }
 
 function buildSourceTree(
   sources: readonly string[],
-  counts: ReadonlyMap<string, number>,
+  summaries: ReadonlyMap<string, SourceSummary>,
 ): SourceNode[] {
   const roots: SourceNode[] = [];
   for (const source of [...new Set(sources)].sort(sourceOrder)) {
+    const summary = summaries.get(source);
     let children = roots;
     let path = "";
     for (const label of source.split("/").filter(Boolean)) {
       path = path ? `${path}/${label}` : label;
       let node = children.find((entry) => entry.path === path);
       if (!node) {
-        node = { path, label, sources: [], count: 0, children: [] };
+        node = {
+          path,
+          label,
+          sources: [],
+          count: 0,
+          level: 0,
+          id: 0,
+          children: [],
+        };
         children.push(node);
       }
       node.sources.push(source);
-      node.count += counts.get(source) ?? 0;
+      node.count += summary?.count ?? 0;
+      if (summary && equipmentOrder(summary, node) < 0) {
+        node.level = summary.level;
+        node.id = summary.id;
+      }
       children = node.children;
     }
   }
   function sort(nodes: SourceNode[]) {
-    nodes.sort((a, b) => sourceOrder(a.label, b.label));
+    nodes.sort((a, b) => equipmentOrder(a, b) || sourceOrder(a.label, b.label));
     nodes.forEach((node) => sort(node.children));
   }
   sort(roots);
@@ -139,14 +162,14 @@ function SourceTreeSelect({
   popupAnchor,
   sources,
   excludedSources,
-  counts,
+  summaries,
   disabled,
   onChange,
 }: {
   popupAnchor: RefObject<HTMLDivElement | null>;
   sources: readonly string[];
   excludedSources: readonly string[];
-  counts: ReadonlyMap<string, number>;
+  summaries: ReadonlyMap<string, SourceSummary>;
   disabled: boolean;
   onChange(sources: string[]): void;
 }) {
@@ -176,9 +199,9 @@ function SourceTreeSelect({
         choices.filter((source) =>
           source.toLocaleLowerCase().includes(normalizedQuery),
         ),
-        counts,
+        summaries,
       ),
-    [choices, counts, normalizedQuery],
+    [choices, summaries, normalizedQuery],
   );
   const selected = new Set(
     choices.filter((source) =>
@@ -309,13 +332,19 @@ function ExcludedSourcesEditor() {
   const { excludedSources, sourceOptions, remove, setSources } =
     useExcludedSources();
   const { readOnly, catalog } = useEquipmentScope();
-  const counts = useMemo(() => {
-    const result = new Map<string, number>();
+  const summaries = useMemo(() => {
+    const result = new Map<string, SourceSummary>();
     const seen = new Set<number>();
     for (const gear of catalog.gearOptions) {
       if (!gear.source || seen.has(gear.id)) continue;
       seen.add(gear.id);
-      result.set(gear.source, (result.get(gear.source) ?? 0) + 1);
+      const summary = result.get(gear.source) ?? { count: 0, level: 0, id: 0 };
+      summary.count += 1;
+      if (equipmentOrder(gear, summary) < 0) {
+        summary.level = gear.level;
+        summary.id = gear.id;
+      }
+      result.set(gear.source, summary);
     }
     return result;
   }, [catalog.gearOptions]);
@@ -328,7 +357,7 @@ function ExcludedSourcesEditor() {
             popupAnchor={popupAnchor}
             sources={sourceOptions}
             excludedSources={excludedSources}
-            counts={counts}
+            summaries={summaries}
             disabled={readOnly}
             onChange={setSources}
           />
@@ -340,9 +369,9 @@ function ExcludedSourcesEditor() {
             <span className={styles.sourceListLabel}>
               <span data-source-name>{source}</span>
               <EquipmentCountBadge
-                count={[...counts].reduce(
-                  (sum, [name, count]) =>
-                    name.startsWith(source) ? sum + count : sum,
+                count={[...summaries].reduce(
+                  (sum, [name, summary]) =>
+                    name.startsWith(source) ? sum + summary.count : sum,
                   0,
                 )}
               />
@@ -372,12 +401,14 @@ function ExcludedGearEditor() {
   ];
   const activePart = parts.includes(part as GearSlot) ? part : "all";
   const { readOnly } = useEquipmentScope();
-  const available = gearOptions.filter(
-    (gear) =>
-      !excludedGearIds.includes(gear.id) &&
-      (activePart === "all" ||
-        (gear.slot === "ring2" ? "ring" : gear.slot) === activePart),
-  );
+  const available = gearOptions
+    .filter(
+      (gear) =>
+        !excludedGearIds.includes(gear.id) &&
+        (activePart === "all" ||
+          (gear.slot === "ring2" ? "ring" : gear.slot) === activePart),
+    )
+    .sort(equipmentOrder);
   return (
     <section className={styles.section} aria-label="排除指定装备">
       <div ref={popupAnchor} className={styles.titleRow}>
@@ -469,7 +500,7 @@ function ForcedGearEditor({
         <ul className={styles.list} tabIndex={0} aria-label="已强制装备" />
       </section>
     );
-  const choices =
+  const choices = (
     activeSlot === "all"
       ? [
           ...new Map(
@@ -478,7 +509,8 @@ function ForcedGearEditor({
               .map((gear) => [gear.id, gear]),
           ).values(),
         ]
-      : gearOptionsForSlot(activeSlot);
+      : gearOptionsForSlot(activeSlot)
+  ).toSorted(equipmentOrder);
   const selectedId =
     activeSlot === "all" ? undefined : forcedGearId(forcedGear[activeSlot]);
   const selectedGear =
