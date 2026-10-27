@@ -53,6 +53,14 @@ export type IntegerDamageFactorEvaluator = (
   gearAndFoodContributions: readonly number[],
 ) => IntegerDamageFactors | undefined;
 
+export type IntegerDamageUtilityCertificate = { key: string; coordinates: readonly number[] };
+const integerDamageCertificates = new WeakMap<IntegerDamageFactorEvaluator, () => IntegerDamageUtilityCertificate | undefined>();
+
+/** Only factory-created evaluators can certify equality of normalized utilities. */
+export function integerDamageUtilityCertificate(evaluate: IntegerDamageFactorEvaluator): IntegerDamageUtilityCertificate | undefined {
+  return integerDamageCertificates.get(evaluate)?.();
+}
+
 /**
  * 根据伤害求值器使用的同一装备与食物贡献向量，构造精确整数因子。
  * 因子乘积的分母和职业特性倍率对同一职业及等级保持不变，因此能保留精确伤害排序。
@@ -63,6 +71,8 @@ export function createIntegerDamageFactorEvaluator(
   statIndexes: ReadonlyMap<Stat, number>,
   clanIndex: number = defaultClanIndex,
 ): IntegerDamageFactorEvaluator {
+  // The closure and its certificate must see the same immutable coordinates.
+  statIndexes = new Map(statIndexes);
   assertClanIndex(clanIndex);
   const schema = game.jobSchemas[job];
   const levelMod = game.jobLevelModifiers[jobLevel];
@@ -102,6 +112,26 @@ export function createIntegerDamageFactorEvaluator(
       gcdCentiseconds,
     };
   };
+  integerDamageCertificates.set(effects, () => {
+    const currentSchema = game.jobSchemas[job];
+    const currentLevel = game.jobLevelModifiers[jobLevel];
+    if (currentSchema?.mainStat !== mainStat || currentSchema.statModifiers === undefined || currentLevel === undefined) return undefined;
+    const currentBase = getBaseStats(job, currentLevel, clanIndex);
+    const speed: Stat = schema.stats.includes("SKS") ? "SKS" : "SPS";
+    const weapon: Stat = mainStat === "INT" || mainStat === "MND" ? "MDMG" : "PDMG";
+    const stats: Stat[] = [mainStat, weapon, "CRT", "DET", "DHT", "TEN", speed, ...(job === "BLU" ? ["INT" as const] : [])];
+    const coordinates = stats.map((stat) => statIndexes.get(stat) ?? -1);
+    const values = [currentBase[mainStat] ?? 0, currentBase.CRT ?? 0, currentBase.DET ?? 0,
+      currentBase.DHT ?? 0, currentBase.TEN ?? 0, baseStats[speed] ?? 0,
+      currentLevel.main, currentLevel.sub, currentLevel.div, currentLevel.det, currentLevel.detTrunc,
+      currentSchema.role === "tank" ? currentLevel.apTank : currentLevel.ap,
+      currentSchema.partyBonus ?? 1.05, floor((levelMod.main * statModifiers[mainStat]!) / 1000),
+      (jobLevel >= 80 && statModifiers.gcd) || 100, Number(job === "BLU")];
+    if (values.some((value) => !Number.isFinite(value)) || coordinates.some((value) => !Number.isSafeInteger(value) || value < -1)) return undefined;
+    // Trait multipliers cancel within each job's ratio. BLU shares the same
+    // gameData lookup table under the search's stable-data input contract.
+    return { key: JSON.stringify([coordinates, values]), coordinates: [...new Set(coordinates.filter((value) => value >= 0))].sort((a, b) => a - b) };
+  });
   return effects;
 }
 

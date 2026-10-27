@@ -398,4 +398,27 @@ describe("搜索历史记录结构校验", () => {
     expect(() => validateSearchHistoryRecord({ ...record, result: invalidLimitResult }))
       .toThrow(/结果缺少必要字段/);
   });
+
+  it("保留完整共享状态枚举的证明来源，拒绝未知完成状态", () => {
+    const configValue = jointConfig();
+    const result = jointResult(configValue.jobs.map(({ jobId }) => jobId));
+    result.proof.innerSolverStatus = "ExactStateEnumeration";
+    const record = {
+      id: "history-joint-exact-states",
+      kind: "joint",
+      startedAtISO: "2026-10-26T09:00:00.000Z",
+      dataVersion: "test-version",
+      config: configValue,
+      status: "completed",
+      result,
+    };
+    const restored = validateSearchHistoryRecord(record);
+    expect(restored.kind).toBe("joint");
+    expect(restored.kind === "joint" && restored.result?.proof.innerSolverStatus)
+      .toBe("ExactStateEnumeration");
+    expect(() => validateSearchHistoryRecord({
+      ...record,
+      result: { ...result, proof: { ...result.proof, innerSolverStatus: "PartialEnumeration" } },
+    })).toThrow(/结果缺少必要字段/);
+  });
 });

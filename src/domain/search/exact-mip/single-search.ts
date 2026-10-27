@@ -2,6 +2,8 @@ import { prepareSignatureFeasibility } from "./signature-feasibility.ts";
 import type { ExactMipOptions } from "./types.ts";
 import type { ExactMipResult } from "./types.ts";
 import { throwIfCancelled } from "../cancellation.ts";
+import { inheritCanonicalEvaluatorCandidateUpperBound } from "../exact-mip-candidate-upper-bound.ts";
+import { prepareFoodProductBound } from "./food-product-bound.ts";
 import { hasCanonicalEvaluatorCandidateUpperBound } from "../exact-mip-candidate-upper-bound.ts";
 import { shouldEnableCanonicalCandidateUpperBound } from "../exact-mip-candidate-upper-bound.ts";
 import { isProfileTimingEnabled } from "../core/diagnostics.ts";
@@ -24,6 +26,8 @@ import { factorObjectiveLogScore } from "./factor-model.ts";
 import { candidateUpperBoundCannotImproveIncumbent } from "../exact-mip-candidate-upper-bound.ts";
 import { addRows } from "../core/model-builder.ts";
 import { solveIntegerModel } from "../core/highs-solver.ts";
+import { prepareMateriaFamilies, materiaModelFamilies } from "./materia-families.ts";
+import type { MateriaFamilyProjectionStatistics } from "../core/materia-family-projection.ts";
 import { validateMipSolution } from "../core/solution-validation.ts";
 import { addRangeConstraint } from "./attribute-model.ts";
 import { addTerm } from "../core/model-builder.ts";
@@ -84,6 +88,7 @@ export async function findBestLoadoutExactMip(
   const resourceBudgetCandidateUpperBoundCuts = new Set<string>();
   let resourceBudgetCandidateScoreUpperBySlot: readonly ReadonlyMap<EquipInfo, bigint>[] | undefined;
   let resourceBudgetCandidateBound: ExactMipSearchStatistics["resourceBudgetCandidateBound"];
+  let foodProductBound: ExactMipSearchStatistics["foodProductBound"];
   let greedyMipStartMs = 0;
   let modelPreparationMs = 0;
   let prepared: Awaited<ReturnType<typeof prepareExactMipModel>> | undefined;
@@ -245,6 +250,32 @@ export async function findBestLoadoutExactMip(
     );
     initialMipStart = { ...initialMipStart, hint: completeHint };
   }
+  const foodBound = prepareFoodProductBound(
+    inheritCanonicalEvaluatorCandidateUpperBound(options, modelOptions), prepared, initialMipStart,
+    { deadline: Math.min(searchDeadline, performance.now() + 500) },
+  );
+  foodProductBound = foodBound.statistics;
+  modelPreparationMs += foodBound.statistics.elapsedMs;
+  if (foodBound.rows.length > 0) model.rows.push(...foodBound.rows);
+  if (isProfileTimingEnabled() && options.onSolverProgress !== undefined) {
+    options.onSolverProgress({
+      backend: "HiGHS", model: `${options.job}:food_product_bound`, kind: "log",
+      message: `PROFILE ${JSON.stringify({ phase: "food-product-bound", job: options.job, ...foodProductBound })}`,
+    });
+  }
+  const materiaPreparation = prepareMateriaFamilies(modelOptions);
+  modelPreparationMs += materiaPreparation.elapsedMs;
+  const materiaFamilies = materiaModelFamilies(materiaPreparation, model);
+  const materiaStatistics: NonNullable<ExactMipSearchStatistics["materiaFamilies"]> = {
+    preparedFamilies: materiaFamilies.length, preparationPoints: materiaPreparation.points,
+    rejectedGroups: materiaPreparation.rejectedGroups, preparationMs: materiaPreparation.elapsedMs, solveRequests: 0, requests: [],
+  };
+  if (isProfileTimingEnabled() && options.onSolverProgress !== undefined) options.onSolverProgress({
+    backend: "HiGHS", model: `${options.job}:materia_families`, kind: "log",
+    message: `PROFILE ${JSON.stringify({ phase: "materia-family-preparation", job: options.job,
+      families: materiaFamilies.length, points: materiaPreparation.points, rejectedGroups: materiaPreparation.rejectedGroups,
+      elapsedMs: materiaPreparation.elapsedMs, skipReason: materiaPreparation.skipReason })}`,
+  });
   const initialStart = initialMipStart?.hint;
   const { signatureBandGroups, isPossiblyFeasibleFactorTuple } =
     prepareSignatureFeasibility(options, prepared);
@@ -327,6 +358,7 @@ export async function findBestLoadoutExactMip(
     });
     throwIfCancelled(options.isCancelled);
     const solverCallStartedAt = performance.now();
+    let materiaRequestStatistics: MateriaFamilyProjectionStatistics | undefined;
     const output = await solveIntegerModel({
       name: phaseName,
       objective,
@@ -334,6 +366,9 @@ export async function findBestLoadoutExactMip(
       variables: solveBounds,
       binaryVariables: model.binaryVars,
       integerVariables: model.generalVars,
+      ...(materiaFamilies.length === 0 ? {} : { materiaFamilies,
+        onMateriaFamilyProjection: (statistics: MateriaFamilyProjectionStatistics) => { materiaRequestStatistics = statistics; } }),
+      isCancelled: options.isCancelled,
       timeLimitMs: remainingMs,
       ...(initialStart === undefined || excludedSignatures.length > 0
         ? {}
@@ -343,6 +378,8 @@ export async function findBestLoadoutExactMip(
         : { onProgress: options.onSolverProgress }),
       ...(options.onSolverCallback === undefined ? {} : { onCallback: options.onSolverCallback }),
     });
+    materiaStatistics.solveRequests++;
+    if (materiaRequestStatistics !== undefined && materiaStatistics.requests.length < 64) materiaStatistics.requests.push(materiaRequestStatistics);
     solverWallMs += performance.now() - solverCallStartedAt;
     throwIfCancelled(options.isCancelled);
     solverRuns++;
@@ -561,6 +598,8 @@ export async function findBestLoadoutExactMip(
       ...(resourceBudgetCandidateBound === undefined ? {} : { resourceBudgetCandidateBound }),
       resourceBudgetCandidateCuts: resourceBudgetCandidateUpperBoundCuts.size,
       primaryResourceSupportsEnabled: prepared!.primaryResourceSupportsEnabled,
+      ...(foodProductBound === undefined ? {} : { foodProductBound }),
+      materiaFamilies: materiaStatistics,
       solverRuns,
       incumbentCandidateUpperBoundCuts: incumbentCandidateUpperBoundCuts.size,
       excludedSignatures: excludedSignatures.length,

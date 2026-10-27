@@ -8,6 +8,7 @@ import type { GcdSpeedRange } from "../search-types.ts";
 import { addTerm } from "../core/model-builder.ts";
 import type { AttributeFoodBonus } from "./types.ts";
 import { validateFoodRate } from "./attributes.ts";
+import { prepareSpeedFoodProjection } from "./speed-food-projection.ts";
 
 export function addRangeConstraint(
   rows: ModelRow[],
@@ -430,6 +431,12 @@ export function buildLinearAttributeModel(options: ExactMipOptions) {
     addRangeConstraint(rows, `attribute_range_${attribute}`, finalVariables[attribute]!, range.min, range.max);
   }
 
+  const speedFoodProjection = prepareSpeedFoodProjection(options, {
+    fixedEquipmentAttributes, resistanceAllocationVariables, foodVariables,
+    rawVariables, foodBonuses, idToIndex, ranges, gcdChoiceRanges,
+  });
+  if (speedFoodProjection !== undefined) rows.push(...speedFoodProjection.rows);
+
   return {
     rows,
     bounds,
@@ -451,5 +458,6 @@ export function buildLinearAttributeModel(options: ExactMipOptions) {
     idToIndex,
     ranges,
     canonicalRingOrder,
+    speedFoodProjection,
   };
 }

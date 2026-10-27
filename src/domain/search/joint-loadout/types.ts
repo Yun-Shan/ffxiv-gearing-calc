@@ -3,6 +3,7 @@ import type { ExactMipOptions, ExactMipResult } from "../loadout-finder-exact-mi
 import type { EquipInfo, FoodInfo, SharedSlotProjection } from "../types.ts";
 import type { HighsCallbackTrace } from "../linear-mip.ts";
 import type { BaselineExecutor } from "../parallel-baseline-executor.ts";
+import type { SharedStateSearchStatistics } from "./shared-state-search.ts";
 
 export type JointLoadoutJobV3 = {
   id: string;
@@ -49,7 +50,7 @@ export type JointLoadoutV3Result = {
     objective: "damage" | "dps";
     optimalityScope: string;
     outerBound: string;
-    innerSolverStatus: "Optimal" | "DualBound";
+    innerSolverStatus: "Optimal" | "DualBound" | "ExactStateEnumeration";
     formalCertificate: false;
     numericalLimitation: string;
     terminationReason: string;
@@ -76,6 +77,7 @@ export type JointLoadoutV3Statistics = {
   cacheLimit: number;
   rssBytes?: number;
   heapUsedBytes?: number;
+  exactSharedStateSearch?: SharedStateSearchStatistics;
 };
 
 export type Rational = { numerator: bigint; denominator: bigint };

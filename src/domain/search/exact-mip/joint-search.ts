@@ -340,6 +340,10 @@ export async function findBestJointFactorMip(
     const optimizingRatioUpperBound = ratioUpperBoundObjectiveEnabled;
     const solverCallStartedAt = performance.now();
     const output = await solveIntegerModel({
+      // Equivalent representations can have different native MIP performance;
+      // bound row-density growth and require substantial column reduction.
+      equalityQuotient: { maxRowDensityGrowth: 3, minVariableReductionPercent: 25 },
+      isCancelled,
       name: "joint_factor_product",
       objective: ratioUpperBoundObjectiveEnabled
         ? ratioUpperBoundObjective

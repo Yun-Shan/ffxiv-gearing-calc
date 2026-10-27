@@ -18,6 +18,8 @@ import { prepareCandidates } from "./candidate-preparation.ts";
 import { solveBaselines } from "./baselines.ts";
 import { createRestrictedSearch } from "./restricted-search.ts";
 import { createSeedResults } from "./warm-start.ts";
+import { findBestSharedStateLoadout } from "./shared-state-search.ts";
+import { emitProfileEvent } from "../core/diagnostics.ts";
 
 const MAX_ACCEPTANCE_SEARCH_MS = 235_000;
 
@@ -191,6 +193,18 @@ export async function findBestJointLoadoutV3(
     score: Rational,
     results: readonly ExactMipResult[],
   ) => {
+    for (let index = 0; index < contexts.length; index++) {
+      const context = contexts[index]!;
+      if (!context.active) continue;
+      const factors = factorsForResult(context, results[index]!);
+      const product = integerDamageProduct(factors);
+      const exceedsBaseline = objective === "dps"
+        ? product * BigInt(context.optimumGcd) > context.optimumProduct * BigInt(factors.gcdCentiseconds)
+        : product > context.optimumProduct;
+      if (exceedsBaseline) {
+        throw new Error(`职业 ${context.job.id} 的可行目标超过独立最优基线；未返回未经证明的联合结果`);
+      }
+    }
     if (best !== undefined && compareRational(score, best.score) <= 0) return;
     const commonEquipments: Record<string, EquipInfo> = {};
     for (const name of options.commonSlots) {
@@ -237,11 +251,37 @@ export async function findBestJointLoadoutV3(
   };
 
   let jointFactorProof = false;
-  let jointInnerSolverStatus: "Optimal" | "DualBound" = "Optimal";
+  let jointInnerSolverStatus: JointLoadoutV3Result["proof"]["innerSolverStatus"] = "Optimal";
   let exactSharedDomainProof = false;
+  let exactStateProof = false;
+  const sharedStates = await findBestSharedStateLoadout({
+    options, contexts, commonChoicesByName, foodChoices, projections: commonSlotProjections,
+    assertWithinBudget, remainingTimeLimit,
+  });
+  emitProfileEvent(contexts[0]?.job.options.onSolverProgress, "HiGHS", "joint:shared-state-search",
+    "exact-shared-state-search", {
+      ...Object.fromEntries(Object.entries(sharedStates.statistics)
+        .filter((entry): entry is [string, string | number] => typeof entry[1] === "string" || typeof entry[1] === "number")),
+      resourcePriceDiagnostics: JSON.stringify(sharedStates.statistics.resourcePriceDiagnostics),
+    });
+  assertWithinBudget("共享状态搜索复核");
+  mutable.exactSharedStateSearch = sharedStates.statistics;
+  mutable.outerNodes += sharedStates.statistics.states;
+  mutable.upperBoundPrunes += sharedStates.statistics.resourcePrunes;
+  if (sharedStates.results !== undefined) updateBest(exactScore(sharedStates.results), sharedStates.results);
+  if (sharedStates.status === "complete-infeasible") return undefined;
+  if (sharedStates.status === "complete-feasible") {
+    if (sharedStates.results === undefined) throw new Error("完整共享状态证明缺少可行见证");
+    exactStateProof = true;
+    jointInnerSolverStatus = "ExactStateEnumeration";
+    mutable.completeNodes++;
+  }
   const hasOnlyOneCommonAssignment = options.commonSlots.length > 0 &&
     options.commonSlots.every((name) => commonChoicesByName.get(name)!.length === 1);
-  if (contexts.every((context) => context.active) && options.commonSlots.length > 0 &&
+  if (exactStateProof) {
+    // The bounded attempt completed its whole domain (or reached the certified
+    // independent-baseline ceiling), so no floating joint MIP is required.
+  } else if (contexts.every((context) => context.active) && options.commonSlots.length > 0 &&
     !hasOnlyOneCommonAssignment) {
     const seedCandidates: {
       key: string;
@@ -525,15 +565,25 @@ export async function findBestJointLoadoutV3(
       complete: true,
       objective,
       optimalityScope: "传入的每职业槽位候选（含两个独立戒指槽及跨槽 unique 约束）、完整装备身份交集、食物列表和约束范围",
-      outerBound: jointFactorProof
+      outerBound: exactStateProof
+        ? sharedStates.statistics.termination === "baseline-ceiling"
+          ? "每个独立最优基线给出其职业归一化目标的上界；已恢复的合法共同装备和食物同时达到全部职业上界"
+          : "共享完整属性状态逐层精确合并；每个食物/共享速度上下文以全部合法私有状态独立最大化各职业目标，使用 BigInt 有理数比较原归一化总和"
+        : jointFactorProof
         ? "单职业最优基线归一化后，每职业比例不超过 1；总和不超过职业数减 1 加比例乘积，乘积仅筛选可能改进的因子签名；最终总和使用 BigInt 有理数比较"
         : objective === "dps"
         ? "每个外层节点以各职业在已固定通用装备下独立重优化的 DPS 上界求和；product/GCD 归一化分数用 BigInt 有理数比较"
         : "每个外层节点以各职业在已固定通用装备下独立重优化的伤害上界求和；归一化分数用 BigInt 有理数比较",
       innerSolverStatus: jointInnerSolverStatus,
       formalCertificate: false,
-      numericalLimitation: "HiGHS 报告 Optimal，或经保守取整的 MIP 对偶上界已不高于精确 BigInt incumbent；模型行与属性重建均已复核，但这些求解器结果不是独立形式化证书",
-      terminationReason: stopAtProvenCeiling
+      numericalLimitation: exactStateProof
+        ? "共享状态与私有包络已用完整整数属性和 BigInt 目标完成；独立最优基线仍依赖 HiGHS 最优状态可信，未提供独立形式化基线证书"
+        : "HiGHS 报告 Optimal，或经保守取整的 MIP 对偶上界已不高于精确 BigInt incumbent；模型行与属性重建均已复核，但这些求解器结果不是独立形式化证书",
+      terminationReason: exactStateProof
+        ? sharedStates.statistics.termination === "baseline-ceiling"
+          ? "合法共享状态已达到所有独立最优基线之和；逐职业基线界均已复核"
+          : "已完整穷尽必要条件保留的共享状态/食物/速度上下文，并完成全部真实私有包络与原候选恢复"
+        : stopAtProvenCeiling
         ? "已达到各职业单独最优基线之和这一全局上界"
         : jointFactorProof && jointInnerSolverStatus === "DualBound"
         ? "HiGHS MIP 对偶上界不高于当前精确 BigInt incumbent，已证明不存在严格改进解"

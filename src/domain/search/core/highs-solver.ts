@@ -7,6 +7,10 @@ import { isProfileTimingEnabled } from "./diagnostics.ts";
 import { emitSolverProfile } from "./diagnostics.ts";
 import type { HighsCallbackName } from "../linear-mip.ts";
 import type { CallbackEvent } from "highs";
+import { prepareEqualityQuotient } from "./equality-quotient.ts";
+import { prepareMateriaFamilyProjection } from "./materia-family-projection.ts";
+import type { MateriaFamilyProjectionStatistics } from "./materia-family-projection.ts";
+import { throwIfCancelled } from "./cancellation.ts";
 
 let highsPromise: ReturnType<typeof loadHighs> | undefined;
 
@@ -103,6 +107,31 @@ function lpText(
   return output.join("\n");
 }
 
+export type NonzeroRowDensity = { nonzeros: bigint; nonzeroRows: bigint };
+
+/** Count actual nonzeros, leaving rows and their explicit zero terms untouched. */
+export function measureNonzeroRowDensity(
+  rows: LinearMipRequest["rows"],
+  isCancelled?: () => boolean,
+): NonzeroRowDensity | undefined {
+  throwIfCancelled(isCancelled);
+  let nonzeros = 0n;
+  let nonzeroRows = 0n;
+  let measurable = true;
+  scan: for (const row of rows) {
+    throwIfCancelled(isCancelled);
+    let nonempty = false;
+    for (const coefficient of row.terms.values()) {
+      throwIfCancelled(isCancelled);
+      if (!Number.isFinite(coefficient)) { measurable = false; break scan; }
+      if (coefficient !== 0) { nonzeros += 1n; nonempty = true; }
+    }
+    if (nonempty) nonzeroRows += 1n;
+  }
+  throwIfCancelled(isCancelled);
+  return measurable ? { nonzeros, nonzeroRows } : undefined;
+}
+
 export async function solveIntegerModel(
   request: LinearMipRequest,
 ): Promise<LinearMipSolution> {
@@ -110,8 +139,92 @@ export async function solveIntegerModel(
 
   const profileEnabled = request.onProgress !== undefined && isProfileTimingEnabled();
   const callStartedAt = performance.now();
-  const modelNonzeros = request.rows.reduce((sum, row) => sum + row.terms.size, 0);
+  const originalVariables = request.variables.length;
+  const originalRows = request.rows.length;
+  let materiaStatistics: MateriaFamilyProjectionStatistics | undefined;
+  const materiaObserver = request.onMateriaFamilyProjection;
+  request = { ...request, onMateriaFamilyProjection: (statistics) => { materiaStatistics = statistics; materiaObserver?.(statistics); } };
+  const materia = prepareMateriaFamilyProjection(request);
+  request = materia?.request ?? request;
+  const materiaPreparationMs = performance.now() - callStartedAt;
+  const baseRequest = request;
+  const equalityStartedAt = performance.now();
+  const policy = baseRequest.equalityQuotient;
+  const densityPolicy = typeof policy === "object" && policy !== null;
+  const maximumGrowth = densityPolicy ? policy.maxRowDensityGrowth : undefined;
+  const minimumReduction = densityPolicy ? (policy.minVariableReductionPercent === undefined ? 0 : policy.minVariableReductionPercent) : undefined;
+  const validDensityPolicy = densityPolicy && Number.isSafeInteger(maximumGrowth) && maximumGrowth! > 0 &&
+    Number.isSafeInteger(minimumReduction) && minimumReduction! >= 0 && minimumReduction! <= 100;
+  const automaticPolicy = policy === undefined || policy === true;
+  let acceptedQuotient: ReturnType<typeof prepareEqualityQuotient>;
+  let baseDensity: NonzeroRowDensity | undefined;
+  let candidateDensity: NonzeroRowDensity | undefined;
+  let candidateVariables: { base: number; candidate: number; removed: number } | undefined;
+  let equalityDecision = policy === false ? "disabled" : "invalid-policy";
+  const equalityPolicy = policy === false ? "disabled" : automaticPolicy ? "auto" : densityPolicy ? "row-density" : "invalid";
+  throwIfCancelled(baseRequest.isCancelled);
+  if (automaticPolicy || validDensityPolicy) {
+    throwIfCancelled(baseRequest.isCancelled);
+    const candidate = prepareEqualityQuotient(baseRequest);
+    throwIfCancelled(baseRequest.isCancelled);
+    equalityDecision = "no-certificate";
+    if (candidate !== undefined) {
+      const baseVariables = baseRequest.variables.length;
+      const quotientVariables = candidate.request.variables.length;
+      if (Number.isSafeInteger(baseVariables) && baseVariables > 0 && Number.isSafeInteger(quotientVariables) &&
+          quotientVariables >= 0 && quotientVariables <= baseVariables) {
+        candidateVariables = { base: baseVariables, candidate: quotientVariables, removed: baseVariables - quotientVariables };
+      }
+      if (automaticPolicy) {
+        acceptedQuotient = candidate;
+        equalityDecision = "accepted";
+      } else {
+        baseDensity = measureNonzeroRowDensity(baseRequest.rows, baseRequest.isCancelled);
+        candidateDensity = measureNonzeroRowDensity(candidate.request.rows, baseRequest.isCancelled);
+        if (baseDensity === undefined || candidateDensity === undefined) equalityDecision = "unmeasurable";
+        else if (baseDensity.nonzeroRows === 0n) equalityDecision = "empty-base";
+        else if ((candidateDensity.nonzeroRows === 0n && candidateDensity.nonzeros === 0n) ||
+          (candidateDensity.nonzeroRows > 0n && candidateDensity.nonzeros * baseDensity.nonzeroRows <=
+            BigInt(maximumGrowth!) * baseDensity.nonzeros * candidateDensity.nonzeroRows)) {
+          if (candidateVariables === undefined) equalityDecision = "unmeasurable";
+          else if (100n * BigInt(candidateVariables.removed) >= BigInt(minimumReduction!) * BigInt(candidateVariables.base)) {
+            acceptedQuotient = candidate;
+            equalityDecision = "accepted";
+          } else equalityDecision = "variable-reduction-rejected";
+        } else equalityDecision = "density-rejected";
+      }
+    }
+  }
+  throwIfCancelled(baseRequest.isCancelled);
+  request = acceptedQuotient?.request ?? baseRequest;
+  const equalityPreparationMs = automaticPolicy || validDensityPolicy ? performance.now() - equalityStartedAt : 0;
+  const selectedDensity = acceptedQuotient === undefined ? baseDensity : candidateDensity;
+  let modelNonzeros = selectedDensity === undefined ? 0 : Number(selectedDensity.nonzeros);
+  if (selectedDensity === undefined) {
+    for (const row of request.rows) {
+      throwIfCancelled(request.isCancelled);
+      for (const coefficient of row.terms.values()) if (coefficient !== 0) modelNonzeros++;
+    }
+  }
   if (profileEnabled) emitSolverProfile(request, "highs-call-start", {
+    equalityOriginalVariables: originalVariables,
+    equalityOriginalRows: originalRows,
+    equalityVariablesRemoved: acceptedQuotient?.variablesRemoved ?? 0,
+    equalityRowsRemoved: acceptedQuotient?.rowsRemoved ?? 0,
+    equalityPreparationMs,
+    equalityQuotientPolicy: equalityPolicy,
+    equalityQuotientDecision: equalityDecision,
+    ...(validDensityPolicy ? { equalityDensityMaxGrowth: maximumGrowth! } : {}),
+    ...(validDensityPolicy ? { equalityMinVariableReductionPercent: minimumReduction! } : {}),
+    ...(candidateVariables === undefined ? {} : { equalityCandidateBaseVariables: candidateVariables.base,
+      equalityCandidateVariables: candidateVariables.candidate, equalityCandidateVariablesRemoved: candidateVariables.removed }),
+    ...(baseDensity === undefined ? {} : { equalityBaseNonzeros: baseDensity.nonzeros.toString(), equalityBaseNonzeroRows: baseDensity.nonzeroRows.toString() }),
+    ...(candidateDensity === undefined ? {} : { equalityCandidateNonzeros: candidateDensity.nonzeros.toString(), equalityCandidateNonzeroRows: candidateDensity.nonzeroRows.toString() }),
+    materiaPreparationMs,
+    materiaVariablesRemoved: materia?.statistics.variablesRemoved ?? 0,
+    materiaFamilies: materia?.statistics.eligibleFamilies ?? 0,
+    materiaPools: materia?.statistics.pools ?? 0,
+    materiaHallRows: materia?.statistics.hallRows ?? 0,
     variables: request.variables.length,
     constraints: request.rows.length,
     nonzeros: modelNonzeros,
@@ -281,7 +394,12 @@ export async function solveIntegerModel(
     status: result.Status,
     completed: result.Status === "Optimal",
   });
-  return result;
+  const expanded = acceptedQuotient?.expandSolution(result) ?? result;
+  const restored = materia?.expandSolution(expanded) ?? expanded;
+  if (profileEnabled && materiaStatistics !== undefined) emitSolverProfile(request, "materia-family-projection", {
+    ...materiaStatistics, finalSolverVariables: request.variables.length,
+  });
+  return restored;
 
   function emitFullCallback(callbackName: HighsCallbackName, event: CallbackEvent): void {
     request.onCallback?.({

@@ -1,5 +1,7 @@
 import type { HighsCallbackTrace, LinearMipProgress } from "./linear-mip.ts";
 import type { ExactMipOptions, ExactMipResult } from "./loadout-finder-exact-mip.ts";
+import { prepareMateriaFamilies } from "./exact-mip/materia-families.ts";
+import type { MateriaFamilyMetadata } from "./exact-mip/materia-families.ts";
 import { hasCanonicalEvaluatorCandidateUpperBound } from "./exact-mip-candidate-upper-bound.ts";
 import type { ParamInfo } from "./types.ts";
 import type { Stat } from "../types.ts";
@@ -44,6 +46,7 @@ export type SerializedFoodColumns = {
 };
 
 export type SerializedBaselineOptions = {
+  materiaFamilyMetadata?: MateriaFamilyMetadata;
   job: ExactMipOptions["job"];
   jobLevel: number;
   /** 族群基础属性索引。 */
@@ -180,6 +183,7 @@ function serializedOptions(
   remainingMs: number,
 ): SerializedBaselineOptions {
   const attributeIds = [...options.attributeIds];
+  const materiaPreparation = prepareMateriaFamilies(options);
   const relevantAttributes = new Set(attributeIds);
   let candidateCount = 0;
   let parameterCount = 0;
@@ -267,6 +271,7 @@ function serializedOptions(
   }
 
   return {
+    ...(materiaPreparation.metadata.families.length === 0 ? {} : { materiaFamilyMetadata: materiaPreparation.metadata }),
     job: options.job,
     jobLevel: options.jobLevel,
     clanIndex: options.clanIndex,

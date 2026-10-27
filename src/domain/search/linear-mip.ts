@@ -1,4 +1,5 @@
 import type { CallbackType } from "highs";
+import type { MateriaModelFamily, MateriaFamilyProjectionStatistics } from "./core/materia-family-projection.ts";
 
 /** 精确配装搜索使用的有限域整数线性模型。 */
 export type LinearMipRow = {
@@ -68,6 +69,11 @@ export type LinearMipRequest = {
   variables: readonly LinearMipVariable[];
   binaryVariables: readonly string[];
   integerVariables: readonly string[];
+  /** Object policy also supports a safe integer percentage in [0,100], defaulting to zero. */
+  equalityQuotient?: boolean | { maxRowDensityGrowth: number; minVariableReductionPercent?: number };
+  materiaFamilies?: readonly MateriaModelFamily[];
+  isCancelled?: () => boolean;
+  onMateriaFamilyProjection?: (statistics: MateriaFamilyProjectionStatistics) => void;
   timeLimitMs?: number;
   solutionHint?: ReadonlyMap<string, number>;
   /** 当已证明的对偶界无法超过精确当前最优解时，中断最大化求解。 */

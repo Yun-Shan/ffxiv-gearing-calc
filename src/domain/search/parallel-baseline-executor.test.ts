@@ -22,6 +22,7 @@ vi.mock("../node/parallel-baseline-node-adapter.ts", () => ({
 }));
 
 import { createParallelBaselineExecutor } from "./parallel-baseline-executor.ts";
+import { boundedMateriaCounts } from "./core/materia-family-projection.ts";
 
 const task: ExactMipOptions = {
   clanIndex: 0,
@@ -84,6 +85,46 @@ const control = {
   isCancelled: () => false,
   maxConcurrency: 1,
 };
+
+test("T54 numeric family sidechannel survives real Worker option decoding without transmitting variant identity", async () => {
+  const base = exactOptionsForWorker();
+  const family = boundedMateriaCounts([2, 2, 2], 2).map((count) => {
+    const equipment = testEquipment(900, { 1: 500, 2: 300 + count[0]! * 36, 3: 300 + count[1]! * 54, 4: 300 + count[2]! * 36 });
+    equipment.variantKey = JSON.stringify(count.flatMap((amount, axis) => Array.from({ length: amount }, () =>
+      [(["CRT", "DET", "DHT"] as const)[axis], [36, 54, 36][axis], 12])));
+    return equipment;
+  });
+  const options = markCanonicalEvaluatorCandidateUpperBound({ ...base, slots: [base.slots[0]!, family], foods: [] });
+  const expected = await findBestLoadoutExactMip(options);
+  expectFamilyCompressed(expected!);
+  let posted: BaselineWorkerRequest | undefined;
+  adapter.createNodeBaselineWorker.mockImplementation(() => workerHandle((post, request) => {
+    posted = request;
+    void solveSerializedBaseline(structuredClone(request.options), {}).then(
+      (result) => post({ type: "result", result }),
+      (caught) => { const error = caught as Error; post({ type: "error", error: { name: error.name, message: error.message } }); },
+    );
+  }, () => undefined));
+  const executor = await createParallelBaselineExecutor();
+  assert.ok(executor);
+  try {
+    const result = (await executor([options], control))![0]!;
+    assert.equal(result.damage, expected!.damage);
+    assert.equal(result.statistics.signatureBandProof, true);
+    expectFamilyCompressed(result);
+    result.selection.forEach((equipment, index) => assert.ok(options.slots[index]!.includes(equipment)));
+    assert.equal(posted!.options.materiaFamilyMetadata!.families.length, 1);
+    assert.equal("variantKey" in posted!.options.slots, false);
+    const stale = structuredClone(posted!.options);
+    stale.materiaFamilyMetadata!.families[0]!.memberIndexes = [999, 998, 997, 996, 995, 994];
+    const fallback = await solveSerializedBaseline(stale, {});
+    assert.equal(fallback!.damage, expected!.damage);
+    assert.equal(fallback!.statistics.materiaFamilies!.preparedFamilies, 0);
+  } finally { await executor.dispose?.(); }
+  function expectFamilyCompressed(result: NonNullable<Awaited<ReturnType<typeof findBestLoadoutExactMip>>>) {
+    assert.ok(result.statistics.materiaFamilies!.requests.some(({ variablesRemoved }) => variablesRemoved > 0));
+  }
+});
 
 const testAttributeIds = [-1, 1, 2, 3, 4, 5, 6];
 const testStatIndexes = new Map<Stat, number>([

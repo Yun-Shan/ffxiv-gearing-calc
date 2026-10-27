@@ -127,6 +127,7 @@ export async function solveSerializedBaseline(
     attributeIds: request.attributeIds,
     statIndexes,
     slots,
+    ...(request.materiaFamilyMetadata === undefined ? {} : { materiaFamilyMetadata: request.materiaFamilyMetadata }),
     foods,
     ...(request.constraints === undefined ? {} : { constraints: request.constraints }),
     ...(request.speedAttributeId === undefined ? {} : { speedAttributeId: request.speedAttributeId }),

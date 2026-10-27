@@ -11,6 +11,8 @@ import type { CandidateResourceSupportProfile } from "../candidate-resource-supp
 import type { ResourceBudgetCandidateProfile } from "../candidate-resource-support-policy.ts";
 import type { LinearMipProgress } from "../linear-mip.ts";
 import type { HighsCallbackTrace } from "../linear-mip.ts";
+import type { MateriaFamilyMetadata } from "./materia-families.ts";
+import type { MateriaFamilyProjectionStatistics } from "../core/materia-family-projection.ts";
 
 export type JobLevel = number;
 
@@ -37,6 +39,18 @@ export type AttributeFoodBonus = {
   denominator: number;
   cap: number;
   maximumRaw: number;
+};
+
+export type FoodProductBoundStatistics = {
+  execution: "completed" | "skipped";
+  skipReason?: string;
+  elapsedMs: number;
+  work: number;
+  speedFibers: number;
+  peakSupportPoints: number;
+  foodsEvaluated: number;
+  foodsExcluded: number;
+  nonConstantFactors: number;
 };
 
 export type ExactMipSearchStatistics = {
@@ -71,6 +85,15 @@ export type ExactMipSearchStatistics = {
   };
   resourceBudgetCandidateCuts?: number;
   primaryResourceSupportsEnabled?: boolean;
+  foodProductBound?: FoodProductBoundStatistics;
+  materiaFamilies?: {
+    preparedFamilies: number;
+    preparationPoints: number;
+    rejectedGroups: number;
+    preparationMs: number;
+    solveRequests: number;
+    requests: MateriaFamilyProjectionStatistics[];
+  };
   incumbentCandidateUpperBoundCuts?: number;
   conditionalResourceSupport?: {
     candidateBands: number;
@@ -94,6 +117,8 @@ export type ExactMipOptions = {
   statIndexes: ReadonlyMap<Stat, number>;
   slots: readonly (readonly EquipInfo[])[];
   foods: readonly FoodInfo[];
+  /** Internal Worker sidechannel; recertified against the current slot arrays. */
+  materiaFamilyMetadata?: MateriaFamilyMetadata;
   constraints?: LoadoutConstraints;
   speedAttributeId?: number;
   toughnessAttributeId?: number;

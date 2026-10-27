@@ -576,7 +576,8 @@ function validateJointResult(
     typeof proof.optimalityScope === "string" &&
     typeof proof.outerBound === "string" &&
     (proof.innerSolverStatus === "Optimal" ||
-      proof.innerSolverStatus === "DualBound") &&
+      proof.innerSolverStatus === "DualBound" ||
+      proof.innerSolverStatus === "ExactStateEnumeration") &&
     proof.formalCertificate === false &&
     typeof proof.numericalLimitation === "string" &&
     typeof proof.terminationReason === "string" &&

@@ -17,7 +17,64 @@ export interface FactorResourceBudgetUpperBoundOptions {
 export interface PreparedFactorResourceBudgetUpperBound {
   minimumCost: number;
   supportCount: number;
+  /** 完整原始类别被分成的析取块数；未采用分块时省略。 */
+  partitionCount?: number;
   query: (budget: number) => bigint | undefined;
+}
+
+/**
+ * Keep the nonconcave part of one finite factor domain as a union of blocks.
+ * Every original class belongs to a block; splitting only hull vertices would
+ * be unsafe. Each block has its own conservative resource upper bound, so their
+ * maximum covers the union. A failed block abandons the whole strengthening.
+ */
+export function preparePartitionedFactorResourceBudgetUpperBound(
+  groups: readonly ResourceBudgetFactorGroup[],
+  groupIndex: number,
+  options: FactorResourceBudgetUpperBoundOptions & { maxPartitions?: number } = {},
+): PreparedFactorResourceBudgetUpperBound | undefined {
+  const maxWork = options.maxWork ?? DEFAULT_MAX_WORK;
+  const maxPartitions = options.maxPartitions ?? 8;
+  if (!Array.isArray(groups) || !Number.isSafeInteger(groupIndex) || groupIndex < 0 || groupIndex >= groups.length ||
+    !Number.isSafeInteger(maxWork) || maxWork < 0 ||
+    !Number.isSafeInteger(maxPartitions) || maxPartitions < 1) return undefined;
+  const baseWork = Math.floor(maxWork / 2);
+  const base = prepareFactorResourceBudgetUpperBound(groups, { maxWork: baseWork });
+  if (base === undefined) return undefined;
+  const classes = [...groups[groupIndex]!.classes].sort((left, right) => left.min - right.min || left.score - right.score);
+  const count = Math.min(maxPartitions, classes.length);
+  if (count < 2 || classes.every((entry) => entry.min === classes[0]!.min)) return base;
+  const perBlockWork = Math.floor((maxWork - baseWork) / count);
+  const blocks: PreparedFactorResourceBudgetUpperBound[] = [];
+  for (let block = 0; block < count; block++) {
+    const first = Math.floor(block * classes.length / count);
+    const last = Math.floor((block + 1) * classes.length / count);
+    const restricted = groups.map((group, index) => index === groupIndex
+      ? { classes: classes.slice(first, last) }
+      : group);
+    const bound = prepareFactorResourceBudgetUpperBound(restricted, { maxWork: perBlockWork });
+    if (bound === undefined) return base;
+    blocks.push(bound);
+  }
+  if (Math.min(...blocks.map((block) => block.minimumCost)) !== base.minimumCost) return base;
+  return {
+    minimumCost: base.minimumCost,
+    supportCount: base.supportCount + blocks.reduce((total, block) => total + block.supportCount, 0),
+    partitionCount: blocks.length,
+    query(budget) {
+      const original = base.query(budget);
+      if (original === undefined) return undefined;
+      let disjunctive: bigint | undefined;
+      for (const block of blocks) {
+        // Only the certified minimum cost can prove a block inactive.
+        if (budget < block.minimumCost) continue;
+        const upper = block.query(budget);
+        if (upper === undefined) return original;
+        if (disjunctive === undefined || upper > disjunctive) disjunctive = upper;
+      }
+      return disjunctive === undefined || original < disjunctive ? original : disjunctive;
+    },
+  };
 }
 
 type Point = { cost: number; score: number };
