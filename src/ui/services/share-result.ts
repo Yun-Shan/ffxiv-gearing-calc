@@ -3,11 +3,40 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import type { ResultShareData } from "@/ui/components/results/result-share-layout/types";
 
-async function renderResultImage(data: ResultShareData): Promise<Blob> {
-  const [{ snapdom }, { ResultShareLayout }] = await Promise.all([
+type ResultImageModules = [
+  typeof import("@zumer/snapdom"),
+  typeof import("@/ui/components/results/result-share-layout/ResultShareLayout"),
+];
+let resultImageModules: Promise<ResultImageModules> | undefined;
+let initializationScheduled = false;
+
+function loadResultImageModules(): Promise<ResultImageModules> {
+  return (resultImageModules ??= Promise.all([
     import("@zumer/snapdom"),
     import("@/ui/components/results/result-share-layout/ResultShareLayout"),
-  ]);
+  ]).catch((error: unknown) => {
+    resultImageModules = undefined;
+    throw error;
+  }));
+}
+
+export function scheduleResultImageInitialization(): void {
+  if (initializationScheduled || resultImageModules) return;
+  initializationScheduled = true;
+  const initialize = () => {
+    initializationScheduled = false;
+    // 预初始化失败不影响结果页；正式复制仍可重新尝试加载。
+    void loadResultImageModules().catch(() => {});
+  };
+  if (typeof window.requestIdleCallback === "function") {
+    window.requestIdleCallback(initialize, { timeout: 3000 });
+  } else {
+    window.setTimeout(initialize, 1000);
+  }
+}
+
+async function renderResultImage(data: ResultShareData): Promise<Blob> {
+  const [{ snapdom }, { ResultShareLayout }] = await loadResultImageModules();
   const host = document.createElement("div");
   Object.assign(host.style, {
     position: "fixed",

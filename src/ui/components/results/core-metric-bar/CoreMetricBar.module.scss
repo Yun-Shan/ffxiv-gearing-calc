@@ -75,6 +75,10 @@
   gap: 6px;
 
   .openLink {
+    flex: none;
+    justify-content: center;
+    width: tokens.$result-action-width;
+    font-size: tokens.$font-size-body;
     border-color: tokens.$color-accent-teal;
     background: tokens.$color-accent-teal;
     color: tokens.$color-neutral-white;

@@ -22,6 +22,11 @@ const tasks = vi.hoisted(() => ({
   gcd: vi.fn(),
   saveHistory: vi.fn(),
   replaceHistory: vi.fn(),
+  initializeImages: vi.fn(),
+}));
+vi.mock("@/ui/services/share-result", async (original) => ({
+  ...(await original<typeof import("@/ui/services/share-result")>()),
+  scheduleResultImageInitialization: tasks.initializeImages,
 }));
 vi.mock("@/ui/services/share-link", async (original) => ({
   ...(await original<typeof import("@/ui/services/share-link")>()),
@@ -55,6 +60,7 @@ beforeEach(() => {
   tasks.saveHistory.mockReset();
   tasks.replaceHistory.mockReset();
   tasks.gcd.mockReset().mockResolvedValue([2.5, 2.48]);
+  tasks.initializeImages.mockReset();
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   vi.spyOn(window, "scrollTo").mockImplementation(() => {});
   window.history.replaceState(null, "", `/?s=${joint.binary}`);
@@ -157,7 +163,9 @@ describe("share input at the application entry", () => {
       const depth = window.history.length;
       await mount();
       expect(host.textContent).toContain("正在恢复分享结果");
+      expect(tasks.initializeImages).not.toHaveBeenCalled();
       await resolve(0, fixture.binary);
+      await vi.waitFor(() => expect(tasks.initializeImages).toHaveBeenCalled());
       expectSharedResult(
         path === "/single" ? "single" : "joint",
         fixture.binary,
@@ -190,6 +198,7 @@ describe("share input at the application entry", () => {
     await mount();
     await act(async () => tasks.requests[0].resolve(restoreDocument(document)));
     expect(host.textContent).toContain("未知来源（9999）");
+    expect(tasks.initializeImages).not.toHaveBeenCalled();
     expect(window.location.search).toContain("s=");
     expect(host.querySelector("table")).toBeNull();
     expect(button("调整条件")).toBeUndefined();
@@ -215,6 +224,7 @@ describe("share input at the application entry", () => {
       tasks.requests[0].reject(new Error("无效的分享链接：未知同步副本 999")),
     );
     expect(host.querySelector("h1")?.textContent).toBe("分享链接恢复失败");
+    expect(tasks.initializeImages).not.toHaveBeenCalled();
     expect(host.querySelector("main[data-share-error] pre")?.textContent).toContain(
       "未知同步副本 999",
     );

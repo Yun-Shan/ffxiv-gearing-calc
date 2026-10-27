@@ -22,6 +22,11 @@ const mocks = vi.hoisted(() => ({
   optimize: vi.fn(),
   optimizeJoint: vi.fn(),
   gcd: vi.fn(),
+  initializeImages: vi.fn(),
+}));
+vi.mock("@/ui/services/share-result", async (original) => ({
+  ...(await original<typeof import("@/ui/services/share-result")>()),
+  scheduleResultImageInitialization: mocks.initializeImages,
 }));
 vi.mock("@/domain", async (original) => ({
   ...(await original<typeof import("@/domain")>()),
@@ -40,6 +45,7 @@ beforeEach(() => {
   mocks.optimize.mockReset();
   mocks.optimizeJoint.mockReset();
   mocks.gcd.mockReset().mockResolvedValue([2.5, 2.48]);
+  mocks.initializeImages.mockReset();
   window.sessionStorage.clear();
   host = document.createElement("div");
   document.body.append(host);
@@ -151,9 +157,17 @@ describe("workbench route integration", () => {
         mode === "single" ? "选择职业" : "选择参与联合搜索的职业",
       );
       expect(router!.history.length).toBe(1);
+      expect(mocks.initializeImages).not.toHaveBeenCalled();
       noOptimization();
     },
   );
+  it("keeps image initialization out of selection, conditions and content routes", async () => {
+    await mount("/single");
+    await click("骑士");
+    await navigate("/about");
+    await navigate("/joint");
+    expect(mocks.initializeImages).not.toHaveBeenCalled();
+  });
   it("replaces unknown paths with root without appending redirect history", async () => {
     await mount("/single/unrecognized");
     expect(path()).toBe("/");
@@ -420,6 +434,7 @@ describe("workbench route integration", () => {
         writeWorkbenchSession({ mode: "single", phase: "result", value });
       else writeWorkbenchSession({ mode: "joint", phase: "result", value });
       await mount(`/${mode}/result`, true);
+      await vi.waitFor(() => expect(mocks.initializeImages).toHaveBeenCalled());
       expect(path()).toBe(`/${mode}/result`);
       expect(title()).toBe(
         mode === "single" ? "吟游诗人 · 配装结果" : "联合配装结果",

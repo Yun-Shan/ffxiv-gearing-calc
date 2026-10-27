@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Share2 } from "lucide-react";
+import { Image, Share2 } from "lucide-react";
 import { Popover } from "@base-ui/react/popover";
 import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
 import { copyResultImage } from "@/ui/services/share-result";
@@ -62,16 +62,28 @@ export function ShareResultButton({
         if (!value) setChoosingImage(false);
       }}
     >
-      <Popover.Trigger className={className} disabled={copying}>
+      <Popover.Trigger
+        className={`${className ?? ""} ${styles.trigger}`}
+        disabled={copying}
+      >
         <Share2 size="1em" aria-hidden="true" />
         分享配装结果
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Positioner sideOffset={8} className={styles.positioner}>
-          <Popover.Popup className={styles.popup}>
-            <Popover.Title className={styles.title}>
-              {choosingImage ? "选择图片职业" : "分享配装结果"}
-            </Popover.Title>
+        <Popover.Positioner
+          align="start"
+          sideOffset={8}
+          className={styles.positioner}
+        >
+          <Popover.Popup
+            className={styles.popup}
+            aria-label={choosingImage ? undefined : "复制配装结果"}
+          >
+            {choosingImage && (
+              <Popover.Title className={styles.title}>
+                选择图片职业
+              </Popover.Title>
+            )}
             {choosingImage ? (
               <>
                 {imageOptions.map((option) => (
@@ -119,7 +131,8 @@ export function ShareResultButton({
                         : void share(imageOptions[0].data)
                     }
                   >
-                    {copying ? "正在复制…" : "复制图片分享"}
+                    <Image size="1em" aria-hidden="true" />
+                    {copying ? "正在复制…" : "复制图片"}
                   </button>
                 )}
               </>

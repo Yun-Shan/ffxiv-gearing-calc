@@ -58,7 +58,7 @@ async function open(multiple = false) {
 }
 
 it.each(["link", "image"] as const)("serializes both copy actions when %s starts first", async first => {
-  const trigger = await open(), link = button("复制分享链接"), image = button("复制图片分享");
+  const trigger = await open(), link = button("复制链接"), image = button("复制图片");
   act(() => {
     (first === "link" ? link : image).click();
     (first === "link" ? image : link).click();
@@ -70,26 +70,26 @@ it.each(["link", "image"] as const)("serializes both copy actions when %s starts
   await act(async () => (first === "link" ? linkTask : imageTask).resolve());
   expect(trigger.disabled).toBe(false);
   await act(async () => trigger.click());
-  act(() => button(first === "link" ? "复制图片分享" : "复制分享链接").click());
+  act(() => button(first === "link" ? "复制图片" : "复制链接").click());
   expect(writeText).toHaveBeenCalledTimes(1); expect(copies.image).toHaveBeenCalledTimes(1);
 });
 
 it("keeps the copy lock after closing the popup until a pending link fails", async () => {
   const trigger = await open();
-  act(() => button("复制分享链接").click());
+  act(() => button("复制链接").click());
   act(() => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
   expect(trigger.getAttribute("aria-expanded")).toBe("false");
   expect(trigger.disabled).toBe(true);
   await act(async () => linkTask.reject(new Error("clipboard denied")));
   expect(trigger.disabled).toBe(false);
   await act(async () => trigger.click());
-  act(() => button("复制图片分享").click());
+  act(() => button("复制图片").click());
   expect(copies.image).toHaveBeenCalledTimes(1);
 });
 
 it("disables the image picker back action while copying and releases it on failure", async () => {
   const trigger = await open(true);
-  act(() => button("复制图片分享").click());
+  act(() => button("复制图片").click());
   act(() => button("复制当前配装图片").click());
   const back = button("返回");
   expect(back.disabled).toBe(true); expect(trigger.disabled).toBe(true);
@@ -98,6 +98,6 @@ it("disables the image picker back action while copying and releases it on failu
   await act(async () => imageTask.reject(new Error("image denied")));
   expect(back.disabled).toBe(false); expect(trigger.disabled).toBe(false);
   act(() => back.click());
-  act(() => button("复制分享链接").click());
+  act(() => button("复制链接").click());
   expect(writeText).toHaveBeenCalledTimes(1);
 });

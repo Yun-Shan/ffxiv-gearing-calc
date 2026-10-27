@@ -1,6 +1,6 @@
 import { Popover } from "@base-ui/react/popover";
 import { useState } from "react";
-import { Link } from "lucide-react";
+import { SquareArrowOutUpRight } from "lucide-react";
 import type { Effects, OptimizationResult } from "@/domain";
 import styles from "./CoreMetricBar.module.scss";
 import { ShareResultButton } from "./components/share-result-button/ShareResultButton";
@@ -89,7 +89,7 @@ function ReferenceLink({
   const [open, setOpen] = useState(false);
   const content = (
     <>
-      <Link size="1em" aria-hidden="true" />
+      <SquareArrowOutUpRight size="1em" aria-hidden="true" />
       {showLabel ? `${entry.label} · 在配装器打开` : "在配装器打开"}
     </>
   );

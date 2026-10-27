@@ -7,6 +7,7 @@ import { routeTree } from "./routeTree.gen";
 import { WorkbenchRuntime } from "./workbench-runtime";
 import { parseRouterSearch, stringifyRouterSearch } from "./router-search";
 import { applicationBase } from "@/ui/services/application-base";
+import { scheduleResultImageInitialization } from "@/ui/services/share-result";
 
 export interface AppRouterOptions {
   history?: RouterHistory;
@@ -36,6 +37,17 @@ export function createAppRouter(options: AppRouterOptions = {}): AppRouter {
     navigate: (options) => router.navigate(options),
     history: router.history,
     location: () => router.state.location,
+  });
+  router.subscribe("onRendered", () => {
+    const result = router.state.matches.find(
+      (match) =>
+        match.status === "success" &&
+        (match.routeId === "/_single/single/result" ||
+          match.routeId === "/joint/result"),
+    );
+    if (!result) return;
+    const mode = result.routeId === "/joint/result" ? "joint" : "single";
+    if (!workflow.pendingShare(mode)) scheduleResultImageInitialization();
   });
   return router;
 }

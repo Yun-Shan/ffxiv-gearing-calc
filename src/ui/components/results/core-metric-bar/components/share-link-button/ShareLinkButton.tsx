@@ -59,7 +59,7 @@ export function ShareLinkButton({
       aria-busy={copying}
     >
       <Link size="1em" aria-hidden="true" />
-      {copying ? "正在复制…" : "复制分享链接"}
+      {copying ? "正在复制…" : "复制链接"}
     </button>
   );
 }
