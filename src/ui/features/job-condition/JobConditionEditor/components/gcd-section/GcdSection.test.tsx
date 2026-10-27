@@ -3,18 +3,22 @@ import { act, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { JobConditionScopeProvider } from "../../../scope";
-import type { GcdAnalysisState, JobConditionDraft } from "../../../types";
+import { jobConditionDraftFromConfig } from "../../../draft";
+import { makeConfig } from "@/ui/services/app-config";
+import type { GcdAnalysisState, GcdDraft, JobConditionDraft } from "../../../types";
 import { GcdSection } from "./GcdSection";
 
 let host: HTMLDivElement;
 let root: Root;
 function Harness({
   analysis,
-  initialTiers,
+  initialTiers = [],
+  initialGcd,
   readOnly = false,
 }: {
   analysis: GcdAnalysisState;
-  initialTiers: number[];
+  initialTiers?: number[];
+  initialGcd?: GcdDraft;
   readOnly?: boolean;
 }) {
   const [draft, setDraft] = useState<JobConditionDraft>({
@@ -24,7 +28,7 @@ function Harness({
       sync: undefined,
       clanIndex: 0,
     },
-    gcd: { mode: "tiers", tiers: initialTiers },
+    gcd: initialGcd ?? { mode: "tiers", tiers: initialTiers },
     food: { mode: "auto" },
     tank: { strategy: "any" },
   });
@@ -43,8 +47,31 @@ function Harness({
 }
 const selected = () =>
   JSON.parse(host.querySelector("output")!.textContent!).tiers;
+const gcdValue = () => JSON.parse(host.querySelector("output")!.textContent!);
+function trigger(labelText: string): HTMLButtonElement {
+  const label = [...host.querySelectorAll("label")].find(
+    (element) => element.textContent === labelText,
+  )!;
+  return document.getElementById(label.htmlFor) as HTMLButtonElement;
+}
+async function click(element: HTMLElement) {
+  await act(async () => element.click());
+}
+async function choose(text: string) {
+  const option = [...document.body.querySelectorAll<HTMLElement>('[role="option"]')]
+    .find((element) => element.textContent?.replace("✓", "").trim() === text)!;
+  await click(option);
+}
+const readyAnalysis: GcdAnalysisState = {
+  status: "ready", key: "test", feasibleTiers: [2.5, 2.48, 2.46],
+};
 beforeEach(() => {
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+  vi.stubGlobal("ResizeObserver", class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  });
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
@@ -55,7 +82,66 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+describe("GCD single and multiple selection", () => {
+  it.each([
+    { tiers: [], expected: "选择单个档位" },
+    { tiers: [2.5], expected: "选择单个档位" },
+    { tiers: [2.5, 2.48], expected: "选择多个档位" },
+  ])("infers $expected from rebuilt choices $tiers", ({ tiers, expected }) => {
+    const initialGcd = jobConditionDraftFromConfig({
+      ...makeConfig("SAM"), gcdChoices: tiers,
+    }).gcd;
+    act(() => root.render(<Harness analysis={readyAnalysis} initialGcd={initialGcd} />));
+    expect(trigger("GCD 条件").textContent).toContain(expected);
+    expect(selected()).toEqual(tiers);
+  });
+
+  it("replaces the chosen tier in single mode", async () => {
+    act(() => root.render(<Harness analysis={readyAnalysis} />));
+    await click(trigger("可行 GCD 档位"));
+    await choose("2.50 秒");
+    expect(selected()).toEqual([2.5]);
+    await click(trigger("可行 GCD 档位"));
+    await choose("2.48 秒");
+    expect(gcdValue()).toEqual({ mode: "tiers", tiers: [2.48], multiple: false });
+  });
+
+  it("clears choices when switching modes and keeps multiple mode with one or no tiers", async () => {
+    act(() => root.render(<Harness analysis={readyAnalysis} initialTiers={[2.5]} />));
+    await click(trigger("GCD 条件"));
+    await choose("选择多个档位");
+    expect(gcdValue()).toEqual({ mode: "tiers", tiers: [], multiple: true });
+    await click(trigger("可行 GCD 档位"));
+    await choose("2.50 秒");
+    expect(selected()).toEqual([2.5]);
+    expect(trigger("GCD 条件").textContent).toContain("选择多个档位");
+    await choose("2.50 秒");
+    expect(selected()).toEqual([]);
+    expect(trigger("GCD 条件").textContent).toContain("选择多个档位");
+    await choose("2.48 秒");
+    await act(async () => {
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    });
+    await click(trigger("GCD 条件"));
+    await choose("选择单个档位");
+    expect(gcdValue()).toEqual({ mode: "tiers", tiers: [], multiple: false });
+    expect(host.textContent).toContain("目标模式：待选择");
+  });
+});
+
 describe("GCD selection after analysis", () => {
+  it("retains inferred multiple mode when recalculation leaves one tier or clears all tiers", () => {
+    const render = (key: string, feasibleTiers: number[]) => act(() => root.render(
+      <Harness analysis={{ status: "ready", key, feasibleTiers }} initialTiers={[2.5, 2.48]} />,
+    ));
+    render("one", [2.48]);
+    expect(gcdValue()).toEqual({ mode: "tiers", tiers: [2.48], multiple: true });
+    expect(trigger("GCD 条件").textContent).toContain("选择多个档位");
+    render("none", [2.46]);
+    expect(gcdValue()).toEqual({ mode: "tiers", tiers: [], multiple: true });
+    expect(trigger("GCD 条件").textContent).toContain("选择多个档位");
+  });
+
   it.each([[2.5], [2.5, 2.48, 2.46]])(
     "retains available selections from %j through recalculation",
     (...tiers) => {

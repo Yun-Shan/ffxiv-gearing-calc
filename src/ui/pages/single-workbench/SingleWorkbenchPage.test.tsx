@@ -207,11 +207,12 @@ describe("坚韧策略与通用输入", () => {
   });
 });
 
-describe("GCD 多选", () => {
-  it("默认选择可行档位，生成期间识别中，未选择时显示待选择并阻止搜索", async () => {
+describe("GCD 档位选择", () => {
+  it("默认选择单个档位，生成期间识别中，未选择时显示待选择并阻止搜索", async () => {
     support.chooseJob("SAM");
     expect(support.host.textContent).toContain("识别中…");
     await support.settleApp(220);
+    expect(support.host.querySelector('section[aria-label="GCD"]')?.textContent).toContain("选择单个档位");
     expect(support.host.textContent).toContain("目标模式：待选择");
     expect(support.buttonNamed("开始搜索").disabled).toBe(true);
     await support.selectFirstGcdTierIfEmpty();
@@ -239,7 +240,7 @@ describe("GCD 多选", () => {
       await support.settleApp();
     };
     await open("GCD 条件");
-    await choose("选择可行档位");
+    await choose("选择多个档位");
     await open("可行 GCD 档位");
     await choose("2.50 秒");
     await choose("2.48 秒");
@@ -249,9 +250,11 @@ describe("GCD 多选", () => {
         ?.getAttribute("aria-selected");
     expect(selected("2.50 秒")).toBe("true");
     expect(selected("2.48 秒")).toBe("true");
+    expect(support.host.querySelector('section[aria-label="GCD"]')?.textContent).toContain("选择多个档位");
     await choose("2.50 秒");
     expect(selected("2.50 秒")).toBe("false");
     expect(selected("2.48 秒")).toBe("true");
+    expect(support.host.querySelector('section[aria-label="GCD"]')?.textContent).toContain("选择多个档位");
     act(() =>
       document.dispatchEvent(
         new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
@@ -261,5 +264,7 @@ describe("GCD 多选", () => {
     await support.selectFirstGcdTierIfEmpty();
     await support.startSearchAndSettle();
     expect(support.optimizeMock.mock.calls[0]![0].gcdChoices).toEqual([2.48]);
+    expect(support.optimizeMock.mock.calls[0]![0].objective).toBe("damage");
+    expect(support.optimizeMock.mock.calls[0]![0]).not.toHaveProperty("multiple");
   });
 });

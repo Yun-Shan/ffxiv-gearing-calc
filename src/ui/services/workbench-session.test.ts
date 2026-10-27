@@ -89,6 +89,43 @@ describe("workbench refresh session", () => {
     });
   });
 
+  it.each([
+    { tiers: [] },
+    { tiers: [2.5] },
+    { tiers: [2.5, 2.48] },
+    { tiers: [], multiple: false },
+    { tiers: [2.5], multiple: false },
+    { tiers: [], multiple: true },
+    { tiers: [2.5], multiple: true },
+    { tiers: [2.5, 2.48], multiple: true },
+  ])("preserves explicit and legacy GCD selection modes in both workbenches: %j", (selection) => {
+    const single = singleDraft();
+    single.condition.gcd = { mode: "tiers", ...selection };
+    const joint = createJointWorkbenchDraft(["PLD", "WAR"]);
+    joint.conditions.PLD!.gcd = { mode: "tiers", ...selection };
+    const sessions: WorkbenchSession[] = [
+      { mode: "single", phase: "conditions", draft: single },
+      { mode: "joint", phase: "conditions", draft: joint },
+    ];
+    for (const session of sessions) {
+      expect(writeWorkbenchSession(session)).toBeUndefined();
+      expect(readWorkbenchSession()).toEqual({ session });
+    }
+  });
+
+  it("rejects invalid GCD selection flags and multiple choices marked as single", () => {
+    for (const selection of [
+      ...[null, "true", 0, 1, {}, []].map((multiple) => ({ tiers: [2.5], multiple })),
+      { tiers: [2.5, 2.48], multiple: false },
+    ]) {
+      const draft = singleDraft();
+      expect(sessionError({
+        mode: "single", phase: "conditions",
+        draft: { ...draft, condition: { ...draft.condition, gcd: { mode: "tiers", ...selection } } },
+      })).toBeTruthy();
+    }
+  });
+
   it("retains hidden committed joint foods, empty tiers, missing tank values and forced materia", () => {
     const draft = createJointWorkbenchDraft(["PLD", "WAR"]);
     draft.conditions = {

@@ -527,7 +527,7 @@ export async function selectFirstGcdTierIfEmpty(): Promise<void> {
   );
   if (!label) return;
   const trigger = document.getElementById(label.htmlFor) as HTMLButtonElement;
-  if (!trigger.textContent?.includes("选择可行档位")) return;
+  if (!/选择(?:单个|多个)档位/.test(trigger.textContent ?? "")) return;
   click(trigger);
   await settleApp();
   const option = [

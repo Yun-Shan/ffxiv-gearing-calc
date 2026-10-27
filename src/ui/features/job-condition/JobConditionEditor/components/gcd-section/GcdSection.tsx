@@ -7,6 +7,7 @@ import { deriveJobObjective } from '../../../compiler';
 import styles from './GcdSection.module.scss';
 import { useEffect } from 'react';
 
+type GcdUiMode = Exclude<GcdDraft['mode'], 'tiers'> | 'single' | 'multiple';
 
 function Issue({objective, gcdAnalysisState, issues}: {
   objective: 'damage' | 'dps' | undefined,
@@ -43,6 +44,11 @@ export function GcdSection() {
   const { jobId, draft, updateDraft, runtime, validation, readOnly } = useJobConditionScope();
   const speedLabel = speedAttributeLabel(jobId);
   const gcd = draft.gcd;
+  // 重建的条件按数量识别；编辑后显式保留模式，允许多选只剩一个档位。
+  const multiple = gcd.mode === 'tiers' && (gcd.multiple ?? (gcd.tiers.length > 1));
+  const mode = gcd.mode === 'tiers'
+    ? multiple ? 'multiple' : 'single'
+    : gcd.mode;
   const analysis = runtime.gcdAnalysis;
   const awaitingSelection = gcd.mode === 'tiers' && gcd.tiers.length === 0;
   const objective =
@@ -59,22 +65,21 @@ export function GcdSection() {
       return {
         ...current,
         gcd: {
-          mode: 'tiers',
+          ...current.gcd,
+          multiple: current.gcd.multiple ?? (current.gcd.tiers.length > 1),
           tiers: current.gcd.tiers.filter((tier) => analysis.feasibleTiers.includes(tier)),
         },
       };
     });
   }, [analysis, gcd, readOnly, updateDraft]);
 
-  function setMode(mode: GcdDraft['mode']) {
+  function setMode(mode: GcdUiMode) {
     updateDraft((current) => ({
       ...current,
       gcd:
-        mode === 'any'
-          ? {mode}
-          : mode === 'tiers'
-            ? {mode, tiers: []}
-            : {mode},
+        mode === 'single' || mode === 'multiple'
+          ? {mode: 'tiers', tiers: [], multiple: mode === 'multiple'}
+          : {mode},
     }));
   }
 
@@ -86,27 +91,31 @@ export function GcdSection() {
           controlSize="strategy"
           layout="inline"
           label="GCD 条件"
-          value={gcd.mode}
+          value={mode}
           disabled={readOnly}
           options={[
             {value: 'any', label: '不限'},
-            {value: 'tiers', label: '选择可行档位'},
+            {value: 'single', label: '选择单个档位'},
+            {value: 'multiple', label: '选择多个档位'},
             {value: 'speed', label: `${speedLabel}范围`},
           ]}
-          onChange={(value) => setMode(value as GcdDraft['mode'])}
+          onChange={(value) => setMode(value as GcdUiMode)}
         />
         {gcd.mode === 'tiers' && (
           <div className={styles.tierSelection}>
             <LabeledSelect
+              key={mode}
               controlSize="wide"
-              multiple
+              multiple={multiple}
               label="可行 GCD 档位"
               layout="inline"
-              value={gcd.tiers.map(String)}
+              value={multiple
+                ? gcd.tiers.map(String)
+                : gcd.tiers[0] === undefined ? null : String(gcd.tiers[0])}
               disabled={readOnly || runtime.gcdAnalysis.status !== 'ready'}
               placeholder={
                 runtime.gcdAnalysis.status === 'ready'
-                  ? '选择可行档位'
+                  ? multiple ? '选择多个档位' : '选择单个档位'
                   : '正在计算…'
               }
               options={(runtime.gcdAnalysis.status === 'ready'
@@ -121,7 +130,9 @@ export function GcdSection() {
                   ...current,
                   gcd: {
                     mode: 'tiers',
-                    tiers: values.map(Number).sort((a, b) => b - a),
+                    multiple,
+                    tiers: (Array.isArray(values) ? values : [values])
+                      .map(Number).sort((a, b) => b - a),
                   },
                 }))
               }

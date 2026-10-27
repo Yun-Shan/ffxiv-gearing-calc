@@ -99,6 +99,16 @@ describe("job condition draft compiler", () => {
     expect(draftValue).not.toHaveProperty("objective");
   });
 
+  it.each([false, true])("compiles one tier with multiple=%s identically and rebuilds without the UI flag", (multiple) => {
+    const compiled = compileJobCondition({
+      ...draft, gcd: { mode: "tiers", tiers: [2.5], multiple },
+    }, { jobId: "PLD", feasibleGcds: [2.5, 2.48] });
+    expect(compiled.config.gcdChoices).toEqual([2.5]);
+    expect(compiled.config.objective).toBe("damage");
+    expect(compiled.config).not.toHaveProperty("multiple");
+    expect(jobConditionDraftFromConfig(config(compiled.config)).gcd).toEqual({ mode: "tiers", tiers: [2.5] });
+  });
+
   it("normalizes all joint job objectives to the one current domain objective", () => {
     expect(
       normalizeJointObjective([

@@ -134,7 +134,12 @@ function gcd(value: unknown): boolean {
   if (!object(value)) return false;
   if (value.mode === "any") return shape(value, ["mode"]);
   if (value.mode === "tiers")
-    return shape(value, ["mode", "tiers"]) && list(value.tiers, finite);
+    return (
+      shape(value, ["mode", "tiers", "multiple"]) &&
+      list(value.tiers, finite) &&
+      (value.multiple === undefined || typeof value.multiple === "boolean") &&
+      (value.multiple !== false || value.tiers.length <= 1)
+    );
   return (
     value.mode === "speed" &&
     shape(value, ["mode", "min", "max"]) &&

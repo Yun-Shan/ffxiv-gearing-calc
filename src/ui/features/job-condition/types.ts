@@ -8,7 +8,7 @@ export type SearchRangeDraft = Pick<
 
 export type GcdDraft =
   | { mode: "any" }
-  | { mode: "tiers"; tiers: number[] }
+  | { mode: "tiers"; tiers: number[]; multiple?: boolean }
   | { mode: "speed"; min?: number; max?: number };
 
 export type FoodDraft = { mode: "auto" } | { mode: "specific"; foodId: number };

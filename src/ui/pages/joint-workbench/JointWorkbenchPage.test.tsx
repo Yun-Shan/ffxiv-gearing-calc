@@ -60,6 +60,36 @@ async function waitForGcdValidation(): Promise<void> {
 }
 
 describe("联合工作台", () => {
+  it("各职业默认单档，多档只选一项后切换职业仍保留选择方式", async () => {
+    await enterConditions();
+    testSupport.click(testSupport.buttonNamed(jobSchemas.RDM.name));
+    await testSupport.settleApp();
+    const trigger = (labelText: string) => {
+      const label = [...testSupport.host.querySelectorAll("label")]
+        .find((element) => element.textContent === labelText)!;
+      return document.getElementById(label.htmlFor) as HTMLButtonElement;
+    };
+    expect(trigger("GCD 条件").textContent).toContain("选择单个档位");
+    testSupport.click(trigger("GCD 条件"));
+    await testSupport.settleApp();
+    const multiple = [...document.body.querySelectorAll<HTMLElement>('[role="option"]')]
+      .find((element) => normalizedText(element) === "选择多个档位")!;
+    testSupport.click(multiple as HTMLButtonElement);
+    await testSupport.settleApp();
+    expect(trigger("可行 GCD 档位").textContent).toContain("选择多个档位");
+    expect(testSupport.buttonNamed("开始联合搜索").disabled).toBe(true);
+    await testSupport.selectFirstGcdTierIfEmpty();
+    const selected = trigger("可行 GCD 档位").textContent;
+    testSupport.click(testSupport.buttonNamed(jobSchemas.BLM.name));
+    await testSupport.settleApp();
+    expect(trigger("GCD 条件").textContent).toContain("选择单个档位");
+    testSupport.click(testSupport.buttonNamed(jobSchemas.RDM.name));
+    await testSupport.settleApp();
+    expect(trigger("GCD 条件").textContent).toContain("选择多个档位");
+    expect(trigger("可行 GCD 档位").textContent).toBe(selected);
+    expect(testSupport.buttonNamed("开始联合搜索").disabled).toBe(false);
+  });
+
   it("保存实际点击的副本名，联合搜索与 GCD 输入仍只使用原同步目标", async () => {
     await enterConditions();
     const group = gameData.sync.groups.find(({ options }) => options.some(({ target }) => target.kind === "itemLevel"))!;
