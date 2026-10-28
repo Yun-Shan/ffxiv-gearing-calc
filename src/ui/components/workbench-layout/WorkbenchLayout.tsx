@@ -17,7 +17,7 @@ export function WorkbenchLayout({
     <main className={`${styles.root} ${mobileResult ? styles.mobileResult : ""}`}>
       {mobileResult && (
         <p className={styles.viewportWarning} role="status">
-          当前视口过小，仅可查看结果，建议在大屏幕打开。
+          当前屏幕过小，仅可查看结果。<br/>建议在电脑上打开以使用完整功能。
         </p>
       )}
       <div className={styles.main}>

@@ -25,6 +25,7 @@ import type { JointSearchPhase, JointSearchProgressJob, JointSearchProgressState
 import type { WorkbenchRouting, WorkbenchTransitionIntent } from "@/ui/services/workbench-routing";
 import type { WorkbenchSession } from "@/ui/services/workbench-session";
 import { freezeSnapshot } from "@/ui/services/snapshots/freeze-snapshot";
+import { useMobileResultViewport } from "@/ui/services/use-mobile-result-viewport";
 
 type JointRunSnapshot = {
   config: JointOptimizationConfig;
@@ -56,6 +57,7 @@ export function jointSessionFromState(state: JointWorkbenchPhase): WorkbenchSess
 }
 export function useJointWorkbenchController(routing?: WorkbenchRouting<JointWorkbenchPhase>) {
   const { notify, confirm } = useFeedback();
+  const smallViewport = useMobileResultViewport();
   const [phase, setPhase] = useState<JointWorkbenchPhase>(() => routing?.initialState ?? { phase: "selection" });
   const phaseRef = useRef<JointWorkbenchPhase>(phase);
   const runRef = useRef<ActiveJointRun | undefined>(undefined);
@@ -509,6 +511,7 @@ export function useJointWorkbenchController(routing?: WorkbenchRouting<JointWork
 
   return {
     phase,
+    isMobileResult: phase.phase === "result" && smallViewport,
     selectionState,
     selectedJobs,
     editorTarget,

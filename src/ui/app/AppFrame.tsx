@@ -12,7 +12,8 @@ export function AppFrame() {
   const { notify } = useFeedback();
   const mobileResult = useRouterState({
     select: (state) => state.matches.some(
-      (match) => match.routeId === "/_single/single/result",
+      (match) => match.routeId === "/_single/single/result" ||
+        match.routeId === "/joint/result",
     ),
   });
   useEffect(() => {

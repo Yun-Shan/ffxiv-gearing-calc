@@ -57,7 +57,7 @@
   white-space: nowrap;
 }
 
-@media (width < tokens.$single-result-mobile-breakpoint) {
+@media (width < tokens.$result-mobile-breakpoint) {
   .resultHeading {
     position: absolute;
     width: 1px;

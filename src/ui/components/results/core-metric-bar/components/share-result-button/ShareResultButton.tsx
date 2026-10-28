@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Image, Share2 } from "lucide-react";
 import { Popover } from "@base-ui/react/popover";
 import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
@@ -8,17 +9,26 @@ import type { ShareInput } from "@/share/types";
 import { ShareLinkButton } from "../share-link-button/ShareLinkButton";
 import styles from "./ShareResultButton.module.scss";
 
-export function ShareResultButton({
-  data,
-  linkData,
-  images,
-  className,
-}: {
+interface ShareResultButtonProps {
   data?: ResultShareData;
   linkData?: ShareInput;
   images?: readonly { label: string; data: ResultShareData }[];
   className?: string;
-}) {
+  floating?: boolean;
+}
+
+export function ShareResultButton(props: ShareResultButtonProps) {
+  // Changing the trigger's host resets the menu, while the shared copy lock survives.
+  return <ShareResultMenu key={props.floating ? "floating" : "inline"} {...props} />;
+}
+
+function ShareResultMenu({
+  data,
+  linkData,
+  images,
+  className,
+  floating = false,
+}: ShareResultButtonProps) {
   const { notify } = useFeedback();
   const { copying, copyImage } = useResultShare();
   const [open, setOpen] = useState(false);
@@ -40,6 +50,16 @@ export function ShareResultButton({
   }
 
   const imageOptions = images ?? (data ? [{ label: "当前配装", data }] : []);
+  const trigger = (
+    <Popover.Trigger
+      className={`${className ?? ""} ${styles.trigger} ${floating ? styles.floatingTrigger : ""}`}
+      disabled={copying}
+      aria-label={floating ? "分享配装结果" : undefined}
+    >
+      <Share2 size={floating ? 22 : "1em"} aria-hidden="true" />
+      {!floating && "分享配装结果"}
+    </Popover.Trigger>
+  );
   return (
     <Popover.Root
       open={open}
@@ -48,13 +68,7 @@ export function ShareResultButton({
         if (!value) setChoosingImage(false);
       }}
     >
-      <Popover.Trigger
-        className={`${className ?? ""} ${styles.trigger}`}
-        disabled={copying}
-      >
-        <Share2 size="1em" aria-hidden="true" />
-        分享配装结果
-      </Popover.Trigger>
+      {floating ? createPortal(trigger, document.body) : trigger}
       <Popover.Portal>
         <Popover.Positioner
           align="start"

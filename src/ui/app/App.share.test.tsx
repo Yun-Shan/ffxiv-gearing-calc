@@ -7,7 +7,8 @@ import { restoreDocument, restoreShare } from "@/share/restore";
 import type { ShareDocument, ShareView } from "@/share/types";
 import type { ShareWorkerRequest } from "@/share/worker-protocol";
 import { createBrowserHistory } from "@tanstack/react-router";
-import { readWorkbenchSession } from "@/ui/services/workbench-session";
+import { readWorkbenchSession, writeWorkbenchSession } from "@/ui/services/workbench-session";
+import { workbenchResultFromShare } from "@/ui/services/share-link";
 import { App, createAppRouter } from "./App";
 
 const tasks = vi.hoisted(() => ({
@@ -50,6 +51,7 @@ vi.mock("@/ui/services/search-history", async (original) => ({
 }));
 const joint = fixtures.find((f) => f.label === "caster-shared")!;
 const single = fixtures.find((f) => f.label === "brd-open")!;
+const synced = fixtures.find((f) => f.label === "nin-sync90")!;
 let root: Root, host: HTMLDivElement;
 let router: ReturnType<typeof createAppRouter> | undefined;
 beforeEach(() => {
@@ -83,6 +85,23 @@ const nav = (label: string) =>
   [...host.querySelectorAll('nav[aria-label="主导航"] a')].find(
     (a) => a.textContent === label,
   )!;
+async function replaceGear(currentName: string, nextName: string) {
+  const row = [...host.querySelectorAll("tr")].find((item) =>
+    item.textContent?.includes(currentName),
+  )!;
+  const trigger = [...row.querySelectorAll("button")].find((item) =>
+    item.textContent?.startsWith("可替换"),
+  )!;
+  await act(async () => trigger.click());
+  const popup = [...document.body.querySelectorAll("[aria-label]")].find(
+    (item) => item.getAttribute("aria-label") === `${currentName}的可替换装备`,
+  )!;
+  const option = [...popup.querySelectorAll("button")].find((item) =>
+    item.textContent?.includes(nextName),
+  )!;
+  await act(async () => option.click());
+  expect(row.textContent).toContain(nextName);
+}
 async function waitForNavigation(assertion: () => void) {
   await vi.waitFor(async () => {
     await act(async () => {
@@ -143,6 +162,78 @@ function noSearchOrHistory() {
 }
 
 describe("share input at the application entry", () => {
+  it.each(["ordinary", "share"])("keeps mobile joint %s results on shared equipment and switches complete job views without routing", async (source) => {
+    let small = true;
+    const listeners = new Set<() => void>();
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      media: query,
+      get matches() { return query === "(width < 1000px)" && small; },
+      addEventListener(_event: string, listener: () => void) {
+        if (query === "(width < 1000px)") listeners.add(listener);
+      },
+      removeEventListener(_event: string, listener: () => void) {
+        listeners.delete(listener);
+      },
+    }));
+    const view = restoreShare(joint.binary);
+    const value = workbenchResultFromShare(view);
+    if (value.mode !== "joint") throw new Error("Expected joint result");
+    if (source === "ordinary") {
+      window.history.replaceState(null, "", "/joint/result");
+      writeWorkbenchSession({ mode: "joint", phase: "result", value });
+      await mount(false, true);
+    } else {
+      await mount();
+      await resolve(0, joint.binary);
+    }
+    const select = (tab: string) => host.querySelector<HTMLButtonElement>(
+      `[role="tab"][data-value="${tab}"]`,
+    )!;
+    const floating = () => document.body.querySelector<HTMLButtonElement>(
+      'button[aria-label="分享配装结果"]',
+    );
+    expect(select("shared").getAttribute("aria-selected")).toBe("true");
+    expect(host.querySelector('section[aria-label="共享装备"]')).not.toBeNull();
+    expect(floating()?.textContent).toBe("");
+    expect(host.textContent).not.toContain("当前屏幕过小，可能无法正常使用");
+    const url = window.location.href;
+    const depth = window.history.length;
+    const load = vi.spyOn(router!, "load");
+    for (const [index, config] of view.document.configs.entries()) {
+      await act(async () => select(config.jobId).click());
+      expect(select(config.jobId).getAttribute("aria-selected")).toBe("true");
+      const metrics = host.querySelector('section[aria-label="核心指标"]')!;
+      expect(metrics.textContent).toContain(view.results[index].effects.damage.toFixed(7));
+      expect(metrics.textContent).not.toContain("在配装器打开");
+      expect(host.querySelector("table")?.textContent).toContain(view.results[index].food.name);
+      expect(host.querySelector("aside")?.textContent).toContain("实际生效条件");
+      expect(host.querySelector("aside")?.textContent).not.toContain("公式等级");
+      expect(floating()?.textContent).toBe("");
+      expect(window.location.href).toBe(url);
+      expect(window.history.length).toBe(depth);
+    }
+    const lastJob = view.document.configs.at(-1)!.jobId;
+    await act(async () => {
+      small = false;
+      for (const listener of listeners) listener();
+    });
+    expect(floating()).toBeNull();
+    expect(select(lastJob).getAttribute("aria-selected")).toBe("true");
+    expect(button("分享配装结果")).toBeDefined();
+    await act(async () => {
+      small = true;
+      for (const listener of listeners) listener();
+    });
+    expect(floating()?.textContent).toBe("");
+    expect(select(lastJob).getAttribute("aria-selected")).toBe("true");
+    await act(async () => select("shared").click());
+    expect(host.querySelector('section[aria-label="联合结果概览"]')).not.toBeNull();
+    expect(host.querySelector("aside")?.textContent).toContain("共享条件");
+    expect(floating()?.textContent).toBe("");
+    expect(load).not.toHaveBeenCalled();
+    expect(tasks.requests).toHaveLength(source === "share" ? 1 : 0);
+    noSearchOrHistory();
+  });
   it.each([
     {
       fixture: single,
@@ -285,6 +376,89 @@ describe("share input at the application entry", () => {
       "first",
       "second",
     ]);
+    noSearchOrHistory();
+  });
+  it("updates the share token on repeated gear replacements without routing or adding history", async () => {
+    window.history.replaceState(
+      null,
+      "",
+      `/?s=${synced.binary}&s=ignored&campaign=001&tag=first&tag=second&empty=`,
+    );
+    await mount();
+    await resolve(0, synced.binary);
+    const view = restoreShare(synced.binary);
+    const gear = view.results[0].gear.find((item) => item.slot === "head")!;
+    const replacement = view.results[0].equivalentGear![
+      gear.replacementGroupKey!
+    ]!.find((item) => item.id !== gear.id)!;
+    const depth = window.history.length;
+    const location = router!.state.location;
+    const load = vi.spyOn(router!, "load");
+    const navigateSpy = vi.spyOn(router!, "navigate");
+    const prepare = vi.spyOn(router!.options.context.workflow, "prepare");
+    let token = synced.binary;
+    for (const [current, next] of [
+      [gear, replacement],
+      [replacement, gear],
+    ]) {
+      await replaceGear(current.name, next.name);
+      const query = new URLSearchParams(window.location.search);
+      const nextToken = query.get("s")!;
+      expect(nextToken).not.toBe(token);
+      expect(query.getAll("s")).toEqual([nextToken]);
+      expect(
+        restoreShare(nextToken).results[0].gear.find(
+          (item) => item.slot === "head",
+        )?.id,
+      ).toBe(next.id);
+      expect(query.get("campaign")).toBe("001");
+      expect(query.getAll("tag")).toEqual(["first", "second"]);
+      expect(query.get("empty")).toBe("");
+      expectSharedResult("single", nextToken);
+      expect(router!.history.location.search).toBe(window.location.search);
+      expect(router!.state.location).toBe(location);
+      expect(window.history.length).toBe(depth);
+      expect(load).not.toHaveBeenCalled();
+      expect(navigateSpy).not.toHaveBeenCalled();
+      expect(prepare).not.toHaveBeenCalled();
+      expect(tasks.requests).toHaveLength(1);
+      noSearchOrHistory();
+      token = nextToken;
+    }
+    await act(async () => button("调整条件").click());
+    expect(window.location.search).toBe("");
+    await traverse("back", () => expectSharedResult("single", token));
+    expect(tasks.requests).toHaveLength(1);
+    expect(host.textContent).toContain(gear.name);
+    noSearchOrHistory();
+  });
+  it("restores replacement gear from the updated token on refresh and browser history return", async () => {
+    window.history.replaceState(null, "", `/?s=${synced.binary}`);
+    await mount();
+    await resolve(0, synced.binary);
+    const view = restoreShare(synced.binary);
+    const gear = view.results[0].gear.find((item) => item.slot === "head")!;
+    const replacement = view.results[0].equivalentGear![
+      gear.replacementGroupKey!
+    ]!.find((item) => item.id !== gear.id)!;
+    await replaceGear(gear.name, replacement.name);
+    const token = new URLSearchParams(window.location.search).get("s")!;
+    await navigate("/about");
+    await traverse("back", () => expect(tasks.requests).toHaveLength(2));
+    expect(tasks.requests[1].input).toEqual({ token });
+    await resolve(1, token);
+    expectSharedResult("single", token);
+    expect(host.textContent).toContain(replacement.name);
+
+    act(() => root.unmount());
+    router!.history.destroy();
+    root = createRoot(host);
+    await mount(false, true);
+    expect(tasks.requests).toHaveLength(3);
+    expect(tasks.requests[2].input).toEqual({ token });
+    await resolve(2, token);
+    expectSharedResult("single", token);
+    expect(host.textContent).toContain(replacement.name);
     noSearchOrHistory();
   });
   it("decodes the visible token again on refresh ahead of the saved workbench result", async () => {

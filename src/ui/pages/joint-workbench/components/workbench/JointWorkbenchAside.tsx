@@ -203,13 +203,13 @@ export function JointWorkbenchAside() {
               jobConfigFor(controller.resultTab as JobId),
               phase.result.jobResults[controller.resultTab as JobId]
                 ?.calculationLevel,
-            )}
+            ).filter((row) => !controller.isMobileResult || row.label !== "公式等级")}
           />
         </SidePanel.Section>
       );
     return (
       <>
-        <SidePanel>
+        <SidePanel mobileResult>
           <SidePanel.Header subtitle="结果" title="联合配装" />
           <SidePanel.Content>
             {resultContent}

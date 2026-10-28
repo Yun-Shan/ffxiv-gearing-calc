@@ -128,7 +128,7 @@
   line-height: 1.6;
 }
 
-@media (width < tokens.$single-result-mobile-breakpoint) {
+@media (width < tokens.$result-mobile-breakpoint) {
   .mobileResult {
     flex: none;
 

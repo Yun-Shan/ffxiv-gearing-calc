@@ -1,4 +1,6 @@
 import type { RouterHistory } from "@tanstack/react-router";
+import { shareUrl } from "@/share/codec";
+import { projectShareInput } from "@/share/projection";
 import {
   singleSessionFromState,
   singleDraftFromConfig,
@@ -371,7 +373,16 @@ export class WorkbenchRuntime {
     port.state = state;
     port.phases.set(state.phase, state);
     this.save(port);
-    if (intent === "update" || !this.host) return;
+    if (intent === "update") {
+      if (
+        previous.phase === "result" &&
+        state.phase === "result" &&
+        previous.result !== state.result
+      )
+        this.updateShareUrl(port);
+      return;
+    }
+    if (!this.host) return;
     if (
       intent === "return" &&
       port.returnIndex !== undefined &&
@@ -386,6 +397,44 @@ export class WorkbenchRuntime {
       search: {},
       replace: intent === "replace" || intent === "return",
     });
+  }
+  private updateShareUrl<M extends WorkbenchMode>(port: WorkbenchPort<M>) {
+    const history = this.host?.history;
+    if (!history || port.resultToken === undefined) return;
+    const url = new URL(history.location.href, window.location.href);
+    if (url.searchParams.get("s") !== port.resultToken) return;
+    const session = adapters[port.mode].serialize(port.state);
+    if (session?.mode !== "single" || session.phase !== "result") return;
+    const { value } = session;
+    const token = new URL(
+      shareUrl(
+        projectShareInput({
+          mode: "single",
+          config: value.config,
+          results: [value.result],
+          dataVersion: value.dataVersion,
+          elapsedMs: value.result.statistics.elapsedMs,
+        }),
+        url.href,
+      ),
+    ).searchParams.get("s")!;
+    url.searchParams.set("s", token);
+
+    // Keep the history adapter's location and mask state current, while skipping
+    // router subscribers so replacing gear never re-enters or reloads the route.
+    const subscribers = [...history.subscribers];
+    history.subscribers.clear();
+    try {
+      history.replace(
+        url.pathname + url.search + url.hash,
+        history.location.state,
+        { ignoreBlocker: true },
+      );
+      history.flush();
+      port.resultToken = token;
+    } finally {
+      for (const subscriber of subscribers) history.subscribers.add(subscriber);
+    }
   }
   private save<M extends WorkbenchMode>(port: WorkbenchPort<M>) {
     if (port.state.phase === "selection") {

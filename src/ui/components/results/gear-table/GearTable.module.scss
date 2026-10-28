@@ -399,7 +399,7 @@
   display: none;
 }
 
-@media (width < tokens.$single-result-mobile-breakpoint) {
+@media (width < tokens.$result-mobile-breakpoint) {
   .mobileResult {
     flex: none;
     max-height: none;
@@ -423,9 +423,14 @@
     .levelCell,
     .statCell,
     .weaponPerformance,
-    .foodStatsMeaning,
-    .marker {
+    .foodStatsMeaning {
       display: none;
+    }
+
+    .marker {
+      font-size: 1em;
+      font-weight: 400;
+      line-height: 1.2;
     }
 
     .row,
@@ -446,6 +451,30 @@
       > th {
         grid-row: 1;
         grid-column: 1;
+        align-self: center;
+      }
+    }
+
+    // Shared markers use the materia row instead of enlarging the name row.
+    .row:has(.marker),
+    .foodRow:has(.marker) {
+      grid-template-rows: auto auto;
+
+      > th {
+        display: grid;
+        grid-row: 1 / 3;
+        grid-template-rows: subgrid;
+        align-self: stretch;
+      }
+
+      .slotCell {
+        grid-row: 1;
+        align-self: center;
+      }
+
+      .marker {
+        grid-row: 2;
+        align-self: center;
       }
     }
 
@@ -472,7 +501,6 @@
     }
 
     .replacementTrigger {
-      min-height: 32px;
       padding: 4px 6px;
       font-size: 12px;
     }

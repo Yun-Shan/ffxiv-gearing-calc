@@ -140,7 +140,7 @@ function SharedResultContent({
       </section>
       <section aria-label="共享装备" className={styles.sharedGear}>
         {rows.length ? (
-          <GearTable rows={rows} jobId={config.jobs[0]!.jobId} />
+          <GearTable rows={rows} jobId={config.jobs[0]!.jobId} mobileResult />
         ) : (
           <p>本次结果没有共享装备部位。</p>
         )}
@@ -239,12 +239,14 @@ function JobTab({
   config,
   result,
   linkShareData,
+  isMobileResult,
 }: {
   commonSlots: JointOptimizationConfig["commonSlots"];
   jobId: JobId;
   config: OptimizationConfig;
   result: JointResultView;
   linkShareData: ShareInput;
+  isMobileResult: boolean;
 }) {
   const jobResult = result.jobResults[jobId];
   if (!jobResult) return <p>结果没有包含该职业的配装明细。</p>;
@@ -256,6 +258,8 @@ function JobTab({
   return (
     <div className={styles.jobResult}>
       <CoreMetricBar
+        mobileResult
+        floatingActions={isMobileResult}
         linkShareData={linkShareData}
         shareData={{
           jobId,
@@ -267,11 +271,11 @@ function JobTab({
         entries={jobMetricEntries(jobId, result).map((entry) => ({
           ...entry,
           clanIndex: config.clanIndex,
-          referenceUrl: resultReferenceUrl(jobResult, config),
+          referenceUrl: isMobileResult ? undefined : resultReferenceUrl(jobResult, config),
         }))}
         showTenacity={jobSchemas[jobId].role === "tank"}
       />
-      <GearTable rows={rows} jobId={jobId} />
+      <GearTable rows={rows} jobId={jobId} mobileResult />
     </div>
   );
 }
@@ -518,6 +522,7 @@ export function ResultMain({
   selectedTab,
   setSelectedTab,
   onReturnSelection,
+  isMobileResult,
 }: {
   config: JointOptimizationConfig;
   result: JointResultView;
@@ -525,9 +530,11 @@ export function ResultMain({
   selectedTab: string;
   setSelectedTab(value: string): void;
   onReturnSelection(): void;
+  isMobileResult: boolean;
 }) {
   const tabList = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    if (isMobileResult) return;
     const list = tabList.current;
     const selected = list?.querySelector<HTMLElement>(
       '[data-value="' + selectedTab + '"]',
@@ -543,7 +550,7 @@ export function ResultMain({
     if (selectedStart < visibleStart) list.scrollTo({ left: selectedStart });
     else if (selectedEnd > visibleEnd)
       list.scrollTo({ left: selectedEnd - list.clientWidth });
-  }, [selectedTab]);
+  }, [selectedTab, isMobileResult]);
   const linkShareData: ShareInput = {
     mode: "joint",
     config,
@@ -563,6 +570,7 @@ export function ResultMain({
           </span>
           {selectedTab === "shared" && (
             <ShareResultButton
+              floating={isMobileResult}
               className={styles.returnButton}
               linkData={linkShareData}
               images={config.jobs.map((c) => ({
@@ -637,6 +645,7 @@ export function ResultMain({
               }
               result={result}
               linkShareData={linkShareData}
+              isMobileResult={isMobileResult}
             />
           </Tabs.Panel>
         ))}
@@ -697,6 +706,7 @@ export function JointWorkbenchMain() {
         selectedTab={controller.resultTab}
         setSelectedTab={controller.setResultTab}
         onReturnSelection={controller.returnToSelection}
+        isMobileResult={controller.isMobileResult}
       />
     );
   }

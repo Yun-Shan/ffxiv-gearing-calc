@@ -65,7 +65,7 @@
   outline-offset: -4px;
 }
 
-@media (width < tokens.$single-result-mobile-breakpoint) {
+@media (width < tokens.$result-mobile-breakpoint) {
   .mobileResult {
     gap: 0;
     padding-inline: 16px;

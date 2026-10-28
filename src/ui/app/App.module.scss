@@ -36,7 +36,7 @@
   pointer-events: none;
 }
 
-@media (width < tokens.$single-result-mobile-breakpoint) {
+@media (width < tokens.$result-mobile-breakpoint) {
   .viewportWarning {
     display: block;
   }

@@ -4,7 +4,6 @@ import {
   useContext,
   useRef,
   useState,
-  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { jobSchemas } from "@/domain";
@@ -44,18 +43,7 @@ import {
 import { SingleEquipmentRestrictions } from "../equipment/SingleEquipmentRestrictions";
 import styles from "./SingleWorkbench.module.scss";
 import type { WorkbenchRouting } from "@/ui/services/workbench-routing";
-
-// Keep aligned with tokens.$single-result-mobile-breakpoint. Floating actions
-// render outside the workbench's size containers so they stay viewport-fixed.
-const mobileResultQuery = "(width < 1000px)";
-function subscribeMobileResult(onChange: () => void) {
-  const query = window.matchMedia?.(mobileResultQuery);
-  query?.addEventListener("change", onChange);
-  return () => query?.removeEventListener("change", onChange);
-}
-function mobileResultSnapshot() {
-  return window.matchMedia?.(mobileResultQuery).matches ?? false;
-}
+import { useMobileResultViewport } from "@/ui/services/use-mobile-result-viewport";
 
 function summaryRows(draft: SingleDraft) {
   const rows = conditionRows(draft.condition, draft.jobId).filter(
@@ -83,7 +71,7 @@ function useSingleWorkbenchValue(routing?: WorkbenchRouting<SingleState>) {
   const [historyOpen, setHistoryOpen] = useState(false);
   const controller = useSingleController(routing, () => setHistoryOpen(false));
   const { state } = controller;
-  const smallViewport = useSyncExternalStore(subscribeMobileResult, mobileResultSnapshot);
+  const smallViewport = useMobileResultViewport();
   const draft =
     state.phase === "conditions"
       ? state.draft

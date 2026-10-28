@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { createPortal } from "react-dom";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import fixtures from "@/share/__fixtures__/real-search.json";
 import { restoreShare } from "@/share/restore";
@@ -47,17 +46,40 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 function button(label: string): HTMLButtonElement {
-  const value = [...document.querySelectorAll("button")].find(b => b.textContent?.trim() === label);
+  const value = [...document.querySelectorAll("button")].find(b =>
+    b.getAttribute("aria-label") === label || b.textContent?.trim() === label,
+  );
   expect(value, label).toBeDefined(); return value!;
 }
-async function open(multiple = false) {
+function renderButton(floating = false, multiple = false) {
   act(() => root.render(<FeedbackProvider><ShareResultButton data={imageData} linkData={linkData}
+    floating={floating}
     images={multiple ? [{ label: "当前配装", data: imageData }, { label: "对比配装", data: imageData }] : undefined}
   /></FeedbackProvider>));
+}
+async function open(multiple = false) {
+  renderButton(false, multiple);
   const trigger = button("分享配装结果");
   await act(async () => trigger.click());
   return trigger;
 }
+
+it.each([false, true])("closes and resets an open image picker when floating starts as %s and changes", async initialFloating => {
+  renderButton(initialFloating, true);
+  for (const floating of [!initialFloating, initialFloating]) {
+    await act(async () => button("分享配装结果").click());
+    await act(async () => button("复制图片").click());
+    expect(button("复制当前配装图片")).toBeDefined();
+    renderButton(floating, true);
+    expect(button("分享配装结果").getAttribute("aria-expanded")).toBe("false");
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    await act(async () => button("分享配装结果").click());
+    expect(button("复制链接")).toBeDefined();
+    expect(button("复制图片")).toBeDefined();
+    expect(document.querySelector('[role="dialog"]')?.textContent).not.toContain("选择图片职业");
+    await act(async () => button("分享配装结果").click());
+  }
+});
 
 it.each(["link", "image"] as const)("serializes both copy actions when %s starts first", async first => {
   const trigger = await open(), link = button("复制链接"), image = button("复制图片");
@@ -107,19 +129,13 @@ it("disables the image picker back action while copying and releases it on failu
 it.each([
   ["link", "success"], ["link", "failure"],
   ["image", "success"], ["image", "failure"],
-] as const)("keeps a pending %s copy across Portal remounts and handles %s", async (kind, outcome) => {
-  function renderLayout(floating: boolean) {
-    const share = <ShareResultButton data={imageData} linkData={linkData} />;
-    act(() => root.render(
-      <FeedbackProvider>{floating ? createPortal(share, document.body) : share}</FeedbackProvider>,
-    ));
-  }
-  renderLayout(true);
+] as const)("keeps a pending %s copy across floating changes and handles %s", async (kind, outcome) => {
+  renderButton(true);
   act(() => button("分享配装结果").click());
   await act(async () => {});
   act(() => button(kind === "image" ? "复制图片" : "复制链接").click());
   for (const floating of [false, true]) {
-    renderLayout(floating);
+    renderButton(floating);
     const trigger = button("分享配装结果");
     expect(trigger.disabled).toBe(true);
     act(() => trigger.click());

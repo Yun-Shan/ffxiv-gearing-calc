@@ -104,26 +104,6 @@
 .shareButton {
   margin-inline-end: auto;
 }
-.floatingActions {
-  position: fixed;
-  z-index: 30;
-  right: calc(12px + env(safe-area-inset-right, 0px));
-  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-  box-sizing: border-box;
-  max-width: calc(100vw - 24px);
-  flex-wrap: nowrap;
-  gap: 8px;
-  padding: 8px;
-  border: 1px solid #e0e7e4;
-  border-radius: 8px;
-  background: tokens.$color-neutral-white;
-  box-shadow: 0 4px 16px #18223524;
-
-  .openLink {
-    box-sizing: border-box;
-    min-height: 40px;
-  }
-}
 .compact {
   gap: 8px;
   .metric {
@@ -175,7 +155,7 @@
   margin-top: 12px;
 }
 
-@media (width < tokens.$single-result-mobile-breakpoint) {
+@media (width < tokens.$result-mobile-breakpoint) {
   .mobileResult {
     grid-template-columns: minmax(0, 1fr);
     gap: 6px;

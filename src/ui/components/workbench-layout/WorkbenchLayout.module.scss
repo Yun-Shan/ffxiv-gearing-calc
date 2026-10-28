@@ -28,25 +28,24 @@
   display: none;
 }
 
-@media (width < tokens.$single-result-mobile-breakpoint) {
+@media (width < tokens.$result-mobile-breakpoint) {
   .mobileResult {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    padding-bottom: calc(tokens.$single-result-actions-clearance + env(safe-area-inset-bottom, 0px));
-    scroll-padding-bottom: calc(tokens.$single-result-actions-clearance + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(tokens.$result-actions-clearance + env(safe-area-inset-bottom, 0px));
+    scroll-padding-bottom: calc(tokens.$result-actions-clearance + env(safe-area-inset-bottom, 0px));
 
     .viewportWarning {
       display: block;
       flex: none;
       margin: 8px 12px 0;
-      padding: 8px 10px;
+      padding: 4px 10px;
       border: 1px solid #e7c47d;
       border-radius: 5px;
       background: #fff5df;
       color: #946518;
       font-size: 12px;
-      line-height: 1.5;
       text-align: center;
     }
 

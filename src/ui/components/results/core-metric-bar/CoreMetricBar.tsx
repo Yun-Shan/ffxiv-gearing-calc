@@ -1,6 +1,5 @@
 import { Popover } from "@base-ui/react/popover";
 import { useState } from "react";
-import { createPortal } from "react-dom";
 import { SquareArrowOutUpRight } from "lucide-react";
 import type { Effects, OptimizationResult } from "@/domain";
 import styles from "./CoreMetricBar.module.scss";
@@ -179,7 +178,7 @@ export function CoreMetricBar({
   const divider = <div className={styles.divider} aria-hidden="true" />;
   const actions = (
     <div
-      className={`${styles.openActions} ${floatingActions ? styles.floatingActions : ""}`}
+      className={styles.openActions}
       role="group"
       aria-label="配装结果操作"
     >
@@ -187,6 +186,7 @@ export function CoreMetricBar({
         <ShareResultButton
           data={shareData}
           linkData={linkShareData}
+          floating={floatingActions}
           className={`${styles.openLink} ${styles.shareButton}`}
         />
       )}
@@ -273,7 +273,7 @@ export function CoreMetricBar({
       <article className={styles.metric} aria-label="生命值">
         {metric("生命值", (entry) => entry.hp.toFixed(0), undefined, false, styles.desktopOnly)}
         {divider}
-        {floatingActions ? createPortal(actions, document.body) : actions}
+        {actions}
       </article>
     </section>
   );
