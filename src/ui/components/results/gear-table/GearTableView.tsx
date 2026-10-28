@@ -173,10 +173,12 @@ export function GearTableView({
   rows,
   jobId,
   presentation = "interactive",
+  mobileResult = false,
 }: {
   rows: readonly GearTableRow[];
   jobId: JobId;
   presentation?: "interactive" | "image";
+  mobileResult?: boolean;
 }) {
   const job = jobSchemas[jobId];
   const statColumns = [
@@ -199,7 +201,7 @@ export function GearTableView({
     );
   return (
     <div
-      className={`${styles.wrap} ${presentation === "image" ? styles.image : ""}`}
+      className={`${styles.wrap} ${presentation === "image" ? styles.image : ""} ${mobileResult ? styles.mobileResult : ""}`}
       style={
         {
           "--gear-row-count": rows.length,
@@ -247,7 +249,7 @@ export function GearTableView({
                     <span className={styles.marker}>{row.marker}</span>
                   )}
                 </th>
-                <td>
+                <td className={styles.nameCell}>
                   {item.kind === "summary" ? null : (
                     <div className={styles.itemCell}>
                       <GameIcon
@@ -287,7 +289,7 @@ export function GearTableView({
                   )}
                 </td>
                 {hasReplacements && (
-                  <td>
+                  <td className={styles.replacementCell}>
                     {gearRow?.replacements &&
                       gearRow.replacements.length > 1 &&
                       gearRow.onReplacementSelect && (
@@ -306,18 +308,21 @@ export function GearTableView({
                       ? "生产制作"
                       : (item.source ?? "上游未标注")}
                 </td>
-                <td>
+                <td className={styles.levelCell}>
                   <span className={styles.level}>
                     {item.kind === "summary"
                       ? (item.itemLevel ?? "—")
                       : (item.level ?? "—")}
                   </span>
                 </td>
-                <td>
+                <td className={styles.meldCell}>
                   {item.kind === "gear" && (item.melds.length > 0 || item.materiaSync) && (
                     <div className={styles.melds}>
                       {item.materiaSync && <SyncIcon className={styles.syncIcon}
                         aria-label={item.materiaSync === "disabled" ? "品级同步后魔晶石不生效" : "自定义属性因同步被截断"} />}
+                      {mobileResult && item.materiaSync === "disabled" && (
+                        <span className={styles.mobileMeldHint}>品级同步后魔晶石不生效</span>
+                      )}
                       {item.materiaSync !== "disabled" && item.melds.map(({ stat, value, isOvermeld }, index) => (
                         <span
                           className={`${styles.meld} ${isOvermeld ? styles.overmeld : ""}`}
@@ -328,6 +333,9 @@ export function GearTableView({
                         </span>
                       ))}
                     </div>
+                  )}
+                  {mobileResult && item.kind === "gear" && item.melds.length === 0 && !item.materiaSync && (
+                    <span className={styles.mobileMeldHint}>—</span>
                   )}
                 </td>
                 <StatCells

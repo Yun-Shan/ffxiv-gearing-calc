@@ -1,3 +1,5 @@
+@use "@/styles/tokens" as tokens;
+
 .header {
   display: flex;
   flex: 0 0 64px;
@@ -61,4 +63,15 @@
 .navLink:focus-visible {
   outline: 3px solid #49a9b4;
   outline-offset: -4px;
+}
+
+@media (width < tokens.$single-result-mobile-breakpoint) {
+  .mobileResult {
+    gap: 0;
+    padding-inline: 16px;
+
+    .nav {
+      display: none;
+    }
+  }
 }

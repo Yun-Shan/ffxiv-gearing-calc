@@ -4,6 +4,7 @@ import {
   useContext,
   useRef,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { jobSchemas } from "@/domain";
@@ -44,6 +45,18 @@ import { SingleEquipmentRestrictions } from "../equipment/SingleEquipmentRestric
 import styles from "./SingleWorkbench.module.scss";
 import type { WorkbenchRouting } from "@/ui/services/workbench-routing";
 
+// Keep aligned with tokens.$single-result-mobile-breakpoint. Floating actions
+// render outside the workbench's size containers so they stay viewport-fixed.
+const mobileResultQuery = "(width < 1000px)";
+function subscribeMobileResult(onChange: () => void) {
+  const query = window.matchMedia?.(mobileResultQuery);
+  query?.addEventListener("change", onChange);
+  return () => query?.removeEventListener("change", onChange);
+}
+function mobileResultSnapshot() {
+  return window.matchMedia?.(mobileResultQuery).matches ?? false;
+}
+
 function summaryRows(draft: SingleDraft) {
   const rows = conditionRows(draft.condition, draft.jobId).filter(
     ({ label }) => label !== "公式等级",
@@ -70,6 +83,7 @@ function useSingleWorkbenchValue(routing?: WorkbenchRouting<SingleState>) {
   const [historyOpen, setHistoryOpen] = useState(false);
   const controller = useSingleController(routing, () => setHistoryOpen(false));
   const { state } = controller;
+  const smallViewport = useSyncExternalStore(subscribeMobileResult, mobileResultSnapshot);
   const draft =
     state.phase === "conditions"
       ? state.draft
@@ -130,6 +144,7 @@ function useSingleWorkbenchValue(routing?: WorkbenchRouting<SingleState>) {
     submitState,
     historyProps,
     title,
+    isMobileResult: state.phase === "result" && smallViewport,
   };
 }
 const Context = createContext<
@@ -139,14 +154,14 @@ export function SingleWorkbenchProvider({ children, routing }: { children: React
   const value = useSingleWorkbenchValue(routing);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
-function useWorkbench() {
+export function useSingleWorkbench() {
   const value = useContext(Context);
   if (!value) throw new Error("SingleWorkbenchProvider is required");
   return value;
 }
 export function SingleWorkbenchMain() {
-  const { controller, state, title, draft, runtime, validation, historyProps } =
-    useWorkbench();
+  const { controller, state, title, draft, runtime, validation, historyProps, isMobileResult } =
+    useSingleWorkbench();
   const resultRows =
     state.phase === "result"
       ? buildResultGearTableRows(state.result, state.snapshot, {
@@ -155,7 +170,7 @@ export function SingleWorkbenchMain() {
       : [];
   return (
     <>
-      <header className={styles.heading}>
+      <header className={`${styles.heading} ${state.phase === "result" ? styles.resultHeading : ""}`}>
         <div className={styles.titleRow}>
           <h1>
             {state.phase === "selection"
@@ -212,6 +227,8 @@ export function SingleWorkbenchMain() {
       {state.phase === "result" && (
         <>
           <CoreMetricBar
+            mobileResult
+            floatingActions={isMobileResult}
             linkShareData={{ mode: "single", config: state.snapshot, results: [state.result], dataVersion: state.dataVersion, elapsedMs: state.result.statistics.elapsedMs }}
             shareData={{
               jobId: state.snapshot.jobId,
@@ -219,11 +236,17 @@ export function SingleWorkbenchMain() {
               rows: resultRows,
               summaryRows: summaryRows(draft!),
             }}
-            entries={[{ ...buildResultMetricEntry(state.result), clanIndex: state.snapshot.clanIndex, referenceUrl: resultReferenceUrl(state.result, state.snapshot) }]}
+            entries={[{
+              ...buildResultMetricEntry(state.result),
+              clanIndex: state.snapshot.clanIndex,
+              referenceUrl: isMobileResult
+                ? undefined
+                : resultReferenceUrl(state.result, state.snapshot),
+            }]}
             objective={state.snapshot.objective}
             showTenacity={jobSchemas[state.snapshot.jobId].role === "tank"}
           />
-          <GearTable rows={resultRows} jobId={state.snapshot.jobId} />
+          <GearTable rows={resultRows} jobId={state.snapshot.jobId} mobileResult />
         </>
       )}
     </>
@@ -238,9 +261,9 @@ export function SingleWorkbenchAside() {
     validation,
     submitState,
     setHistoryOpen,
-  } = useWorkbench();
+  } = useSingleWorkbench();
   return (
-    <SidePanel>
+    <SidePanel mobileResult={state.phase === "result"}>
       <SidePanel.Header
         title={state.phase === "selection" ? "信息公告栏" : title}
         subtitle={state.phase === "selection" ? "自动配装器" : "条件摘要"}
@@ -290,7 +313,7 @@ export function SingleWorkbenchAside() {
   );
 }
 export function SingleWorkbenchOverlays() {
-  const { historyProps, historyOpen, setHistoryOpen } = useWorkbench();
+  const { historyProps, historyOpen, setHistoryOpen } = useSingleWorkbench();
   return (
     <HistoryOverlay
       {...historyProps}

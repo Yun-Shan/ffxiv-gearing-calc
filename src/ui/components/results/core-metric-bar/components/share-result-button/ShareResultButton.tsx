@@ -1,8 +1,8 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Image, Share2 } from "lucide-react";
 import { Popover } from "@base-ui/react/popover";
 import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
-import { copyResultImage } from "@/ui/services/share-result";
+import { useResultShare } from "@/ui/services/use-result-share";
 import type { ResultShareData } from "../../../result-share-layout/types";
 import type { ShareInput } from "@/share/types";
 import { ShareLinkButton } from "../share-link-button/ShareLinkButton";
@@ -20,25 +20,13 @@ export function ShareResultButton({
   className?: string;
 }) {
   const { notify } = useFeedback();
-  const [copying, setCopying] = useState(false);
-  const pending = useRef(false);
+  const { copying, copyImage } = useResultShare();
   const [open, setOpen] = useState(false);
   const [choosingImage, setChoosingImage] = useState(false);
 
-  function startCopy(): boolean {
-    if (pending.current) return false;
-    pending.current = true;
-    setCopying(true);
-    return true;
-  }
-  function finishCopy() {
-    pending.current = false;
-    setCopying(false);
-  }
   async function share(image: ResultShareData) {
-    if (!startCopy()) return;
     try {
-      await copyResultImage(image);
+      if (!(await copyImage(image))) return;
       notify("结果图片已复制到剪贴板", "success");
       setOpen(false);
       setChoosingImage(false);
@@ -48,8 +36,6 @@ export function ShareResultButton({
           ? error.message
           : "请检查浏览器的剪贴板权限后重试";
       notify(`分享结果失败：${message}`, "error");
-    } finally {
-      finishCopy();
     }
   }
 
@@ -114,9 +100,6 @@ export function ShareResultButton({
                     data={linkData}
                     className={styles.option}
                     onCopied={() => setOpen(false)}
-                    disabled={copying}
-                    onCopyStart={startCopy}
-                    onCopyEnd={finishCopy}
                   />
                 )}
                 {imageOptions.length > 0 && (

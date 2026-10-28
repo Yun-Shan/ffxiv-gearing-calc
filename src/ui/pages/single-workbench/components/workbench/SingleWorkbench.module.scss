@@ -1,3 +1,5 @@
+@use "@/styles/tokens" as tokens;
+
 .heading {
   display: flex;
   align-items: center;
@@ -53,4 +55,19 @@
   color: #316c67;
   font-size: 16px;
   white-space: nowrap;
+}
+
+@media (width < tokens.$single-result-mobile-breakpoint) {
+  .resultHeading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+
+    button,
+    .durationBadge {
+      display: none;
+    }
+  }
 }

@@ -10,6 +10,11 @@ export function AppFrame() {
     select: (state) => state.location.pathname,
   });
   const { notify } = useFeedback();
+  const mobileResult = useRouterState({
+    select: (state) => state.matches.some(
+      (match) => match.routeId === "/_single/single/result",
+    ),
+  });
   useEffect(() => {
     const show = () => {
       for (const warning of router.options.context.workflow.takeWarnings())
@@ -32,10 +37,12 @@ export function AppFrame() {
             : "single";
   return (
     <div className={styles.root}>
-      <p className={styles.viewportWarning} role="status">
-        当前屏幕过小，可能无法正常使用
-      </p>
-      <AppHeader page={page} />
+      <AppHeader page={page} mobileResult={mobileResult} />
+      {!mobileResult && (
+        <p className={styles.viewportWarning} role="status">
+          当前屏幕过小，可能无法正常使用
+        </p>
+      )}
       <div className={styles.route}>
         <Outlet />
       </div>

@@ -52,9 +52,9 @@ function NavLinks({
   ));
 }
 
-export function AppHeader({ page }: { page: AppPage }) {
+export function AppHeader({ page, mobileResult = false }: { page: AppPage; mobileResult?: boolean }) {
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header} ${mobileResult ? styles.mobileResult : ""}`}>
       <div className={styles.brand}>
         <img className={styles.mark} src={`${applicationBase()}icons/logo-128.png`} alt="" />
         <div className={styles.name}>

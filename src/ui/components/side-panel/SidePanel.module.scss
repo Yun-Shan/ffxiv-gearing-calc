@@ -127,3 +127,27 @@
 .section > p {
   line-height: 1.6;
 }
+
+@media (width < tokens.$single-result-mobile-breakpoint) {
+  .mobileResult {
+    flex: none;
+
+    > * {
+      font-size: 14px;
+    }
+
+    .title {
+      font-size: 18px;
+    }
+
+    .content {
+      flex: none;
+      overflow: visible;
+    }
+
+    .actions,
+    .footer {
+      display: none;
+    }
+  }
+}

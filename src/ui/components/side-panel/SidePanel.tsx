@@ -4,12 +4,14 @@ import styles from "./SidePanel.module.scss";
 function Root({
   children,
   className,
+  mobileResult = false,
 }: {
   children: ReactNode;
   className?: string;
+  mobileResult?: boolean;
 }) {
   return (
-    <aside className={`${styles.root} ${className ?? ""}`}>{children}</aside>
+    <aside className={`${styles.root} ${mobileResult ? styles.mobileResult : ""} ${className ?? ""}`}>{children}</aside>
   );
 }
 function Header({

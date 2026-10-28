@@ -394,3 +394,123 @@
   align-self: center;
   color: #657083;
 }
+
+.mobileMeldHint {
+  display: none;
+}
+
+@media (width < tokens.$single-result-mobile-breakpoint) {
+  .mobileResult {
+    flex: none;
+    max-height: none;
+    container-type: inline-size;
+    contain-intrinsic-block-size: none;
+    overflow: visible;
+
+    .table,
+    .table tbody {
+      display: block;
+      height: auto;
+    }
+
+    .table {
+      font-size: 14px;
+    }
+
+    .table thead,
+    .summaryRow,
+    .source,
+    .levelCell,
+    .statCell,
+    .weaponPerformance,
+    .foodStatsMeaning,
+    .marker {
+      display: none;
+    }
+
+    .row,
+    .foodRow {
+      grid-template-columns: 42px minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      gap: 4px;
+      padding: 8px 10px;
+      border-bottom: 1px solid #e2e8e4;
+
+      > th,
+      > td {
+        height: auto;
+        border: 0;
+        padding: 0;
+      }
+
+      > th {
+        grid-row: 1;
+        grid-column: 1;
+      }
+    }
+
+    .nameCell {
+      grid-row: 1;
+      grid-column: 2;
+    }
+
+    .itemCell {
+      gap: 4px;
+    }
+
+    .row:has(.replacementTrigger) {
+      grid-template-columns: 42px minmax(0, 1fr) max-content;
+    }
+
+    .replacementCell {
+      grid-row: 1;
+      grid-column: 3;
+
+      &:empty {
+        display: none;
+      }
+    }
+
+    .replacementTrigger {
+      min-height: 32px;
+      padding: 4px 6px;
+      font-size: 12px;
+    }
+
+    .equipmentIcon {
+      --equipment-icon-size: 24px;
+    }
+
+    .meldCell {
+      grid-row: 2;
+      grid-column: 2 / -1;
+      min-height: 22px;
+    }
+
+    .melds {
+      gap: 4px;
+    }
+
+    .meld {
+      padding: 1px 3px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .mobileMeldHint {
+      display: inline;
+      color: tokens.$color-text-secondary;
+      font-size: 12px;
+      line-height: 22px;
+    }
+
+    .foodRow {
+      grid-template-rows: auto;
+      border-bottom: 0;
+
+      .meldCell {
+        display: none;
+      }
+    }
+  }
+}

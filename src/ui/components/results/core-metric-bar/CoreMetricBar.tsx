@@ -1,5 +1,6 @@
 import { Popover } from "@base-ui/react/popover";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { SquareArrowOutUpRight } from "lucide-react";
 import type { Effects, OptimizationResult } from "@/domain";
 import styles from "./CoreMetricBar.module.scss";
@@ -39,6 +40,8 @@ export interface CoreMetricBarProps {
   entries: readonly CoreMetricEntry[];
   showTenacity: boolean;
   compact?: boolean;
+  mobileResult?: boolean;
+  floatingActions?: boolean;
   shareData?: ResultShareData;
   linkShareData?: ShareInput;
 }
@@ -141,6 +144,8 @@ export function CoreMetricBar({
   entries,
   showTenacity,
   compact = false,
+  mobileResult = false,
+  floatingActions = false,
   shareData,
   linkShareData,
 }: CoreMetricBarProps) {
@@ -150,10 +155,11 @@ export function CoreMetricBar({
     value: (entry: CoreMetricEntry) => string,
     delta?: (entry: CoreMetricEntry) => string | undefined,
     target = false,
+    className = "",
   ) {
     return (
       <div
-        className={`${styles.metricRow} ${target ? styles.targetMetric : ""}`}
+        className={`${styles.metricRow} ${target ? styles.targetMetric : ""} ${className}`}
       >
         <span>{label}</span>
         <div className={styles.values}>
@@ -171,9 +177,34 @@ export function CoreMetricBar({
     );
   }
   const divider = <div className={styles.divider} aria-hidden="true" />;
+  const actions = (
+    <div
+      className={`${styles.openActions} ${floatingActions ? styles.floatingActions : ""}`}
+      role="group"
+      aria-label="配装结果操作"
+    >
+      {(shareData || linkShareData) && (
+        <ShareResultButton
+          data={shareData}
+          linkData={linkShareData}
+          className={`${styles.openLink} ${styles.shareButton}`}
+        />
+      )}
+      {entries.map(
+        (entry) =>
+          entry.referenceUrl && (
+            <ReferenceLink
+              key={entry.key}
+              entry={entry}
+              showLabel={showLabels}
+            />
+          ),
+      )}
+    </div>
+  );
   return (
     <section
-      className={`${styles.metrics} ${compact ? styles.compact : ""}`}
+      className={`${styles.metrics} ${compact ? styles.compact : ""} ${mobileResult ? styles.mobileResult : ""}`}
       aria-label="核心指标"
     >
       <article className={styles.metric} aria-label="伤害指标">
@@ -182,6 +213,7 @@ export function CoreMetricBar({
           (entry) => formatMetric(entry.damagePerPotency),
           (entry) => differenceText(entry.deltas?.damagePerPotency),
           objective === "damage",
+          styles.damagePerPotency,
         )}
         {divider}
         {metric(
@@ -189,64 +221,59 @@ export function CoreMetricBar({
           (entry) => formatMetric(entry.damagePerSecond),
           (entry) => differenceText(entry.deltas?.damagePerSecond),
           objective === "dps",
+          styles.desktopOnly,
         )}
       </article>
-      <article className={styles.metric} aria-label="暴击率">
-        {metric(
-          "暴击率",
-          (entry) => `${(entry.criticalRate * 100).toFixed(1)}%`,
-        )}
-        {divider}
-        {metric(
-          "直击率",
-          (entry) => `${(entry.directHitRate * 100).toFixed(1)}%`,
-        )}
-      </article>
-      <article className={styles.metric} aria-label="GCD">
-        {metric(
-          "GCD",
-          (entry) => `${entry.gcd.toFixed(2)} 秒`,
-          (entry) =>
-            entry.deltas?.gcd === undefined
-              ? undefined
-              : signed(entry.deltas.gcd, 2),
-        )}
-        {divider}
-        {showTenacity ? (
-          metric(
-            "坚韧减伤",
-            (entry) => `${((entry.tenacityMitigation ?? 0) * 100).toFixed(1)}%`,
+      <div className={styles.attributes}>
+        <article className={styles.metric} aria-label="暴击率">
+          {metric(
+            "暴击率",
+            (entry) => `${(entry.criticalRate * 100).toFixed(1)}%`,
+            undefined,
+            false,
+            styles.critical,
+          )}
+          {divider}
+          {metric(
+            "直击率",
+            (entry) => `${(entry.directHitRate * 100).toFixed(1)}%`,
+            undefined,
+            false,
+            styles.directHit,
+          )}
+        </article>
+        <article className={styles.metric} aria-label="GCD">
+          {metric(
+            "GCD",
+            (entry) => `${entry.gcd.toFixed(2)} 秒`,
             (entry) =>
-              entry.deltas?.tenacityMitigationPp === undefined
+              entry.deltas?.gcd === undefined
                 ? undefined
-                : `${signed(entry.deltas.tenacityMitigationPp, 2)}pp`,
-          )
-        ) : (
-          <div />
-        )}
-      </article>
+                : signed(entry.deltas.gcd, 2),
+            false,
+            styles.gcd,
+          )}
+          {divider}
+          {showTenacity ? (
+            metric(
+              "坚韧减伤",
+              (entry) => `${((entry.tenacityMitigation ?? 0) * 100).toFixed(1)}%`,
+              (entry) =>
+                entry.deltas?.tenacityMitigationPp === undefined
+                  ? undefined
+                  : `${signed(entry.deltas.tenacityMitigationPp, 2)}pp`,
+              false,
+              styles.tenacity,
+            )
+          ) : (
+            <div className={styles.tenacityPlaceholder} aria-hidden="true" />
+          )}
+        </article>
+      </div>
       <article className={styles.metric} aria-label="生命值">
-        {metric("生命值", (entry) => entry.hp.toFixed(0))}
+        {metric("生命值", (entry) => entry.hp.toFixed(0), undefined, false, styles.desktopOnly)}
         {divider}
-        <div className={styles.openActions}>
-          {(shareData || linkShareData) && (
-            <ShareResultButton
-              data={shareData}
-              linkData={linkShareData}
-              className={`${styles.openLink} ${styles.shareButton}`}
-            />
-          )}
-          {entries.map(
-            (entry) =>
-              entry.referenceUrl && (
-                <ReferenceLink
-                  key={entry.key}
-                  entry={entry}
-                  showLabel={showLabels}
-                />
-              ),
-          )}
-        </div>
+        {floatingActions ? createPortal(actions, document.body) : actions}
       </article>
     </section>
   );
