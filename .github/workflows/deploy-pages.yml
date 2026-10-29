@@ -1,6 +1,7 @@
 name: Deploy to GitHub Pages
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
@@ -15,6 +16,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: pages
@@ -25,6 +27,60 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: ${{ github.event_name == 'workflow_dispatch' && 1 || 0 }}
+          filter: blob:none
+      - name: Check share identities build history
+        if: github.event_name != 'workflow_dispatch'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const identityPath = 'scripts/data-update/share-identities.json';
+            const git = async (...args) => (
+              await exec.getExecOutput('git', args, { silent: true })
+            ).stdout.trim();
+            const before = context.payload.before;
+            let changedFiles;
+            if (!before || /^0+$/.test(before)) {
+              changedFiles = await git('ls-tree', '-r', '--name-only', context.sha, '--', identityPath);
+            } else {
+              const diffArgs = ['diff', '--name-only', '--no-renames', before, context.sha, '--', identityPath];
+              try {
+                changedFiles = await git(...diffArgs);
+              } catch {
+                // 强制推送的旧提交可能不在本地，只在比较失败后补取并重试。
+                await git('fetch', '--no-tags', '--filter=blob:none', 'origin', before);
+                changedFiles = await git(...diffArgs);
+              }
+            }
+            if (changedFiles) {
+              core.setFailed('share-identities.json 修改后必须由人工手动构建');
+              return;
+            }
+
+            const [identityCommit, identityCommittedAt] = (await git(
+              'log', '-1', '--no-renames', '--format=%H %cI', context.sha, '--', identityPath,
+            )).split(' ');
+            if (!identityCommit || !identityCommittedAt) {
+              throw new Error('无法找到 share-identities.json 的最近修改提交');
+            }
+
+            const branch = context.ref.replace(/^refs\/heads\//, '');
+            const { data } = await github.rest.actions.listWorkflowRuns({
+              ...context.repo, workflow_id: 'deploy-pages.yml', branch,
+              event: 'workflow_dispatch', status: 'success',
+              created: `>=${identityCommittedAt}`, per_page: 1,
+            });
+            const run = data.workflow_runs[0];
+            // L 来自 HEAD 的文件历史；范围内恰好是满足 L → R → HEAD 且 R ≠ L 的提交。
+            if (run?.head_sha && (run.head_sha === identityCommit ||
+                (await git('rev-list', '--ancestry-path', `${identityCommit}..${context.sha}`))
+                  .split('\n').includes(run.head_sha))) {
+              core.info(`分享身份已有成功的人工构建：${run.html_url}`);
+              return;
+            }
+
+            core.setFailed('share-identities.json 的修改还未经人工手动构建');
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
