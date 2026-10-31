@@ -86,6 +86,22 @@ const control = {
   maxConcurrency: 1,
 };
 
+test("baseline worker receives independent execution strategy modes", async () => {
+  let posted: BaselineWorkerRequest | undefined;
+  adapter.createNodeBaselineWorker.mockImplementation(() => workerHandle((post, request) => {
+    posted = structuredClone(request);
+    post({ type: "result", result: undefined });
+  }, () => undefined));
+  const executor = await createParallelBaselineExecutor();
+  assert.ok(executor);
+  const strategies = { equalityQuotient: "off", materiaFamilyProjection: "off", resourceBudgetCandidateBounds: "on" } as const;
+  try {
+    await executor([{ ...task, strategies }], control);
+    assert.deepEqual(posted!.options.strategies, strategies);
+    assert.equal(posted!.options.materiaFamilyMetadata, undefined);
+  } finally { await executor.dispose?.(); }
+});
+
 test("T54 numeric family sidechannel survives real Worker option decoding without transmitting variant identity", async () => {
   const base = exactOptionsForWorker();
   const family = boundedMateriaCounts([2, 2, 2], 2).map((count) => {

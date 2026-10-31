@@ -23,6 +23,8 @@ import { emitProfileEvent } from "../core/diagnostics.ts";
 import { getMemoryUsageSnapshot } from "../memory-usage.ts";
 import { solveIntegerModel } from "../core/highs-solver.ts";
 import { validateMipSolution } from "../core/solution-validation.ts";
+import { normalizeSearchStrategies } from "../strategies.ts";
+import { inheritCanonicalEvaluatorCandidateUpperBound } from "../exact-mip-candidate-upper-bound.ts";
 
 export type { JointPreparedJob } from "./joint-types.ts";
 
@@ -38,6 +40,15 @@ export async function findBestJointFactorMip(
   | undefined
 > {
   const startedAt = performance.now();
+  const strategies = normalizeSearchStrategies(options.strategies);
+  options = {
+    ...options,
+    strategies,
+    jobs: options.jobs.map((job) => ({
+      ...job,
+      options: inheritCanonicalEvaluatorCandidateUpperBound(job.options, { ...job.options, strategies }),
+    })),
+  };
   const jointMaxSearchMs = options.maxSearchMs;
   const jointPreprocessingBudgetBaseMs = jointMaxSearchMs ?? 235_000;
   const jointTimeLimitReached = () =>
@@ -340,6 +351,7 @@ export async function findBestJointFactorMip(
     const optimizingRatioUpperBound = ratioUpperBoundObjectiveEnabled;
     const solverCallStartedAt = performance.now();
     const output = await solveIntegerModel({
+      strategies,
       // Equivalent representations can have different native MIP performance;
       // bound row-density growth and require substantial column reduction.
       equalityQuotient: { maxRowDensityGrowth: 3, minVariableReductionPercent: 25 },

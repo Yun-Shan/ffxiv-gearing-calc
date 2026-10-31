@@ -121,6 +121,7 @@ export async function solveSerializedBaseline(
   const slots = decodeEquipmentColumns(request.slots);
   const foods = decodeFoodColumns(request.foods);
   const exactOptions: ExactMipOptions = {
+    strategies: request.strategies,
     job: request.job,
     jobLevel: request.jobLevel,
     clanIndex,

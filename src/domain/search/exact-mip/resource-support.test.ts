@@ -71,6 +71,19 @@ const run = ({ options, model, groups, axes, food }: Fixture) =>
     axes,
   );
 
+test("conditional resource three-state policy cannot be overridden by a local legacy profile", () => {
+  const f = fixture();
+  f.options.candidateResourceSupportProfile = "disabled";
+  expect(run(f)?.skipReason).toBe("disabled-by-policy");
+  f.options.strategies = { conditionalResourceSupports: "on" };
+  expect(run(f)?.rowsAdded).toBeGreaterThan(0);
+  const before = f.model.rows.length;
+  f.options.strategies = { conditionalResourceSupports: "off" };
+  f.options.candidateResourceSupportProfile = "compact";
+  expect(run(f)?.skipReason).toBe("disabled-by-policy");
+  expect(f.model.rows).toHaveLength(before);
+});
+
 test.each<[string, (f: Fixture) => void]>([
   ["no resource axes", (f) => f.axes.clear()],
   ["wrong slot variable count", (f) => f.model.slotVariables.push([])],

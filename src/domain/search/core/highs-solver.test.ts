@@ -426,6 +426,22 @@ function densityRuntime(status = 1, run: (callbacks: Callbacks) => void = () => 
   return native;
 }
 
+test.each(["auto", "on", "off"] as const)("T57 unified %s overrides performance routing without removing original solution validation", async (mode) => {
+  vi.stubEnv("FFXIV_PROFILE_TIMING", "1");
+  const native = densityRuntime();
+  loader.mockResolvedValue(native);
+  const { solveIntegerModel } = await import("./highs-solver.ts");
+  const progress = vi.fn();
+  const result = await solveIntegerModel({ ...densityRequest(7), strategies: { equalityQuotient: mode, feasibleSeeds: "off" }, onProgress: progress });
+  expect(result.Columns.x).toEqual({ Primal: 2 });
+  expect(result.Columns.y).toEqual({ Primal: 2 });
+  const lp = native.withModel.mock.calls[0]![0].data;
+  expect(/\by\b/.test(lp)).toBe(mode !== "on");
+  expect(native.native.setSolution).not.toHaveBeenCalled();
+  const line = progress.mock.calls.map(([value]) => value as LinearMipProgress).find((value) => value.message?.includes('"phase":"highs-call-start"'))!.message!;
+  expect(JSON.parse(line.slice(8)).equalityQuotientDecision).toBe(mode === "on" ? "accepted" : mode === "off" ? "disabled" : "density-rejected");
+});
+
 test.each([[5, "accepted"], [6, "accepted"], [7, "density-rejected"]] as const)(
   "density budget k=3 with %i equality rows makes decision %s (including exact threshold)", async (count, decision) => {
     vi.stubEnv("FFXIV_PROFILE_TIMING", "1");

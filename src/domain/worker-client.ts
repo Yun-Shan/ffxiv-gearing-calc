@@ -1,4 +1,5 @@
 import { createComputeWorker } from "./compute-worker-factory.ts";
+import { normalizeSearchStrategies } from "./search/strategies.ts";
 import type { JointOptimizationConfig, JointOptimizationResult, OptimizationConfig, OptimizationResult, SearchOptions } from "./types";
 import type { SearchRequest, SearchResponse, SearchValue } from "./compute-worker-protocol.ts";
 
@@ -9,6 +10,7 @@ export function optimizeInWorker(request: { kind: "joint"; config: JointOptimiza
 export function optimizeInWorker(request: { kind: "gcds"; config: OptimizationConfig }, options?: SearchOptions): Promise<number[]>;
 export async function optimizeInWorker(request: SearchRequest, options: SearchOptions = {}): Promise<SearchValue> {
   if (options.signal?.aborted) throw cancellationError();
+  options = { ...options, strategies: normalizeSearchStrategies(options.strategies ?? request.strategies) };
   const frontendRequest = withoutFrontendSearchLimit(request);
   if (typeof Worker === "undefined") {
     const { findFeasibleGcdsLocally, runJointOptimizationLocally, runOptimizationLocally } = await import("./optimizer");
@@ -32,6 +34,7 @@ export async function optimizeInWorker(request: SearchRequest, options: SearchOp
     options.signal?.addEventListener("abort", cancel, { once: true });
     const workerRequest = {
       ...frontendRequest,
+      strategies: options.strategies,
       ...(options.onSolverCallback === undefined ? {} : { traceSolverCallbacks: true }),
       ...(options.onCandidateCounts === undefined ? {} : { includeCandidateCounts: true }),
       ...(options.onSolverProgress === undefined ? {} : { includeSolverProgress: true }),

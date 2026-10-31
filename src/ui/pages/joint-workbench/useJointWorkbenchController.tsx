@@ -6,6 +6,7 @@ import {
   type JointOptimizationResult,
   type SearchOptions,
 } from "@/domain";
+import { getSearchStrategySettings } from "@/ui/services/search-strategy-settings";
 import { jointConfigForDomain, type UiJointOptimizationConfig as JointOptimizationConfig, type UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
 import type { JointJobSelectionState } from "@/ui/components/job-selection/JobSelection";
 import { useFeedback } from "@/ui/components/feedback/FeedbackProvider";
@@ -392,6 +393,7 @@ export function useJointWorkbenchController(routing?: WorkbenchRouting<JointWork
     let searchPromise: Promise<JointOptimizationResult | undefined>;
     try {
       searchPromise = optimizeJoint(freezeJointConfig(jointConfigForDomain(config)), {
+        strategies: getSearchStrategySettings(),
         signal: controller.signal,
         onProgress,
         onCandidateCounts,

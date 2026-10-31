@@ -1,4 +1,5 @@
 import { MAX_SEARCH_MS, UNLIMITED_SEARCH_MS } from "./limits.mjs";
+import { parseSearchStrategies } from "../search-strategies.mjs";
 
 const DEFAULT_JOBS = ["RDM", "BLM"];
 
@@ -191,6 +192,7 @@ function optionalPositiveIntegerEnvironment(env, name) {
 }
 
 export function parseV3Config({ env, jobSchemas, slotsForJob, syncLevels }) {
+  const strategies = parseSearchStrategies(env);
   const jobs = parseJobs(env, jobSchemas);
   const jobConstraints = parseJobConstraints(env, jobs);
   const globalConstraints = parseGlobalConstraintEnvironment(env);
@@ -241,6 +243,7 @@ export function parseV3Config({ env, jobSchemas, slotsForJob, syncLevels }) {
 
   return {
     jobs,
+    strategies,
     jobConstraints,
     globalConstraints,
     commonSlots,

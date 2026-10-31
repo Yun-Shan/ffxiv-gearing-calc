@@ -6,11 +6,13 @@ import {
 } from "../gear-options.ts";
 import type { OptimizationConfig, SearchOptions } from "../types.ts";
 import { normalizeOptimizationConfig } from "../config-validation.ts";
+import { normalizeSearchStrategies } from "../search/strategies.ts";
 
 export function findFeasibleGcdsLocally(
   config: OptimizationConfig,
   options: SearchOptions = {},
 ): number[] {
+  options = { ...options, strategies: normalizeSearchStrategies(options.strategies) };
   config = normalizeOptimizationConfig(config);
   return calculateFeasibleGcdTiers(config, options, {
     getJobLevel: calculationJobLevelFor,

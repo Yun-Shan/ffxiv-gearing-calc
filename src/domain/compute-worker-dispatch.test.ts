@@ -67,6 +67,7 @@ it.each(["single", "joint", "gcds"] as const)(
       includeCandidateCounts: true,
       includeSolverProgress: true,
       traceSolverCallbacks: true,
+      strategies: { equalityQuotient: "off", sharedStateSearch: "on" },
     } as ComputeWorkerRequest;
     await worker.send(request);
     expect(worker.responses).toEqual([
@@ -78,6 +79,7 @@ it.each(["single", "joint", "gcds"] as const)(
       { kind: "result", value: result },
     ]);
     expect(handlers[kind]).toHaveBeenCalledOnce();
+    expect(handlers[kind].mock.calls[0]![1].strategies).toEqual({ equalityQuotient: "off", sharedStateSearch: "on" });
     for (const other of Object.keys(handlers).filter((key) => key !== kind)) {
       expect(handlers[other as keyof typeof handlers]).not.toHaveBeenCalled();
     }

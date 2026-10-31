@@ -22,6 +22,7 @@ export function runInWorker(config, maxSearchMs, startedAt, dataBinary, dependen
     logger = console,
     maxRssBytes = MAX_RSS_BYTES,
     workerURL = new URL("../v3-worker.mjs", import.meta.url),
+    strategies,
   } = dependencies;
 
   return new Promise((resolve, reject) => {
@@ -72,7 +73,7 @@ export function runInWorker(config, maxSearchMs, startedAt, dataBinary, dependen
 
     try {
       worker = new WorkerConstructor(workerURL, {
-        workerData: { config, dataBinary },
+        workerData: { config, dataBinary, ...(strategies === undefined ? {} : { strategies }) },
         resourceLimits: { maxOldGenerationSizeMb: 2560 },
       });
     } catch (error) {

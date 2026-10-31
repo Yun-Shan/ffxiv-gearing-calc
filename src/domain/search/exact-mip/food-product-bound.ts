@@ -367,6 +367,7 @@ export function prepareFoodProductBound(
   const { model, groups } = prepared;
   try {
     checkpoint();
+    if (options.strategies?.foodProductBound === "off") return skip("disabled-by-policy");
     if (!Number.isSafeInteger(maxWork) || maxWork < 1 ||
       (limits.maxPoints !== undefined && (!Number.isSafeInteger(limits.maxPoints) || limits.maxPoints < 1)))
       return skip("invalid-budget");

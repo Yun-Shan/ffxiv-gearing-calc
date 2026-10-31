@@ -32,6 +32,7 @@ export function LabeledSelect<Multiple extends boolean = false>({
   invalid = false,
   onOptionHighlighted,
   popupRef,
+  triggerClassName,
 }: {
   label: string;
   multiple?: Multiple;
@@ -46,6 +47,7 @@ export function LabeledSelect<Multiple extends boolean = false>({
   invalid?: boolean;
   onOptionHighlighted?(option: LabeledSelectOption | undefined): void;
   popupRef?: Ref<HTMLDivElement>;
+  triggerClassName?: string;
 }) {
   const id = useId();
   return (
@@ -69,7 +71,7 @@ export function LabeledSelect<Multiple extends boolean = false>({
         <Select.Trigger
           id={id}
           aria-invalid={invalid || undefined}
-          className={`${styles.trigger} ${multiple ? styles.multiple : ""} ${controlSize === "slot" ? styles.slot : ""} ${controlSize === "fit" ? styles.fit : ""} ${controlSize === "strategy" ? styles.strategy : ""}`}
+          className={`${styles.trigger} ${multiple ? styles.multiple : ""} ${controlSize === "slot" ? styles.slot : ""} ${controlSize === "fit" ? styles.fit : ""} ${controlSize === "strategy" ? styles.strategy : ""} ${triggerClassName ?? ""}`}
         >
           <Select.Value
             className={styles.value}

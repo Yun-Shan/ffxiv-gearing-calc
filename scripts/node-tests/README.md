@@ -33,6 +33,7 @@ npm test                # Vitest 单元测试，包括 src/domain 中的规则�
 | `DATA_TEST_TOUGH_PERCENT`、`DATA_TEST_MIN_TENACITY`、`DATA_TEST_MAX_TOUGHNESS` | 所有职业使用的坚韧约束 | 无 |
 | `DATA_TEST_GCD_CHOICES` | 所有职业可选的 GCD 数组，JSON 格式 | 无 |
 | `DATA_TEST_V3_TIMEOUT_MS` | 搜索时限，接受 1 至 235000 毫秒或 `unlimited`；无限时仍保留 RSS 保护线 | `235000` |
+| `FFXIV_SEARCH_STRATEGIES` | 独立的策略执行选项，JSON 对象，详见下节 | 所有项 `auto` |
 
 `DATA_TEST_JOB_CONSTRAINTS` 使用当前领域字段 `gcdChoices`、`speedMin`、`speedMax`、`minTenacity`、`toughnessMinPercent` 和 `maximizeTenacity`。GCD 档位与速度范围互斥，坚韧只选择一种策略；`gcdChoices` 是无重复的正有限数字数组，单值使用单元素数组。每个职业配置显式写入所选目标和族群索引 0；共享范围沿用首个职业的默认范围。装备排除与强制值缺省时按空集合处理。
 
@@ -48,3 +49,15 @@ npm run data:test:v3
 ```
 
 正式搜索的规则测试和算法验收位于 `src/domain`，通过 `npm test` 或 `npm run test:coverage` 运行。历史算法和探索记录可通过 Git 历史查阅。
+
+## 搜索策略
+
+`FFXIV_SEARCH_STRATEGIES` 同时适用于多职业入口、`docs/search-optimization/tools/run-single.mjs` 单职业入口及全场景验收。配置键以 [`SEARCH_STRATEGY_IDS`](../../src/domain/search/strategies.ts) 为准，每项接受 `auto`、`on`、`off`，未提供的项为 `auto`；未知键或非法值直接失败。策略单独传入执行选项，不写入职业条件。
+
+```powershell
+$env:FFXIV_SEARCH_STRATEGIES = '{"sharedStateSearch":"off","equalityQuotient":"on"}'
+npm run data:test:v3
+Remove-Item Env:FFXIV_SEARCH_STRATEGIES
+```
+
+程序调用使用 `runOptimizationLocally(config, { strategies: { equalityQuotient: "off" } })`，联合入口的第二参数相同。`auto` 沿用原选择政策；`on` 只越过性能启用门槛，证书、数学适用性、数值安全、预算及取消检查继续生效；`off` 跳过该优化，完整求解和最优性复核继续执行。依赖策略关闭或证书不满足时，即便设置 `on` 也可能跳过。策略与业务条件分离，不能通过它关闭独立基线或最终复核。

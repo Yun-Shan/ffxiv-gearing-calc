@@ -9,12 +9,14 @@ import { privateParetoSlots, prepareSearch } from "./search-preparation.ts";
 import { assembleResult } from "./result-assembly.ts";
 import { throwIfAborted } from "./context.ts";
 import { normalizeOptimizationConfig } from "../config-validation.ts";
+import { normalizeSearchStrategies } from "../search/strategies.ts";
 
 export async function runOptimizationLocally(
   input: OptimizationConfig,
   options: SearchOptions = {},
 ): Promise<OptimizationResult | undefined> {
   const startedAt = performance.now();
+  options = { ...options, strategies: normalizeSearchStrategies(options.strategies) };
   const config = normalizeOptimizationConfig(input);
   const prepared = prepareSearch(
     config,

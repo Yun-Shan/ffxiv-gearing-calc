@@ -13,9 +13,10 @@ import { strictLogThresholdLoss } from "../core/exact-arithmetic.ts";
 import type { JointModel } from "./joint-model.ts";
 import type { JointCandidateBounds } from "./joint-candidate-bounds.ts";
 import type { JointIncumbent } from "./joint-results.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 export function buildJointIterationRows(
-  options: Pick<JointSearchOptions, "jobs">,
+  options: Pick<JointSearchOptions, "jobs" | "strategies">,
   model: Pick<
     JointModel,
     | "rows"
@@ -44,7 +45,7 @@ export function buildJointIterationRows(
   if (best !== undefined) {
     const thresholdNumerator =
       best.numerator - BigInt(options.jobs.length - 1) * best.denominator;
-    if (thresholdNumerator > 0n) {
+    if (thresholdNumerator > 0n && strategyEnabled(options.strategies, "jointFactorCuts")) {
       const loss = strictLogThresholdLoss(thresholdNumerator, best.denominator);
       const minimumQ = BigInt(baselineQ) - loss - BigInt(groupCount);
       const rhs = minimumQ - BigInt(maximumOffset);
@@ -97,6 +98,8 @@ export function buildJointIterationRows(
           factorCuts.factorClassConflictRows.add(upperBound.rowName);
         }
       }
+    }
+    if (thresholdNumerator > 0n) {
       addCandidateSpecificUpperBoundProofRows(
         solveRows,
         best.numerator,

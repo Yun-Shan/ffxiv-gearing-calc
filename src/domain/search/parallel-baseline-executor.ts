@@ -46,6 +46,7 @@ export type SerializedFoodColumns = {
 };
 
 export type SerializedBaselineOptions = {
+  strategies?: ExactMipOptions["strategies"];
   materiaFamilyMetadata?: MateriaFamilyMetadata;
   job: ExactMipOptions["job"];
   jobLevel: number;
@@ -272,6 +273,7 @@ function serializedOptions(
 
   return {
     ...(materiaPreparation.metadata.families.length === 0 ? {} : { materiaFamilyMetadata: materiaPreparation.metadata }),
+    strategies: options.strategies,
     job: options.job,
     jobLevel: options.jobLevel,
     clanIndex: options.clanIndex,

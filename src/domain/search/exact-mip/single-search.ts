@@ -40,11 +40,15 @@ import { getAttributeVector } from "./attributes.ts";
 import { betterFactors } from "./factor-model.ts";
 import { getMemoryUsageSnapshot } from "../memory-usage.ts";
 import { assertClanIndex } from "../../clans.ts";
+import { normalizeSearchStrategies, strategyEnabled } from "../strategies.ts";
 
 export async function findBestLoadoutExactMip(
   options: ExactMipOptions,
 ): Promise<ExactMipResult | undefined> {
   const startedAt = performance.now();
+  options = inheritCanonicalEvaluatorCandidateUpperBound(options, {
+    ...options, strategies: normalizeSearchStrategies(options.strategies),
+  });
   throwIfCancelled(options.isCancelled);
   assertClanIndex(options.clanIndex);
   if (options.objective !== "damage" && options.objective !== "dps")
@@ -64,7 +68,8 @@ export async function findBestLoadoutExactMip(
     options,
     canonicalCandidateUpperBoundTrusted,
   );
-  const primaryResourceSupportsEnabled = candidateUpperBoundEnabled;
+  const primaryResourceSupportsEnabled = strategyEnabled(options.strategies, "resourceSupports", candidateUpperBoundEnabled);
+  const seedHintsEnabled = strategyEnabled(options.strategies, "feasibleSeeds");
   if (isProfileTimingEnabled() && options.onSolverProgress !== undefined) {
     options.onSolverProgress({
       backend: "HiGHS",
@@ -127,6 +132,7 @@ export async function findBestLoadoutExactMip(
         );
       } catch {
         // 上界不确定只会错过一次优化；原始模型仍会证明结果。
+        throwIfCancelled(options.isCancelled);
       }
       candidateBoundMs = performance.now() - candidateBoundStartedAt;
       if (pruning !== undefined) {
@@ -137,7 +143,7 @@ export async function findBestLoadoutExactMip(
           elapsedMs: pruning.elapsedMs,
         };
         if (pruning.candidatesAfter < pruning.candidatesBefore) {
-          modelOptions = { ...options, slots: pruning.slots };
+          modelOptions = inheritCanonicalEvaluatorCandidateUpperBound(options, { ...options, slots: pruning.slots });
           initialModel = undefined;
         }
       }
@@ -178,8 +184,15 @@ export async function findBestLoadoutExactMip(
   if (prepared === undefined) return undefined;
   const { model, groups, factorEvaluator, useDps, qByVariable,
     mainAttribute, weaponAttribute, detAttribute, tenAttribute, crtAttribute, dhtAttribute, speedAttribute } = prepared;
-  if (candidateUpperBoundEnabled && candidateUpperFactorsBySlot !== undefined && options.job !== "BLU" &&
-      options.resourceBudgetCandidateProfile !== "disabled") {
+  // Resource-budget bounds are an independent optional proof aid, not a child
+  // of independent-coordinate pruning. In auto, retain the original size gate.
+  const resourceBudgetAutomatic = candidateUpperBoundEnabled
+    ? candidateUpperFactorsBySlot !== undefined
+    : options.strategies?.candidateUpperBound === "off" && candidateUpperBoundCandidateCount >= 2_000;
+  if (canonicalCandidateUpperBoundTrusted && options.equipmentAttributeExtractor === undefined &&
+      options.constraints?.maxToughnessMode !== true && options.job !== "BLU" &&
+      strategyEnabled(options.strategies, "resourceBudgetCandidateBounds", resourceBudgetAutomatic) &&
+      (options.strategies?.resourceBudgetCandidateBounds === "on" || options.resourceBudgetCandidateProfile !== "disabled")) {
     const remainingAfterModelMs = searchDeadline - performance.now() - 1_000;
     if (remainingAfterModelMs > 0) {
       const resourceBudgetStartedAt = performance.now();
@@ -197,6 +210,7 @@ export async function findBestLoadoutExactMip(
         ]),
         resourceBudgetDeadline,
         () => options.isCancelled?.() === true,
+        options.strategies?.resourceBudgetCandidateBounds === "on",
       );
       const elapsedMs = performance.now() - resourceBudgetStartedAt;
       modelPreparationMs += elapsedMs;
@@ -225,7 +239,7 @@ export async function findBestLoadoutExactMip(
       }
     }
   }
-  if (!candidateUpperBoundEnabled) {
+  if (!candidateUpperBoundEnabled && (seedHintsEnabled || strategyEnabled(options.strategies, "foodProductBound"))) {
     const greedyMipStartStartedAt = performance.now();
     initialMipStart = greedyMipStart(options, model, useDps,
       Math.min(searchDeadline, performance.now() + 100),
@@ -276,7 +290,7 @@ export async function findBestLoadoutExactMip(
       families: materiaFamilies.length, points: materiaPreparation.points, rejectedGroups: materiaPreparation.rejectedGroups,
       elapsedMs: materiaPreparation.elapsedMs, skipReason: materiaPreparation.skipReason })}`,
   });
-  const initialStart = initialMipStart?.hint;
+  const initialStart = seedHintsEnabled ? initialMipStart?.hint : undefined;
   const { signatureBandGroups, isPossiblyFeasibleFactorTuple } =
     prepareSignatureFeasibility(options, prepared);
   const excludedSignatures: string[][] = [];
@@ -309,18 +323,18 @@ export async function findBestLoadoutExactMip(
     const rows = [...model.rows];
     const strictImprovementCandidateVariables = new Set<string>();
     if (phaseName === "exact_damage_band_feasibility" && best !== undefined &&
-        options.job !== "BLU" && candidateUpperFactorsBySlot !== undefined) {
+        options.job !== "BLU" && (candidateUpperFactorsBySlot !== undefined || resourceBudgetCandidateScoreUpperBySlot !== undefined)) {
       const incumbentLogScore = BigInt(factorObjectiveLogScore(best.factors, useDps));
       const roundingSlack = BigInt(groups.length);
       for (let slotIndex = 0; slotIndex < modelOptions.slots.length; slotIndex++) {
         const candidates = modelOptions.slots[slotIndex]!;
-        const candidateBounds = candidateUpperFactorsBySlot[slotIndex];
+        const candidateBounds = candidateUpperFactorsBySlot?.[slotIndex];
         const resourceCandidateBounds = resourceBudgetCandidateScoreUpperBySlot?.[slotIndex];
         const variables = model.slotVariables[slotIndex]!;
-        if (candidateBounds === undefined || candidates.length !== variables.length) continue;
+        if (candidates.length !== variables.length) continue;
         for (let candidateIndex = 0; candidateIndex < candidates.length; candidateIndex++) {
           const candidate = candidates[candidateIndex]!;
-          const upperFactors = candidateBounds.get(candidate);
+          const upperFactors = candidateBounds?.get(candidate);
           const independentBoundProvesNoImprovement = upperFactors !== undefined &&
             candidateUpperBoundCannotImproveIncumbent(best.factors, upperFactors, useDps);
           const resourceScoreUpper = resourceCandidateBounds?.get(candidate);
@@ -360,6 +374,7 @@ export async function findBestLoadoutExactMip(
     const solverCallStartedAt = performance.now();
     let materiaRequestStatistics: MateriaFamilyProjectionStatistics | undefined;
     const output = await solveIntegerModel({
+      strategies: options.strategies,
       name: phaseName,
       objective,
       rows,

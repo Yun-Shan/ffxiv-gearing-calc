@@ -67,7 +67,8 @@ export function addCandidateLevelConditionalResourceSupports(
   foodMaximumBonuses: readonly (readonly number[])[],
   resourceAttributeIndexes: ReadonlyMap<string, number | undefined>,
 ): ConditionalResourceSupportStats | undefined {
-  const profile = options.candidateResourceSupportProfile ?? "balanced";
+  const mode = options.strategies?.conditionalResourceSupports;
+  const profile = mode === "off" ? "disabled" : mode === "on" ? "balanced" : options.candidateResourceSupportProfile ?? "balanced";
   if (profile === "disabled") {
     return { candidateBands: 0, rowsAdded: 0, nonzerosAdded: 0, skipReason: "disabled-by-policy" };
   }

@@ -13,6 +13,7 @@ export type JointLoadoutJobV3 = {
 };
 
 export type JointLoadoutV3Options = {
+  strategies?: import("../strategies.ts").SearchStrategies;
   jobs: readonly JointLoadoutJobV3[];
   /** 各职业之间共享的槽位名称或投影装备身份。 */
   commonSlots: readonly string[];

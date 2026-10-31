@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
 import { Worker } from "node:worker_threads";
+import { parseSearchStrategies } from "../../../scripts/node-tests/search-strategies.mjs";
 
 const generatedDataBytes = new Uint8Array(await readFile(
   new URL("../../../src/data/generated-data.bin", import.meta.url),
@@ -93,7 +94,7 @@ function makeConfig() {
   };
 }
 
-function runInWorker(config, maxSearchMs, startedAt) {
+function runInWorker(config, maxSearchMs, startedAt, strategies) {
   return new Promise((resolve, reject) => {
     let settled = false;
     let peakRssBytes = processPeakRssBytes();
@@ -130,7 +131,7 @@ function runInWorker(config, maxSearchMs, startedAt) {
 
     try {
       worker = new Worker(new URL("./single-worker.mjs", import.meta.url), {
-        workerData: { config, dataBinary: generatedDataBytes },
+        workerData: { config, dataBinary: generatedDataBytes, strategies },
         resourceLimits: { maxOldGenerationSizeMb: 2560 },
       });
     } catch (error) {
@@ -238,10 +239,12 @@ function summarizeResult(config, result, solverStatuses, peakRssBytes) {
 }
 
 async function main() {
+  const strategies = parseSearchStrategies();
   const { config, maxSearchMs } = makeConfig();
   console.log("Node 单职业验收配置：");
   console.log(JSON.stringify({
     ...config,
+    strategies,
     maxSearchMs: maxSearchMs === UNLIMITED_SEARCH_MS ? "unlimited" : maxSearchMs,
     gameData: {
       version: gameData.version,
@@ -252,7 +255,7 @@ async function main() {
   }, null, 2));
 
   const startedAt = performance.now();
-  const { result, solverStatuses, peakRssBytes } = await runInWorker(config, maxSearchMs, startedAt);
+  const { result, solverStatuses, peakRssBytes } = await runInWorker(config, maxSearchMs, startedAt, strategies);
   if (!result) {
     console.log(`没有满足全部约束的配装（峰值 RSS ${peakRssBytes} 字节）。`);
     process.exitCode = 2;

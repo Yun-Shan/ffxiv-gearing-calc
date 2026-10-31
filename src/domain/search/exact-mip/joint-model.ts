@@ -6,6 +6,7 @@ import type { VariableBounds } from "../core/model-types.ts";
 import { addTerm } from "../core/model-builder.ts";
 import { addRows } from "../core/model-builder.ts";
 import { roundedLog } from "../core/exact-arithmetic.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 import type { JointPreparedJob, JointSearchOptions } from "./joint-types.ts";
 import type { prepareJointIdentity } from "./joint-identity.ts";
@@ -32,6 +33,7 @@ export function assembleJointModel(
     | "foodIdentity"
     | "objective"
     | "sharedFood"
+    | "strategies"
   >,
   preparedJobs: readonly JointPreparedJob[],
   identity: ReturnType<typeof prepareJointIdentity>,
@@ -123,15 +125,17 @@ export function assembleJointModel(
     });
     // 每个联合可行职业的结果都受其独立证明的最优值约束。
     // 显式添加上界还能防止 LP 松弛用不可能的超最优职业结果，抵消其他职业的次优结果。
-    addRows(
-      rows,
-      `solo_bound_${index}`,
-      terms,
-      "<=",
-      individualBaselineQ + groups.length - offset,
-    );
+    if (strategyEnabled(options.strategies, "jointFactorCuts")) {
+      addRows(
+        rows,
+        `solo_bound_${index}`,
+        terms,
+        "<=",
+        individualBaselineQ + groups.length - offset,
+      );
+    }
   }
-  if (options.canonicalSharedRingPair) {
+  if (strategyEnabled(options.strategies, "ringSymmetry") && options.canonicalSharedRingPair) {
     for (let jobIndex = 0; jobIndex < preparedJobs.length; jobIndex++) {
       const { job, prepared } = preparedJobs[jobIndex]!;
       const { firstSlotIndex, secondSlotIndex } =
@@ -414,6 +418,7 @@ export function assembleJointModel(
   // 单个投影戒指按其完整实体身份共享，另一枚戒指则可在每个完整且满足唯一性规则的戒指对候选中自由选择。
   const profileRows = new Set<string>();
   for (let targetJob = 0; targetJob < preparedJobs.length; targetJob++) {
+    if (!strategyEnabled(options.strategies, "jointSharedBounds")) break;
     const target = preparedJobs[targetJob]!.job.options;
     for (const attributeId of target.attributeIds) {
       const contributions = sharedEquipmentDomains.map(

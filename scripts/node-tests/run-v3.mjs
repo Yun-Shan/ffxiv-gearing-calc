@@ -29,10 +29,12 @@ async function main() {
     objective,
     maxSearchMs,
     jobConfigs,
+    strategies,
   } = parsed;
 
   console.log("Node 多职业验收配置：");
   console.log(JSON.stringify({
+    strategies,
     jobs: jobConfigs.map((config) => ({
       id: config.jobId,
       itemLevelRange: [config.minItemLevel, config.maxItemLevel],
@@ -67,6 +69,7 @@ async function main() {
     maxSearchMs,
     startedAt,
     generatedDataBytes,
+    { strategies },
   );
 
   if (!result) {

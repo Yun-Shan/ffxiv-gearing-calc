@@ -99,6 +99,7 @@ test("worker preserves solver policies, constraints and callback context", async
     objective: "dps",
     candidateResourceSupportProfile: "compact",
     resourceBudgetCandidateProfile: "weighted",
+    strategies: { equalityQuotient: "off", resourceBudgetCandidateBounds: "on" },
     enableCanonicalEvaluatorCandidateUpperBound: true,
   };
   const callbacks = {
@@ -112,6 +113,7 @@ test("worker preserves solver policies, constraints and callback context", async
   assert.equal(options.clanIndex, 1);
   assert.equal(options.candidateResourceSupportProfile, "compact");
   assert.equal(options.resourceBudgetCandidateProfile, "weighted");
+  assert.deepEqual(options.strategies, task.strategies);
   assert.equal(hasCanonicalEvaluatorCandidateUpperBound(options), true);
   assert.equal(options.onProgress, callbacks.onProgress);
   assert.equal(options.onSolverProgress, callbacks.onSolverProgress);

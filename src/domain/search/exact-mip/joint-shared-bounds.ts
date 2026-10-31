@@ -1,4 +1,5 @@
 import { throwIfCancelled } from "../cancellation.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 import type {
   JointPreparedJob,
@@ -19,7 +20,7 @@ import {
 } from "./joint-arithmetic.ts";
 
 export function createJointSharedBounds(
-  options: Pick<JointSearchOptions, "jobs">,
+  options: Pick<JointSearchOptions, "jobs" | "strategies">,
   preparedJobs: readonly JointPreparedJob[],
   model: Pick<
     JointModel,
@@ -65,7 +66,7 @@ export function createJointSharedBounds(
   const sharedPairConflictRows = new Set<string>();
   const sharedAssignmentConflictRows = new Set<string>();
   const sharedAssignmentResourceScoreConflictRows = new Set<string>();
-  const sharedEquipmentUpperBounds = sharedEquipmentDomains.flatMap(
+  const sharedEquipmentUpperBounds = (strategyEnabled(options.strategies, "jointSharedBounds") ? sharedEquipmentDomains : []).flatMap(
     (domain, domainIndex) => {
       const selectors = sharedEquipmentSelectors.get(domain.slot)!;
       return [...selectors].map(([key, selector], choiceIndex) => ({
@@ -89,7 +90,7 @@ export function createJointSharedBounds(
     },
   );
   const sharedFoodUpperBounds =
-    sharedFoodSelectors === undefined
+    !strategyEnabled(options.strategies, "jointSharedBounds") || sharedFoodSelectors === undefined
       ? []
       : [...sharedFoodSelectors].map(([key, selector], choiceIndex) => ({
           selector,
@@ -185,6 +186,7 @@ export function createJointSharedBounds(
     incumbentNumerator: bigint,
     incumbentDenominator: bigint,
   ) => {
+    if (!strategyEnabled(options.strategies, "jointSharedBounds")) return;
     if (sharedPairUpperBounds !== undefined || incumbentNumerator <= 0n) return;
     const preprocessingStartedAt = performance.now();
     // 共享配对候选与完整的当前最优总和比较。即使单职业阈值不为正，
@@ -243,9 +245,10 @@ export function createJointSharedBounds(
       candidateCount > BigInt(Number.MAX_SAFE_INTEGER)
         ? Number.MAX_SAFE_INTEGER
         : Number(candidateCount);
-    sharedPairPreprocessingSkipped = candidateCount > sharedPairCandidateLimit;
+    sharedPairPreprocessingSkipped = !strategyEnabled(options.strategies, "jointSharedBounds", candidateCount <= sharedPairCandidateLimit);
     const pairBounds: SharedPairUpperBound[] = [];
     if (!sharedPairPreprocessingSkipped) {
+      pairSearch:
       for (
         let domainIndex = 0;
         domainIndex < choicesByDomain.length;
@@ -258,6 +261,15 @@ export function createJointSharedBounds(
         ) {
           for (const choiceA of choicesByDomain[domainIndex]!) {
             for (const choiceB of choicesByDomain[other]!) {
+              // Forced activation may sample an otherwise skipped large domain,
+              // but only installs individually certified rows within the same work budget.
+              if (options.strategies?.jointSharedBounds === "on" &&
+                (sharedPairCandidatesEvaluated >= Number(sharedPairCandidateLimit) ||
+                  performance.now() - preprocessingStartedAt >= sharedAssignmentPreprocessingBudgetMs || jointTimeLimitReached())) {
+                sharedPairPreprocessingSkipped = true;
+                break pairSearch;
+              }
+              if ((sharedPairCandidatesEvaluated & 255) === 0) throwIfCancelled(isCancelled);
               sharedPairCandidatesEvaluated++;
               const jobRatios = preparedJobs.map((_, jobIndex) => {
                 const attributes = coordinateUpperAttributes(jobIndex, [
@@ -284,6 +296,7 @@ export function createJointSharedBounds(
     sharedPairPreprocessingMs += performance.now() - preprocessingStartedAt;
   };
   const prepareSharedAssignmentUpperBounds = (best: ExactRatio | undefined) => {
+    if (!strategyEnabled(options.strategies, "jointSharedBounds")) return;
     if (best === undefined) return;
     const incumbentKey = `${best.numerator}/${best.denominator}`;
     const isCompleteDomain =
@@ -292,7 +305,7 @@ export function createJointSharedBounds(
     // 对特别大的双职业候选域，反复测量发现两万条浅层前缀剪枝会让严格不可行性证明
     // 比求解未裁剪的小模型慢得多。因此仅在较小的候选域或更大的职业组中保留前缀剪枝。
     if (
-      preparedJobs.length === 2 &&
+      options.strategies?.jointSharedBounds !== "on" && preparedJobs.length === 2 &&
       sharedAssignmentCandidateUpperBound >
         sharedAssignmentTwoJobPrefixCutSkipThreshold
     ) {

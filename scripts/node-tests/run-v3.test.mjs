@@ -10,6 +10,7 @@ import {
 } from "./v3/limits.mjs";
 import { buildV3Output, digestV3Output } from "./v3/report.mjs";
 import { runInWorker } from "./v3/worker.mjs";
+import { parseSearchStrategies } from "./search-strategies.mjs";
 
 const jobSchemas = {
   RDM: { defaultItemLevel: [700, 790] },
@@ -35,6 +36,17 @@ function parse(env = {}) {
     syncLevels,
   });
 }
+
+test("Node strategies default to auto, reject invalid inputs and stay outside job conditions", () => {
+  assert.ok(Object.values(parseSearchStrategies({})).every((mode) => mode === "auto"));
+  const config = parse({ FFXIV_SEARCH_STRATEGIES: '{"sharedStateSearch":"off","equalityQuotient":"on"}' });
+  assert.equal(config.strategies.sharedStateSearch, "off");
+  assert.equal(config.strategies.equalityQuotient, "on");
+  assert.ok(config.jobConfigs.every((job) => !Object.hasOwn(job, "strategies")));
+  for (const raw of ["", "null", "[]", "false", '{"unknown":"auto"}', '{"equalityQuotient":"yes"}']) {
+    assert.throws(() => parse({ FFXIV_SEARCH_STRATEGIES: raw }), /策略|STRATEGIES/);
+  }
+});
 
 test("V3 config defaults use the standard jobs, supported shared slots, and 235-second limit", () => {
   const config = parse();
@@ -326,6 +338,17 @@ test("V3 worker accepts one result, forwards progress and diagnostics, and termi
   assert.equal(worker.terminateCalls, 1);
   assert.equal(harness.timers.size, 0);
   assert.equal(harness.cleared.length, 2);
+});
+
+test("Node worker carries strategy execution options separately from saved conditions", async () => {
+  const harness = makeWorkerHarness();
+  harness.dependencies.strategies = parseSearchStrategies({ FFXIV_SEARCH_STRATEGIES: '{"materiaFamilyProjection":"off"}' });
+  const pending = startWorker(harness);
+  const [worker] = harness.instances;
+  assert.equal(worker.options.workerData.strategies.materiaFamilyProjection, "off");
+  assert.deepEqual(worker.options.workerData.config, { marker: "config" });
+  worker.emit("message", { type: "result", result: undefined });
+  await pending;
 });
 
 test("V3 worker timeout rejects, terminates, and clears both timers", async () => {

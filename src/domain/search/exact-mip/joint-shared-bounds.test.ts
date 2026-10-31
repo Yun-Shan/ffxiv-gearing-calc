@@ -2,6 +2,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import type { JointPreparedJob, JointSearchOptions } from "./joint-types.ts";
 import type { SharedKeyDomain } from "./joint-candidate-bounds.ts";
 import { createJointSharedBounds } from "./joint-shared-bounds.ts";
+import type { SearchStrategies } from "../strategies.ts";
 
 function fixture(
   config: {
@@ -12,6 +13,7 @@ function fixture(
     unknown?: boolean;
     cancelled?: () => boolean;
     timedOut?: () => boolean;
+    strategies?: SearchStrategies;
   } = {},
 ) {
   const sharedKeyDomains = config.domains ?? [
@@ -88,6 +90,7 @@ function fixture(
   );
   const bounds = createJointSharedBounds(
     {
+      strategies: config.strategies,
       jobs: Array.from(
         { length: jobCount },
         () => ({}) as JointSearchOptions["jobs"][number],
@@ -139,6 +142,16 @@ function fixture(
 afterEach(() => vi.restoreAllMocks());
 
 describe("shared assignment upper bounds", () => {
+  test("off avoids all shared-bound coordinate preparation and optional pair/assignment rows", () => {
+    const { bounds, coordinateUpperAttributes } = fixture({ strategies: { jointSharedBounds: "off" } });
+    bounds.prepareSharedPairUpperBounds(18n, 10n);
+    bounds.prepareSharedAssignmentUpperBounds({ numerator: 18n, denominator: 10n });
+    expect(coordinateUpperAttributes).not.toHaveBeenCalled();
+    expect(bounds.sharedEquipmentUpperBounds).toEqual([]);
+    expect(bounds.sharedFoodUpperBounds).toEqual([]);
+    expect(bounds.sharedPairCandidatesEvaluated).toBe(0);
+    expect(bounds.sharedAssignmentPrefixesEvaluated).toBe(0);
+  });
   test("enumerates the small complete domain exactly and caches it across incumbents", () => {
     vi.spyOn(performance, "now").mockReturnValue(0);
     const {

@@ -1,5 +1,6 @@
 import type { IntegerDamageFactors } from "./equipped-effects.ts";
 import type { FoodParam } from "./types.ts";
+import { strategyEnabled, type SearchStrategies } from "./strategies.ts";
 
 const canonicalEvaluatorOptions = new WeakSet<object>();
 const MIN_CANDIDATES_FOR_UPPER_BOUND = 2_000;
@@ -28,13 +29,15 @@ export function shouldEnableCanonicalCandidateUpperBound(
     slots: readonly (readonly unknown[])[];
     equipmentAttributeExtractor?: unknown;
     constraints?: { maxToughnessMode?: boolean };
+    strategies?: SearchStrategies;
   },
   hasCanonicalEvaluatorMarker: boolean,
 ): boolean {
   if (!hasCanonicalEvaluatorMarker || options.equipmentAttributeExtractor !== undefined ||
       options.constraints?.maxToughnessMode === true) return false;
   const candidateCount = options.slots.reduce((total, slot) => total + slot.length, 0);
-  return Number.isSafeInteger(candidateCount) && candidateCount >= MIN_CANDIDATES_FOR_UPPER_BOUND;
+  return Number.isSafeInteger(candidateCount) && strategyEnabled(options.strategies, "candidateUpperBound",
+    candidateCount >= MIN_CANDIDATES_FOR_UPPER_BOUND);
 }
 
 export type RationalFoodBonusInput = {

@@ -9,6 +9,7 @@ import { prepareResourceBudgetCandidateBounds } from "./candidate-bounds.ts";
 import { factorObjectiveLogScore } from "./factor-model.ts";
 import type { FactorGroup } from "./types.ts";
 import { gcd } from "../core/exact-arithmetic.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 import type {
   JointPreparedJob,
@@ -57,7 +58,7 @@ export type FactorClassUpperBound = {
 export function prepareJointCandidateBounds(
   options: Pick<
     JointSearchOptions,
-    "equipmentIdentity" | "foodIdentity" | "objective"
+    "equipmentIdentity" | "foodIdentity" | "objective" | "strategies"
   >,
   preparedJobs: readonly JointPreparedJob[],
   model: Pick<
@@ -401,6 +402,7 @@ export function prepareJointCandidateBounds(
   for (let jobIndex = 0; jobIndex < preparedJobs.length; jobIndex++) {
     const { job, prepared } = preparedJobs[jobIndex]!;
     if (
+      !strategyEnabled(options.strategies, "candidateUpperBound") ||
       job.options.equipmentAttributeExtractor !== undefined ||
       job.options.constraints?.maxToughnessMode === true ||
       job.options.job === "BLU"
@@ -609,14 +611,14 @@ export function prepareJointCandidateBounds(
   for (let jobIndex = 0; jobIndex < preparedJobs.length; jobIndex++) {
     // 在四职业和五职业档位中，逐候选资源查询没有产生剪枝，
     // 反而显著降低了共享前缀预处理的效率。
-    if (preparedJobs.length >= 4) {
+    if (!strategyEnabled(options.strategies, "resourceBudgetCandidateBounds", preparedJobs.length < 4)) {
       resourceBudgetCandidateUpperBoundSkippedJobs++;
       continue;
     }
     const { job, prepared } = preparedJobs[jobIndex]!;
     const resourceBudgetProfile =
       job.options.resourceBudgetCandidateProfile ?? "default";
-    if (resourceBudgetProfile === "disabled") {
+    if (!strategyEnabled(options.strategies, "resourceBudgetCandidateBounds", resourceBudgetProfile !== "disabled")) {
       resourceBudgetCandidateUpperBoundSkippedJobs++;
       continue;
     }
@@ -711,7 +713,7 @@ export function prepareJointCandidateBounds(
   candidateSpecificUpperBoundPreparationMs =
     performance.now() - candidateSpecificUpperBoundPreparationStartedAt;
   const useResourceBudgetSharedPrefixBounds =
-    preparedJobs.length < 4 &&
+    strategyEnabled(options.strategies, "resourceBudgetCandidateBounds", preparedJobs.length < 4) &&
     factorResourceBudgetByJob.some((budget) => budget !== undefined);
   const factorClassUpperBounds: FactorClassUpperBound[] = [];
   for (let jobIndex = 0; jobIndex < preparedJobs.length; jobIndex++) {

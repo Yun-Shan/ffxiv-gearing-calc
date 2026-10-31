@@ -43,6 +43,42 @@ function searchFor(
 }
 
 describe("restricted solve lifecycle", () => {
+  test.each([false, true])("reuse off recomputes cached, parent and independent-baseline matches (worker=%s)", async (worker) => {
+    const context = contextFor();
+    let received = 0;
+    const search = searchFor([context], {
+      strategies: { restrictedResultReuse: "off", conditionalResourceSupports: "off" },
+      ...(worker ? { baselineExecutor: async (tasks: readonly import("../loadout-finder-exact-mip.ts").ExactMipOptions[]) => {
+        received += tasks.length;
+        expect(tasks[0]!.strategies).toMatchObject({ restrictedResultReuse: "off", conditionalResourceSupports: "off" });
+        expect(tasks[0]!.candidateResourceSupportProfile).not.toBe("compact");
+        return [context.optimum];
+      } } : {}),
+    });
+    const fixed = new Map([["body", choice([context], context.optimum.selection[0]!)]]);
+    for (let run = 0; run < 2; run++) {
+      const results = await search.refineSeedJobs(undefined, fixed, undefined, [0], [context.optimum]);
+      expect(results[0]!.damage).toBe(context.optimum.damage);
+    }
+    expect(search.mutable).toMatchObject({ innerSolves: 2, cacheHits: 0, parentResultReuses: 0 });
+    expect(search.cache.size).toBe(0);
+    if (worker) expect(received).toBe(2);
+  });
+
+  test("two-job restricted tuning cannot override a disabled conditional-resource strategy", async () => {
+    const contexts = [contextFor(), contextFor(undefined, undefined, "second")];
+    const executor = vi.fn(async (tasks: readonly import("../loadout-finder-exact-mip.ts").ExactMipOptions[]) => {
+      expect(tasks).toHaveLength(2);
+      for (const task of tasks) {
+        expect(task.candidateResourceSupportProfile).not.toBe("compact");
+        expect(task.strategies?.conditionalResourceSupports).toBe("off");
+      }
+      return contexts.map((context) => context.optimum);
+    });
+    const search = searchFor(contexts, { strategies: { restrictedResultReuse: "off", conditionalResourceSupports: "off" }, baselineExecutor: executor });
+    await search.refineSeedJobs(undefined, new Map(), undefined, [0, 1]);
+    expect(executor).toHaveBeenCalledTimes(1);
+  });
   test("serial refinement solves the restricted candidate domain and reuses the proven result", async () => {
     const alternate = equip(2, [100, 2900, 300, 200, 100, 50, 0]);
     const context = contextFor([[equip(1), alternate]]);

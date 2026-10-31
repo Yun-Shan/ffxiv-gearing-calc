@@ -8,6 +8,7 @@ const { runJointOptimizationLocally } = await import("../../src/domain/optimizer
 try {
   const profileTimingEnabled = process.env.FFXIV_PROFILE_TIMING === "1";
   const options = {
+    strategies: workerData.strategies,
     onProgress: (message) => parentPort.postMessage({ type: "progress", message }),
     ...(profileTimingEnabled ? {
       onSolverProgress: (progress) => {

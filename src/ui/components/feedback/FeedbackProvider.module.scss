@@ -36,6 +36,23 @@
   background: white;
   border-radius: 6px;
 }
+.advancedDialog {
+  width: min(680px, calc(100vw - 32px));
+  max-height: min(88vh, 960px);
+  display: flex;
+  flex-direction: column;
+}
+.advancedDescription {
+  margin: 0 0 12px;
+  color: #657083;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.advancedContent {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
 .actions {
   display: flex;
   justify-content: flex-end;
@@ -79,4 +96,10 @@
   &:hover { background: #edf6f3; border-color: #3a8f84; }
   &:focus-visible { outline: 3px solid #49a9b4; outline-offset: 2px; }
   svg { width: 24px; height: 24px; }
+}
+
+@media (max-width: 540px) {
+  .advancedDialog {
+    padding: 18px;
+  }
 }

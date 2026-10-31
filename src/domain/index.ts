@@ -5,6 +5,7 @@ export * from "./jobs";
 export * from "./optimizer";
 export * from "./rules";
 export * from "./types";
+export * from "./search/strategies";
 export * from "./food-result";
 export * from "./fixed-gearset";
 export * from "./equipment-materia";

@@ -132,6 +132,7 @@ export function pruneCandidatesByIncumbentUpperBound(
   deadline: number,
   isCancelled: () => boolean,
 ): CandidateUpperBoundResult | undefined {
+  if (options.strategies?.candidateUpperBound === "off") return undefined;
   if (!hasCanonicalEvaluatorCandidateUpperBound(options) ||
     options.equipmentAttributeExtractor !== undefined ||
     options.constraints?.maxToughnessMode === true ||
@@ -267,8 +268,10 @@ export function prepareResourceBudgetCandidateBounds(
   includeAllCandidates = false,
 ): ResourceBudgetCandidateBoundResult | undefined {
   const startedAt = performance.now();
-  const profile = options.resourceBudgetCandidateProfile ?? "default";
+  const mode = options.strategies?.resourceBudgetCandidateBounds;
+  const profile = mode === "off" ? "disabled" : mode === "on" ? "weighted" : options.resourceBudgetCandidateProfile ?? "default";
   if (profile === "disabled") return undefined;
+  includeAllCandidates ||= mode === "on";
   const resourceAxes = (["main", "weapon", "det", "ten", "crt", "dht", "gcd"] as const).flatMap((name) => {
     const attribute = resourceAttributeIndexes.get(name);
     return attribute === undefined ? [] : [[name, attribute] as const];

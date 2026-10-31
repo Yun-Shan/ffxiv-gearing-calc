@@ -2,6 +2,7 @@ import { throwIfCancelled } from "../cancellation.ts";
 import type { ModelRow } from "../core/model-types.ts";
 import { addRows } from "../core/model-builder.ts";
 import { gcd } from "../core/exact-arithmetic.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 import type {
   JointPreparedJob,
@@ -20,7 +21,7 @@ import {
 } from "./joint-arithmetic.ts";
 
 export function createJointFactorCuts(
-  options: Pick<JointSearchOptions, "objective">,
+  options: Pick<JointSearchOptions, "objective" | "strategies">,
   preparedJobs: readonly JointPreparedJob[],
   model: Pick<JointModel, "bounds" | "prefix">,
   candidates: Pick<
@@ -69,6 +70,7 @@ export function createJointFactorCuts(
     incumbentNumerator: bigint,
     incumbentDenominator: bigint,
   ) => {
+    if (!strategyEnabled(options.strategies, "jointFactorCuts")) return;
     const jobCount = preparedJobs.length;
     if (jobCount < 2) return;
     const individualThreshold =
@@ -219,6 +221,7 @@ export function createJointFactorCuts(
     incumbentNumerator: bigint,
     incumbentDenominator: bigint,
   ) => {
+    if (!strategyEnabled(options.strategies, "jointFactorCuts")) return;
     for (const row of factorClassJointPairConflictRows.values())
       solveRows.push(row);
     if (preparedJobs.length !== 2) return;
@@ -410,6 +413,7 @@ export function createJointFactorCuts(
     incumbentNumerator: bigint,
     incumbentDenominator: bigint,
   ) => {
+    if (!strategyEnabled(options.strategies, "jointFactorCuts")) return;
     for (const row of factorClassJointTripleConflictRows.values())
       solveRows.push(row);
     if (preparedJobs.length !== 2) return;
@@ -627,6 +631,7 @@ export function createJointFactorCuts(
     incumbentNumerator: bigint,
     incumbentDenominator: bigint,
   ) => {
+    if (!strategyEnabled(options.strategies, "jointFactorCuts")) return;
     for (const row of factorClassTripleCutRows.values()) solveRows.push(row);
     const incumbentKey = `${incumbentNumerator}/${incumbentDenominator}`;
     if (factorClassTripleCutIncumbentKeys.has(incumbentKey)) return;
@@ -914,6 +919,7 @@ export function createJointFactorCuts(
     incumbentNumerator: bigint,
     incumbentDenominator: bigint,
   ) => {
+    if (!strategyEnabled(options.strategies, "jointFactorCuts")) return;
     const jobCount = preparedJobs.length;
     const addSubsetCut = (jobIndexes: readonly number[]) => {
       const thresholdNumerator =

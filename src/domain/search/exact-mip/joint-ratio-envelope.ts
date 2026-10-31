@@ -1,5 +1,6 @@
 import { addRows } from "../core/model-builder.ts";
 import { gcd } from "../core/exact-arithmetic.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 import type {
   JointPreparedJob,
@@ -13,7 +14,7 @@ import type {
 } from "./joint-candidate-bounds.ts";
 
 export function assembleJointRatioEnvelope(
-  options: Pick<JointSearchOptions, "objective" | "ratioUpperPairPolicy">,
+  options: Pick<JointSearchOptions, "objective" | "ratioUpperPairPolicy" | "strategies">,
   preparedJobs: readonly JointPreparedJob[],
   model: Pick<JointModel, "rows" | "bounds" | "generals" | "prefix">,
   candidates: Pick<
@@ -110,7 +111,7 @@ export function assembleJointRatioEnvelope(
     jobIndex < ratioUpperBoundVariables.length;
     jobIndex++
   ) {
-    if (options.ratioUpperPairPolicy === "disabled") continue;
+    if (!strategyEnabled(options.strategies, "jointRatioPairBounds", options.ratioUpperPairPolicy !== "disabled")) continue;
     const groups = preparedJobs[jobIndex]!.prepared.groups.filter(
       (group) => group.name !== "gcd" || options.objective === "dps",
     );

@@ -14,6 +14,7 @@ import { prepareFactorResourceBudgetUpperBound, preparePartitionedFactorResource
 import { FIXED_SCALE, LOG_SCALE, floorDiv, logRatioFixedBounds } from "../core/exact-arithmetic.ts";
 import type { FactorGroup } from "../exact-mip/types.ts";
 import { integerDamageUtilityCertificate } from "../equipped-effects.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 export type SharedResourcePriceDiagnostic = {
   job: string;
@@ -190,6 +191,12 @@ export async function findBestSharedStateLoadout(input: {
     return values;
   };
   try {
+    input.assertWithinBudget("共享状态策略检查");
+    if (!strategyEnabled(options.strategies, "sharedStateSearch")) {
+      stats.activationDecision = "skipped";
+      stats.activationReason = "disabled-by-policy";
+      return complete("skipped", stats.activationReason);
+    }
     checkpoint(true);
     if (contexts.length < 1 || !contexts.every((context) => context.active) || options.commonSlots.length === 0 ||
       options.foodStrategy !== "shared" || projections.size !== 0 || foodChoices.length === 0) {
@@ -379,7 +386,8 @@ export async function findBestSharedStateLoadout(input: {
     for (let job = 0; job < contexts.length; job++) {
       checkpoint(true);
       const context = contexts[job]!;
-      const certificate = input.limits?.disableUtilityMerging ? undefined : integerDamageUtilityCertificate(context.factorEvaluator);
+      const certificate = input.limits?.disableUtilityMerging || !strategyEnabled(options.strategies, "utilityEquivalence")
+        ? undefined : integerDamageUtilityCertificate(context.factorEvaluator);
       const constraints = normalized[job]!.constraints ?? {};
       const toughId = normalized[job]!.toughnessAttributeId;
       const toughIndex = toughId === undefined ? undefined : context.attributeIndexes.get(toughId);
@@ -496,8 +504,10 @@ export async function findBestSharedStateLoadout(input: {
     }
     stats.activationHeuristicWork = saturating(totalFootprint * maximumEnvelope);
     stats.activationDecisionMs = performance.now() - activationStartedAt;
-    stats.activationDecision = stats.activationHeuristicWork > maxTransitions ? "skipped" : "enabled";
-    stats.activationReason = stats.activationDecision === "enabled" ? "permissive shared footprint and private envelope" : "estimated shared/private burden";
+    stats.activationDecision = strategyEnabled(options.strategies, "sharedStateSearch", stats.activationHeuristicWork <= maxTransitions) ? "enabled" : "skipped";
+    stats.activationReason = stats.activationDecision === "enabled"
+      ? options.strategies?.sharedStateSearch === "on" ? "enabled-by-policy" : "permissive shared footprint and private envelope"
+      : "estimated shared/private burden";
     const skipStateEnumeration = stats.activationDecision === "skipped";
 
     const ratioFor = (job: number, product: bigint, gcd: number) => options.objective === "dps"
@@ -576,6 +586,7 @@ export async function findBestSharedStateLoadout(input: {
     const seedDeadline = Math.min(startedAt + maxElapsedMs, seedStarted + maxSeedMs);
     const seeds: { shared: Option[]; choice: FoodChoice; vectors: number[][] }[] = [];
     for (const context of contexts) {
+      if (!strategyEnabled(options.strategies, "feasibleSeeds")) break;
       const selected = groups.map((group) => group.options.find((option) =>
         option.assignments[contexts.indexOf(context)]!.every(({ slot, equipment }) =>
           equipmentIdentity(equipment) === equipmentIdentity(context.optimum.selection[slot]!))) ?? group.options[0]!);
@@ -640,6 +651,10 @@ export async function findBestSharedStateLoadout(input: {
     const prices: Price[][] = [];
     for (let job = 0; job < contexts.length; job++) {
       checkpoint(true);
+      if (!strategyEnabled(options.strategies, "resourceSupports")) {
+        prices.push([]);
+        continue;
+      }
       const prepared = await prepareExactMipModel(normalized[job]!);
       if (prepared === undefined) return complete("unsupported", "baseline and resource model disagree");
       const axes = ([

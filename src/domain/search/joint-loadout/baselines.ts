@@ -4,6 +4,7 @@ import type { JobContext, JointLoadoutV3Options, MutableStatistics } from "./typ
 import { canonicalBaselineDamageAttributes, dedupeEquivalentBaselineRingCandidates, pruneInnerSlots } from "./candidate-dominance.ts";
 import { factorsForResult, integerDamageProduct } from "./score.ts";
 import { minimumTimeLimit } from "./job-options.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 /** Complete the independent optima before shared pruning or restricted solving. */
 export async function solveBaselines({
@@ -56,10 +57,10 @@ export async function solveBaselines({
     const preserveBaselineIndexes = new Set(context.solverSlots.flatMap((_, index) =>
       !commonIndexes.has(index) ? [index] : []));
     let baselineSlots = context.solverSlots;
-    if (options.factorizedSharedRingPair) {
+    if (strategyEnabled(options.strategies, "candidateDominance") && options.factorizedSharedRingPair) {
       baselineSlots = dedupeEquivalentBaselineRingCandidates(context, baselineSlots);
     }
-    if (commonIndexes.size > 0) {
+    if (strategyEnabled(options.strategies, "candidateDominance") && commonIndexes.size > 0) {
       baselineSlots = pruneInnerSlots(context, preserveBaselineIndexes, baselineSlots,
         options.factorizedSharedRingPair
           ? {
@@ -81,6 +82,7 @@ export async function solveBaselines({
       (canParallelizeBaselines ? Number.MAX_SAFE_INTEGER : undefined);
     const baselineOptions = inheritCanonicalEvaluatorCandidateUpperBound(context.job.options, {
       ...context.job.options,
+      strategies: options.strategies ?? context.job.options.strategies,
       slots: baselineSlots,
       objective,
       ...(baselineTaskTimeLimit === undefined ? {} : { maxSearchMs: baselineTaskTimeLimit }),

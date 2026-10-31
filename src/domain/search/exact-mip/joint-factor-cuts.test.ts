@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import type { ModelRow } from "../core/model-types.ts";
 import { createJointFactorCuts } from "./joint-factor-cuts.ts";
+import type { SearchStrategies } from "../strategies.ts";
 import {
   factorDomain,
   factorAssignments,
@@ -15,12 +16,13 @@ function fixture(
     values?: number[];
     cancelled?: () => boolean;
     timedOut?: () => boolean;
+    strategies?: SearchStrategies;
   } = {},
 ) {
   const domain = factorDomain(jobCount, names, config.values);
   const scale = 1_000_000_000n;
   const cuts = createJointFactorCuts(
-    { objective: config.objective ?? "dps" },
+    { objective: config.objective ?? "dps", strategies: config.strategies },
     domain.preparedJobs,
     { bounds: [], prefix: domain.prefix },
     domain.candidates,
@@ -41,6 +43,20 @@ function fixture(
 }
 
 describe("dynamic factor cuts", () => {
+  test("off prevents every optional factor-cut family from doing preprocessing or adding rows", () => {
+    for (const jobCount of [2, 3]) {
+      const { cuts } = fixture(jobCount, undefined, { strategies: { jointFactorCuts: "off" }, cancelled: () => true });
+      const rows: ModelRow[] = [];
+      cuts.addTwoJobWithinJobFactorPairCuts(rows, 8n, 5n);
+      cuts.addTwoJobWithinJobFactorTripleCuts(rows, 8n, 5n);
+      cuts.addCrossJobFactorClassGroupPairCuts(rows, 5n, 2n);
+      cuts.addCrossJobFactorClassGroupTripleCuts(rows, 5n, 2n);
+      cuts.addRatioUpperNecessaryCuts(rows, 8n, 5n);
+      expect(rows).toEqual([]);
+      expect(cuts.factorClassTriplePreprocessingWork).toBe(0);
+      expect(cuts.ratioUpperNecessaryRows.size).toBe(0);
+    }
+  });
   test("within-job pair and triple cuts preserve every improving point of a 729-point integer domain", () => {
     const { domain, cuts } = fixture();
     const rows: ModelRow[] = [];

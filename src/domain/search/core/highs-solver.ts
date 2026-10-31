@@ -11,6 +11,7 @@ import { prepareEqualityQuotient } from "./equality-quotient.ts";
 import { prepareMateriaFamilyProjection } from "./materia-family-projection.ts";
 import type { MateriaFamilyProjectionStatistics } from "./materia-family-projection.ts";
 import { throwIfCancelled } from "./cancellation.ts";
+import { normalizeSearchStrategies } from "./strategies.ts";
 
 let highsPromise: ReturnType<typeof loadHighs> | undefined;
 
@@ -135,7 +136,8 @@ export function measureNonzeroRowDensity(
 export async function solveIntegerModel(
   request: LinearMipRequest,
 ): Promise<LinearMipSolution> {
-  request = { ...request, name: `${request.name}#${++linearMipRunSequence}` };
+  request = { ...request, strategies: normalizeSearchStrategies(request.strategies), name: `${request.name}#${++linearMipRunSequence}` };
+  if (request.strategies?.feasibleSeeds === "off") request = { ...request, solutionHint: undefined };
 
   const profileEnabled = request.onProgress !== undefined && isProfileTimingEnabled();
   const callStartedAt = performance.now();
@@ -149,7 +151,8 @@ export async function solveIntegerModel(
   const materiaPreparationMs = performance.now() - callStartedAt;
   const baseRequest = request;
   const equalityStartedAt = performance.now();
-  const policy = baseRequest.equalityQuotient;
+  const equalityMode = baseRequest.strategies?.equalityQuotient;
+  const policy = equalityMode === "off" ? false : equalityMode === "on" ? true : baseRequest.equalityQuotient;
   const densityPolicy = typeof policy === "object" && policy !== null;
   const maximumGrowth = densityPolicy ? policy.maxRowDensityGrowth : undefined;
   const minimumReduction = densityPolicy ? (policy.minVariableReductionPercent === undefined ? 0 : policy.minVariableReductionPercent) : undefined;

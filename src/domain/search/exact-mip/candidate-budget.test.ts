@@ -77,6 +77,17 @@ function fixture() {
 
 afterEach(() => vi.restoreAllMocks());
 
+test("three-state resource-budget policy overrides only the legacy performance profile", () => {
+  const { options, run } = fixture();
+  options.resourceBudgetCandidateProfile = "disabled";
+  expect(run()).toBeUndefined();
+  options.strategies = { resourceBudgetCandidateBounds: "on" };
+  expect(run()).toBeDefined();
+  options.strategies = { resourceBudgetCandidateBounds: "off" };
+  options.resourceBudgetCandidateProfile = "weighted";
+  expect(run()).toBeUndefined();
+});
+
 describe("candidate resource-budget upper bounds", () => {
   test.each(["weighted", "default"] as const)(
     "%s budgets preserve the exact score of every four-leaf completion",

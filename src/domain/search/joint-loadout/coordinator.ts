@@ -20,6 +20,7 @@ import { createRestrictedSearch } from "./restricted-search.ts";
 import { createSeedResults } from "./warm-start.ts";
 import { findBestSharedStateLoadout } from "./shared-state-search.ts";
 import { emitProfileEvent } from "../core/diagnostics.ts";
+import { normalizeSearchStrategies, strategyEnabled } from "../strategies.ts";
 
 const MAX_ACCEPTANCE_SEARCH_MS = 235_000;
 
@@ -29,6 +30,7 @@ const RSS_LIMIT_BYTES = 3.5 * 1024 * 1024 * 1024;
 export async function findBestJointLoadoutV3(
   options: JointLoadoutV3Options,
 ): Promise<JointLoadoutV3Result | undefined> {
+  const strategies = normalizeSearchStrategies(options.strategies);
   const inputCandidateCount = options.jobs.reduce((total, job) => total +
     job.options.slots.reduce((slotTotal, slot) => slotTotal + slot.length, 0), 0);
   const candidateSupportProfile = chooseCandidateResourceSupportProfile(options.jobs.length, inputCandidateCount);
@@ -36,10 +38,12 @@ export async function findBestJointLoadoutV3(
   // 同时不修改调用方提供的对象。
   const ownedOptions: JointLoadoutV3Options = {
     ...options,
+    strategies,
     jobs: options.jobs.map((job) => ({
       ...job,
       options: inheritCanonicalEvaluatorCandidateUpperBound(job.options, {
         ...job.options,
+        strategies,
         candidateResourceSupportProfile: job.options.candidateResourceSupportProfile ?? candidateSupportProfile,
       }),
     })),
@@ -66,10 +70,11 @@ export async function findBestJointLoadoutV3(
   if (options.foodStrategy !== "shared" && options.foodStrategy !== "independent") {
     throw new RangeError("V3 foodStrategy 必须是 shared 或 independent");
   }
-  const cacheLimit = options.cacheLimit ?? 2048;
-  if (!Number.isSafeInteger(cacheLimit) || cacheLimit < 0 || cacheLimit > 50_000) {
+  const requestedCacheLimit = options.cacheLimit ?? 2048;
+  if (!Number.isSafeInteger(requestedCacheLimit) || requestedCacheLimit < 0 || requestedCacheLimit > 50_000) {
     throw new RangeError("V3 cacheLimit 必须是 0 到 50000 之间的整数");
   }
+  const cacheLimit = strategyEnabled(strategies, "restrictedResultReuse") ? requestedCacheLimit : 0;
   if (options.jobs.length === 0) throw new RangeError("V3 至少需要一个职业");
   const baselineConcurrency = baselineWorkerLimit(options.jobs.length, inputCandidateCount);
   const cancellationRequested = () => options.isCancelled?.() === true ||
@@ -107,7 +112,7 @@ export async function findBestJointLoadoutV3(
     cancellationRequested, baselineConcurrency,
   })) return undefined;
 
-  if (options.factorizedSharedRingPair) {
+  if (strategyEnabled(strategies, "candidateDominance") && options.factorizedSharedRingPair) {
     const ringChoices = commonChoicesByName.get("ring");
     const ring2Choices = commonChoicesByName.get("ring2");
     if (ringChoices !== undefined && ring2Choices !== undefined) {
@@ -135,6 +140,7 @@ export async function findBestJointLoadoutV3(
     }
   }
   for (const [name, choices] of commonChoicesByName) {
+    if (!strategyEnabled(strategies, "candidateDominance")) break;
     if (options.factorizedSharedRingPair && (name === "ring" || name === "ring2")) continue;
     commonChoicesByName.set(name, pruneCommonChoices(
       name,
@@ -145,7 +151,7 @@ export async function findBestJointLoadoutV3(
     ));
   }
   if (options.foodStrategy === "shared") {
-    foodChoices.splice(0, foodChoices.length, ...pruneSharedFoods(
+    if (strategyEnabled(strategies, "candidateDominance")) foodChoices.splice(0, foodChoices.length, ...pruneSharedFoods(
       foodChoices,
       contexts,
       () => assertWithinBudget("通用食物等价剪枝"),
@@ -303,6 +309,7 @@ export async function findBestJointLoadoutV3(
       seedCandidates.push({ key, fixed, foodChoice, score: scoreSeed(fixed, foodChoice), anchorId });
     };
     for (const anchor of contexts) {
+      if (!strategyEnabled(strategies, "feasibleSeeds")) break;
       assertWithinBudget("联合热启动评分");
       const initialFixed = new Map<string, CommonChoice>();
       for (const name of options.commonSlots) {
@@ -319,7 +326,7 @@ export async function findBestJointLoadoutV3(
       product * BigInt(commonChoicesByName.get(name)!.length), 1n) *
       BigInt(options.foodStrategy === "shared" ? foodChoices.length : 1);
     const fullSeedCandidateLimit = 5_000n;
-    if (fullSeedCandidateCount <= fullSeedCandidateLimit) {
+    if (strategyEnabled(strategies, "feasibleSeeds") && fullSeedCandidateCount <= fullSeedCandidateLimit) {
       const current = new Map<string, CommonChoice>();
       let visited = 0;
       const visitSharedChoices = (slotIndex: number) => {
@@ -495,6 +502,7 @@ export async function findBestJointLoadoutV3(
       equipmentIdentity,
       foodIdentity,
       objective,
+      strategies,
       ...(options.factorizedSharedRingPair ? { canonicalSharedRingPair: true } : {}),
       ...(options.ratioUpperPairPolicy === undefined
         ? {}

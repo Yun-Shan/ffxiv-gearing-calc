@@ -10,6 +10,7 @@ try {
   const { runOptimizationLocally } = await import("../../../src/domain/optimizer.ts");
   const solverStatuses = [];
   const result = await runOptimizationLocally(workerData.config, {
+    strategies: workerData.strategies,
     onProgress: (message) => {
       const match = /^HiGHS (\S+) 状态=([^；]+)/.exec(message);
       if (match) solverStatuses.push({ phase: match[1], status: match[2] });

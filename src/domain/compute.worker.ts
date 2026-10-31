@@ -24,6 +24,7 @@ const workerScope = self as unknown as {
 
 async function search(request: SearchRequest): Promise<void> {
   const options: SearchOptions = {
+    strategies: request.strategies,
     onProgress: (message) =>
       workerScope.postMessage({ kind: "progress", message }),
     ...(request.includeCandidateCounts

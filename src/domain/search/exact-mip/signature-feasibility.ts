@@ -2,6 +2,7 @@ import type { ExactMipOptions } from "./types.ts";
 import type { prepareExactMipModel } from "./model-preparation.ts";
 import type { GcdSpeedRange } from "../search-types.ts";
 import { factorResourceWeightVectors } from "./resource-support.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 /** Build a safe superset of feasible signatures; uncertainty always retains a tuple. */
 export function prepareSignatureFeasibility(
@@ -76,6 +77,11 @@ export function prepareSignatureFeasibility(
     };
   });
   const minimumAttributeByGroupAndQ = new Map<string, Map<number, number>>();
+  // This optional necessary-resource filter accelerates the complete signature
+  // check. Without it every tuple remains for the original exact proof path.
+  if (!strategyEnabled(options.strategies, "resourceSupports")) {
+    return { signatureBandGroups, isPossiblyFeasibleFactorTuple: () => true };
+  }
   for (const group of groups) {
     const filteredGroup = signatureBandGroups.find((candidate) => candidate.name === group.name)!;
     const classBySignature = new Map(filteredGroup.classes.map(({ q, value }) => [`${q}:${value}`, true]));

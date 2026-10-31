@@ -137,6 +137,12 @@ export function prepareMateriaFamilyProjection(request: LinearMipRequest, limits
     pools: 0, hallRows: 0, variablesRemoved: 0, originalVariables: request.variables.length, solverVariables: request.variables.length,
     preparationMs: 0, reconstructionMs: 0 };
   const publish = () => { statistics.preparationMs = performance.now() - started; request.onMateriaFamilyProjection?.({ ...statistics }); };
+  throwIfCancelled(request.isCancelled);
+  if (request.strategies?.materiaFamilyProjection === "off") {
+    statistics.skipReason = "disabled-by-policy";
+    publish();
+    return undefined;
+  }
   let points = 0;
   const check = () => {
     throwIfCancelled(request.isCancelled);

@@ -5,6 +5,7 @@ import type { CommonChoice, FoodChoice, JobContext, JointLoadoutV3Options, Mutab
 import { commonSlotIdentity } from "./shared-equipment.ts";
 import { foodIdentityForOptional } from "./shared-foods.ts";
 import { makeJobOptions } from "./job-options.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 /** Own the restricted-result cache and the serial/worker refinement lifecycle. */
 export function createRestrictedSearch({
@@ -28,6 +29,7 @@ export function createRestrictedSearch({
   updateBest: (score: Rational, results: readonly ExactMipResult[]) => void;
   isAtProvenCeiling: () => boolean;
 }) {
+  const reuseResults = strategyEnabled(options.strategies, "restrictedResultReuse");
   const cache = new Map<string, ExactMipResult | null>();
   const nodeCacheKey = (
     context: JobContext,
@@ -43,7 +45,7 @@ export function createRestrictedSearch({
   };
 
   const rememberNode = (key: string, result: ExactMipResult | null): void => {
-    if (cacheLimit === 0) return;
+    if (!reuseResults || cacheLimit === 0) return;
     cache.set(key, result);
     while (cache.size > cacheLimit) cache.delete(cache.keys().next().value!);
     mutable.cacheEntries = cache.size;
@@ -68,7 +70,8 @@ export function createRestrictedSearch({
       objective,
       cancellationRequested,
     );
-    if (options.jobs.length === 2) {
+    mipOptions.strategies = options.strategies ?? mipOptions.strategies;
+    if (strategyEnabled(options.strategies, "conditionalResourceSupports") && options.jobs.length === 2) {
       // 每个槽位只加一条隐含的资源阈值约束，可缩小受限双职业模型，
       // 同时保留相同的候选集合和精确证明义务。
       mipOptions.candidateResourceSupportProfile = "compact";
@@ -100,14 +103,14 @@ export function createRestrictedSearch({
   ): Promise<ExactMipResult | undefined> => {
     const key = nodeCacheKey(context, fixed, foodChoice);
     const cached = cache.get(key);
-    if (cached !== undefined || cache.has(key)) {
+    if (reuseResults && (cached !== undefined || cache.has(key))) {
       mutable.cacheHits++;
       cache.delete(key);
       cache.set(key, cached ?? null);
       return cached ?? undefined;
     }
 
-    if (parentResult !== undefined) {
+    if (reuseResults && parentResult !== undefined) {
       const satisfiesFixed = [...fixed].every(([name, choice]) =>
         commonSlotIdentity(context, parentResult.selection, name, commonSlotProjections) === choice.key);
       const chosenFood = foodChoice?.foods.get(context.job.id);
@@ -120,6 +123,7 @@ export function createRestrictedSearch({
       }
     }
 
+    if (!reuseResults) return solveAndRemember();
     for (const [name, choice] of fixed) {
       if (commonSlotIdentity(context, context.optimum.selection, name, commonSlotProjections) !== choice.key) {
         return solveAndRemember();
@@ -178,7 +182,7 @@ export function createRestrictedSearch({
         const context = contexts[index]!;
         const key = nodeCacheKey(context, request.fixed, request.foodChoice);
         const cached = cache.get(key);
-        if (cached !== undefined || cache.has(key)) {
+        if (reuseResults && (cached !== undefined || cache.has(key))) {
           mutable.cacheHits++;
           cache.delete(key);
           cache.set(key, cached ?? null);
@@ -186,7 +190,7 @@ export function createRestrictedSearch({
           continue;
         }
         const parentResult = request.parentResults?.[index];
-        if (parentResult !== undefined) {
+        if (reuseResults && parentResult !== undefined) {
           const satisfiesFixed = [...request.fixed].every(([name, choice]) =>
             commonSlotIdentity(context, parentResult.selection, name, commonSlotProjections) === choice.key);
           const chosenFood = request.foodChoice?.foods.get(context.job.id);
@@ -204,7 +208,7 @@ export function createRestrictedSearch({
         const chosenFood = request.foodChoice?.foods.get(context.job.id);
         const satisfiesFood = request.foodChoice === undefined ||
           foodIdentityForOptional(context.optimum.food) === foodIdentityForOptional(chosenFood);
-        if (satisfiesFixed && satisfiesFood) {
+        if (reuseResults && satisfiesFixed && satisfiesFood) {
           rememberNode(key, context.optimum);
           results[index] = context.optimum;
           continue;

@@ -1,5 +1,6 @@
 import { findFeasibleGcds } from "@/domain";
 import type { AnalyzeFeasibleGcds, GcdAnalysisInput } from "./types";
+import { getSearchStrategySettings } from "@/ui/services/search-strategy-settings";
 
 /** Adapter to the current domain API; it does not reproduce GCD or combat formulas. */
 export const analyzeFeasibleGcds: AnalyzeFeasibleGcds = (
@@ -14,5 +15,5 @@ export const analyzeFeasibleGcds: AnalyzeFeasibleGcds = (
       speedMax: input.speedMax,
       objective: "damage",
     },
-    { signal },
+    { signal, strategies: getSearchStrategySettings() },
   );

@@ -50,6 +50,16 @@ function model(separateRawBlocks = false, alternatives = false) {
   return { request, families, solution };
 }
 
+test("T54 off leaves every original variable and family untouched", () => {
+  const { request } = model();
+  const original = structuredClone(request);
+  const observations: unknown[] = [];
+  expect(prepareMateriaFamilyProjection({ ...request, strategies: { materiaFamilyProjection: "off" },
+    onMateriaFamilyProjection: (statistics) => observations.push(statistics) })).toBeUndefined();
+  expect(observations).toMatchObject([{ skipReason: "disabled-by-policy", variablesRemoved: 0 }]);
+  expect(request).toEqual(original);
+});
+
 test("random full count DP, every Hall inequality and integral flow describe the same totals", () => {
   let state = 0x54a11;
   const next = (maximum: number) => { state = (Math.imul(state, 1664525) + 1013904223) >>> 0; return state % maximum; };

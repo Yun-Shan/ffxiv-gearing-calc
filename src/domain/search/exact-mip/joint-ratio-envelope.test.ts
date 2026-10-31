@@ -8,6 +8,17 @@ import {
 } from "./joint-factor-domain.helper.test.ts";
 
 describe("integer normalized-ratio envelope", () => {
+  test.each(["auto", "on", "off"] as const)("unified %s policy overrides the legacy pair toggle without removing the basic envelope", (mode) => {
+    const domain = factorDomain();
+    const model = { rows: [] as ModelRow[], bounds: [] as VariableBounds[], generals: [] as string[], prefix: domain.prefix };
+    const result = assembleJointRatioEnvelope(
+      { objective: "damage", ratioUpperPairPolicy: "disabled", strategies: { jointRatioPairBounds: mode } },
+      domain.preparedJobs, model, domain.candidates,
+    );
+    expect(result.ratioUpperBoundPairCutCount > 0).toBe(mode === "on");
+    expect(result.ratioUpperBoundObjectiveEnabled).toBe(true);
+    expect(model.rows.filter(({ name }) => !name.includes("pair_upper"))).toHaveLength(6);
+  });
   test("upward rounding and pair rows preserve the true product for every small-model assignment", () => {
     const domain = factorDomain(2);
     const model = {

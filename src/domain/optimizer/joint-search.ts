@@ -28,6 +28,7 @@ import {
   type SolverGear,
 } from "./context.ts";
 import { assertJointOptimizationConfig, normalizeOptimizationConfig } from "../config-validation.ts";
+import { normalizeSearchStrategies, strategyEnabled } from "../search/strategies.ts";
 
 function normalizedCommonSlots(commonSlots: readonly CommonGearSlot[], independentRings: boolean): {
   slots: string[];
@@ -49,12 +50,14 @@ export async function runJointOptimizationLocally(
   options: SearchOptions = {},
 ): Promise<JointOptimizationResult | undefined> {
   const startedAt = performance.now();
+  options = { ...options, strategies: normalizeSearchStrategies(options.strategies) };
   assertJointOptimizationConfig(input);
   const config = { ...input, jobs: input.jobs.map(normalizeOptimizationConfig) };
   throwIfAborted(options.signal);
   const objective = config.objective;
   const hasSharedRing = config.commonSlots.some((slot) => slot === "ring" || slot === "ring2");
   const factorizedSharedRingPair =
+    strategyEnabled(options.strategies, "ringSymmetry") &&
     config.commonSlots.includes("ring") && config.commonSlots.includes("ring2") &&
     config.jobs.every(
       (job) =>
@@ -109,6 +112,7 @@ export async function runJointOptimizationLocally(
       `联合候选准备完成；职业数=${jobCount}；装备方案=${[...preparedByJob.values()].reduce((sum, prepared) => sum + prepared.searchedCandidates, 0)}；食物候选=${[...preparedByJob.values()].reduce((sum, prepared) => sum + prepared.foods.length, 0)}；正在求解配装`,
     );
     const v3Options = {
+      strategies: options.strategies,
       jobs,
       commonSlots: jointCommonSlots,
       ...(sharedSlots.projections.length > 0

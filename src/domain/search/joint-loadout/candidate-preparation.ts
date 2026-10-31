@@ -6,6 +6,7 @@ import type { CommonChoice, FoodChoice, JobContext, JointLoadoutV3Options } from
 import { commonSlotIndex, projectEquipment, projectionMap } from "./shared-equipment.ts";
 import { pruneInnerSlots } from "./candidate-dominance.ts";
 import { foodIdentity } from "./shared-foods.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 /** Validate each job and retain the complete shared identity intersections before baselines. */
 export function prepareCandidates(
@@ -58,7 +59,9 @@ export function prepareCandidates(
 
   for (const context of contexts) {
     assertWithinBudget("单职业候选等价剪枝");
-    context.solverSlots = pruneInnerSlots(context, preserveCommonSlotIndexes.get(context));
+    if (strategyEnabled(options.strategies, "candidateDominance")) {
+      context.solverSlots = pruneInnerSlots(context, preserveCommonSlotIndexes.get(context));
+    }
     context.job.options.slots = context.solverSlots;
   }
   if (new Set(options.commonSlots).size !== options.commonSlots.length) {

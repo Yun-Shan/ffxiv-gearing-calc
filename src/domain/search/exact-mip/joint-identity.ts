@@ -7,11 +7,12 @@ import { ringPairCandidate } from "./ring-domain.ts";
 import { ringPairSharedIdentity } from "./ring-domain.ts";
 
 import type { JointSearchOptions } from "./joint-types.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 export function prepareJointIdentity(
   options: Pick<
     JointSearchOptions,
-    "commonSlotProjections" | "commonSlots" | "equipmentIdentity" | "jobs"
+    "commonSlotProjections" | "commonSlots" | "equipmentIdentity" | "jobs" | "strategies"
   >,
 ) {
   const projections = new Map<string, SharedSlotProjection>();
@@ -32,9 +33,10 @@ export function prepareJointIdentity(
     job.options.slots.some((slot) => slot.some(hasRingPairProperty)),
   );
   const ringSplitCandidates = options.jobs.map((job) =>
-    trySplitRingPairDomain(job, options.equipmentIdentity),
+    strategyEnabled(options.strategies, "ringSymmetry") ? trySplitRingPairDomain(job, options.equipmentIdentity) : undefined,
   );
   let useSplitRings =
+    strategyEnabled(options.strategies, "ringSymmetry") &&
     detectedRingPairs.some(Boolean) &&
     ringSplitCandidates.every((split) => split !== undefined);
   if (useSplitRings) {

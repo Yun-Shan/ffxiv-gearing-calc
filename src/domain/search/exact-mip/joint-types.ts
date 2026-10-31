@@ -17,6 +17,7 @@ export type JointPreparedJob = {
 };
 
 export type JointSearchOptions = {
+  strategies?: import("../strategies.ts").SearchStrategies;
   jobs: readonly JointMipJob[];
   commonSlots: readonly string[];
   commonSlotProjections?: readonly SharedSlotProjection[];

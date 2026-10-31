@@ -9,6 +9,7 @@ import {
 import { Dialog } from "@base-ui/react/dialog";
 import { Toast } from "@base-ui/react/toast";
 import styles from "./FeedbackProvider.module.scss";
+import { StrategySettings } from "./components/strategy-settings/StrategySettings";
 
 const feedbackEntries: readonly { name: string; href: string; icon: ReactNode }[] = [
   {
@@ -114,9 +115,14 @@ function FeedbackContent({ children }: { children: ReactNode }) {
       >
         <Dialog.Portal>
           <Dialog.Backdrop className={styles.backdrop} />
-          <Dialog.Popup className={styles.dialog} finalFocus={advancedTrigger}>
+          <Dialog.Popup className={`${styles.dialog} ${styles.advancedDialog}`} finalFocus={advancedTrigger}>
             <Dialog.Title className={styles.dialogTitle}>高级设置</Dialog.Title>
-            <Dialog.Description>当前没有可调整的高级设置。</Dialog.Description>
+            <Dialog.Description className={styles.advancedDescription}>
+              配置全局搜索优化策略，单职业与联合搜索共用。
+            </Dialog.Description>
+            <div className={styles.advancedContent}>
+              <StrategySettings />
+            </div>
             <div className={styles.actions}>
               <Dialog.Close>关闭</Dialog.Close>
             </div>

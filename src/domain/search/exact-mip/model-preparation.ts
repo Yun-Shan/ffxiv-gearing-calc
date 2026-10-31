@@ -15,6 +15,7 @@ import { retainReachableFactorClasses } from "./factor-model.ts";
 import { roundedLog } from "../core/exact-arithmetic.ts";
 import { factorResourceWeightVectors } from "./resource-support.ts";
 import { addCandidateLevelConditionalResourceSupports } from "./resource-support.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 export const SURROGATE_OBJECTIVE_SCALE = 65_536;
 
@@ -53,6 +54,7 @@ export function reachableFinalAttributeValues(
   model: NonNullable<ReturnType<typeof buildLinearAttributeModel>>,
   attribute: number,
 ): number[] | undefined {
+  if (!strategyEnabled(options.strategies, "factorReachability")) return undefined;
   const maximumTransitionWork = 1_000_000;
   const maximumFoodEvaluations = 1_000_000;
   const slotValues: number[][] = [];
@@ -138,6 +140,8 @@ export async function prepareExactMipModel(
   prebuiltModel?: NonNullable<ReturnType<typeof buildLinearAttributeModel>>,
 ) {
   throwIfCancelled(options.isCancelled);
+  const resourceSupportsEnabled = strategyEnabled(options.strategies, "resourceSupports");
+  addPrimaryResourceSupports = strategyEnabled(options.strategies, "resourceSupports", addPrimaryResourceSupports);
   const model = prebuiltModel ?? buildLinearAttributeModel(options);
   throwIfCancelled(options.isCancelled);
   if (model === undefined) return undefined;
@@ -192,7 +196,7 @@ export async function prepareExactMipModel(
   let reachableFactorClassesRemoved = 0;
   let reachableAttributePruningSkipped = 0;
   const reachableValuesByAttribute = new Map<number, number[]>();
-  for (let groupIndex = 0; groupIndex < groups.length; groupIndex++) {
+  for (let groupIndex = 0; strategyEnabled(options.strategies, "factorReachability") && groupIndex < groups.length; groupIndex++) {
     const attribute = groupAttributes[groupIndex];
     if (attribute === undefined) continue;
     let reachableValues = reachableValuesByAttribute.get(attribute);
@@ -342,7 +346,7 @@ export async function prepareExactMipModel(
   }
   // 这些支撑不等式由实际装备和食物资源蕴含。将它们直接施加到因子选择变量上，
   // 以强化整数松弛。
-  for (let mask = 1; mask < 1 << resourceAxes.length; mask++) {
+  for (let mask = 1; resourceSupportsEnabled && mask < 1 << resourceAxes.length; mask++) {
     const axes = resourceAxes.filter((_, index) => (mask & (1 << index)) !== 0);
     const gearMaximum = model.equipmentAttributes.reduce((total, slot) => total + Math.max(...slot.map((candidate) =>
       axes.reduce((sum, [, attribute]) => sum + candidate[attribute]!, 0))), 0);

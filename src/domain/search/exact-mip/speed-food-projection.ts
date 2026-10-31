@@ -1,4 +1,5 @@
 import { throwIfCancelled } from "../cancellation.ts";
+import { strategyEnabled } from "../strategies.ts";
 import { addRows, addTerm } from "../core/model-builder.ts";
 import type { ModelRow } from "../core/model-types.ts";
 import type { GcdSpeedRange } from "../search-types.ts";
@@ -49,6 +50,7 @@ export function prepareSpeedFoodProjection(
   model: ProjectionModel,
   limits: ProjectionLimits = {},
 ): SpeedFoodProjection | undefined {
+  if (!strategyEnabled(options.strategies, "speedFoodProjection")) return undefined;
   const constraints = options.constraints;
   if (constraints === undefined ||
     (constraints.gcd === undefined && constraints.gcdChoices === undefined &&

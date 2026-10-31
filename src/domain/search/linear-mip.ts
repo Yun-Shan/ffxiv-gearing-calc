@@ -63,6 +63,7 @@ export type HighsCallbackTrace = {
 };
 
 export type LinearMipRequest = {
+  strategies?: import("./strategies.ts").SearchStrategies;
   name: string;
   objective: ReadonlyMap<string, number>;
   rows: readonly LinearMipRow[];

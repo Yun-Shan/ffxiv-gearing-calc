@@ -395,6 +395,8 @@ export interface JointOptimizationConfig {
 }
 
 export interface SearchOptions {
+  /** Execution policy, independent of saved search conditions. */
+  strategies?: import("./search/strategies.ts").SearchStrategies;
   signal?: AbortSignal;
   onProgress?: (message: string) => void;
   onCandidateCounts?: (counts: SearchCandidateCounts) => void;

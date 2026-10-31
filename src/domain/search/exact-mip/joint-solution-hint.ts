@@ -5,9 +5,10 @@ import { ringChildStructuralKey } from "./ring-domain.ts";
 
 import type { JointModel } from "./joint-model.ts";
 import type { JointIncumbent } from "./joint-results.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 export function createJointSolutionHint(
-  options: Pick<JointSearchOptions, "equipmentIdentity" | "foodIdentity">,
+  options: Pick<JointSearchOptions, "equipmentIdentity" | "foodIdentity" | "strategies">,
   preparedJobs: readonly JointPreparedJob[],
   model: Pick<
     JointModel,
@@ -29,9 +30,10 @@ export function createJointSolutionHint(
     sharedFoodSelectors,
   } = model;
   const solutionHint = new Map<string, number>();
+  if (!strategyEnabled(options.strategies, "feasibleSeeds", !(preparedJobs.length === 2 && solverRuns > 0))) return solutionHint;
   // 在证明工作量较大的双职业重跑中，部分当前最优解提示并未帮助 HiGHS 修复出可行解；
   // 省略该提示不会改变模型。
-  if (best !== undefined && !(preparedJobs.length === 2 && solverRuns > 0)) {
+  if (best !== undefined) {
     for (let jobIndex = 0; jobIndex < preparedJobs.length; jobIndex++) {
       const jointJob = preparedJobs[jobIndex]!;
       const { job, prepared } = jointJob;

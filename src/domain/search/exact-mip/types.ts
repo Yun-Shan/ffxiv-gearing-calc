@@ -109,6 +109,7 @@ export type ExactMipResult = LoadoutSearchResult & {
 };
 
 export type ExactMipOptions = {
+  strategies?: import("../strategies.ts").SearchStrategies;
   job: JobId;
   jobLevel: JobLevel;
   /** 族群基础属性索引。 */

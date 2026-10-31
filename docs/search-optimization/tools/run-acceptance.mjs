@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { StringDecoder } from "node:string_decoder";
 import { decodeGeneratedData } from "../../../src/data/binary/decode.ts";
 import { compareHistoricalTiming, evaluateOptimizationTarget } from "./timing-acceptance.mjs";
+import { parseSearchStrategies } from "../../../scripts/node-tests/search-strategies.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(SCRIPT_DIR, "../../..");
@@ -588,8 +589,8 @@ async function createRunDirectory() {
   throw new Error("无法为本次验收创建唯一输出目录");
 }
 
-function childEnvironment(caseItem, timeoutMs) {
-  const env = { ...process.env, FFXIV_PROFILE_TIMING: "1" };
+function childEnvironment(caseItem, timeoutMs, searchStrategies) {
+  const env = { ...process.env, FFXIV_PROFILE_TIMING: "1", FFXIV_SEARCH_STRATEGIES: JSON.stringify(searchStrategies) };
   for (const name of Object.keys(env)) {
     if (name.startsWith("DATA_TEST_")) delete env[name];
   }
@@ -726,7 +727,7 @@ function isResultObject(value) {
   return value.proof && value.result && value.statistics && value.scenario;
 }
 
-async function runChild(caseItem, runDir, timeoutMs, inputIntegrityBaseline) {
+async function runChild(caseItem, runDir, timeoutMs, inputIntegrityBaseline, searchStrategies) {
   const caseDir = path.join(runDir, "cases", caseItem.id);
   await mkdir(caseDir, { recursive: true });
   const scriptPath = caseItem.jobs.length === 1
@@ -749,6 +750,7 @@ async function runChild(caseItem, runDir, timeoutMs, inputIntegrityBaseline) {
     profileTiming: true,
     parentWatchdogTimeoutMs: timeoutMs,
     runnerSearchTimeoutMs: runnerTimeoutMs,
+    strategies: searchStrategies,
   };
   const caseConfig = {
     id: caseItem.id,
@@ -883,7 +885,7 @@ async function runChild(caseItem, runDir, timeoutMs, inputIntegrityBaseline) {
   try {
     child = spawn(process.execPath, childArgs, {
       cwd: ROOT,
-      env: childEnvironment(caseItem, timeoutMs),
+      env: childEnvironment(caseItem, timeoutMs, searchStrategies),
       stdio: ["ignore", stdoutFd, stderrFd],
       windowsHide: true,
     });
@@ -1241,6 +1243,7 @@ async function main() {
   if (options.help) { printUsage(); return; }
   if (options.list) { for (const caseItem of CASES) console.log(formatCase(caseItem)); return; }
   const selected = selectCases(options);
+  const searchStrategies = parseSearchStrategies();
   const run = await createRunDirectory();
   console.log(`搜索性能验收记录：${path.relative(ROOT, run.path).split(path.sep).join("/")}`);
   console.log(`将按顺序执行 ${selected.length} 个场景；原始 stdout/stderr 仅写入本次记录目录。`);
@@ -1264,6 +1267,7 @@ async function main() {
       selectedCaseIds: selected.map((caseItem) => caseItem.id),
       jobCount: options.jobCount ?? null,
       strategies: options.strategies,
+      searchStrategies,
       timeoutMs: options.timeoutMs,
       targetMsPerJob: TARGET_MS_PER_JOB,
       historicalComparisonRule: "historical-best-vs-nine-round-average-and-range",
@@ -1286,7 +1290,7 @@ async function main() {
     if (interruptedSignal !== null) break;
     console.log(`[${index + 1}/${selected.length}] ${caseItem.id} 开始`);
     try {
-      const record = await runChild(caseItem, run.path, options.timeoutMs, inputIntegrityBaseline);
+      const record = await runChild(caseItem, run.path, options.timeoutMs, inputIntegrityBaseline, searchStrategies);
       suite.cases.push(record);
       console.log(formatCaseProgress(record, index, selected.length));
     } catch (error) {

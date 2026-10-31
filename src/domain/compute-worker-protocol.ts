@@ -14,7 +14,7 @@ import type {
   BaselineWorkerRequest,
 } from "./search/parallel-baseline-executor.ts";
 
-export type SearchRequest =
+export type SearchRequest = { strategies?: import("./search/strategies.ts").SearchStrategies } & (
   | {
       kind: "single";
       config: OptimizationConfig;
@@ -35,7 +35,7 @@ export type SearchRequest =
       traceSolverCallbacks?: boolean;
       includeCandidateCounts?: boolean;
       includeSolverProgress?: boolean;
-    };
+    });
 export type SearchValue =
   OptimizationResult | JointOptimizationResult | number[] | undefined;
 export type SearchResponse =

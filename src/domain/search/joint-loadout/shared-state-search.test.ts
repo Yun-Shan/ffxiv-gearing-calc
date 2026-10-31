@@ -11,6 +11,7 @@ import type { EquipInfo, FoodInfo } from "../types.ts";
 import * as resourceBudget from "../factor-resource-budget-upper-bound.ts";
 import { createIntegerDamageFactorEvaluator } from "../equipped-effects.ts";
 import * as sharedStateSearch from "./shared-state-search.ts";
+import { SEARCH_STRATEGY_IDS, type SearchStrategies, type SearchStrategyMode } from "../strategies.ts";
 
 function cartesian<T>(slots: readonly (readonly T[])[]): T[][] {
   let rows: T[][] = [[]];
@@ -100,10 +101,13 @@ function fixture(objective: "damage" | "dps" = "damage", shield = false) {
     remainingTimeLimit: () => undefined, limits: { maxElapsedMs: 10000, maxSeedMs: 0, maxTransitions: 1_000_000 } };
 }
 
-function exhaustive(f: ReturnType<typeof fixture>): Rational {
+function exhaustive(f: ReturnType<typeof fixture>, independentFood = false): Rational {
   let best = rational(0n, 1n);
   const all = f.contexts.map((context) => cartesian(context.solverSlots));
-  for (const selections of cartesian(all)) for (const choice of f.foodChoices) {
+  const foodRows = independentFood
+    ? cartesian(f.contexts.map((context) => context.job.options.foods))
+    : f.foodChoices.map((choice) => f.contexts.map((context) => choice.foods.get(context.job.id)));
+  for (const selections of cartesian(all)) for (const selectedFoods of foodRows) {
     if (!f.options.commonSlots.every((name) => selections.every((selection, job) =>
       equipmentIdentity(selection[f.contexts[job]!.indexByName.get(name)!]!) ===
       equipmentIdentity(selections[0]![f.contexts[0]!.indexByName.get(name)!]!)))) continue;
@@ -111,7 +115,7 @@ function exhaustive(f: ReturnType<typeof fixture>): Rational {
     let feasible = true;
     for (let job = 0; job < f.contexts.length; job++) {
       const context = f.contexts[job]!;
-      const selectedFood = choice.foods.get(context.job.id);
+      const selectedFood = selectedFoods[job];
       if (!legal(context, selections[job]!, selectedFood)) { feasible = false; break; }
       const value = scalar(context, selections[job]!, selectedFood, f.options.objective);
       const base = scalar(context, context.optimum.selection, context.optimum.food, f.options.objective);
@@ -150,6 +154,58 @@ function equivalentFixture(objective: "damage" | "dps" = "damage") {
 }
 
 describe("complete shared attribute states and private envelopes", () => {
+  test.each(["damage", "dps"] as const)("all strategy modes preserve exhaustive independent-food %s with the full MIP fallback", async (objective) => {
+    for (const mode of ["auto", "on", "off"] as const) {
+      const f = fixture(objective);
+      const strategies = Object.fromEntries(SEARCH_STRATEGY_IDS.map((id) => [id, mode]));
+      const result = await findBestJointLoadoutV3({ ...f.options, foodStrategy: "independent", strategies });
+      expect(result?.proof.complete).toBe(true);
+      expect(compareRational({ numerator: BigInt(result!.value.numerator), denominator: BigInt(result!.value.denominator) }, exhaustive(f, true))).toBe(0);
+    }
+  });
+  test.each(["damage", "dps"] as const)("all strategy modes preserve the exhaustive shared-food %s optimum", async (objective) => {
+    const settings: SearchStrategies[] = (["auto", "on", "off"] as const).map((mode) =>
+      Object.fromEntries(SEARCH_STRATEGY_IDS.map((id) => [id, mode])));
+    // Isolate every switch against the complete unoptimized path as well as
+    // testing their interactions when all are enabled together.
+    const disabled = Object.fromEntries(SEARCH_STRATEGY_IDS.map((id) => [id, "off"])) as SearchStrategies;
+    settings.push(...SEARCH_STRATEGY_IDS.map((id) => ({ ...disabled, [id]: "on" as const })));
+    for (const strategies of settings) {
+      const f = fixture(objective);
+      const expected = exhaustive(f);
+      const result = await findBestJointLoadoutV3({ ...f.options, strategies });
+      expect(result, JSON.stringify(strategies)).toBeDefined();
+      expect(result!.proof.complete).toBe(true);
+      expect(compareRational({ numerator: BigInt(result!.value.numerator), denominator: BigInt(result!.value.denominator) }, expected), JSON.stringify(strategies)).toBe(0);
+      if (strategies.sharedStateSearch === "off") {
+        expect(result!.statistics.exactSharedStateSearch).toMatchObject({ status: "skipped", activationReason: "disabled-by-policy", states: 0 });
+      }
+      if (strategies.restrictedResultReuse === "off") {
+        expect(result!.statistics).toMatchObject({ cacheHits: 0, cacheEntries: 0, parentResultReuses: 0 });
+      }
+    }
+  }, 30_000);
+
+  test("turning off the parent path never lets forced utility merging or seeds activate it", async () => {
+    const f = equivalentFixture();
+    f.options.strategies = { sharedStateSearch: "off", utilityEquivalence: "on", feasibleSeeds: "on" };
+    const result = await findBestSharedStateLoadout(f);
+    expect(result).toMatchObject({ status: "skipped", statistics: {
+      activationReason: "disabled-by-policy", states: 0, privateStates: 0, seedEvaluations: 0, equivalentJobs: 0,
+    } });
+    expect(result.results).toBeUndefined();
+  });
+
+  test.each(["auto", "on", "off"] as SearchStrategyMode[])("utility equivalence %s keeps the full original goal and physical witnesses", async (mode) => {
+    const f = equivalentFixture();
+    f.options.strategies = { sharedStateSearch: "on", utilityEquivalence: mode, feasibleSeeds: "off" };
+    const result = await findBestSharedStateLoadout(f);
+    expect(result.status).toBe("complete-feasible");
+    expect(result.statistics.utilityClasses).toBe(mode === "off" ? 2 : 1);
+    expect(result.statistics.seedEvaluations).toBe(0);
+    expect(compareRational(outputScore(f, result.results!), exhaustive(f))).toBe(0);
+  });
+
   test.each(["damage", "dps"] as const)("folds certified utilities for %s and restores each physical private witness/display", async (objective) => {
     const f = equivalentFixture(objective);
     const result = await findBestSharedStateLoadout(f);
@@ -280,6 +336,12 @@ describe("complete shared attribute states and private envelopes", () => {
     for (let job = 0; job < f.contexts.length; job++) {
       expect(legal(f.contexts[job]!, result.results![job]!.selection, result.results![job]!.food)).toBe(true);
     }
+    const forced = await findBestSharedStateLoadout({ ...f, options: { ...f.options, strategies: { sharedStateSearch: "on", feasibleSeeds: "off" } } });
+    expect(forced.statistics.activationDecision).toBe("enabled");
+    expect(forced.statistics.activationReason).toBe("enabled-by-policy");
+    expect(forced.statistics.seedEvaluations).toBe(0);
+    // `on` bypasses the cost prediction, never the actual work budget.
+    expect(forced.status).toBe("budget-exhausted");
   });
 
   test("keeps small shared domains enabled with a substantial private envelope", async () => {
@@ -353,6 +415,33 @@ describe("complete shared attribute states and private envelopes", () => {
     expect(result.statistics.speedPrunes).toBeGreaterThan(0);
     expect(result.statistics.termination).toBe("enumeration");
     for (const resultForJob of result.results!) expect(resultForJob.statistics.signatureBandProof).toBe(false);
+  });
+
+  test.each(["auto", "on", "off"] as const)("DP resource support %s preserves nonempty full enumeration and the exact optimum", async (mode) => {
+    const f = fixture("damage", true);
+    f.options.strategies = { sharedStateSearch: "on", feasibleSeeds: "off", resourceSupports: mode };
+    const preparePrices = vi.spyOn(resourceBudget, "prepareFactorResourceBudgetUpperBound");
+    const preparePartitions = vi.spyOn(resourceBudget, "preparePartitionedFactorResourceBudgetUpperBound");
+    try {
+      const result = await findBestSharedStateLoadout(f);
+      expect(result.status).toBe("complete-feasible");
+      expect(result.statistics.termination).toBe("enumeration");
+      expect(result.statistics.states).toBeGreaterThan(0);
+      expect(result.statistics.privateEvaluations).toBeGreaterThan(0);
+      expect(compareRational(outputScore(f, result.results!), exhaustive(f))).toBe(0);
+      if (mode === "off") {
+        expect(preparePrices).not.toHaveBeenCalled();
+        expect(preparePartitions).not.toHaveBeenCalled();
+        expect(result.statistics).toMatchObject({ resourceSupports: 0, resourcePriceCount: 0,
+          resourcePartitionAttempts: 0, resourcePartitions: 0, resourcePrunes: 0 });
+      } else {
+        expect(preparePrices).toHaveBeenCalled();
+        expect(result.statistics.resourceSupports).toBeGreaterThan(0);
+        expect(result.statistics.resourcePriceCount).toBeGreaterThan(0);
+      }
+    } finally {
+      preparePrices.mockRestore(); preparePartitions.mockRestore();
+    }
   });
 
   test("keeps separated GCD choices and freezes the full-domain maximum toughness", async () => {

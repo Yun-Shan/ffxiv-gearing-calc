@@ -23,6 +23,7 @@ import type {
 } from "../types.ts";
 import { calculationJobLevelFor } from "../gear-options.ts";
 import { normalizeOptimizationConfig } from "../config-validation.ts";
+import { normalizeSearchStrategies, strategyEnabled } from "../search/strategies.ts";
 import {
   attributeIds,
   attributeIndex,
@@ -114,6 +115,7 @@ function makeExactOptions(
     throw new RangeError(`职业 ${jobId} 不使用坚韧属性`);
   }
   return markCanonicalEvaluatorCandidateUpperBound({
+    strategies: options.strategies,
     job: jobId,
     jobLevel,
     clanIndex,
@@ -172,6 +174,7 @@ export function prepareSearch(
   paretoSlots?: ReadonlySet<string>,
   paretoIndependentRings = false,
 ): PreparedSearch {
+  options = { ...options, strategies: normalizeSearchStrategies(options.strategies) };
   config = normalizeOptimizationConfig(config);
   throwIfAborted(options.signal);
   const jobLevel = calculationJobLevelFor(config);
@@ -181,8 +184,8 @@ export function prepareSearch(
     gearsByIdentity,
     preserveRingOrder,
     independentRingSlots,
-    paretoSlots,
-    paretoIndependentRings,
+    strategyEnabled(options.strategies, "candidateDominance") ? paretoSlots : undefined,
+    strategyEnabled(options.strategies, "candidateDominance") && paretoIndependentRings,
   );
   const slots = candidatePoolsResult.slots;
   if (slots.some((slot) => slot.candidates.length === 0)) {

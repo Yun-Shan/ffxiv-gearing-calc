@@ -29,6 +29,7 @@ try {
     { baseParamId: workerData.weaponDamageId, value: equipment[workerData.weaponDamageStat] },
   ];
   const result = await findBestLoadoutExactMip({
+    strategies: workerData.strategies,
     job: workerData.job,
     jobLevel: workerData.jobLevel,
     clanIndex: workerData.clanIndex,

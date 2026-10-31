@@ -388,6 +388,15 @@ describe("joint solution hints", () => {
     expect(hint(1).size).toBe(0);
   });
 
+  test("unified hint modes disable hints or override only the two-job rerun performance policy", () => {
+    const { options, jobs, model, identity, best } = hintFixture();
+    expect(createJointSolutionHint({ ...options, strategies: { feasibleSeeds: "off" } }, jobs, model, identity, best, 0).size).toBe(0);
+    expect(createJointSolutionHint({ ...options, strategies: { feasibleSeeds: "on" } }, jobs, model, identity, best, 1).size).toBeGreaterThan(0);
+    // Forced hints still require a complete physical mapping.
+    model.sharedEquipmentSelectors.clear();
+    expect(() => createJointSolutionHint({ ...options, strategies: { feasibleSeeds: "on" } }, jobs, model, identity, best, 1)).toThrow(/缺少共享装备选择/);
+  });
+
   test("missing incumbents produce no hints", () => {
     const { options, jobs, model, identity } = hintFixture();
     expect(

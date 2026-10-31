@@ -51,6 +51,20 @@ afterEach(() => {
 });
 
 describe("frontend worker search timing", () => {
+  it("freezes execution strategies before worker readiness without adding search-condition fields", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("Worker", ControlledWorker);
+    const strategies = { sharedStateSearch: "off" as const, equalityQuotient: "on" as const };
+    const search = optimizeInWorker({ kind: "single", config: singleConfig }, { strategies });
+    Object.assign(strategies, { sharedStateSearch: "on" });
+    await vi.advanceTimersByTimeAsync(0);
+    const worker = ControlledWorker.instances[0]!;
+    expect(worker.request?.strategies).toMatchObject({ sharedStateSearch: "off", equalityQuotient: "on", foodProductBound: "auto" });
+    expect(worker.request?.config).not.toHaveProperty("strategies");
+    worker.respond();
+    await search;
+  });
+
   it("uses the same script in independent search and baseline instances, waiting for readiness", async () => {
     vi.useFakeTimers();
     vi.stubGlobal("Worker", ControlledWorker);

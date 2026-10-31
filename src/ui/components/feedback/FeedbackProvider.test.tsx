@@ -15,6 +15,7 @@ import { makeConfig } from "@/ui/services/app-config";
 import fixtures from "@/share/__fixtures__/real-search.json";
 import { restoreShare } from "@/share/restore";
 import { workbenchResultFromShare } from "@/ui/services/share-link";
+import { getSearchStrategySettings, resetSearchStrategies, setSearchStrategy } from "@/ui/services/search-strategy-settings";
 
 const mocks = vi.hoisted(() => ({ optimize: vi.fn(), optimizeJoint: vi.fn() }));
 vi.mock("@/domain", async original => ({ ...(await original<typeof import("@/domain")>()), optimize: mocks.optimize, optimizeJoint: mocks.optimizeJoint }));
@@ -35,6 +36,7 @@ function request(title: string, signal?: AbortSignal) {
 }
 beforeEach(() => {
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+  resetSearchStrategies();
   mocks.optimize.mockReset(); mocks.optimizeJoint.mockReset();
   host = document.createElement("div"); document.body.append(host); root = createRoot(host);
 });
@@ -77,6 +79,22 @@ describe("abortable feedback confirmation", () => {
     const pending = request("退出确认", controller.signal);
     act(() => root.render(null)); await expect(pending).resolves.toBe(false);
     expect(remove).toHaveBeenCalledWith("abort", expect.any(Function));
+  });
+  it("shows every strategy in global settings and restores all modes to auto", async () => {
+    render();
+    act(() => feedback.openAdvancedSettings());
+    await flush();
+    const settings = dialog("高级设置")!;
+    expect(settings.querySelectorAll('[role="combobox"]')).toHaveLength(18);
+    expect(settings.textContent).toContain("自动」沿用推荐条件");
+    setSearchStrategy("candidateDominance", "off");
+    expect(getSearchStrategySettings().candidateDominance).toBe("off");
+    const reset = [...settings.querySelectorAll<HTMLButtonElement>("button")]
+      .find(button => button.textContent === "全部恢复自动")!;
+    act(() => reset.click());
+    expect(getSearchStrategySettings()).toEqual(Object.fromEntries(
+      Object.keys(getSearchStrategySettings()).map(id => [id, "auto"]),
+    ));
   });
 });
 
@@ -128,6 +146,20 @@ function setup(mode: "single" | "joint") {
   };
 }
 describe.each(["single", "joint"] as const)("%s real history confirmation", mode => {
+  it("freezes the global strategy settings into the active search options, outside its config", async () => {
+    setSearchStrategy("equalityQuotient", "off");
+    const ui = setup(mode);
+    await flush();
+    const search = mode === "single" ? mocks.optimize : mocks.optimizeJoint;
+    const [config, options] = search.mock.calls[0]!;
+    expect(options.strategies.equalityQuotient).toBe("off");
+    expect(config).not.toHaveProperty("strategies");
+    setSearchStrategy("equalityQuotient", "on");
+    expect(options.strategies.equalityQuotient).toBe("off");
+    ui.navigate("unmount");
+    await flush();
+  });
+
   it("leaves a newer unrelated confirmation open when its workflow is revoked", async () => {
     const ui = setup(mode), other = request("无关确认");
     ui.navigate("enter"); await flush();

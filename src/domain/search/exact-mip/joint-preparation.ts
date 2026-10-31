@@ -6,6 +6,7 @@ import type { EquipInfo } from "../types.ts";
 import { throwIfCancelled } from "../cancellation.ts";
 import { expandJointRingPairDomain } from "./ring-domain.ts";
 import { inheritCanonicalEvaluatorCandidateUpperBound } from "../exact-mip-candidate-upper-bound.ts";
+import { strategyEnabled } from "../strategies.ts";
 
 export async function prepareJointJobs(
   options: Pick<
@@ -16,6 +17,7 @@ export async function prepareJointJobs(
     | "initialResults"
     | "jobs"
     | "objective"
+    | "strategies"
   >,
   identity: ReturnType<typeof prepareJointIdentity>,
   isCancelled: () => boolean,
@@ -56,7 +58,8 @@ export async function prepareJointJobs(
     firstSlotIndex: number;
     secondSlotIndex: number;
   }[] = [];
-  if (options.canonicalSharedRingPair) {
+  const canonicalSharedRingPair = strategyEnabled(options.strategies, "ringSymmetry") && options.canonicalSharedRingPair;
+  if (canonicalSharedRingPair) {
     if (
       !options.commonSlots.includes("ring") ||
       !options.commonSlots.includes("ring2") ||
@@ -131,7 +134,7 @@ export async function prepareJointJobs(
   }
   const jointInitialResults = providedInitialResults?.map(
     (result, jobIndex) => {
-      if (!options.canonicalSharedRingPair) return result;
+      if (!canonicalSharedRingPair) return result;
       const { firstSlotIndex, secondSlotIndex } =
         canonicalRingSlotIndexes[jobIndex]!;
       const first = result.selection[firstSlotIndex];

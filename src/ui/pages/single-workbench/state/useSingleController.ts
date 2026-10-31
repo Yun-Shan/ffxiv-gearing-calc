@@ -6,6 +6,7 @@ import {
   type GearSlot,
   type MeldedGear,
 } from "@/domain";
+import { getSearchStrategySettings } from "@/ui/services/search-strategy-settings";
 import { optimizationConfigForDomain, type UiOptimizationConfig as OptimizationConfig } from "@/ui/services/search-config";
 import { currentDataVersion, makeConfig } from "@/ui/services/app-config";
 import {
@@ -243,6 +244,7 @@ export function useSingleController(routing?: WorkbenchRouting<SingleState>, onR
     }
     try {
       const result = await optimize(freezeSnapshot(optimizationConfigForDomain(snapshot)), {
+        strategies: getSearchStrategySettings(),
         signal: controller.signal,
         onProgress: (message) =>
           changeProgress((p) => ({

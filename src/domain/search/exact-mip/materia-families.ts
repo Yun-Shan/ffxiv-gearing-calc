@@ -33,6 +33,8 @@ export function prepareMateriaFamilies(options: ExactMipOptions, limits: Limits 
   let rejectedGroups = 0;
   const empty = (skipReason?: string): MateriaFamilyPreparation => ({ metadata: { attributeIds: [...options.attributeIds], families: [] },
     points, rejectedGroups, elapsedMs: performance.now() - started, ...(skipReason === undefined ? {} : { skipReason }) });
+  throwIfCancelled(options.isCancelled);
+  if (options.strategies?.materiaFamilyProjection === "off") return empty("disabled-by-policy");
   const check = () => {
     throwIfCancelled(options.isCancelled);
     if (++points > (limits.maxPoints ?? 200_000)) throw new Abandon("work-budget");

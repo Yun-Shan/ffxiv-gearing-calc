@@ -28,6 +28,39 @@ function optionsFor(slots: EquipInfo[][] = [slot(1), slot(2)]): ExactMipOptions 
     evaluationFunction: createDamageGcdVectorEvaluator("WAR", 100, statIndexes), maxSearchMs: 10_000 };
 }
 
+test("T54 off also blocks numeric Worker metadata; on preserves recertification and budgets", () => {
+  const options = optionsFor();
+  options.materiaFamilyMetadata = prepareMateriaFamilies(options, { maxMs: Infinity }).metadata;
+  options.strategies = { materiaFamilyProjection: "off" };
+  expect(prepareMateriaFamilies(options)).toMatchObject({ metadata: { families: [] }, skipReason: "disabled-by-policy" });
+  options.strategies = { materiaFamilyProjection: "on" };
+  expect(prepareMateriaFamilies(options, { maxMs: Infinity }).metadata.families).toHaveLength(2);
+  expect(prepareMateriaFamilies(options, { maxPoints: 0 }).metadata.families).toEqual([]);
+  options.slots = options.slots.map((candidates) => candidates.slice(1));
+  expect(prepareMateriaFamilies(options, { maxMs: Infinity }).metadata.families).toEqual([]);
+});
+
+test.each([
+  ["off", "off"], ["off", "on"], ["on", "off"], ["on", "on"],
+] as const)("T54 %s with T57 %s preserves the full count-family Cartesian optimum", async (materiaFamilyProjection, equalityQuotient) => {
+  const options = optionsFor();
+  options.strategies = { materiaFamilyProjection, equalityQuotient };
+  const factor = createIntegerDamageFactorEvaluator("WAR", 100, options.statIndexes);
+  const productFor = (selection: readonly EquipInfo[]) => {
+    const attributes = options.attributeIds.map((id) => selection.flatMap(({ baseParams }) => baseParams)
+      .filter(({ baseParamId }) => baseParamId === id).reduce((sum, parameter) => sum + parameter.value, 0));
+    const value = factor(attributes)!;
+    return [value.weaponDamage, value.mainStat, value.determination, value.tenacity, value.critical, value.directHit]
+      .reduce((total, term) => total * BigInt(term), 1n);
+  };
+  const best = options.slots[0]!.flatMap((first) => options.slots[1]!.map((second) => productFor([first, second])))
+    .reduce((maximum, product) => product > maximum ? product : maximum, 0n);
+  const result = (await findBestLoadoutExactMip(options))!;
+  expect(productFor(result.selection)).toBe(best);
+  if (materiaFamilyProjection === "off") expect(result.statistics.materiaFamilies?.preparedFamilies).toBe(0);
+  else expect(result.statistics.materiaFamilies?.requests.some(({ variablesRemoved }) => variablesRemoved > 0)).toBe(true);
+});
+
 test("the slot/item/grade union supplies absent-stat units and certifies every actual count/attribute point", () => {
   const options = optionsFor();
   const prepared = prepareMateriaFamilies(options, { maxMs: Infinity });
