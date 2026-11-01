@@ -135,11 +135,19 @@ export function assembleJointModel(
       );
     }
   }
+  const sharedCanonicalRingOrders: ({
+    firstSlotIndex: number;
+    secondSlotIndex: number;
+    firstRanks: number[];
+    secondRanks: number[];
+  } | undefined)[] = preparedJobs.map(() => undefined);
   if (strategyEnabled(options.strategies, "ringSymmetry") && options.canonicalSharedRingPair) {
     for (let jobIndex = 0; jobIndex < preparedJobs.length; jobIndex++) {
       const { job, prepared } = preparedJobs[jobIndex]!;
       const { firstSlotIndex, secondSlotIndex } =
         canonicalRingSlotIndexes[jobIndex]!;
+      const firstRanks: number[] = [];
+      const secondRanks: number[] = [];
       const terms = new Map<string, number>();
       for (const [slotIndex, direction] of [
         [firstSlotIndex, 1],
@@ -151,6 +159,7 @@ export function assembleJointModel(
           );
           if (rank === undefined)
             throw new Error(`共享戒指身份缺少规范排序：${job.id}`);
+          (direction === 1 ? firstRanks : secondRanks).push(rank);
           if (rank !== 0)
             addTerm(
               terms,
@@ -169,6 +178,7 @@ export function assembleJointModel(
         "<=",
         0,
       );
+      sharedCanonicalRingOrders[jobIndex] = { firstSlotIndex, secondSlotIndex, firstRanks, secondRanks };
     }
   }
   if (
@@ -527,6 +537,9 @@ export function assembleJointModel(
     },
     get sharedFoodSelectors() {
       return sharedFoodSelectors;
+    },
+    get sharedCanonicalRingOrders() {
+      return sharedCanonicalRingOrders;
     },
   };
 }

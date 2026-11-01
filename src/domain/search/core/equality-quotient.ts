@@ -1,4 +1,5 @@
 import type { LinearMipRequest, LinearMipSolution } from "../linear-mip.ts";
+import { hasMipPoint } from "../linear-mip.ts";
 
 type Dyadic = { numerator: bigint; exponent: number };
 
@@ -175,7 +176,7 @@ export function prepareEqualityQuotient(request: LinearMipRequest): EqualityQuot
     variablesRemoved: request.variables.length - bounds.size,
     rowsRemoved: request.rows.length - rows.length,
     expandSolution: (solution) => {
-      if (solution.Status !== "Optimal") return solution;
+      if (!hasMipPoint(solution)) return solution;
       const Columns: LinearMipSolution["Columns"] = {};
       for (const [name, representative] of aliases) {
         const column = solution.Columns[representative];

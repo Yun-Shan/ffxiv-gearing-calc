@@ -9,6 +9,7 @@ import type {
 import type { Stats } from "../types.ts";
 import type { EquipInfo, FoodInfo, ParamInfo } from "./types.ts";
 import { markCanonicalEvaluatorCandidateUpperBound } from "./exact-mip-candidate-upper-bound.ts";
+import { assertUniqueFoodAttributes } from "./food-parameters.ts";
 
 export type BaselineWorkerCallbacks = {
   onProgress?: (message: string) => void;
@@ -107,7 +108,9 @@ function decodeFoodColumns(columns: SerializedBaselineOptions["foods"]): FoodInf
         maxValue: columns.maxValues[parameterIndex]!,
       });
     }
-    foods.push({ itemId: 0, itemLevel: 0, key: "", baseParams });
+    const food = { itemId: 0, itemLevel: 0, key: "", baseParams };
+    assertUniqueFoodAttributes(food, `基线工作线程食物候选 ${foodIndex}`);
+    foods.push(food);
   }
   return foods;
 }

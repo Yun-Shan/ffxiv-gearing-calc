@@ -1,6 +1,7 @@
 import { foods, searchFoods } from "../../data.ts";
 import { jobSchemas } from "../../jobs.ts";
 import { calculateBaseStats } from "../../rules.ts";
+import { assertUniqueFoodAttributes } from "../../search/food-parameters.ts";
 import type { Food, JobId, OptimizationConfig, Stat, Stats } from "../../types.ts";
 import { attributeIndex, type SolverFood } from "../context.ts";
 
@@ -71,6 +72,7 @@ export function createFoodInfo(
           ];
     })
     .sort((left, right) => left.baseParamId - right.baseParamId);
+  assertUniqueFoodAttributes({ itemId: food.id, baseParams });
   return {
     itemId: food.id,
     itemLevel: food.level,

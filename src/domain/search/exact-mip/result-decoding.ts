@@ -1,6 +1,16 @@
 import type { EquipInfo } from "../types.ts";
 import type { ResistanceAllocationVariable } from "./attribute-model.ts";
 import type { FoodInfo } from "../types.ts";
+import type { LoadoutConstraints } from "../search-types.ts";
+
+export function assertRequestedGcd(gcdCentiseconds: number, constraints: LoadoutConstraints | undefined, source: string): void {
+  if (constraints?.gcd !== undefined && Math.round(constraints.gcd * 100) !== gcdCentiseconds) {
+    throw new Error(`${source} GCD=${gcdCentiseconds / 100} 不满足标量 GCD 约束 ${constraints.gcd}`);
+  }
+  if (constraints?.gcdChoices !== undefined && !constraints.gcdChoices.some(value => Math.round(value * 100) === gcdCentiseconds)) {
+    throw new Error(`${source} GCD=${gcdCentiseconds / 100} 不满足 GCD 集合 ${constraints.gcdChoices.join(", ")}`);
+  }
+}
 
 export function slotsForResult(
   slots: readonly (readonly EquipInfo[])[],

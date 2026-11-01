@@ -13,6 +13,7 @@ import { strictLogThresholdLoss } from "../core/exact-arithmetic.ts";
 import type { JointModel } from "./joint-model.ts";
 import type { JointCandidateBounds } from "./joint-candidate-bounds.ts";
 import type { JointIncumbent } from "./joint-results.ts";
+import type { LinearMipRow } from "../linear-mip.ts";
 import { strategyEnabled } from "../strategies.ts";
 
 export function buildJointIterationRows(
@@ -42,6 +43,8 @@ export function buildJointIterationRows(
     factorScoreUpperCannotBeatThreshold,
   } = proofs;
   const solveRows = [...rows];
+  const jobLowerBounds: LinearMipRow[] = [];
+  const signatureRestrictions: LinearMipRow[] = [];
   if (best !== undefined) {
     const thresholdNumerator =
       best.numerator - BigInt(options.jobs.length - 1) * best.denominator;
@@ -60,6 +63,7 @@ export function buildJointIterationRows(
           ">=",
           Number(rhs),
         );
+        signatureRestrictions.push(solveRows[solveRows.length - 1]!);
       }
       for (let index = 0; index < jobSurrogates.length; index++) {
         const surrogate = jobSurrogates[index]!;
@@ -78,6 +82,7 @@ export function buildJointIterationRows(
             ">=",
             Number(individualRhs),
           );
+          jobLowerBounds[index] = solveRows[solveRows.length - 1]!;
         }
       }
       for (const upperBound of factorClassUpperBounds) {
@@ -215,14 +220,15 @@ export function buildJointIterationRows(
       }
     }
   }
-  excluded.forEach((signature, index) =>
+  excluded.forEach((signature, index) => {
     addRows(
       solveRows,
       `joint_nogood_${index}`,
       signature.map((name) => [name, 1] as const),
       "<=",
       signature.length - 1,
-    ),
-  );
-  return solveRows;
+    );
+    signatureRestrictions.push(solveRows[solveRows.length - 1]!);
+  });
+  return { solveRows, jobLowerBounds, signatureRestrictions };
 }

@@ -421,4 +421,41 @@ describe("搜索历史记录结构校验", () => {
       result: { ...result, proof: { ...result.proof, innerSolverStatus: "PartialEnumeration" } },
     })).toThrow(/结果缺少必要字段/);
   });
+
+  it.each([
+    ["Optimal", "ratio-envelope-bound"],
+    ["DualBound", "ratio-dual-bound"],
+    ["Infeasible", "remaining-domain-infeasible"],
+    ["FeasibleSignature", "theoretical-score"],
+    ["ExactSignatureEnumeration", "exact-signatures"],
+    ["ExactStateEnumeration", "exact-attributes"],
+    ["ExactStateEnumeration", "shared-state-enumeration"],
+    ["ExactStateEnumeration", "baseline-ceiling"],
+    ["Optimal", "shared-domain-enumeration"],
+    ["Optimal", "outer-branch-bound"],
+  ] as const)("保留联合证明状态 %s 与实际来源 %s", (innerSolverStatus, termination) => {
+    const configValue = jointConfig();
+    const result = jointResult(configValue.jobs.map(({ jobId }) => jobId));
+    result.proof = { ...result.proof, innerSolverStatus, termination };
+    const record = {
+      id: "history-joint-proof-source", kind: "joint", startedAtISO: "2026-11-01T09:00:00.000Z",
+      config: configValue, status: "completed", result,
+    };
+    const restored = validateSearchHistoryRecord(record);
+    expect(restored.kind === "joint" && restored.result.proof).toEqual(result.proof);
+    expect(() => validateSearchHistoryRecord({
+      ...record, result: { ...result, proof: { ...result.proof, termination: "unfinished" } },
+    })).toThrow(/结果缺少必要字段/);
+  });
+
+  it.each(["Optimal", "DualBound", "ExactStateEnumeration"] as const)("继续读取未保存来源字段的旧 %s 记录", (innerSolverStatus) => {
+    const configValue = jointConfig();
+    const result = jointResult(configValue.jobs.map(({ jobId }) => jobId));
+    result.proof.innerSolverStatus = innerSolverStatus;
+    const restored = validateSearchHistoryRecord({
+      id: "history-joint-legacy-proof", kind: "joint", startedAtISO: "2026-10-26T09:00:00.000Z",
+      config: configValue, status: "completed", result,
+    });
+    expect(restored.kind === "joint" && restored.result.proof.termination).toBeUndefined();
+  });
 });

@@ -3,7 +3,7 @@ import type { SharedSlotProjection } from "../types.ts";
 import { throwIfCancelled } from "../cancellation.ts";
 import type { CommonChoice, FoodChoice, JobContext, JointLoadoutV3Options, MutableStatistics, Rational } from "./types.ts";
 import { commonSlotIdentity } from "./shared-equipment.ts";
-import { foodIdentityForOptional } from "./shared-foods.ts";
+import { foodCandidateIdentity, foodChoiceContains, foodsForChoice } from "./shared-foods.ts";
 import { makeJobOptions } from "./job-options.ts";
 import { strategyEnabled } from "../strategies.ts";
 
@@ -41,7 +41,10 @@ export function createRestrictedSearch({
       .sort(([left], [right]) => left.localeCompare(right))
       .map(([name, choice]) => `${name}=${choice.key}`)
       .join(";");
-    return `${context.job.id}|${foodKey}|${fixedKey}`;
+    const foodDomain = foodChoice === undefined ? "independent" : JSON.stringify(
+      foodsForChoice(foodChoice, context.job.id).map(foodCandidateIdentity).sort(),
+    );
+    return `${context.job.id}|${foodKey}|${fixedKey}|${foodDomain}`;
   };
 
   const rememberNode = (key: string, result: ExactMipResult | null): void => {
@@ -113,9 +116,8 @@ export function createRestrictedSearch({
     if (reuseResults && parentResult !== undefined) {
       const satisfiesFixed = [...fixed].every(([name, choice]) =>
         commonSlotIdentity(context, parentResult.selection, name, commonSlotProjections) === choice.key);
-      const chosenFood = foodChoice?.foods.get(context.job.id);
       const satisfiesFood = foodChoice === undefined ||
-        foodIdentityForOptional(parentResult.food) === foodIdentityForOptional(chosenFood);
+        foodChoiceContains(foodChoice, context.job.id, parentResult.food);
       if (satisfiesFixed && satisfiesFood) {
         mutable.parentResultReuses++;
         rememberNode(key, parentResult);
@@ -130,8 +132,7 @@ export function createRestrictedSearch({
       }
     }
     if (foodChoice !== undefined) {
-      const chosenFood = foodChoice.foods.get(context.job.id);
-      if (foodIdentityForOptional(context.optimum.food) !== foodIdentityForOptional(chosenFood)) return solveAndRemember();
+      if (!foodChoiceContains(foodChoice, context.job.id, context.optimum.food)) return solveAndRemember();
     }
     rememberNode(key, context.optimum);
     return context.optimum;
@@ -193,9 +194,8 @@ export function createRestrictedSearch({
         if (reuseResults && parentResult !== undefined) {
           const satisfiesFixed = [...request.fixed].every(([name, choice]) =>
             commonSlotIdentity(context, parentResult.selection, name, commonSlotProjections) === choice.key);
-          const chosenFood = request.foodChoice?.foods.get(context.job.id);
           const satisfiesFood = request.foodChoice === undefined ||
-            foodIdentityForOptional(parentResult.food) === foodIdentityForOptional(chosenFood);
+            foodChoiceContains(request.foodChoice, context.job.id, parentResult.food);
           if (satisfiesFixed && satisfiesFood) {
             mutable.parentResultReuses++;
             rememberNode(key, parentResult);
@@ -205,9 +205,8 @@ export function createRestrictedSearch({
         }
         const satisfiesFixed = [...request.fixed].every(([name, choice]) =>
           commonSlotIdentity(context, context.optimum.selection, name, commonSlotProjections) === choice.key);
-        const chosenFood = request.foodChoice?.foods.get(context.job.id);
         const satisfiesFood = request.foodChoice === undefined ||
-          foodIdentityForOptional(context.optimum.food) === foodIdentityForOptional(chosenFood);
+          foodChoiceContains(request.foodChoice, context.job.id, context.optimum.food);
         if (reuseResults && satisfiesFixed && satisfiesFood) {
           rememberNode(key, context.optimum);
           results[index] = context.optimum;

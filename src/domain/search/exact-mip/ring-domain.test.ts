@@ -280,6 +280,60 @@ describe("ordered ring-domain decomposition", () => {
       new Map([[2, 15]]),
     );
   });
+
+  test.each(["attributes", "identity"] as const)(
+    "refuses order-sensitive %s hidden behind a repeated structural key, on either side and in either input order",
+    (mode) => {
+      for (const crossSide of [false, true]) for (const reversed of [false, true]) {
+        const { job, weapon, body } = fixture();
+        const first = { ...equipment(1), baseParams: [{ baseParamId: 1, value: 3 }, { baseParamId: 2, value: 9 }] };
+        const alternate = { ...first, baseParams: [...first.baseParams].reverse() };
+        const second = equipment(2, 4), third = equipment(3, 5);
+        const candidates = crossSide
+          ? [pair(first, second), pair(second, alternate), pair(second, second)]
+          : [pair(first, second), pair(alternate, third)];
+        for (const candidate of candidates) candidate.ringUniqueByItemId = crossSide
+          ? [[1, true], [2, false]] : [[1, false], [2, false], [3, false]];
+        job.options.slots = [[weapon], reversed ? [...candidates].reverse() : candidates, [body]];
+        if (mode === "attributes") {
+          const extract = (value: EquipInfo): EquipInfo["baseParams"] => {
+            const rings = ringPairCandidate(value);
+            return rings === undefined ? [{ baseParamId: 1, value: value.baseParams[0]?.value ?? 0 }]
+              : rings.ringEquips.flatMap(extract);
+          };
+          job.options.equipmentAttributeExtractor = extract;
+          // Every original pair remains a valid sum of its own true endpoints.
+          for (const candidate of candidates) {
+            const sum = new Map<number, number>();
+            for (const child of candidate.ringEquips) for (const [id, value] of extractedAttributeMap(job.options, child))
+              sum.set(id, (sum.get(id) ?? 0) + value);
+            expect(extractedAttributeMap(job.options, candidate)).toEqual(sum);
+          }
+        }
+        const physicalIdentity = mode === "identity"
+          ? (value: EquipInfo) => `${value.itemId}:${JSON.stringify(value.baseParams)}` : identity;
+        expect(ringChildStructuralKey(first)).toBe(ringChildStructuralKey(alternate));
+        expect(trySplitRingPairDomain(job, physicalIdentity)).toBeUndefined();
+      }
+    },
+  );
+
+  test("retains the first representatives when repeated structures have certified equal semantics", () => {
+    const { job, weapon, body } = fixture();
+    const first = { ...equipment(1), baseParams: [{ baseParamId: 1, value: 3 }, { baseParamId: 2, value: 9 }] };
+    const alternate = { ...first, baseParams: [...first.baseParams].reverse() };
+    const second = equipment(2, 4);
+    const candidates = [pair(first, second), pair(second, alternate), pair(second, second)];
+    job.options.slots = [[weapon], candidates, [body]];
+    const split = trySplitRingPairDomain(job, identity)!;
+    expect(split.firstCandidates.find((candidate) => candidate.itemId === 1)).toBe(first);
+    expect(split.secondCandidates.find((candidate) => candidate.itemId === 1)).toBe(alternate);
+    const domain = { job: expandJointRingPairDomain(job, split), originalJob: job, ringSplit: split };
+    for (const candidate of candidates) {
+      const internal = internalRingSelection(domain, [weapon, candidate, body])!;
+      expect(originalRingSelection(domain, internal)).toEqual([weapon, candidate, body]);
+    }
+  });
 });
 
 describe("ring uniqueness validation", () => {
@@ -311,6 +365,11 @@ describe("ring uniqueness validation", () => {
         { ...equipment(1), ringSlotIndex: 1 },
       ]),
     ).toBe(false);
+  });
+  test("a physical pair retains its identity for reference-based attribute extractors", () => {
+    const original = pair(equipment(1), equipment(2));
+    const attributes = new WeakMap([[original, 123]]);
+    expect(attributes.get(ringPairCandidate(original)!)).toBe(123);
   });
   test.each(
     [null, [], [null, {}], [{}, null], [{}, 1], [1, {}]].map((ringEquips) => ({

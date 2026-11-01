@@ -70,6 +70,11 @@ export type LinearMipRequest = {
   variables: readonly LinearMipVariable[];
   binaryVariables: readonly string[];
   integerVariables: readonly string[];
+  /** Joint requests distinguish ratio proofs from visits to feasible signatures. */
+  jointObjective?:
+    | { kind: "ratio-bound"; variables: readonly string[]; scale: number }
+    | { kind: "signature" }
+    | { kind: "feasibility" };
   /** Object policy also supports a safe integer percentage in [0,100], defaulting to zero. */
   equalityQuotient?: boolean | { maxRowDensityGrowth: number; minVariableReductionPercent?: number };
   materiaFamilies?: readonly MateriaModelFamily[];
@@ -88,3 +93,8 @@ export type LinearMipSolution = {
   Columns: Record<string, { Primal: number }>;
   ObjectiveValue?: number;
 };
+
+/** Both statuses carry a complete validated point; only Optimal proves its objective. */
+export function hasMipPoint(solution: LinearMipSolution): boolean {
+  return solution.Status === "Optimal" || solution.Status === "FeasibleSignature";
+}

@@ -447,22 +447,10 @@ export function prepareJointCandidateBounds(
     };
     const foodBonusBoundsByFood = new Map<
       number,
-      Map<number, FoodBonusBound[]>
+      Map<number, FoodBonusBound>
     >();
     let validFoodBounds = true;
-    for (const food of job.options.foods) {
-      const seenAttributes = new Set<number>();
-      for (const param of food.baseParams) {
-        if (seenAttributes.has(param.baseParamId)) {
-          validFoodBounds = false;
-          break;
-        }
-        seenAttributes.add(param.baseParamId);
-      }
-      if (!validFoodBounds) break;
-    }
     for (const bonus of prepared.model.foodBonuses) {
-      if (!validFoodBounds) break;
       const food = job.options.foods[bonus.foodIndex];
       const attributeId = job.options.attributeIds[bonus.attribute];
       const param = food?.baseParams.find(
@@ -485,22 +473,14 @@ export function prepareJointCandidateBounds(
       }
       const byAttribute =
         foodBonusBoundsByFood.get(bonus.foodIndex) ??
-        new Map<number, FoodBonusBound[]>();
-      const boundsForAttribute = byAttribute.get(bonus.attribute) ?? [];
-      if (boundsForAttribute.length > 0) {
-        // 规范求值器会针对逐步更新后的属性累加重复食物约束行。
-        // 跳过这个可选上界，避免根据单个原始坐标计算出过低的估计值。
-        validFoodBounds = false;
-        break;
-      }
-      boundsForAttribute.push({
+        new Map<number, FoodBonusBound>();
+      byAttribute.set(bonus.attribute, {
         attribute: bonus.attribute,
         numerator: bonus.numerator,
         denominator: bonus.denominator,
         cap: bonus.cap,
         baseValue: param.baseValue ?? 0,
       });
-      byAttribute.set(bonus.attribute, boundsForAttribute);
       foodBonusBoundsByFood.set(bonus.foodIndex, byAttribute);
     }
     if (!validFoodBounds) {
@@ -550,8 +530,7 @@ export function prepareJointCandidateBounds(
         const foodBonusUpper = new Array<number>(rawUpper.length).fill(0);
         let validCandidateFoodUpper = true;
         for (const byAttribute of foodBonusBoundsByFood.values()) {
-          for (const [attribute, boundsForAttribute] of byAttribute) {
-            const bonus = boundsForAttribute[0]!;
+          for (const [attribute, bonus] of byAttribute) {
             const rawWithBase =
               BigInt(rawUpper[attribute]!) + BigInt(bonus.baseValue);
             if (rawWithBase < 0n) {

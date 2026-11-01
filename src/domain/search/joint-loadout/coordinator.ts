@@ -11,7 +11,7 @@ import type { CommonChoice, FoodChoice, JobContext, JointLoadoutJobResultV3, Joi
 import { commonSlotIdentity, commonSlotIndex, equipmentForCommonSlot, projectEquipment } from "./shared-equipment.ts";
 import { compareRational, createExactScorer, factorsForResult, integerDamageProduct, rational } from "./score.ts";
 import { pruneCommonChoices, pruneCommonRingChoices } from "./candidate-dominance.ts";
-import { foodIdentity, foodIdentityForOptional, pruneSharedFoods } from "./shared-foods.ts";
+import { foodIdentity, foodIdentityForOptional, hasFoodVariants, pruneSharedFoods } from "./shared-foods.ts";
 import { makeJobOptions } from "./job-options.ts";
 import { statisticsSnapshot } from "./statistics.ts";
 import { prepareCandidates } from "./candidate-preparation.ts";
@@ -21,15 +21,52 @@ import { createSeedResults } from "./warm-start.ts";
 import { findBestSharedStateLoadout } from "./shared-state-search.ts";
 import { emitProfileEvent } from "../core/diagnostics.ts";
 import { normalizeSearchStrategies, strategyEnabled } from "../strategies.ts";
+import type { JointMipTermination } from "../exact-mip/joint-types.ts";
 
 const MAX_ACCEPTANCE_SEARCH_MS = 235_000;
 
 const RSS_LIMIT_BYTES = 3.5 * 1024 * 1024 * 1024;
 
+const jointMipProofDescriptions: Record<JointMipTermination, {
+  outerBound: string; numericalLimitation: string; terminationReason: string;
+}> = {
+  "remaining-domain-infeasible": {
+    outerBound: "独立最优基线限制各职业归一化比例不超过 1；完整共享模型保留所有可能严格改进当前 BigInt 有理数总和的签名，逐次验证并排除已访问签名",
+    numericalLimitation: "HiGHS 的 Infeasible 仅针对排除已访问签名后的剩余必要改进域；独立基线和该不可行判定仍依赖求解器可信，不构成原完整域无解或独立形式化证书",
+    terminationReason: "HiGHS 报告剩余必要改进域 Infeasible；已访问签名的原约束与精确目标均已复核，因此不存在优于当前合法 incumbent 的解",
+  },
+  "ratio-envelope-bound": {
+    outerBound: "独立最优基线归一化后构造保守比例包络；其剩余目标上界以精确整数或有理数与当前 BigInt incumbent 比较",
+    numericalLimitation: "比例上界与原配装精确得分分别复核；独立基线及参与比例上界的 HiGHS 判定仍依赖求解器可信，未提供独立形式化证书",
+    terminationReason: "剩余域的保守比例包络上界不高于当前精确 BigInt incumbent，已证明不存在严格改进解",
+  },
+  "ratio-dual-bound": {
+    outerBound: "完整共享模型的比例上界由 HiGHS MIP 对偶界保守还原缩放单位并取整，再与原归一化总和的 BigInt 有理数 incumbent 比较",
+    numericalLimitation: "终止依赖保守转换后的 HiGHS 浮点对偶界和独立最优基线可信；模型行与原配装均已复核，但不是独立形式化证书",
+    terminationReason: "HiGHS MIP 比例对偶上界不高于当前精确 BigInt incumbent，已证明不存在严格改进解",
+  },
+  "theoretical-score": {
+    outerBound: "各职业独立最优基线分别给出归一化比例上界 1；原约束复核后的合法共享配装已达到全部基线之和",
+    numericalLimitation: "当前可行点经原约束和 BigInt 目标复核，完成性来自独立基线的理论上界；FeasibleSignature 本身不提供原生最优证明，基线仍依赖 HiGHS 判定可信",
+    terminationReason: "已达到各职业单独最优基线之和这一全局上界；终止依据是精确理论得分，而非可行点状态本身",
+  },
+  "exact-signatures": {
+    outerBound: "当前必要改进域的共享投影与全部保留因子签名已完整覆盖；原目标使用 BigInt 整数乘积或有理数界进行比较",
+    numericalLimitation: "完成性来自算法对必要改进域的完整签名覆盖与精确上界，不来自 HiGHS 对原完整模型的 Optimal 或 Infeasible；独立基线仍依赖求解器可信",
+    terminationReason: "已完整枚举必要改进域的因子签名并以精确 BigInt 上界排除严格改进；当前合法 incumbent 经原始约束复核",
+  },
+  "exact-attributes": {
+    outerBound: "当前必要改进域的共享属性投影与全部保留属性状态已完整覆盖；原目标使用 BigInt 整数乘积或有理数界进行比较",
+    numericalLimitation: "完成性来自算法对必要改进域的完整属性状态覆盖与精确上界，不来自 HiGHS 对原完整模型的 Optimal 或 Infeasible；独立基线仍依赖求解器可信",
+    terminationReason: "已完整枚举必要改进域的属性状态并以精确 BigInt 上界排除严格改进；当前合法 incumbent 经原始约束复核",
+  },
+};
+
 /** 对给定的各职业候选执行精确联合搜索；超时时抛出错误，不返回未经证明的部分结果。 */
 export async function findBestJointLoadoutV3(
   options: JointLoadoutV3Options,
 ): Promise<JointLoadoutV3Result | undefined> {
+  const startedAt = performance.now();
   const strategies = normalizeSearchStrategies(options.strategies);
   const inputCandidateCount = options.jobs.reduce((total, job) => total +
     job.options.slots.reduce((slotTotal, slot) => slotTotal + slot.length, 0), 0);
@@ -49,7 +86,6 @@ export async function findBestJointLoadoutV3(
     })),
   };
   options = ownedOptions;
-  const startedAt = performance.now();
   const requestedMs = options.maxSearchMs;
   if (requestedMs !== undefined && (!Number.isFinite(requestedMs) || requestedMs <= 0)) {
     throw new RangeError("V3 maxSearchMs 必须是正有限数");
@@ -103,14 +139,21 @@ export async function findBestJointLoadoutV3(
   };
 
   const prepared = prepareCandidates(options, assertWithinBudget);
-  if (prepared === undefined) return undefined;
+  if (prepared === undefined) {
+    assertWithinBudget("候选准备");
+    return undefined;
+  }
   const { contexts, commonSlotProjections, preserveCommonSlotIndexes, commonChoicesByName, foodChoices } = prepared;
+  const ambiguousSharedFoods = options.foodStrategy === "shared" && foodChoices.some(hasFoodVariants);
 
   if (!await solveBaselines({
     options, contexts, preserveCommonSlotIndexes, objective, mutable,
     assertWithinBudget, remainingTimeLimit, remainingWorkerTimeLimit, timeLimitMs,
     cancellationRequested, baselineConcurrency,
-  })) return undefined;
+  })) {
+    assertWithinBudget("单职业基线");
+    return undefined;
+  }
 
   if (strategyEnabled(strategies, "candidateDominance") && options.factorizedSharedRingPair) {
     const ringChoices = commonChoicesByName.get("ring");
@@ -258,10 +301,16 @@ export async function findBestJointLoadoutV3(
 
   let jointFactorProof = false;
   let jointInnerSolverStatus: JointLoadoutV3Result["proof"]["innerSolverStatus"] = "Optimal";
+  let jointMipTermination: JointMipTermination | undefined;
   let exactSharedDomainProof = false;
   let exactStateProof = false;
   const sharedStates = await findBestSharedStateLoadout({
-    options, contexts, commonChoicesByName, foodChoices, projections: commonSlotProjections,
+    // State search currently models one effect per physical key. Ambiguous key
+    // domains use the complete restricted branch search below instead.
+    options: ambiguousSharedFoods
+      ? { ...options, strategies: { ...strategies, sharedStateSearch: "off" } }
+      : options,
+    contexts, commonChoicesByName, foodChoices, projections: commonSlotProjections,
     assertWithinBudget, remainingTimeLimit,
   });
   emitProfileEvent(contexts[0]?.job.options.onSolverProgress, "HiGHS", "joint:shared-state-search",
@@ -287,7 +336,7 @@ export async function findBestJointLoadoutV3(
   if (exactStateProof) {
     // The bounded attempt completed its whole domain (or reached the certified
     // independent-baseline ceiling), so no floating joint MIP is required.
-  } else if (contexts.every((context) => context.active) && options.commonSlots.length > 0 &&
+  } else if (!ambiguousSharedFoods && contexts.every((context) => context.active) && options.commonSlots.length > 0 &&
     !hasOnlyOneCommonAssignment) {
     const seedCandidates: {
       key: string;
@@ -518,12 +567,15 @@ export async function findBestJointLoadoutV3(
       ...(options.onProgress === undefined ? {} : { onProgress: options.onProgress }),
       isCancelled: cancellationRequested,
     };
-    const joint = stopAtProvenCeiling || exactSharedDomainProof
-      ? undefined
-      : await findBestJointFactorMip(jointOptions);
+    const requiresJointSolve = !stopAtProvenCeiling && !exactSharedDomainProof;
+    const joint = requiresJointSolve ? await findBestJointFactorMip(jointOptions) : undefined;
     assertWithinBudget("联合因子模型复核");
+    if (requiresJointSolve && joint === undefined && best !== undefined) {
+      throw new Error("联合因子模型未找到解，与已有可行配装矛盾");
+    }
     if (joint !== undefined) {
       jointInnerSolverStatus = joint.innerSolverStatus;
+      jointMipTermination = joint.termination;
       mutable.innerSolves += joint.solverRuns;
       mutable.completeNodes++;
       const results = joint.results.map((result, index) => ({ ...result,
@@ -533,7 +585,7 @@ export async function findBestJointLoadoutV3(
       }));
       updateBest(exactScore(results), results);
     }
-    jointFactorProof = !exactSharedDomainProof;
+    jointFactorProof = joint !== undefined;
   } else {
     for (const foodChoice of foodChoices) {
       if (stopAtProvenCeiling) break;
@@ -546,7 +598,10 @@ export async function findBestJointLoadoutV3(
 
   assertWithinBudget("结果整理");
   if (best === undefined) return undefined;
-  const stats = statisticsSnapshot(mutable, startedAt, timeLimitMs, cacheLimit, cache.size);
+  const mipProof = jointMipTermination === undefined ? undefined : jointMipProofDescriptions[jointMipTermination];
+  const termination: JointLoadoutV3Result["proof"]["termination"] = jointMipTermination ??
+    (stopAtProvenCeiling ? "baseline-ceiling" : exactStateProof ? "shared-state-enumeration" :
+      exactSharedDomainProof ? "shared-domain-enumeration" : "outer-branch-bound");
   const withMetrics = (context: JobContext, result: ExactMipResult): JointLoadoutJobResultV3 => {
     const factors = factorsForResult(context, result);
     const gcd = factors.gcdCentiseconds / 100;
@@ -556,7 +611,7 @@ export async function findBestJointLoadoutV3(
       damagePerSecond: gcd > 0 ? result.damage / gcd : 0,
     };
   };
-  return {
+  const result: JointLoadoutV3Result = {
     value: {
       numerator: best.score.numerator.toString(),
       denominator: best.score.denominator.toString(),
@@ -568,7 +623,6 @@ export async function findBestJointLoadoutV3(
       withMetrics(context, best!.jobResults[context.job.id]!),
     ])),
     optima: Object.fromEntries(contexts.map((context) => [context.job.id, withMetrics(context, context.optimum)])),
-    statistics: stats,
     proof: {
       complete: true,
       objective,
@@ -577,8 +631,12 @@ export async function findBestJointLoadoutV3(
         ? sharedStates.statistics.termination === "baseline-ceiling"
           ? "每个独立最优基线给出其职业归一化目标的上界；已恢复的合法共同装备和食物同时达到全部职业上界"
           : "共享完整属性状态逐层精确合并；每个食物/共享速度上下文以全部合法私有状态独立最大化各职业目标，使用 BigInt 有理数比较原归一化总和"
+        : stopAtProvenCeiling
+        ? "每个独立最优基线给出其职业归一化目标的上界；已恢复的合法共同装备和食物同时达到全部职业上界"
         : jointFactorProof
-        ? "单职业最优基线归一化后，每职业比例不超过 1；总和不超过职业数减 1 加比例乘积，乘积仅筛选可能改进的因子签名；最终总和使用 BigInt 有理数比较"
+        ? mipProof!.outerBound
+        : exactSharedDomainProof
+        ? "完整枚举全部共享装备和食物组合，每个组合分别求各职业条件最优，再使用 BigInt 有理数比较原归一化总和"
         : objective === "dps"
         ? "每个外层节点以各职业在已固定通用装备下独立重优化的 DPS 上界求和；product/GCD 归一化分数用 BigInt 有理数比较"
         : "每个外层节点以各职业在已固定通用装备下独立重优化的伤害上界求和；归一化分数用 BigInt 有理数比较",
@@ -586,22 +644,25 @@ export async function findBestJointLoadoutV3(
       formalCertificate: false,
       numericalLimitation: exactStateProof
         ? "共享状态与私有包络已用完整整数属性和 BigInt 目标完成；独立最优基线仍依赖 HiGHS 最优状态可信，未提供独立形式化基线证书"
-        : "HiGHS 报告 Optimal，或经保守取整的 MIP 对偶上界已不高于精确 BigInt incumbent；模型行与属性重建均已复核，但这些求解器结果不是独立形式化证书",
+        : mipProof?.numericalLimitation ??
+          "独立最优基线和各受限子问题的完成性仍依赖 HiGHS 判定可信；外层分支、共享组合及 BigInt 有理数上界按实际终止来源复核，未提供独立形式化证书",
+      termination,
       terminationReason: exactStateProof
         ? sharedStates.statistics.termination === "baseline-ceiling"
           ? "合法共享状态已达到所有独立最优基线之和；逐职业基线界均已复核"
           : "已完整穷尽必要条件保留的共享状态/食物/速度上下文，并完成全部真实私有包络与原候选恢复"
         : stopAtProvenCeiling
         ? "已达到各职业单独最优基线之和这一全局上界"
-        : jointFactorProof && jointInnerSolverStatus === "DualBound"
-        ? "HiGHS MIP 对偶上界不高于当前精确 BigInt incumbent，已证明不存在严格改进解"
         : jointFactorProof
-        ? "完整共享模型已穷尽归一化总和可能改进的因子签名；乘积仅用于必要条件筛选，最终比较精确有理数总和"
+        ? mipProof!.terminationReason
         : exactSharedDomainProof
         ? "已穷尽全部共享装备/食物组合，并对每个组合精确求得各职业条件最优；结果以 BigInt 有理数比较"
         : "所有未剪枝通用装备分支均已完成，剩余分支由精确有理数上界剪除",
     },
+    statistics: statisticsSnapshot(mutable, startedAt, timeLimitMs, cacheLimit, cache.size),
   };
+  assertWithinBudget("结果返回");
+  return result;
 
   async function visit(
     fixed: Map<string, CommonChoice>,

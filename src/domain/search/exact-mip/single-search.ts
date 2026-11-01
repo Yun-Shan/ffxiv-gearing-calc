@@ -35,12 +35,13 @@ import { SURROGATE_OBJECTIVE_SCALE } from "./model-preparation.ts";
 import { hasStrictlyBetterFactorCombination } from "../signature-band.ts";
 import type { FactorClass } from "./types.ts";
 import { slotsForResultWithResistanceAllocations } from "./result-decoding.ts";
-import { foodForResult } from "./result-decoding.ts";
+import { assertRequestedGcd, foodForResult } from "./result-decoding.ts";
 import { getAttributeVector } from "./attributes.ts";
 import { betterFactors } from "./factor-model.ts";
 import { getMemoryUsageSnapshot } from "../memory-usage.ts";
 import { assertClanIndex } from "../../clans.ts";
 import { normalizeSearchStrategies, strategyEnabled } from "../strategies.ts";
+import { prepareStrictImprovementCover } from "./strict-improvement-cover.ts";
 
 export async function findBestLoadoutExactMip(
   options: ExactMipOptions,
@@ -61,6 +62,11 @@ export async function findBestLoadoutExactMip(
   const preparationBudgetBaseMs = maxSearchMs ?? 110_000;
   const timeLimitReached = () =>
     maxSearchMs !== undefined && performance.now() - startedAt >= maxSearchMs;
+  const requireSearchActive = () => {
+    throwIfCancelled(options.isCancelled);
+    if (timeLimitReached()) throw new Error("精确 MIP 搜索达到时限，未完成最优性证明");
+  };
+  requireSearchActive();
   const modelPreparationStartedAt = performance.now();
   const candidateUpperBoundCandidateCount = options.slots.reduce((total, slot) => total + slot.length, 0);
   const canonicalCandidateUpperBoundTrusted = hasCanonicalEvaluatorCandidateUpperBound(options);
@@ -99,6 +105,7 @@ export async function findBestLoadoutExactMip(
   let prepared: Awaited<ReturnType<typeof prepareExactMipModel>> | undefined;
   if (candidateUpperBoundEnabled) {
     let initialModel = buildLinearAttributeModel(options);
+    requireSearchActive();
     if (initialModel === undefined) return undefined;
     const initialBuildMs = performance.now() - modelPreparationStartedAt;
     const greedyStartedAt = performance.now();
@@ -181,6 +188,7 @@ export async function findBestLoadoutExactMip(
     modelPreparationMs = performance.now() - ordinaryPreparationStartedAt;
   }
   throwIfCancelled(options.isCancelled);
+  requireSearchActive();
   if (prepared === undefined) return undefined;
   const { model, groups, factorEvaluator, useDps, qByVariable,
     mainAttribute, weaponAttribute, detAttribute, tenAttribute, crtAttribute, dhtAttribute, speedAttribute } = prepared;
@@ -312,7 +320,7 @@ export async function findBestLoadoutExactMip(
     objective: Map<string, number>,
     phaseName: string,
     minimumSurrogate?: number,
-  ): Promise<LinearMipSolution> => {
+  ): Promise<{ solution: LinearMipSolution; termination: "native-result" | "strict-improvement-infeasible" }> => {
     throwIfCancelled(options.isCancelled);
     const remainingMs = maxSearchMs === undefined
       ? undefined
@@ -370,9 +378,29 @@ export async function findBestLoadoutExactMip(
     excludedSignatures.forEach((signature, index) => {
       addRows(rows, `nogood_${index}`, signature.map((variable) => [variable, 1] as const), "<=", signature.length - 1);
     });
+    let hasStrictImprovementCover = false;
+    if (phaseName === "exact_damage_band_feasibility" && best !== undefined &&
+        firstSurrogate !== undefined && minimumSurrogate !== undefined &&
+        canonicalCandidateUpperBoundTrusted && !useDps &&
+        strategyEnabled(options.strategies, "factorReachability")) {
+      const coverStartedAt = performance.now();
+      const cover = prepareStrictImprovementCover({
+        prepared, rows, variables: solveBounds, incumbent: best.factors,
+        gcdChoiceAttribute: options.speedAttributeId === undefined ? undefined : model.idToIndex.get(options.speedAttributeId),
+        qMinimum: minimumSurrogate, qMaximum: firstSurrogate,
+        checkActive: requireSearchActive,
+      });
+      signatureBandElapsedMs += performance.now() - coverStartedAt;
+      requireSearchActive();
+      if (cover.status === "covered" && cover.targetCount > 0) {
+        rows.push(...cover.rows);
+        hasStrictImprovementCover = true;
+      }
+    }
     throwIfCancelled(options.isCancelled);
     const solverCallStartedAt = performance.now();
     let materiaRequestStatistics: MateriaFamilyProjectionStatistics | undefined;
+    requireSearchActive();
     const output = await solveIntegerModel({
       strategies: options.strategies,
       name: phaseName,
@@ -384,7 +412,7 @@ export async function findBestLoadoutExactMip(
       ...(materiaFamilies.length === 0 ? {} : { materiaFamilies,
         onMateriaFamilyProjection: (statistics: MateriaFamilyProjectionStatistics) => { materiaRequestStatistics = statistics; } }),
       isCancelled: options.isCancelled,
-      timeLimitMs: remainingMs,
+      timeLimitMs: maxSearchMs === undefined ? undefined : searchDeadline - performance.now(),
       ...(initialStart === undefined || excludedSignatures.length > 0
         ? {}
         : { solutionHint: initialStart }),
@@ -393,6 +421,7 @@ export async function findBestLoadoutExactMip(
         : { onProgress: options.onSolverProgress }),
       ...(options.onSolverCallback === undefined ? {} : { onCallback: options.onSolverCallback }),
     });
+    requireSearchActive();
     materiaStatistics.solveRequests++;
     if (materiaRequestStatistics !== undefined && materiaStatistics.requests.length < 64) materiaStatistics.requests.push(materiaRequestStatistics);
     solverWallMs += performance.now() - solverCallStartedAt;
@@ -401,7 +430,9 @@ export async function findBestLoadoutExactMip(
     throwIfCancelled(options.isCancelled);
     if (output.Status === "Optimal") validateMipSolution(rows, solveBounds, output.Columns);
     options.onProgress?.(`${solverName} ${phaseName} 状态=${output.Status}；目标=${output.ObjectiveValue}`);
-    return output;
+    requireSearchActive();
+    return { solution: output, termination: hasStrictImprovementCover && output.Status === "Infeasible"
+      ? "strict-improvement-infeasible" : "native-result" };
   };
   const setRange = (variable: string, minimum?: number, maximum?: number) => {
     addRangeConstraint(model.rows, `max_ten_${model.rows.length}`, variable, minimum, maximum);
@@ -409,7 +440,8 @@ export async function findBestLoadoutExactMip(
 
   if (options.constraints?.maxToughnessMode === true) {
     const tenVariable = model.finalVariables[toughnessIndex!]!;
-    const phaseOne = await solveModel(new Map([[tenVariable, 1]]), "maximum_tenacity");
+    const { solution: phaseOne } = await solveModel(new Map([[tenVariable, 1]]), "maximum_tenacity");
+    requireSearchActive();
     if (phaseOne.Status === "Infeasible") return undefined;
     if (phaseOne.Status !== "Optimal") throw new Error(`最高坚韧阶段未证明最优：${phaseOne.Status}`);
     const maximumTenacity = phaseOne.Columns[tenVariable]?.Primal;
@@ -460,18 +492,24 @@ export async function findBestLoadoutExactMip(
         signatureBandElapsedMs += performance.now() - bandStartedAt;
         lastSignatureBandIncumbent = incumbentKey;
       }
-      if (timeLimitReached()) {
-        throw new Error("精确 MIP 搜索达到时限，未完成最优性证明");
-      }
+      requireSearchActive();
       if (!lastSignatureBandMayContainBetter) {
         signatureBandProof = true;
         options.onProgress?.("签名带 BigInt 组合上界证明无更优伤害因子，跳过完整 MIP 带宽可行性求解");
         break;
       }
     }
-    const output = firstSurrogate === undefined
+    const { solution: output, termination } = firstSurrogate === undefined
       ? await solveModel(objective, "exact_damage_initial")
       : await solveModel(new Map(), "exact_damage_band_feasibility", firstSurrogate - errorBand);
+    requireSearchActive();
+    if (termination === "strict-improvement-infeasible") {
+      // This proves only that the original constraints admit no strict damage
+      // improvement in the band. It does not claim the whole band is infeasible.
+      if (best === undefined || output.Status !== "Infeasible") throw new Error("严格改善覆盖缺少已核验下界或不可行证明");
+      options.onProgress?.("严格改善因子覆盖在完整候选约束下不可行，已证明当前伤害最优");
+      break;
+    }
     if (output.Status === "Infeasible") {
       if (best === undefined) {
         return undefined;
@@ -550,12 +588,7 @@ export async function findBestLoadoutExactMip(
     if (evaluation === undefined || !Number.isFinite(evaluation.damage) || !Number.isFinite(evaluation.gcd)) {
       throw new Error("MIP 返回的配装无法计算伤害或 GCD");
     }
-    const requestedGcds = options.constraints?.gcdChoices ??
-      (options.constraints?.gcd === undefined ? undefined : [options.constraints.gcd]);
-    if (requestedGcds !== undefined && !requestedGcds.some((gcdChoice) =>
-      Math.round(gcdChoice * 100) === factors.gcdCentiseconds)) {
-      throw new Error(`精确 MIP 返回 GCD=${factors.gcdCentiseconds / 100}，不在请求集合 ${requestedGcds.join(", ")} 中`);
-    }
+    assertRequestedGcd(factors.gcdCentiseconds, options.constraints, "精确 MIP");
     const candidate = { result: { selection, food, damage: evaluation.damage }, factors, toughness: toughnessIndex === undefined ? undefined : attributes[toughnessIndex] };
     if (maximumToughness !== undefined && candidate.toughness !== maximumToughness) {
       throw new Error(`最高坚韧阶段固定值不一致：${candidate.toughness}，预期 ${maximumToughness}`);
@@ -572,10 +605,9 @@ export async function findBestLoadoutExactMip(
     }
     excludedSignatures.push(selectedSignature);
     options.onProgress?.(`精确候选已核验 ${excludedSignatures.length} 个；固定点上界=${surrogate}`);
-    if (timeLimitReached()) {
-      throw new Error("精确 MIP 搜索达到时限，未完成最优性证明");
-    }
+    requireSearchActive();
   }
+  requireSearchActive();
   if (best === undefined) return undefined;
   const statistics = createStatistics();
   if (options.onSolverProgress !== undefined && isProfileTimingEnabled()) {
@@ -590,6 +622,7 @@ export async function findBestLoadoutExactMip(
       })}`,
     });
   }
+  requireSearchActive();
   return {
     ...best.result,
     ...(options.constraints?.maxToughnessMode === true && best.toughness !== undefined

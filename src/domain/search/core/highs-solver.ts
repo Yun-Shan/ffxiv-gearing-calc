@@ -3,15 +3,20 @@ import type { ModelRow } from "./model-types.ts";
 import type { VariableBounds } from "./model-types.ts";
 import type { LinearMipRequest } from "../linear-mip.ts";
 import type { LinearMipSolution } from "../linear-mip.ts";
+import { hasMipPoint } from "../linear-mip.ts";
 import { isProfileTimingEnabled } from "./diagnostics.ts";
 import { emitSolverProfile } from "./diagnostics.ts";
 import type { HighsCallbackName } from "../linear-mip.ts";
 import type { CallbackEvent } from "highs";
+import type { InterruptCallbackEvent } from "highs";
 import { prepareEqualityQuotient } from "./equality-quotient.ts";
 import { prepareMateriaFamilyProjection } from "./materia-family-projection.ts";
 import type { MateriaFamilyProjectionStatistics } from "./materia-family-projection.ts";
 import { throwIfCancelled } from "./cancellation.ts";
 import { normalizeSearchStrategies } from "./strategies.ts";
+import { validateMipSolution } from "./solution-validation.ts";
+import { prepareRatioDeficitRepresentation } from "./ratio-deficit.ts";
+import { prepareRadixRepresentation } from "./radix-representation.ts";
 
 let highsPromise: ReturnType<typeof loadHighs> | undefined;
 
@@ -136,17 +141,30 @@ export function measureNonzeroRowDensity(
 export async function solveIntegerModel(
   request: LinearMipRequest,
 ): Promise<LinearMipSolution> {
+  const callStartedAt = performance.now();
+  const validationRequest = request;
+  const budgetMs = request.timeLimitMs;
+  if (budgetMs !== undefined && (!Number.isFinite(budgetMs) || budgetMs < 0)) {
+    throw new Error("HiGHS 请求时间预算必须是非负有限毫秒数");
+  }
+  const deadline = budgetMs === undefined ? Number.POSITIVE_INFINITY : callStartedAt + budgetMs;
+  let nativeInterruption: { error: unknown } | undefined;
+  checkRequest();
+  validateJointObjective();
   request = { ...request, strategies: normalizeSearchStrategies(request.strategies), name: `${request.name}#${++linearMipRunSequence}` };
+  // Existing preparation/recovery loops also obey the original absolute deadline.
+  request = { ...request, isCancelled: () => { checkRequest(); return false; } };
   if (request.strategies?.feasibleSeeds === "off") request = { ...request, solutionHint: undefined };
 
   const profileEnabled = request.onProgress !== undefined && isProfileTimingEnabled();
-  const callStartedAt = performance.now();
   const originalVariables = request.variables.length;
   const originalRows = request.rows.length;
   let materiaStatistics: MateriaFamilyProjectionStatistics | undefined;
   const materiaObserver = request.onMateriaFamilyProjection;
   request = { ...request, onMateriaFamilyProjection: (statistics) => { materiaStatistics = statistics; materiaObserver?.(statistics); } };
+  checkRequest();
   const materia = prepareMateriaFamilyProjection(request);
+  checkRequest();
   request = materia?.request ?? request;
   const materiaPreparationMs = performance.now() - callStartedAt;
   const baseRequest = request;
@@ -201,7 +219,25 @@ export async function solveIntegerModel(
   throwIfCancelled(baseRequest.isCancelled);
   request = acceptedQuotient?.request ?? baseRequest;
   const equalityPreparationMs = automaticPolicy || validDensityPolicy ? performance.now() - equalityStartedAt : 0;
-  const selectedDensity = acceptedQuotient === undefined ? baseDensity : candidateDensity;
+  const equalityRequest = request;
+  let ratioDeficit: ReturnType<typeof prepareRatioDeficitRepresentation>;
+  let radix: ReturnType<typeof prepareRadixRepresentation>;
+  if (validationRequest.jointObjective?.kind === "ratio-bound") {
+    const variables = [...new Set(validationRequest.jointObjective.variables.map((name) =>
+      acceptedQuotient?.aliases.get(name) ?? name))];
+    checkRequest();
+    const candidate = prepareRatioDeficitRepresentation(request, { variables, scale: validationRequest.jointObjective.scale });
+    checkRequest();
+    if (candidate !== undefined && candidate.centeredRows > 0) {
+      ratioDeficit = candidate;
+      request = candidate.request;
+    }
+    radix = prepareRadixRepresentation(request);
+    checkRequest();
+    request = radix?.request ?? request;
+  }
+  const selectedDensity = ratioDeficit !== undefined || radix !== undefined ? undefined
+    : acceptedQuotient === undefined ? baseDensity : candidateDensity;
   let modelNonzeros = selectedDensity === undefined ? 0 : Number(selectedDensity.nonzeros);
   if (selectedDensity === undefined) {
     for (const row of request.rows) {
@@ -210,6 +246,10 @@ export async function solveIntegerModel(
     }
   }
   if (profileEnabled) emitSolverProfile(request, "highs-call-start", {
+    jointObjective: validationRequest.jointObjective?.kind ?? "native",
+    ratioDeficit: ratioDeficit === undefined ? 0 : 1,
+    ratioDeficitCenteredRows: ratioDeficit?.centeredRows ?? 0,
+    radix: radix === undefined ? 0 : 1,
     equalityOriginalVariables: originalVariables,
     equalityOriginalRows: originalRows,
     equalityVariablesRemoved: acceptedQuotient?.variablesRemoved ?? 0,
@@ -234,7 +274,9 @@ export async function solveIntegerModel(
     objectiveTerms: request.objective.size,
     hintTerms: request.solutionHint?.size ?? 0,
   });
+  checkRequest();
   const highs = await getHighs();
+  checkRequest();
   const highsReadyAt = performance.now();
   const text = lpText(
     request.name,
@@ -244,10 +286,8 @@ export async function solveIntegerModel(
     request.binaryVariables,
     request.integerVariables,
   );
+  checkRequest();
   const lpReadyAt = performance.now();
-  const timeLimit = request.timeLimitMs === undefined
-    ? undefined
-    : Math.max(0.05, request.timeLimitMs / 1000);
   const startedAt = performance.now();
   let lastMipCheckpointAt = startedAt;
   let modelReadyMs = 0;
@@ -255,29 +295,49 @@ export async function solveIntegerModel(
   let finalStatus = "unknown";
   let stoppedByDualBound = false;
   let lastObjectiveBoundCheckAt = Number.NEGATIVE_INFINITY;
-  const result = await highs.withModel({ format: "lp", data: text }, (native) => {
+  const result = await highs.withModel((native) => {
+    checkRequest();
+    requireSuccessfulCall("options.set.small_matrix_value.before-import", native.options.set("small_matrix_value", 1e-12));
+    requireSmallMatrixValue("before-import");
+    checkRequest();
+    let importMetadata: ReturnType<typeof native.readModel> | undefined;
+    try {
+      importMetadata = native.readModel({ format: "lp", data: text });
+    } finally {
+      try {
+        requireSmallMatrixValue("after-import");
+      } finally {
+        checkRequest();
+      }
+    }
+    requireSuccessfulCall("readModel", importMetadata);
     modelReadyMs = performance.now() - lpReadyAt;
     const hasProgress = request.onProgress !== undefined;
     const hasCallbackTrace = request.onCallback !== undefined;
-    native.options.set({
+    requireSuccessfulCall("options.set.initial", native.options.set({
       output_flag: hasProgress || hasCallbackTrace,
       log_to_console: false,
       presolve: "on",
-      mip_rel_gap: 0,
-      mip_abs_gap: 0,
       mip_min_logging_interval: 1,
-      ...(timeLimit === undefined ? {} : { time_limit: timeLimit }),
-    });
+    }));
     let solutionHintEntries: readonly (readonly [number, number])[] | undefined;
     if (request.solutionHint !== undefined && request.solutionHint.size > 0) {
       const entries = [...request.solutionHint]
         .map(([name, value]) => [native.getColByName(name), value] as const)
         .sort(([left], [right]) => left - right);
       solutionHintEntries = entries;
-      native.setSolution({
-        indices: entries.map(([index]) => index),
-        values: entries.map(([, value]) => value),
-      });
+      try {
+        const hintStatus: { status: number } | undefined = native.setSolution({
+          indices: entries.map(([index]) => index),
+          values: entries.map(([, value]) => value),
+        });
+        if (hintStatus?.status !== highs.constants.status.error) requireSuccessfulCall("setSolution", hintStatus);
+      } catch (error) {
+        // The persistent HiGHS wrapper throws for a native -1 from setSparseSolution.
+        if (!(error instanceof Error && "status" in error && error.status === highs.constants.status.error &&
+          "operation" in error && error.operation === "setSparseSolution")) throw error;
+      }
+      checkRequest();
     }
     let userSolutionAttempted = false;
     const callbacks: NonNullable<Parameters<typeof native.run>[0]> = {
@@ -293,39 +353,46 @@ export async function solveIntegerModel(
           return undefined;
         },
       } : {}),
-      ...(hasCallbackTrace || request.stopWhenDualBoundProvesOptimal !== undefined ? {
-        [highs.constants.callbackType.mipInterrupt]: (event) => {
-          if (hasCallbackTrace) emitFullCallback("mipInterrupt", event);
-          const now = performance.now();
-          const dualBound = event.data.mip_dual_bound;
-          if (!stoppedByDualBound && request.stopWhenDualBoundProvesOptimal !== undefined &&
-            now - lastObjectiveBoundCheckAt >= 100 && typeof dualBound === "number" &&
-            Number.isFinite(dualBound)) {
-            lastObjectiveBoundCheckAt = now;
-            if (request.stopWhenDualBoundProvesOptimal(dualBound)) {
-              stoppedByDualBound = true;
-              event.interrupt();
-              return undefined;
-            }
+      [highs.constants.callbackType.mipInterrupt]: (event) => {
+        if (interruptIfStopped(event)) return undefined;
+        if (hasCallbackTrace) emitFullCallback("mipInterrupt", event);
+        if (interruptIfStopped(event)) return undefined;
+        const now = performance.now();
+        const dualBound = event.data.mip_dual_bound;
+        if (!stoppedByDualBound && request.stopWhenDualBoundProvesOptimal !== undefined &&
+          now - lastObjectiveBoundCheckAt >= 100 && typeof dualBound === "number" &&
+          Number.isFinite(dualBound)) {
+          lastObjectiveBoundCheckAt = now;
+          const proved = request.stopWhenDualBoundProvesOptimal(dualBound);
+          if (interruptIfStopped(event)) return undefined;
+          if (proved) {
+            stoppedByDualBound = true;
+            event.interrupt();
+            return undefined;
           }
-          if (hasCallbackTrace && now - lastMipCheckpointAt >= 1000) {
-            lastMipCheckpointAt = now;
-            if (hasProgress) emitHighsProgress("bound", event.data);
-          }
-          return undefined;
-        },
-      } : {}),
+        }
+        if (hasCallbackTrace && now - lastMipCheckpointAt >= 1000) {
+          lastMipCheckpointAt = now;
+          if (hasProgress) emitHighsProgress("bound", event.data);
+        }
+        interruptIfStopped(event);
+        return undefined;
+      },
+      [highs.constants.callbackType.simplexInterrupt]: (event) => {
+        if (interruptIfStopped(event)) return undefined;
+        if (hasCallbackTrace) emitFullCallback("simplexInterrupt", event);
+        interruptIfStopped(event);
+        return undefined;
+      },
+      [highs.constants.callbackType.ipmInterrupt]: (event) => {
+        if (interruptIfStopped(event)) return undefined;
+        if (hasCallbackTrace) emitFullCallback("ipmInterrupt", event);
+        interruptIfStopped(event);
+        return undefined;
+      },
       ...(hasCallbackTrace ? {
         [highs.constants.callbackType.logging]: (event) => {
           emitFullCallback("logging", event);
-          return undefined;
-        },
-        [highs.constants.callbackType.simplexInterrupt]: (event) => {
-          emitFullCallback("simplexInterrupt", event);
-          return undefined;
-        },
-        [highs.constants.callbackType.ipmInterrupt]: (event) => {
-          emitFullCallback("ipmInterrupt", event);
           return undefined;
         },
         [highs.constants.callbackType.mipSolution]: (event) => {
@@ -346,7 +413,14 @@ export async function solveIntegerModel(
               indices: solutionHintEntries.map(([index]) => index),
               values: solutionHintEntries.map(([, value]) => value),
             });
-            if (status.status !== highs.constants.status.error) event.repairSolution();
+            // A rejected heuristic hint is not a failed model or a proof result.
+            if (status.status !== highs.constants.status.error) {
+              requireSuccessfulCall("callback.setSolution", status);
+              const repairStatus = event.repairSolution();
+              if (repairStatus.status !== highs.constants.status.error) {
+                requireSuccessfulCall("callback.repairSolution", repairStatus);
+              }
+            }
           }
           return undefined;
         },
@@ -361,25 +435,138 @@ export async function solveIntegerModel(
       constraints: request.rows.length,
       nonzeros: modelNonzeros,
     });
+    checkRequest();
+    // Reset every proof-affecting limit at the actual run boundary, including
+    // the unlimited case so an earlier purpose cannot leak its time limit.
+    const nativeTimeLimit = remainingNativeSeconds();
+    const absoluteGap = validationRequest.jointObjective?.kind === "signature" ? 1024 : 0;
+    if (nativeTimeLimit === undefined) {
+      // The installed wrapper rejects numeric Infinity in options.set, while
+      // its native options-file parser supports the explicit infinite limit.
+      requireSuccessfulCall("options.read.unlimited-time", native.options.read("time_limit = inf\n"));
+    }
+    requireSuccessfulCall("options.set.before-run", native.options.set({
+      small_matrix_value: 1e-12,
+      mip_abs_gap: absoluteGap,
+      mip_rel_gap: 0,
+      mip_max_improving_sols: 2_147_483_647,
+      ...(nativeTimeLimit === undefined ? {} : { time_limit: nativeTimeLimit }),
+    }));
+    requireSmallMatrixValue("before-run");
+    if (native.options.get("mip_abs_gap") !== absoluteGap || native.options.get("mip_rel_gap") !== 0 ||
+        native.options.get("mip_max_improving_sols") !== 2_147_483_647 ||
+        native.options.get("time_limit") !== (nativeTimeLimit ?? Number.POSITIVE_INFINITY)) {
+      throw new Error("HiGHS 原生证明选项未按本次请求正确复位");
+    }
+    checkRequest();
     const nativeStartedAt = performance.now();
-    native.run(callbacks);
-    nativeRunMs = performance.now() - nativeStartedAt;
-    const status = native.getModelStatus();
-    const Status = stoppedByDualBound ? "DualBound"
-      : status === highs.constants.modelStatus.optimal ? "Optimal"
-      : status === highs.constants.modelStatus.infeasible ? "Infeasible" : `状态代码 ${status}`;
-    finalStatus = Status;
-    const Columns: Record<string, { Primal: number }> = {};
-    if (Status === "Optimal") {
-      const solution = native.getSolution();
-      for (const { name } of request.variables) {
-        Columns[name] = { Primal: solution.colValue[native.getColByName(name)]! };
+    let runMetadata: ReturnType<typeof native.run> | undefined;
+    try {
+      runMetadata = native.run(callbacks);
+    } finally {
+      nativeRunMs = performance.now() - nativeStartedAt;
+      try {
+        requireSmallMatrixValue("after-run");
+      } finally {
+        checkRequest();
       }
     }
-    return { Status, Columns, ObjectiveValue: native.getObjectiveValue() };
+    requireSuccessfulCall("run", runMetadata);
+    checkRequest();
+    const status = native.getModelStatus();
+    if (runMetadata?.modelStatus !== status) throw new Error("HiGHS 运行与模型的终止状态不一致");
+    if (status === highs.constants.modelStatus.infeasible) {
+      const primalStatus = native.info.get("primal_solution_status");
+      checkRequest();
+      if (primalStatus === highs.constants.solutionStatus.feasible) {
+        throw new Error("HiGHS 不可行状态与可行原生 primal 矛盾");
+      }
+      if (primalStatus !== highs.constants.solutionStatus.none && primalStatus !== highs.constants.solutionStatus.infeasible) {
+        throw new Error("HiGHS 不可行结果的 primal 状态未知");
+      }
+      const hint = validationRequest.solutionHint;
+      if (hint !== undefined) {
+        const hintedColumns: Record<string, { Primal: number }> = Object.create(null);
+        for (const { name } of validationRequest.variables) {
+          checkRequest();
+          const value = hint.get(name);
+          if (value !== undefined) hintedColumns[name] = { Primal: value };
+        }
+        if (isFeasibleWitness(validationRequest, hintedColumns)) {
+          throw new Error("HiGHS 不可行状态与原完整整数模型的可行提示矛盾");
+        }
+      }
+      // An infeasible solve may leave an absent, zero, or invalid buffer. It is
+      // only a contradiction when every native integer row really accepts it;
+      // failure to find a witness is not an independent infeasibility proof.
+      const { numCols } = native.getDimensions();
+      const solution = native.getSolution();
+      if (numCols === request.variables.length && solution.colValue.length === numCols) {
+        const candidate: Record<string, { Primal: number }> = Object.create(null);
+        const indices = new Set<number>();
+        for (const { name } of request.variables) {
+          checkRequest();
+          const index = native.getColByName(name);
+          const value = solution.colValue[index];
+          if (!Number.isInteger(index) || index < 0 || index >= numCols || indices.has(index)
+            || Object.hasOwn(candidate, name) || native.getColName(index) !== name
+            || value === undefined || !Number.isFinite(value)) break;
+          indices.add(index);
+          candidate[name] = { Primal: value };
+        }
+        if (indices.size === numCols && isFeasibleWitness(request, candidate)) {
+          throw new Error("HiGHS 不可行状态与原生完整整数模型的可行列值矛盾");
+        }
+      }
+    }
+    const Status = stoppedByDualBound && status === highs.constants.modelStatus.interrupted ? "DualBound"
+      : status === highs.constants.modelStatus.optimal
+        ? validationRequest.jointObjective?.kind === "signature" || validationRequest.jointObjective?.kind === "feasibility"
+          ? "FeasibleSignature" : "Optimal"
+      : status === highs.constants.modelStatus.infeasible ? "Infeasible" : `状态代码 ${status}`;
+    finalStatus = Status;
+    const Columns: Record<string, { Primal: number }> = Object.create(null);
+    if (hasMipPoint({ Status, Columns })) {
+      if (native.info.get("primal_solution_status") !== highs.constants.solutionStatus.feasible) {
+        throw new Error("HiGHS 最优状态没有可行原生 primal");
+      }
+      const { numCols } = native.getDimensions();
+      const solution = native.getSolution();
+      if (numCols !== request.variables.length || solution.colValue.length !== numCols) {
+        throw new Error("HiGHS 最优解原生列数或稠密 primal 长度不完整");
+      }
+      const indices = new Set<number>();
+      for (const { name } of request.variables) {
+        checkRequest();
+        const index = native.getColByName(name);
+        if (!Number.isInteger(index) || index < 0 || index >= numCols || indices.has(index) ||
+            Object.hasOwn(Columns, name) || native.getColName(index) !== name) {
+          throw new Error(`HiGHS 原生变量名与列索引不是双射：${name}`);
+        }
+        const value = solution.colValue[index];
+        if (value === undefined || !Number.isFinite(value)) {
+          throw new Error(`HiGHS 最优解缺少显式有限列：${name}`);
+        }
+        indices.add(index);
+        Columns[name] = { Primal: value };
+      }
+    }
+    const nativeResult = { Status, Columns, ObjectiveValue: native.getObjectiveValue() };
+    validateCompleteSolution(request, nativeResult);
+    return nativeResult;
+
+    function requireSmallMatrixValue(phase: string): void {
+      if (native.options.get("small_matrix_value") !== 1e-12) {
+        throw new Error(`HiGHS small_matrix_value 未保持 1e-12：${phase}`);
+      }
+    }
   });
+  checkRequest();
   if (profileEnabled) emitSolverProfile(request, "highs-solve-end", {
     status: finalStatus,
+    jointObjective: validationRequest.jointObjective?.kind ?? "native",
+    ratioDeficit: ratioDeficit === undefined ? 0 : 1,
+    radix: radix === undefined ? 0 : 1,
     getHighsMs: highsReadyAt - callStartedAt,
     lpSerializationMs: lpReadyAt - highsReadyAt,
     modelImportMs: modelReadyMs,
@@ -387,6 +574,22 @@ export async function solveIntegerModel(
     totalMs: performance.now() - callStartedAt,
     lpCharacters: text.length,
   });
+  checkRequest();
+  const unradixed = radix?.expandSolution(result) ?? result;
+  checkRequest();
+  if (radix !== undefined) validateCompleteSolution(ratioDeficit?.request ?? equalityRequest, unradixed);
+  checkRequest();
+  const uncentered = ratioDeficit?.expandSolution(unradixed) ?? unradixed;
+  checkRequest();
+  if (ratioDeficit !== undefined) validateCompleteSolution(equalityRequest, uncentered);
+  checkRequest();
+  const expanded = acceptedQuotient?.expandSolution(uncentered) ?? uncentered;
+  checkRequest();
+  validateCompleteSolution(baseRequest, expanded);
+  checkRequest();
+  const restored = materia?.expandSolution(expanded) ?? expanded;
+  checkRequest();
+  validateCompleteSolution(validationRequest, restored);
   request.onProgress?.({
     backend: "HiGHS",
     model: request.name,
@@ -397,12 +600,110 @@ export async function solveIntegerModel(
     status: result.Status,
     completed: result.Status === "Optimal",
   });
-  const expanded = acceptedQuotient?.expandSolution(result) ?? result;
-  const restored = materia?.expandSolution(expanded) ?? expanded;
   if (profileEnabled && materiaStatistics !== undefined) emitSolverProfile(request, "materia-family-projection", {
     ...materiaStatistics, finalSolverVariables: request.variables.length,
   });
+  checkRequest();
   return restored;
+
+  function checkRequest(): void {
+    throwIfCancelled(validationRequest.isCancelled);
+    if (nativeInterruption !== undefined) throw nativeInterruption.error;
+    if (performance.now() >= deadline) {
+      throw new Error("HiGHS 请求时间预算已耗尽，完整最优性复核未完成");
+    }
+  }
+
+  function remainingNativeSeconds(): number | undefined {
+    checkRequest();
+    if (budgetMs === undefined) return undefined;
+    const remaining = deadline - performance.now();
+    if (remaining <= 0) checkRequest();
+    return remaining / 1000;
+  }
+
+  function interruptIfStopped(event: InterruptCallbackEvent): boolean {
+    try {
+      checkRequest();
+      return false;
+    } catch (error) {
+      nativeInterruption ??= { error };
+      stoppedByDualBound = false;
+      event.interrupt();
+      return true;
+    }
+  }
+
+  function requireSuccessfulCall(operation: string, metadata: { readonly status: number } | undefined): void {
+    if (metadata == null || (metadata.status !== highs.constants.status.ok && metadata.status !== highs.constants.status.warning)) {
+      throw new Error(`HiGHS 原生调用失败或返回未知状态：${operation}`);
+    }
+  }
+
+  function validateCompleteSolution(model: LinearMipRequest, solution: LinearMipSolution): void {
+    checkRequest();
+    if (!hasMipPoint(solution)) return;
+    const names = new Set<string>();
+    for (const { name } of model.variables) {
+      checkRequest();
+      if (names.has(name) || !Object.hasOwn(solution.Columns, name) ||
+          !Number.isFinite(solution.Columns[name]?.Primal)) {
+        throw new Error(`HiGHS 最优解缺少唯一的显式有限列：${name}`);
+      }
+      names.add(name);
+    }
+    validateMipSolution(model.rows, model.variables, solution.Columns);
+    checkRequest();
+  }
+
+  function isFeasibleWitness(model: LinearMipRequest, columns: Record<string, { Primal: number }>): boolean {
+    checkRequest();
+    for (const { name } of model.variables) {
+      checkRequest();
+      if (!Object.hasOwn(columns, name) || !Number.isFinite(columns[name]?.Primal)) return false;
+    }
+    let feasible = false;
+    try {
+      // This pure validator has no cancellation callbacks; only an invalid
+      // candidate is swallowed. Request interruption remains outside the catch.
+      validateMipSolution(model.rows, model.variables, columns);
+      feasible = true;
+    } catch { /* An unusable buffer supplies no existence witness. */ }
+    checkRequest();
+    return feasible;
+  }
+
+  function validateJointObjective(): void {
+    const purpose = validationRequest.jointObjective;
+    if (purpose === undefined) return;
+    if (purpose.kind === "signature" || purpose.kind === "feasibility") {
+      if (validationRequest.stopWhenDualBoundProvesOptimal !== undefined) {
+        throw new Error("HiGHS 签名访问请求不能使用比例对偶界证明回调");
+      }
+      if (purpose.kind === "feasibility" && [...validationRequest.objective.values()].some((value) => value !== 0)) {
+        throw new Error("HiGHS 可行性访问请求必须使用零目标");
+      }
+      return;
+    }
+    if (purpose.kind !== "ratio-bound" || !Array.isArray(purpose.variables) || purpose.variables.length === 0 ||
+        new Set(purpose.variables).size !== purpose.variables.length || !Number.isSafeInteger(purpose.scale) || purpose.scale <= 0) {
+      throw new Error("HiGHS 联合比例目标声明无效");
+    }
+    const variables = new Set(validationRequest.variables.map(({ name }) => name));
+    const ratios = new Set(purpose.variables);
+    for (const name of ratios) {
+      checkRequest();
+      if (!variables.has(name) || validationRequest.objective.get(name) !== 1) {
+        throw new Error(`HiGHS 联合比例目标缺少原始 +1 比例列：${name}`);
+      }
+    }
+    for (const [name, coefficient] of validationRequest.objective) {
+      checkRequest();
+      if (coefficient !== 0 && (!ratios.has(name) || coefficient !== 1)) {
+        throw new Error(`HiGHS 联合比例目标含非比例目标项：${name}`);
+      }
+    }
+  }
 
   function emitFullCallback(callbackName: HighsCallbackName, event: CallbackEvent): void {
     request.onCallback?.({

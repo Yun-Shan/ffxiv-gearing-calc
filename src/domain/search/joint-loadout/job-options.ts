@@ -4,6 +4,7 @@ import type { FoodInfo, SharedSlotProjection } from "../types.ts";
 import { equipmentIdentity } from "../equipment-identity.ts";
 import type { CommonChoice, FoodChoice, JobContext } from "./types.ts";
 import { commonSlotIndex, projectEquipment } from "./shared-equipment.ts";
+import { foodsForChoice } from "./shared-foods.ts";
 
 export function minimumTimeLimit(...limits: (number | undefined)[]): number | undefined {
   const definedLimits = limits.filter((limit): limit is number => limit !== undefined);
@@ -29,8 +30,7 @@ export function makeJobOptions(
 
   let foods: readonly FoodInfo[] = context.job.options.foods;
   if (foodChoice !== undefined) {
-    const fixedFood = foodChoice.foods.get(context.job.id);
-    foods = fixedFood === undefined ? [] : [fixedFood];
+    foods = foodsForChoice(foodChoice, context.job.id);
   }
 
   const originalConstraints = context.constraints ?? {};

@@ -53,10 +53,8 @@ export function getAttributeVector(
     for (const param of food.baseParams) {
       const index = indexes.get(param.baseParamId);
       if (index === undefined) continue;
-      result[index] += Math.min(
-        param.maxValue,
-        Math.trunc((result[index]! + (param.baseValue ?? 0)) * (param.multiplier - 1) + 1e-7),
-      );
+      validateFoodParameter(param);
+      result[index] = applyFoodParameter(result[index]!, param);
     }
   }
   return result;
@@ -64,18 +62,36 @@ export function getAttributeVector(
 
 export function parseRationalRate(rate: number): { numerator: number; denominator: number } {
   const numerator = Math.round(rate * 100);
-  if (!Number.isSafeInteger(numerator) || numerator < 0) {
+  if (!Number.isFinite(rate) || !Number.isSafeInteger(numerator) || numerator < 0 || Math.abs(rate * 100 - numerator) > 1e-7) {
     throw new RangeError(`食物加成比例不是百分比整数：${rate}`);
   }
   const divisor = gcd(numerator, 100);
   return { numerator: numerator / divisor, denominator: 100 / divisor };
 }
 
+export function validateFoodParameter(param: FoodInfo["baseParams"][number]): { numerator: number; denominator: number } {
+  if (!Number.isFinite(param.multiplier) || param.multiplier < 1)
+    throw new RangeError(`食物加成比例不是百分比整数或为负值：${param.multiplier - 1}`);
+  if (!Number.isSafeInteger(param.maxValue) || param.maxValue < 0)
+    throw new RangeError("食物加成封顶必须为非负安全整数");
+  if (!Number.isSafeInteger(param.baseValue ?? 0) || (param.baseValue ?? 0) < 0)
+    throw new RangeError("食物基础属性必须为非负安全整数");
+  return parseRationalRate(param.multiplier - 1);
+}
+
+/** Applies one valid food row to the raw value of its attribute. */
+export function applyFoodParameter(raw: number, param: FoodInfo["baseParams"][number]): number {
+  const value = raw + Math.min(param.maxValue,
+    Math.trunc((raw + (param.baseValue ?? 0)) * (param.multiplier - 1) + 1e-7));
+  if (!Number.isSafeInteger(value) || value < 0) throw new RangeError("食物最终属性超过安全整数范围");
+  return value;
+}
+
 export function validateFoodRate(param: FoodInfo["baseParams"][number], maximumRaw: number): {
   numerator: number;
   denominator: number;
 } {
-  const rate = parseRationalRate(param.multiplier - 1);
+  const rate = validateFoodParameter(param);
   for (let raw = 0; raw <= maximumRaw; raw++) {
     const expected = Math.min(
       param.maxValue,

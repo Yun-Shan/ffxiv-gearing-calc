@@ -577,7 +577,16 @@ function validateJointResult(
     typeof proof.outerBound === "string" &&
     (proof.innerSolverStatus === "Optimal" ||
       proof.innerSolverStatus === "DualBound" ||
+      proof.innerSolverStatus === "Infeasible" ||
+      proof.innerSolverStatus === "FeasibleSignature" ||
+      proof.innerSolverStatus === "ExactSignatureEnumeration" ||
       proof.innerSolverStatus === "ExactStateEnumeration") &&
+    (proof.termination === undefined ||
+      (typeof proof.termination === "string" && [
+        "remaining-domain-infeasible", "ratio-envelope-bound", "ratio-dual-bound", "theoretical-score",
+        "exact-signatures", "exact-attributes", "baseline-ceiling", "shared-state-enumeration",
+        "shared-domain-enumeration", "outer-branch-bound",
+      ].includes(proof.termination))) &&
     proof.formalCertificate === false &&
     typeof proof.numericalLimitation === "string" &&
     typeof proof.terminationReason === "string" &&

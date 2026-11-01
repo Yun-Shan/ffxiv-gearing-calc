@@ -372,7 +372,8 @@ test("V3 keeps each job's maximum tenacity through the shared factor-MIP proof",
 
   assert.ok(result);
   assert.equal(result.proof.complete, true);
-  assert.ok(result.proof.innerSolverStatus === "Optimal" || result.proof.innerSolverStatus === "DualBound");
+  assert.ok(["Optimal", "DualBound", "Infeasible", "FeasibleSignature", "ExactSignatureEnumeration", "ExactStateEnumeration"].includes(result.proof.innerSolverStatus));
+  assert.ok(result.proof.termination, "the completed result must identify its actual proof source");
   assert.ok(result.statistics.completeNodes >= 1,
     "the fixture must reach the shared factor-MIP proof after restricted max-tenacity solves");
   assert.equal(result.commonEquipments.ring!.itemId, expected.ringId);
@@ -415,7 +416,8 @@ test("V3 finds the feasible shared ring after rejecting a max-TEN anchor", async
 
   assert.ok(result);
   assert.equal(result.proof.complete, true);
-  assert.ok(result.proof.innerSolverStatus === "Optimal" || result.proof.innerSolverStatus === "DualBound");
+  assert.ok(["Optimal", "DualBound", "Infeasible", "FeasibleSignature", "ExactSignatureEnumeration", "ExactStateEnumeration"].includes(result.proof.innerSolverStatus));
+  assert.ok(result.proof.termination, "the completed result must identify its actual proof source");
   assert.ok(result.statistics.cacheEntries >= 1,
     "the failed restricted solve should remain in the result cache as an infeasible entry");
   assert.ok(result.statistics.completeNodes >= 1,

@@ -7,9 +7,9 @@ export function applyFood(attributes: readonly number[], food: FoodInfo | undefi
   for (const param of food.baseParams) {
     const index = indexes.get(param.baseParamId);
     if (index === undefined) continue;
-    final[index] += Math.min(
+    final[index] = attributes[index]! + Math.min(
       param.maxValue,
-      Math.trunc((final[index]! + (param.baseValue ?? 0)) * (param.multiplier - 1) + 1e-7),
+      Math.trunc((attributes[index]! + (param.baseValue ?? 0)) * (param.multiplier - 1) + 1e-7),
     );
   }
   return final;

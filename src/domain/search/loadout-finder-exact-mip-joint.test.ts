@@ -513,7 +513,10 @@ test("a joint incumbent is retained when HiGHS proves its dual upper bound canno
     },
   });
   assert.ok(solved);
-  assert.ok(solved.innerSolverStatus === "Optimal" || solved.innerSolverStatus === "DualBound");
+  assert.ok(["Optimal", "DualBound", "Infeasible", "FeasibleSignature", "ExactSignatureEnumeration", "ExactStateEnumeration"].includes(solved.innerSolverStatus));
+  assert.ok(["remaining-domain-infeasible", "ratio-envelope-bound", "ratio-dual-bound", "theoretical-score", "exact-signatures", "exact-attributes"].includes(solved.termination));
+  if (solved.innerSolverStatus === "Infeasible") assert.equal(solved.termination, "remaining-domain-infeasible");
+  if (solved.innerSolverStatus === "FeasibleSignature") assert.equal(solved.termination, "theoretical-score");
   if (solved.innerSolverStatus === "DualBound") assert.ok(mipInterrupts.length > 0);
   assertJointMatchesEnumeration(solved, expected, jobs, false, "damage");
 });
@@ -739,78 +742,33 @@ test("joint candidate upper bounds fail open for jobs with custom extractors", a
     "the unaffected canonical job can still use its safe candidate bounds");
 });
 
-test("joint candidate upper bounds fail open for duplicate food attributes", async () => {
-  const ordinaryFood = food(7_431, [1]);
-  const parameter = ordinaryFood.baseParams[0]!;
-  const duplicateFood: FoodInfo = {
-    ...ordinaryFood,
-    baseParams: [
-      { ...parameter, baseValue: 0 },
-      { ...parameter, baseValue: 200 },
-    ],
-  };
-  const jobs = tradeoffJobs([ordinaryFood]);
-  jobs[0] = {
-    ...jobs[0]!,
-    options: { ...jobs[0]!.options, foods: [duplicateFood] },
-  };
-  const expected = jointOracle(jobs, false, "damage");
-  assert.ok(expected);
-  const initialResults = expected.results.map((candidate, index) => {
-    const evaluation = jobs[index]!.options.evaluationFunction(candidate.attributes);
-    assert.ok(evaluation);
-    return {
-      selection: candidate.selection,
-      food: candidate.food,
-      damage: evaluation.damage,
-      statistics: {
-        elapsedMs: 0,
-        solverRuns: 0,
-        excludedSignatures: 0,
-        signatureBandChecks: 0,
-        signatureBandElapsedMs: 0,
-        signatureBandProof: false,
-        variables: 0,
-        constraints: 0,
-        maximumSurrogate: 0,
-        nextSurrogate: undefined,
-        memoryUsage: {},
-      },
-    } satisfies ExactMipResult;
-  });
-  const previousProfileSetting = process.env.FFXIV_PROFILE_TIMING;
-  process.env.FFXIV_PROFILE_TIMING = "1";
-  const progressEvents: LinearMipProgress[] = [];
-  let actual: Awaited<ReturnType<typeof findBestJointFactorMip>>;
-  try {
-    actual = await findBestJointFactorMip({
-      jobs: jointJobArgs(jobs, "damage"),
-      commonSlots: ["ring"],
-      sharedFood: false,
-      equipmentIdentity: (item) => String(item.itemId),
-      foodIdentity: (item) => String(item.itemId),
-      objective: "damage",
-      initialResults,
-      maxSearchMs: 20_000,
-      onSolverProgress: (event) => progressEvents.push(event),
-    });
-  } finally {
-    if (previousProfileSetting === undefined) delete process.env.FFXIV_PROFILE_TIMING;
-    else process.env.FFXIV_PROFILE_TIMING = previousProfileSetting;
+test("native results must meet the requested GCD even when the converted speed range admits the point", async () => {
+  const jobs = jointJobArgs(tradeoffJobs(), "damage");
+  // All rings have zero speed and the formula therefore gives 2.50 s. A
+  // bad internal conversion should be detected even without an initial seed.
+  const options = { ...jobs[0]!.options, gcdToSpeedRange: () => ({ min: 0, max: 0 }) };
+  for (const constraints of [{ gcd: 2.4, gcdChoices: [2.5] }, { gcdChoices: [2.4] }]) {
+    jobs[0]!.options = { ...options, constraints };
+    await assert.rejects(findBestJointFactorMip({
+      jobs, commonSlots: ["ring"], sharedFood: false, objective: "damage",
+      equipmentIdentity: item => String(item.itemId), foodIdentity: item => String(item.itemId),
+    }), /GCD=2.5.*不满足/);
   }
+  await assert.rejects(findBestLoadoutExactMip({ ...options, constraints: { gcd: 2.4, gcdChoices: [2.5] } }),
+    /GCD=2.5.*不满足/);
+});
 
-  assertJointMatchesEnumeration(actual, expected, jobs, false, "damage");
-  const summary = progressEvents.find((event) =>
-    event.model === "joint_factor_product" && (event.message ?? "").includes("joint-search-summary"));
-  assert.ok(summary);
-  const profile = JSON.parse((summary.message ?? "").slice("PROFILE ".length)) as {
-    candidateSpecificUpperBoundCandidates: number;
-    candidateSpecificUpperBoundSkippedJobs: number;
-  };
-  assert.equal(profile.candidateSpecificUpperBoundSkippedJobs, 1,
-    "the job with repeated food attributes must retain its selectors in the strict proof model");
-  assert.ok(profile.candidateSpecificUpperBoundCandidates > 0,
-    "the unaffected job should continue to receive safe candidate bounds");
+test("joint MIP rejects a food with two parameters for the same attribute", async () => {
+  const ordinaryFood = food(7_431, [1]);
+  const jobs = jointJobArgs(tradeoffJobs([ordinaryFood]), "damage");
+  const parameter = ordinaryFood.baseParams[0]!;
+  jobs[1]!.options = { ...jobs[1]!.options, foods: [{ ...ordinaryFood,
+    baseParams: [parameter, { ...parameter, baseValue: 200 }] }] };
+  jobs[0]!.options = { ...jobs[0]!.options, slots: jobs[0]!.options.slots.map(() => []) };
+  await assert.rejects(findBestJointFactorMip({
+    jobs, commonSlots: ["ring"], sharedFood: false, objective: "damage",
+    equipmentIdentity: item => String(item.itemId), foodIdentity: item => String(item.itemId),
+  }), /食物 7431 的属性 1 重复/);
 });
 
 test("factor-class upper bounds preserve the exact joint optimum when maxima conflict", async () => {

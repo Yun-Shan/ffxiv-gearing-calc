@@ -1,4 +1,5 @@
 import type { HighsCallbackTrace, LinearMipProgress } from "./search/linear-mip.ts";
+import type { JointMipStatus, JointMipTermination } from "./search/exact-mip/joint-types.ts";
 
 export type Stat =
   | "STR"
@@ -452,10 +453,12 @@ export interface JointOptimizationResult {
     objective: "damage" | "dps";
     optimalityScope: string;
     outerBound: string;
-    innerSolverStatus: "Optimal" | "DualBound" | "ExactStateEnumeration";
+    innerSolverStatus: JointMipStatus;
     formalCertificate: false;
     numericalLimitation: string;
     terminationReason: string;
+    /** Older completed history records can omit the machine-readable proof source. */
+    termination?: JointMipTermination | "baseline-ceiling" | "shared-state-enumeration" | "shared-domain-enumeration" | "outer-branch-bound";
   };
   statistics: {
     /** 从领域搜索入口到完整结果返回的耗时，单位为毫秒。 */

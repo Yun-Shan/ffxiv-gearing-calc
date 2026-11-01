@@ -1,14 +1,21 @@
 import { prepareJointJobs } from "./joint-preparation.ts";
+import { assertUniqueJobFoodAttributes } from "../food-parameters.ts";
 import {
   validateJointInitialResults,
   decodeJointSolution,
 } from "./joint-results.ts";
 import { createJointSolutionHint } from "./joint-solution-hint.ts";
 import { buildJointIterationRows } from "./joint-iteration-model.ts";
+import { chooseJointGuide, type JointGuideFeedback } from "./joint-guide.ts";
+import { projectRemainingDomain } from "./shared-projection/remaining-domain.ts";
+import { SURROGATE_OBJECTIVE_SCALE } from "./model-preparation.ts";
+import type { LinearMipRequest } from "../linear-mip.ts";
 import type {
   JointPreparedJob,
   JointSearchOptions,
   ExactRatio,
+  JointMipStatus,
+  JointMipTermination,
 } from "./joint-types.ts";
 import { prepareJointIdentity } from "./joint-identity.ts";
 import { assembleJointModel } from "./joint-model.ts";
@@ -35,7 +42,8 @@ export async function findBestJointFactorMip(
       results: ExactMipResult[];
       solverRuns: number;
       signatures: number;
-      innerSolverStatus: "Optimal" | "DualBound";
+      innerSolverStatus: JointMipStatus;
+      termination: JointMipTermination;
     }
   | undefined
 > {
@@ -50,16 +58,34 @@ export async function findBestJointFactorMip(
     })),
   };
   const jointMaxSearchMs = options.maxSearchMs;
+  if (jointMaxSearchMs !== undefined && (!Number.isFinite(jointMaxSearchMs) || jointMaxSearchMs <= 0)) {
+    throw new RangeError("maxSearchMs 必须是正有限值");
+  }
   const jointPreprocessingBudgetBaseMs = jointMaxSearchMs ?? 235_000;
   const jointTimeLimitReached = () =>
     jointMaxSearchMs !== undefined &&
     performance.now() - startedAt >= jointMaxSearchMs;
-  const isCancelled =
-    options.isCancelled ??
-    (() => options.jobs.some((job) => job.options.isCancelled?.() === true));
+  const isCancelled = () => options.isCancelled?.() === true ||
+    options.jobs.some((job) => job.options.isCancelled !== options.isCancelled && job.options.isCancelled?.() === true);
+  const requireSearchActive = () => {
+    throwIfCancelled(isCancelled);
+    if (jointTimeLimitReached()) throw new Error("联合因子 MIP 达到时限，未完成最优性复核");
+  };
+  let nextMemoryCheck = 0;
+  const checkProjection = () => {
+    requireSearchActive();
+    const now = performance.now();
+    if (now >= nextMemoryCheck) {
+      nextMemoryCheck = now + 100;
+      if ((getMemoryUsageSnapshot().rssBytes ?? 0) > 3.5 * 1024 ** 3) throw new Error("联合因子 MIP 达到内存保护线");
+    }
+  };
+  requireSearchActive();
+  assertUniqueJobFoodAttributes(options.jobs);
   const identity = prepareJointIdentity(options);
   const { originalSelectionIdentity } = identity;
   const preparation = await prepareJointJobs(options, identity, isCancelled);
+  requireSearchActive();
   if (preparation === undefined) return undefined;
   const {
     preparedJobs,
@@ -73,6 +99,7 @@ export async function findBestJointFactorMip(
     canonicalRingRanks,
     canonicalRingSlotIndexes,
   });
+  requireSearchActive();
   if (assembled === undefined) return undefined;
   const { rows, bounds, binaries, generals, objective } = assembled;
   const candidateBounds = prepareJointCandidateBounds(
@@ -139,7 +166,8 @@ export async function findBestJointFactorMip(
   throwIfCancelled(isCancelled);
   const excluded: string[][] = [];
   let solverRuns = 0;
-  let innerSolverStatus: "Optimal" | "DualBound" = "Optimal";
+  let innerSolverStatus: JointMipStatus = "Optimal";
+  let termination: JointMipTermination = "ratio-envelope-bound";
   let best = validateJointInitialResults(
     options,
     preparedJobs,
@@ -267,6 +295,9 @@ export async function findBestJointFactorMip(
   let solverWallMs = 0;
   let iterationModelBuildMs = 0;
   let postSolveMs = 0;
+  let previousGuide: JointGuideFeedback | undefined;
+  let projectionMs = 0;
+  const signatureObjective = new Map([...objective].map(([name, q]) => [name, q / SURROGATE_OBJECTIVE_SCALE]));
   while (true) {
     throwIfCancelled(isCancelled);
     if (best !== undefined) {
@@ -276,19 +307,13 @@ export async function findBestJointFactorMip(
       );
       sharedBounds.prepareSharedAssignmentUpperBounds(best);
     }
-    const remaining =
-      options.maxSearchMs === undefined
-        ? undefined
-        : options.maxSearchMs - (performance.now() - startedAt);
-    if (remaining !== undefined && remaining <= 0) {
-      throw new Error("联合因子 MIP 达到时限，未完成最优性复核");
-    }
+    requireSearchActive();
     const memory = getMemoryUsageSnapshot();
     if (memory.rssBytes !== undefined && memory.rssBytes > 3.5 * 1024 ** 3) {
       throw new Error("联合因子 MIP 达到内存保护线");
     }
     const iterationModelBuildStartedAt = performance.now();
-    const solveRows = buildJointIterationRows(
+    const { solveRows, jobLowerBounds, signatureRestrictions } = buildJointIterationRows(
       options,
       assembled,
       candidateBounds,
@@ -299,6 +324,40 @@ export async function findBestJointFactorMip(
       best,
       excluded,
     );
+    // 固定模型是公共前缀，每个已解码签名在末尾恰好生成一行排除。
+    const restrictions = solveRows.slice(rows.length, solveRows.length - excluded.length);
+    const guide = chooseJointGuide(ratioUpperBoundObjectiveEnabled, restrictions, previousGuide);
+    const optimizingRatioUpperBound = guide === "ratio-bound";
+    if (guide === "signature" && best && excluded.length > 0 && projectionMs < 42_000) {
+      const begin = performance.now();
+      const available = jointMaxSearchMs === undefined ? Infinity : jointMaxSearchMs - (begin - startedAt);
+      const projection = projectRemainingDomain(options, preparedJobs, assembled, jobLowerBounds, signatureRestrictions,
+        best, Math.min(42_000 - projectionMs, available * 0.7), checkProjection);
+      projectionMs += performance.now() - begin;
+      nextMemoryCheck = 0;
+      checkProjection();
+      if (projection) {
+        const { route, closed, details } = projection;
+        if (closed) {
+          const verified = validateJointInitialResults(options, preparedJobs, best.results, originalSelectionIdentity);
+          requireSearchActive();
+          if (!verified || verified.numerator * best.denominator !== best.numerator * verified.denominator)
+            throw new Error("共享投影结束前，原候选与精确目标复核失败");
+          innerSolverStatus = route === "fixed-ten-ranks" ? "ExactSignatureEnumeration" : "ExactStateEnumeration";
+          termination = route === "fixed-ten-ranks" ? "exact-signatures" : "exact-attributes";
+        } else {
+          solveRows.push(...projection.rows);
+        }
+        emitProfileEvent(options.onSolverProgress, profileBackend, "joint_factor_product", "joint-shared-projection", {
+          route, closed: Number(closed), excludedSignatures: excluded.length, rows: projection.rows.length, elapsedMs: performance.now() - begin, ...details,
+        });
+        requireSearchActive();
+        if (closed) {
+          iterationModelBuildMs += performance.now() - iterationModelBuildStartedAt;
+          break;
+        }
+      }
+    }
     throwIfCancelled(isCancelled);
     const solutionHint = createJointSolutionHint(
       options,
@@ -317,6 +376,7 @@ export async function findBestJointFactorMip(
         "joint-model-iteration-ready",
         {
           solverRuns,
+          guide,
           variables: bounds.length,
           constraints: solveRows.length,
           nonzeros: solveRows.reduce((sum, row) => sum + row.terms.size, 0),
@@ -348,25 +408,27 @@ export async function findBestJointFactorMip(
           candidateSpecificUpperBoundSkippedJobs,
         },
       );
-    const optimizingRatioUpperBound = ratioUpperBoundObjectiveEnabled;
     const solverCallStartedAt = performance.now();
+    requireSearchActive();
+    const jointObjective: NonNullable<LinearMipRequest["jointObjective"]> = guide === "ratio-bound"
+      ? { kind: guide, variables: ratioUpperBoundVariables, scale: Number(ratioUpperBoundScale) }
+      : { kind: guide };
     const output = await solveIntegerModel({
       strategies,
+      jointObjective,
       // Equivalent representations can have different native MIP performance;
       // bound row-density growth and require substantial column reduction.
       equalityQuotient: { maxRowDensityGrowth: 3, minVariableReductionPercent: 25 },
       isCancelled,
       name: "joint_factor_product",
-      objective: ratioUpperBoundObjectiveEnabled
-        ? ratioUpperBoundObjective
-        : new Map(),
+      objective: optimizingRatioUpperBound ? ratioUpperBoundObjective : guide === "signature" ? signatureObjective : new Map(),
       rows: solveRows,
       variables: bounds,
       binaryVariables: binaries,
       integerVariables: generals,
-      timeLimitMs: remaining,
+      timeLimitMs: jointMaxSearchMs === undefined ? undefined : jointMaxSearchMs - (performance.now() - startedAt),
       ...(solutionHint.size === 0 ? {} : { solutionHint }),
-      ...(best === undefined
+      ...(best === undefined || !optimizingRatioUpperBound
         ? {}
         : {
             stopWhenDualBoundProvesOptimal: (dualBound: number) => {
@@ -388,27 +450,32 @@ export async function findBestJointFactorMip(
     });
     solverWallMs += performance.now() - solverCallStartedAt;
     const postSolveStartedAt = performance.now();
-    throwIfCancelled(isCancelled);
+    requireSearchActive();
     solverRuns++;
     options.onProgress?.(
       `HiGHS 联合因子 MIP 状态=${output.Status}；已检查签名=${excluded.length}；耗时=${Math.round(performance.now() - startedAt)}ms`,
     );
+    requireSearchActive();
     if (output.Status === "DualBound") {
+      if (!optimizingRatioUpperBound || !best) throw new Error("联合 MIP 返回了无对应比例上界证明的 DualBound");
       innerSolverStatus = "DualBound";
+      termination = "ratio-dual-bound";
       postSolveMs += performance.now() - postSolveStartedAt;
       break;
     }
     if (output.Status === "Infeasible") {
+      innerSolverStatus = "Infeasible";
+      termination = "remaining-domain-infeasible";
       postSolveMs += performance.now() - postSolveStartedAt;
       break;
     }
-    if (output.Status !== "Optimal")
-      throw new Error(`联合因子 MIP 未证明最优：${output.Status}`);
+    if (output.Status !== (optimizingRatioUpperBound ? "Optimal" : "FeasibleSignature"))
+      throw new Error(`联合因子 MIP 在 ${guide} 路线没有返回预期的可验证解：${output.Status}`);
     validateMipSolution(solveRows, bounds, output.Columns);
     const upperBoundScaled = optimizingRatioUpperBound
       ? ratioUpperBoundVariables.reduce(
           (sum, name) =>
-            sum + BigInt(Math.round(output.Columns[name]?.Primal ?? 0)),
+            sum + BigInt(Math.round(output.Columns[name]!.Primal)),
           0n,
         )
       : undefined;
@@ -424,10 +491,12 @@ export async function findBestJointFactorMip(
         constraints: solveRows.length,
       },
     );
-    if (
-      best === undefined ||
-      numerator * best.denominator > best.numerator * denominator
-    ) {
+    requireSearchActive();
+    if (upperBoundScaled !== undefined && upperBoundScaled * denominator < numerator * ratioUpperBoundScale) {
+      throw new Error("联合比例上界低于本次原配装的精确得分");
+    }
+    const improved = best === undefined || numerator * best.denominator > best.numerator * denominator;
+    if (best === undefined || improved) {
       best = { numerator, denominator, results };
       options.onProgress?.(
         `联合因子 MIP 当前最优归一化总和=${Number(numerator) / Number(denominator)}`,
@@ -442,10 +511,15 @@ export async function findBestJointFactorMip(
       break;
     }
     postSolveMs += performance.now() - postSolveStartedAt;
-    if (best.numerator === BigInt(options.jobs.length) * best.denominator)
+    if (best.numerator === BigInt(options.jobs.length) * best.denominator) {
+      innerSolverStatus = optimizingRatioUpperBound ? "Optimal" : "FeasibleSignature";
+      termination = "theoretical-score";
       break;
+    }
     excluded.push(signature);
+    previousGuide = { guide, improved, restrictions, saturated: upperBoundScaled === BigInt(options.jobs.length) * ratioUpperBoundScale };
   }
+  requireSearchActive();
   if (best === undefined) return undefined;
   const elapsedMs = performance.now() - startedAt;
   const profile = {
@@ -550,10 +624,12 @@ export async function findBestJointFactorMip(
       "joint-search-summary",
       profile,
     );
+  requireSearchActive();
   return {
     results: best.results,
     solverRuns,
     signatures: excluded.length,
     innerSolverStatus,
+    termination,
   };
 }

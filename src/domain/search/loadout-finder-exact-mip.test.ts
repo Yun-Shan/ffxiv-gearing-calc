@@ -1214,54 +1214,16 @@ test("exact MIP prunes unreachable non-BLU weapon classes with food modifiers an
 });
 
 
-test("duplicate food weapon modifiers skip the whole weapon reachability axis", async () => {
-  const duplicateWeaponFood: FoodInfo = {
-    itemId: 5989,
-    itemLevel: 795,
-    key: "duplicate-weapon-attribute-food",
+test("single MIP rejects a repeated food attribute even if the second row has no effect", async () => {
+  const duplicateFood: FoodInfo = {
+    itemId: 5989, itemLevel: 795, key: "invalid",
     baseParams: [
       { baseParamId: -1, multiplier: 1.1, maxValue: 10 },
       { baseParamId: -1, multiplier: 1, maxValue: 0 },
     ],
   };
-  let expected: bigint | undefined;
-  for (const first of slots[0]!) {
-    for (const second of slots[1]!) {
-      const score = product([first, second], duplicateWeaponFood);
-      if (expected === undefined || score > expected) expected = score;
-    }
-  }
-  assert.ok(expected !== undefined);
-
-  const previousProfileSetting = process.env.FFXIV_PROFILE_TIMING;
-  process.env.FFXIV_PROFILE_TIMING = "1";
-  const progressEvents: { model: string; message?: string }[] = [];
-  let result: Awaited<ReturnType<typeof findBestLoadoutExactMip>>;
-  try {
-    result = await findBestLoadoutExactMip(exactMipOptions({
-      foods: [duplicateWeaponFood],
-      objective: "damage" as const,
-      onSolverProgress: (event) => progressEvents.push(event),
-    }));
-  } finally {
-    if (previousProfileSetting === undefined) delete process.env.FFXIV_PROFILE_TIMING;
-    else process.env.FFXIV_PROFILE_TIMING = previousProfileSetting;
-  }
-
-  assert.ok(result);
-  assert.equal(product(result.selection, result.food!), expected);
-  const summary = progressEvents.find((event) =>
-    event.model === "exact_search_RDM" && (event.message ?? "").includes("exact-search-summary"));
-  assert.ok(summary);
-  const profile = JSON.parse((summary.message ?? "").slice("PROFILE ".length)) as {
-    reachableWeaponFactorClassesRemoved: number;
-    reachableWeaponPruningSkipped: number;
-  };
-  assert.equal(profile.reachableWeaponFactorClassesRemoved, 0);
-  assert.ok(profile.reachableWeaponPruningSkipped > 0,
-    "ambiguous duplicate food modifiers must disable weapon-axis pruning");
+  await assert.rejects(findBestLoadoutExactMip(exactMipOptions({ foods: [duplicateFood] })), /食物 5989 的属性 -1 重复/);
 });
-
 
 test("food percentages include base attributes before truncation and caps", async () => {
   const offsetFoods = foods.map(item => ({ ...item, baseParams: item.baseParams.map(param => ({ ...param, baseValue: 420 })) }));
@@ -1495,7 +1457,7 @@ test("exact MIP rejects invalid resource ranges, food rates, and unconfigured co
         baseParams: [{ baseParamId: 1, multiplier: 1.005, maxValue: 90 }],
       }],
     })),
-    /整数比例模型与 v2 取整不一致/,
+    /食物加成比例不是百分比整数/,
   );
   await assert.rejects(
     findBestLoadoutExactMip(exactMipOptions({
@@ -1509,7 +1471,7 @@ test("exact MIP rejects invalid resource ranges, food rates, and unconfigured co
         }],
       }],
     })),
-    /食物基础属性必须为非负安全整数/,
+    /食物整数模型系数超过安全整数范围/,
   );
 
   await assert.rejects(

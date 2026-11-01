@@ -10,7 +10,7 @@ export function foodIdentity(food: FoodInfo): string {
     itemLevel: food.itemLevel,
     baseParams: food.baseParams
       .map(({ baseParamId, multiplier, maxValue }) => [baseParamId, multiplier, maxValue] as const)
-      .sort((left, right) => left[0] - right[0] || left[1] - right[1] || left[2] - right[2]),
+      .sort((left, right) => left[0] - right[0]),
   });
 }
 
@@ -18,8 +18,33 @@ export function foodIdentityForOptional(food: FoodInfo | undefined): string {
   return food === undefined ? "no-food" : foodIdentity(food);
 }
 
+/** Physical identity alone does not determine the effect within a job's input domain. */
+export function foodCandidateIdentity(food: FoodInfo): string {
+  return JSON.stringify([foodIdentity(food), food.baseParams.map((param) => [
+    param.baseParamId, param.multiplier, param.maxValue, param.baseValue ?? 0,
+  ])]);
+}
+
+export function foodsForChoice(choice: FoodChoice, jobId: string): readonly FoodInfo[] {
+  const variants = choice.foodVariants?.get(jobId);
+  if (variants !== undefined) return variants;
+  const representative = choice.foods.get(jobId);
+  return representative === undefined ? [] : [representative];
+}
+
+export function foodChoiceContains(choice: FoodChoice, jobId: string, food: FoodInfo | undefined): boolean {
+  const candidates = foodsForChoice(choice, jobId);
+  if (food === undefined) return candidates.length === 0;
+  const key = foodCandidateIdentity(food);
+  return candidates.some((candidate) => foodCandidateIdentity(candidate) === key);
+}
+
+export function hasFoodVariants(choice: FoodChoice): boolean {
+  return [...(choice.foodVariants?.values() ?? [])].some((foods) => foods.length > 1);
+}
+
 function foodBonus(food: FoodInfo | undefined, attributeId: number, raw: number): number {
-  const param = food?.baseParams.find((entry) => entry.baseParamId === attributeId);
+  const param = food?.baseParams.find(entry => entry.baseParamId === attributeId);
   if (param === undefined) return 0;
   return Math.min(param.maxValue, Math.trunc((raw + (param.baseValue ?? 0)) * (param.multiplier - 1) + 1e-7));
 }
@@ -94,6 +119,8 @@ export function pruneSharedFoods(
   contexts: readonly JobContext[],
   checkBudget: () => void,
 ): FoodChoice[] {
+  // Representative effects cannot prove dominance between physical-key domains.
+  if (choices.some(hasFoodVariants)) return [...choices];
   if (choices.length < 2) return [...choices];
   const rawMaximums = new Map(contexts.map((context) => [
     context.job.id,

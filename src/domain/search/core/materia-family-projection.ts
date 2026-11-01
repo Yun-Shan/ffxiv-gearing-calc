@@ -1,4 +1,5 @@
 import type { LinearMipRequest, LinearMipRow, LinearMipSolution } from "../linear-mip.ts";
+import { hasMipPoint } from "../linear-mip.ts";
 import { throwIfCancelled } from "./cancellation.ts";
 import { validateMipSolution } from "./solution-validation.ts";
 
@@ -284,7 +285,7 @@ export function prepareMateriaFamilyProjection(request: LinearMipRequest, limits
     return { request: { ...request, objective, rows: transformedRows, variables, binaryVariables, integerVariables,
       materiaFamilies: undefined, solutionHint }, statistics,
     expandSolution(solution) {
-      if (solution.Status !== "Optimal") return solution;
+      if (!hasMipPoint(solution)) return solution;
       const restoreStarted = performance.now();
       throwIfCancelled(request.isCancelled);
       validateMipSolution(transformedRows, variables, solution.Columns);

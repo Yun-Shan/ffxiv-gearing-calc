@@ -38,3 +38,6 @@ export type JointSearchOptions = {
 };
 
 export type ExactRatio = { numerator: bigint; denominator: bigint };
+
+export type JointMipStatus = "Optimal" | "DualBound" | "Infeasible" | "FeasibleSignature" | "ExactSignatureEnumeration" | "ExactStateEnumeration";
+export type JointMipTermination = "remaining-domain-infeasible" | "ratio-envelope-bound" | "ratio-dual-bound" | "theoretical-score" | "exact-signatures" | "exact-attributes";

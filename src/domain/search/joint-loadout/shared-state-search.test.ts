@@ -274,7 +274,7 @@ describe("complete shared attribute states and private envelopes", () => {
     expect(result.results).toHaveLength(3);
   });
 
-  test.each(["unregistered", "formula", "constraints", "shared-vector", "private-vector", "food", "duplicate-food"] as const)(
+  test.each(["unregistered", "formula", "constraints", "shared-vector", "private-vector", "food"] as const)(
     "does not fold when %s equivalence evidence differs", async (difference) => {
       const f = equivalentFixture();
       const context = f.contexts[1]!;
@@ -298,7 +298,6 @@ describe("complete shared attribute states and private envelopes", () => {
         const previous = context.job.options.foods[0]!;
         const changed = { ...previous, baseParams: previous.baseParams.map((parameter) => ({ ...parameter,
           baseValue: (parameter.baseValue ?? 0) + 1 })) };
-        if (difference === "duplicate-food") changed.baseParams.push({ ...changed.baseParams[0]! });
         context.job.options.foods = [changed, ...context.job.options.foods.slice(1)];
         f.foodChoices[0]!.foods.set(context.job.id, changed);
       }

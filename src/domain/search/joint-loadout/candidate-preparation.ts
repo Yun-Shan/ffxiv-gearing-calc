@@ -6,6 +6,7 @@ import type { CommonChoice, FoodChoice, JobContext, JointLoadoutV3Options } from
 import { commonSlotIndex, projectEquipment, projectionMap } from "./shared-equipment.ts";
 import { pruneInnerSlots } from "./candidate-dominance.ts";
 import { foodIdentity } from "./shared-foods.ts";
+import { assertUniqueJobFoodAttributes } from "../food-parameters.ts";
 import { strategyEnabled } from "../strategies.ts";
 
 /** Validate each job and retain the complete shared identity intersections before baselines. */
@@ -15,6 +16,7 @@ export function prepareCandidates(
 ) {
   const jobIds = new Set<string>();
   const contexts: JobContext[] = [];
+  assertUniqueJobFoodAttributes(options.jobs);
   for (const job of options.jobs) {
     assertWithinBudget("输入校验");
     if (job.id.length === 0 || jobIds.has(job.id)) throw new RangeError(`V3 职业 id 为空或重复：${job.id}`);
@@ -106,26 +108,24 @@ export function prepareCandidates(
     if (contexts.every((context) => context.job.options.foods.length === 0)) {
       foodChoices.push({ key: "no-food", foods: new Map(contexts.map((context) => [context.job.id, undefined])) });
     } else {
-      const firstFoods = contexts[0]!.job.options.foods;
-      const candidates = new Map<string, FoodChoice>();
-      for (const food of firstFoods) {
-        const key = foodIdentity(food);
-        if (!candidates.has(key)) candidates.set(key, { key, foods: new Map([[contexts[0]!.job.id, food]]) });
-      }
-      for (let index = 1; index < contexts.length; index++) {
-        const context = contexts[index]!;
-        const available = new Map<string, FoodInfo>();
+      const groupedFoods = contexts.map((context) => {
+        const groups = new Map<string, FoodInfo[]>();
         for (const food of context.job.options.foods) {
           const key = foodIdentity(food);
-          if (!available.has(key)) available.set(key, food);
+          const group = groups.get(key) ?? [];
+          group.push(food);
+          groups.set(key, group);
         }
-        for (const [key, choice] of candidates) {
-          const food = available.get(key);
-          if (food === undefined) candidates.delete(key);
-          else choice.foods.set(context.job.id, food);
-        }
+        return groups;
+      });
+      for (const key of groupedFoods[0]!.keys()) {
+        if (groupedFoods.some((groups) => !groups.has(key))) continue;
+        const variants = new Map(contexts.map((context, index) => [
+          context.job.id, groupedFoods[index]!.get(key)!,
+        ]));
+        foodChoices.push({ key, foodVariants: variants,
+          foods: new Map(contexts.map((context) => [context.job.id, variants.get(context.job.id)![0]!])) });
       }
-      foodChoices.push(...candidates.values());
     }
     if (foodChoices.length === 0) return undefined;
   } else {

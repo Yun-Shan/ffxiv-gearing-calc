@@ -33,6 +33,7 @@ export type FoodInfo = {
   key: string;
   /** 食物实体身份，与职业可用属性无关。 */
   physicalKey?: string;
+  /** 同一食物的每个 baseParamId 最多一项。 */
   baseParams: FoodParam[];
 };
 

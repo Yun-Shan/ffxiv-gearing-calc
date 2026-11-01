@@ -84,6 +84,22 @@ test("worker rejects food columns with different lengths", async () => {
   await assert.rejects(solveSerializedBaseline(task, {}), /食物数值列长度不匹配/);
 });
 
+test("worker rejects a duplicate in one reconstructed food before calling the solver", async () => {
+  const solver = vi.mocked(findBestLoadoutExactMip);
+  solver.mockClear();
+  const task = serializedTask();
+  task.foods = {
+    offsets: new Uint32Array([0, 1, 3]), parameterIds: new Float64Array([4, 4, 4]),
+    baseValues: new Float64Array(3), hasBaseValues: new Uint8Array(3),
+    multipliers: new Float64Array([1.1, 1.1, 1]), maxValues: new Float64Array([10, 10, 0]),
+  };
+  await assert.rejects(solveSerializedBaseline(task, {}), /食物候选 1 的属性 4 重复/);
+  assert.equal(solver.mock.calls.length, 0);
+  task.foods.offsets = new Uint32Array([0, 1, 2, 3]);
+  await solveSerializedBaseline(task, {});
+  assert.equal(solver.mock.calls[0]![0].foods.length, 3);
+});
+
 test("worker preserves solver policies, constraints and callback context", async () => {
   const solver = vi.mocked(findBestLoadoutExactMip);
   solver.mockClear();

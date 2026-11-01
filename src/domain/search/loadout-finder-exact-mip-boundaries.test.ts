@@ -518,23 +518,26 @@ test("exact MIP rejects invalid public food rates and negative base offsets", as
   });
   const validEquipment = [[slots[0]![0]!], [slots[1]![0]!]];
 
-  for (const multiplier of [Number.NaN, Number.POSITIVE_INFINITY]) {
+  for (const multiplier of [Number.NaN, Number.POSITIVE_INFINITY, 0.9]) {
     await assert.rejects(
       findBestLoadoutExactMip(exactOptions({
         slots: validEquipment,
         foods: [food(multiplier, 90)],
       })),
       /食物加成比例不是百分比整数/,
-      `non-finite food multiplier ${multiplier} must not be silently treated as a usable rate`,
+      `invalid food multiplier ${multiplier} must not enter the integer model`,
     );
   }
+
+  await assert.rejects(findBestLoadoutExactMip(exactOptions({ slots: validEquipment, foods: [food(1.005, 0)] })), /百分比整数/);
+  await assert.rejects(findBestLoadoutExactMip(exactOptions({ slots: validEquipment, foods: [food(1.1, -1)] })), /封顶必须为非负安全整数/);
 
   await assert.rejects(
     findBestLoadoutExactMip(exactOptions({
       slots: validEquipment,
       foods: [food(1.1, 90, -1)],
     })),
-    /整数比例模型与 v2 取整不一致/,
+    /食物基础属性必须为非负安全整数/,
     "a negative base value with a positive fractional rate must not pass the public formula check",
   );
 

@@ -41,7 +41,7 @@ export function ringPairCandidate(equipment: EquipInfo): RingPairCandidate | und
     || typeof pair[0] !== "object" || pair[0] === null ||
     typeof pair[1] !== "object" || pair[1] === null
     ? undefined
-    : { ...equipment, ringEquips: pair };
+    : equipment as RingPairCandidate;
 }
 
 export function hasUniqueRingConflict(selection: readonly EquipInfo[]): boolean {
@@ -123,6 +123,7 @@ export function trySplitRingPairDomain(
   const pairByOrderedChildren = new Map<string, RingPairCandidate>();
   const uniqueByItemId = new Map<number, boolean>();
   const pairCompositionBySharedIdentity = new Map<string, string>();
+  const semanticsByStructuralKey = new Map<string, { identity: string; attributes: ReadonlyMap<number, number> }>();
   for (const equipment of pairSlot) {
     const pair = ringPairCandidate(equipment);
     if (pair === undefined) return undefined;
@@ -145,14 +146,29 @@ export function trySplitRingPairDomain(
     }
     const firstKey = ringChildStructuralKey(first);
     const secondKey = ringChildStructuralKey(second);
-    firstByStructuralKey.set(firstKey, first);
-    secondByStructuralKey.set(secondKey, second);
+    const firstAttributes = extractedAttributeMap(job.options, first);
+    const secondAttributes = extractedAttributeMap(job.options, second);
+    for (const [child, key, attributes] of [
+      [first, firstKey, firstAttributes], [second, secondKey, secondAttributes],
+    ] as const) {
+      const identity = equipmentIdentity(child);
+      const previous = semanticsByStructuralKey.get(key);
+      // Structural keys normalize parameter order, while caller extractors and
+      // physical identities may observe it. Certify every instance on both sides
+      // before replacing it with either slot's representative.
+      if (previous !== undefined && (previous.identity !== identity ||
+        [...attributes].some(([id, value]) => value !== (previous.attributes.get(id) ?? 0)) ||
+        [...previous.attributes].some(([id, value]) => value !== (attributes.get(id) ?? 0)))) return undefined;
+      if (previous === undefined) semanticsByStructuralKey.set(key, { identity, attributes });
+    }
+    if (!firstByStructuralKey.has(firstKey)) firstByStructuralKey.set(firstKey, first);
+    if (!secondByStructuralKey.has(secondKey)) secondByStructuralKey.set(secondKey, second);
     const orderedKey = orderedRingChildrenKey(firstKey, secondKey);
     if (pairByOrderedChildren.has(orderedKey)) return undefined;
 
     const pairAttributes = extractedAttributeMap(job.options, pair);
-    const childAttributes = extractedAttributeMap(job.options, first);
-    for (const [attributeId, value] of extractedAttributeMap(job.options, second)) {
+    const childAttributes = new Map(firstAttributes);
+    for (const [attributeId, value] of secondAttributes) {
       childAttributes.set(attributeId, (childAttributes.get(attributeId) ?? 0) + value);
     }
     for (const attributeId of job.options.attributeIds) {

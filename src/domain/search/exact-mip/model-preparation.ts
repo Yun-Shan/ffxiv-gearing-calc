@@ -181,9 +181,7 @@ export async function prepareExactMipModel(
   if (mainAttribute === undefined || weaponAttribute === undefined || speedAttribute === undefined) {
     throw new Error("精确 MIP 模型缺少主属性、武器伤害或职业速度属性");
   }
-  const finalMaximums = options.attributeIds.map((id, index) =>
-    model.rawMaximums[index]! + Math.max(0, ...options.foods.map((food) =>
-      food.baseParams.find((param) => param.baseParamId === id)?.maxValue ?? 0)));
+  const finalMaximums = model.finalMaximums;
 
   const groups: FactorGroup[] = [];
   groups.push(factorGroupsForAttribute("main", mainAttribute, finalMaximums[mainAttribute]!, options.attributeIds.length, factorEvaluator, "mainStat", options.job === "BLU", zeroFactors.weaponDamage, model.finalMinimums[mainAttribute]!));

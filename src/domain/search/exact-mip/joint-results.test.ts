@@ -78,6 +78,15 @@ function fixture(objective: "damage" | "dps" = "damage") {
         })),
         slotVariables: [["gear"]],
         resistanceAllocationVariables: [],
+        get fixedEquipmentAttributes() {
+          return job.options.slots.map(slot => slot.map(item => job.options.attributeIds.map(id =>
+            (job.options.equipmentAttributeExtractor?.(item) ?? item.baseParams)
+              .filter(param => param.baseParamId === id).reduce((sum, param) => sum + param.value, 0))));
+        },
+        idToIndex: new Map([[1, 0]]),
+        gcdChoiceRanges: [],
+        foodBonuses: [],
+        rawMaximums: [50],
         foodVariables: ["food"],
         finalVariables: ["attribute"],
         ranges: new Map(),
@@ -415,15 +424,15 @@ describe("joint solution hints", () => {
   ] as const)(
     "fails explicitly when the hint cannot be mapped: %s",
     (reason) => {
-      const { initial, model, hint } = hintFixture();
+      const { best, model, hint } = hintFixture();
       let error: RegExp;
       switch (reason) {
         case "equipment":
-          initial[0]!.selection = [equipment(999)];
+          best.results[0]!.selection = [equipment(999)];
           error = /装备不属于模型候选/;
           break;
         case "food":
-          initial[0]!.food = food(999);
+          best.results[0]!.food = food(999);
           error = /食物不属于模型候选/;
           break;
         case "shared-equipment":
@@ -439,7 +448,7 @@ describe("joint solution hints", () => {
           error = /缺少共享食物选择/;
           break;
         case "missing-food":
-          initial[0]!.food = undefined;
+          best.results[0]!.food = undefined;
           error = /缺少共享食物选择/;
           break;
       }
@@ -448,8 +457,8 @@ describe("joint solution hints", () => {
   );
 
   test("allocation annotations do not change the underlying candidate identity", () => {
-    const { initial, options, hint } = hintFixture();
-    initial[0]!.selection = [{ ...equipment(), resistanceAllocation: [] }];
+    const { best, options, hint } = hintFixture();
+    best.results[0]!.selection = [{ ...equipment(), resistanceAllocation: [] }];
     options.equipmentIdentity = (entry) =>
       `${entry.key}:${entry.resistanceAllocation?.length ?? "unallocated"}`;
     expect(hint().get("j0_gear")).toBe(1);

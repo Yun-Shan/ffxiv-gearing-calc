@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { foods, gameData, gears } from "./data";
 import {
   findFeasibleGcdsLocally,
@@ -21,7 +21,8 @@ import {
   effectiveGearSyncLevel,
   getGearStatCap,
 } from "./rules";
-import { foodStatsForJob } from "./optimizer/equipment-candidates";
+import { createFoodInfo, foodStatsForJob } from "./optimizer/equipment-candidates";
+import { attributeIndex } from "./optimizer/context";
 
 const maxItemLevel = Math.max(...gears.map((gear) => gear.level));
 
@@ -98,6 +99,19 @@ function expectResultUsesLevel(result: NonNullable<Awaited<ReturnType<typeof run
 }
 
 describe("optimizer runtime boundaries", () => {
+  it("rejects two game food stats mapped to the same solver attribute", () => {
+    const food = { id: 7431, name: "test", level: 795, stats: { CRT: 90, DET: 40 }, statRates: { CRT: 10, DET: 8 } };
+    const config = configFor("RDM");
+    const parameters = createFoodInfo(food, config, 100).baseParams;
+    expect(parameters).toHaveLength(2);
+    expect(new Set(parameters.map(param => param.baseParamId))).toEqual(new Set([attributeIndex.get("CRT"), attributeIndex.get("DET")]));
+    const collision = vi.spyOn(attributeIndex, "get").mockReturnValue(4);
+    try {
+      expect(() => createFoodInfo(food, config, 100)).toThrow(/食物 7431 的属性 4 重复/);
+    } finally {
+      collision.mockRestore();
+    }
+  });
   it("filters real equipment by job cap, item-level range, source, and id", () => {
     const lowLevel = configFor("SAM", 70);
     const body = gearOptionsFor(lowLevel, "body");

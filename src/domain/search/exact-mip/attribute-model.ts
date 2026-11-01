@@ -7,8 +7,15 @@ import type { VariableBounds } from "../core/model-types.ts";
 import type { GcdSpeedRange } from "../search-types.ts";
 import { addTerm } from "../core/model-builder.ts";
 import type { AttributeFoodBonus } from "./types.ts";
-import { validateFoodRate } from "./attributes.ts";
+import { applyFoodParameter, validateFoodParameter, validateFoodRate } from "./attributes.ts";
+import { assertUniqueFoodAttributes } from "../food-parameters.ts";
 import { prepareSpeedFoodProjection } from "./speed-food-projection.ts";
+
+function safeFoodInteger(value: bigint): number {
+  if (value < -BigInt(Number.MAX_SAFE_INTEGER) || value > BigInt(Number.MAX_SAFE_INTEGER))
+    throw new RangeError("食物整数模型系数超过安全整数范围");
+  return Number(value);
+}
 
 export function addRangeConstraint(
   rows: ModelRow[],
@@ -76,6 +83,7 @@ export type ResistanceAllocationVariable = {
 
 export function buildLinearAttributeModel(options: ExactMipOptions) {
   const { slots, foods, attributeIds } = options;
+  for (const food of foods) assertUniqueFoodAttributes(food);
   if (slots.some((slot) => slot.length === 0)) return undefined;
   const idToIndex = new Map(attributeIds.map((id, index) => [id, index]));
   const rows: ModelRow[] = [];
@@ -159,13 +167,20 @@ export function buildLinearAttributeModel(options: ExactMipOptions) {
   }
   const finalMinimums = attributeIds.map((id, attribute) => {
     if (foods.length === 0) return rawMinimums[attribute]!;
+    const raw = rawMinimums[attribute]!;
     return Math.min(...foods.map((food) => {
       const param = food.baseParams.find((entry) => entry.baseParamId === id);
-      const bonus = param !== undefined && param.maxValue > 0 && param.multiplier > 1
-        ? Math.min(param.maxValue, Math.trunc((rawMinimums[attribute]! + (param.baseValue ?? 0)) * (param.multiplier - 1) + 1e-7))
-        : 0;
-      return rawMinimums[attribute]! + bonus;
+      if (param === undefined) return raw;
+      validateFoodParameter(param);
+      return applyFoodParameter(raw, param);
     }));
+  });
+  const finalMaximums = attributeIds.map((id, attribute) => {
+    const raw = rawMaximums[attribute]!;
+    const maximum = raw + Math.max(0, ...foods.map(food =>
+      food.baseParams.find(param => param.baseParamId === id)?.maxValue ?? 0));
+    if (!Number.isSafeInteger(maximum) || maximum < 0) throw new RangeError("食物属性上界超过安全整数范围");
+    return maximum;
   });
 
   slots.forEach((slot, slotIndex) => {
@@ -283,8 +298,7 @@ export function buildLinearAttributeModel(options: ExactMipOptions) {
     rawVariables.push(rawVariable);
     finalVariables.push(finalVariable);
     bounds.push({ name: rawVariable, min: rawMinimums[attribute]!, max: rawMaximums[attribute]! });
-    bounds.push({ name: finalVariable, min: finalMinimums[attribute]!, max: rawMaximums[attribute]! + Math.max(0, ...foods.map((food) =>
-      food.baseParams.find((param) => param.baseParamId === attributeIds[attribute])?.maxValue ?? 0)) });
+    bounds.push({ name: finalVariable, min: finalMinimums[attribute]!, max: finalMaximums[attribute]! });
     generalVars.push(rawVariable, finalVariable);
 
     const rawTerms = new Map<string, number>([[rawVariable, 1]]);
@@ -305,18 +319,22 @@ export function buildLinearAttributeModel(options: ExactMipOptions) {
     const foodVariable = foodVariables[foodIndex]!;
     for (const param of food.baseParams) {
       const attribute = idToIndex.get(param.baseParamId);
-      if (attribute === undefined || param.maxValue <= 0 || param.multiplier <= 1) continue;
+      if (attribute === undefined) continue;
+      if (param.maxValue === 0 || param.multiplier === 1) continue;
       const { numerator, denominator } = validateFoodRate(param, rawMaximums[attribute]!);
       if (numerator === 0) continue;
       const bonus = `b_${foodIndex}_${attribute}`;
       const capped = `c_${foodIndex}_${attribute}`;
       const cap = param.maxValue;
-      const offset = numerator * (param.baseValue ?? 0);
-      if (!Number.isSafeInteger(offset) || offset < 0) throw new RangeError("食物基础属性必须为非负安全整数");
-      const bigM = Math.max(
-        numerator * rawMaximums[attribute]! + offset,
-        denominator * cap,
-      );
+      const offset = safeFoodInteger(BigInt(numerator) * BigInt(param.baseValue ?? 0));
+      const uncappedMaximum = BigInt(numerator) * BigInt(rawMaximums[attribute]!) + BigInt(offset);
+      const capScaled = BigInt(denominator) * BigInt(cap);
+      const bigM = safeFoodInteger(uncappedMaximum > capScaled ? uncappedMaximum : capScaled);
+      const maximumRaw = rawMaximums[attribute]! + (param.baseValue ?? 0);
+      if (!Number.isSafeInteger(maximumRaw))
+        throw new RangeError("食物整数模型系数超过安全整数范围");
+      const floorHighRhs = safeFoodInteger(BigInt(denominator) - 1n + BigInt(bigM) - BigInt(offset));
+      const thresholdRhs = safeFoodInteger(capScaled - BigInt(bigM) - BigInt(offset));
       bounds.push({ name: bonus, min: 0, max: cap });
       bounds.push({ name: capped, min: 0, max: 1 });
       generalVars.push(bonus);
@@ -329,7 +347,7 @@ export function buildLinearAttributeModel(options: ExactMipOptions) {
         numerator,
         denominator,
         cap,
-        maximumRaw: rawMaximums[attribute]! + (param.baseValue ?? 0),
+        maximumRaw,
       });
       addRows(rows, `food_cap_flag_${foodIndex}_${attribute}`, [[capped, 1], [foodVariable, -1]], "<=", 0);
       addRows(rows, `food_bonus_cap_low_${foodIndex}_${attribute}`, [[bonus, 1], [capped, -cap]], ">=", 0);
@@ -341,12 +359,12 @@ export function buildLinearAttributeModel(options: ExactMipOptions) {
         [capped, -bigM],
         [foodVariable, bigM],
       ]);
-      addRows(rows, `food_floor_high_${foodIndex}_${attribute}`, floorHigh, "<=", denominator - 1 + bigM - offset);
+      addRows(rows, `food_floor_high_${foodIndex}_${attribute}`, floorHigh, "<=", floorHighRhs);
       const capThreshold = new Map<string, number>([
         [rawVariables[attribute]!, numerator],
         [capped, -bigM],
       ]);
-      addRows(rows, `food_cap_threshold_${foodIndex}_${attribute}`, capThreshold, ">=", denominator * cap - bigM - offset);
+      addRows(rows, `food_cap_threshold_${foodIndex}_${attribute}`, capThreshold, ">=", thresholdRhs);
     }
   }
   // 各食物的条件加成变量创建后，重新构造最终属性总和。
@@ -451,6 +469,7 @@ export function buildLinearAttributeModel(options: ExactMipOptions) {
     rawMaximums,
     rawMinimums,
     finalMinimums,
+    finalMaximums,
     equipmentAttributes,
     fixedEquipmentAttributes,
     resistanceAllocationVariables,

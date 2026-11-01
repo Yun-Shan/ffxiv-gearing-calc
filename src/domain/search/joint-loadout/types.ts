@@ -4,6 +4,7 @@ import type { EquipInfo, FoodInfo, SharedSlotProjection } from "../types.ts";
 import type { HighsCallbackTrace } from "../linear-mip.ts";
 import type { BaselineExecutor } from "../parallel-baseline-executor.ts";
 import type { SharedStateSearchStatistics } from "./shared-state-search.ts";
+import type { JointOptimizationResult } from "../../types.ts";
 
 export type JointLoadoutJobV3 = {
   id: string;
@@ -46,16 +47,7 @@ export type JointLoadoutV3Result = {
   jobResults: Record<string, JointLoadoutJobResultV3>;
   optima: Record<string, JointLoadoutJobResultV3>;
   statistics: JointLoadoutV3Statistics;
-  proof: {
-    complete: true;
-    objective: "damage" | "dps";
-    optimalityScope: string;
-    outerBound: string;
-    innerSolverStatus: "Optimal" | "DualBound" | "ExactStateEnumeration";
-    formalCertificate: false;
-    numericalLimitation: string;
-    terminationReason: string;
-  };
+  proof: JointOptimizationResult["proof"];
 };
 
 export type JointLoadoutJobResultV3 = ExactMipResult & {
@@ -90,7 +82,10 @@ export type CommonChoice = {
 
 export type FoodChoice = {
   key: string;
+  /** A representative per job; complete only for single-variant domains. */
   foods: Map<string, FoodInfo | undefined>;
+  /** All original candidates with this physical identity, including job-specific effects. */
+  foodVariants?: ReadonlyMap<string, readonly FoodInfo[]>;
 };
 
 export type JobContext = {
