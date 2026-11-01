@@ -1,6 +1,6 @@
 # Node 测试与验收
 
-正式搜索耗时统一取领域结果 `statistics.elapsedMs`，覆盖领域入口至完整结果返回前的全部工作。输出与性能判定直接使用该值，不校验或修正耗时；Worker 与父进程的看门狗计时仅负责超时保护，不替代搜索耗时。历史基准保留原来的计时范围，跨口径分类仅作参考。
+正式搜索耗时统一取领域结果 `statistics.elapsedMs`，覆盖领域入口至完整结果返回前的全部工作。输出与性能判定直接使用该值，不校验或修正耗时；Worker 与父进程的看门狗计时仅负责超时保护，不替代搜索耗时。当前 22 个正式场景采用同一领域口径的[九轮基准](../../docs/search-optimization/九轮耗时基准.md)。
 
 本目录包含项目原有 Node 测试与正式多职业搜索入口。游戏数据读取、候选生成、属性公式和搜索算法由 `src/domain` 提供。
 
@@ -35,7 +35,7 @@ npm test                # Vitest 单元测试，包括 src/domain 中的规则�
 | `DATA_TEST_V3_TIMEOUT_MS` | 搜索时限，接受 1 至 235000 毫秒或 `unlimited`；无限时仍保留 RSS 保护线 | `235000` |
 | `FFXIV_SEARCH_STRATEGIES` | 独立的策略执行选项，JSON 对象，详见下节 | 所有项 `auto` |
 
-`DATA_TEST_JOB_CONSTRAINTS` 使用当前领域字段 `gcdChoices`、`speedMin`、`speedMax`、`minTenacity`、`toughnessMinPercent` 和 `maximizeTenacity`。GCD 档位与速度范围互斥，坚韧只选择一种策略；`gcdChoices` 是无重复的正有限数字数组，单值使用单元素数组。每个职业配置显式写入所选目标和族群索引 0；共享范围沿用首个职业的默认范围。装备排除与强制值缺省时按空集合处理。
+`DATA_TEST_JOB_CONSTRAINTS` 支持 `gcdChoices`、`speedMin`、`speedMax`、`minTenacity`、`toughnessMinPercent`、`maximizeTenacity` 和 `excludedGearIds`。单职业入口使用相同格式，职业键须与所选职业一致。GCD 档位与速度范围互斥，坚韧只选择一种策略。`gcdChoices` 是无重复的正有限数字数组，单值使用单元素数组。`excludedGearIds` 是无重复的正安全整数数组，可为空。每个职业配置显式写入所选目标和族群索引 0，共享范围沿用首个职业的默认范围。装备排除与强制值缺省时按空集合处理。
 
 赤魔与绘灵的共享装备、DPS 目标示例：
 

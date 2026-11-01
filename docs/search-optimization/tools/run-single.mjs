@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
 import { Worker } from "node:worker_threads";
 import { parseSearchStrategies } from "../../../scripts/node-tests/search-strategies.mjs";
+import { parseJobConstraints } from "../../../scripts/node-tests/v3/config.mjs";
 
 const generatedDataBytes = new Uint8Array(await readFile(
   new URL("../../../src/data/generated-data.bin", import.meta.url),
@@ -75,6 +76,7 @@ function makeConfig() {
     ? { kind: "itemLevel", value: syncLevel }
     : syncJobLevel !== undefined ? { kind: "jobLevel", value: syncJobLevel } : undefined;
   const maxSearchMs = parseTimeout();
+  const jobConstraints = parseJobConstraints(process.env, [jobId]).get(jobId) ?? {};
 
   return {
     config: {
@@ -88,6 +90,7 @@ function makeConfig() {
       excludedSources: [],
       forcedGear: {},
       foodId,
+      ...jobConstraints,
       maxSearchMs,
     },
     maxSearchMs,

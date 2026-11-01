@@ -103,6 +103,39 @@ test("per-job constraints override global values with current domain field names
   ]);
 });
 
+test("per-job excluded gear IDs accept unique positive safe integers and stay out of defaults", () => {
+  const defaults = parse();
+  assert.ok(defaults.jobConfigs.every((job) => !Object.hasOwn(job, "excludedGearIds")));
+
+  const config = parse({
+    DATA_TEST_JOB_CONSTRAINTS: JSON.stringify({
+      RDM: { excludedGearIds: [1001, 2002] },
+      BLM: { excludedGearIds: [] },
+    }),
+  });
+  assert.deepEqual(config.jobConfigs.map(({ jobId, excludedGearIds }) => [jobId, excludedGearIds]), [
+    ["RDM", [1001, 2002]],
+    ["BLM", []],
+  ]);
+});
+
+test("per-job excluded gear IDs reject invalid, unsafe, or duplicate IDs", () => {
+  for (const excludedGearIds of [
+    null,
+    1001,
+    [0],
+    [-1],
+    [1.5],
+    [Number.MAX_SAFE_INTEGER + 1],
+    ["1001"],
+    [1001, 1001],
+  ]) {
+    assert.throws(() => parse({
+      DATA_TEST_JOB_CONSTRAINTS: JSON.stringify({ RDM: { excludedGearIds } }),
+    }), /excludedGearIds/);
+  }
+});
+
 test("V3 sync settings and item-level overrides preserve supported bounds", () => {
   const itemSync = parse({
     DATA_TEST_SYNC_LEVEL: "90",

@@ -1,19 +1,20 @@
 # 搜索耗时优化资料
 
-本目录集中保存搜索性能优化的总结、原始记录归档和复测工具。
+本目录保存当前搜索性能基准、验证边界和复测工具。
 
-- [搜索耗时优化总结](搜索耗时优化总结.md)：优化策略与验证结果的摘要。
-- [通用数学策略迁移验收](通用数学策略迁移验收.md)：清单策略的适用条件、Node 对照、已知错误完成反例与验证边界。
-- [策略启用条件调整验收](策略启用条件调整验收.md)：原17场景与迁移四案的耗时、实际策略路径、条件对照及被拒绝试验。
-- [策略独立开关验收](策略独立开关验收.md)：全局 `auto/on/off` 执行配置、传输、正确性与界面验证。
+- [九轮耗时基准](九轮耗时基准.md)：22 个正式场景的当前耗时分布。
+- [搜索结果基准](tools/acceptance-baseline.json)：完整场景输入和精确目标。
+- [搜索耗时优化总结](搜索耗时优化总结.md)：当前验证结论和测量口径。
+- [通用数学策略迁移验收](通用数学策略迁移验收.md)：已知错误完成反例与证明边界。
+- [策略启用条件调整验收](策略启用条件调整验收.md)：模型表示的数学条件和性能选择边界。
+- [领域与搜索规则](../rules/领域与搜索规则.md)：全局 `auto/on/off` 执行契约及必要复核责任。
 - [基线 Worker 品级元数据丢失缺陷](基线Worker品级元数据丢失缺陷.md)：品级传输遗漏的影响、修复及正确性验证。
-- [耗时优化记录](耗时优化记录.7z)：搜索耗时优化过程的归档记录。
 - `tools/`：性能验收脚本及其 worker。从仓库根目录直接运行：
 
   ```powershell
   node --max-old-space-size=2560 --experimental-strip-types docs/search-optimization/tools/run-single.mjs
   node docs/search-optimization/tools/run-acceptance.mjs
-  node --test docs/search-optimization/tools/timing-acceptance.node-test.mjs
+  node --test docs/search-optimization/tools/*.node-test.mjs
   ```
 
   可直接在运行器命令后添加参数，例如：
@@ -36,21 +37,34 @@
 | `DATA_TEST_SINGLE_SYNC_JOB_LEVEL` | 仅同步公式等级，与品级设置互斥 |
 | `DATA_TEST_SINGLE_OBJECTIVE` | `damage` 或 `dps` |
 | `DATA_TEST_SINGLE_FOOD_ID` | 固定食物 ID |
+| `DATA_TEST_JOB_CONSTRAINTS` | 按当前职业缩写设置 GCD、坚韧和装备排除等条件，格式与联合入口相同 |
 | `DATA_TEST_SINGLE_TIMEOUT_MS` | 搜索时限，默认 `unlimited` |
 
 结果包括总耗时、候选数量、证明状态、结果属性和求解统计。RSS 保护线为 3.5 GiB。
 
 ## 全场景性能验收
 
-`run-acceptance.mjs` 默认顺序运行当前有效的 17 个性能验收场景。共享戒指统一使用两个具体槽位后，原先仅表示方式不同的 RPR/SAM 场景合并为一案；既有历史运行证据保留原口径。每个场景通过独立子进程调用 `run-single.mjs` 或正式多职业 Node 入口 `scripts/node-tests/run-v3.mjs`，并开启 `FFXIV_PROFILE_TIMING=1`。结果合法性、最优性证明、优化时限和历史耗时分栏显示；低于历史结果门槛、证明不完整或输入完整性失败均视为非法结果。
+`run-acceptance.mjs` 默认顺序运行 22 个性能验收场景。每案通过独立子进程调用 `run-single.mjs` 或正式联合入口 `scripts/node-tests/run-v3.mjs`，并开启 `FFXIV_PROFILE_TIMING=1`。运行器分别检查结果下限、最优性证明、输入一致性与耗时。
+
+使用 `--strategy mip` 可筛选 MIP 接入时验证的 11 案。其中 BLM、BRD、两个品级范围的 VPR＋MCH、四职业及五职业共享饰品共 6 案沿用原场景 ID，仅运行一次。新增 5 案如下。
+
+| 场景 ID | 搜索条件 |
+| --- | --- |
+| `forced-a` | PLD/WAR/DRK/GNB，780–785，无同步，伤害目标，GCD 均为 2.50，非武器装备与食物共享 |
+| `custom-b` | BLM，500–530，同步 530，伤害目标，GCD 2.45 |
+| `custom-c` | WAR/DRK/GNB，500–530，同步 530，伤害目标，GCD 均为 2.50，非武器装备与食物共享 |
+| `custom-d` | WAR/DRK/GNB，770–780，无同步，伤害目标，GCD 分别为 2.50、2.49、2.48，非武器装备与食物共享 |
+| `holdout-food-independent` | VPR/MCH，730–795，同步 735，DPS 目标，耳、项、腕及双戒共享，食物各自选择 |
+
+A–D 每个职业沿用同一份 98 项装备 ID 排除清单。四坦 A 用于复现联合 MIP 路线，该案固定 `sharedStateSearch=off`，优先于全局同名设置。其余策略沿用 `FFXIV_SEARCH_STRATEGIES`。逐案的 `execution.strategies` 记录实际执行设置。
 
 `FFXIV_PROFILE_TIMING=1` 会输出 HiGHS 模型准备、求解阶段、共享选择冲突行和因子类别冲突切面的诊断事件。三职业及以上会报告类别组切面数量与预处理工作量；联合共享组合超过 20,000 时会报告前缀上界搜索的启用状态、检查前缀数及剪枝数。达到可选预处理预算只会少生成加强行，搜索仍执行完整最优性证明；该设置只增加诊断信息，不改变候选、约束或优化目标。
 
-当前正式耗时直接读取领域结果 `statistics.elapsedMs`：从领域搜索入口开始，到候选准备、求解、结果还原与资源清理完成、返回结果前结束。不包含 Worker 启动、数据模块加载和结果传输。单职业与联合入口使用同一口径，不再从旧 `search`、`runtime` 字段或外层进程计时取值；看门狗计时仅控制超时保护。耗时值直接使用，不做数值校验或修正。
+当前正式耗时直接读取领域结果 `statistics.elapsedMs`，从领域搜索入口开始，到候选准备、求解、结果还原与资源清理完成、返回结果前结束。单职业与联合入口使用同一口径，Worker 启动、数据模块加载和结果传输由外层看门狗单独计时并控制超时保护。领域耗时值直接用于报告与比较。
 
-历史验收产物与基准保留当时口径；旧记录包含 Worker 开销的计时不重写。与当前领域入口耗时的分类仅作历史参考，不能单独证明公平提速。新的汇总使用 schema 6，并标记当前计时范围。
+22 个场景的耗时基准来自 2026-11-01 的九轮串行复跑，共 198 次完整搜索。最小值、算术均值、最大值与九个原始毫秒样本保存在 tools/timing-baseline.mjs，运行器的历史最快值采用九轮最小值，详见[九轮耗时基准](九轮耗时基准.md)。完整输入、独立最优分母和精确目标保存在[搜索结果基准](tools/acceptance-baseline.json)。
 
-优化时限与历史耗时独立判断。优化时限为每个职业 30 秒，包含单职业；超时只表示没有达到该搜索预算。历史比较使用该条件的历史最优耗时和九轮统计：不慢于历史最优为“优化成功”；慢于历史最优但低于九轮均值为“优化成功（提示）”；高于或等于均值且不超过九轮最大值为“耗时无影响”；高于九轮最大值为“劣化”。九轮最小值、均值和最大值随场景保存在验收工具中。历史结果门槛仍是硬性条件，结果低于门槛即非法，与耗时类别无关。历史记录来源见[优化总结](搜索耗时优化总结.md)和[记录归档](耗时优化记录.7z)。联合结果阈值使用整数分子/分母精确比较。
+优化时限与历史耗时独立判断。优化时限为每个职业 30 秒，包含单职业；超时只表示没有达到该搜索预算。历史比较使用该条件的本次九轮最小值和九轮统计：不慢于历史最优为“优化成功”；慢于历史最优但低于九轮均值为“优化成功（提示）”；高于或等于均值且不超过九轮最大值为“耗时无影响”；高于九轮最大值为“劣化”。九轮统计由完整领域耗时直接计算，保留毫秒原始精度。历史结果门槛仍是硬性条件，结果低于门槛即非法，与耗时类别无关。当前耗时来源见[九轮耗时基准](九轮耗时基准.md)。联合结果阈值使用整数分子/分母精确比较。
 
 当前同步宽域压力场景包括 VPR+MCH、四职业与五职业共享饰品/戒指对，以及防护、治疗、智力 DPS 各自的四职业全非武器槽共享搜索；均为 715–795、同步 735。每案父进程看门狗默认为 300 秒。V3 入口最多接受 235 秒有限内部时限，父进程看门狗更长时，验收器让 V3 内部时限不限时，由父进程负责超时控制。
 
@@ -61,6 +75,7 @@
 ```powershell
 node docs/search-optimization/tools/run-acceptance.mjs --strategy stress --timeout-ms unlimited
 node docs/search-optimization/tools/run-acceptance.mjs --list
+node docs/search-optimization/tools/run-acceptance.mjs --strategy mip --list
 node docs/search-optimization/tools/run-acceptance.mjs --case single-blm-sync735-730-795-damage,vpr-mch-sync735-rings-pair-dps
 node docs/search-optimization/tools/run-acceptance.mjs --job-count 2
 node docs/search-optimization/tools/run-acceptance.mjs --strategy joint-2
@@ -71,11 +86,11 @@ node docs/search-optimization/tools/run-acceptance.mjs --timeout-ms 180000
 
 ## 验收记录
 
-每次运行在 `acceptance-runs/<时间戳>/` 建立新目录，不覆盖旧记录。`suite.json` 和 `suite.md` 汇总场景；每个 `cases/<场景ID>/config.json` 保存输入、阈值来源、实际子进程参数、工作目录、堆上限、profile 开关、日志捕获方式及超时；`result.json` 保存最终结果、证明与耗时判定、逐职业单职业分数、联合结果、求解统计、原始 HiGHS profile 事件、阶段列表和策略摘要。完整 stdout/stderr 分别保存在 `stdout.log`、`stderr.log`。
+每次运行在 `acceptance-runs/<时间戳>/` 建立独立目录。`suite.json` 和 `suite.md` 汇总场景；每个 `cases/<场景ID>/config.json` 保存输入、阈值来源、实际子进程参数、工作目录、堆上限、profile 开关、日志捕获方式及超时；`result.json` 保存最终结果、证明与耗时判定、逐职业单职业分数、联合结果、求解统计、原始 HiGHS profile 事件、阶段列表和策略摘要。完整 stdout/stderr 分别保存在 `stdout.log`、`stderr.log`。
 
 `strategy-snapshot/` 保存 `src/domain`、`src/data` 中的运行时源码、`scripts/node-tests`、`docs/search-optimization/tools` 下的非测试运行时代码和根目录包清单；其中必须包含 `src/data/binary` 下的 `schema.ts`、`types.ts`、`encode.ts` 与 `decode.ts`。`data-snapshot/generated-data.bin` 保存本次使用的运行时数据。套件开始时记录策略文件和二进制数据的 SHA-256；每案启动前、结束后重新比对。输入不一致会跳过该案，运行期间发生变化会使该案失败，并在结果中记录变化路径、基线及观测到的哈希和字节数。`suite.json` 还记录游戏数据版本、Git HEAD、dirty 文件、Node 版本、平台、CPU 和内存信息，不保存进程环境变量或密钥。
 
-验收结果按 `schemaVersion: 5` 记录，重点字段包括：
+验收结果按 `schemaVersion: 7` 记录，重点字段包括：
 
 - `runtime`：Node/V8、可执行文件、平台、架构、CPU、核心数和内存。
 - `strategySources[]`：每个策略快照文件的相对路径、SHA-256、字节数和快照路径。

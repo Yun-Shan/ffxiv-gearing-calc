@@ -25,7 +25,7 @@ export function compareHistoricalTiming({
   nineRoundAverageMs,
   nineRoundMaxMs,
 }) {
-  if (actualMs === null) {
+  if (actualMs === null || ![historicalBestMs, nineRoundMinMs, nineRoundAverageMs, nineRoundMaxMs].every(Number.isFinite)) {
     return {
       status: STATUS.UNAVAILABLE,
       label: STATUS_LABELS[STATUS.UNAVAILABLE],

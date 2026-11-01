@@ -8,6 +8,7 @@ const sharedSlots = new Set([
 ]);
 const constraintNames = new Set([
   "gcdChoices", "speedMin", "speedMax", "minTenacity", "toughnessMinPercent", "maximizeTenacity",
+  "excludedGearIds",
 ]);
 
 function parseJobs(env, jobSchemas) {
@@ -89,6 +90,17 @@ function parseConstraintObject(job, value) {
       normalized[name] = rawValue;
       continue;
     }
+    if (name === "excludedGearIds") {
+      if (
+        !Array.isArray(rawValue) ||
+        rawValue.some((gearId) => !Number.isSafeInteger(gearId) || gearId <= 0) ||
+        new Set(rawValue).size !== rawValue.length
+      ) {
+        throw new Error(`${job}.excludedGearIds 必须是无重复的正安全整数数组`);
+      }
+      normalized[name] = rawValue;
+      continue;
+    }
     if (typeof rawValue !== "number" || !Number.isFinite(rawValue)) {
       throw new Error(`${job}.${name} 必须是有限数字`);
     }
@@ -97,7 +109,7 @@ function parseConstraintObject(job, value) {
   return normalized;
 }
 
-function parseJobConstraints(env, jobs) {
+export function parseJobConstraints(env, jobs) {
   const raw = env.DATA_TEST_JOB_CONSTRAINTS ?? "{}";
   let parsed;
   try {

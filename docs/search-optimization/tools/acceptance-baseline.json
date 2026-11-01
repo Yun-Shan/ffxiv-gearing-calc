@@ -1,0 +1,3814 @@
+{
+  "schemaVersion": 1,
+  "timingBaseline": "docs/search-optimization/tools/timing-baseline.mjs",
+  "dataSha256": "1207891e70a28006357c32cb21bc0672e95899d14e2777eae1a80e61e81952ec",
+  "verifiedRunsPerCase": 9,
+  "verifiedSearches": 198,
+  "cases": {
+    "single-blm-sync735-730-795-damage": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "BLM",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [],
+        "foodStrategy": "independent",
+        "objective": "damage"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "minimum": 91.6344764121696
+      },
+      "exact": {
+        "single": {
+          "numerator": "2819522351143680000000",
+          "denominator": "1"
+        }
+      }
+    },
+    "single-brd-unsynced-770-795-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "BRD",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 770,
+            "maxItemLevel": 795,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [],
+        "foodStrategy": "independent",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "minimum": 50.07705056381793
+      },
+      "exact": {
+        "single": {
+          "numerator": "3872625243601920000000",
+          "denominator": "232"
+        }
+      }
+    },
+    "rdm-blm-780-795-shared-all-damage": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "RDM",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 780,
+            "maxItemLevel": 795,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "BLM",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 780,
+            "maxItemLevel": 795,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [
+          "head",
+          "body",
+          "hands",
+          "legs",
+          "feet",
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "damage"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "2",
+          "denominator": "1"
+        },
+        "soloObjectiveScores": {
+          "RDM": 134.83336963078128,
+          "BLM": 134.83336963078128
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "2",
+          "denominator": "1"
+        },
+        "jobs": {
+          "RDM": {
+            "solo": {
+              "numerator": "4148719065562500000000",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "4148719065562500000000",
+              "denominator": "1"
+            }
+          },
+          "BLM": {
+            "solo": {
+              "numerator": "4148719065562500000000",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "4148719065562500000000",
+              "denominator": "1"
+            }
+          }
+        }
+      }
+    },
+    "rdm-blm-780-795-independent-damage": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "RDM",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 780,
+            "maxItemLevel": 795,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "BLM",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 780,
+            "maxItemLevel": 795,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [],
+        "foodStrategy": "independent",
+        "objective": "damage"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "2",
+          "denominator": "1"
+        },
+        "soloObjectiveScores": {
+          "RDM": 134.83336963078128,
+          "BLM": 134.83336963078128
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "2",
+          "denominator": "1"
+        },
+        "jobs": {
+          "RDM": {
+            "solo": {
+              "numerator": "4148719065562500000000",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "4148719065562500000000",
+              "denominator": "1"
+            }
+          },
+          "BLM": {
+            "solo": {
+              "numerator": "4148719065562500000000",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "4148719065562500000000",
+              "denominator": "1"
+            }
+          }
+        }
+      }
+    },
+    "rpr-sam-sync735-rings-pair-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "RPR",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "SAM",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "2",
+          "denominator": "1"
+        },
+        "soloObjectiveScores": {
+          "RPR": 28.645899062799366,
+          "SAM": 32.661898805812505
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "2",
+          "denominator": "1"
+        },
+        "jobs": {
+          "RPR": {
+            "solo": {
+              "numerator": "2589589275277062744000",
+              "denominator": "226"
+            },
+            "joint": {
+              "numerator": "2589589275277062744000",
+              "denominator": "226"
+            }
+          },
+          "SAM": {
+            "solo": {
+              "numerator": "2547628106853375000000",
+              "denominator": "195"
+            },
+            "joint": {
+              "numerator": "2547628106853375000000",
+              "denominator": "195"
+            }
+          }
+        }
+      }
+    },
+    "rdm-pct-sync735-gcd-shared-armor-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "RDM",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.48
+            ]
+          },
+          {
+            "jobId": "PCT",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.48,
+              2.5
+            ]
+          }
+        ],
+        "commonSlots": [
+          "head",
+          "body",
+          "hands",
+          "legs",
+          "feet",
+          "earrings",
+          "necklace",
+          "bracelet"
+        ],
+        "foodStrategy": "shared",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "2",
+          "denominator": "1"
+        },
+        "soloObjectiveScores": {
+          "RDM": 36.769120086402275,
+          "PCT": 36.769120086402275
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "2",
+          "denominator": "1"
+        },
+        "jobs": {
+          "RDM": {
+            "solo": {
+              "numerator": "2805766701977774080000",
+              "denominator": "248"
+            },
+            "joint": {
+              "numerator": "2805766701977774080000",
+              "denominator": "248"
+            }
+          },
+          "PCT": {
+            "solo": {
+              "numerator": "2805766701977774080000",
+              "denominator": "248"
+            },
+            "joint": {
+              "numerator": "2805766701977774080000",
+              "denominator": "248"
+            }
+          }
+        }
+      }
+    },
+    "vpr-mch-sync735-rings-pair-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "VPR",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "MCH",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "8673",
+          "denominator": "4337"
+        },
+        "soloObjectiveScores": {
+          "VPR": 33.22292791883143,
+          "MCH": 34.227896116543384
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "8673",
+          "denominator": "4337"
+        },
+        "jobs": {
+          "VPR": {
+            "solo": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            },
+            "joint": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            }
+          },
+          "MCH": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612126975754750720000",
+              "denominator": "229"
+            }
+          }
+        }
+      }
+    },
+    "vpr-mch-sync735-wide715-795-rings-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "VPR",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "MCH",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "8673",
+          "denominator": "4337"
+        },
+        "soloObjectiveScores": {
+          "VPR": 33.22292791883143,
+          "MCH": 34.227896116543384
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "8673",
+          "denominator": "4337"
+        },
+        "jobs": {
+          "VPR": {
+            "solo": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            },
+            "joint": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            }
+          },
+          "MCH": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612126975754750720000",
+              "denominator": "229"
+            }
+          }
+        }
+      }
+    },
+    "rdm-blm-pct-sync735-gcd-shared-all-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "RDM",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.48
+            ]
+          },
+          {
+            "jobId": "BLM",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.48,
+              2.5
+            ]
+          },
+          {
+            "jobId": "PCT",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.48,
+              2.5
+            ]
+          }
+        ],
+        "commonSlots": [
+          "head",
+          "body",
+          "hands",
+          "legs",
+          "feet",
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "3",
+          "denominator": "1"
+        },
+        "soloObjectiveScores": {
+          "RDM": 36.769120086402275,
+          "BLM": 36.769120086402275,
+          "PCT": 36.769120086402275
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "3",
+          "denominator": "1"
+        },
+        "jobs": {
+          "RDM": {
+            "solo": {
+              "numerator": "2805766701977774080000",
+              "denominator": "248"
+            },
+            "joint": {
+              "numerator": "2805766701977774080000",
+              "denominator": "248"
+            }
+          },
+          "BLM": {
+            "solo": {
+              "numerator": "2805766701977774080000",
+              "denominator": "248"
+            },
+            "joint": {
+              "numerator": "2805766701977774080000",
+              "denominator": "248"
+            }
+          },
+          "PCT": {
+            "solo": {
+              "numerator": "2805766701977774080000",
+              "denominator": "248"
+            },
+            "joint": {
+              "numerator": "2805766701977774080000",
+              "denominator": "248"
+            }
+          }
+        }
+      }
+    },
+    "brd-dnc-mch-sync735-shared-all-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "BRD",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "DNC",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "MCH",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [
+          "head",
+          "body",
+          "hands",
+          "legs",
+          "feet",
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "3",
+          "denominator": "1"
+        },
+        "soloObjectiveScores": {
+          "BRD": 34.227896116543384,
+          "DNC": 34.227896116543384,
+          "MCH": 34.227896116543384
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "3",
+          "denominator": "1"
+        },
+        "jobs": {
+          "BRD": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            }
+          },
+          "DNC": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            }
+          },
+          "MCH": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            }
+          }
+        }
+      }
+    },
+    "brd-dnc-mch-vpr-unsynced-independent-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "BRD",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 770,
+            "maxItemLevel": 795,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "DNC",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 770,
+            "maxItemLevel": 795,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "MCH",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 770,
+            "maxItemLevel": 795,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "VPR",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 770,
+            "maxItemLevel": 795,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [],
+        "foodStrategy": "independent",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "4",
+          "denominator": "1"
+        },
+        "soloObjectiveScores": {
+          "BRD": 50.07705056381793,
+          "DNC": 50.07705056381793,
+          "MCH": 50.07705056381793,
+          "VPR": 48.5175189601382
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "4",
+          "denominator": "1"
+        },
+        "jobs": {
+          "BRD": {
+            "solo": {
+              "numerator": "3872625243601920000000",
+              "denominator": "232"
+            },
+            "joint": {
+              "numerator": "3872625243601920000000",
+              "denominator": "232"
+            }
+          },
+          "DNC": {
+            "solo": {
+              "numerator": "3872625243601920000000",
+              "denominator": "232"
+            },
+            "joint": {
+              "numerator": "3872625243601920000000",
+              "denominator": "232"
+            }
+          },
+          "MCH": {
+            "solo": {
+              "numerator": "3872625243601920000000",
+              "denominator": "232"
+            },
+            "joint": {
+              "numerator": "3872625243601920000000",
+              "denominator": "232"
+            }
+          },
+          "VPR": {
+            "solo": {
+              "numerator": "3726145456138613760000",
+              "denominator": "192"
+            },
+            "joint": {
+              "numerator": "3726145456138613760000",
+              "denominator": "192"
+            }
+          }
+        }
+      }
+    },
+    "brd-dnc-mch-vpr-sync735-wide715-795-shared-accessories-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "BRD",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "DNC",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "MCH",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "VPR",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "18973495",
+          "denominator": "4744003"
+        },
+        "soloObjectiveScores": {
+          "BRD": 34.227896116543384,
+          "DNC": 34.227896116543384,
+          "MCH": 34.227896116543384,
+          "VPR": 33.22292791883143
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "18973495",
+          "denominator": "4744003"
+        },
+        "jobs": {
+          "BRD": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            }
+          },
+          "DNC": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            }
+          },
+          "MCH": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            }
+          },
+          "VPR": {
+            "solo": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            },
+            "joint": {
+              "numerator": "2523602876740861088000",
+              "denominator": "190"
+            }
+          }
+        }
+      }
+    },
+    "brd-dnc-mch-nin-vpr-sync735-independent-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "BRD",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "DNC",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "MCH",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "NIN",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "VPR",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [],
+        "foodStrategy": "independent",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "5",
+          "denominator": "1"
+        },
+        "soloObjectiveScores": {
+          "BRD": 34.227896116543384,
+          "DNC": 34.227896116543384,
+          "MCH": 34.227896116543384,
+          "NIN": 33.22292791883143,
+          "VPR": 33.22292791883143
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "5",
+          "denominator": "1"
+        },
+        "jobs": {
+          "BRD": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            }
+          },
+          "DNC": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            }
+          },
+          "MCH": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            }
+          },
+          "NIN": {
+            "solo": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            },
+            "joint": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            }
+          },
+          "VPR": {
+            "solo": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            },
+            "joint": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            }
+          }
+        }
+      }
+    },
+    "brd-dnc-mch-nin-vpr-sync735-wide715-795-shared-accessories-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "BRD",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "DNC",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "MCH",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "NIN",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "VPR",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "21682",
+          "denominator": "4337"
+        },
+        "soloObjectiveScores": {
+          "BRD": 34.227896116543384,
+          "DNC": 34.227896116543384,
+          "MCH": 34.227896116543384,
+          "NIN": 33.22292791883143,
+          "VPR": 33.22292791883143
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "21682",
+          "denominator": "4337"
+        },
+        "jobs": {
+          "BRD": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612126975754750720000",
+              "denominator": "229"
+            }
+          },
+          "DNC": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612126975754750720000",
+              "denominator": "229"
+            }
+          },
+          "MCH": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612126975754750720000",
+              "denominator": "229"
+            }
+          },
+          "NIN": {
+            "solo": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            },
+            "joint": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            }
+          },
+          "VPR": {
+            "solo": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            },
+            "joint": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            }
+          }
+        }
+      }
+    },
+    "pld-war-drk-gnb-sync735-wide715-795-shared-all-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "PLD",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "WAR",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "DRK",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "GNB",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [
+          "head",
+          "body",
+          "hands",
+          "legs",
+          "feet",
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "4",
+          "denominator": "1"
+        },
+        "soloObjectiveScores": {
+          "PLD": 21.97532541211506,
+          "WAR": 22.3116902496236,
+          "DRK": 22.3116902496236,
+          "GNB": 21.97532541211506
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "4",
+          "denominator": "1"
+        },
+        "jobs": {
+          "PLD": {
+            "solo": {
+              "numerator": "1977779287090355374080",
+              "denominator": "225"
+            },
+            "joint": {
+              "numerator": "1977779287090355374080",
+              "denominator": "225"
+            }
+          },
+          "WAR": {
+            "solo": {
+              "numerator": "2008052122466124693504",
+              "denominator": "225"
+            },
+            "joint": {
+              "numerator": "2008052122466124693504",
+              "denominator": "225"
+            }
+          },
+          "DRK": {
+            "solo": {
+              "numerator": "2008052122466124693504",
+              "denominator": "225"
+            },
+            "joint": {
+              "numerator": "2008052122466124693504",
+              "denominator": "225"
+            }
+          },
+          "GNB": {
+            "solo": {
+              "numerator": "1977779287090355374080",
+              "denominator": "225"
+            },
+            "joint": {
+              "numerator": "1977779287090355374080",
+              "denominator": "225"
+            }
+          }
+        }
+      }
+    },
+    "whm-sch-ast-sge-sync735-wide715-795-shared-all-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "WHM",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "SCH",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "AST",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "SGE",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [
+          "head",
+          "body",
+          "hands",
+          "legs",
+          "feet",
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "4",
+          "denominator": "1"
+        },
+        "soloObjectiveScores": {
+          "WHM": 36.73743006859162,
+          "SCH": 36.73743006859162,
+          "AST": 36.73743006859162,
+          "SGE": 36.73743006859162
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "4",
+          "denominator": "1"
+        },
+        "jobs": {
+          "WHM": {
+            "solo": {
+              "numerator": "2543360543210188800000",
+              "denominator": "225"
+            },
+            "joint": {
+              "numerator": "2543360543210188800000",
+              "denominator": "225"
+            }
+          },
+          "SCH": {
+            "solo": {
+              "numerator": "2543360543210188800000",
+              "denominator": "225"
+            },
+            "joint": {
+              "numerator": "2543360543210188800000",
+              "denominator": "225"
+            }
+          },
+          "AST": {
+            "solo": {
+              "numerator": "2543360543210188800000",
+              "denominator": "225"
+            },
+            "joint": {
+              "numerator": "2543360543210188800000",
+              "denominator": "225"
+            }
+          },
+          "SGE": {
+            "solo": {
+              "numerator": "2543360543210188800000",
+              "denominator": "225"
+            },
+            "joint": {
+              "numerator": "2543360543210188800000",
+              "denominator": "225"
+            }
+          }
+        }
+      }
+    },
+    "blm-smn-rdm-pct-sync735-wide715-795-shared-all-dps": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "BLM",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "SMN",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "RDM",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "PCT",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 715,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [
+          "head",
+          "body",
+          "hands",
+          "legs",
+          "feet",
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "4",
+          "denominator": "1"
+        },
+        "soloObjectiveScores": {
+          "BLM": 37.27741304836786,
+          "SMN": 37.27741304836786,
+          "RDM": 37.27741304836786,
+          "PCT": 37.27741304836786
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "4",
+          "denominator": "1"
+        },
+        "jobs": {
+          "BLM": {
+            "solo": {
+              "numerator": "2523394114043362560000",
+              "denominator": "220"
+            },
+            "joint": {
+              "numerator": "2523394114043362560000",
+              "denominator": "220"
+            }
+          },
+          "SMN": {
+            "solo": {
+              "numerator": "2523394114043362560000",
+              "denominator": "220"
+            },
+            "joint": {
+              "numerator": "2523394114043362560000",
+              "denominator": "220"
+            }
+          },
+          "RDM": {
+            "solo": {
+              "numerator": "2523394114043362560000",
+              "denominator": "220"
+            },
+            "joint": {
+              "numerator": "2523394114043362560000",
+              "denominator": "220"
+            }
+          },
+          "PCT": {
+            "solo": {
+              "numerator": "2523394114043362560000",
+              "denominator": "220"
+            },
+            "joint": {
+              "numerator": "2523394114043362560000",
+              "denominator": "220"
+            }
+          }
+        }
+      }
+    },
+    "custom-b": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "BLM",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 500,
+            "maxItemLevel": 530,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 530
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.45
+            ],
+            "excludedGearIds": [
+              32669,
+              32670,
+              32671,
+              32672,
+              32673,
+              32674,
+              32675,
+              32676,
+              32677,
+              32678,
+              32679,
+              32680,
+              32681,
+              32682,
+              32683,
+              32684,
+              32685,
+              32686,
+              33462,
+              33463,
+              33464,
+              33465,
+              33466,
+              33467,
+              33468,
+              33469,
+              33470,
+              33471,
+              33472,
+              33473,
+              33474,
+              33475,
+              33476,
+              33477,
+              33478,
+              33479,
+              39920,
+              39921,
+              39922,
+              39923,
+              39924,
+              39925,
+              39926,
+              39927,
+              39928,
+              39929,
+              39930,
+              39931,
+              39932,
+              39933,
+              39934,
+              39935,
+              39936,
+              39937,
+              39938,
+              39939,
+              40932,
+              40933,
+              40934,
+              40935,
+              40936,
+              40937,
+              40938,
+              40939,
+              40940,
+              40941,
+              40942,
+              40943,
+              40944,
+              40945,
+              40946,
+              40947,
+              40948,
+              40949,
+              40950,
+              40951,
+              51000,
+              51001,
+              51002,
+              51003,
+              51004,
+              51005,
+              51006,
+              51007,
+              51008,
+              51009,
+              51010,
+              51011,
+              51012,
+              51013,
+              51014,
+              51015,
+              51016,
+              51017,
+              51018,
+              51019,
+              51020,
+              51021
+            ]
+          }
+        ],
+        "commonSlots": [],
+        "foodStrategy": "independent",
+        "objective": "damage"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "minimum": 23.68180572939693
+      },
+      "exact": {
+        "single": {
+          "numerator": "728670945519905472000",
+          "denominator": "1"
+        }
+      }
+    },
+    "custom-c": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "WAR",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 500,
+            "maxItemLevel": 530,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 530
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.5
+            ],
+            "excludedGearIds": [
+              32669,
+              32670,
+              32671,
+              32672,
+              32673,
+              32674,
+              32675,
+              32676,
+              32677,
+              32678,
+              32679,
+              32680,
+              32681,
+              32682,
+              32683,
+              32684,
+              32685,
+              32686,
+              33462,
+              33463,
+              33464,
+              33465,
+              33466,
+              33467,
+              33468,
+              33469,
+              33470,
+              33471,
+              33472,
+              33473,
+              33474,
+              33475,
+              33476,
+              33477,
+              33478,
+              33479,
+              39920,
+              39921,
+              39922,
+              39923,
+              39924,
+              39925,
+              39926,
+              39927,
+              39928,
+              39929,
+              39930,
+              39931,
+              39932,
+              39933,
+              39934,
+              39935,
+              39936,
+              39937,
+              39938,
+              39939,
+              40932,
+              40933,
+              40934,
+              40935,
+              40936,
+              40937,
+              40938,
+              40939,
+              40940,
+              40941,
+              40942,
+              40943,
+              40944,
+              40945,
+              40946,
+              40947,
+              40948,
+              40949,
+              40950,
+              40951,
+              51000,
+              51001,
+              51002,
+              51003,
+              51004,
+              51005,
+              51006,
+              51007,
+              51008,
+              51009,
+              51010,
+              51011,
+              51012,
+              51013,
+              51014,
+              51015,
+              51016,
+              51017,
+              51018,
+              51019,
+              51020,
+              51021
+            ]
+          },
+          {
+            "jobId": "DRK",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 500,
+            "maxItemLevel": 530,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 530
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.5
+            ],
+            "excludedGearIds": [
+              32669,
+              32670,
+              32671,
+              32672,
+              32673,
+              32674,
+              32675,
+              32676,
+              32677,
+              32678,
+              32679,
+              32680,
+              32681,
+              32682,
+              32683,
+              32684,
+              32685,
+              32686,
+              33462,
+              33463,
+              33464,
+              33465,
+              33466,
+              33467,
+              33468,
+              33469,
+              33470,
+              33471,
+              33472,
+              33473,
+              33474,
+              33475,
+              33476,
+              33477,
+              33478,
+              33479,
+              39920,
+              39921,
+              39922,
+              39923,
+              39924,
+              39925,
+              39926,
+              39927,
+              39928,
+              39929,
+              39930,
+              39931,
+              39932,
+              39933,
+              39934,
+              39935,
+              39936,
+              39937,
+              39938,
+              39939,
+              40932,
+              40933,
+              40934,
+              40935,
+              40936,
+              40937,
+              40938,
+              40939,
+              40940,
+              40941,
+              40942,
+              40943,
+              40944,
+              40945,
+              40946,
+              40947,
+              40948,
+              40949,
+              40950,
+              40951,
+              51000,
+              51001,
+              51002,
+              51003,
+              51004,
+              51005,
+              51006,
+              51007,
+              51008,
+              51009,
+              51010,
+              51011,
+              51012,
+              51013,
+              51014,
+              51015,
+              51016,
+              51017,
+              51018,
+              51019,
+              51020,
+              51021
+            ]
+          },
+          {
+            "jobId": "GNB",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 500,
+            "maxItemLevel": 530,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 530
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.5
+            ],
+            "excludedGearIds": [
+              32669,
+              32670,
+              32671,
+              32672,
+              32673,
+              32674,
+              32675,
+              32676,
+              32677,
+              32678,
+              32679,
+              32680,
+              32681,
+              32682,
+              32683,
+              32684,
+              32685,
+              32686,
+              33462,
+              33463,
+              33464,
+              33465,
+              33466,
+              33467,
+              33468,
+              33469,
+              33470,
+              33471,
+              33472,
+              33473,
+              33474,
+              33475,
+              33476,
+              33477,
+              33478,
+              33479,
+              39920,
+              39921,
+              39922,
+              39923,
+              39924,
+              39925,
+              39926,
+              39927,
+              39928,
+              39929,
+              39930,
+              39931,
+              39932,
+              39933,
+              39934,
+              39935,
+              39936,
+              39937,
+              39938,
+              39939,
+              40932,
+              40933,
+              40934,
+              40935,
+              40936,
+              40937,
+              40938,
+              40939,
+              40940,
+              40941,
+              40942,
+              40943,
+              40944,
+              40945,
+              40946,
+              40947,
+              40948,
+              40949,
+              40950,
+              40951,
+              51000,
+              51001,
+              51002,
+              51003,
+              51004,
+              51005,
+              51006,
+              51007,
+              51008,
+              51009,
+              51010,
+              51011,
+              51012,
+              51013,
+              51014,
+              51015,
+              51016,
+              51017,
+              51018,
+              51019,
+              51020,
+              51021
+            ]
+          }
+        ],
+        "commonSlots": [
+          "head",
+          "body",
+          "hands",
+          "legs",
+          "feet",
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "damage"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "7203491",
+          "denominator": "2401410"
+        },
+        "soloObjectiveScores": {
+          "WAR": 12.841303962762657,
+          "DRK": 12.8652339804949,
+          "GNB": 12.630610717339414
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "7203491",
+          "denominator": "2401410"
+        },
+        "jobs": {
+          "WAR": {
+            "solo": {
+              "numerator": "513652158510506288000",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "513652158510506288000",
+              "denominator": "1"
+            }
+          },
+          "DRK": {
+            "solo": {
+              "numerator": "514609359219795840000",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "514450995459978304000",
+              "denominator": "1"
+            }
+          },
+          "GNB": {
+            "solo": {
+              "numerator": "505224428693576519200",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "505224428693576519200",
+              "denominator": "1"
+            }
+          }
+        }
+      }
+    },
+    "custom-d": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "WAR",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 770,
+            "maxItemLevel": 780,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.5
+            ],
+            "excludedGearIds": [
+              32669,
+              32670,
+              32671,
+              32672,
+              32673,
+              32674,
+              32675,
+              32676,
+              32677,
+              32678,
+              32679,
+              32680,
+              32681,
+              32682,
+              32683,
+              32684,
+              32685,
+              32686,
+              33462,
+              33463,
+              33464,
+              33465,
+              33466,
+              33467,
+              33468,
+              33469,
+              33470,
+              33471,
+              33472,
+              33473,
+              33474,
+              33475,
+              33476,
+              33477,
+              33478,
+              33479,
+              39920,
+              39921,
+              39922,
+              39923,
+              39924,
+              39925,
+              39926,
+              39927,
+              39928,
+              39929,
+              39930,
+              39931,
+              39932,
+              39933,
+              39934,
+              39935,
+              39936,
+              39937,
+              39938,
+              39939,
+              40932,
+              40933,
+              40934,
+              40935,
+              40936,
+              40937,
+              40938,
+              40939,
+              40940,
+              40941,
+              40942,
+              40943,
+              40944,
+              40945,
+              40946,
+              40947,
+              40948,
+              40949,
+              40950,
+              40951,
+              51000,
+              51001,
+              51002,
+              51003,
+              51004,
+              51005,
+              51006,
+              51007,
+              51008,
+              51009,
+              51010,
+              51011,
+              51012,
+              51013,
+              51014,
+              51015,
+              51016,
+              51017,
+              51018,
+              51019,
+              51020,
+              51021
+            ]
+          },
+          {
+            "jobId": "DRK",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 770,
+            "maxItemLevel": 780,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.49
+            ],
+            "excludedGearIds": [
+              32669,
+              32670,
+              32671,
+              32672,
+              32673,
+              32674,
+              32675,
+              32676,
+              32677,
+              32678,
+              32679,
+              32680,
+              32681,
+              32682,
+              32683,
+              32684,
+              32685,
+              32686,
+              33462,
+              33463,
+              33464,
+              33465,
+              33466,
+              33467,
+              33468,
+              33469,
+              33470,
+              33471,
+              33472,
+              33473,
+              33474,
+              33475,
+              33476,
+              33477,
+              33478,
+              33479,
+              39920,
+              39921,
+              39922,
+              39923,
+              39924,
+              39925,
+              39926,
+              39927,
+              39928,
+              39929,
+              39930,
+              39931,
+              39932,
+              39933,
+              39934,
+              39935,
+              39936,
+              39937,
+              39938,
+              39939,
+              40932,
+              40933,
+              40934,
+              40935,
+              40936,
+              40937,
+              40938,
+              40939,
+              40940,
+              40941,
+              40942,
+              40943,
+              40944,
+              40945,
+              40946,
+              40947,
+              40948,
+              40949,
+              40950,
+              40951,
+              51000,
+              51001,
+              51002,
+              51003,
+              51004,
+              51005,
+              51006,
+              51007,
+              51008,
+              51009,
+              51010,
+              51011,
+              51012,
+              51013,
+              51014,
+              51015,
+              51016,
+              51017,
+              51018,
+              51019,
+              51020,
+              51021
+            ]
+          },
+          {
+            "jobId": "GNB",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 770,
+            "maxItemLevel": 780,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.48
+            ],
+            "excludedGearIds": [
+              32669,
+              32670,
+              32671,
+              32672,
+              32673,
+              32674,
+              32675,
+              32676,
+              32677,
+              32678,
+              32679,
+              32680,
+              32681,
+              32682,
+              32683,
+              32684,
+              32685,
+              32686,
+              33462,
+              33463,
+              33464,
+              33465,
+              33466,
+              33467,
+              33468,
+              33469,
+              33470,
+              33471,
+              33472,
+              33473,
+              33474,
+              33475,
+              33476,
+              33477,
+              33478,
+              33479,
+              39920,
+              39921,
+              39922,
+              39923,
+              39924,
+              39925,
+              39926,
+              39927,
+              39928,
+              39929,
+              39930,
+              39931,
+              39932,
+              39933,
+              39934,
+              39935,
+              39936,
+              39937,
+              39938,
+              39939,
+              40932,
+              40933,
+              40934,
+              40935,
+              40936,
+              40937,
+              40938,
+              40939,
+              40940,
+              40941,
+              40942,
+              40943,
+              40944,
+              40945,
+              40946,
+              40947,
+              40948,
+              40949,
+              40950,
+              40951,
+              51000,
+              51001,
+              51002,
+              51003,
+              51004,
+              51005,
+              51006,
+              51007,
+              51008,
+              51009,
+              51010,
+              51011,
+              51012,
+              51013,
+              51014,
+              51015,
+              51016,
+              51017,
+              51018,
+              51019,
+              51020,
+              51021
+            ]
+          }
+        ],
+        "commonSlots": [
+          "head",
+          "body",
+          "hands",
+          "legs",
+          "feet",
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "damage"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "1907860718776273301",
+          "denominator": "636313640021102760"
+        },
+        "soloObjectiveScores": {
+          "WAR": 75.26202779593314,
+          "DRK": 75.09785808062286,
+          "GNB": 73.84634819036843
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "1907860718776273301",
+          "denominator": "636313640021102760"
+        },
+        "jobs": {
+          "WAR": {
+            "solo": {
+              "numerator": "3010481111837325643776",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "3010481111837325643776",
+              "denominator": "1"
+            }
+          },
+          "DRK": {
+            "solo": {
+              "numerator": "3003914323224913674240",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "3001301050826884829184",
+              "denominator": "1"
+            }
+          },
+          "GNB": {
+            "solo": {
+              "numerator": "2953853927614737320940",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "2951409209300658849600",
+              "denominator": "1"
+            }
+          }
+        }
+      }
+    },
+    "forced-a": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "PLD",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 780,
+            "maxItemLevel": 785,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.5
+            ],
+            "excludedGearIds": [
+              32669,
+              32670,
+              32671,
+              32672,
+              32673,
+              32674,
+              32675,
+              32676,
+              32677,
+              32678,
+              32679,
+              32680,
+              32681,
+              32682,
+              32683,
+              32684,
+              32685,
+              32686,
+              33462,
+              33463,
+              33464,
+              33465,
+              33466,
+              33467,
+              33468,
+              33469,
+              33470,
+              33471,
+              33472,
+              33473,
+              33474,
+              33475,
+              33476,
+              33477,
+              33478,
+              33479,
+              39920,
+              39921,
+              39922,
+              39923,
+              39924,
+              39925,
+              39926,
+              39927,
+              39928,
+              39929,
+              39930,
+              39931,
+              39932,
+              39933,
+              39934,
+              39935,
+              39936,
+              39937,
+              39938,
+              39939,
+              40932,
+              40933,
+              40934,
+              40935,
+              40936,
+              40937,
+              40938,
+              40939,
+              40940,
+              40941,
+              40942,
+              40943,
+              40944,
+              40945,
+              40946,
+              40947,
+              40948,
+              40949,
+              40950,
+              40951,
+              51000,
+              51001,
+              51002,
+              51003,
+              51004,
+              51005,
+              51006,
+              51007,
+              51008,
+              51009,
+              51010,
+              51011,
+              51012,
+              51013,
+              51014,
+              51015,
+              51016,
+              51017,
+              51018,
+              51019,
+              51020,
+              51021
+            ]
+          },
+          {
+            "jobId": "WAR",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 780,
+            "maxItemLevel": 785,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.5
+            ],
+            "excludedGearIds": [
+              32669,
+              32670,
+              32671,
+              32672,
+              32673,
+              32674,
+              32675,
+              32676,
+              32677,
+              32678,
+              32679,
+              32680,
+              32681,
+              32682,
+              32683,
+              32684,
+              32685,
+              32686,
+              33462,
+              33463,
+              33464,
+              33465,
+              33466,
+              33467,
+              33468,
+              33469,
+              33470,
+              33471,
+              33472,
+              33473,
+              33474,
+              33475,
+              33476,
+              33477,
+              33478,
+              33479,
+              39920,
+              39921,
+              39922,
+              39923,
+              39924,
+              39925,
+              39926,
+              39927,
+              39928,
+              39929,
+              39930,
+              39931,
+              39932,
+              39933,
+              39934,
+              39935,
+              39936,
+              39937,
+              39938,
+              39939,
+              40932,
+              40933,
+              40934,
+              40935,
+              40936,
+              40937,
+              40938,
+              40939,
+              40940,
+              40941,
+              40942,
+              40943,
+              40944,
+              40945,
+              40946,
+              40947,
+              40948,
+              40949,
+              40950,
+              40951,
+              51000,
+              51001,
+              51002,
+              51003,
+              51004,
+              51005,
+              51006,
+              51007,
+              51008,
+              51009,
+              51010,
+              51011,
+              51012,
+              51013,
+              51014,
+              51015,
+              51016,
+              51017,
+              51018,
+              51019,
+              51020,
+              51021
+            ]
+          },
+          {
+            "jobId": "DRK",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 780,
+            "maxItemLevel": 785,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.5
+            ],
+            "excludedGearIds": [
+              32669,
+              32670,
+              32671,
+              32672,
+              32673,
+              32674,
+              32675,
+              32676,
+              32677,
+              32678,
+              32679,
+              32680,
+              32681,
+              32682,
+              32683,
+              32684,
+              32685,
+              32686,
+              33462,
+              33463,
+              33464,
+              33465,
+              33466,
+              33467,
+              33468,
+              33469,
+              33470,
+              33471,
+              33472,
+              33473,
+              33474,
+              33475,
+              33476,
+              33477,
+              33478,
+              33479,
+              39920,
+              39921,
+              39922,
+              39923,
+              39924,
+              39925,
+              39926,
+              39927,
+              39928,
+              39929,
+              39930,
+              39931,
+              39932,
+              39933,
+              39934,
+              39935,
+              39936,
+              39937,
+              39938,
+              39939,
+              40932,
+              40933,
+              40934,
+              40935,
+              40936,
+              40937,
+              40938,
+              40939,
+              40940,
+              40941,
+              40942,
+              40943,
+              40944,
+              40945,
+              40946,
+              40947,
+              40948,
+              40949,
+              40950,
+              40951,
+              51000,
+              51001,
+              51002,
+              51003,
+              51004,
+              51005,
+              51006,
+              51007,
+              51008,
+              51009,
+              51010,
+              51011,
+              51012,
+              51013,
+              51014,
+              51015,
+              51016,
+              51017,
+              51018,
+              51019,
+              51020,
+              51021
+            ]
+          },
+          {
+            "jobId": "GNB",
+            "clanIndex": 0,
+            "objective": "damage",
+            "minItemLevel": 780,
+            "maxItemLevel": 785,
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0,
+            "gcdChoices": [
+              2.5
+            ],
+            "excludedGearIds": [
+              32669,
+              32670,
+              32671,
+              32672,
+              32673,
+              32674,
+              32675,
+              32676,
+              32677,
+              32678,
+              32679,
+              32680,
+              32681,
+              32682,
+              32683,
+              32684,
+              32685,
+              32686,
+              33462,
+              33463,
+              33464,
+              33465,
+              33466,
+              33467,
+              33468,
+              33469,
+              33470,
+              33471,
+              33472,
+              33473,
+              33474,
+              33475,
+              33476,
+              33477,
+              33478,
+              33479,
+              39920,
+              39921,
+              39922,
+              39923,
+              39924,
+              39925,
+              39926,
+              39927,
+              39928,
+              39929,
+              39930,
+              39931,
+              39932,
+              39933,
+              39934,
+              39935,
+              39936,
+              39937,
+              39938,
+              39939,
+              40932,
+              40933,
+              40934,
+              40935,
+              40936,
+              40937,
+              40938,
+              40939,
+              40940,
+              40941,
+              40942,
+              40943,
+              40944,
+              40945,
+              40946,
+              40947,
+              40948,
+              40949,
+              40950,
+              40951,
+              51000,
+              51001,
+              51002,
+              51003,
+              51004,
+              51005,
+              51006,
+              51007,
+              51008,
+              51009,
+              51010,
+              51011,
+              51012,
+              51013,
+              51014,
+              51015,
+              51016,
+              51017,
+              51018,
+              51019,
+              51020,
+              51021
+            ]
+          }
+        ],
+        "commonSlots": [
+          "head",
+          "body",
+          "hands",
+          "legs",
+          "feet",
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "shared",
+        "objective": "damage"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "off",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "9297538159",
+          "denominator": "2324486470"
+        },
+        "soloObjectiveScores": {
+          "PLD": 74.8171407165735,
+          "WAR": 75.88090188291036,
+          "DRK": 75.88090188291036,
+          "GNB": 74.85288536122114
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "9297538159",
+          "denominator": "2324486470"
+        },
+        "jobs": {
+          "PLD": {
+            "solo": {
+              "numerator": "2992685628662940600000",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "2992160703784714020000",
+              "denominator": "1"
+            }
+          },
+          "WAR": {
+            "solo": {
+              "numerator": "3035236075316414611200",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "3035236075316414611200",
+              "denominator": "1"
+            }
+          },
+          "DRK": {
+            "solo": {
+              "numerator": "3035236075316414611200",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "3035236075316414611200",
+              "denominator": "1"
+            }
+          },
+          "GNB": {
+            "solo": {
+              "numerator": "2994115414448845440000",
+              "denominator": "1"
+            },
+            "joint": {
+              "numerator": "2994115414448845440000",
+              "denominator": "1"
+            }
+          }
+        }
+      }
+    },
+    "holdout-food-independent": {
+      "configuration": {
+        "jobs": [
+          {
+            "jobId": "VPR",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          },
+          {
+            "jobId": "MCH",
+            "clanIndex": 0,
+            "objective": "dps",
+            "minItemLevel": 730,
+            "maxItemLevel": 795,
+            "sync": {
+              "kind": "itemLevel",
+              "value": 735
+            },
+            "maximizeTenacity": false,
+            "excludedSources": [],
+            "forcedGear": {},
+            "foodId": 0
+          }
+        ],
+        "commonSlots": [
+          "earrings",
+          "necklace",
+          "bracelet",
+          "ring",
+          "ring2"
+        ],
+        "foodStrategy": "independent",
+        "objective": "dps"
+      },
+      "strategies": {
+        "candidateDominance": "auto",
+        "factorReachability": "auto",
+        "speedFoodProjection": "auto",
+        "foodProductBound": "auto",
+        "candidateUpperBound": "auto",
+        "resourceSupports": "auto",
+        "conditionalResourceSupports": "auto",
+        "resourceBudgetCandidateBounds": "auto",
+        "sharedStateSearch": "auto",
+        "utilityEquivalence": "auto",
+        "materiaFamilyProjection": "auto",
+        "equalityQuotient": "auto",
+        "jointRatioPairBounds": "auto",
+        "jointSharedBounds": "auto",
+        "jointFactorCuts": "auto",
+        "ringSymmetry": "auto",
+        "feasibleSeeds": "auto",
+        "restrictedResultReuse": "auto"
+      },
+      "expected": {
+        "normalizedJointValue": {
+          "numerator": "8673",
+          "denominator": "4337"
+        },
+        "soloObjectiveScores": {
+          "VPR": 33.22292791883143,
+          "MCH": 34.227896116543384
+        }
+      },
+      "exact": {
+        "normalized": {
+          "numerator": "8673",
+          "denominator": "4337"
+        },
+        "jobs": {
+          "VPR": {
+            "solo": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            },
+            "joint": {
+              "numerator": "2524942521831188624000",
+              "denominator": "190"
+            }
+          },
+          "MCH": {
+            "solo": {
+              "numerator": "2612729403562812240000",
+              "denominator": "229"
+            },
+            "joint": {
+              "numerator": "2612126975754750720000",
+              "denominator": "229"
+            }
+          }
+        }
+      }
+    }
+  }
+}

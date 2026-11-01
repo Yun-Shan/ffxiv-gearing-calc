@@ -41,7 +41,7 @@ async function main() {
       ...(config.sync === undefined ? {} : { sync: config.sync }),
       constraints: Object.fromEntries(Object.entries(config).filter(([name]) => [
         "gcdChoices", "speedMin", "speedMax", "minTenacity",
-        "toughnessMinPercent", "maximizeTenacity",
+        "toughnessMinPercent", "maximizeTenacity", "excludedGearIds",
       ].includes(name))),
     })),
     commonSlots,

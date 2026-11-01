@@ -1,6 +1,6 @@
 # 分享协议回归输入
 
-`real-search.json` 保留17份在 `2026.10.06.0000.0000` 版 bin 上重新完成正式搜索的业务条件、选装和预期属性。`provenance` 记录原始结果 SHA、bin SHA、数据版本、正式搜索入口及时间；原始结果保留在 `.tmp/share-source-prefix/real-search/`。普通属性和显示效果直接来自实际结果，耗时取 `result.statistics.elapsedMs`，不含人为生成的配装或假设的性能数据。binary是最终规格的完整原始二进制Base64url，可独立比较生产编解码与预期字节。
+`real-search.json` 保留17份在 `2026.10.06.0000.0000` 版 bin 上重新完成正式搜索的业务条件、选装和预期属性。`provenance` 记录原始结果 SHA、bin SHA、数据版本、正式搜索入口及时间。普通属性和显示效果直接来自实际结果，耗时取 `result.statistics.elapsedMs`，不含人为生成的配装或假设的性能数据。binary是最终规格的完整原始二进制Base64url，可独立比较生产编解码与预期字节。
 
 `duty-metadata.json` 为5份副本选项元数据夹具：在对应真实结果上补充目标完全一致的实际目录选项名称，不改变计算条件，不计作新搜索。标签末尾数字沿用历史实验标签，不表示当前零基分享ID；以duty对象及binary为准。
 
